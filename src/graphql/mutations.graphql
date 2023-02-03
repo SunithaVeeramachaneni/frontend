@@ -1,4 +1,127 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateAssets(
+  $input: CreateAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  createAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateAssets(
+  $input: UpdateAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  updateAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteAssets(
+  $input: DeleteAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  deleteAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateLocation(
+  $input: CreateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  createLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateLocation(
+  $input: UpdateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  updateLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteLocation(
+  $input: DeleteLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  deleteLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateRoundPlanSubmissionDetails(
   $input: CreateRoundPlanSubmissionDetailsInput!
   $condition: ModelRoundPlanSubmissionDetailsConditionInput
@@ -270,6 +393,7 @@ mutation CreateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -311,6 +435,7 @@ mutation UpdateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -352,6 +477,7 @@ mutation DeleteRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -639,6 +765,7 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -680,6 +807,7 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -721,6 +849,7 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version

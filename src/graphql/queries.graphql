@@ -1,4 +1,153 @@
 # this is an auto generated file. This will be overwritten
+query GetAssets($id: ID!) {
+  getAssets(id: $id) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListAssets(
+  $filter: ModelAssetsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      model
+      parentType
+      parentId
+      assetsId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncAssets(
+  $filter: ModelAssetsFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncAssets(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      model
+      parentType
+      parentId
+      assetsId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetLocation($id: ID!) {
+  getLocation(id: $id) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListLocations(
+  $filter: ModelLocationFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      model
+      locationId
+      parentId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncLocations(
+  $filter: ModelLocationFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncLocations(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      model
+      locationId
+      parentId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetRoundPlanSubmissionDetails($id: ID!) {
   getRoundPlanSubmissionDetails(id: $id) {
     id
@@ -441,6 +590,7 @@ query GetRoundPlanList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -472,6 +622,7 @@ query ListRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -512,6 +663,7 @@ query SyncRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -945,6 +1097,7 @@ query GetFormList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -976,6 +1129,7 @@ query ListFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -1016,6 +1170,7 @@ query SyncFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version

@@ -6,6 +6,88 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerAssets = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Assets, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly parentType?: string | null;
+  readonly parentId?: string | null;
+  readonly assetsId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyAssets = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Assets, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly parentType?: string | null;
+  readonly parentId?: string | null;
+  readonly assetsId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Assets = LazyLoading extends LazyLoadingDisabled ? EagerAssets : LazyAssets
+
+export declare const Assets: (new (init: ModelInit<Assets>) => Assets) & {
+  copyOf(source: Assets, mutator: (draft: MutableModel<Assets>) => MutableModel<Assets> | void): Assets;
+}
+
+type EagerLocation = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Location, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly locationId?: string | null;
+  readonly parentId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyLocation = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Location, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly locationId?: string | null;
+  readonly parentId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Location = LazyLoading extends LazyLoadingDisabled ? EagerLocation : LazyLocation
+
+export declare const Location: (new (init: ModelInit<Location>) => Location) & {
+  copyOf(source: Location, mutator: (draft: MutableModel<Location>) => MutableModel<Location> | void): Location;
+}
+
 type EagerRoundPlanSubmissionDetails = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
@@ -183,6 +265,7 @@ type EagerRoundPlanList = {
   readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
   readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -212,6 +295,7 @@ type LazyRoundPlanList = {
   readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
   readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -405,6 +489,7 @@ type EagerFormList = {
   readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
   readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
   readonly formListFormDetail?: (FormDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -434,6 +519,7 @@ type LazyFormList = {
   readonly formListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
   readonly formListFormDetail: AsyncCollection<FormDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

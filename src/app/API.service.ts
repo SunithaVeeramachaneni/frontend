@@ -10,6 +10,12 @@ export interface SubscriptionResponse<T> {
 }
 
 export type __SubscriptionContainer = {
+  onCreateAssets: OnCreateAssetsSubscription;
+  onUpdateAssets: OnUpdateAssetsSubscription;
+  onDeleteAssets: OnDeleteAssetsSubscription;
+  onCreateLocation: OnCreateLocationSubscription;
+  onUpdateLocation: OnUpdateLocationSubscription;
+  onDeleteLocation: OnDeleteLocationSubscription;
   onCreateRoundPlanSubmissionDetails: OnCreateRoundPlanSubmissionDetailsSubscription;
   onUpdateRoundPlanSubmissionDetails: OnUpdateRoundPlanSubmissionDetailsSubscription;
   onDeleteRoundPlanSubmissionDetails: OnDeleteRoundPlanSubmissionDetailsSubscription;
@@ -45,21 +51,31 @@ export type __SubscriptionContainer = {
   onDeleteFormDetail: OnDeleteFormDetailSubscription;
 };
 
-export type CreateRoundPlanSubmissionDetailsInput = {
+export type CreateAssetsInput = {
   id?: string | null;
-  formData?: string | null;
-  formlistID: string;
-  formsubmissionlistID: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
-export type ModelRoundPlanSubmissionDetailsConditionInput = {
-  formData?: ModelStringInput | null;
-  formlistID?: ModelIDInput | null;
-  formsubmissionlistID?: ModelIDInput | null;
-  and?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
-  or?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
-  not?: ModelRoundPlanSubmissionDetailsConditionInput | null;
+export type ModelAssetsConditionInput = {
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  model?: ModelStringInput | null;
+  parentType?: ModelStringInput | null;
+  parentId?: ModelStringInput | null;
+  assetsId?: ModelStringInput | null;
+  image?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  and?: Array<ModelAssetsConditionInput | null> | null;
+  or?: Array<ModelAssetsConditionInput | null> | null;
+  not?: ModelAssetsConditionInput | null;
 };
 
 export type ModelStringInput = {
@@ -99,6 +115,118 @@ export type ModelSizeInput = {
   ge?: number | null;
   gt?: number | null;
   between?: Array<number | null> | null;
+};
+
+export type Assets = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateAssetsInput = {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteAssetsInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateLocationInput = {
+  id?: string | null;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  _version?: number | null;
+};
+
+export type ModelLocationConditionInput = {
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  model?: ModelStringInput | null;
+  locationId?: ModelStringInput | null;
+  parentId?: ModelStringInput | null;
+  image?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  and?: Array<ModelLocationConditionInput | null> | null;
+  or?: Array<ModelLocationConditionInput | null> | null;
+  not?: ModelLocationConditionInput | null;
+};
+
+export type Location = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateLocationInput = {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteLocationInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateRoundPlanSubmissionDetailsInput = {
+  id?: string | null;
+  formData?: string | null;
+  formlistID: string;
+  formsubmissionlistID: string;
+  _version?: number | null;
+};
+
+export type ModelRoundPlanSubmissionDetailsConditionInput = {
+  formData?: ModelStringInput | null;
+  formlistID?: ModelIDInput | null;
+  formsubmissionlistID?: ModelIDInput | null;
+  and?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
+  or?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
+  not?: ModelRoundPlanSubmissionDetailsConditionInput | null;
 };
 
 export type ModelIDInput = {
@@ -361,6 +489,7 @@ export type CreateRoundPlanListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -381,6 +510,7 @@ export type ModelRoundPlanListConditionInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelRoundPlanListConditionInput | null> | null;
   or?: Array<ModelRoundPlanListConditionInput | null> | null;
   not?: ModelRoundPlanListConditionInput | null;
@@ -408,6 +538,7 @@ export type RoundPlanList = {
   RoundPlanSubmissionDetails?: ModelRoundPlanSubmissionDetailsConnection | null;
   AuthoredRoundPlanDetails?: ModelAuthoredRoundPlanDetailConnection | null;
   RoundPlanDetails?: ModelRoundPlanDetailConnection | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -447,6 +578,7 @@ export type UpdateRoundPlanListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -709,6 +841,7 @@ export type CreateFormListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -729,6 +862,7 @@ export type ModelFormListConditionInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelFormListConditionInput | null> | null;
   or?: Array<ModelFormListConditionInput | null> | null;
   not?: ModelFormListConditionInput | null;
@@ -756,6 +890,7 @@ export type FormList = {
   formListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
   formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
   formListFormDetail?: ModelFormDetailConnection | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -807,6 +942,7 @@ export type UpdateFormListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -840,6 +976,49 @@ export type UpdateFormDetailInput = {
 export type DeleteFormDetailInput = {
   id: string;
   _version?: number | null;
+};
+
+export type ModelAssetsFilterInput = {
+  id?: ModelIDInput | null;
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  model?: ModelStringInput | null;
+  parentType?: ModelStringInput | null;
+  parentId?: ModelStringInput | null;
+  assetsId?: ModelStringInput | null;
+  image?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  and?: Array<ModelAssetsFilterInput | null> | null;
+  or?: Array<ModelAssetsFilterInput | null> | null;
+  not?: ModelAssetsFilterInput | null;
+};
+
+export type ModelAssetsConnection = {
+  __typename: "ModelAssetsConnection";
+  items: Array<Assets | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type ModelLocationFilterInput = {
+  id?: ModelIDInput | null;
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  model?: ModelStringInput | null;
+  locationId?: ModelStringInput | null;
+  parentId?: ModelStringInput | null;
+  image?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  and?: Array<ModelLocationFilterInput | null> | null;
+  or?: Array<ModelLocationFilterInput | null> | null;
+  not?: ModelLocationFilterInput | null;
+};
+
+export type ModelLocationConnection = {
+  __typename: "ModelLocationConnection";
+  items: Array<Location | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type ModelRoundPlanSubmissionDetailsFilterInput = {
@@ -923,6 +1102,7 @@ export type ModelRoundPlanListFilterInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelRoundPlanListFilterInput | null> | null;
   or?: Array<ModelRoundPlanListFilterInput | null> | null;
   not?: ModelRoundPlanListFilterInput | null;
@@ -1021,6 +1201,7 @@ export type ModelFormListFilterInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelFormListFilterInput | null> | null;
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
@@ -1042,13 +1223,18 @@ export type ModelFormDetailFilterInput = {
   not?: ModelFormDetailFilterInput | null;
 };
 
-export type ModelSubscriptionRoundPlanSubmissionDetailsFilterInput = {
+export type ModelSubscriptionAssetsFilterInput = {
   id?: ModelSubscriptionIDInput | null;
-  formData?: ModelSubscriptionStringInput | null;
-  formlistID?: ModelSubscriptionIDInput | null;
-  formsubmissionlistID?: ModelSubscriptionIDInput | null;
-  and?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
-  or?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
+  name?: ModelSubscriptionStringInput | null;
+  description?: ModelSubscriptionStringInput | null;
+  model?: ModelSubscriptionStringInput | null;
+  parentType?: ModelSubscriptionStringInput | null;
+  parentId?: ModelSubscriptionStringInput | null;
+  assetsId?: ModelSubscriptionStringInput | null;
+  image?: ModelSubscriptionStringInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
+  and?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
+  or?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
 };
 
 export type ModelSubscriptionIDInput = {
@@ -1079,6 +1265,28 @@ export type ModelSubscriptionStringInput = {
   beginsWith?: string | null;
   in?: Array<string | null> | null;
   notIn?: Array<string | null> | null;
+};
+
+export type ModelSubscriptionLocationFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  name?: ModelSubscriptionStringInput | null;
+  description?: ModelSubscriptionStringInput | null;
+  model?: ModelSubscriptionStringInput | null;
+  locationId?: ModelSubscriptionStringInput | null;
+  parentId?: ModelSubscriptionStringInput | null;
+  image?: ModelSubscriptionStringInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
+  and?: Array<ModelSubscriptionLocationFilterInput | null> | null;
+  or?: Array<ModelSubscriptionLocationFilterInput | null> | null;
+};
+
+export type ModelSubscriptionRoundPlanSubmissionDetailsFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  formData?: ModelSubscriptionStringInput | null;
+  formlistID?: ModelSubscriptionIDInput | null;
+  formsubmissionlistID?: ModelSubscriptionIDInput | null;
+  and?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
+  or?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
 };
 
 export type ModelSubscriptionRoundPlanSubmissionListFilterInput = {
@@ -1154,6 +1362,7 @@ export type ModelSubscriptionRoundPlanListFilterInput = {
   isArchived?: ModelSubscriptionBooleanInput | null;
   searchTerm?: ModelSubscriptionStringInput | null;
   isArchivedAt?: ModelSubscriptionStringInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionRoundPlanListFilterInput | null> | null;
   or?: Array<ModelSubscriptionRoundPlanListFilterInput | null> | null;
 };
@@ -1226,6 +1435,7 @@ export type ModelSubscriptionFormListFilterInput = {
   isArchived?: ModelSubscriptionBooleanInput | null;
   searchTerm?: ModelSubscriptionStringInput | null;
   isArchivedAt?: ModelSubscriptionStringInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
 };
@@ -1236,6 +1446,111 @@ export type ModelSubscriptionFormDetailFilterInput = {
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
+};
+
+export type CreateAssetsMutation = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateAssetsMutation = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type DeleteAssetsMutation = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type CreateLocationMutation = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateLocationMutation = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type DeleteLocationMutation = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
 };
 
 export type CreateRoundPlanSubmissionDetailsMutation = {
@@ -1476,6 +1791,7 @@ export type CreateRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1517,6 +1833,7 @@ export type UpdateRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1558,6 +1875,7 @@ export type DeleteRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1812,6 +2130,7 @@ export type CreateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1853,6 +2172,7 @@ export type UpdateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1894,6 +2214,7 @@ export type DeleteFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1935,6 +2256,131 @@ export type DeleteFormDetailMutation = {
   _version: number;
   _deleted?: boolean | null;
   _lastChangedAt: number;
+};
+
+export type GetAssetsQuery = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ListAssetsQuery = {
+  __typename: "ModelAssetsConnection";
+  items: Array<{
+    __typename: "Assets";
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    model?: string | null;
+    parentType?: string | null;
+    parentId?: string | null;
+    assetsId?: string | null;
+    image?: string | null;
+    searchTerm?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type SyncAssetsQuery = {
+  __typename: "ModelAssetsConnection";
+  items: Array<{
+    __typename: "Assets";
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    model?: string | null;
+    parentType?: string | null;
+    parentId?: string | null;
+    assetsId?: string | null;
+    image?: string | null;
+    searchTerm?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type GetLocationQuery = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ListLocationsQuery = {
+  __typename: "ModelLocationConnection";
+  items: Array<{
+    __typename: "Location";
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    model?: string | null;
+    locationId?: string | null;
+    parentId?: string | null;
+    image?: string | null;
+    searchTerm?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type SyncLocationsQuery = {
+  __typename: "ModelLocationConnection";
+  items: Array<{
+    __typename: "Location";
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    model?: string | null;
+    locationId?: string | null;
+    parentId?: string | null;
+    image?: string | null;
+    searchTerm?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type GetRoundPlanSubmissionDetailsQuery = {
@@ -2279,6 +2725,7 @@ export type GetRoundPlanListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2307,6 +2754,7 @@ export type ListRoundPlanListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2338,6 +2786,7 @@ export type SyncRoundPlanListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2682,6 +3131,7 @@ export type GetFormListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2710,6 +3160,7 @@ export type ListFormListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2741,6 +3192,7 @@ export type SyncFormListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2812,6 +3264,111 @@ export type FormDetailsByFormlistIDQuery = {
   } | null>;
   nextToken?: string | null;
   startedAt?: number | null;
+};
+
+export type OnCreateAssetsSubscription = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnUpdateAssetsSubscription = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnDeleteAssetsSubscription = {
+  __typename: "Assets";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnCreateLocationSubscription = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnUpdateLocationSubscription = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnDeleteLocationSubscription = {
+  __typename: "Location";
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  locationId?: string | null;
+  parentId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
 };
 
 export type OnCreateRoundPlanSubmissionDetailsSubscription = {
@@ -3052,6 +3609,7 @@ export type OnCreateRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3093,6 +3651,7 @@ export type OnUpdateRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3134,6 +3693,7 @@ export type OnDeleteRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3388,6 +3948,7 @@ export type OnCreateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3429,6 +3990,7 @@ export type OnUpdateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3470,6 +4032,7 @@ export type OnDeleteFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3517,6 +4080,207 @@ export type OnDeleteFormDetailSubscription = {
   providedIn: "root"
 })
 export class APIService {
+  async CreateAssets(
+    input: CreateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<CreateAssetsMutation> {
+    const statement = `mutation CreateAssets($input: CreateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        createAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateAssetsMutation>response.data.createAssets;
+  }
+  async UpdateAssets(
+    input: UpdateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<UpdateAssetsMutation> {
+    const statement = `mutation UpdateAssets($input: UpdateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        updateAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateAssetsMutation>response.data.updateAssets;
+  }
+  async DeleteAssets(
+    input: DeleteAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<DeleteAssetsMutation> {
+    const statement = `mutation DeleteAssets($input: DeleteAssetsInput!, $condition: ModelAssetsConditionInput) {
+        deleteAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteAssetsMutation>response.data.deleteAssets;
+  }
+  async CreateLocation(
+    input: CreateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<CreateLocationMutation> {
+    const statement = `mutation CreateLocation($input: CreateLocationInput!, $condition: ModelLocationConditionInput) {
+        createLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateLocationMutation>response.data.createLocation;
+  }
+  async UpdateLocation(
+    input: UpdateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<UpdateLocationMutation> {
+    const statement = `mutation UpdateLocation($input: UpdateLocationInput!, $condition: ModelLocationConditionInput) {
+        updateLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateLocationMutation>response.data.updateLocation;
+  }
+  async DeleteLocation(
+    input: DeleteLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<DeleteLocationMutation> {
+    const statement = `mutation DeleteLocation($input: DeleteLocationInput!, $condition: ModelLocationConditionInput) {
+        deleteLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteLocationMutation>response.data.deleteLocation;
+  }
   async CreateRoundPlanSubmissionDetails(
     input: CreateRoundPlanSubmissionDetailsInput,
     condition?: ModelRoundPlanSubmissionDetailsConditionInput
@@ -3970,6 +4734,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4027,6 +4792,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4084,6 +4850,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4564,6 +5331,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4621,6 +5389,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4678,6 +5447,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4779,6 +5549,243 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return <DeleteFormDetailMutation>response.data.deleteFormDetail;
+  }
+  async GetAssets(id: string): Promise<GetAssetsQuery> {
+    const statement = `query GetAssets($id: ID!) {
+        getAssets(id: $id) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetAssetsQuery>response.data.getAssets;
+  }
+  async ListAssets(
+    filter?: ModelAssetsFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListAssetsQuery> {
+    const statement = `query ListAssets($filter: ModelAssetsFilterInput, $limit: Int, $nextToken: String) {
+        listAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            name
+            description
+            model
+            parentType
+            parentId
+            assetsId
+            image
+            searchTerm
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <ListAssetsQuery>response.data.listAssets;
+  }
+  async SyncAssets(
+    filter?: ModelAssetsFilterInput,
+    limit?: number,
+    nextToken?: string,
+    lastSync?: number
+  ): Promise<SyncAssetsQuery> {
+    const statement = `query SyncAssets($filter: ModelAssetsFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
+        syncAssets(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
+          __typename
+          items {
+            __typename
+            id
+            name
+            description
+            model
+            parentType
+            parentId
+            assetsId
+            image
+            searchTerm
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    if (lastSync) {
+      gqlAPIServiceArguments.lastSync = lastSync;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <SyncAssetsQuery>response.data.syncAssets;
+  }
+  async GetLocation(id: string): Promise<GetLocationQuery> {
+    const statement = `query GetLocation($id: ID!) {
+        getLocation(id: $id) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetLocationQuery>response.data.getLocation;
+  }
+  async ListLocations(
+    filter?: ModelLocationFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListLocationsQuery> {
+    const statement = `query ListLocations($filter: ModelLocationFilterInput, $limit: Int, $nextToken: String) {
+        listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            name
+            description
+            model
+            locationId
+            parentId
+            image
+            searchTerm
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <ListLocationsQuery>response.data.listLocations;
+  }
+  async SyncLocations(
+    filter?: ModelLocationFilterInput,
+    limit?: number,
+    nextToken?: string,
+    lastSync?: number
+  ): Promise<SyncLocationsQuery> {
+    const statement = `query SyncLocations($filter: ModelLocationFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
+        syncLocations(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
+          __typename
+          items {
+            __typename
+            id
+            name
+            description
+            model
+            locationId
+            parentId
+            image
+            searchTerm
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    if (lastSync) {
+      gqlAPIServiceArguments.lastSync = lastSync;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <SyncLocationsQuery>response.data.syncLocations;
   }
   async GetRoundPlanSubmissionDetails(
     id: string
@@ -5492,6 +6499,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -5534,6 +6542,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -5587,6 +6596,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -6271,6 +7281,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -6313,6 +7324,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -6366,6 +7378,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -6541,6 +7554,213 @@ export class APIService {
     )) as any;
     return <FormDetailsByFormlistIDQuery>response.data.formDetailsByFormlistID;
   }
+  OnCreateAssetsListener(
+    filter?: ModelSubscriptionAssetsFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+  > {
+    const statement = `subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
+        onCreateAssets(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+    >;
+  }
+
+  OnUpdateAssetsListener(
+    filter?: ModelSubscriptionAssetsFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+  > {
+    const statement = `subscription OnUpdateAssets($filter: ModelSubscriptionAssetsFilterInput) {
+        onUpdateAssets(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+    >;
+  }
+
+  OnDeleteAssetsListener(
+    filter?: ModelSubscriptionAssetsFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+  > {
+    const statement = `subscription OnDeleteAssets($filter: ModelSubscriptionAssetsFilterInput) {
+        onDeleteAssets(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+    >;
+  }
+
+  OnCreateLocationListener(
+    filter?: ModelSubscriptionLocationFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+  > {
+    const statement = `subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
+        onCreateLocation(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+    >;
+  }
+
+  OnUpdateLocationListener(
+    filter?: ModelSubscriptionLocationFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+  > {
+    const statement = `subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
+        onUpdateLocation(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+    >;
+  }
+
+  OnDeleteLocationListener(
+    filter?: ModelSubscriptionLocationFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+  > {
+    const statement = `subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
+        onDeleteLocation(filter: $filter) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+    >;
+  }
+
   OnCreateRoundPlanSubmissionDetailsListener(
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
@@ -7037,6 +8257,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7097,6 +8318,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7157,6 +8379,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7670,6 +8893,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7728,6 +8952,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7786,6 +9011,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
