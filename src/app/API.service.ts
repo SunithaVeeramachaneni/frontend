@@ -116,7 +116,7 @@ export type ModelSizeInput = {
   gt?: number | null;
   between?: Array<number | null> | null;
 };
-
+// assets subscription container
 export type Assets = {
   __typename: "Assets";
   id: string;
@@ -177,7 +177,7 @@ export type ModelLocationConditionInput = {
   or?: Array<ModelLocationConditionInput | null> | null;
   not?: ModelLocationConditionInput | null;
 };
-
+// location subscription container
 export type Location = {
   __typename: "Location";
   id: string;
@@ -1206,6 +1206,7 @@ export type ModelFormListFilterInput = {
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
 };
+
 
 export type ModelFormListConnection = {
   __typename: "ModelFormListConnection";
@@ -4077,210 +4078,9 @@ export type OnDeleteFormDetailSubscription = {
 };
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class APIService {
-  async CreateAssets(
-    input: CreateAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<CreateAssetsMutation> {
-    const statement = `mutation CreateAssets($input: CreateAssetsInput!, $condition: ModelAssetsConditionInput) {
-        createAssets(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          parentType
-          parentId
-          assetsId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <CreateAssetsMutation>response.data.createAssets;
-  }
-  async UpdateAssets(
-    input: UpdateAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<UpdateAssetsMutation> {
-    const statement = `mutation UpdateAssets($input: UpdateAssetsInput!, $condition: ModelAssetsConditionInput) {
-        updateAssets(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          parentType
-          parentId
-          assetsId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateAssetsMutation>response.data.updateAssets;
-  }
-  async DeleteAssets(
-    input: DeleteAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<DeleteAssetsMutation> {
-    const statement = `mutation DeleteAssets($input: DeleteAssetsInput!, $condition: ModelAssetsConditionInput) {
-        deleteAssets(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          parentType
-          parentId
-          assetsId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteAssetsMutation>response.data.deleteAssets;
-  }
-  async CreateLocation(
-    input: CreateLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<CreateLocationMutation> {
-    const statement = `mutation CreateLocation($input: CreateLocationInput!, $condition: ModelLocationConditionInput) {
-        createLocation(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <CreateLocationMutation>response.data.createLocation;
-  }
-  async UpdateLocation(
-    input: UpdateLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<UpdateLocationMutation> {
-    const statement = `mutation UpdateLocation($input: UpdateLocationInput!, $condition: ModelLocationConditionInput) {
-        updateLocation(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateLocationMutation>response.data.updateLocation;
-  }
-  async DeleteLocation(
-    input: DeleteLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<DeleteLocationMutation> {
-    const statement = `mutation DeleteLocation($input: DeleteLocationInput!, $condition: ModelLocationConditionInput) {
-        deleteLocation(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteLocationMutation>response.data.deleteLocation;
-  }
   async CreateRoundPlanSubmissionDetails(
     input: CreateRoundPlanSubmissionDetailsInput,
     condition?: ModelRoundPlanSubmissionDetailsConditionInput
@@ -5550,6 +5350,211 @@ export class APIService {
     )) as any;
     return <DeleteFormDetailMutation>response.data.deleteFormDetail;
   }
+  // assets methods
+  async CreateAssets(
+    input: CreateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<CreateAssetsMutation> {
+    const statement = `mutation CreateAssets($input: CreateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        createAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateAssetsMutation>response.data.createAssets;
+  }
+  async UpdateAssets(
+    input: UpdateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<UpdateAssetsMutation> {
+    const statement = `mutation UpdateAssets($input: UpdateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        updateAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateAssetsMutation>response.data.updateAssets;
+  }
+  async DeleteAssets(
+    input: DeleteAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<DeleteAssetsMutation> {
+    const statement = `mutation DeleteAssets($input: DeleteAssetsInput!, $condition: ModelAssetsConditionInput) {
+        deleteAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteAssetsMutation>response.data.deleteAssets;
+  }
+  // location methods
+  async CreateLocation(
+    input: CreateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<CreateLocationMutation> {
+    const statement = `mutation CreateLocation($input: CreateLocationInput!, $condition: ModelLocationConditionInput) {
+        createLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateLocationMutation>response.data.createLocation;
+  }
+  async UpdateLocation(
+    input: UpdateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<UpdateLocationMutation> {
+    const statement = `mutation UpdateLocation($input: UpdateLocationInput!, $condition: ModelLocationConditionInput) {
+        updateLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateLocationMutation>response.data.updateLocation;
+  }
+  async DeleteLocation(
+    input: DeleteLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<DeleteLocationMutation> {
+    const statement = `mutation DeleteLocation($input: DeleteLocationInput!, $condition: ModelLocationConditionInput) {
+        deleteLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteLocationMutation>response.data.deleteLocation;
+  }
+
+  // get assets methods
   async GetAssets(id: string): Promise<GetAssetsQuery> {
     const statement = `query GetAssets($id: ID!) {
         getAssets(id: $id) {
@@ -5670,6 +5675,8 @@ export class APIService {
     )) as any;
     return <SyncAssetsQuery>response.data.syncAssets;
   }
+
+  // get location methods
   async GetLocation(id: string): Promise<GetLocationQuery> {
     const statement = `query GetLocation($id: ID!) {
         getLocation(id: $id) {
@@ -5787,6 +5794,7 @@ export class APIService {
     )) as any;
     return <SyncLocationsQuery>response.data.syncLocations;
   }
+
   async GetRoundPlanSubmissionDetails(
     id: string
   ): Promise<GetRoundPlanSubmissionDetailsQuery> {
@@ -7557,7 +7565,7 @@ export class APIService {
   OnCreateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
   > {
     const statement = `subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onCreateAssets(filter: $filter) {
@@ -7585,14 +7593,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
     >;
   }
 
   OnUpdateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
   > {
     const statement = `subscription OnUpdateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onUpdateAssets(filter: $filter) {
@@ -7620,14 +7628,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
     >;
   }
 
   OnDeleteAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
   > {
     const statement = `subscription OnDeleteAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onDeleteAssets(filter: $filter) {
@@ -7655,14 +7663,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
     >;
   }
 
   OnCreateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
   > {
     const statement = `subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onCreateLocation(filter: $filter) {
@@ -7689,14 +7697,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
     >;
   }
 
   OnUpdateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
   > {
     const statement = `subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onUpdateLocation(filter: $filter) {
@@ -7723,14 +7731,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
     >;
   }
 
   OnDeleteLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
   > {
     const statement = `subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
         onDeleteLocation(filter: $filter) {
@@ -7757,7 +7765,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
     >;
   }
 
@@ -7765,7 +7773,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7790,7 +7798,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -7799,7 +7807,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7824,7 +7832,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -7833,7 +7841,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7858,7 +7866,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -7867,7 +7875,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -7906,7 +7914,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
       >
     >;
   }
@@ -7915,7 +7923,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -7954,7 +7962,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
       >
     >;
   }
@@ -7963,7 +7971,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -8002,7 +8010,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
       >
     >;
   }
@@ -8011,7 +8019,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnCreateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8039,7 +8047,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -8048,7 +8056,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnUpdateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8076,7 +8084,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -8085,7 +8093,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnDeleteAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8113,7 +8121,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -8122,7 +8130,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8146,7 +8154,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
       >
     >;
   }
@@ -8155,7 +8163,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8179,7 +8187,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
       >
     >;
   }
@@ -8188,7 +8196,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8212,7 +8220,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
       >
     >;
   }
@@ -8220,7 +8228,7 @@ export class APIService {
   OnCreateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>>
   > {
     const statement = `subscription OnCreateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onCreateRoundPlanList(filter: $filter) {
@@ -8273,7 +8281,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanList">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>
       >
     >;
   }
@@ -8281,7 +8289,7 @@ export class APIService {
   OnUpdateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>>
   > {
     const statement = `subscription OnUpdateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onUpdateRoundPlanList(filter: $filter) {
@@ -8334,7 +8342,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanList">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>
       >
     >;
   }
@@ -8342,7 +8350,7 @@ export class APIService {
   OnDeleteRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>>
   > {
     const statement = `subscription OnDeleteRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onDeleteRoundPlanList(filter: $filter) {
@@ -8395,7 +8403,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanList">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>
       >
     >;
   }
@@ -8403,7 +8411,7 @@ export class APIService {
   OnCreateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
   > {
     const statement = `subscription OnCreateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onCreateResponseSet(filter: $filter) {
@@ -8428,14 +8436,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
     >;
   }
 
   OnUpdateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
   > {
     const statement = `subscription OnUpdateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onUpdateResponseSet(filter: $filter) {
@@ -8460,14 +8468,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
     >;
   }
 
   OnDeleteResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
   > {
     const statement = `subscription OnDeleteResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onDeleteResponseSet(filter: $filter) {
@@ -8492,7 +8500,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
     >;
   }
 
@@ -8500,7 +8508,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnCreateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8525,7 +8533,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
       >
     >;
   }
@@ -8534,7 +8542,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8559,7 +8567,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
       >
     >;
   }
@@ -8568,7 +8576,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8593,7 +8601,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
       >
     >;
   }
@@ -8602,7 +8610,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnCreateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8630,7 +8638,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
       >
     >;
   }
@@ -8639,7 +8647,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnUpdateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8667,7 +8675,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
       >
     >;
   }
@@ -8676,7 +8684,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnDeleteAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8704,7 +8712,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
       >
     >;
   }
@@ -8713,7 +8721,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
     >
   > {
     const statement = `subscription OnCreateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8752,7 +8760,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
       >
     >;
   }
@@ -8761,7 +8769,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8800,7 +8808,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
       >
     >;
   }
@@ -8809,7 +8817,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8848,7 +8856,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
       >
     >;
   }
@@ -8856,7 +8864,7 @@ export class APIService {
   OnCreateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
   > {
     const statement = `subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onCreateFormList(filter: $filter) {
@@ -8908,14 +8916,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
     >;
   }
 
   OnUpdateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
   > {
     const statement = `subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onUpdateFormList(filter: $filter) {
@@ -8967,14 +8975,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
     >;
   }
 
   OnDeleteFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
   > {
     const statement = `subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
         onDeleteFormList(filter: $filter) {
@@ -9026,14 +9034,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
     >;
   }
 
   OnCreateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
   > {
     const statement = `subscription OnCreateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onCreateFormDetail(filter: $filter) {
@@ -9055,14 +9063,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
     >;
   }
 
   OnUpdateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
   > {
     const statement = `subscription OnUpdateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onUpdateFormDetail(filter: $filter) {
@@ -9084,14 +9092,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
     >;
   }
 
   OnDeleteFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
   > {
     const statement = `subscription OnDeleteFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onDeleteFormDetail(filter: $filter) {
@@ -9113,7 +9121,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
     >;
   }
 }
