@@ -42,6 +42,10 @@ export const permissions = Object.freeze({
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
 
+  viewLocations: 'LOCATION',
+
+  viewAssets: 'ASSETS',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
