@@ -1,0 +1,129 @@
+import { Injectable } from '@angular/core'; 
+import { BehaviorSubject, from, of, ReplaySubject } from 'rxjs';
+import { APIService, CreateLocationInput, DeleteLocationListInput, ListLocationsQuery } from 'src/app/API.service';
+import { map } from 'rxjs/operators';
+import {
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../interfaces';
+import { formatDistance } from 'date-fns';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LocationService {
+  private locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
+
+  fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
+
+  constructor(
+    private readonly awsApiService: APIService  ) {}
+
+  setFormCreatedUpdated(data: any) {
+    this.locationCreatedUpdatedSubject.next(data);
+  }
+ 
+  getLocationsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = queryParams.fetchType === 'search';
+      return from(
+        this.awsApiService.ListLocations(
+          {
+            ...(queryParams.searchKey && {
+              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+            })
+          },
+          !isSearch && queryParams.limit,
+          !isSearch && queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatGraphQLocationResponse(res)));
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        nextToken: null
+      });
+    }
+  }
+
+  private formatGraphQLocationResponse(resp: ListLocationsQuery) {
+    const rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        ?.map((p) => ({
+          ...p,
+          preTextImage: {
+            image: p?.image,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          },
+          archivedAt: p.createdAt
+            ? formatDistance(new Date(p.createdAt), new Date(), {
+                addSuffix: true
+              })
+            : ''
+        })) || [];
+    const count = resp?.items.length || 0;
+    const nextToken = resp?.nextToken;
+    return {
+      count,
+      rows,
+      nextToken
+    };
+  }
+
+  getLocationById$(id: string) {
+    return from(this.awsApiService.GetLocation(id));
+  }
+
+  createLocation$(
+    formLocationQuery: Pick<
+      CreateLocationInput,
+      'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
+    >
+  ) {
+    return from(
+      this.awsApiService.CreateLocation({
+        name: formLocationQuery.name,
+        image: formLocationQuery.image,
+        description: formLocationQuery.description,
+        model: formLocationQuery.model,
+        locationId: formLocationQuery.locationId,
+        parentId: formLocationQuery.parentId
+      })
+    );
+  }
+
+  updateLocation$(formMetaDataDetails) {
+    return from(
+      this.awsApiService.UpdateLocation({
+        ...formMetaDataDetails.formMetadata,
+        _version: formMetaDataDetails.formListDynamoDBVersion
+      })
+    );
+  }
+
+  deleteLocation$(values: DeleteLocationListInput) {
+    return from(this.awsApiService.DeleteLocation({ ...values }));
+  }
+}

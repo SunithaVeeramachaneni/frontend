@@ -951,6 +951,16 @@ export type DeleteFormListInput = {
   _version?: number | null;
 };
 
+export type DeleteLocationListInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type DeleteAssetsListInput = {
+  id: string;
+  _version?: number | null;
+};
+
 export type CreateFormDetailInput = {
   id?: string | null;
   formData?: string | null;
