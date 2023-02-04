@@ -1267,3 +1267,88 @@ query FormDetailsByFormlistID(
     startedAt
   }
 }
+query ListLocationLists(
+  $filter: ModelFormListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listLocationLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      image
+      locationId
+      model
+      description
+      parentId
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetLocationDetail($id: ID!) {
+  getLocationDetail(id: $id) {
+    id
+    name
+    image
+    locationId
+    model
+    description
+    searchTerm
+    parentId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListAssetsLists(
+  $filter: ModelFormListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listAssetsLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      image
+      assetsId
+      parentType
+      model
+      description
+      searchTerm
+      parentId
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetAssetsDetail($id: ID!) {
+  getAssetsDetail(id: $id) {
+    id
+    name
+    image
+    assetsId
+    parentType
+    model
+    description
+    searchTerm
+    parentId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
