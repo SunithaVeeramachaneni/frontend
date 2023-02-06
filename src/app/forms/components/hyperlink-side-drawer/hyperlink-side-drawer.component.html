@@ -1,0 +1,52 @@
+<div class="app-customizer">
+  <div class="width-80 m-t-14">
+    <mat-card>
+      <mat-card-title class="m-0 light-gray">
+        <div class="hyperlink-heading" translate="hyperlink"></div>
+      </mat-card-title>
+      <div [formGroup]="hyperlinkForm">
+        <mat-form-field appearance="outline" class="m-r-10 width-100">
+          <mat-label translate>title</mat-label>
+          <div>
+            <input
+              matInput
+              formControlName="displayText"
+              placeholder="Untitled Response Set"
+              autocomplete="off"
+              class="hyperlink-input"
+            />
+          </div>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="m-r-10 width-100">
+          <mat-label translate>hyperlink</mat-label>
+          <div>
+            <input
+              matInput
+              formControlName="hyperlink"
+              placeholder="Untitled Response Set"
+              autocomplete="off"
+              class="hyperlink-input"
+            />
+          </div>
+        </mat-form-field>
+        <mat-error *ngIf="processValidationErrors('hyperlink')">
+          {{ errors.hyperlink.name | translate }}
+        </mat-error>
+      </div>
+
+      <button
+        mat-raised-button
+        (click)="submitHyperlink()"
+        color="primary"
+        class="submit-response-btn"
+        translate="apply"
+      ></button>
+      <button
+        mat-stroked-button
+        (click)="cancelHyperlink()"
+        class="cancel-response-btn"
+        translate="cancel"
+      ></button>
+    </mat-card>
+  </div>
+</div>

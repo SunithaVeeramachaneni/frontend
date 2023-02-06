@@ -544,6 +544,13 @@ export class RaceDynamicFormService {
                     : 'CT';
               }
 
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
+              }
+
               return questionItem;
             })
           };

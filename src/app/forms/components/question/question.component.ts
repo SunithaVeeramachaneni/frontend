@@ -110,7 +110,8 @@ export class QuestionComponent implements OnInit {
     'RT',
     'TAF',
     'ARD',
-    'DT'
+    'DT',
+    'HL'
   ];
 
   unitOfMeasurementsAvailable = [];
@@ -138,6 +139,7 @@ export class QuestionComponent implements OnInit {
   sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
   addQuestionClicked: boolean;
+  isHyperLinkOpen = false;
   formId: string;
 
   private _pageIndex: number;
@@ -187,6 +189,7 @@ export class QuestionComponent implements OnInit {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
+          console.log(current);
           const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
           const {
             isOpen: currIsOpen,
@@ -549,4 +552,8 @@ export class QuestionComponent implements OnInit {
         break;
     }
   }
+
+  toggleHyperLink = () => {
+    this.isHyperLinkOpen = !this.isHyperLinkOpen;
+  };
 }

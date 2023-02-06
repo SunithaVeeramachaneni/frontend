@@ -213,6 +213,21 @@
               </span>
 
               <span
+                *ngIf="questionForm.get('fieldType').value === 'HL'"
+                class="action"
+              >
+                <button
+                  mat-button
+                  color="primary"
+                  class="addLogicBtn"
+                  (click)="toggleHyperLink()"
+                >
+                  <mat-icon class="icon">link</mat-icon>
+                  <span translate="addLinkBtn"></span>
+                </button>
+              </span>
+
+              <span
                 *ngIf="questionForm.get('fieldType').value === 'RT'"
                 (click)="sliderOpen()"
                 class="action"
@@ -296,4 +311,10 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="isHyperLinkOpen">
+  <app-hyperlink-side-drawer
+    (hyperlinkHandler)="questionForm.get('value').setValue($event)"
+  ></app-hyperlink-side-drawer>
 </div>
