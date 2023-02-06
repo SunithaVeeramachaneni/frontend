@@ -183,6 +183,7 @@ type EagerRoundPlanList = {
   readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
   readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -212,6 +213,7 @@ type LazyRoundPlanList = {
   readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
   readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -405,6 +407,7 @@ type EagerFormList = {
   readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
   readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
   readonly formListFormDetail?: (FormDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -434,6 +437,7 @@ type LazyFormList = {
   readonly formListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
   readonly formListFormDetail: AsyncCollection<FormDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

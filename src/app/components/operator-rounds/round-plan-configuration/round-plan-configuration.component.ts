@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,7 +14,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -66,6 +67,8 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -75,6 +78,7 @@ import { FormConfigurationService } from 'src/app/forms/services/form-configurat
 })
 export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
+  public openAppSider$: Observable<any>;
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
@@ -99,6 +103,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  selectedFormName: string;
+  selectedFormData: any;
+  currentFormData: any;
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -108,7 +115,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
-    private formConfigurationService: FormConfigurationService
+    private formConfigurationService: FormConfigurationService,
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -611,6 +620,30 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     };
   }
 
+  importTasks = () => {
+    const dialogRef = this.dialog.open(ImportTaskModalComponent, {
+      data: {
+        selectedFormData: '',
+        selectedFormName: '',
+        openImportQuestionsSlider: false
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.selectedFormData = result.selectedFormData;
+      this.selectedFormName = result.selectedFormName;
+      this.authoredFormDetail$.subscribe((pagesData) => {
+        this.currentFormData = pagesData;
+      });
+      this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.cdrf.markForCheck();
+    });
+  };
+
+  cancelSlider(event) {
+    this.openAppSider$ = of(event);
+  }
+
   processValidationErrors(controlName: string): boolean {
     const touched = this.formConfiguration.get(controlName).touched;
     const errors = this.formConfiguration.get(controlName).errors;
@@ -628,5 +661,15 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+  }
+
+  addQuestion(pageIndex, sectionIndex, questionIndex) {
+    this.formConfigurationService.addQuestions(
+      pageIndex,
+      sectionIndex,
+      1,
+      questionIndex,
+      this.formConf.counter.value
+    );
   }
 }

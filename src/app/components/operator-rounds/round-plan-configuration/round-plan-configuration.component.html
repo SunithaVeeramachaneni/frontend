@@ -129,7 +129,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        disabled
+        (click)="importTasks()"
       ></button>
 
       <button
@@ -218,6 +218,21 @@
                               translate="sectionEmptyMessage"
                             >
                             </span>
+                            <div class="floating-btns empty-section">
+                              <button
+                                class="questions-btn"
+                                (click)="addQuestion(pageIndex, sectionIds[pageIndex][sectionIndex], 0)"
+                              >
+                                <img
+                                  src="assets/rdf-forms-icons/add-question.svg"
+                                  alt="add questions"
+                                />
+                                <p
+                                  class="questions-delete-btn-text"
+                                  translate="question"
+                                ></p>
+                              </button>
+                            </div>
                           </div>
                           <ng-container
                             *ngFor="
@@ -273,5 +288,16 @@
     <div class="iphone-width">
       <app-iphone></app-iphone>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>
