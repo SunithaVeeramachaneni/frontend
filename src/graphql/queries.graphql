@@ -441,6 +441,7 @@ query GetRoundPlanList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -472,6 +473,7 @@ query ListRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -512,6 +514,7 @@ query SyncRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -945,6 +948,7 @@ query GetFormList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -976,6 +980,7 @@ query ListFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -1016,6 +1021,7 @@ query SyncFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version

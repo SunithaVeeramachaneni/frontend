@@ -361,6 +361,7 @@ export type CreateRoundPlanListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -381,6 +382,7 @@ export type ModelRoundPlanListConditionInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelRoundPlanListConditionInput | null> | null;
   or?: Array<ModelRoundPlanListConditionInput | null> | null;
   not?: ModelRoundPlanListConditionInput | null;
@@ -408,6 +410,7 @@ export type RoundPlanList = {
   RoundPlanSubmissionDetails?: ModelRoundPlanSubmissionDetailsConnection | null;
   AuthoredRoundPlanDetails?: ModelAuthoredRoundPlanDetailConnection | null;
   RoundPlanDetails?: ModelRoundPlanDetailConnection | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -447,6 +450,7 @@ export type UpdateRoundPlanListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -709,6 +713,7 @@ export type CreateFormListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -729,6 +734,7 @@ export type ModelFormListConditionInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelFormListConditionInput | null> | null;
   or?: Array<ModelFormListConditionInput | null> | null;
   not?: ModelFormListConditionInput | null;
@@ -756,6 +762,7 @@ export type FormList = {
   formListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
   formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
   formListFormDetail?: ModelFormDetailConnection | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -807,6 +814,7 @@ export type UpdateFormListInput = {
   isArchived?: boolean | null;
   searchTerm?: string | null;
   isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
   _version?: number | null;
 };
 
@@ -923,6 +931,7 @@ export type ModelRoundPlanListFilterInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelRoundPlanListFilterInput | null> | null;
   or?: Array<ModelRoundPlanListFilterInput | null> | null;
   not?: ModelRoundPlanListFilterInput | null;
@@ -1021,6 +1030,7 @@ export type ModelFormListFilterInput = {
   isArchived?: ModelBooleanInput | null;
   searchTerm?: ModelStringInput | null;
   isArchivedAt?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelFormListFilterInput | null> | null;
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
@@ -1154,6 +1164,7 @@ export type ModelSubscriptionRoundPlanListFilterInput = {
   isArchived?: ModelSubscriptionBooleanInput | null;
   searchTerm?: ModelSubscriptionStringInput | null;
   isArchivedAt?: ModelSubscriptionStringInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionRoundPlanListFilterInput | null> | null;
   or?: Array<ModelSubscriptionRoundPlanListFilterInput | null> | null;
 };
@@ -1226,6 +1237,7 @@ export type ModelSubscriptionFormListFilterInput = {
   isArchived?: ModelSubscriptionBooleanInput | null;
   searchTerm?: ModelSubscriptionStringInput | null;
   isArchivedAt?: ModelSubscriptionStringInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
 };
@@ -1476,6 +1488,7 @@ export type CreateRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1517,6 +1530,7 @@ export type UpdateRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1558,6 +1572,7 @@ export type DeleteRoundPlanListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1812,6 +1827,7 @@ export type CreateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1853,6 +1869,7 @@ export type UpdateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1894,6 +1911,7 @@ export type DeleteFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2279,6 +2297,7 @@ export type GetRoundPlanListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2307,6 +2326,7 @@ export type ListRoundPlanListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2338,6 +2358,7 @@ export type SyncRoundPlanListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2682,6 +2703,7 @@ export type GetFormListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2710,6 +2732,7 @@ export type ListFormListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2741,6 +2764,7 @@ export type SyncFormListsQuery = {
     isArchived?: boolean | null;
     searchTerm?: string | null;
     isArchivedAt?: string | null;
+    isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -3052,6 +3076,7 @@ export type OnCreateRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3093,6 +3118,7 @@ export type OnUpdateRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3134,6 +3160,7 @@ export type OnDeleteRoundPlanListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3388,6 +3415,7 @@ export type OnCreateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3429,6 +3457,7 @@ export type OnUpdateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3470,6 +3499,7 @@ export type OnDeleteFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isDeleted?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3970,6 +4000,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4027,6 +4058,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4084,6 +4116,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4564,6 +4597,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4621,6 +4655,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -4678,6 +4713,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -5492,6 +5528,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -5534,6 +5571,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -5587,6 +5625,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -6271,6 +6310,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -6313,6 +6353,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -6366,6 +6407,7 @@ export class APIService {
             isArchived
             searchTerm
             isArchivedAt
+            isDeleted
             createdAt
             updatedAt
             _version
@@ -7037,6 +7079,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7097,6 +7140,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7157,6 +7201,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7670,6 +7715,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7728,6 +7774,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version
@@ -7786,6 +7833,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isDeleted
           createdAt
           updatedAt
           _version

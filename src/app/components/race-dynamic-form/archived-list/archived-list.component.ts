@@ -66,21 +66,12 @@ export class ArchivedListComponent implements OnInit {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      // preTextImageConfig: {
-      //   logoAvialable: false,
-      //   style: {
-      //     width: '40px',
-      //     height: '40px',
-      //     marginRight: '10px'
-      //   }
-      // },
       hasPostTextImage: false
-      //postTextImageConfig: {}
     },
     {
-      id: 'archivedAt',
+      id: 'isArchivedAt',
       displayName: 'Archived',
-      type: 'string',
+      type: 'timeAgo',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -102,7 +93,7 @@ export class ArchivedListComponent implements OnInit {
     {
       id: 'publishedDate',
       displayName: 'Last Published',
-      type: 'string',
+      type: 'timeAgo',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -312,7 +303,10 @@ export class ArchivedListComponent implements OnInit {
       .updateForm$({
         formMetadata: {
           id: form?.id,
-          isArchived: false
+          isArchived: false,
+          name: form?.name,
+          description: form?.description,
+          isArchivedAt: ''
         },
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
@@ -335,9 +329,15 @@ export class ArchivedListComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.raceDynamicFormService
-          .deleteForm$({
-            _version: form._version,
-            id: form?.id
+          .updateForm$({
+            formMetadata: {
+              id: form?.id,
+              name: form?.name,
+              description: form?.description,
+              isDeleted: true
+            },
+            // eslint-disable-next-line no-underscore-dangle
+            formListDynamoDBVersion: form._version
           })
           .subscribe((updatedForm) => {
             this.restoreDeleteForm$.next({

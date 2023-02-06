@@ -660,4 +660,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   cancelSlider(event) {
     this.openAppSider$ = of(event);
   }
+
+  addQuestion(pageIndex, sectionIndex, questionIndex) {
+    this.formConfigurationService.addQuestions(
+      pageIndex,
+      sectionIndex,
+      1,
+      questionIndex,
+      this.formConf.counter.value
+    );
+  }
 }
