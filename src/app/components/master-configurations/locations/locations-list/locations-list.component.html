@@ -1,0 +1,40 @@
+<div class="locations-list-view">
+  <div class="main-container">
+    <div class="locations-header">
+      <h2 class="heading" translate="locations"></h2>
+      <span class="custom-form-field-gray-color search">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchLocation' | translate"
+            autocomplete="off"
+            [formControl]="searchLocation"
+          />
+          <img [src]="filterIcon" matSuffix alt="Open Filter" />
+        </mat-form-field>
+      </span>
+
+      <!-- <button
+        mat-raised-button
+        [matMenuTriggerFor]="menu"
+        translate="createNew"
+      ></button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>dialpad</mat-icon>
+          <span>Redial</span>
+        </button>
+        <button mat-menu-item disabled>
+          <mat-icon>voicemail</mat-icon>
+          <span>Check voice mail</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>notifications_off</mat-icon>
+          <span>Disable alerts</span>
+        </button>
+      </mat-menu> -->
+    </div>
+  </div>
+</div>

@@ -1,32 +1,32 @@
-import { Injectable } from '@angular/core'; 
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, of, ReplaySubject } from 'rxjs';
-import { APIService, CreateLocationInput, DeleteLocationListInput, ListLocationsQuery } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
 import {
-  LoadEvent,
-  SearchEvent,
-  TableEvent
-} from './../../../interfaces';
+  APIService,
+  CreateLocationInput,
+  DeleteLocationListInput,
+  ListLocationsQuery
+} from 'src/app/API.service';
+import { map } from 'rxjs/operators';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
 import { formatDistance } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocationService {
-  private locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
+  locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
 
-  constructor(
-    private readonly awsApiService: APIService  ) {}
+  constructor(private readonly awsApiService: APIService) {}
 
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
   }
- 
+
   getLocationsList$(queryParams: {
     nextToken?: string;
     limit: number;
@@ -57,39 +57,6 @@ export class LocationService {
         nextToken: null
       });
     }
-  }
-
-  private formatGraphQLocationResponse(resp: ListLocationsQuery) {
-    const rows =
-      resp.items
-        .sort(
-          (a, b) =>
-            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        ?.map((p) => ({
-          ...p,
-          preTextImage: {
-            image: p?.image,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
-            },
-            condition: true
-          },
-          archivedAt: p.createdAt
-            ? formatDistance(new Date(p.createdAt), new Date(), {
-                addSuffix: true
-              })
-            : ''
-        })) || [];
-    const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
-    return {
-      count,
-      rows,
-      nextToken
-    };
   }
 
   getLocationById$(id: string) {
@@ -125,5 +92,38 @@ export class LocationService {
 
   deleteLocation$(values: DeleteLocationListInput) {
     return from(this.awsApiService.DeleteLocation({ ...values }));
+  }
+
+  private formatGraphQLocationResponse(resp: ListLocationsQuery) {
+    const rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        ?.map((p) => ({
+          ...p,
+          preTextImage: {
+            image: p?.image,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          },
+          archivedAt: p.createdAt
+            ? formatDistance(new Date(p.createdAt), new Date(), {
+                addSuffix: true
+              })
+            : ''
+        })) || [];
+    const count = resp?.items.length || 0;
+    const nextToken = resp?.nextToken;
+    return {
+      count,
+      rows,
+      nextToken
+    };
   }
 }

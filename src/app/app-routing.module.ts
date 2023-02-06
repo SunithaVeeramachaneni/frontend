@@ -82,19 +82,13 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'locations',
+    path: 'master-configuration',
     loadChildren: () =>
-      import('./components/locations/locations.module').then(
-        (m) => m.LocationsModule
-      )
+      import(
+        './components/master-configurations/master-configurations.module'
+      ).then((m) => m.MasterConfigurationsModule)
   },
-  {
-    path: 'assets',
-    loadChildren: () =>
-      import('./components/assets/assets.module').then(
-        (m) => m.AssetsModule
-      )
-  },
+
   {
     path: 'user-settings',
     loadChildren: () =>
