@@ -33,7 +33,6 @@ import { ResponseTypeButtonComponent } from './components/response-type-button/r
 import { TranslateModule } from '@ngx-translate/core';
 import { ArrayComponent } from './components/field-types/array/array.component';
 import { DateComponent } from './components/field-types/date/date.component';
-import { TimeComponent } from './components/field-types/time/time.component';
 import { ReadOnlyComponent } from './components/field-types/read-only/read-only.component';
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
@@ -64,7 +63,6 @@ import { MatDividerModule } from '@angular/material/divider';
     IphoneComponent,
     ArrayComponent,
     DateComponent,
-    TimeComponent,
     ReadOnlyComponent,
     TextComponent,
     DropDownComponent,
