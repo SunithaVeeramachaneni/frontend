@@ -270,6 +270,7 @@ mutation CreateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -311,6 +312,7 @@ mutation UpdateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -352,6 +354,7 @@ mutation DeleteRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -639,6 +642,7 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -680,6 +684,7 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -721,6 +726,7 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
