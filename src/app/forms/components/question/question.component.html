@@ -133,7 +133,11 @@
                 class="action"
               >
                 <span translate="unitTxt"></span>
-                <span [matMenuTriggerFor]="menu" #unitMenuTrigger="matMenuTrigger" class="uomBtn">
+                <span
+                  [matMenuTriggerFor]="menu"
+                  #unitMenuTrigger="matMenuTrigger"
+                  class="uomBtn"
+                >
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
                 <mat-menu #menu="matMenu">
@@ -197,28 +201,15 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                *ngIf="questionForm.get('fieldType').value === 'DT'"
                 class="action"
               >
                 <app-date
                   [question]="questionForm"
-                  (checkedToDefaultDate)="
+                  (checkedToDefaultDateAndTime)="
                     questionForm.get('value').setValue($event)
                   "
                 ></app-date>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'TIF'"
-                class="action"
-              >
-                <app-time
-                  [question]="questionForm"
-                  (checkedToDefaultTime)="
-                    questionForm.get('value').setValue($event)
-                  "
-                >
-                </app-time>
               </span>
 
               <span
