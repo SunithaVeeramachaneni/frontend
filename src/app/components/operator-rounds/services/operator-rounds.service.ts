@@ -700,7 +700,7 @@ export class OperatorRoundsService {
               condition: true
             },
             responses,
-            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            createdAt: format(new Date(p?.createdAt), 'do MMM'),
             updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
               addSuffix: true
             })
