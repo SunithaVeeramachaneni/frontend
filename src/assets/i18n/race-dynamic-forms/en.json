@@ -59,6 +59,8 @@
   "mcqHeading": "Multiple Choice Responses",
   "globalMcqHeading": "Global Response Set",
   "hyperlink": "Hyperlink",
+  "title": "Title",
+  "url": "URL",
   "isInvalidURL": "Invalid URL provided",
   "response": "Response",
   "addRes": " + Add Response",

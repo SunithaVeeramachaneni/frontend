@@ -205,7 +205,7 @@
                 class="action"
               >
                 <app-date
-                  [question]="questionForm"
+                  [question]="questionForm.get('value')"
                   (checkedToDefaultDateAndTime)="
                     questionForm.get('value').setValue($event)
                   "
@@ -315,6 +315,7 @@
 
 <div *ngIf="isHyperLinkOpen">
   <app-hyperlink-side-drawer
-    (hyperlinkHandler)="questionForm.get('value').setValue($event)"
+    [questionToBeHyperlinked]="question"
+    (hyperlinkHandler)="handlerHyperlink($event)"
   ></app-hyperlink-side-drawer>
 </div>

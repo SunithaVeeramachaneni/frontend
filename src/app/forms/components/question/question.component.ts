@@ -555,4 +555,9 @@ export class QuestionComponent implements OnInit {
   toggleHyperLink = () => {
     this.isHyperLinkOpen = !this.isHyperLinkOpen;
   };
+
+  handlerHyperlink = (event: any) => {
+    this.questionForm.get('value').setValue(event);
+    this.isHyperLinkOpen = !this.isHyperLinkOpen;
+  };
 }

@@ -24,7 +24,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
-import { ValidationError } from 'src/app/interfaces';
+import { ValidationError, Hyperlink } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-hyperlink-side-drawer',
@@ -36,6 +36,10 @@ export class HyperlinkSideDrawerComponent implements OnInit {
   public hyperlinkForm: FormGroup;
   public isHyperlinkFormUpdated = false;
   public errors: ValidationError = {};
+  private question;
+  @Input() set questionToBeHyperlinked(input: any) {
+    this.question = input ? input : null;
+  }
 
   constructor(private fb: FormBuilder, private cdrf: ChangeDetectorRef) {}
 
@@ -57,6 +61,20 @@ export class HyperlinkSideDrawerComponent implements OnInit {
         })
       )
       .subscribe();
+
+    if (this.question && this.isHyperlink(this.question.value)) {
+      this.displayText.patchValue(this.question.value.title);
+      this.hyperlink.patchValue(this.question.value.link);
+    }
+  }
+
+  isHyperlink(hyperlink: any) {
+    return (
+      hyperlink &&
+      hyperlink.link &&
+      typeof hyperlink.title === 'string' &&
+      typeof hyperlink.link === 'string'
+    );
   }
 
   get displayText(): FormControl {
@@ -82,14 +100,21 @@ export class HyperlinkSideDrawerComponent implements OnInit {
     this.hyperlinkHandler.emit({
       title: this.displayText.value,
       link: this.hyperlink.value
-    });
+    } as Hyperlink);
   };
 
   cancelHyperlink = () => {
-    this.hyperlinkHandler.emit({
-      title: '',
-      link: ''
-    });
+    if (this.question && this.isHyperlink(this.question.value)) {
+      const { title, link } = this.question.value;
+      this.hyperlinkHandler.emit({
+        title,
+        link
+      } as Hyperlink);
+    } else
+      this.hyperlinkHandler.emit({
+        title: '',
+        link: ''
+      } as Hyperlink);
   };
 
   processValidationErrors(controlName: string): boolean {
