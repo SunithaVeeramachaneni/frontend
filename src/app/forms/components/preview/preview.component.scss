@@ -6,7 +6,7 @@
     display: none;
   }
   .read-only-field {
-      color: rgb(125 125 125);
+    color: rgb(125 125 125);
   }
   .pages.active {
     display: block !important;
@@ -165,6 +165,13 @@
           margin: 12px 5px;
         }
 
+        .hyperlink {
+          font-size: 11px;
+          color: blue;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+
         .image-field {
           width: 100%;
           margin-top: 7px;
@@ -190,7 +197,7 @@
           flex-direction: column;
           width: 100%;
           border: none;
-          margin-top: 7px; 
+          margin-top: 7px;
         }
 
         .mat-button-toggle {

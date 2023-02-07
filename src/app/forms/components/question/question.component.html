@@ -221,9 +221,16 @@
                   color="primary"
                   class="addLogicBtn"
                   (click)="toggleHyperLink()"
+                  [matTooltip]="
+                    questionForm.get('value')?.value?.link || 'Enter URL'
+                  "
                 >
                   <mat-icon class="icon">link</mat-icon>
-                  <span translate="addLinkBtn"></span>
+                  <span>{{
+                    questionForm.get('value').value.title
+                      ? questionForm.get('value').value.title
+                      : ('addLinkBtn' | translate)
+                  }}</span>
                 </button>
               </span>
 
