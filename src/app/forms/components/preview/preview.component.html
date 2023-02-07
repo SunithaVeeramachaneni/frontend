@@ -98,7 +98,10 @@
                 <span
                   class="hyperlink"
                   (click)="openURL(question.value)"
-                  *ngIf="question?.value?.link; else addUrlBlock"
+                  *ngIf="
+                    question.value && question.value?.link;
+                    else addUrlBlock
+                  "
                   >{{
                     question.value.title?.length
                       ? question.value.title

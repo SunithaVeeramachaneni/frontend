@@ -11,7 +11,6 @@ import {
   FormBuilder,
   FormGroup,
   FormControl,
-  FormArray,
   Validators,
   ValidatorFn,
   AbstractControl,
@@ -29,12 +28,13 @@ import { ValidationError, Hyperlink } from 'src/app/interfaces';
 @Component({
   selector: 'app-hyperlink-side-drawer',
   templateUrl: './hyperlink-side-drawer.component.html',
-  styleUrls: ['./hyperlink-side-drawer.component.scss']
+  styleUrls: ['./hyperlink-side-drawer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HyperlinkSideDrawerComponent implements OnInit {
   @Output() hyperlinkHandler: EventEmitter<any> = new EventEmitter<any>();
   public hyperlinkForm: FormGroup;
-  public isHyperlinkSaveDisabled = true;
+  public isHyperlinkFormUpdated = false;
   public errors: ValidationError = {};
   private question;
   @Input() set questionToBeHyperlinked(input: any) {
@@ -55,8 +55,10 @@ export class HyperlinkSideDrawerComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         tap(([prev, curr]) => {
-          if (isEqual(prev, curr)) this.isHyperlinkSaveDisabled = true;
-          if (!this.hyperlink) this.isHyperlinkSaveDisabled = true;
+          if (isEqual(prev, curr)) this.isHyperlinkFormUpdated = false;
+          else if (!this.hyperlink) this.isHyperlinkFormUpdated = false;
+          else this.isHyperlinkFormUpdated = true;
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();

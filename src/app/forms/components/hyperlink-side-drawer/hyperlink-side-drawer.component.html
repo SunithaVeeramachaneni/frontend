@@ -37,7 +37,7 @@
       color="primary"
       class="submit-response-btn"
       translate="apply"
-      [disabled]="processValidationErrors('hyperlink')"
+      [disabled]="hyperlinkForm.invalid || hyperlinkForm.pristine"
     ></button>
     <button
       mat-stroked-button
