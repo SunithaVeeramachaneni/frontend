@@ -222,7 +222,10 @@
                   class="addLogicBtn"
                   (click)="toggleHyperLink()"
                   [matTooltip]="
-                    questionForm.get('value')?.value?.link || 'Enter URL'
+                    questionForm.get('value').value &&
+                    questionForm.get('value').value?.link
+                      ? questionForm.get('value').value.link
+                      : 'Enter URL'
                   "
                 >
                   <mat-icon class="icon">link</mat-icon>
