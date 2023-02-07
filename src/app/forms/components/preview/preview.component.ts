@@ -39,6 +39,10 @@ export class PreviewComponent implements OnInit, OnChanges {
     }
   }
 
+  formatLabel(value: number): string {
+    return `${value}`;
+  }
+
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
     let pageData;

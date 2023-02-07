@@ -143,7 +143,11 @@
                   [ngModelOptions]="{ standalone: true }"
                   color="primary"
                   class="slider"
+                  showTickMarks
+                  discrete
+                  [displayWith]="formatLabel"
                 >
+                  <input matSliderThumb />
                 </mat-slider>
                 <span class="slider-values">{{ question.value.max }}</span>
               </div>
