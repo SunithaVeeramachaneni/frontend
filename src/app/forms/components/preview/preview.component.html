@@ -94,16 +94,21 @@
               </div>
 
               <!-- Hyperlink  -->
-              <span
-                *ngIf="question.fieldType === 'HL'"
-                class="hyperlink"
-                (click)="openURL(question.value)"
-                >{{
-                  question.value.title?.length
-                    ? question.value.title
-                    : question.value.link
-                }}</span
-              >
+              <div *ngIf="question.fieldType === 'HL'">
+                <span
+                  class="hyperlink"
+                  (click)="openURL(question.value)"
+                  *ngIf="question?.value?.link; else addUrlBlock"
+                  >{{
+                    question.value.title?.length
+                      ? question.value.title
+                      : question.value.link
+                  }}</span
+                >
+                <ng-template #addUrlBlock>
+                  <span translate="addLinkBtn" class="add-link"></span>
+                </ng-template>
+              </div>
 
               <!-- checkbox  -->
               <mat-checkbox

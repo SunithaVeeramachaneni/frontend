@@ -34,7 +34,7 @@ import { ValidationError, Hyperlink } from 'src/app/interfaces';
 export class HyperlinkSideDrawerComponent implements OnInit {
   @Output() hyperlinkHandler: EventEmitter<any> = new EventEmitter<any>();
   public hyperlinkForm: FormGroup;
-  public isHyperlinkFormUpdated = false;
+  public isHyperlinkSaveDisabled = true;
   public errors: ValidationError = {};
   private question;
   @Input() set questionToBeHyperlinked(input: any) {
@@ -55,9 +55,8 @@ export class HyperlinkSideDrawerComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         tap(([prev, curr]) => {
-          console.log(curr);
-          if (isEqual(prev, curr)) this.isHyperlinkFormUpdated = false;
-          if (!this.hyperlink) this.isHyperlinkFormUpdated = false;
+          if (isEqual(prev, curr)) this.isHyperlinkSaveDisabled = true;
+          if (!this.hyperlink) this.isHyperlinkSaveDisabled = true;
         })
       )
       .subscribe();
