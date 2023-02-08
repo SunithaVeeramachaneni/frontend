@@ -26,15 +26,15 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
-import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
+import { GetFormListQuery, GetRoundPlanListQuery } from 'src/app/API.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
-  form: GetFormListQuery;
+  form: GetRoundPlanListQuery;
 }
 
 @Component({
@@ -149,13 +149,13 @@ export class ArchivedListComponent implements OnInit {
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as GetRoundPlanListQuery
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
-    private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private readonly operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
@@ -170,7 +170,7 @@ export class ArchivedListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.archivedFormsListCount$ =
-      this.raceDynamicFormService.getFormsListCount$(true);
+      this.operatorRoundsService.getFormsListCount$(true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -242,7 +242,7 @@ export class ArchivedListComponent implements OnInit {
   }
 
   getArchivedList() {
-    return this.raceDynamicFormService
+    return this.operatorRoundsService
       .getFormsList$(
         {
           nextToken: this.nextToken,
@@ -299,7 +299,7 @@ export class ArchivedListComponent implements OnInit {
   };
 
   private onRestoreForm(form: GetFormListQuery): void {
-    this.raceDynamicFormService
+    this.operatorRoundsService
       .updateForm$({
         formMetadata: {
           id: form?.id,
@@ -311,13 +311,13 @@ export class ArchivedListComponent implements OnInit {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm) => {
+      ?.subscribe((updatedForm) => {
         this.restoreDeleteForm$.next({
           action: 'restore',
           form: updatedForm
         });
         this.archivedFormsListCount$ =
-          this.raceDynamicFormService.getFormsListCount$(true);
+          this.operatorRoundsService.getFormsListCount$(true);
       });
   }
 
@@ -328,7 +328,7 @@ export class ArchivedListComponent implements OnInit {
 
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
-        this.raceDynamicFormService
+        this.operatorRoundsService
           .updateForm$({
             formMetadata: {
               id: form?.id,
@@ -339,13 +339,13 @@ export class ArchivedListComponent implements OnInit {
             // eslint-disable-next-line no-underscore-dangle
             formListDynamoDBVersion: form._version
           })
-          .subscribe((updatedForm) => {
+          ?.subscribe((updatedForm) => {
             this.restoreDeleteForm$.next({
               action: 'delete',
               form: updatedForm
             });
             this.archivedFormsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$(true);
+              this.operatorRoundsService.getFormsListCount$(true);
           });
       }
     });
