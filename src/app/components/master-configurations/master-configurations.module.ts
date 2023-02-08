@@ -76,7 +76,13 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSelectModule,
     NgxShimmerLoadingModule
   ],
-  exports: [MasterConfigurationsContainerComponent]
+  exports: [
+    MasterConfigurationsContainerComponent,
+    LocationsListComponent,
+    AssetsListComponent,
+    LocationDetailViewComponent,
+    AddEditLocationComponent
+  ]
 })
 export class MasterConfigurationsModule {
   constructor(

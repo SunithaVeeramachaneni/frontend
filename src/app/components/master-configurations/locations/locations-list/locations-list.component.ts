@@ -297,7 +297,7 @@ export class LocationsListComponent implements OnInit {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Location deleted successfully!',
               type: 'success'
             });
           } else {
@@ -398,7 +398,7 @@ export class LocationsListComponent implements OnInit {
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
-        //this.openArchiveModal(data);
+        this.deleteLocation(data);
         break;
       default:
     }
@@ -419,6 +419,20 @@ export class LocationsListComponent implements OnInit {
     }
   };
 
+  deleteLocation(location: any): void {
+    console.log(location);
+    const deleteData = {
+      id: location.id,
+      _version: location._version
+    };
+    this.locationService.deleteLocation$(deleteData).subscribe((data: any) => {
+      this.addEditCopyDeleteLocations$.next({
+        action: 'delete',
+        form: data
+      });
+    });
+  }
+
   addManually() {
     this.locationAddOrEditOpenState = 'in';
     this.locationEditData = undefined;
@@ -427,7 +441,6 @@ export class LocationsListComponent implements OnInit {
   showLocationDetail(row: GetFormListQuery): void {
     this.selectedLocation = row;
     this.openLocationDetailedView = 'in';
-    this.locationEditData = this.selectedLocation;
   }
 
   onCloseLocationAddOrEditOpenState(event) {
@@ -435,7 +448,10 @@ export class LocationsListComponent implements OnInit {
   }
 
   onCloseLocationDetailedView(event) {
-    this.openLocationDetailedView = event;
-    this.locationAddOrEditOpenState = 'in';
+    this.openLocationDetailedView = event.status;
+    if (event.data !== '') {
+      this.locationEditData = event.data;
+      this.locationAddOrEditOpenState = 'in';
+    }
   }
 }

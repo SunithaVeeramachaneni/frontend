@@ -21,10 +21,10 @@ export class LocationDetailViewComponent implements OnInit {
   ngOnInit(): void {}
 
   edit() {
-    this.slideInOut.emit('out');
+    this.slideInOut.emit({ status: 'out', data: this.selectedLocation });
   }
 
   cancel() {
-    this.slideInOut.emit('out');
+    this.slideInOut.emit({ status: 'out', data: '' });
   }
 }

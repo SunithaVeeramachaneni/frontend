@@ -8,7 +8,7 @@
         class="cancel"
       />
     </div>
-    <div>
+    <div *ngIf="selectedLocation">
       <p>
         <img [src]="selectedLocation.image" alt="Image" class="image" />
       </p>
