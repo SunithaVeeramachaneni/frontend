@@ -31,7 +31,7 @@ const routes: Routes = [
         component: UnitMeasurementListComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Unit Measurement' },
+          breadcrumb: { label: 'Unit of Measurement' },
           permissions: [permissions.viewAssets]
         }
       }
