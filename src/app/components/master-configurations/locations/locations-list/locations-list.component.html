@@ -77,16 +77,16 @@
     </div>
   </div>
 
-  <ng-container *ngIf="locationAddOrEditOpenState === 'in'">
+  <ng-container *ngIf="locationAddOrEditOpenState">
     <app-add-edit-location
       [@slideInOut]="locationAddOrEditOpenState"
-      [locationEditData]="locationEditData"
       (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+      [locationEditData]="locationEditData"
       (createdLocationData)="addOrUpdateLocation($event)"
     ></app-add-edit-location>
   </ng-container>
 
-  <ng-container *ngIf="openLocationDetailedView === 'in'">
+  <ng-container *ngIf="openLocationDetailedView">
     <app-location-detail-view
       [@slideInOut]="openLocationDetailedView"
       (slideInOut)="onCloseLocationDetailedView($event)"

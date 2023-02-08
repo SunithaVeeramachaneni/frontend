@@ -80,7 +80,11 @@ export const customTranslateLoader = (http: HttpClient) =>
   ],
   exports: [
     MasterConfigurationsContainerComponent,
-    UnitMeasurementListComponent
+    UnitMeasurementListComponent,
+    LocationsListComponent,
+    AssetsListComponent,
+    LocationDetailViewComponent,
+    AddEditLocationComponent
   ]
 })
 export class MasterConfigurationsModule {

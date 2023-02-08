@@ -25,7 +25,32 @@ import { LocationService } from '../services/location.service';
 export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
-  @Input() locationEditData;
+  @Input() set locationEditData(data) {
+    this.locEditData = data;
+    if (this.locEditData === undefined) {
+      this.locationStatus = 'add';
+      this.locationTitle = 'Create Location';
+      this.locationButton = 'Create';
+    } else {
+      this.locationStatus = 'edit';
+      this.locationTitle = 'Edit Location';
+      this.locationButton = 'Update';
+      this.locationImage = this.locEditData.image;
+      const locdata = {
+        id: this.locEditData.id,
+        image: this.locEditData.image,
+        name: this.locEditData.name,
+        locationId: this.locEditData.locationId,
+        model: this.locEditData.model,
+        description: this.locEditData.description,
+        parentId: this.locEditData.parentId
+      };
+      this.locationForm.patchValue(locdata);
+    }
+  }
+  get locationEditData() {
+    return this.locEditData;
+  }
   errors: ValidationError = {};
   locationForm: FormGroup;
 
@@ -49,6 +74,7 @@ export class AddEditLocationComponent implements OnInit {
     { name: 'ABCDEF' }
   ];
   allParentsData;
+  private locEditData;
 
   constructor(
     private fb: FormBuilder,
@@ -65,26 +91,6 @@ export class AddEditLocationComponent implements OnInit {
       description: '',
       parentId: ''
     });
-    if (this.locationEditData === undefined) {
-      this.locationStatus = 'add';
-      this.locationTitle = 'Create Location';
-      this.locationButton = 'Create';
-    } else {
-      this.locationStatus = 'edit';
-      this.locationTitle = 'Edit Location';
-      this.locationButton = 'Update';
-      this.locationImage = this.locationEditData.image;
-      const data = {
-        id: this.locationEditData.id,
-        image: this.locationEditData.image,
-        name: this.locationEditData.name,
-        locationId: this.locationEditData.locationId,
-        model: this.locationEditData.model,
-        description: this.locationEditData.description,
-        parentId: this.locationEditData.parentId
-      };
-      this.locationForm.patchValue(data);
-    }
     this.allParentsData = this.parentInformation;
   }
 
@@ -96,14 +102,17 @@ export class AddEditLocationComponent implements OnInit {
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
-          this.createdLocationData.emit(res);
+          this.createdLocationData.emit({
+            status: this.locationStatus,
+            data: res
+          });
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
     } else if (this.locationStatus === 'edit') {
       const updateData = {
         data: this.locationForm.value,
-        version: this.locationEditData._version
+        version: this.locEditData._version
       };
       this.locationService.updateLocation$(updateData).subscribe((res) => {
         this.createdLocationData.emit({
