@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Input,
   Output,
   EventEmitter
@@ -16,13 +15,6 @@ import {
   AbstractControl,
   ValidationErrors
 } from '@angular/forms';
-import {
-  pairwise,
-  debounceTime,
-  distinctUntilChanged,
-  tap
-} from 'rxjs/operators';
-import { isEqual } from 'lodash-es';
 import { ValidationError, Hyperlink } from 'src/app/interfaces';
 
 @Component({
@@ -34,34 +26,19 @@ import { ValidationError, Hyperlink } from 'src/app/interfaces';
 export class HyperlinkSideDrawerComponent implements OnInit {
   @Output() hyperlinkHandler: EventEmitter<any> = new EventEmitter<any>();
   public hyperlinkForm: FormGroup;
-  public isHyperlinkFormUpdated = false;
   public errors: ValidationError = {};
   private question;
   @Input() set questionToBeHyperlinked(input: any) {
     this.question = input ? input : null;
   }
 
-  constructor(private fb: FormBuilder, private cdrf: ChangeDetectorRef) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.hyperlinkForm = this.fb.group({
       displayText: new FormControl(''),
       hyperlink: new FormControl('', [Validators.required, this.urlValidator()])
     });
-
-    this.hyperlinkForm.valueChanges
-      .pipe(
-        pairwise(),
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap(([prev, curr]) => {
-          if (isEqual(prev, curr)) this.isHyperlinkFormUpdated = false;
-          else if (!this.hyperlink) this.isHyperlinkFormUpdated = false;
-          else this.isHyperlinkFormUpdated = true;
-          this.cdrf.markForCheck();
-        })
-      )
-      .subscribe();
 
     if (this.question && this.isHyperlink(this.question.value)) {
       this.displayText.patchValue(this.question.value.title);
