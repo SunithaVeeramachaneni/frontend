@@ -1,5 +1,8 @@
 {
   "locations": "Locations",
   "createNew": "Create New",
-  "searchLocation": "Search"
+  "searchLocation": "Search",
+  "name": "Name",
+  "locationId": "Location Id",
+  "required": "{name} is required"
 }

@@ -1,0 +1,33 @@
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div>
+      <p>
+        <img [src]="selectedLocation.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedLocation.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">ID</p>
+      <p class="m-0 sub-headings-value">{{ selectedLocation.locationId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">Parent</p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedLocation.parentId ? selectedLocation.parentId : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">Description</p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedLocation.description }}
+      </p>
+      <hr class="horizon-line" />
+      <button mat-raised-button class="edit-btn" (click)="edit()">Edit</button>
+    </div>
+  </mat-card>
+</div>

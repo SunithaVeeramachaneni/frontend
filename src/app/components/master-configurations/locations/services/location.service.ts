@@ -81,11 +81,11 @@ export class LocationService {
     );
   }
 
-  updateLocation$(formMetaDataDetails) {
+  updateLocation$(locationDetails) {
     return from(
       this.awsApiService.UpdateLocation({
-        ...formMetaDataDetails.formMetadata,
-        _version: formMetaDataDetails.formListDynamoDBVersion
+        ...locationDetails.data,
+        _version: locationDetails.version
       })
     );
   }

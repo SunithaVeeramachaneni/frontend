@@ -2,7 +2,7 @@
 
 .locations-list-view {
   background-color: $white;
-  height: calc(100vh - 205px);
+  height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
     width: 60%;
@@ -31,4 +31,43 @@
     margin-top: 5px;
     margin-right: 15px;
   }
+
+  .create-new-btn {
+    background: $blue-main;
+    color: $white;
+  }
+
+  .more-btn {
+    background: $blue-main;
+    color: $white;
+    margin-left: 10px;
+    min-width: 50px;
+    margin-right: 15px;
+  }
+
+  .ghost-loading {
+    padding: 0 20px;
+  }
+}
+
+.menu-icons {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 5px;
+  margin-right: 12px;
+}
+
+.add-manually-icon {
+  width: 15px;
+  height: 15px;
+  position: relative;
+  top: 3px;
+  margin-right: 12px;
+}
+
+.menu-buttons {
+  height: 40px;
+  align-items: center;
+  line-height: 20px;
 }
