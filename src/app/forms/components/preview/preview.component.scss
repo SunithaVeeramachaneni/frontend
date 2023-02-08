@@ -6,7 +6,7 @@
     display: none;
   }
   .read-only-field {
-      color: rgb(125 125 125);
+    color: rgb(125 125 125);
   }
   .pages.active {
     display: block !important;
@@ -190,7 +190,7 @@
           flex-direction: column;
           width: 100%;
           border: none;
-          margin-top: 7px; 
+          margin-top: 7px;
         }
 
         .mat-button-toggle {
@@ -293,4 +293,9 @@
       }
     }
   }
+}
+
+.slider-form {
+  display: flex;
+  align-items: center;
 }

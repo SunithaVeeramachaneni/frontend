@@ -529,9 +529,19 @@ export class RaceDynamicFormService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
               }
 
               return questionItem;
@@ -699,7 +709,7 @@ export class RaceDynamicFormService {
               condition: true
             },
             responses,
-            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            createdAt: format(new Date(p?.createdAt), 'do MMM'),
             updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
               addSuffix: true
             })

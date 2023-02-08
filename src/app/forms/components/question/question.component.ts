@@ -99,7 +99,6 @@ export class QuestionComponent implements OnInit {
 
   addLogicNotAppliedFields = [
     'LTV',
-    'TIF',
     'SF',
     'LF',
     'LLF',
@@ -111,7 +110,7 @@ export class QuestionComponent implements OnInit {
     'RT',
     'TAF',
     'ARD',
-    'DF'
+    'DT'
   ];
 
   unitOfMeasurementsAvailable = [];
