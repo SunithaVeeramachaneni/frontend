@@ -10,6 +10,12 @@ export interface SubscriptionResponse<T> {
 }
 
 export type __SubscriptionContainer = {
+  onCreateUnitMeasument: OnCreateUnitMeasumentSubscription;
+  onUpdateUnitMeasument: OnUpdateUnitMeasumentSubscription;
+  onDeleteUnitMeasument: OnDeleteUnitMeasumentSubscription;
+  onCreateUnitList: OnCreateUnitListSubscription;
+  onUpdateUnitList: OnUpdateUnitListSubscription;
+  onDeleteUnitList: OnDeleteUnitListSubscription;
   onCreateAssets: OnCreateAssetsSubscription;
   onUpdateAssets: OnUpdateAssetsSubscription;
   onDeleteAssets: OnDeleteAssetsSubscription;
@@ -51,31 +57,25 @@ export type __SubscriptionContainer = {
   onDeleteFormDetail: OnDeleteFormDetailSubscription;
 };
 
-export type CreateAssetsInput = {
+export type CreateUnitMeasumentInput = {
   id?: string | null;
-  name?: string | null;
   description?: string | null;
-  model?: string | null;
-  parentType?: string | null;
-  parentId?: string | null;
-  assetsId?: string | null;
-  image?: string | null;
-  searchTerm?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
   _version?: number | null;
 };
 
-export type ModelAssetsConditionInput = {
-  name?: ModelStringInput | null;
+export type ModelUnitMeasumentConditionInput = {
   description?: ModelStringInput | null;
-  model?: ModelStringInput | null;
-  parentType?: ModelStringInput | null;
-  parentId?: ModelStringInput | null;
-  assetsId?: ModelStringInput | null;
-  image?: ModelStringInput | null;
-  searchTerm?: ModelStringInput | null;
-  and?: Array<ModelAssetsConditionInput | null> | null;
-  or?: Array<ModelAssetsConditionInput | null> | null;
-  not?: ModelAssetsConditionInput | null;
+  symbol?: ModelStringInput | null;
+  isDefault?: ModelBooleanInput | null;
+  isDeleted?: ModelBooleanInput | null;
+  unitlistID?: ModelIDInput | null;
+  and?: Array<ModelUnitMeasumentConditionInput | null> | null;
+  or?: Array<ModelUnitMeasumentConditionInput | null> | null;
+  not?: ModelUnitMeasumentConditionInput | null;
 };
 
 export type ModelStringInput = {
@@ -116,7 +116,138 @@ export type ModelSizeInput = {
   gt?: number | null;
   between?: Array<number | null> | null;
 };
-// assets subscription container
+
+export type ModelBooleanInput = {
+  ne?: boolean | null;
+  eq?: boolean | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+};
+
+export type ModelIDInput = {
+  ne?: string | null;
+  eq?: string | null;
+  le?: string | null;
+  lt?: string | null;
+  ge?: string | null;
+  gt?: string | null;
+  contains?: string | null;
+  notContains?: string | null;
+  between?: Array<string | null> | null;
+  beginsWith?: string | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+  size?: ModelSizeInput | null;
+};
+
+export type UnitMeasument = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateUnitMeasumentInput = {
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteUnitMeasumentInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateUnitListInput = {
+  id?: string | null;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  _version?: number | null;
+};
+
+export type ModelUnitListConditionInput = {
+  name?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
+  and?: Array<ModelUnitListConditionInput | null> | null;
+  or?: Array<ModelUnitListConditionInput | null> | null;
+  not?: ModelUnitListConditionInput | null;
+};
+
+export type UnitList = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: ModelUnitMeasumentConnection | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ModelUnitMeasumentConnection = {
+  __typename: "ModelUnitMeasumentConnection";
+  items: Array<UnitMeasument | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type UpdateUnitListInput = {
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  _version?: number | null;
+};
+
+export type DeleteUnitListInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateAssetsInput = {
+  id?: string | null;
+  name?: string | null;
+  description?: string | null;
+  model?: string | null;
+  parentType?: string | null;
+  parentId?: string | null;
+  assetsId?: string | null;
+  image?: string | null;
+  searchTerm?: string | null;
+  _version?: number | null;
+};
+
+export type ModelAssetsConditionInput = {
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  model?: ModelStringInput | null;
+  parentType?: ModelStringInput | null;
+  parentId?: ModelStringInput | null;
+  assetsId?: ModelStringInput | null;
+  image?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  and?: Array<ModelAssetsConditionInput | null> | null;
+  or?: Array<ModelAssetsConditionInput | null> | null;
+  not?: ModelAssetsConditionInput | null;
+};
+
 export type Assets = {
   __typename: "Assets";
   id: string;
@@ -177,7 +308,7 @@ export type ModelLocationConditionInput = {
   or?: Array<ModelLocationConditionInput | null> | null;
   not?: ModelLocationConditionInput | null;
 };
-// location subscription container
+
 export type Location = {
   __typename: "Location";
   id: string;
@@ -227,22 +358,6 @@ export type ModelRoundPlanSubmissionDetailsConditionInput = {
   and?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
   or?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
   not?: ModelRoundPlanSubmissionDetailsConditionInput | null;
-};
-
-export type ModelIDInput = {
-  ne?: string | null;
-  eq?: string | null;
-  le?: string | null;
-  lt?: string | null;
-  ge?: string | null;
-  gt?: string | null;
-  contains?: string | null;
-  notContains?: string | null;
-  between?: Array<string | null> | null;
-  beginsWith?: string | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
-  size?: ModelSizeInput | null;
 };
 
 export type RoundPlanSubmissionDetails = {
@@ -304,13 +419,6 @@ export type ModelRoundPlanSubmissionListConditionInput = {
   and?: Array<ModelRoundPlanSubmissionListConditionInput | null> | null;
   or?: Array<ModelRoundPlanSubmissionListConditionInput | null> | null;
   not?: ModelRoundPlanSubmissionListConditionInput | null;
-};
-
-export type ModelBooleanInput = {
-  ne?: boolean | null;
-  eq?: boolean | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
 };
 
 export type RoundPlanSubmissionList = {
@@ -951,16 +1059,6 @@ export type DeleteFormListInput = {
   _version?: number | null;
 };
 
-export type DeleteLocationListInput = {
-  id: string;
-  _version?: number | null;
-};
-
-export type DeleteAssetsListInput = {
-  id: string;
-  _version?: number | null;
-};
-
 export type CreateFormDetailInput = {
   id?: string | null;
   formData?: string | null;
@@ -986,6 +1084,40 @@ export type UpdateFormDetailInput = {
 export type DeleteFormDetailInput = {
   id: string;
   _version?: number | null;
+};
+
+export type ModelUnitMeasumentFilterInput = {
+  id?: ModelIDInput | null;
+  description?: ModelStringInput | null;
+  symbol?: ModelStringInput | null;
+  isDefault?: ModelBooleanInput | null;
+  isDeleted?: ModelBooleanInput | null;
+  unitlistID?: ModelIDInput | null;
+  and?: Array<ModelUnitMeasumentFilterInput | null> | null;
+  or?: Array<ModelUnitMeasumentFilterInput | null> | null;
+  not?: ModelUnitMeasumentFilterInput | null;
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC"
+}
+
+export type ModelUnitListFilterInput = {
+  id?: ModelIDInput | null;
+  name?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
+  and?: Array<ModelUnitListFilterInput | null> | null;
+  or?: Array<ModelUnitListFilterInput | null> | null;
+  not?: ModelUnitListFilterInput | null;
+};
+
+export type ModelUnitListConnection = {
+  __typename: "ModelUnitListConnection";
+  items: Array<UnitList | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type ModelAssetsFilterInput = {
@@ -1040,11 +1172,6 @@ export type ModelRoundPlanSubmissionDetailsFilterInput = {
   or?: Array<ModelRoundPlanSubmissionDetailsFilterInput | null> | null;
   not?: ModelRoundPlanSubmissionDetailsFilterInput | null;
 };
-
-export enum ModelSortDirection {
-  ASC = "ASC",
-  DESC = "DESC"
-}
 
 export type ModelRoundPlanSubmissionListFilterInput = {
   id?: ModelIDInput | null;
@@ -1217,7 +1344,6 @@ export type ModelFormListFilterInput = {
   not?: ModelFormListFilterInput | null;
 };
 
-
 export type ModelFormListConnection = {
   __typename: "ModelFormListConnection";
   items: Array<FormList | null>;
@@ -1234,18 +1360,15 @@ export type ModelFormDetailFilterInput = {
   not?: ModelFormDetailFilterInput | null;
 };
 
-export type ModelSubscriptionAssetsFilterInput = {
+export type ModelSubscriptionUnitMeasumentFilterInput = {
   id?: ModelSubscriptionIDInput | null;
-  name?: ModelSubscriptionStringInput | null;
   description?: ModelSubscriptionStringInput | null;
-  model?: ModelSubscriptionStringInput | null;
-  parentType?: ModelSubscriptionStringInput | null;
-  parentId?: ModelSubscriptionStringInput | null;
-  assetsId?: ModelSubscriptionStringInput | null;
-  image?: ModelSubscriptionStringInput | null;
-  searchTerm?: ModelSubscriptionStringInput | null;
-  and?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
-  or?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
+  symbol?: ModelSubscriptionStringInput | null;
+  isDefault?: ModelSubscriptionBooleanInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
+  unitlistID?: ModelSubscriptionIDInput | null;
+  and?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
+  or?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
 };
 
 export type ModelSubscriptionIDInput = {
@@ -1276,6 +1399,34 @@ export type ModelSubscriptionStringInput = {
   beginsWith?: string | null;
   in?: Array<string | null> | null;
   notIn?: Array<string | null> | null;
+};
+
+export type ModelSubscriptionBooleanInput = {
+  ne?: boolean | null;
+  eq?: boolean | null;
+};
+
+export type ModelSubscriptionUnitListFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  name?: ModelSubscriptionStringInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
+  isDeleted?: ModelSubscriptionBooleanInput | null;
+  and?: Array<ModelSubscriptionUnitListFilterInput | null> | null;
+  or?: Array<ModelSubscriptionUnitListFilterInput | null> | null;
+};
+
+export type ModelSubscriptionAssetsFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  name?: ModelSubscriptionStringInput | null;
+  description?: ModelSubscriptionStringInput | null;
+  model?: ModelSubscriptionStringInput | null;
+  parentType?: ModelSubscriptionStringInput | null;
+  parentId?: ModelSubscriptionStringInput | null;
+  assetsId?: ModelSubscriptionStringInput | null;
+  image?: ModelSubscriptionStringInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
+  and?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
+  or?: Array<ModelSubscriptionAssetsFilterInput | null> | null;
 };
 
 export type ModelSubscriptionLocationFilterInput = {
@@ -1316,11 +1467,6 @@ export type ModelSubscriptionRoundPlanSubmissionListFilterInput = {
   searchTerm?: ModelSubscriptionStringInput | null;
   and?: Array<ModelSubscriptionRoundPlanSubmissionListFilterInput | null> | null;
   or?: Array<ModelSubscriptionRoundPlanSubmissionListFilterInput | null> | null;
-};
-
-export type ModelSubscriptionBooleanInput = {
-  ne?: boolean | null;
-  eq?: boolean | null;
 };
 
 export type ModelSubscriptionAuthoredRoundPlanDetailFilterInput = {
@@ -1457,6 +1603,105 @@ export type ModelSubscriptionFormDetailFilterInput = {
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
+};
+
+export type CreateUnitMeasumentMutation = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateUnitMeasumentMutation = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type DeleteUnitMeasumentMutation = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type CreateUnitListMutation = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateUnitListMutation = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type DeleteUnitListMutation = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
 };
 
 export type CreateAssetsMutation = {
@@ -2267,6 +2512,135 @@ export type DeleteFormDetailMutation = {
   _version: number;
   _deleted?: boolean | null;
   _lastChangedAt: number;
+};
+
+export type GetUnitMeasumentQuery = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ListUnitMeasumentsQuery = {
+  __typename: "ModelUnitMeasumentConnection";
+  items: Array<{
+    __typename: "UnitMeasument";
+    id: string;
+    description?: string | null;
+    symbol?: string | null;
+    isDefault?: boolean | null;
+    isDeleted?: boolean | null;
+    unitlistID: string;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type SyncUnitMeasumentsQuery = {
+  __typename: "ModelUnitMeasumentConnection";
+  items: Array<{
+    __typename: "UnitMeasument";
+    id: string;
+    description?: string | null;
+    symbol?: string | null;
+    isDefault?: boolean | null;
+    isDeleted?: boolean | null;
+    unitlistID: string;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type UnitMeasumentsByUnitlistIDQuery = {
+  __typename: "ModelUnitMeasumentConnection";
+  items: Array<{
+    __typename: "UnitMeasument";
+    id: string;
+    description?: string | null;
+    symbol?: string | null;
+    isDefault?: boolean | null;
+    isDeleted?: boolean | null;
+    unitlistID: string;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type GetUnitListQuery = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ListUnitListsQuery = {
+  __typename: "ModelUnitListConnection";
+  items: Array<{
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    searchTerm?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type SyncUnitListsQuery = {
+  __typename: "ModelUnitListConnection";
+  items: Array<{
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    searchTerm?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type GetAssetsQuery = {
@@ -3277,6 +3651,105 @@ export type FormDetailsByFormlistIDQuery = {
   startedAt?: number | null;
 };
 
+export type OnCreateUnitMeasumentSubscription = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnUpdateUnitMeasumentSubscription = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnDeleteUnitMeasumentSubscription = {
+  __typename: "UnitMeasument";
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnCreateUnitListSubscription = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnUpdateUnitListSubscription = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnDeleteUnitListSubscription = {
+  __typename: "UnitList";
+  id: string;
+  name?: string | null;
+  searchTerm?: string | null;
+  isDeleted?: boolean | null;
+  unitMeasuments?: {
+    __typename: "ModelUnitMeasumentConnection";
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
 export type OnCreateAssetsSubscription = {
   __typename: "Assets";
   id: string;
@@ -4088,9 +4561,405 @@ export type OnDeleteFormDetailSubscription = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class APIService {
+  async CreateUnitMeasument(
+    input: CreateUnitMeasumentInput,
+    condition?: ModelUnitMeasumentConditionInput
+  ): Promise<CreateUnitMeasumentMutation> {
+    const statement = `mutation CreateUnitMeasument($input: CreateUnitMeasumentInput!, $condition: ModelUnitMeasumentConditionInput) {
+        createUnitMeasument(input: $input, condition: $condition) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateUnitMeasumentMutation>response.data.createUnitMeasument;
+  }
+  async UpdateUnitMeasument(
+    input: UpdateUnitMeasumentInput,
+    condition?: ModelUnitMeasumentConditionInput
+  ): Promise<UpdateUnitMeasumentMutation> {
+    const statement = `mutation UpdateUnitMeasument($input: UpdateUnitMeasumentInput!, $condition: ModelUnitMeasumentConditionInput) {
+        updateUnitMeasument(input: $input, condition: $condition) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateUnitMeasumentMutation>response.data.updateUnitMeasument;
+  }
+  async DeleteUnitMeasument(
+    input: DeleteUnitMeasumentInput,
+    condition?: ModelUnitMeasumentConditionInput
+  ): Promise<DeleteUnitMeasumentMutation> {
+    const statement = `mutation DeleteUnitMeasument($input: DeleteUnitMeasumentInput!, $condition: ModelUnitMeasumentConditionInput) {
+        deleteUnitMeasument(input: $input, condition: $condition) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteUnitMeasumentMutation>response.data.deleteUnitMeasument;
+  }
+  async CreateUnitList(
+    input: CreateUnitListInput,
+    condition?: ModelUnitListConditionInput
+  ): Promise<CreateUnitListMutation> {
+    const statement = `mutation CreateUnitList($input: CreateUnitListInput!, $condition: ModelUnitListConditionInput) {
+        createUnitList(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateUnitListMutation>response.data.createUnitList;
+  }
+  async UpdateUnitList(
+    input: UpdateUnitListInput,
+    condition?: ModelUnitListConditionInput
+  ): Promise<UpdateUnitListMutation> {
+    const statement = `mutation UpdateUnitList($input: UpdateUnitListInput!, $condition: ModelUnitListConditionInput) {
+        updateUnitList(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateUnitListMutation>response.data.updateUnitList;
+  }
+  async DeleteUnitList(
+    input: DeleteUnitListInput,
+    condition?: ModelUnitListConditionInput
+  ): Promise<DeleteUnitListMutation> {
+    const statement = `mutation DeleteUnitList($input: DeleteUnitListInput!, $condition: ModelUnitListConditionInput) {
+        deleteUnitList(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteUnitListMutation>response.data.deleteUnitList;
+  }
+  async CreateAssets(
+    input: CreateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<CreateAssetsMutation> {
+    const statement = `mutation CreateAssets($input: CreateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        createAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateAssetsMutation>response.data.createAssets;
+  }
+  async UpdateAssets(
+    input: UpdateAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<UpdateAssetsMutation> {
+    const statement = `mutation UpdateAssets($input: UpdateAssetsInput!, $condition: ModelAssetsConditionInput) {
+        updateAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateAssetsMutation>response.data.updateAssets;
+  }
+  async DeleteAssets(
+    input: DeleteAssetsInput,
+    condition?: ModelAssetsConditionInput
+  ): Promise<DeleteAssetsMutation> {
+    const statement = `mutation DeleteAssets($input: DeleteAssetsInput!, $condition: ModelAssetsConditionInput) {
+        deleteAssets(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          parentType
+          parentId
+          assetsId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteAssetsMutation>response.data.deleteAssets;
+  }
+  async CreateLocation(
+    input: CreateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<CreateLocationMutation> {
+    const statement = `mutation CreateLocation($input: CreateLocationInput!, $condition: ModelLocationConditionInput) {
+        createLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateLocationMutation>response.data.createLocation;
+  }
+  async UpdateLocation(
+    input: UpdateLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<UpdateLocationMutation> {
+    const statement = `mutation UpdateLocation($input: UpdateLocationInput!, $condition: ModelLocationConditionInput) {
+        updateLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateLocationMutation>response.data.updateLocation;
+  }
+  async DeleteLocation(
+    input: DeleteLocationInput,
+    condition?: ModelLocationConditionInput
+  ): Promise<DeleteLocationMutation> {
+    const statement = `mutation DeleteLocation($input: DeleteLocationInput!, $condition: ModelLocationConditionInput) {
+        deleteLocation(input: $input, condition: $condition) {
+          __typename
+          id
+          name
+          description
+          model
+          locationId
+          parentId
+          image
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteLocationMutation>response.data.deleteLocation;
+  }
   async CreateRoundPlanSubmissionDetails(
     input: CreateRoundPlanSubmissionDetailsInput,
     condition?: ModelRoundPlanSubmissionDetailsConditionInput
@@ -5360,23 +6229,16 @@ export class APIService {
     )) as any;
     return <DeleteFormDetailMutation>response.data.deleteFormDetail;
   }
-  // assets methods
-  async CreateAssets(
-    input: CreateAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<CreateAssetsMutation> {
-    const statement = `mutation CreateAssets($input: CreateAssetsInput!, $condition: ModelAssetsConditionInput) {
-        createAssets(input: $input, condition: $condition) {
+  async GetUnitMeasument(id: string): Promise<GetUnitMeasumentQuery> {
+    const statement = `query GetUnitMeasument($id: ID!) {
+        getUnitMeasument(id: $id) {
           __typename
           id
-          name
           description
-          model
-          parentType
-          parentId
-          assetsId
-          image
-          searchTerm
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
           createdAt
           updatedAt
           _version
@@ -5385,32 +6247,162 @@ export class APIService {
         }
       }`;
     const gqlAPIServiceArguments: any = {
-      input
+      id
     };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetUnitMeasumentQuery>response.data.getUnitMeasument;
+  }
+  async ListUnitMeasuments(
+    filter?: ModelUnitMeasumentFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListUnitMeasumentsQuery> {
+    const statement = `query ListUnitMeasuments($filter: ModelUnitMeasumentFilterInput, $limit: Int, $nextToken: String) {
+        listUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            description
+            symbol
+            isDefault
+            isDeleted
+            unitlistID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
     }
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return <CreateAssetsMutation>response.data.createAssets;
+    return <ListUnitMeasumentsQuery>response.data.listUnitMeasuments;
   }
-  async UpdateAssets(
-    input: UpdateAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<UpdateAssetsMutation> {
-    const statement = `mutation UpdateAssets($input: UpdateAssetsInput!, $condition: ModelAssetsConditionInput) {
-        updateAssets(input: $input, condition: $condition) {
+  async SyncUnitMeasuments(
+    filter?: ModelUnitMeasumentFilterInput,
+    limit?: number,
+    nextToken?: string,
+    lastSync?: number
+  ): Promise<SyncUnitMeasumentsQuery> {
+    const statement = `query SyncUnitMeasuments($filter: ModelUnitMeasumentFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
+        syncUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
+          __typename
+          items {
+            __typename
+            id
+            description
+            symbol
+            isDefault
+            isDeleted
+            unitlistID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    if (lastSync) {
+      gqlAPIServiceArguments.lastSync = lastSync;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <SyncUnitMeasumentsQuery>response.data.syncUnitMeasuments;
+  }
+  async UnitMeasumentsByUnitlistID(
+    unitlistID: string,
+    sortDirection?: ModelSortDirection,
+    filter?: ModelUnitMeasumentFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<UnitMeasumentsByUnitlistIDQuery> {
+    const statement = `query UnitMeasumentsByUnitlistID($unitlistID: ID!, $sortDirection: ModelSortDirection, $filter: ModelUnitMeasumentFilterInput, $limit: Int, $nextToken: String) {
+        unitMeasumentsByUnitlistID(unitlistID: $unitlistID, sortDirection: $sortDirection, filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            description
+            symbol
+            isDefault
+            isDeleted
+            unitlistID
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      unitlistID
+    };
+    if (sortDirection) {
+      gqlAPIServiceArguments.sortDirection = sortDirection;
+    }
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UnitMeasumentsByUnitlistIDQuery>(
+      response.data.unitMeasumentsByUnitlistID
+    );
+  }
+  async GetUnitList(id: string): Promise<GetUnitListQuery> {
+    const statement = `query GetUnitList($id: ID!) {
+        getUnitList(id: $id) {
           __typename
           id
           name
-          description
-          model
-          parentType
-          parentId
-          assetsId
-          image
           searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
           createdAt
           updatedAt
           _version
@@ -5419,152 +6411,95 @@ export class APIService {
         }
       }`;
     const gqlAPIServiceArguments: any = {
-      input
+      id
     };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return <UpdateAssetsMutation>response.data.updateAssets;
+    return <GetUnitListQuery>response.data.getUnitList;
   }
-  async DeleteAssets(
-    input: DeleteAssetsInput,
-    condition?: ModelAssetsConditionInput
-  ): Promise<DeleteAssetsMutation> {
-    const statement = `mutation DeleteAssets($input: DeleteAssetsInput!, $condition: ModelAssetsConditionInput) {
-        deleteAssets(input: $input, condition: $condition) {
+  async ListUnitLists(
+    filter?: ModelUnitListFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListUnitListsQuery> {
+    const statement = `query ListUnitLists($filter: ModelUnitListFilterInput, $limit: Int, $nextToken: String) {
+        listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
           __typename
-          id
-          name
-          description
-          model
-          parentType
-          parentId
-          assetsId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
+          items {
+            __typename
+            id
+            name
+            searchTerm
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
         }
       }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
     }
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return <DeleteAssetsMutation>response.data.deleteAssets;
+    return <ListUnitListsQuery>response.data.listUnitLists;
   }
-  // location methods
-  async CreateLocation(
-    input: CreateLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<CreateLocationMutation> {
-    const statement = `mutation CreateLocation($input: CreateLocationInput!, $condition: ModelLocationConditionInput) {
-        createLocation(input: $input, condition: $condition) {
+  async SyncUnitLists(
+    filter?: ModelUnitListFilterInput,
+    limit?: number,
+    nextToken?: string,
+    lastSync?: number
+  ): Promise<SyncUnitListsQuery> {
+    const statement = `query SyncUnitLists($filter: ModelUnitListFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
+        syncUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
           __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
+          items {
+            __typename
+            id
+            name
+            searchTerm
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
         }
       }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    if (lastSync) {
+      gqlAPIServiceArguments.lastSync = lastSync;
     }
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return <CreateLocationMutation>response.data.createLocation;
+    return <SyncUnitListsQuery>response.data.syncUnitLists;
   }
-  async UpdateLocation(
-    input: UpdateLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<UpdateLocationMutation> {
-    const statement = `mutation UpdateLocation($input: UpdateLocationInput!, $condition: ModelLocationConditionInput) {
-        updateLocation(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateLocationMutation>response.data.updateLocation;
-  }
-  async DeleteLocation(
-    input: DeleteLocationInput,
-    condition?: ModelLocationConditionInput
-  ): Promise<DeleteLocationMutation> {
-    const statement = `mutation DeleteLocation($input: DeleteLocationInput!, $condition: ModelLocationConditionInput) {
-        deleteLocation(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          model
-          locationId
-          parentId
-          image
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteLocationMutation>response.data.deleteLocation;
-  }
-
-  // get assets methods
   async GetAssets(id: string): Promise<GetAssetsQuery> {
     const statement = `query GetAssets($id: ID!) {
         getAssets(id: $id) {
@@ -5685,8 +6620,6 @@ export class APIService {
     )) as any;
     return <SyncAssetsQuery>response.data.syncAssets;
   }
-
-  // get location methods
   async GetLocation(id: string): Promise<GetLocationQuery> {
     const statement = `query GetLocation($id: ID!) {
         getLocation(id: $id) {
@@ -5804,7 +6737,6 @@ export class APIService {
     )) as any;
     return <SyncLocationsQuery>response.data.syncLocations;
   }
-
   async GetRoundPlanSubmissionDetails(
     id: string
   ): Promise<GetRoundPlanSubmissionDetailsQuery> {
@@ -7572,10 +8504,217 @@ export class APIService {
     )) as any;
     return <FormDetailsByFormlistIDQuery>response.data.formDetailsByFormlistID;
   }
+  OnCreateUnitMeasumentListener(
+    filter?: ModelSubscriptionUnitMeasumentFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitMeasument">>
+  > {
+    const statement = `subscription OnCreateUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
+        onCreateUnitMeasument(filter: $filter) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<
+        Pick<__SubscriptionContainer, "onCreateUnitMeasument">
+      >
+    >;
+  }
+
+  OnUpdateUnitMeasumentListener(
+    filter?: ModelSubscriptionUnitMeasumentFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitMeasument">>
+  > {
+    const statement = `subscription OnUpdateUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
+        onUpdateUnitMeasument(filter: $filter) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<
+        Pick<__SubscriptionContainer, "onUpdateUnitMeasument">
+      >
+    >;
+  }
+
+  OnDeleteUnitMeasumentListener(
+    filter?: ModelSubscriptionUnitMeasumentFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitMeasument">>
+  > {
+    const statement = `subscription OnDeleteUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
+        onDeleteUnitMeasument(filter: $filter) {
+          __typename
+          id
+          description
+          symbol
+          isDefault
+          isDeleted
+          unitlistID
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<
+        Pick<__SubscriptionContainer, "onDeleteUnitMeasument">
+      >
+    >;
+  }
+
+  OnCreateUnitListListener(
+    filter?: ModelSubscriptionUnitListFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitList">>
+  > {
+    const statement = `subscription OnCreateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+        onCreateUnitList(filter: $filter) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitList">>
+    >;
+  }
+
+  OnUpdateUnitListListener(
+    filter?: ModelSubscriptionUnitListFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitList">>
+  > {
+    const statement = `subscription OnUpdateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+        onUpdateUnitList(filter: $filter) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitList">>
+    >;
+  }
+
+  OnDeleteUnitListListener(
+    filter?: ModelSubscriptionUnitListFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitList">>
+  > {
+    const statement = `subscription OnDeleteUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+        onDeleteUnitList(filter: $filter) {
+          __typename
+          id
+          name
+          searchTerm
+          isDeleted
+          unitMeasuments {
+            __typename
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitList">>
+    >;
+  }
+
   OnCreateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
   > {
     const statement = `subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onCreateAssets(filter: $filter) {
@@ -7603,14 +8742,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
     >;
   }
 
   OnUpdateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
   > {
     const statement = `subscription OnUpdateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onUpdateAssets(filter: $filter) {
@@ -7638,14 +8777,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
     >;
   }
 
   OnDeleteAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
   > {
     const statement = `subscription OnDeleteAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onDeleteAssets(filter: $filter) {
@@ -7673,14 +8812,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
     >;
   }
 
   OnCreateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
   > {
     const statement = `subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onCreateLocation(filter: $filter) {
@@ -7707,14 +8846,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
     >;
   }
 
   OnUpdateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
   > {
     const statement = `subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onUpdateLocation(filter: $filter) {
@@ -7741,14 +8880,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
     >;
   }
 
   OnDeleteLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
   > {
     const statement = `subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
         onDeleteLocation(filter: $filter) {
@@ -7775,7 +8914,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
     >;
   }
 
@@ -7783,7 +8922,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
+      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7808,7 +8947,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
+        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
       >
     >;
   }
@@ -7817,7 +8956,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
+      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7842,7 +8981,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
+        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
       >
     >;
   }
@@ -7851,7 +8990,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
+      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -7876,7 +9015,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
+        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
       >
     >;
   }
@@ -7885,7 +9024,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
+      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -7924,7 +9063,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
+        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
       >
     >;
   }
@@ -7933,7 +9072,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
+      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -7972,7 +9111,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
+        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
       >
     >;
   }
@@ -7981,7 +9120,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
+      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -8020,7 +9159,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
+        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
       >
     >;
   }
@@ -8029,7 +9168,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
     >
   > {
     const statement = `subscription OnCreateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8057,7 +9196,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
       >
     >;
   }
@@ -8066,7 +9205,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
     >
   > {
     const statement = `subscription OnUpdateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8094,7 +9233,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
       >
     >;
   }
@@ -8103,7 +9242,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
     >
   > {
     const statement = `subscription OnDeleteAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -8131,7 +9270,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
       >
     >;
   }
@@ -8140,7 +9279,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
     >
   > {
     const statement = `subscription OnCreateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8164,7 +9303,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
       >
     >;
   }
@@ -8173,7 +9312,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
     >
   > {
     const statement = `subscription OnUpdateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8197,7 +9336,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
       >
     >;
   }
@@ -8206,7 +9345,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
+      Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
     >
   > {
     const statement = `subscription OnDeleteRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -8230,7 +9369,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
+        Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
       >
     >;
   }
@@ -8238,7 +9377,7 @@ export class APIService {
   OnCreateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateRoundPlanList">>
   > {
     const statement = `subscription OnCreateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onCreateRoundPlanList(filter: $filter) {
@@ -8291,7 +9430,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>
+        Pick<__SubscriptionContainer, "onCreateRoundPlanList">
       >
     >;
   }
@@ -8299,7 +9438,7 @@ export class APIService {
   OnUpdateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateRoundPlanList">>
   > {
     const statement = `subscription OnUpdateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onUpdateRoundPlanList(filter: $filter) {
@@ -8352,7 +9491,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>
+        Pick<__SubscriptionContainer, "onUpdateRoundPlanList">
       >
     >;
   }
@@ -8360,7 +9499,7 @@ export class APIService {
   OnDeleteRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteRoundPlanList">>
   > {
     const statement = `subscription OnDeleteRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onDeleteRoundPlanList(filter: $filter) {
@@ -8413,7 +9552,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>
+        Pick<__SubscriptionContainer, "onDeleteRoundPlanList">
       >
     >;
   }
@@ -8421,7 +9560,7 @@ export class APIService {
   OnCreateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
   > {
     const statement = `subscription OnCreateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onCreateResponseSet(filter: $filter) {
@@ -8446,14 +9585,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
     >;
   }
 
   OnUpdateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
   > {
     const statement = `subscription OnUpdateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onUpdateResponseSet(filter: $filter) {
@@ -8478,14 +9617,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
     >;
   }
 
   OnDeleteResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
   > {
     const statement = `subscription OnDeleteResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onDeleteResponseSet(filter: $filter) {
@@ -8510,7 +9649,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
     >;
   }
 
@@ -8518,7 +9657,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
+      Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
     >
   > {
     const statement = `subscription OnCreateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8543,7 +9682,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
+        Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
       >
     >;
   }
@@ -8552,7 +9691,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
+      Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8577,7 +9716,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
+        Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
       >
     >;
   }
@@ -8586,7 +9725,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
+      Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -8611,7 +9750,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
+        Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
       >
     >;
   }
@@ -8620,7 +9759,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
+      Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
     >
   > {
     const statement = `subscription OnCreateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8648,7 +9787,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
+        Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
       >
     >;
   }
@@ -8657,7 +9796,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
+      Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
     >
   > {
     const statement = `subscription OnUpdateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8685,7 +9824,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
+        Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
       >
     >;
   }
@@ -8694,7 +9833,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
+      Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
     >
   > {
     const statement = `subscription OnDeleteAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -8722,7 +9861,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
+        Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
       >
     >;
   }
@@ -8731,7 +9870,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
+      Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
     >
   > {
     const statement = `subscription OnCreateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8770,7 +9909,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
+        Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
       >
     >;
   }
@@ -8779,7 +9918,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
+      Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8818,7 +9957,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
+        Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
       >
     >;
   }
@@ -8827,7 +9966,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
+      Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -8866,7 +10005,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
+        Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
       >
     >;
   }
@@ -8874,7 +10013,7 @@ export class APIService {
   OnCreateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
   > {
     const statement = `subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onCreateFormList(filter: $filter) {
@@ -8926,14 +10065,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
     >;
   }
 
   OnUpdateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
   > {
     const statement = `subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onUpdateFormList(filter: $filter) {
@@ -8985,14 +10124,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
     >;
   }
 
   OnDeleteFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
   > {
     const statement = `subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
         onDeleteFormList(filter: $filter) {
@@ -9044,14 +10183,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
     >;
   }
 
   OnCreateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
   > {
     const statement = `subscription OnCreateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onCreateFormDetail(filter: $filter) {
@@ -9073,14 +10212,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
     >;
   }
 
   OnUpdateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
   > {
     const statement = `subscription OnUpdateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onUpdateFormDetail(filter: $filter) {
@@ -9102,14 +10241,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
     >;
   }
 
   OnDeleteFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
   > {
     const statement = `subscription OnDeleteFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onDeleteFormDetail(filter: $filter) {
@@ -9131,7 +10270,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
     >;
   }
 }

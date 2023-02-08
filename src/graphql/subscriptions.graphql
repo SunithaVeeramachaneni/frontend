@@ -1,4 +1,106 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onCreateUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onUpdateUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onDeleteUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onCreateUnitList(filter: $filter) {
+    id
+    name
+    searchTerm
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onUpdateUnitList(filter: $filter) {
+    id
+    name
+    searchTerm
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onDeleteUnitList(filter: $filter) {
+    id
+    name
+    searchTerm
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
   onCreateAssets(filter: $filter) {
     id
