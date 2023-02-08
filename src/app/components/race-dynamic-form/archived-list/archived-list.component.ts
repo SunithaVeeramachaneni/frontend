@@ -25,12 +25,14 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, routingUrls } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
+import { Router } from '@angular/router';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -152,11 +154,18 @@ export class ArchivedListComponent implements OnInit {
       form: {} as GetFormListQuery
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isOperatorRounds = false;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private readonly router: Router,
+    private readonly operatorRoundsService: OperatorRoundsService
+  ) {
+    if (this.router.url.includes(routingUrls?.roundPlanArchivedForms?.url)) {
+      this.isOperatorRounds = true;
+    }
+  }
 
   ngOnInit(): void {
     this.fetchForms$.next({ data: 'load' });
@@ -169,8 +178,9 @@ export class ArchivedListComponent implements OnInit {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.archivedFormsListCount$ =
-      this.raceDynamicFormService.getFormsListCount$(true);
+    this.archivedFormsListCount$ = this.isOperatorRounds
+      ? this.operatorRoundsService.getFormsListCount$(true)
+      : this.raceDynamicFormService.getFormsListCount$(true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -242,27 +252,27 @@ export class ArchivedListComponent implements OnInit {
   }
 
   getArchivedList() {
-    return this.raceDynamicFormService
-      .getFormsList$(
-        {
-          nextToken: this.nextToken,
-          limit: this.limit,
-          searchKey: this.searchForm.value,
-          fetchType: this.fetchType
-        },
-        true
-      )
-      .pipe(
-        mergeMap(({ rows, nextToken }) => {
-          this.nextToken = nextToken;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+    const obj = {
+      nextToken: this.nextToken,
+      limit: this.limit,
+      searchKey: this.searchForm.value,
+      fetchType: this.fetchType
+    };
+    const observable = this.isOperatorRounds
+      ? this.operatorRoundsService.getFormsList$(obj, true)
+      : this.raceDynamicFormService.getFormsList$(obj, true);
+
+    return observable.pipe(
+      mergeMap(({ rows, nextToken }) => {
+        this.nextToken = nextToken;
+        this.isLoading$.next(false);
+        return of(rows);
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   handleTableEvent = (event): void => {
@@ -299,26 +309,30 @@ export class ArchivedListComponent implements OnInit {
   };
 
   private onRestoreForm(form: GetFormListQuery): void {
-    this.raceDynamicFormService
-      .updateForm$({
-        formMetadata: {
-          id: form?.id,
-          isArchived: false,
-          name: form?.name,
-          description: form?.description,
-          isArchivedAt: ''
-        },
-        // eslint-disable-next-line no-underscore-dangle
-        formListDynamoDBVersion: form._version
-      })
-      .subscribe((updatedForm) => {
-        this.restoreDeleteForm$.next({
-          action: 'restore',
-          form: updatedForm
-        });
-        this.archivedFormsListCount$ =
-          this.raceDynamicFormService.getFormsListCount$(true);
+    const obj = {
+      formMetadata: {
+        id: form?.id,
+        isArchived: false,
+        name: form?.name,
+        description: form?.description,
+        isArchivedAt: ''
+      },
+      // eslint-disable-next-line no-underscore-dangle
+      formListDynamoDBVersion: form._version
+    };
+    const observable: any = this.isOperatorRounds
+      ? this.operatorRoundsService.updateForm$(obj)
+      : this.raceDynamicFormService.updateForm$(obj);
+
+    observable?.subscribe((updatedForm) => {
+      this.restoreDeleteForm$.next({
+        action: 'restore',
+        form: updatedForm
       });
+      this.archivedFormsListCount$ = this.isOperatorRounds
+        ? this.operatorRoundsService.getFormsListCount$(true)
+        : this.raceDynamicFormService.getFormsListCount$(true);
+    });
   }
 
   private onDeleteForm(form: GetFormListQuery): void {
@@ -328,25 +342,30 @@ export class ArchivedListComponent implements OnInit {
 
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
-        this.raceDynamicFormService
-          .updateForm$({
-            formMetadata: {
-              id: form?.id,
-              name: form?.name,
-              description: form?.description,
-              isDeleted: true
-            },
-            // eslint-disable-next-line no-underscore-dangle
-            formListDynamoDBVersion: form._version
-          })
-          .subscribe((updatedForm) => {
-            this.restoreDeleteForm$.next({
-              action: 'delete',
-              form: updatedForm
-            });
-            this.archivedFormsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$(true);
+        const obj = {
+          formMetadata: {
+            id: form?.id,
+            name: form?.name,
+            description: form?.description,
+            isDeleted: true
+          },
+          // eslint-disable-next-line no-underscore-dangle
+          formListDynamoDBVersion: form._version
+        };
+
+        const observable: any = this.isOperatorRounds
+          ? this.operatorRoundsService.updateForm$(obj)
+          : this.raceDynamicFormService.updateForm$(obj);
+
+        observable?.subscribe((updatedForm) => {
+          this.restoreDeleteForm$.next({
+            action: 'delete',
+            form: updatedForm
           });
+          this.archivedFormsListCount$ = this.isOperatorRounds
+            ? this.operatorRoundsService.getFormsListCount$(true)
+            : this.raceDynamicFormService.getFormsListCount$(true);
+        });
       }
     });
   }

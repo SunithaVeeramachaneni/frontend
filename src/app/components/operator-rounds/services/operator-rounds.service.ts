@@ -121,6 +121,9 @@ export class OperatorRoundsService {
             }),
             isArchived: {
               eq: isArchived
+            },
+            isDeleted: {
+              eq: false
             }
           },
           !isSearch && queryParams.limit,
@@ -170,7 +173,7 @@ export class OperatorRoundsService {
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     const statement = isArchived
       ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -178,7 +181,7 @@ export class OperatorRoundsService {
     }
     `
       : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}, isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -225,7 +228,8 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        isArchived: false
+        isArchived: false,
+        isDeleted: false
       })
     );
   }
