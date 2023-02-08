@@ -24,6 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetsListComponent } from './assets/assets-list/assets-list.component';
+import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -36,7 +37,8 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [
     MasterConfigurationsContainerComponent,
     LocationsListComponent,
-    AssetsListComponent
+    AssetsListComponent,
+    UnitMeasurementListComponent
   ],
   imports: [
     FormsModule,
@@ -62,7 +64,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatIconModule
   ],
-  exports: [MasterConfigurationsContainerComponent]
+  exports: [
+    MasterConfigurationsContainerComponent,
+    UnitMeasurementListComponent
+  ]
 })
 export class MasterConfigurationsModule {
   constructor(

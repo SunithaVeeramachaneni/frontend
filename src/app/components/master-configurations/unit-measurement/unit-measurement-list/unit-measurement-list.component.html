@@ -1,0 +1,67 @@
+<div class="list-view">
+    <div class="main-container">
+      <div class="forms-header">
+        <h2 class="heading" translate="myForms"></h2>
+        <span class="custom-form-field-gray-color search">
+          <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
+            <span class="forms-count">
+              {{ totalCount }}
+            </span>
+            <span class="forms-text">{{
+              'forms'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span>
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchForms' | translate"
+              autocomplete="off"
+              [formControl]="searchForm"
+            />
+            <img [src]="filterIcon" matSuffix alt="Open Filter" />
+          </mat-form-field>
+          <button
+          mat-raised-button
+          class="add-user-btn"
+          translate="addUserBtn"
+        ></button>
+        </span>
+      </div>
+  
+      <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+  
+    <!-- <ng-container *ngIf="menuState">
+      <app-form-detail
+        [@slideInOut]="menuState"
+        (slideInOut)="onCloseViewDetail()"
+        [selectedForm]="selectedForm"
+        (formDetailAction)="formDetailActionHandler($event)"
+      ></app-form-detail>
+    </ng-container> -->
+  
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
+  </div>
