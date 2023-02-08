@@ -300,6 +300,7 @@ export class LocationsListComponent implements OnInit {
               text: 'Location deleted successfully!',
               type: 'success'
             });
+            form.action = 'add';
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -338,11 +339,10 @@ export class LocationsListComponent implements OnInit {
   }
 
   addOrUpdateLocation(locationData) {
-    console.log(locationData);
-    if (locationData.status === 'add') {
+    if (locationData?.status === 'add') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        this.locationService.fetchLocations$.next({ data: 'search' });
+        this.locationService.fetchLocations$.next({ data: 'load' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'add',
@@ -353,21 +353,21 @@ export class LocationsListComponent implements OnInit {
         text: 'Location created successfully!',
         type: 'success'
       });
-    } else if (locationData.status === 'edit') {
+    } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        this.locationService.fetchLocations$.next({ data: 'search' });
+        this.locationService.fetchLocations$.next({ data: 'load' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'edit',
           form: locationData.data
         });
+        this.toast.show({
+          text: 'Location updated successfully!',
+          type: 'success'
+        });
         // this.cdrf.markForCheck();
       }
-      this.toast.show({
-        text: 'Location updated successfully!',
-        type: 'success'
-      });
     }
   }
 

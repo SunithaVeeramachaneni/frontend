@@ -102,7 +102,10 @@ export class AddEditLocationComponent implements OnInit {
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
-          this.createdLocationData.emit(res);
+          this.createdLocationData.emit({
+            status: this.locationStatus,
+            data: res
+          });
           this.locationForm.reset();
           this.slideInOut.emit('out');
         });
