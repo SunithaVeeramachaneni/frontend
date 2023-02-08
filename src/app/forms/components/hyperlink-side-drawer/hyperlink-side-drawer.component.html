@@ -10,7 +10,7 @@
           <input
             matInput
             formControlName="displayText"
-            placeholder="Untitled Link"
+            [placeholder]="'untitledLink' | translate"
             autocomplete="off"
           />
         </div>
@@ -21,7 +21,7 @@
           <input
             matInput
             formControlName="hyperlink"
-            placeholder="URL"
+            [placeholder]="'url' | translate"
             autocomplete="off"
           />
         </div>

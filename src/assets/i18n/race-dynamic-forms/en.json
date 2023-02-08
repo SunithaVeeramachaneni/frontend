@@ -60,6 +60,7 @@
   "globalMcqHeading": "Global Response Set",
   "hyperlink": "Hyperlink",
   "title": "Title",
+  "untitledLink": "Untitled Link",
   "url": "URL",
   "isInvalidURL": "Invalid URL provided",
   "response": "Response",
