@@ -1,0 +1,123 @@
+<div id="add-edit-slider">
+  <mat-card [formGroup]="locationForm">
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+      <h1 class="heading">{{ locationTitle }}</h1>
+    </div>
+    <div>
+      <p class="m-0">Image</p>
+      <p>
+        <img
+          src="assets/master-configurations/image-placeholder.svg"
+          alt="Image Placeholder"
+          class="image"
+          *ngIf="locationImage === ''"
+        />
+        <img
+          [src]="locationImage"
+          alt="Image"
+          class="image-contain"
+          *ngIf="locationImage !== ''"
+        />
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label>Name</mat-label>
+          <input matInput placeholder="Name" formControlName="name" />
+
+          <mat-error
+            *ngIf="processValidationErrors('name')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.name.name
+                | translate
+                  : {
+                      name: 'name' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label>Location Id</mat-label>
+          <input
+            matInput
+            placeholder="Location Id"
+            formControlName="locationId"
+          />
+          <mat-error
+            *ngIf="processValidationErrors('locationId')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.locationId.name
+                | translate
+                  : {
+                      name: 'locationId' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label>Model</mat-label>
+          <input matInput placeholder="Model" formControlName="model" />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            placeholder="Description"
+            formControlName="description"
+          >
+          </textarea>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label>Parent</mat-label>
+          <mat-select formControlName="parentId">
+            <input
+              class="searchable-input"
+              placeholder="Search"
+              (keyup)="onKey($event.target.value)"
+            />
+            <mat-option
+              [value]="parent.name"
+              *ngFor="let parent of allParentsData"
+              >{{ parent.name }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </p>
+
+      <button
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        [disabled]="locationForm.invalid"
+        (click)="create()"
+      >
+        {{ locationButton }}
+      </button>
+      <button
+        mat-stroked-button
+        class="cancel-btn"
+        type="button"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+    </div>
+  </mat-card>
+</div>

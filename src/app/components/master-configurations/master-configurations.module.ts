@@ -25,6 +25,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { AssetsListComponent } from './assets/assets-list/assets-list.component';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { LocationDetailViewComponent } from './locations/location-detail-view/location-detail-view.component';
+import { AddEditLocationComponent } from './locations/add-edit-location/add-edit-location.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -38,7 +45,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MasterConfigurationsContainerComponent,
     LocationsListComponent,
     AssetsListComponent,
-    UnitMeasurementListComponent
+    UnitMeasurementListComponent,
+    LocationDetailViewComponent,
+    AddEditLocationComponent
   ],
   imports: [
     FormsModule,
@@ -62,7 +71,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSelectModule,
+    NgxShimmerLoadingModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,
