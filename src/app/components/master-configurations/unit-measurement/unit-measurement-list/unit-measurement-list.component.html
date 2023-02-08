@@ -1,67 +1,107 @@
-<div class="list-view">
-    <div class="main-container">
-      <div class="forms-header">
-        <h2 class="heading" translate="myForms"></h2>
+<div class="uom-list-view">
+  <div class="main-container">
+    <div class="uom-header">
+      <div>
+        <h2 class="heading" translate="uom"></h2>
+      </div>
+      <div>
         <span class="custom-form-field-gray-color search">
-          <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
-            <span class="forms-count">
-              {{ totalCount }}
-            </span>
-            <span class="forms-text">{{
-              'forms'
-                | translate
-                  : {
-                      count: totalCount || 0
-                    }
-            }}</span>
-          </span>
           <mat-form-field appearance="outline">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input
               matInput
               type="text"
-              [placeholder]="'searchForms' | translate"
+              [placeholder]="'searchUom' | translate"
               autocomplete="off"
-              [formControl]="searchForm"
+              [formControl]="searchUom"
             />
             <img [src]="filterIcon" matSuffix alt="Open Filter" />
           </mat-form-field>
-          <button
-          mat-raised-button
-          class="add-user-btn"
-          translate="addUserBtn"
-        ></button>
         </span>
-      </div>
-  
-      <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
+
+        <button
+          mat-raised-button
+          [matMenuTriggerFor]="createMenu"
+          translate="createNew"
+          class="create-new-btn"
+        ></button>
+        <mat-menu #createMenu="matMenu">
+          <button mat-menu-item class="menu-buttons" disabled>
+            <img
+              src="assets/master-configurations/upload-from-excel.svg"
+              alt="Excel"
+              class="menu-icons"
+            />
+            <span>Upload Excel</span>
+          </button>
+          <button mat-menu-item (click)="addManually()" class="menu-buttons">
+            <img
+              src="assets/master-configurations/add-manually.svg"
+              alt="add manually"
+              class="add-manually-icon"
+            />
+            <span>Add Manually</span>
+          </button>
+        </mat-menu>
+
+        <button
+          mat-raised-button
+          [matMenuTriggerFor]="moreMenu"
+          class="more-btn"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu">
+          <button mat-menu-item class="menu-buttons">
+            <img
+              src="assets/master-configurations/upload-from-excel.svg"
+              alt="Excel"
+              class="menu-icons"
+            />
+            <span>Download Template</span>
+          </button>
+        </mat-menu>
       </div>
     </div>
-  
-    <!-- <ng-container *ngIf="menuState">
-      <app-form-detail
-        [@slideInOut]="menuState"
-        (slideInOut)="onCloseViewDetail()"
-        [selectedForm]="selectedForm"
-        (formDetailAction)="formDetailActionHandler($event)"
-      ></app-form-detail>
-    </ng-container> -->
-  
-    <div *ngIf="isLoading$ | async">
-      <div class="ghost-loading">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
-        </div>
+
+    <div
+      *ngIf="(unitOfMeasurements$ | async) && (isLoading$ | async) === false"
+    >
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+
+  <ng-container *ngIf="unitAddOrEditOpenState">
+    <app-add-edit-uom
+      [@slideInOut]="unitAddOrEditOpenState"
+      (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+      [unitEditData]="unitEditData"
+      (createUnitData)="addOrUpdateUnit($event)"
+    ></app-add-edit-uom>
+  </ng-container>
+
+  <ng-container *ngIf="openUomDetailedView">
+    <app-uom-detail-view
+      [@slideInOut]="openUomDetailedView"
+      (slideInOut)="onCloseUnitDetailedView($event)"
+      [selectedUnit]="selectedUnit"
+    ></app-uom-detail-view>
+  </ng-container>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
       </div>
     </div>
   </div>
+</div>

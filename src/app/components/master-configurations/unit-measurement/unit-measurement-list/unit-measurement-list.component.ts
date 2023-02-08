@@ -1,4 +1,4 @@
-
+import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import {
   trigger,
   state,
@@ -7,7 +7,13 @@ import {
   animate
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -31,20 +37,14 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { RaceDynamicFormService } from '../../../../components/race-dynamic-form/services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
-import { Router } from '@angular/router';
-import { omit } from 'lodash-es';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { generateCopyNumber,generateCopyRegex } from '../../../../components/user-management/utils/utils';
+import { UnitMeasurementService } from '../services/unit-measurement.service';
 
 @Component({
-   selector: 'app-unit-measurement-list',
-   templateUrl: './unit-measurement-list.component.html',
+  selector: 'app-unit-measurement-list',
+  templateUrl: './unit-measurement-list.component.html',
   styleUrls: ['./unit-measurement-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
@@ -72,7 +72,7 @@ export class UnitMeasurementListComponent implements OnInit {
 
   columns: Column[] = [
     {
-      id: 'unitType',
+      id: 'name',
       displayName: 'UMO',
       type: 'string',
       order: 1,
@@ -100,7 +100,7 @@ export class UnitMeasurementListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'unitlength',
+      id: 'noOfUnits',
       displayName: 'No. of Unit',
       type: 'number',
       isMultiValued: true,
@@ -158,21 +158,7 @@ export class UnitMeasurementListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -194,26 +180,12 @@ export class UnitMeasurementListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasConditionalStyles: true
-    },
+    }
   ];
 
   configOptions: ConfigOptions = {
@@ -231,19 +203,9 @@ export class UnitMeasurementListComponent implements OnInit {
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
-    conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
-      },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
-      }
-    }
+    conditionalStyles: {}
   };
   dataSource: MatTableDataSource<any>;
-  forms$: Observable<any>;
   formsCount$: Observable<Count>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
@@ -253,10 +215,9 @@ export class UnitMeasurementListComponent implements OnInit {
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
-  searchForm: FormControl;
+  searchUom: FormControl;
   addCopyFormCount = false;
   isPopoverOpen = false;
-  formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -264,42 +225,35 @@ export class UnitMeasurementListComponent implements OnInit {
   selectedForm: GetFormListQuery = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  unitOfMeasurements$: Observable<{
+    columns: Column[];
+    data: any[];
+  }>;
+  fetchUOM$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  openUomDetailedView = 'out';
+  unitAddOrEditOpenState = 'out';
+  unitEditData: any;
+  selectedUnit: any;
   constructor(
     private readonly toast: ToastService,
-    private readonly raceDynamicFormService: RaceDynamicFormService,
-    private router: Router,
-    private readonly store: Store<State>
+    private readonly unitMeasurementService: UnitMeasurementService
   ) {}
 
   ngOnInit(): void {
-    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-    this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
-    this.searchForm = new FormControl('');
-
-    this.searchForm.valueChanges
+    this.fetchUOM$.next({ data: 'load' });
+    this.fetchUOM$.next({} as TableEvent);
+    this.searchUom = new FormControl('');
+    this.searchUom.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+          this.fetchUOM$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
     this.getDisplayedForms();
-
-    this.formsCount$ = combineLatest([
-      this.formsCount$,
-      this.formCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addCopyFormCount) {
-          count.count += update;
-          this.addCopyFormCount = false;
-        }
-        return count;
-      })
-    );
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
   }
@@ -307,77 +261,16 @@ export class UnitMeasurementListComponent implements OnInit {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
-      case 'unitType':
-      case 'unitlength':
+      case 'name':
       case 'description':
-      case 'symbol':
-      case 'formStatus':
-      case 'responses':
-        this.showFormDetail(row);
+        this.showLocationDetail(row);
         break;
       default:
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
-    if (!form.id) {
-      return;
-    }
-    combineLatest([
-      this.raceDynamicFormService.fetchAllFormListNames$(),
-      this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
-    ])
-      .pipe(
-        map(([formNames, authoredFormDetail]) => ({
-          formNames,
-          authoredFormDetail
-        }))
-      )
-      .subscribe(({ formNames, authoredFormDetail }) => {
-        const createdForm = this.generateCopyFormName(form, formNames);
-        if (createdForm?.newName) {
-          this.raceDynamicFormService
-            .createForm$({
-              ...omit(form, ['id', 'preTextImage']),
-              name: createdForm.newName,
-              formStatus: formConfigurationStatus.draft,
-              isPublic: false
-            })
-            .subscribe((newRecord) => {
-              if (!newRecord) {
-                return;
-              }
-              if (
-                authoredFormDetail &&
-                Object.keys(authoredFormDetail).length
-              ) {
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
-              }
-              this.addEditCopyForm$.next({
-                action: 'copy',
-                form: {
-                  ...newRecord,
-                  name: createdForm.newName,
-                  preTextImage: (form as any)?.preTextImage,
-                  oldId: form.id
-                } as any
-              });
-              this.formsListCount$ =
-                this.raceDynamicFormService.getFormsListCount$();
-            });
-        }
-      });
-  }
-
   getDisplayedForms(): void {
-    const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
+    const formsOnLoadSearch$ = this.fetchUOM$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -386,7 +279,7 @@ export class UnitMeasurementListComponent implements OnInit {
       })
     );
 
-    const onScrollForms$ = this.raceDynamicFormService.fetchForms$.pipe(
+    const onScrollForms$ = this.fetchUOM$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -402,7 +295,7 @@ export class UnitMeasurementListComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.forms$ = combineLatest([
+    this.unitOfMeasurements$ = combineLatest([
       formsOnLoadSearch$,
       this.addEditCopyForm$,
       onScrollForms$
@@ -415,19 +308,6 @@ export class UnitMeasurementListComponent implements OnInit {
           };
           initial.data = rows;
         } else {
-          if (form.action === 'copy') {
-            const obj = { ...form.form } as any;
-            const oldIdx = initial?.data?.findIndex(
-              (d) => d?.id === obj?.oldId
-            );
-            const newIdx = oldIdx !== -1 ? oldIdx : 0;
-            initial.data.splice(newIdx, 0, obj);
-            form.action = 'add';
-            this.toast.show({
-              text: 'Form copied successfully!',
-              type: 'success'
-            });
-          }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
@@ -447,11 +327,11 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   getForms() {
-    return this.raceDynamicFormService
-      .getFormsList$({
+    return this.unitMeasurementService
+      .getUnitOfMeasurementList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchForm.value,
+        searchKey: this.searchUom.value,
         fetchType: this.fetchType
       })
       .pipe(
@@ -469,47 +349,17 @@ export class UnitMeasurementListComponent implements OnInit {
       );
   }
 
-  openArchiveModal(form: GetFormListQuery): void {
-    this.raceDynamicFormService
-      .updateForm$({
-        formMetadata: {
-          id: form?.id,
-          isArchived: true,
-          name: form?.name,
-          description: form?.description,
-          isArchivedAt: new Date().toISOString()
-        },
-        // eslint-disable-next-line no-underscore-dangle
-        formListDynamoDBVersion: form._version
-      })
-      .subscribe((updatedForm) => {
-        this.addEditCopyForm$.next({
-          action: 'delete',
-          form: updatedForm
-        });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
-      });
-  }
-
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
-      case 'copy':
-        this.onCopyFormMetaData(data);
-        break;
-
       case 'edit':
-        this.router.navigate(['/forms/edit', data.id]);
+        this.unitEditData = data;
+        this.unitAddOrEditOpenState = 'in';
         break;
-
-      case 'archive':
-        this.openArchiveModal(data);
-        break;
-      default:
     }
   };
 
   handleTableEvent = (event): void => {
-    this.raceDynamicFormService.fetchForms$.next(event);
+    this.fetchUOM$.next(event);
   };
 
   configOptionsChangeHandler = (event): void => {};
@@ -517,62 +367,64 @@ export class UnitMeasurementListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
+        title: 'Set as Default',
+        action: 'setAsDefault'
+      },
+      {
         title: 'Edit',
         action: 'edit'
       },
       {
-        title: 'Copy',
-        action: 'copy'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
+        title: 'Delete',
+        action: 'delete'
       }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
 
-  onCloseViewDetail() {
-    this.selectedForm = null;
-    this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
-  }
-  formDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+  addManually() {
+    this.unitAddOrEditOpenState = 'in';
   }
 
-  private generateCopyFormName(
-    form: GetFormListQuery,
-    rows: GetFormListQuery[]
-  ) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
+  showLocationDetail(row: any): void {
+    this.selectedUnit = row;
+    this.openUomDetailedView = 'in';
+  }
+
+  onCloseLocationAddOrEditOpenState(event) {
+    console.log({ event });
+    this.unitAddOrEditOpenState = event;
+  }
+
+  onCloseLocationDetailedView(event) {
+    this.openUomDetailedView = event.status;
+    if (event.data !== '') {
+      this.unitEditData = event.data;
+      this.unitAddOrEditOpenState = 'in';
     }
-    return null;
   }
 
-  private showFormDetail(row: GetFormListQuery): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
+  addOrUpdateUnit(locationData) {
+    if (locationData?.status === 'add') {
+      this.toast.show({
+        text: 'Location created successfully!',
+        type: 'success'
+      });
+    } else if (locationData?.status === 'edit') {
+      this.toast.show({
+        text: 'Location updated successfully!',
+        type: 'success'
+      });
+    }
+  }
+
+  onCloseUnitDetailedView(event) {
+    this.openUomDetailedView = event.status;
+    if (event.data !== '') {
+      this.unitEditData = event.data;
+      this.unitAddOrEditOpenState = 'in';
+    }
   }
 }

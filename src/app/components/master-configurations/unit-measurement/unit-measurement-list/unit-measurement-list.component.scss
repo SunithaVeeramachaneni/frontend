@@ -1,9 +1,8 @@
 @import '../../../../../scss/colors.scss';
 
-
-.list-view {
+.uom-list-view {
   background-color: $white;
-  height: calc(100vh - 205px);
+  height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
     width: 60%;
@@ -22,7 +21,7 @@
     margin-top: 1%;
   }
 
-  .forms-header {
+  .uom-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -32,34 +31,43 @@
     margin-top: 5px;
     margin-right: 15px;
   }
-  .no-of-forms {
-    margin-right: 10px;
-  }
-  .forms-count {
-    font-weight: 500;
-    font-size: 110%;
-    color: #212121;
-  }
-  .forms-text {
-    font-weight: 500;
-    font-size: 110%;
-    color: #9e9e9e;
-    margin-left: 5px;
 
-    .ghost-loading {
-      padding: 0 20px;
-    }
+  .create-new-btn {
+    background: $blue-main;
+    color: $white;
   }
 
-  ::ng-deep .mat-column-lastPublishedBy .displayFlex {
-    width: 200px;
+  .more-btn {
+    background: $blue-main;
+    color: $white;
+    margin-left: 10px;
+    min-width: 50px;
+    margin-right: 15px;
   }
 
-  .add-user-btn {
-    background: #3d5afe;
-    color: #ffffff;
-    float: right;
-    margin: 10px 10px 0 10px;
-    padding: 6px 6px;
+  .ghost-loading {
+    padding: 0 20px;
   }
+}
+
+.menu-icons {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 5px;
+  margin-right: 12px;
+}
+
+.add-manually-icon {
+  width: 15px;
+  height: 15px;
+  position: relative;
+  top: 3px;
+  margin-right: 12px;
+}
+
+.menu-buttons {
+  height: 40px;
+  align-items: center;
+  line-height: 20px;
 }

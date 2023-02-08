@@ -4,5 +4,7 @@
   "searchLocation": "Search",
   "name": "Name",
   "locationId": "Location Id",
-  "required": "{name} is required"
+  "required": "{name} is required",
+  "searchUom": "Search",
+  "uom": "UOM"
 }
