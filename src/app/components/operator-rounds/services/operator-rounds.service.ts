@@ -530,9 +530,26 @@ export class OperatorRoundsService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
+              }
+
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
               }
 
               return questionItem;
