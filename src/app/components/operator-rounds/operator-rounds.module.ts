@@ -51,6 +51,11 @@ import { SchedulerComponent } from './scheduler/scheduler.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PlansComponent } from './plans/plans.component';
 import { RoundsComponent } from './rounds/rounds.component';
+import { SubmissionComponent } from './submission/submission.component';
+import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { ArchivedListComponent } from './archived-list/archived-list.component';
+import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -64,14 +69,17 @@ export const customTranslateLoader = (http: HttpClient) =>
     ImportTaskModalComponent,
     SchedulerComponent,
     PlansComponent,
-    RoundsComponent
+    RoundsComponent,
+    SubmissionComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent,
+    ArchivedListComponent,
+    ArchivedDeleteModalComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
-
-    RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
     FormModule,

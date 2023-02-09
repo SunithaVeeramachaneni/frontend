@@ -127,7 +127,10 @@ export class OperatorRoundsService {
               formStatus: {
                 eq: formStatus
               }
-            })
+            }),
+            isDeleted: {
+              eq: false
+            }
           },
           !isSearch && queryParams.limit,
           !isSearch && queryParams.nextToken
@@ -178,7 +181,7 @@ export class OperatorRoundsService {
     isArchived: boolean = false
   ): Observable<number> {
     const statement = `query {
-      listRoundPlanLists(limit: ${limit}, filter: { and: [{isArchived: { eq: ${isArchived} } } ${
+      listRoundPlanLists(limit: ${limit}, filter: { and: [{isArchived: { eq: ${isArchived} } }, isDeleted: { eq: false } } ${
       formStatus !== 'All' ? `,{ formStatus: { eq: "${formStatus}" }}` : ''
     }] }) {
         items {
@@ -228,7 +231,8 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        isArchived: false
+        isArchived: false,
+        isDeleted: false
       })
     );
   }
@@ -529,9 +533,26 @@ export class OperatorRoundsService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
+              }
+
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
               }
 
               return questionItem;

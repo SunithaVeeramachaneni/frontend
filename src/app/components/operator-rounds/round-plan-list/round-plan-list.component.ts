@@ -465,7 +465,10 @@ export class RoundPlanListComponent implements OnInit {
       .updateForm$({
         formMetadata: {
           id: form?.id,
-          isArchived: true
+          isArchived: true,
+          name: form?.name,
+          description: form?.description,
+          isArchivedAt: new Date().toISOString()
         },
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
@@ -512,15 +515,15 @@ export class RoundPlanListComponent implements OnInit {
       {
         title: 'Copy',
         action: 'copy'
-      }
-      /* {
-        title: 'Archive',
-        action: 'archive'
       },
       {
-        title: 'Upload to Public Library',
-        action: 'upload'
-      } */
+        title: 'Archive',
+        action: 'archive'
+      }
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
