@@ -262,11 +262,18 @@ export class UnitMeasurementListComponent implements OnInit {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    console.log(
+      '🚀 ~ file: unit-measurement-list.component.ts:265 ~ UnitMeasurementListComponent ~ columnId',
+      columnId
+    );
     switch (columnId) {
-      case 'name':
+      case 'unitType':
       case 'description':
       case 'isDeleted':
         this.showLocationDetail(row);
+        break;
+      case 'isDeleted':
+        this.onChangeUnitStatus(row);
         break;
       default:
     }
@@ -414,6 +421,7 @@ export class UnitMeasurementListComponent implements OnInit {
 
   onCloseLocationAddOrEditOpenState(event) {
     this.unitAddOrEditOpenState = event;
+    this.fetchUOM$.next({ data: 'load' });
   }
 
   onCloseLocationDetailedView(event) {
@@ -444,6 +452,10 @@ export class UnitMeasurementListComponent implements OnInit {
       this.unitEditData = event.data;
       this.unitAddOrEditOpenState = 'in';
     }
+  }
+
+  private onChangeUnitStatus(unit: GetUnitMeasumentQuery) {
+    // TODO: open popup and edit unit details
   }
 
   private onDeleteUnit(unit: GetUnitMeasumentQuery) {

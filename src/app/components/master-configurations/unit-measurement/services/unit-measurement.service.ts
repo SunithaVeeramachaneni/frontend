@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import {
   APIService,
+  CreateUnitListInput,
+  CreateUnitMeasumentInput,
   ListUnitListsQuery,
   ListUnitMeasumentsQuery,
   ModelUnitListFilterInput,
@@ -53,6 +55,38 @@ export class UnitMeasurementService {
         nextToken: null
       });
     }
+  }
+
+  getSingleUnitListByName$(name: string) {
+    return from(
+      this.awsApiService.ListUnitLists(
+        {
+          name: {
+            eq: name
+          }
+        }
+        // 1
+      )
+    );
+  }
+
+  CreateUnitList$(input: CreateUnitListInput) {
+    return from(
+      this.awsApiService.CreateUnitList({
+        ...input,
+        isDeleted: false
+      })
+    );
+  }
+
+  createUnitOfMeasurement$(input: CreateUnitMeasumentInput) {
+    return from(
+      this.awsApiService.CreateUnitMeasument({
+        ...input,
+        isDefault: false,
+        isDeleted: false
+      })
+    );
   }
 
   updateUnitMeasurement$(
