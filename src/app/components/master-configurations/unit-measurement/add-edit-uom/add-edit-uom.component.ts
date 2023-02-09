@@ -1,3 +1,4 @@
+import { OnChanges, SimpleChanges } from '@angular/core';
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   Component,
@@ -20,7 +21,7 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./add-edit-uom.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditUnitOfMeasurementComponent implements OnInit {
+export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createUnitData: EventEmitter<any> = new EventEmitter();
   @Input() set unitEditData(data) {
@@ -38,6 +39,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit {
     private formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
     this.measurementList = ['Length', 'Area', 'Volume', 'Temperature'];
@@ -141,10 +144,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit {
     units?.forEach((element) => {
       unitObservables.push(
         this.unitOfMeasurementService.createUnitOfMeasurement$({
-          unitlistID: response.id,
-          description: element.description,
+          unitlistID: response?.id,
+          description: element?.description,
           searchTerm: `${element?.description?.toLowerCase()} ${response?.name?.toLowerCase()}`,
-          symbol: element.symbol
+          symbol: element?.symbol
         })
       );
     });

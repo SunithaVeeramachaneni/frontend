@@ -1,0 +1,127 @@
+<div>
+  <div class="edit-unit-delete-modal">
+    <div id="view-location-slider">
+      <mat-card class="title">
+        <div>Edit UOM</div>
+        <div>
+          <img
+            (click)="cancel('cancel')"
+            src="assets/rdf-forms-icons/close.svg"
+            alt="close"
+            class="cancel"
+          />
+        </div>
+      </mat-card>
+    </div>
+
+    <div id="add-edit-slider" [formGroup]="unitForm">
+      <p class="m-l-5 m-t-5">
+        <mat-form-field appearance="outline" class="unit-measurement">
+          <mat-label translate>unitType </mat-label>
+          <mat-select name="unitType" formControlName="unitType">
+            <mat-option
+              disabled
+              *ngFor="let unit of measurementList"
+              [value]="unit"
+            >
+              {{ unit }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('unitType')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors?.unitType?.name
+                | translate
+                  : {
+                      name: 'unitType' | translate,
+                      length: errors?.unitType?.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <div class="custom-form-field-white-color" style="margin-top: 15px">
+        <div class="input-container">
+          <div>
+            <mat-form-field
+              appearance="outline"
+              class="m-b-10 m-l-5 description"
+            >
+              <mat-label>{{ 'description' | translate }}</mat-label>
+              <input matInput formControlName="description" />
+              <mat-error
+                *ngIf="processValidationErrors('description')"
+                class="m-t-5 error-fields"
+              >
+                {{
+                  errors?.description?.name
+                    | translate
+                      : {
+                          name: 'description' | translate,
+                          length: errors?.description?.length
+                        }
+                }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="m-b-10 m-l-5 symbol">
+              <mat-label>{{ 'symbol' | translate }}</mat-label>
+              <input matInput formControlName="symbol" />
+              <mat-error
+                *ngIf="processValidationErrors('symbol')"
+                class="m-t-5 error-fields"
+              >
+                {{
+                  errors?.symbol?.name
+                    | translate
+                      : {
+                          name: 'symbol' | translate,
+                          length: errors?.symbol?.length
+                        }
+                }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-label class="status">{{ 'status' | translate }}</mat-label>
+            <mat-slide-toggle
+              formControlName="isDeleted"
+              [checked]="unitForm.value.isDeleted"
+            >
+              {{ unitForm.value.isDeleted ? 'InActive' : 'Active' }}
+            </mat-slide-toggle>
+            <mat-error
+              *ngIf="processValidationErrors('isDeleted')"
+              class="m-t-5 error-fields"
+            >
+              {{
+                errors?.isDeleted?.name
+                  | translate
+                    : {
+                        name: 'isDeleted' | translate,
+                        length: errors?.isDeleted?.length
+                      }
+              }}
+            </mat-error>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-dialog-actions align="end" class="footer" style="float: right">
+      <button mat-button class="cancel-btn" (click)="cancel('cancel')">
+        {{ 'cancel' | translate | uppercase }}
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="onSave('save')"
+        class="save-btn"
+        [disabled]="unitForm?.invalid"
+      >
+        {{ 'save' | translate | uppercase }}
+      </button>
+    </mat-dialog-actions>
+  </div>
+</div>

@@ -1,0 +1,150 @@
+@import '../../../../../scss/colors.scss';
+
+.edit-unit-delete-modal {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: $white;
+  border-radius: 4px;
+  .cdk-text-field-autofill-monitored:not(:-webkit-autofill) {
+    color: $black;
+  }
+  .mat-card:not([class*='mat-elevation-z']) {
+    box-shadow: none !important;
+  }
+
+  #add-edit-slider {
+    margin-left: 10px;
+    .mat-card {
+      box-shadow: none;
+      width: 85px;
+      height: 32px;
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 32px;
+      letter-spacing: 0.15px;
+      color: rgba(0, 0, 0, 0.87);
+      flex: none;
+      order: 0;
+      flex-grow: 0;
+    }
+
+    .cancel {
+      cursor: pointer;
+    }
+
+    .heading {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .image {
+      border: 1px solid #bbbbbb;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .image-contain {
+      border-radius: 8px;
+      width: 90px;
+      height: 90px;
+    }
+
+    .create-btn {
+      background-color: $blue-main;
+      color: $white;
+      float: right;
+    }
+
+    .create-btn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
+  }
+
+  .searchable-input {
+    width: 92%;
+    border: 1px solid $border-color;
+    padding: 5px;
+    border-radius: 4px;
+    margin: 10px 10px 5px 12px;
+  }
+
+  .save-btn {
+    margin-right: 20px;
+    background-color: #1351d8;
+    color: #ffffff;
+  }
+
+  .cancel-btn {
+    color: $blue-main;
+    border-color: $blue-main;
+    float: right;
+    margin-right: 15px;
+  }
+
+  .unit-measurement {
+    width: 89%;
+  }
+
+  .add-new-icon {
+    width: 15px;
+    margin-top: 5px;
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
+  }
+
+  .add-new-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .description {
+    width: 45%;
+    input {
+      color: rgb(8, 7, 7);
+    }
+  }
+
+  .symbol {
+    width: 45%;
+    input {
+      color: rgb(8, 7, 7);
+    }
+  }
+
+  .cancel {
+    float: right;
+  }
+
+  .footer {
+    float: right;
+    padding: 15px 0px;
+  }
+
+  .status {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0.15px;
+    color: #757575;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    padding-right: 10px;
+  }
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #34c759;
+  }
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #34c759;
+  }
+}

@@ -19,6 +19,7 @@ import { groupBy } from 'lodash-es';
   providedIn: 'root'
 })
 export class UnitMeasurementService {
+  measurementList = ['Length', 'Area', 'Volume', 'Temperature'];
   constructor(private readonly awsApiService: APIService) {}
 
   getUnitOfMeasurementList$(queryParams: {
@@ -59,14 +60,11 @@ export class UnitMeasurementService {
 
   getSingleUnitListByName$(name: string) {
     return from(
-      this.awsApiService.ListUnitLists(
-        {
-          name: {
-            eq: name
-          }
+      this.awsApiService.ListUnitLists({
+        name: {
+          eq: name
         }
-        // 1
-      )
+      })
     );
   }
 
@@ -107,9 +105,7 @@ export class UnitMeasurementService {
       ...item,
       noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
       unitType: item?.unitList?.name,
-      description: item.isDefault
-        ? `${item.description} (Default)`
-        : item.description
+      isDefaultText: item.isDefault ? 'Default' : ''
     }));
     console.log(
       '🚀 ~ file: unit-measurement.service.ts:64 ~ UnitMeasurementService ~ rows ~ rows',

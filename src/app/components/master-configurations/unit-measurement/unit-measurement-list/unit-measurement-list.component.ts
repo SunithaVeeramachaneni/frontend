@@ -37,6 +37,8 @@ import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { GetUnitMeasumentQuery } from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
+import { MatDialog } from '@angular/material/dialog';
+import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | null;
@@ -127,9 +129,8 @@ export class UnitMeasurementListComponent implements OnInit {
       displayName: 'Description',
       type: 'string',
       order: 3,
-      hasSubtitle: false,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -138,10 +139,14 @@ export class UnitMeasurementListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
+      subtitleColumn: 'isDefaultText',
       titleStyle: {},
-      subtitleStyle: {},
+      subtitleStyle: {
+        background: 'rgba(103, 58, 183, 0.2)'
+      },
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
       id: 'symbol',
@@ -239,7 +244,8 @@ export class UnitMeasurementListComponent implements OnInit {
   allUnitData: any[] = [];
   constructor(
     private readonly toast: ToastService,
-    private readonly unitMeasurementService: UnitMeasurementService
+    private readonly unitMeasurementService: UnitMeasurementService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -324,8 +330,16 @@ export class UnitMeasurementListComponent implements OnInit {
               text: 'UOM deleted successfully!',
               type: 'success'
             });
-          }
-          if (form.action === 'setAsDefault') {
+          } else if (form.action === 'edit') {
+            // const idx = initial.data.findIndex((d) => d?.id === form?.form?.id);
+            // if (idx !== -1) {
+            //   initial.data[idx] = form.form;
+            // }
+            this.toast.show({
+              text: 'UOM edited successfully!',
+              type: 'success'
+            });
+          } else if (form.action === 'setAsDefault') {
             this.toast.show({
               text: 'UOM set as default successfully!',
               type: 'success'
@@ -369,8 +383,7 @@ export class UnitMeasurementListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.unitEditData = data;
-        this.unitAddOrEditOpenState = 'in';
+        this.onEditUnit(data);
         break;
       case 'setAsDefault':
         this.onSetIsDefault(data);
@@ -486,6 +499,34 @@ export class UnitMeasurementListComponent implements OnInit {
       .subscribe((res: GetUnitMeasumentQuery) => {
         this.updateListAfterIsDefault(res, unit);
       });
+  }
+
+  private onEditUnit(unit: GetUnitMeasumentQuery) {
+    const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
+      data: unit
+    });
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res?.action === 'save') {
+        this.unitMeasurementService
+          .updateUnitMeasurement$({
+            id: res?.id,
+            symbol: res?.symbol,
+            description: res?.description,
+            isDeleted: res?.isDeleted,
+            unitlistID: res?.unitlistID,
+            searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
+            _version: res?._version
+          })
+          .subscribe((result) => {
+            this.addEditCopyForm$.next({
+              action: 'edit',
+              form: result
+            });
+            this.fetchUOM$.next({ data: 'load' });
+          });
+      }
+    });
   }
 
   private updateListAfterIsDefault(

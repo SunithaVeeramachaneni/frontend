@@ -12,59 +12,67 @@
 </div>
 
 <div id="add-edit-slider">
-  <p class="m-l-5 m-t-5 ">
+  <p class="m-l-5 m-t-5">
     <mat-form-field appearance="outline" class="unit-measurement">
-      <mat-label translate >unitOfMeasurement </mat-label>
-      <mat-select 
-      [(ngModel)]="unitOfMeasurement"
-      name="unitOfMeasurement"
-      (selectionChange)="onMeasurementChange($event)">
-        <mat-option *ngFor=" let unit of measurementList" [value]="unit">
+      <mat-label translate>unitOfMeasurement </mat-label>
+      <mat-select
+        [(ngModel)]="unitOfMeasurement"
+        name="unitOfMeasurement"
+        (selectionChange)="onMeasurementChange($event)"
+      >
+        <mat-option *ngFor="let unit of measurementList" [value]="unit">
           {{ unit }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </p>
 
-  <div [formGroup]="unitMeasurment" class="custom-form-field-white-color" style="margin-top: 15px">
-    <div class="input-container" formArrayName="units"
-    *ngFor="let item of unitMeasurment.get('units').controls; let i = index;">
-    <div [formGroupName]="i">
-      <mat-form-field appearance="outline" class="m-b-10 m-l-5 description">
-        <mat-label>{{ 'description' | translate }}</mat-label>
-        <input matInput formControlName="description"  />
-        <mat-error
-          *ngIf="processValidationErrors(i ,'description')"
-          class="m-t-5 error-fields"
-        >
-          {{
-            errors.description.name
-              | translate
-                : {
-                    name: 'description' | translate,
-                    length: errors.description.length
-                  }
-          }}
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="m-b-10 m-l-5 symbol">
-        <mat-label>{{ 'symbol' | translate }}</mat-label>
-        <input matInput formControlName="symbol" />
-        <mat-error
-          *ngIf="processValidationErrors(i ,'symbol')"
-          class="m-t-5 error-fields"
-        >
-          {{
-            errors.symbol.name
-              | translate
-                : {
-                    name: 'symbol' | translate,
-                    length: errors.symbol.length
-                  }
-          }}
-        </mat-error>
-      </mat-form-field>
-    </div>
+  <div
+    [formGroup]="unitMeasurment"
+    class="custom-form-field-white-color"
+    style="margin-top: 15px"
+  >
+    <div
+      class="input-container"
+      formArrayName="units"
+      *ngFor="let item of unitMeasurment.get('units').controls; let i = index"
+    >
+      <div [formGroupName]="i">
+        <mat-form-field appearance="outline" class="m-b-10 m-l-5 description">
+          <mat-label>{{ 'description' | translate }}</mat-label>
+          <input matInput formControlName="description" />
+          <mat-error
+            *ngIf="processValidationErrors(i, 'description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.description.name
+                | translate
+                  : {
+                      name: 'description' | translate,
+                      length: errors.description.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="m-b-10 m-l-5 symbol">
+          <mat-label>{{ 'symbol' | translate }}</mat-label>
+          <input matInput formControlName="symbol" />
+          <mat-error
+            *ngIf="processValidationErrors(i, 'symbol')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.symbol.name
+                | translate
+                  : {
+                      name: 'symbol' | translate,
+                      length: errors.symbol.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </div>
     </div>
   </div>
 
@@ -83,7 +91,7 @@
     color="primary"
     (click)="onSave()"
     class="save-btn"
-    [disabled]="saveDisabled"
+    [disabled]="unitMeasurment.invalid"
   >
     {{ 'save' | translate | uppercase }}
   </button>
