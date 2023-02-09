@@ -38,6 +38,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -438,5 +439,17 @@ export class AssetsListComponent implements OnInit {
       this.assetsEditData = event.data;
       this.assetsAddOrEditOpenState = 'in';
     }
+  }
+
+  exportAsXLSX(): void {
+    this.assetService
+      .downloadSampleAssetTemplate()
+      .pipe(
+        tap((data) => {
+          console.log(data);
+          downloadFile(data, 'Asset_Sample_Template');
+        })
+      )
+      .subscribe();
   }
 }
