@@ -7,7 +7,12 @@ import {
   ListLocationsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
-import { ErrorInfo, LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../../interfaces';
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -31,6 +36,8 @@ export class LocationService {
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
   }
+
+  fetchAllLocations$ = () => this.awsApiService.ListLocations({}, 20000, '');
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -99,6 +106,18 @@ export class LocationService {
     return from(this.awsApiService.DeleteLocation({ ...values }));
   }
 
+  downloadSampleLocationTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterApiUrl,
+      'api/v1/download-sample-location',
+      info,
+      true,
+      {}
+    );
+  }
+
   private formatGraphQLocationResponse(resp: ListLocationsQuery) {
     const rows =
       resp.items
@@ -130,17 +149,5 @@ export class LocationService {
       rows,
       nextToken
     };
-  }
-
-  downloadSampleLocationTemplate(
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> {
-    return this._appService.downloadFile(
-      environment.masterApiUrl,
-      'api/v1/download-sample-location',
-      info,
-      true,
-      {}
-    );
   }
 }

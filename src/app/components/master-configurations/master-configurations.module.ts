@@ -19,18 +19,21 @@ import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { MasterConfigurationsRoutingModule } from './master-configurations-routing.module';
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
 import { LocationsListComponent } from './locations/locations-list/locations-list.component';
+import { LocationDetailViewComponent } from './locations/location-detail-view/location-detail-view.component';
+import { AddEditLocationComponent } from './locations/add-edit-location/add-edit-location.component';
+import { AssetsListComponent } from './assets/assets-list/assets-list.component';
+import { AddEditAssetsComponent } from './assets/add-edit-assets/add-edit-assets.component';
+import { AssetsDetailViewComponent } from './assets/assets-detail-view/assets-detail-view.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { AssetsListComponent } from './assets/assets-list/assets-list.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { LocationDetailViewComponent } from './locations/location-detail-view/location-detail-view.component';
-import { AddEditLocationComponent } from './locations/add-edit-location/add-edit-location.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { MatRadioModule } from '@angular/material/radio';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -45,7 +48,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     LocationsListComponent,
     AssetsListComponent,
     LocationDetailViewComponent,
-    AddEditLocationComponent
+    AddEditLocationComponent,
+    AddEditAssetsComponent,
+    AssetsDetailViewComponent
   ],
   imports: [
     FormsModule,
@@ -74,6 +79,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatButtonModule,
     MatCardModule,
     MatSelectModule,
+    MatRadioModule,
     NgxShimmerLoadingModule
   ],
   exports: [
@@ -81,7 +87,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     LocationsListComponent,
     AssetsListComponent,
     LocationDetailViewComponent,
-    AddEditLocationComponent
+    AddEditLocationComponent,
+    AddEditAssetsComponent,
+    AssetsDetailViewComponent
   ]
 })
 export class MasterConfigurationsModule {
