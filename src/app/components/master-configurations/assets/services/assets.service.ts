@@ -126,7 +126,7 @@ export class AssetsService {
   }
 
   private formatGraphQAssetsResponse(resp: ListAssetsQuery) {
-    const rows =
+    let rows =
       resp.items
         .sort(
           (a, b) =>
@@ -151,6 +151,7 @@ export class AssetsService {
         })) || [];
     const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;
+    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,

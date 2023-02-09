@@ -119,7 +119,7 @@ export class LocationService {
   }
 
   private formatGraphQLocationResponse(resp: ListLocationsQuery) {
-    const rows =
+    let rows =
       resp.items
         .sort(
           (a, b) =>
@@ -144,6 +144,7 @@ export class LocationService {
         })) || [];
     const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;
+    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
