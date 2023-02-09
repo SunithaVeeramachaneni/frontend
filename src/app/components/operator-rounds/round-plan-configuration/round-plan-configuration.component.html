@@ -150,6 +150,9 @@
     </div>
   </div>
   <div class="dis-flex form">
+    <div class="assetHierarchyContainer">
+      <app-hierarchy-container></app-hierarchy-container>
+    </div>
     <div class="questions-responses-width">
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
@@ -221,7 +224,13 @@
                             <div class="floating-btns empty-section">
                               <button
                                 class="questions-btn"
-                                (click)="addQuestion(pageIndex, sectionIds[pageIndex][sectionIndex], 0)"
+                                (click)="
+                                  addQuestion(
+                                    pageIndex,
+                                    sectionIds[pageIndex][sectionIndex],
+                                    0
+                                  )
+                                "
                               >
                                 <img
                                   src="assets/rdf-forms-icons/add-question.svg"
@@ -285,7 +294,7 @@
         </app-page>
       </ng-container>
     </div>
-    <div class="iphone-width">
+    <div class="iphone-width" *ngIf="false">
       <app-iphone></app-iphone>
     </div>
   </div>

@@ -1,0 +1,32 @@
+<div class="parentNode node">
+  <div class="left">
+    <img src="assets/rdf-forms-icons/form-image-upload.svg" />
+    <div class="description">
+      <span>{{ node.name }} - {{ node.type }}</span>
+      <span> &lt; Additional Field: Value &gt; </span>
+    </div>
+  </div>
+  <div class="right">
+    <span>{{ this.assetHierarchyUtil.getTasksCountByNode(node) }}</span>
+    <mat-icon>more_horiz</mat-icon>
+  </div>
+</div>
+<div *ngIf="node.hasChildren" class="children">
+  <div
+    class="childrenHead"
+    [ngClass]="{ inactive: !assetHierarchyUtil.getAssetCountByNode(node) }"
+  >
+    <span class="expandCollapseBtn" (click)="node.isExpanded = !node.isExpanded"
+      ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
+        >expand_circle_down</mat-icon
+      ></span
+    >
+    <span>{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets</span>
+  </div>
+  <div
+    *ngIf="node.isExpanded"
+    [ngClass]="{ displayInlineBlock: !node.isExpanded }"
+  >
+    <app-node [node]="node" *ngFor="let node of node.children"></app-node>
+  </div>
+</div>

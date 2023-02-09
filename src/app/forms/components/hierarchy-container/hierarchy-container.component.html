@@ -1,0 +1,30 @@
+<div class="header">
+  <div>
+    <span>Assets (6)</span>
+    <button mat-icon-button class="addBtn">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <span>Tasks (1)</span>
+</div>
+<span class="custom-form-field-gray-color search">
+  <mat-form-field appearance="outline" class="searchField">
+    <mat-icon matPrefix class="searchIcon">search</mat-icon>
+    <input
+      matInput
+      type="text"
+      [placeholder]="'Search...'"
+      autocomplete="off"
+    />
+    <img [src]="filterIcon" matSuffix alt="Open Filter" />
+  </mat-form-field>
+</span>
+<div class="hierarchy">
+  <app-node
+    [node]="node"
+    *ngFor="let node of hierarchyList"
+    [ngClass]="{
+      displayInlineBlock: node.hasChildren
+    }"
+  ></app-node>
+</div>

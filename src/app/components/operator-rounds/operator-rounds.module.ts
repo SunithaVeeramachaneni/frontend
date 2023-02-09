@@ -47,6 +47,8 @@ import { RoundPlanConfigurationModalComponent } from './round-plan-configuration
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
+import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
+import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -57,7 +59,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanListComponent,
     RoundPlanConfigurationComponent,
     RoundPlanConfigurationModalComponent,
-    ImportTaskModalComponent
+    ImportTaskModalComponent,
+    HierarchyContainerComponent,
+    NodeComponent
   ],
   imports: [
     FormsModule,
