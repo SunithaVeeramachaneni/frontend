@@ -53,12 +53,6 @@
     color: $gray7;
   }
 
-  .cancel-btn {
-    color: $blue-main;
-    border-color: $blue-main;
-    float: right;
-    margin-right: 15px;
-  }
 }
 
 .searchable-input {
@@ -67,4 +61,44 @@
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 5px 12px;
+}
+
+.save-btn {
+  margin-right: 20px;
+  background-color: #1351d8;
+  color: #ffffff;
+}
+
+.cancel-btn {
+  color: $blue-main;
+  border-color: $blue-main;
+  float: right;
+  margin-right: 15px;
+}
+
+.unit-measurement {
+  width: 89%;
+}
+
+.add-new-icon {
+  width: 15px;
+  margin-top: 5px;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}
+
+.add-new-btn {
+  color: $blue-main;
+  border: none;
+  background: none;
+  padding: 10px;
+  cursor: pointer;
+}
+.description {
+  width: 45%;
+}
+
+.symbol {
+  width: 45%;
 }

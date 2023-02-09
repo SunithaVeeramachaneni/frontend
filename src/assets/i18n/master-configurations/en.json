@@ -6,5 +6,9 @@
   "locationId": "Location Id",
   "required": "{name} is required",
   "searchUom": "Search",
-  "uom": "UOM"
+  "uom": "UOM",
+  "cancel": "Cancel",
+  "description":"Description",
+  "symbol":"Symbol",
+  "unitOfMeasurement":"Unit of Measurement"
 }
