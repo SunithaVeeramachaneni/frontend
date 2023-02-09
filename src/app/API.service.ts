@@ -64,6 +64,7 @@ export type CreateUnitMeasumentInput = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
@@ -73,6 +74,7 @@ export type ModelUnitMeasumentConditionInput = {
   isDefault?: ModelBooleanInput | null;
   isDeleted?: ModelBooleanInput | null;
   unitlistID?: ModelIDInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelUnitMeasumentConditionInput | null> | null;
   or?: Array<ModelUnitMeasumentConditionInput | null> | null;
   not?: ModelUnitMeasumentConditionInput | null;
@@ -148,6 +150,8 @@ export type UnitMeasument = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: UnitList | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -155,43 +159,10 @@ export type UnitMeasument = {
   _lastChangedAt: number;
 };
 
-export type UpdateUnitMeasumentInput = {
-  id: string;
-  description?: string | null;
-  symbol?: string | null;
-  isDefault?: boolean | null;
-  isDeleted?: boolean | null;
-  unitlistID?: string | null;
-  _version?: number | null;
-};
-
-export type DeleteUnitMeasumentInput = {
-  id: string;
-  _version?: number | null;
-};
-
-export type CreateUnitListInput = {
-  id?: string | null;
-  name?: string | null;
-  searchTerm?: string | null;
-  isDeleted?: boolean | null;
-  _version?: number | null;
-};
-
-export type ModelUnitListConditionInput = {
-  name?: ModelStringInput | null;
-  searchTerm?: ModelStringInput | null;
-  isDeleted?: ModelBooleanInput | null;
-  and?: Array<ModelUnitListConditionInput | null> | null;
-  or?: Array<ModelUnitListConditionInput | null> | null;
-  not?: ModelUnitListConditionInput | null;
-};
-
 export type UnitList = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: ModelUnitMeasumentConnection | null;
   createdAt: string;
@@ -208,10 +179,40 @@ export type ModelUnitMeasumentConnection = {
   startedAt?: number | null;
 };
 
+export type UpdateUnitMeasumentInput = {
+  id: string;
+  description?: string | null;
+  symbol?: string | null;
+  isDefault?: boolean | null;
+  isDeleted?: boolean | null;
+  unitlistID?: string | null;
+  searchTerm?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteUnitMeasumentInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateUnitListInput = {
+  id?: string | null;
+  name?: string | null;
+  isDeleted?: boolean | null;
+  _version?: number | null;
+};
+
+export type ModelUnitListConditionInput = {
+  name?: ModelStringInput | null;
+  isDeleted?: ModelBooleanInput | null;
+  and?: Array<ModelUnitListConditionInput | null> | null;
+  or?: Array<ModelUnitListConditionInput | null> | null;
+  not?: ModelUnitListConditionInput | null;
+};
+
 export type UpdateUnitListInput = {
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   _version?: number | null;
 };
@@ -1093,6 +1094,7 @@ export type ModelUnitMeasumentFilterInput = {
   isDefault?: ModelBooleanInput | null;
   isDeleted?: ModelBooleanInput | null;
   unitlistID?: ModelIDInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelUnitMeasumentFilterInput | null> | null;
   or?: Array<ModelUnitMeasumentFilterInput | null> | null;
   not?: ModelUnitMeasumentFilterInput | null;
@@ -1106,7 +1108,6 @@ export enum ModelSortDirection {
 export type ModelUnitListFilterInput = {
   id?: ModelIDInput | null;
   name?: ModelStringInput | null;
-  searchTerm?: ModelStringInput | null;
   isDeleted?: ModelBooleanInput | null;
   and?: Array<ModelUnitListFilterInput | null> | null;
   or?: Array<ModelUnitListFilterInput | null> | null;
@@ -1367,6 +1368,7 @@ export type ModelSubscriptionUnitMeasumentFilterInput = {
   isDefault?: ModelSubscriptionBooleanInput | null;
   isDeleted?: ModelSubscriptionBooleanInput | null;
   unitlistID?: ModelSubscriptionIDInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
   and?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
   or?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
 };
@@ -1409,7 +1411,6 @@ export type ModelSubscriptionBooleanInput = {
 export type ModelSubscriptionUnitListFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   name?: ModelSubscriptionStringInput | null;
-  searchTerm?: ModelSubscriptionStringInput | null;
   isDeleted?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionUnitListFilterInput | null> | null;
   or?: Array<ModelSubscriptionUnitListFilterInput | null> | null;
@@ -1613,6 +1614,18 @@ export type CreateUnitMeasumentMutation = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1628,6 +1641,18 @@ export type UpdateUnitMeasumentMutation = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1643,6 +1668,18 @@ export type DeleteUnitMeasumentMutation = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1654,7 +1691,6 @@ export type CreateUnitListMutation = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -1672,7 +1708,6 @@ export type UpdateUnitListMutation = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -1690,7 +1725,6 @@ export type DeleteUnitListMutation = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -2522,6 +2556,18 @@ export type GetUnitMeasumentQuery = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2539,6 +2585,7 @@ export type ListUnitMeasumentsQuery = {
     isDefault?: boolean | null;
     isDeleted?: boolean | null;
     unitlistID: string;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2559,6 +2606,7 @@ export type SyncUnitMeasumentsQuery = {
     isDefault?: boolean | null;
     isDeleted?: boolean | null;
     unitlistID: string;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2579,6 +2627,7 @@ export type UnitMeasumentsByUnitlistIDQuery = {
     isDefault?: boolean | null;
     isDeleted?: boolean | null;
     unitlistID: string;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2593,7 +2642,6 @@ export type GetUnitListQuery = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -2613,7 +2661,6 @@ export type ListUnitListsQuery = {
     __typename: "UnitList";
     id: string;
     name?: string | null;
-    searchTerm?: string | null;
     isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
@@ -2631,7 +2678,6 @@ export type SyncUnitListsQuery = {
     __typename: "UnitList";
     id: string;
     name?: string | null;
-    searchTerm?: string | null;
     isDeleted?: boolean | null;
     createdAt: string;
     updatedAt: string;
@@ -3659,6 +3705,18 @@ export type OnCreateUnitMeasumentSubscription = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3674,6 +3732,18 @@ export type OnUpdateUnitMeasumentSubscription = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3689,6 +3759,18 @@ export type OnDeleteUnitMeasumentSubscription = {
   isDefault?: boolean | null;
   isDeleted?: boolean | null;
   unitlistID: string;
+  searchTerm?: string | null;
+  unitList?: {
+    __typename: "UnitList";
+    id: string;
+    name?: string | null;
+    isDeleted?: boolean | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3700,7 +3782,6 @@ export type OnCreateUnitListSubscription = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -3718,7 +3799,6 @@ export type OnUpdateUnitListSubscription = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -3736,7 +3816,6 @@ export type OnDeleteUnitListSubscription = {
   __typename: "UnitList";
   id: string;
   name?: string | null;
-  searchTerm?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
     __typename: "ModelUnitMeasumentConnection";
@@ -4577,6 +4656,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -4608,6 +4699,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -4639,6 +4742,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -4666,7 +4781,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -4700,7 +4814,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -4734,7 +4847,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -6239,6 +6351,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -6270,6 +6394,7 @@ export class APIService {
             isDefault
             isDeleted
             unitlistID
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -6312,6 +6437,7 @@ export class APIService {
             isDefault
             isDeleted
             unitlistID
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -6358,6 +6484,7 @@ export class APIService {
             isDefault
             isDeleted
             unitlistID
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -6396,7 +6523,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -6430,7 +6556,6 @@ export class APIService {
             __typename
             id
             name
-            searchTerm
             isDeleted
             createdAt
             updatedAt
@@ -6470,7 +6595,6 @@ export class APIService {
             __typename
             id
             name
-            searchTerm
             isDeleted
             createdAt
             updatedAt
@@ -8518,6 +8642,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -8552,6 +8688,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -8586,6 +8734,18 @@ export class APIService {
           isDefault
           isDeleted
           unitlistID
+          searchTerm
+          unitList {
+            __typename
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
           createdAt
           updatedAt
           _version
@@ -8616,7 +8776,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -8651,7 +8810,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename
@@ -8686,7 +8844,6 @@ export class APIService {
           __typename
           id
           name
-          searchTerm
           isDeleted
           unitMeasuments {
             __typename

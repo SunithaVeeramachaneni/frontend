@@ -10,6 +10,17 @@ mutation CreateUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -28,6 +39,17 @@ mutation UpdateUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -46,6 +68,17 @@ mutation DeleteUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -60,7 +93,6 @@ mutation CreateUnitList(
   createUnitList(input: $input, condition: $condition) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken
@@ -80,7 +112,6 @@ mutation UpdateUnitList(
   updateUnitList(input: $input, condition: $condition) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken
@@ -100,7 +131,6 @@ mutation DeleteUnitList(
   deleteUnitList(input: $input, condition: $condition) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken

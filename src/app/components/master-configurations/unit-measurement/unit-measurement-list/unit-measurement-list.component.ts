@@ -72,7 +72,7 @@ export class UnitMeasurementListComponent implements OnInit {
 
   columns: Column[] = [
     {
-      id: 'name',
+      id: 'unitType',
       displayName: 'UMO',
       type: 'string',
       order: 1,
@@ -91,7 +91,7 @@ export class UnitMeasurementListComponent implements OnInit {
       },
       hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: 'description',
+      subtitleColumn: '',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -198,11 +198,11 @@ export class UnitMeasurementListComponent implements OnInit {
     rowLevelActions: {
       menuActions: []
     },
-    groupByColumns: [],
+    groupByColumns: ['unitType', 'noOfUnits'],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    groupLevelColors: [],
     conditionalStyles: {}
   };
   dataSource: MatTableDataSource<any>;
@@ -275,7 +275,7 @@ export class UnitMeasurementListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        return this.getForms();
+        return this.getUnitOfMeasurementList();
       })
     );
 
@@ -284,7 +284,7 @@ export class UnitMeasurementListComponent implements OnInit {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getForms();
+          return this.getUnitOfMeasurementList();
         } else {
           return of([] as GetFormListQuery[]);
         }
@@ -332,7 +332,7 @@ export class UnitMeasurementListComponent implements OnInit {
     );
   }
 
-  getForms() {
+  getUnitOfMeasurementList() {
     return this.unitMeasurementService
       .getUnitOfMeasurementList$({
         nextToken: this.nextToken,
@@ -379,14 +379,17 @@ export class UnitMeasurementListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
+        icon: 'star',
         title: 'Set as Default',
         action: 'setAsDefault'
       },
       {
+        icon: 'edit',
         title: 'Edit',
         action: 'edit'
       },
       {
+        icon: 'delete',
         title: 'Delete',
         action: 'delete'
       }

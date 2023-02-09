@@ -1,6 +1,6 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
 
 
@@ -17,6 +17,8 @@ type EagerUnitMeasument = {
   readonly isDefault?: boolean | null;
   readonly isDeleted?: boolean | null;
   readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList?: UnitList | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -32,6 +34,8 @@ type LazyUnitMeasument = {
   readonly isDefault?: boolean | null;
   readonly isDeleted?: boolean | null;
   readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList: AsyncItem<UnitList | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -49,7 +53,6 @@ type EagerUnitList = {
   };
   readonly id: string;
   readonly name?: string | null;
-  readonly searchTerm?: string | null;
   readonly isDeleted?: boolean | null;
   readonly unitMeasuments?: (UnitMeasument | null)[] | null;
   readonly createdAt?: string | null;
@@ -63,7 +66,6 @@ type LazyUnitList = {
   };
   readonly id: string;
   readonly name?: string | null;
-  readonly searchTerm?: string | null;
   readonly isDeleted?: boolean | null;
   readonly unitMeasuments: AsyncCollection<UnitMeasument>;
   readonly createdAt?: string | null;

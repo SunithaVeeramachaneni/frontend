@@ -7,6 +7,17 @@ query GetUnitMeasument($id: ID!) {
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -27,6 +38,7 @@ query ListUnitMeasuments(
       isDefault
       isDeleted
       unitlistID
+      searchTerm
       createdAt
       updatedAt
       _version
@@ -56,6 +68,7 @@ query SyncUnitMeasuments(
       isDefault
       isDeleted
       unitlistID
+      searchTerm
       createdAt
       updatedAt
       _version
@@ -87,6 +100,7 @@ query UnitMeasumentsByUnitlistID(
       isDefault
       isDeleted
       unitlistID
+      searchTerm
       createdAt
       updatedAt
       _version
@@ -101,7 +115,6 @@ query GetUnitList($id: ID!) {
   getUnitList(id: $id) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken
@@ -123,7 +136,6 @@ query ListUnitLists(
     items {
       id
       name
-      searchTerm
       isDeleted
       createdAt
       updatedAt
@@ -150,7 +162,6 @@ query SyncUnitLists(
     items {
       id
       name
-      searchTerm
       isDeleted
       createdAt
       updatedAt

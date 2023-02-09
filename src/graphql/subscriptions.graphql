@@ -9,6 +9,17 @@ subscription OnCreateUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -26,6 +37,17 @@ subscription OnUpdateUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -43,6 +65,17 @@ subscription OnDeleteUnitMeasument(
     isDefault
     isDeleted
     unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
     createdAt
     updatedAt
     _version
@@ -54,7 +87,6 @@ subscription OnCreateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
   onCreateUnitList(filter: $filter) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken
@@ -71,7 +103,6 @@ subscription OnUpdateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
   onUpdateUnitList(filter: $filter) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken
@@ -88,7 +119,6 @@ subscription OnDeleteUnitList($filter: ModelSubscriptionUnitListFilterInput) {
   onDeleteUnitList(filter: $filter) {
     id
     name
-    searchTerm
     isDeleted
     unitMeasuments {
       nextToken

@@ -10,6 +10,7 @@ import {
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
 import { API, graphqlOperation } from 'aws-amplify';
+import { groupBy } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class UnitMeasurementService {
       const isSearch = queryParams.fetchType === 'search';
       return from(
         // eslint-disable-next-line no-underscore-dangle
-        this._ListUnitLists(
+        this._ListUnitMeasuments(
           {
             ...(queryParams.searchKey && {
               searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
@@ -60,69 +61,55 @@ export class UnitMeasurementService {
   }
 
   private formatGraphQAssetsResponse(resp: ListUnitListsQuery) {
+    const groupedData: any = groupBy(resp?.items, 'unitList.name');
     const rows = resp?.items?.map((item: any) => ({
       ...item,
-      noOfUnits: item?.unitMeasuments?.items?.length ?? 0
+      noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
+      unitType: item?.unitList?.name
     }));
-
-    const units = [];
-    resp?.items.forEach((row: any) => {
-      if (row?.unitMeasuments?.items.length > 0) {
-        row?.unitMeasuments?.items.forEach((item) => {
-          units.push({
-            noOfUnits: row?.unitMeasuments?.items?.length ?? 0,
-            unitId: row.id,
-            name: row.name,
-            searchTerm: row.searchTerm,
-            ...item,
-            description: item?.isDefault
-              ? `${item.description} (Default)`
-              : item.description
-          });
-        });
-      }
-    });
     console.log(
-      '🚀 ~ file: unit-measurement.service.ts:45 ~ UnitMeasurementService ~ formatGraphQAssetsResponse ~ resp',
-      units
+      '🚀 ~ file: unit-measurement.service.ts:64 ~ UnitMeasurementService ~ rows ~ rows',
+      rows
     );
-
     const count = rows?.length || 0;
     const nextToken = resp?.nextToken;
     return {
       count,
-      rows: units,
+      rows,
       nextToken
     };
   }
 
-  private async _ListUnitLists(
+  private async _ListUnitMeasuments(
     filter?: ModelUnitListFilterInput,
     limit?: number,
     nextToken?: string
   ): Promise<ListUnitListsQuery> {
-    const statement = `query ListUnitLists($filter: ModelUnitListFilterInput, $limit: Int, $nextToken: String) {
-        listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    const statement = `query ListUnitMeasuments($filter: ModelUnitMeasumentFilterInput, $limit: Int, $nextToken: String) {
+        listUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
           __typename
           items {
             __typename
             id
-            name
-            searchTerm
+            description
+            symbol
+            isDefault
             isDeleted
+            unitlistID
+            searchTerm
             createdAt
             updatedAt
             _version
-            unitMeasuments(filter: {isDeleted: {eq: false}}) {
-              items {
-                description
-                createdAt
-                id
-                isDefault
-                isDeleted
-                symbol
-                unitlistID
-              }
+            _deleted
+            _lastChangedAt
+            unitList {
+              name
+              isDeleted
+              id
+              _deleted
+              _lastChangedAt
+              _version
+              createdAt
             }
           }
           nextToken
@@ -142,6 +129,55 @@ export class UnitMeasurementService {
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return response?.data?.listUnitLists as ListUnitListsQuery;
+    return response?.data?.listUnitMeasuments as ListUnitListsQuery;
   }
+
+  // private async _ListUnitLists(
+  //   filter?: ModelUnitListFilterInput,
+  //   limit?: number,
+  //   nextToken?: string
+  // ): Promise<ListUnitListsQuery> {
+  //   const statement = `query ListUnitLists($filter: ModelUnitListFilterInput, $limit: Int, $nextToken: String) {
+  //       listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  //         __typename
+  //         items {
+  //           __typename
+  //           id
+  //           name
+  //           searchTerm
+  //           isDeleted
+  //           createdAt
+  //           updatedAt
+  //           _version
+  //           unitMeasuments(filter: {isDeleted: {eq: false}}) {
+  //             items {
+  //               description
+  //               createdAt
+  //               id
+  //               isDefault
+  //               isDeleted
+  //               symbol
+  //               unitlistID
+  //             }
+  //           }
+  //         }
+  //         nextToken
+  //         startedAt
+  //       }
+  //     }`;
+  //   const gqlAPIServiceArguments: any = {};
+  //   if (filter) {
+  //     gqlAPIServiceArguments.filter = filter;
+  //   }
+  //   if (limit) {
+  //     gqlAPIServiceArguments.limit = limit;
+  //   }
+  //   if (nextToken) {
+  //     gqlAPIServiceArguments.nextToken = nextToken;
+  //   }
+  //   const response = (await API.graphql(
+  //     graphqlOperation(statement, gqlAPIServiceArguments)
+  //   )) as any;
+  //   return response?.data?.listUnitLists as ListUnitListsQuery;
+  // }
 }

@@ -45,6 +45,28 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "searchTerm": {
+                    "name": "searchTerm",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "unitList": {
+                    "name": "unitList",
+                    "isArray": false,
+                    "type": {
+                        "model": "UnitList"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "unitlistID"
+                        ]
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -113,13 +135,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "searchTerm": {
-                    "name": "searchTerm",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "isDeleted": {
                     "name": "isDeleted",
                     "isArray": false,
@@ -139,7 +154,7 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "unitlistID"
+                            "unitList"
                         ]
                     }
                 },
@@ -1767,5 +1782,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "abebcf04a1ad35a9c44d35e7aedf1a79"
+    "version": "b15e97eedf1099481ce0c140c172b4b0"
 };
