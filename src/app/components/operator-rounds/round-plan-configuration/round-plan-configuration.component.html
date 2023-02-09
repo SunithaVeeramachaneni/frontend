@@ -153,7 +153,11 @@
     <div class="assetHierarchyContainer">
       <app-hierarchy-container></app-hierarchy-container>
     </div>
-    <div class="questions-responses-width">
+    <div
+      class="questions-responses-width"
+      *ngIf="selectedNode$ | async as selectedNode"
+    >
+      <span class="selectedNodeTitle">Tasks: {{ selectedNode.name }}</span>
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"

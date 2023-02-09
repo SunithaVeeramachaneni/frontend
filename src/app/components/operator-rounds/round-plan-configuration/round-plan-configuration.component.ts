@@ -69,6 +69,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -106,6 +107,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
+
+  selectedNode: any;
+  selectedNode$: Observable<any>;
+
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -117,10 +122,13 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private formConfigurationService: FormConfigurationService,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$;
+
     this.formConfiguration = this.fb.group({
       id: [''],
       formLogo: [''],

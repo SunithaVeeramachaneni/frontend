@@ -1,13 +1,13 @@
 <div class="header">
   <div>
-    <span>Assets (6)</span>
-    <button mat-icon-button class="addBtn">
+    <span>Assets ({{ hierarchyList.length ? hierarchyList.length : 0 }})</span>
+    <button mat-icon-button class="addBtn" *ngIf="hierarchyList.length">
       <mat-icon>add</mat-icon>
     </button>
   </div>
-  <span>Tasks (1)</span>
+  <span *ngIf="hierarchyList.length">Tasks (1)</span>
 </div>
-<span class="custom-form-field-gray-color search">
+<span class="custom-form-field-gray-color search" *ngIf="hierarchyList.length">
   <mat-form-field appearance="outline" class="searchField">
     <mat-icon matPrefix class="searchIcon">search</mat-icon>
     <input
@@ -19,12 +19,17 @@
     <img [src]="filterIcon" matSuffix alt="Open Filter" />
   </mat-form-field>
 </span>
-<div class="hierarchy">
+<div class="hierarchy" *ngIf="hierarchyList.length">
   <app-node
     [node]="node"
+    (nodeRemoved)="removeNodeHandler($event)"
     *ngFor="let node of hierarchyList"
     [ngClass]="{
       displayInlineBlock: node.hasChildren
     }"
   ></app-node>
+</div>
+<div *ngIf="!hierarchyList.length" class="emptyHierarchy">
+  <span>You have not added any assets yet</span>
+  <button mat-raised-button color="primary">Add Assets</button>
 </div>

@@ -29,3 +29,20 @@
 .displayInlineBlock {
   display: inline-block;
 }
+.emptyHierarchy {
+  display: flex;
+  height: calc(100vh - 275px);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  span {
+    color: $light-gray;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  button {
+    background: $blue-main;
+    color: $white;
+  }
+}

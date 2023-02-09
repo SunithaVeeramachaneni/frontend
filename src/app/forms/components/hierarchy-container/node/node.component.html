@@ -1,14 +1,29 @@
-<div class="parentNode node">
+<div
+  class="parentNode node"
+  (click)="setSelectedNode(node)"
+  [ngClass]="{ active: selectedNode.id === node.id }"
+>
   <div class="left">
     <img src="assets/rdf-forms-icons/form-image-upload.svg" />
     <div class="description">
-      <span>{{ node.name }} - {{ node.type }}</span>
+      <span>{{ node.name }}</span>
       <span> &lt; Additional Field: Value &gt; </span>
     </div>
   </div>
   <div class="right">
     <span>{{ this.assetHierarchyUtil.getTasksCountByNode(node) }}</span>
-    <mat-icon>more_horiz</mat-icon>
+    <span
+      [matMenuTriggerFor]="hierarchyMenu"
+      class="more-icon"
+      aria-label="More Options"
+    >
+      <mat-icon>more_horiz</mat-icon>
+    </span>
+    <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+      <button mat-menu-item class="text-red" (click)="onRemoveNode(node)">
+        <span>Remove Node</span>
+      </button>
+    </mat-menu>
   </div>
 </div>
 <div *ngIf="node.hasChildren" class="children">
@@ -27,6 +42,10 @@
     *ngIf="node.isExpanded"
     [ngClass]="{ displayInlineBlock: !node.isExpanded }"
   >
-    <app-node [node]="node" *ngFor="let node of node.children"></app-node>
+    <app-node
+      [node]="node"
+      *ngFor="let node of node.children"
+      (nodeRemoved)="removeNodeHandler($event)"
+    ></app-node>
   </div>
 </div>

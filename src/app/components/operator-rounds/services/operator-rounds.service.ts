@@ -36,12 +36,15 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class OperatorRoundsService {
+  private selectedNodeSubject = new BehaviorSubject<any>({});
+
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+  selectedNode$ = this.selectedNodeSubject.asObservable();
 
   constructor(
     private readonly awsApiService: APIService,
@@ -49,6 +52,10 @@ export class OperatorRoundsService {
     private appService: AppService,
     private store: Store
   ) {}
+
+  setSelectedNode(node: any) {
+    this.selectedNodeSubject.next(node);
+  }
 
   setFormCreatedUpdated(data: any) {
     this.formCreatedUpdatedSubject.next(data);
