@@ -452,4 +452,12 @@ export class AssetsListComponent implements OnInit {
       )
       .subscribe();
   }
+
+  onCloseAssetsDetailedView(event) {
+    this.openAssetsDetailedView = event.status;
+    if (event.data !== '') {
+      this.assetsEditData = event.data;
+      this.assetsAddOrEditOpenState = 'in';
+    }
+  }
 }

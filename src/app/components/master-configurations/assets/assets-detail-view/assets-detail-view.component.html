@@ -1,1 +1,33 @@
-<p>assets-detail-view works!</p>
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div *ngIf="selectedAsset">
+      <p>
+        <img [src]="selectedAsset.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedAsset.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">ID</p>
+      <p class="m-0 sub-headings-value">{{ selectedAsset.assetId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">Parent</p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedAsset.parentId ? selectedAsset.parentId : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings">Description</p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedAsset.description }}
+      </p>
+      <hr class="horizon-line" />
+      <button mat-raised-button class="edit-btn" (click)="edit()">Edit</button>
+    </div>
+  </mat-card>
+</div>

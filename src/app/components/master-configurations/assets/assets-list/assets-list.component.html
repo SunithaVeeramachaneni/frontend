@@ -86,13 +86,13 @@
     ></app-add-edit-assets>
   </ng-container>
 
-  <!-- <ng-container *ngIf="openAssetsDetailedView">
+  <ng-container *ngIf="openAssetsDetailedView">
     <app-assets-detail-view
       [@slideInOut]="openAssetsDetailedView"
       (slideInOut)="onCloseAssetsDetailedView($event)"
       [selectedAsset]="selectedAsset"
     ></app-assets-detail-view>
-  </ng-container> -->
+  </ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
