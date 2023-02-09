@@ -105,6 +105,7 @@ export class OperatorRoundsService {
       searchKey: string;
       fetchType: string;
     },
+    formStatus: 'Published' | 'Draft' | 'All',
     isArchived: boolean = false
   ) {
     if (
@@ -121,7 +122,12 @@ export class OperatorRoundsService {
             }),
             isArchived: {
               eq: isArchived
-            }
+            },
+            ...(formStatus !== 'All' && {
+              formStatus: {
+                eq: formStatus
+              }
+            })
           },
           !isSearch && queryParams.limit,
           !isSearch && queryParams.nextToken
@@ -167,23 +173,20 @@ export class OperatorRoundsService {
     }
   }
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+  getFormsListCount$(
+    formStatus: 'Published' | 'Draft' | 'All',
+    isArchived: boolean = false
+  ): Observable<number> {
+    const statement = `query {
+      listRoundPlanLists(limit: ${limit}, filter: { and: [{isArchived: { eq: ${isArchived} } } ${
+      formStatus !== 'All' ? `,{ formStatus: { eq: "${formStatus}" }}` : ''
+    }] }) {
         items {
           id
         }
       }
     }`;
+
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listRoundPlanLists } }: any) =>

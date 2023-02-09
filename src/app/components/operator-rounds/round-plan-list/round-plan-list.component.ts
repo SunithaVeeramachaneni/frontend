@@ -272,7 +272,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -358,7 +358,7 @@ export class RoundPlanListComponent implements OnInit {
                 } as any
               });
               this.formsListCount$ =
-                this.operatorRoundsService.getFormsListCount$();
+                this.operatorRoundsService.getFormsListCount$('All');
             });
         }
       });
@@ -436,12 +436,15 @@ export class RoundPlanListComponent implements OnInit {
 
   getForms() {
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        'All'
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -472,7 +475,8 @@ export class RoundPlanListComponent implements OnInit {
           action: 'delete',
           form: updatedForm
         });
-        this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+        this.formsListCount$ =
+          this.operatorRoundsService.getFormsListCount$('All');
       });
   }
 

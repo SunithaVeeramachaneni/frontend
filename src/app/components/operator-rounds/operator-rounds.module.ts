@@ -47,6 +47,10 @@ import { RoundPlanConfigurationModalComponent } from './round-plan-configuration
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
+import { SchedulerComponent } from './scheduler/scheduler.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { PlansComponent } from './plans/plans.component';
+import { RoundsComponent } from './rounds/rounds.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -57,7 +61,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanListComponent,
     RoundPlanConfigurationComponent,
     RoundPlanConfigurationModalComponent,
-    ImportTaskModalComponent
+    ImportTaskModalComponent,
+    SchedulerComponent,
+    PlansComponent,
+    RoundsComponent
   ],
   imports: [
     FormsModule,
@@ -82,6 +89,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatTabsModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
