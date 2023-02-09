@@ -263,6 +263,7 @@ export class UnitMeasurementListComponent implements OnInit {
     switch (columnId) {
       case 'name':
       case 'description':
+      case 'isDeleted':
         this.showLocationDetail(row);
         break;
       default:

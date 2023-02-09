@@ -4,7 +4,8 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  SimpleChanges
 } from '@angular/core';
 import {
   FormArray,
@@ -40,22 +41,30 @@ export class AddEditUnitOfMeasurementComponent implements OnInit {
 
   ngOnInit(): void {
     this.measurementList = ["Length","Area","Volume","Temperature"];
-    this.unitMeasurment = new FormGroup({
-      units: new FormArray([])
-    });
+    this.initForm();
   }
 
   cancel() {
+    this.initForm();
     this.slideInOut.emit('out');
   }
 
   onSave() {
+    if(this.unitMeasurment.get('units').invalid){
+      return;
+    }
     this.unitMeasurment.get('units').value;
   }
 
   onMeasurementChange = ($event) => {
+    this.initForm();
     console.log($event);
     this.addNewUmo();
+  }
+  initForm(){
+    this.unitMeasurment = new FormGroup({
+      units: new FormArray([])
+    });
   }
 
   createUnit(): FormGroup {
