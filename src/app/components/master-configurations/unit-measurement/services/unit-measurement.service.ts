@@ -4,6 +4,7 @@ import { from, Observable, of } from 'rxjs';
 import {
   APIService,
   ListUnitListsQuery,
+  ListUnitMeasumentsQuery,
   ModelUnitListFilterInput,
   UpdateUnitMeasumentInput,
   UpdateUnitMeasumentMutation
@@ -60,12 +61,21 @@ export class UnitMeasurementService {
     return from(this.awsApiService.UpdateUnitMeasument(input));
   }
 
-  private formatGraphQAssetsResponse(resp: ListUnitListsQuery) {
+  updateUnitMeasurementPromise(
+    input: UpdateUnitMeasumentInput
+  ): Promise<UpdateUnitMeasumentMutation> {
+    return this.awsApiService.UpdateUnitMeasument(input);
+  }
+
+  private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {
     const groupedData: any = groupBy(resp?.items, 'unitList.name');
     const rows = resp?.items?.map((item: any) => ({
       ...item,
       noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-      unitType: item?.unitList?.name
+      unitType: item?.unitList?.name,
+      description: item.isDefault
+        ? `${item.description} (Default)`
+        : item.description
     }));
     console.log(
       '🚀 ~ file: unit-measurement.service.ts:64 ~ UnitMeasurementService ~ rows ~ rows',
@@ -84,7 +94,7 @@ export class UnitMeasurementService {
     filter?: ModelUnitListFilterInput,
     limit?: number,
     nextToken?: string
-  ): Promise<ListUnitListsQuery> {
+  ): Promise<ListUnitMeasumentsQuery> {
     const statement = `query ListUnitMeasuments($filter: ModelUnitMeasumentFilterInput, $limit: Int, $nextToken: String) {
         listUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
           __typename
@@ -129,7 +139,7 @@ export class UnitMeasurementService {
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return response?.data?.listUnitMeasuments as ListUnitListsQuery;
+    return response?.data?.listUnitMeasuments as ListUnitMeasumentsQuery;
   }
 
   // private async _ListUnitLists(

@@ -34,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { AddEditUnitOfMeasurementComponent } from './unit-measurement/add-edit-uom/add-edit-uom.component';
 import { UnitOfMeasurementDetailViewComponent } from './unit-measurement/uom-detail-view/uom-detail-view.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -80,7 +81,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatButtonModule,
     MatCardModule,
     MatSelectModule,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    MatDialogModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,
