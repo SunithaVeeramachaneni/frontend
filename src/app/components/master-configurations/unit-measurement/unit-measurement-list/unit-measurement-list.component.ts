@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import {
   trigger,
@@ -34,12 +35,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { GetFormListQuery } from 'src/app/API.service';
-import { UnitMeasurementService } from '../services/unit-measurement.service';
+import { GetUnitMeasumentQuery } from 'src/app/API.service';
+import { UnitMeasurementService } from '../services';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | null;
-  form: GetFormListQuery;
+  form: GetUnitMeasumentQuery;
 }
 
 @Component({
@@ -222,7 +223,7 @@ export class UnitMeasurementListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: GetUnitMeasumentQuery = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   unitOfMeasurements$: Observable<{
@@ -235,6 +236,7 @@ export class UnitMeasurementListComponent implements OnInit {
   unitAddOrEditOpenState = 'out';
   unitEditData: any;
   selectedUnit: any;
+  allUnitData: any[] = [];
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService
@@ -287,7 +289,7 @@ export class UnitMeasurementListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getUnitOfMeasurementList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetUnitMeasumentQuery[]);
         }
       })
     );
@@ -312,7 +314,7 @@ export class UnitMeasurementListComponent implements OnInit {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'UOM deleted successfully!',
               type: 'success'
             });
           }
@@ -327,6 +329,7 @@ export class UnitMeasurementListComponent implements OnInit {
         }
 
         this.skip = initial.data.length;
+        this.allUnitData = initial.data;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -443,19 +446,73 @@ export class UnitMeasurementListComponent implements OnInit {
     }
   }
 
-  private onDeleteUnit(unit: any) {}
-
-  private onSetIsDefault(unit: any) {
+  private onDeleteUnit(unit: GetUnitMeasumentQuery) {
     this.unitMeasurementService
       .updateUnitMeasurement$({
         id: unit.id,
-        isDefault: false
+        isDeleted: true,
+        _version: unit._version
       })
-      .subscribe((res: any) => {
+      .subscribe((res: GetUnitMeasumentQuery) => {
+        this.addEditCopyForm$.next({
+          action: 'delete',
+          form: res
+        });
+      });
+  }
+
+  private onSetIsDefault(unit: GetUnitMeasumentQuery) {
+    if (this.allUnitData?.length === 0) {
+      return;
+    }
+    this.unitMeasurementService
+      .updateUnitMeasurement$({
+        id: unit?.id,
+        isDefault: true,
+        _version: unit._version
+      })
+      .subscribe((res: GetUnitMeasumentQuery) => {
+        this.updateListAfterIsDefault(res, unit);
+      });
+  }
+
+  private updateListAfterIsDefault(
+    res: GetUnitMeasumentQuery,
+    unit: GetUnitMeasumentQuery
+  ) {
+    const result = this.allUnitData?.filter(
+      (d) => d?.unitlistID === unit?.unitlistID && d?.id !== unit?.id
+    );
+    if (result && Object.keys(result)?.length > 0) {
+      const promises = [];
+      result?.forEach((r) => {
+        promises.push(
+          this.unitMeasurementService.updateUnitMeasurementPromise({
+            id: r?.id,
+            isDefault: false,
+            _version: r?._version
+          })
+        );
+      });
+      if (promises?.length > 0) {
+        Promise.all(promises)
+          .catch((err) => {
+            throw err;
+          })
+          .then(() => {
+            this.addEditCopyForm$.next({
+              action: 'setAsDefault',
+              form: res
+            });
+            this.fetchUOM$.next({ data: 'load' });
+          });
+      } else {
         this.addEditCopyForm$.next({
           action: 'setAsDefault',
           form: res
         });
-      });
+        this.fetchUOM$.next({ data: 'load' });
+      }
+    }
   }
 }
