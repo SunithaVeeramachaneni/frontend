@@ -46,6 +46,7 @@ import { ImportQuestionsSliderComponent } from './components/import-questions/im
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
+import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { MatDividerModule } from '@angular/material/divider';
     ImageComponent,
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
-    AddPageOrSelectExistingPageModalComponent
+    AddPageOrSelectExistingPageModalComponent,
+    HyperlinkSideDrawerComponent
   ],
   imports: [
     FormsModule,

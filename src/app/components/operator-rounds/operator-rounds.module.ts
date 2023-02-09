@@ -49,6 +49,11 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
 import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
 import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';
+import { SubmissionComponent } from './submission/submission.component';
+import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { ArchivedListComponent } from './archived-list/archived-list.component';
+import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -61,7 +66,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanConfigurationModalComponent,
     ImportTaskModalComponent,
     HierarchyContainerComponent,
-    NodeComponent
+    NodeComponent,
+    SubmissionComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent,
+    ArchivedListComponent,
+    ArchivedDeleteModalComponent
   ],
   imports: [
     FormsModule,

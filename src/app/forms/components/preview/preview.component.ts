@@ -77,4 +77,10 @@ export class PreviewComponent implements OnInit, OnChanges {
   toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
   };
+
+  openURL = (question: any) => {
+    if (question.link.length) {
+      window.open(question.link);
+    }
+  };
 }

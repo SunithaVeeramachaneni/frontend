@@ -133,12 +133,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SubmissionSliderComponent,
-    SubmissionViewComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
-    ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    AvatarComponent
   ]
 })
 export class RaceDynamicFormModule {
