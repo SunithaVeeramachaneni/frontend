@@ -38,6 +38,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 
 @Component({
   selector: 'app-locations-list',
@@ -454,5 +455,11 @@ export class LocationsListComponent implements OnInit {
       this.locationEditData = event.data;
       this.locationAddOrEditOpenState = 'in';
     }
+  }
+
+  exportAsXLSX(): void {
+    this.locationService
+      .downloadSampleLocationTemplate()
+      .pipe(tap((data) => downloadFile(data, 'Location_Sample_Template')));
   }
 }
