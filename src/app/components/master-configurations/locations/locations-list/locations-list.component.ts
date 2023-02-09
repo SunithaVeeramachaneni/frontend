@@ -342,7 +342,7 @@ export class LocationsListComponent implements OnInit {
     if (locationData?.status === 'add') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        this.locationService.fetchLocations$.next({ data: 'load' });
+        // this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'add',
@@ -356,7 +356,7 @@ export class LocationsListComponent implements OnInit {
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        this.locationService.fetchLocations$.next({ data: 'load' });
+        // this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'edit',
@@ -369,6 +369,7 @@ export class LocationsListComponent implements OnInit {
         // this.cdrf.markForCheck();
       }
     }
+    this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
   prepareMenuActions(): void {

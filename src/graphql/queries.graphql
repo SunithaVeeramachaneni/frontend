@@ -1,4 +1,178 @@
 # this is an auto generated file. This will be overwritten
+query GetUnitMeasument($id: ID!) {
+  getUnitMeasument(id: $id) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListUnitMeasuments(
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncUnitMeasuments(
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncUnitMeasuments(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query UnitMeasumentsByUnitlistID(
+  $unitlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  unitMeasumentsByUnitlistID(
+    unitlistID: $unitlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetUnitList($id: ID!) {
+  getUnitList(id: $id) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListUnitLists(
+  $filter: ModelUnitListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncUnitLists(
+  $filter: ModelUnitListFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncUnitLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetAssets($id: ID!) {
   getAssets(id: $id) {
     id

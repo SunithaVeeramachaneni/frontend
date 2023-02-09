@@ -1,10 +1,82 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
 
 
 
+
+type EagerUnitMeasument = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitMeasument, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly description?: string | null;
+  readonly symbol?: string | null;
+  readonly isDefault?: boolean | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList?: UnitList | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUnitMeasument = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitMeasument, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly description?: string | null;
+  readonly symbol?: string | null;
+  readonly isDefault?: boolean | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList: AsyncItem<UnitList | undefined>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UnitMeasument = LazyLoading extends LazyLoadingDisabled ? EagerUnitMeasument : LazyUnitMeasument
+
+export declare const UnitMeasument: (new (init: ModelInit<UnitMeasument>) => UnitMeasument) & {
+  copyOf(source: UnitMeasument, mutator: (draft: MutableModel<UnitMeasument>) => MutableModel<UnitMeasument> | void): UnitMeasument;
+}
+
+type EagerUnitList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitMeasuments?: (UnitMeasument | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUnitList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitMeasuments: AsyncCollection<UnitMeasument>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UnitList = LazyLoading extends LazyLoadingDisabled ? EagerUnitList : LazyUnitList
+
+export declare const UnitList: (new (init: ModelInit<UnitList>) => UnitList) & {
+  copyOf(source: UnitList, mutator: (draft: MutableModel<UnitList>) => MutableModel<UnitList> | void): UnitList;
+}
 
 type EagerAssets = {
   readonly [__modelMeta__]: {

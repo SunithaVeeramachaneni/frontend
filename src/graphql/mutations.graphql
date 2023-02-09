@@ -1,4 +1,148 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateUnitMeasument(
+  $input: CreateUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  createUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateUnitMeasument(
+  $input: UpdateUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  updateUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteUnitMeasument(
+  $input: DeleteUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  deleteUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateUnitList(
+  $input: CreateUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  createUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateUnitList(
+  $input: UpdateUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  updateUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteUnitList(
+  $input: DeleteUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  deleteUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateAssets(
   $input: CreateAssetsInput!
   $condition: ModelAssetsConditionInput

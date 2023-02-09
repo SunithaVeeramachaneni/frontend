@@ -12,6 +12,8 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { combineLatest, Observable, of } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { LocationService } from '../services/location.service';
@@ -53,7 +55,7 @@ export class AddEditLocationComponent implements OnInit {
   }
   errors: ValidationError = {};
   locationForm: FormGroup;
-
+  locations$: Observable<any>;
   locationStatus;
   locationTitle;
   locationImage = '';
@@ -92,6 +94,44 @@ export class AddEditLocationComponent implements OnInit {
       parentId: ''
     });
     this.allParentsData = this.parentInformation;
+    this.getAllParent();
+  }
+  getAllParent() {
+    const locationsOnLoadSearch$ = this.locationService.fetchLocations$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(({ data }) => {
+        return this.getLocations();
+      })
+    );
+    const initial = {
+      data: []
+    };
+    this.locations$ = combineLatest([locationsOnLoadSearch$]).pipe(
+      map(([rows]) => {
+        initial.data = rows;
+        return initial;
+      })
+    );
+   
+    this.locations$.subscribe(console.log);
+  }
+
+  getLocations() {
+    return this.locationService
+      .getLocationsList$({
+        nextToken: null,
+        limit: 20000,
+        searchKey: '',
+        fetchType: 'load'
+      })
+      .pipe(
+        mergeMap(({ count, rows, nextToken }) => {
+          return of(rows);
+        }),
+        catchError(() => {
+          return of([]);
+        })
+      );
   }
 
   create() {

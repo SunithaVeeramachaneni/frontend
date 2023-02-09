@@ -31,16 +31,16 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  CellClickActionEvent,
-  Count,
-  TableEvent,
-  FormTableUpdate
-} from 'src/app/interfaces';
+import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { GetFormListQuery } from 'src/app/API.service';
 import { UnitMeasurementService } from '../services/unit-measurement.service';
+
+export interface FormTableUpdate {
+  action: 'add' | 'delete' | 'edit' | 'setAsDefault' | null;
+  form: GetFormListQuery;
+}
 
 @Component({
   selector: 'app-unit-measurement-list',
@@ -72,7 +72,7 @@ export class UnitMeasurementListComponent implements OnInit {
 
   columns: Column[] = [
     {
-      id: 'name',
+      id: 'unitType',
       displayName: 'UMO',
       type: 'string',
       order: 1,
@@ -91,7 +91,7 @@ export class UnitMeasurementListComponent implements OnInit {
       },
       hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: 'description',
+      subtitleColumn: '',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -165,7 +165,7 @@ export class UnitMeasurementListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'formStatus',
+      id: 'isDeleted',
       displayName: 'Status',
       type: 'string',
       order: 5,
@@ -198,11 +198,11 @@ export class UnitMeasurementListComponent implements OnInit {
     rowLevelActions: {
       menuActions: []
     },
-    groupByColumns: [],
+    groupByColumns: ['unitType', 'noOfUnits'],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    groupLevelColors: [],
     conditionalStyles: {}
   };
   dataSource: MatTableDataSource<any>;
@@ -210,7 +210,7 @@ export class UnitMeasurementListComponent implements OnInit {
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as any
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
@@ -275,7 +275,7 @@ export class UnitMeasurementListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        return this.getForms();
+        return this.getUnitOfMeasurementList();
       })
     );
 
@@ -284,7 +284,7 @@ export class UnitMeasurementListComponent implements OnInit {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getForms();
+          return this.getUnitOfMeasurementList();
         } else {
           return of([] as GetFormListQuery[]);
         }
@@ -314,6 +314,12 @@ export class UnitMeasurementListComponent implements OnInit {
               text: 'Form archive successfully!',
               type: 'success'
             });
+          }
+          if (form.action === 'setAsDefault') {
+            this.toast.show({
+              text: 'UOM set as default successfully!',
+              type: 'success'
+            });
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -326,7 +332,7 @@ export class UnitMeasurementListComponent implements OnInit {
     );
   }
 
-  getForms() {
+  getUnitOfMeasurementList() {
     return this.unitMeasurementService
       .getUnitOfMeasurementList$({
         nextToken: this.nextToken,
@@ -355,6 +361,12 @@ export class UnitMeasurementListComponent implements OnInit {
         this.unitEditData = data;
         this.unitAddOrEditOpenState = 'in';
         break;
+      case 'setAsDefault':
+        this.onSetIsDefault(data);
+        break;
+      case 'delete':
+        this.onDeleteUnit(data);
+        break;
     }
   };
 
@@ -367,14 +379,17 @@ export class UnitMeasurementListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
+        icon: 'star',
         title: 'Set as Default',
         action: 'setAsDefault'
       },
       {
+        icon: 'edit',
         title: 'Edit',
         action: 'edit'
       },
       {
+        icon: 'delete',
         title: 'Delete',
         action: 'delete'
       }
@@ -394,7 +409,6 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   onCloseLocationAddOrEditOpenState(event) {
-    console.log({ event });
     this.unitAddOrEditOpenState = event;
   }
 
@@ -409,12 +423,12 @@ export class UnitMeasurementListComponent implements OnInit {
   addOrUpdateUnit(locationData) {
     if (locationData?.status === 'add') {
       this.toast.show({
-        text: 'Location created successfully!',
+        text: 'Unit of Measurement created successfully!',
         type: 'success'
       });
     } else if (locationData?.status === 'edit') {
       this.toast.show({
-        text: 'Location updated successfully!',
+        text: 'Unit of Measurement updated successfully!',
         type: 'success'
       });
     }
@@ -426,5 +440,21 @@ export class UnitMeasurementListComponent implements OnInit {
       this.unitEditData = event.data;
       this.unitAddOrEditOpenState = 'in';
     }
+  }
+
+  private onDeleteUnit(unit: any) {}
+
+  private onSetIsDefault(unit: any) {
+    this.unitMeasurementService
+      .updateUnitMeasurement$({
+        id: unit.id,
+        isDefault: false
+      })
+      .subscribe((res: any) => {
+        this.addEditCopyForm$.next({
+          action: 'setAsDefault',
+          form: res
+        });
+      });
   }
 }
