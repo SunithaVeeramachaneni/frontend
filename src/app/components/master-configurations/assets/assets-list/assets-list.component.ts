@@ -288,6 +288,7 @@ export class AssetsListComponent implements OnInit {
               text: 'Assets deleted successfully!',
               type: 'success'
             });
+            form.action = 'add';
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -298,8 +299,6 @@ export class AssetsListComponent implements OnInit {
         return initial;
       })
     );
-
-    this.assets$.subscribe(console.log);
   }
 
   getAssets() {
@@ -355,6 +354,7 @@ export class AssetsListComponent implements OnInit {
         type: 'success'
       });
     }
+    this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
   prepareMenuActions(): void {

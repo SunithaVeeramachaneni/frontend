@@ -110,7 +110,10 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
         .get('image')
         .setValue('assets/master-configurations/default-asset.png');
       this.assetService.createAssets$(this.assetForm.value).subscribe((res) => {
-        this.createdAssetsData.emit(res);
+        this.createdAssetsData.emit({
+          status: this.assetStatus,
+          data: res
+        });
         this.assetForm.reset();
         this.slideInOut.emit('out');
       });
