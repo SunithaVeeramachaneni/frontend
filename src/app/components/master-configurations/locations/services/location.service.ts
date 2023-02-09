@@ -139,7 +139,7 @@ export class LocationService {
       environment.masterApiUrl,
       'api/v1/download-sample-location',
       info,
-      false,
+      true,
       {}
     );
   }

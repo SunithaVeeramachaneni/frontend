@@ -460,6 +460,9 @@ export class LocationsListComponent implements OnInit {
   exportAsXLSX(): void {
     this.locationService
       .downloadSampleLocationTemplate()
-      .pipe(tap((data) => downloadFile(data, 'Location_Sample_Template')));
+      .pipe(tap((data) => {
+        console.log(data)
+        downloadFile(data, 'Location_Sample_Template')
+      })).subscribe();
   }
 }

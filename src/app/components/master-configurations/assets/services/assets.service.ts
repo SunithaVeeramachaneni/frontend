@@ -146,7 +146,7 @@ export class AssetsService {
       environment.masterApiUrl,
       'api/v1/download-sample-assets',
       info,
-      false,
+      true,
       {}
     );
   }
