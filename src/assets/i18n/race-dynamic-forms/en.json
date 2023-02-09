@@ -128,5 +128,10 @@
   "upperLimitTxt": "Upper Limit",
   "upperLimitConditionTxt": "When answer is greater than Upper Limit",
   "addFormDesc": "Add Form description",
-  "enterMessage": "Enter message here"
+  "enterMessage": "Enter message here",
+  "download": "Download",
+  "status": "Status",
+  "location": "Location",
+  "lastEditedBy": "Last Edited by",
+  "viewReport": "View Report"
 }

@@ -118,5 +118,10 @@
   "upperLimitConditionTxt": "When answer is greater than Upper Limit",
   "selectRoundPlan": "Select Round Plan",
   "addFormDesc": "Add Round Plan description",
-  "enterMessage": "Enter message here"
+  "enterMessage": "Enter message here",
+  "download": "Download",
+  "status": "Status",
+  "location": "Location",
+  "lastEditedBy": "Last Edited by",
+  "viewReport": "View Report"
 }
