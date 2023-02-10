@@ -46,7 +46,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     unitList: null,
     rows: []
   };
-  public unitType: string;
+  public unitType: string='';
   public measurementList: string[];
   errors: ValidationError = {};
   public unitMeasurementForm = new FormGroup({
@@ -55,6 +55,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   public units: FormArray;
   public isEditMeasurement = true;
   public isEditForm = false;
+  public isSubmittedForm = false;
   isLoading = false;
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -88,6 +89,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   cancel(): void {
     this.initForm();
     this.unitType = '';
+    this.isSubmittedForm = false;
     this.slideInOut.emit('out');
   }
 
@@ -101,6 +103,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           });
       }
     );
+    this.isSubmittedForm = true;
     if (
       this.unitMeasurementForm?.get('units')?.invalid ||
       this.unitMeasurementForm?.get('units')?.value?.length === 0

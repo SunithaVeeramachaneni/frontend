@@ -25,7 +25,13 @@
           {{ unit }}
         </mat-option>
       </mat-select>
+
     </mat-form-field>
+    <mat-error class="m-l-5 m-t-2" style="color: red;" *ngIf="!unitType && isSubmittedForm">
+      {{
+        'selectmsg' | translate | uppercase
+      }}
+    </mat-error>
   </p>
   <div class="m-l-5 m-t-5 display-flex" *ngIf="unitEditData">
     <div class="show-measurement">
@@ -128,7 +134,6 @@
     color="primary"
     (click)="onSave()"
     class="save-btn"
-    [disabled]="unitMeasurementForm.invalid || isLoading"
   >
     {{ 'save' | translate | uppercase }}
     <mat-icon *ngIf="isLoading"
