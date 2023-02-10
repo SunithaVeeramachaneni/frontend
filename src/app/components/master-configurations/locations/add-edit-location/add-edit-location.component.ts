@@ -47,6 +47,7 @@ export class AddEditLocationComponent implements OnInit {
         parentId: this.locEditData.parentId
       };
       this.locationForm.patchValue(locdata);
+      this.getAllLocations();
     }
   }
   get locationEditData() {
@@ -79,43 +80,16 @@ export class AddEditLocationComponent implements OnInit {
       description: '',
       parentId: ''
     });
-    this.getAllParent();
+    this.getAllLocations();
   }
 
-  getAllParent() {
-    const locationsOnLoadSearch$ = this.locationService.fetchLocations$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => this.getLocations())
-    );
-    const initial = {
-      data: []
-    };
-    this.locations$ = combineLatest([locationsOnLoadSearch$]).pipe(
-      map(([rows]) => {
-        initial.data = rows;
-        return initial;
-      })
-    );
-
-    this.locations$.subscribe((totalLocations) => {
-      this.parentInformation = totalLocations.data;
-      this.allParentsData = this.parentInformation;
-      console.log(totalLocations);
-    });
-  }
-
-  getLocations() {
-    return this.locationService
-      .getLocationsList$({
-        nextToken: null,
-        limit: 20000,
-        searchKey: '',
-        fetchType: 'load'
-      })
-      .pipe(
-        mergeMap(({ rows }) => of(rows)),
-        catchError(() => of([]))
+  getAllLocations() {
+    this.locationService.fetchAllLocations$().then((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (loc) => loc.id !== this.locEditData?.id
       );
+      this.allParentsData = this.parentInformation;
+    });
   }
 
   create() {
@@ -150,7 +124,6 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   onKey(value) {
-    console.log(value);
     this.allParentsData = this.search(value);
   }
 

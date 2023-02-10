@@ -312,8 +312,6 @@ export class LocationsListComponent implements OnInit {
         return initial;
       })
     );
-
-    this.locations$.subscribe(console.log);
   }
 
   getLocations() {
@@ -422,7 +420,6 @@ export class LocationsListComponent implements OnInit {
   };
 
   deleteLocation(location: any): void {
-    console.log(location);
     const deleteData = {
       id: location.id,
       _version: location._version
@@ -460,9 +457,11 @@ export class LocationsListComponent implements OnInit {
   exportAsXLSX(): void {
     this.locationService
       .downloadSampleLocationTemplate()
-      .pipe(tap((data) => {
-        console.log(data)
-        downloadFile(data, 'Location_Sample_Template')
-      })).subscribe();
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Location_Sample_Template');
+        })
+      )
+      .subscribe();
   }
 }
