@@ -423,12 +423,12 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitAddOrEditOpenState = 'in';
   }
 
-  showUnitDetail(row: any): void {
+  showUnitDetail(row: GetUnitMeasumentQuery): void {
     const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
       (d) => d?.unitlistID === row?.unitlistID
     );
     this.unitEditData = {
-      unitType: row?.unitType,
+      unitList: row?.unitList,
       rows: result
     };
     this.unitAddOrEditOpenState = 'in';

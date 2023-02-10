@@ -7,6 +7,8 @@ import {
   CreateUnitMeasumentInput,
   ListUnitMeasumentsQuery,
   ModelUnitListFilterInput,
+  UpdateUnitListInput,
+  UpdateUnitListMutation,
   UpdateUnitMeasumentInput,
   UpdateUnitMeasumentMutation
 } from 'src/app/API.service';
@@ -85,6 +87,12 @@ export class UnitMeasurementService {
         isActive: true
       })
     );
+  }
+
+  updateUnitList$(
+    input: UpdateUnitListInput
+  ): Observable<UpdateUnitListMutation> {
+    return from(this.awsApiService.UpdateUnitList(input));
   }
 
   updateUnitMeasurement$(
