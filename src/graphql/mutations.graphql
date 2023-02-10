@@ -21,6 +21,7 @@ mutation CreateUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version
@@ -50,6 +51,7 @@ mutation UpdateUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version
@@ -79,6 +81,7 @@ mutation DeleteUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version

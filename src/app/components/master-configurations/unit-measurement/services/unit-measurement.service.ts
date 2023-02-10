@@ -82,7 +82,8 @@ export class UnitMeasurementService {
       this.awsApiService.CreateUnitMeasument({
         ...input,
         isDefault: false,
-        isDeleted: false
+        isDeleted: false,
+        isActive: true
       })
     );
   }
@@ -105,7 +106,8 @@ export class UnitMeasurementService {
       ...item,
       noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
       unitType: item?.unitList?.name,
-      isDefaultText: item.isDefault ? 'Default' : ''
+      isDefaultText: item.isDefault ? 'Default' : '',
+      isActive: item.isActive || false
     }));
     console.log(
       '🚀 ~ file: unit-measurement.service.ts:64 ~ UnitMeasurementService ~ rows ~ rows',
@@ -135,6 +137,7 @@ export class UnitMeasurementService {
             symbol
             isDefault
             isDeleted
+            isActive
             unitlistID
             searchTerm
             createdAt

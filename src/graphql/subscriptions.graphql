@@ -20,6 +20,7 @@ subscription OnCreateUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version
@@ -48,6 +49,7 @@ subscription OnUpdateUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version
@@ -76,6 +78,7 @@ subscription OnDeleteUnitMeasument(
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version

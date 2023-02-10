@@ -37,6 +37,7 @@ import { UnitOfMeasurementDetailViewComponent } from './unit-measurement/uom-det
 import { MatDialogModule } from '@angular/material/dialog';
 import { EditUnitPopupComponent } from './unit-measurement/edit-unit-popup/edit-unit-popup.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { UnitOfMeasurementDeleteModalComponent } from './unit-measurement/uom-delete-modal/uom-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -55,7 +56,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditLocationComponent,
     AddEditUnitOfMeasurementComponent,
     UnitOfMeasurementDetailViewComponent,
-    EditUnitPopupComponent
+    EditUnitPopupComponent,
+    UnitOfMeasurementDeleteModalComponent
   ],
   imports: [
     FormsModule,

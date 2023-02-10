@@ -1,7 +1,12 @@
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
@@ -44,7 +49,7 @@ export class EditUnitPopupComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]
     ],
-    isDeleted: [false, [Validators.required]]
+    isActive: [false, [Validators.required]]
   });
   constructor(
     private readonly dialogRef: MatDialogRef<EditUnitPopupComponent>,
@@ -56,11 +61,15 @@ export class EditUnitPopupComponent implements OnInit {
   ngOnInit(): void {
     this.measurementList = this.unitOfMeasurementService.measurementList;
     if (this.formData) {
+      console.log(
+        '🚀 ~ file: edit-unit-popup.component.ts:59 ~ EditUnitPopupComponent ~ ngOnInit ~ this.formData',
+        this.formData
+      );
       this.unitForm.patchValue({
         unitType: this.formData?.unitType,
         symbol: this.formData?.symbol,
         description: this.formData?.description,
-        isDeleted: this.formData?.isDeleted
+        isActive: this.formData?.isActive
       });
     }
   }
@@ -69,7 +78,20 @@ export class EditUnitPopupComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
+  markAsTouched(group: FormGroup) {
+    group.markAsTouched({ onlySelf: true });
+    Object.keys(group.controls).map((field) => {
+      const control = group.get(field);
+      if (control instanceof FormControl) {
+        control.markAsTouched({ onlySelf: true });
+      } else if (control instanceof FormGroup) {
+        this.markAsTouched(control);
+      }
+    });
+  }
+
   onSave(data) {
+    this.markAsTouched(this.unitForm);
     if (this.unitForm.invalid) {
       return;
     }
@@ -79,16 +101,16 @@ export class EditUnitPopupComponent implements OnInit {
       unitType: this.unitForm.value.unitType,
       symbol: this.unitForm.value.symbol,
       description: this.unitForm.value.description,
-      isDeleted: this.unitForm.value.isDeleted
+      isActive: this.unitForm.value.isActive
     });
   }
 
   processValidationErrors(controlName: string): boolean {
-    const touched = this.unitForm?.get(controlName).touched;
-    const errors = this.unitForm?.get(controlName).errors;
+    const touched = this.unitForm?.get(controlName)?.touched;
+    const errors = this.unitForm?.get(controlName)?.errors;
     this.errors[controlName] = null;
     if (touched && errors) {
-      Object.keys(errors).forEach((messageKey) => {
+      Object.keys(errors)?.forEach((messageKey) => {
         this.errors[controlName] = {
           name: messageKey,
           length: errors[messageKey]?.requiredLength

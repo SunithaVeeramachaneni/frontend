@@ -86,21 +86,21 @@
 
             <mat-label class="status">{{ 'status' | translate }}</mat-label>
             <mat-slide-toggle
-              formControlName="isDeleted"
-              [checked]="unitForm.value.isDeleted"
+              formControlName="isActive"
+              [checked]="unitForm.value.isActive"
             >
-              {{ unitForm.value.isDeleted ? 'InActive' : 'Active' }}
+              {{ unitForm.value.isActive ? 'Active' : 'InActive' }}
             </mat-slide-toggle>
             <mat-error
-              *ngIf="processValidationErrors('isDeleted')"
+              *ngIf="processValidationErrors('isActive')"
               class="m-t-5 error-fields"
             >
               {{
-                errors?.isDeleted?.name
+                errors?.isActive?.name
                   | translate
                     : {
-                        name: 'isDeleted' | translate,
-                        length: errors?.isDeleted?.length
+                        name: 'isActive' | translate,
+                        length: errors?.isActive?.length
                       }
               }}
             </mat-error>

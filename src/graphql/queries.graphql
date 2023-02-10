@@ -18,6 +18,7 @@ query GetUnitMeasument($id: ID!) {
       _deleted
       _lastChangedAt
     }
+    isActive
     createdAt
     updatedAt
     _version
@@ -39,6 +40,7 @@ query ListUnitMeasuments(
       isDeleted
       unitlistID
       searchTerm
+      isActive
       createdAt
       updatedAt
       _version
@@ -69,6 +71,7 @@ query SyncUnitMeasuments(
       isDeleted
       unitlistID
       searchTerm
+      isActive
       createdAt
       updatedAt
       _version
@@ -101,6 +104,7 @@ query UnitMeasumentsByUnitlistID(
       isDeleted
       unitlistID
       searchTerm
+      isActive
       createdAt
       updatedAt
       _version

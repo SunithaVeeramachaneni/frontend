@@ -39,9 +39,10 @@ import { GetUnitMeasumentQuery } from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
 import { MatDialog } from '@angular/material/dialog';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
+import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 
 export interface FormTableUpdate {
-  action: 'add' | 'delete' | 'edit' | 'setAsDefault' | null;
+  action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
   form: GetUnitMeasumentQuery;
 }
 
@@ -70,9 +71,6 @@ export interface FormTableUpdate {
   ]
 })
 export class UnitMeasurementListComponent implements OnInit {
-  public menuState = 'out';
-  submissionSlider = 'out';
-
   columns: Column[] = [
     {
       id: 'unitType',
@@ -171,7 +169,7 @@ export class UnitMeasurementListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'isDeleted',
+      id: 'isActive',
       displayName: 'Status',
       type: 'string',
       order: 5,
@@ -190,7 +188,7 @@ export class UnitMeasurementListComponent implements OnInit {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasConditionalStyles: false
     }
   ];
 
@@ -272,6 +270,9 @@ export class UnitMeasurementListComponent implements OnInit {
       case 'unitType':
         this.showUnitDetail(row);
         break;
+      case 'isActive':
+        this.onChangeStatus(row);
+        break;
       default:
     }
   };
@@ -321,20 +322,25 @@ export class UnitMeasurementListComponent implements OnInit {
               text: 'UOM deleted successfully!',
               type: 'success'
             });
+            form.action = null;
           } else if (form.action === 'edit') {
-            // const idx = initial.data.findIndex((d) => d?.id === form?.form?.id);
-            // if (idx !== -1) {
-            //   initial.data[idx] = form.form;
-            // }
             this.toast.show({
               text: 'UOM edited successfully!',
               type: 'success'
             });
+            form.action = null;
+          } else if (form.action === 'status') {
+            this.toast.show({
+              text: 'UOM status changed successfully!',
+              type: 'success'
+            });
+            form.action = null;
           } else if (form.action === 'setAsDefault') {
             this.toast.show({
               text: 'UOM set as default successfully!',
               type: 'success'
             });
+            form.action = null;
           } else {
             initial.data = initial.data.concat(scrollData);
           }
@@ -388,8 +394,6 @@ export class UnitMeasurementListComponent implements OnInit {
   handleTableEvent = (event): void => {
     this.fetchUOM$.next(event);
   };
-
-  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
@@ -457,19 +461,30 @@ export class UnitMeasurementListComponent implements OnInit {
     }
   }
 
-  private onDeleteUnit(unit: GetUnitMeasumentQuery) {
-    this.unitMeasurementService
-      .updateUnitMeasurement$({
-        id: unit.id,
-        isDeleted: true,
-        _version: unit._version
-      })
-      .subscribe((res: GetUnitMeasumentQuery) => {
-        this.addEditCopyForm$.next({
-          action: 'delete',
-          form: res
-        });
-      });
+  private onDeleteUnit(data: GetUnitMeasumentQuery) {
+    const deleteReportRef = this.dialog.open(
+      UnitOfMeasurementDeleteModalComponent,
+      {
+        data
+      }
+    );
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res === 'delete') {
+        this.unitMeasurementService
+          .updateUnitMeasurement$({
+            id: data.id,
+            isDeleted: true,
+            _version: data._version
+          })
+          .subscribe((result) => {
+            this.addEditCopyForm$.next({
+              action: 'delete',
+              form: result
+            });
+          });
+      }
+    });
   }
 
   private onSetIsDefault(unit: GetUnitMeasumentQuery) {
@@ -499,7 +514,7 @@ export class UnitMeasurementListComponent implements OnInit {
             id: res?.id,
             symbol: res?.symbol,
             description: res?.description,
-            isDeleted: res?.isDeleted,
+            isActive: res?.isActive === null ? true : res?.isActive,
             unitlistID: res?.unitlistID,
             searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
             _version: res?._version
@@ -553,5 +568,21 @@ export class UnitMeasurementListComponent implements OnInit {
         this.fetchUOM$.next({ data: 'load' });
       }
     }
+  }
+
+  private onChangeStatus(unit: GetUnitMeasumentQuery) {
+    this.unitMeasurementService
+      .updateUnitMeasurement$({
+        id: unit?.id,
+        isActive: unit?.isActive ? false : true,
+        _version: unit?._version
+      })
+      .subscribe((result) => {
+        this.addEditCopyForm$.next({
+          action: 'status',
+          form: result
+        });
+        this.fetchUOM$.next({ data: 'load' });
+      });
   }
 }

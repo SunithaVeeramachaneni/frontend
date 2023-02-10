@@ -65,6 +65,7 @@ export type CreateUnitMeasumentInput = {
   isDeleted?: boolean | null;
   unitlistID: string;
   searchTerm?: string | null;
+  isActive?: boolean | null;
   _version?: number | null;
 };
 
@@ -75,6 +76,7 @@ export type ModelUnitMeasumentConditionInput = {
   isDeleted?: ModelBooleanInput | null;
   unitlistID?: ModelIDInput | null;
   searchTerm?: ModelStringInput | null;
+  isActive?: ModelBooleanInput | null;
   and?: Array<ModelUnitMeasumentConditionInput | null> | null;
   or?: Array<ModelUnitMeasumentConditionInput | null> | null;
   not?: ModelUnitMeasumentConditionInput | null;
@@ -152,6 +154,7 @@ export type UnitMeasument = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: UnitList | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -187,6 +190,7 @@ export type UpdateUnitMeasumentInput = {
   isDeleted?: boolean | null;
   unitlistID?: string | null;
   searchTerm?: string | null;
+  isActive?: boolean | null;
   _version?: number | null;
 };
 
@@ -1095,6 +1099,7 @@ export type ModelUnitMeasumentFilterInput = {
   isDeleted?: ModelBooleanInput | null;
   unitlistID?: ModelIDInput | null;
   searchTerm?: ModelStringInput | null;
+  isActive?: ModelBooleanInput | null;
   and?: Array<ModelUnitMeasumentFilterInput | null> | null;
   or?: Array<ModelUnitMeasumentFilterInput | null> | null;
   not?: ModelUnitMeasumentFilterInput | null;
@@ -1369,6 +1374,7 @@ export type ModelSubscriptionUnitMeasumentFilterInput = {
   isDeleted?: ModelSubscriptionBooleanInput | null;
   unitlistID?: ModelSubscriptionIDInput | null;
   searchTerm?: ModelSubscriptionStringInput | null;
+  isActive?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
   or?: Array<ModelSubscriptionUnitMeasumentFilterInput | null> | null;
 };
@@ -1626,6 +1632,7 @@ export type CreateUnitMeasumentMutation = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1653,6 +1660,7 @@ export type UpdateUnitMeasumentMutation = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1680,6 +1688,7 @@ export type DeleteUnitMeasumentMutation = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2568,6 +2577,7 @@ export type GetUnitMeasumentQuery = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2586,6 +2596,7 @@ export type ListUnitMeasumentsQuery = {
     isDeleted?: boolean | null;
     unitlistID: string;
     searchTerm?: string | null;
+    isActive?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2607,6 +2618,7 @@ export type SyncUnitMeasumentsQuery = {
     isDeleted?: boolean | null;
     unitlistID: string;
     searchTerm?: string | null;
+    isActive?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -2628,6 +2640,7 @@ export type UnitMeasumentsByUnitlistIDQuery = {
     isDeleted?: boolean | null;
     unitlistID: string;
     searchTerm?: string | null;
+    isActive?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -3717,6 +3730,7 @@ export type OnCreateUnitMeasumentSubscription = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3744,6 +3758,7 @@ export type OnUpdateUnitMeasumentSubscription = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -3771,6 +3786,7 @@ export type OnDeleteUnitMeasumentSubscription = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
   } | null;
+  isActive?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -4668,6 +4684,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -4711,6 +4728,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -4754,6 +4772,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -6363,6 +6382,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -6395,6 +6415,7 @@ export class APIService {
             isDeleted
             unitlistID
             searchTerm
+            isActive
             createdAt
             updatedAt
             _version
@@ -6438,6 +6459,7 @@ export class APIService {
             isDeleted
             unitlistID
             searchTerm
+            isActive
             createdAt
             updatedAt
             _version
@@ -6485,6 +6507,7 @@ export class APIService {
             isDeleted
             unitlistID
             searchTerm
+            isActive
             createdAt
             updatedAt
             _version
@@ -8654,6 +8677,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -8700,6 +8724,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version
@@ -8746,6 +8771,7 @@ export class APIService {
             _deleted
             _lastChangedAt
           }
+          isActive
           createdAt
           updatedAt
           _version

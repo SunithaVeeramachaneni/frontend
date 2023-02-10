@@ -19,6 +19,7 @@ type EagerUnitMeasument = {
   readonly unitlistID: string;
   readonly searchTerm?: string | null;
   readonly unitList?: UnitList | null;
+  readonly isActive?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -36,6 +37,7 @@ type LazyUnitMeasument = {
   readonly unitlistID: string;
   readonly searchTerm?: string | null;
   readonly unitList: AsyncItem<UnitList | undefined>;
+  readonly isActive?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
