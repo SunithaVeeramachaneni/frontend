@@ -459,15 +459,10 @@ export class LocationsListComponent implements OnInit {
       .downloadSampleLocationTemplate()
       .pipe(
         tap((data) => {
-<<<<<<< HEAD
-          console.log(data);
-=======
->>>>>>> 5ce69c89aeb0fc9caf14a9a9d9e113d727d12f48
           downloadFile(data, 'Location_Sample_Template');
         })
       )
       .subscribe();
-<<<<<<< HEAD
   }
 
   uploadFile(event) {
@@ -491,7 +486,5 @@ export class LocationsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-=======
->>>>>>> 5ce69c89aeb0fc9caf14a9a9d9e113d727d12f48
   }
 }
