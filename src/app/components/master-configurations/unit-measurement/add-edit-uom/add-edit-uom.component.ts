@@ -1,5 +1,5 @@
-import { OnChanges, SimpleChanges } from '@angular/core';
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { OnChanges, SimpleChanges } from '@angular/core';
 import {
   Component,
   EventEmitter,
@@ -8,12 +8,23 @@ import {
   Output,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import { forkJoin } from 'rxjs';
+
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
-import { CreateUnitListMutation } from 'src/app/API.service';
-import { forkJoin } from 'rxjs';
+import {
+  CreateUnitListMutation,
+  GetUnitMeasumentQuery
+} from 'src/app/API.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -24,41 +35,61 @@ import { forkJoin } from 'rxjs';
 export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createUnitData: EventEmitter<any> = new EventEmitter();
-  @Input() set unitEditData(data) {
-    // eslint-disable-next-line no-underscore-dangle
-    this._unitEditData = data;
-  }
-  _unitEditData: any;
+  @Input() unitEditData: {
+    unitType: string;
+    rows: GetUnitMeasumentQuery[];
+  } = {
+    unitType: null,
+    rows: []
+  };
   public unitOfMeasurement: string;
   public measurementList: any[];
   errors: ValidationError = {};
-  public unitMeasurment: FormGroup;
+  public unitMeasurementForm: FormGroup;
   public units: FormArray;
 
   constructor(
     private formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService
-  ) {}
+  ) {
+    this.initForm();
+  }
 
-  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.unitEditData?.rows?.length > 0) {
+      this.unitOfMeasurement = this.unitEditData?.unitType ?? '';
+      const units = this.unitMeasurementForm.get('units') as FormArray;
+      this.unitEditData?.rows?.forEach(() => this.addNewUmo());
+      this.unitEditData?.rows?.forEach((row, idx) => {
+        units?.at(idx)?.patchValue({
+          description: row?.description ?? '',
+          symbol: row?.symbol ?? ''
+        });
+      });
+    }
+  }
 
   ngOnInit(): void {
-    this.measurementList = ['Length', 'Area', 'Volume', 'Temperature'];
-    this.initForm();
+    this.measurementList = this.unitOfMeasurementService.measurementList;
   }
 
   cancel() {
     this.initForm();
+    this.unitOfMeasurement = '';
     this.slideInOut.emit('out');
   }
 
   onSave() {
-    const units = this.unitMeasurment.get('units').value;
-    if (
-      this.unitMeasurment.invalid ||
-      units?.length === 0 ||
-      !this.unitOfMeasurement
-    ) {
+    (<FormArray>this.unitMeasurementForm?.get('units'))?.controls?.forEach(
+      (group: any) => {
+        (<any>Object)
+          .values(group.controls)
+          ?.forEach((control: FormControl) => {
+            control?.markAsTouched();
+          });
+      }
+    );
+    if (this.unitMeasurementForm.get('units').invalid) {
       return;
     }
     this.unitOfMeasurementService
@@ -80,11 +111,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
 
   onMeasurementChange = ($event) => {
     this.initForm();
-    console.log($event);
     this.addNewUmo();
   };
+
   initForm() {
-    this.unitMeasurment = new FormGroup({
+    this.unitMeasurementForm = new FormGroup({
       units: new FormArray([])
     });
   }
@@ -115,17 +146,22 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   addNewUmo(): void {
-    this.units = this.unitMeasurment.get('units') as FormArray;
+    if (!this.unitOfMeasurement) {
+      return;
+    }
+    this.units = this.unitMeasurementForm.get('units') as FormArray;
     this.units.push(this.createUnit());
   }
 
-  processValidationErrors(index: any, controlName: string): boolean {
-    const touched = (<FormArray>this.unitMeasurment.get('units'))
+  processValidationErrors(index: number, controlName: string): boolean {
+    const touched: boolean = (<FormArray>this.unitMeasurementForm?.get('units'))
       .at(index)
       .get(controlName).touched;
-    const errors = (<FormArray>this.unitMeasurment.get('units'))
+    const errors: ValidationErrors = (<FormArray>(
+      this.unitMeasurementForm?.get('units')
+    ))
       .at(index)
-      .get(controlName).errors;
+      .get(controlName)?.errors;
     this.errors[controlName] = null;
     if (touched && errors) {
       Object.keys(errors).forEach((messageKey) => {
@@ -139,20 +175,22 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   private createUnitListItems(response: CreateUnitListMutation) {
-    const units = this.unitMeasurment?.get('units')?.value;
+    const units = this.unitMeasurementForm?.get('units')?.value;
     const unitObservables = [];
     units?.forEach((element) => {
       unitObservables.push(
         this.unitOfMeasurementService.createUnitOfMeasurement$({
           unitlistID: response?.id,
-          description: element?.description,
-          searchTerm: `${element?.description?.toLowerCase()} ${response?.name?.toLowerCase()}`,
-          symbol: element?.symbol
+          description: element?.description ?? '',
+          searchTerm: `${element?.description?.toLowerCase() ?? ''} ${
+            response?.name?.toLowerCase() ?? ''
+          }`,
+          symbol: element?.symbol ?? ''
         })
       );
     });
     forkJoin(unitObservables).subscribe(() => {
-      this.unitMeasurment.reset();
+      this.unitMeasurementForm.reset();
       this.unitOfMeasurement = '';
       this.slideInOut.emit('out');
     });

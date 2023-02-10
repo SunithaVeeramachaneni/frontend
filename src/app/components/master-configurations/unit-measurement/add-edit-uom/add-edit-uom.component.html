@@ -19,6 +19,7 @@
         [(ngModel)]="unitOfMeasurement"
         name="unitOfMeasurement"
         (selectionChange)="onMeasurementChange($event)"
+        [(value)]="unitOfMeasurement"
       >
         <mat-option *ngFor="let unit of measurementList" [value]="unit">
           {{ unit }}
@@ -28,14 +29,17 @@
   </p>
 
   <div
-    [formGroup]="unitMeasurment"
+    [formGroup]="unitMeasurementForm"
     class="custom-form-field-white-color"
     style="margin-top: 15px"
   >
     <div
       class="input-container"
       formArrayName="units"
-      *ngFor="let item of unitMeasurment.get('units').controls; let i = index"
+      *ngFor="
+        let item of unitMeasurementForm?.get('units')?.controls;
+        let i = index
+      "
     >
       <div [formGroupName]="i">
         <mat-form-field appearance="outline" class="m-b-10 m-l-5 description">
@@ -77,7 +81,7 @@
   </div>
 
   <span (click)="addNewUmo()" class="add-new-btn">
-    <img src="assets/img/add-new.svg" class="add-new-icon" />
+    <img src="assets/img/add-new.svg" alt="add-new-icon" class="add-new-icon" />
     <label>Add new</label>
   </span>
 </div>
@@ -91,7 +95,7 @@
     color="primary"
     (click)="onSave()"
     class="save-btn"
-    [disabled]="unitMeasurment.invalid"
+    [disabled]="unitMeasurementForm.invalid"
   >
     {{ 'save' | translate | uppercase }}
   </button>

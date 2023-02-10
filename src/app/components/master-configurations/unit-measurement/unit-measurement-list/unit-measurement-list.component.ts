@@ -90,7 +90,7 @@ export class UnitMeasurementListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#3D5AFE'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -268,18 +268,9 @@ export class UnitMeasurementListComponent implements OnInit {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
-    console.log(
-      '🚀 ~ file: unit-measurement-list.component.ts:265 ~ UnitMeasurementListComponent ~ columnId',
-      columnId
-    );
     switch (columnId) {
       case 'unitType':
-      case 'description':
-      case 'isDeleted':
-        this.showLocationDetail(row);
-        break;
-      case 'isDeleted':
-        this.onChangeUnitStatus(row);
+        this.showUnitDetail(row);
         break;
       default:
     }
@@ -423,26 +414,25 @@ export class UnitMeasurementListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  addManually() {
+  addManually(): void {
+    this.unitEditData = null;
     this.unitAddOrEditOpenState = 'in';
   }
 
-  showLocationDetail(row: any): void {
-    this.selectedUnit = row;
-    this.openUomDetailedView = 'in';
+  showUnitDetail(row: any): void {
+    const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
+      (d) => d?.unitlistID === row?.unitlistID
+    );
+    this.unitEditData = {
+      unitType: row?.unitType,
+      rows: result
+    };
+    this.unitAddOrEditOpenState = 'in';
   }
 
   onCloseLocationAddOrEditOpenState(event) {
     this.unitAddOrEditOpenState = event;
     this.fetchUOM$.next({ data: 'load' });
-  }
-
-  onCloseLocationDetailedView(event) {
-    this.openUomDetailedView = event.status;
-    if (event.data !== '') {
-      this.unitEditData = event.data;
-      this.unitAddOrEditOpenState = 'in';
-    }
   }
 
   addOrUpdateUnit(locationData) {
@@ -465,10 +455,6 @@ export class UnitMeasurementListComponent implements OnInit {
       this.unitEditData = event.data;
       this.unitAddOrEditOpenState = 'in';
     }
-  }
-
-  private onChangeUnitStatus(unit: GetUnitMeasumentQuery) {
-    // TODO: open popup and edit unit details
   }
 
   private onDeleteUnit(unit: GetUnitMeasumentQuery) {

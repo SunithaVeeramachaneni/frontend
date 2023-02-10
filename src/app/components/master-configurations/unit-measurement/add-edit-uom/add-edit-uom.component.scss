@@ -70,7 +70,7 @@
 .save-btn {
   margin-right: 20px;
   background-color: #1351d8;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .cancel-btn {
@@ -101,14 +101,14 @@
 }
 .description {
   width: 45%;
-  input{
+  input {
     color: rgb(8, 7, 7);
   }
 }
 
 .symbol {
   width: 45%;
-  input{
+  input {
     color: rgb(8, 7, 7);
   }
 }

@@ -48,6 +48,7 @@
           mat-raised-button
           [matMenuTriggerFor]="moreMenu"
           class="more-btn"
+          disabled
         >
           <mat-icon>more_horiz</mat-icon>
         </button>
@@ -88,13 +89,13 @@
     ></app-add-edit-uom>
   </ng-container>
 
-  <ng-container *ngIf="openUomDetailedView">
+  <!-- <ng-container *ngIf="openUomDetailedView">
     <app-uom-detail-view
       [@slideInOut]="openUomDetailedView"
       (slideInOut)="onCloseUnitDetailedView($event)"
       [selectedUnit]="selectedUnit"
     ></app-uom-detail-view>
-  </ng-container>
+  </ng-container> -->
 
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
