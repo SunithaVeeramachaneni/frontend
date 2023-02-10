@@ -32,7 +32,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Unit of Measurement' },
-          permissions: [permissions.viewAssets]
+          permissions: [permissions.viewUnitOfMeasurement]
         }
       }
     ]
