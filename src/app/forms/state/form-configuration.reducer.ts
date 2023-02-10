@@ -89,7 +89,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => {
-      if(action.authoredFormDetail == null) {
+      if(action.authoredFormDetail === null) {
         return state;
       } else {
         return {...state,
