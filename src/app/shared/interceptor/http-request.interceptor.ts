@@ -12,6 +12,7 @@ import { CommonService } from '../services/common.service';
 import * as hash from 'object-hash';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 import { AuthConfigService } from 'src/app/auth-config.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'

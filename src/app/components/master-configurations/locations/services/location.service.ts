@@ -87,7 +87,8 @@ export class LocationService {
         description: formLocationQuery.description,
         model: formLocationQuery.model,
         locationId: formLocationQuery.locationId,
-        parentId: formLocationQuery.parentId
+        parentId: formLocationQuery.parentId,
+        searchTerm: formLocationQuery.name.toLowerCase()
       })
     );
   }
@@ -149,5 +150,17 @@ export class LocationService {
       rows,
       nextToken
     };
+  }
+
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterApiUrl,
+      'api/v1/location-excel-upload',
+      form,
+      info
+    );
   }
 }

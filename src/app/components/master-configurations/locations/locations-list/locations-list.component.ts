@@ -341,7 +341,7 @@ export class LocationsListComponent implements OnInit {
     if (locationData?.status === 'add') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        // this.locationService.fetchLocations$.next({ data: 'search' });
+        this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'add',
@@ -463,5 +463,28 @@ export class LocationsListComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  uploadFile(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.locationService.uploadExcel(formData).subscribe((resp) => {
+      if (resp.status == 200) {
+        for (const item of resp.data) {
+          this.locationService.createLocation$(item).subscribe((res) => {
+            this.addOrUpdateLocation({
+              status: 'add',
+              data: res
+            });
+          });
+        }
+      }
+    });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }

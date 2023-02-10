@@ -26,7 +26,7 @@
           class="create-new-btn"
         ></button>
         <mat-menu #createMenu="matMenu">
-          <button mat-menu-item class="menu-buttons" disabled>
+          <button mat-menu-item (click)="uploader.click()" class="menu-buttons">
             <img
               src="assets/master-configurations/upload-from-excel.svg"
               alt="Excel"
@@ -61,6 +61,15 @@
             <span translate="downloadTemplate"></span>
           </button>
         </mat-menu>
+        <input
+          id="upload"
+          hidden
+          type="file"
+          #uploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+          (change)="uploadFile($event)"
+          (click)="resetFile($event)"
+        />
       </div>
     </div>
 
