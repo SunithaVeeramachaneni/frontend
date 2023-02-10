@@ -7,6 +7,8 @@ import {
   ElementRef,
   ChangeDetectorRef
 } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
+
 import {
   FormBuilder,
   FormControl,
@@ -75,7 +77,16 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
   selector: 'app-round-plan-configuration',
   templateUrl: './round-plan-configuration.component.html',
   styleUrls: ['./round-plan-configuration.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('previewSlide', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('100ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [animate('100ms ease-out', style({ opacity: 0 }))])
+    ])
+  ]
 })
 export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
@@ -110,6 +121,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   selectedNode: any;
   selectedNode$: Observable<any>;
+
+  isPreviewActive = false;
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -402,6 +415,15 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/rdf-forms-icons/${imageName}-white.svg`
+      : `assets/rdf-forms-icons/${imageName}-blue.svg`;
+
+  togglePreview() {
+    this.isPreviewActive = !this.isPreviewActive;
   }
 
   editFormName() {

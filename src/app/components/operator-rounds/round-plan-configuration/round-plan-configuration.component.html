@@ -127,10 +127,18 @@
       </div>
       <button
         mat-stroked-button
-        class="import-btn"
-        translate="importBtn"
-        (click)="importTasks()"
-      ></button>
+        class="preview-btn"
+        (click)="togglePreview()"
+        [ngClass]="{ 'preview-btn-active': isPreviewActive }"
+      >
+        <span>
+          <img
+            [src]="getImage('preview', isPreviewActive)"
+            class="preview-btn-icon"
+          />
+          <span>Preview</span>
+        </span>
+      </button>
 
       <button
         mat-raised-button
@@ -150,14 +158,23 @@
     </div>
   </div>
   <div class="dis-flex form">
-    <div class="assetHierarchyContainer">
+    <div class="assetHierarchyContainer" *ngIf="!isPreviewActive">
       <app-hierarchy-container></app-hierarchy-container>
     </div>
     <div
       class="questions-responses-width"
       *ngIf="selectedNode$ | async as selectedNode"
     >
-      <span class="selectedNodeTitle">Tasks: {{ selectedNode.name }}</span>
+      <div class="selectedNode">
+        <span class="selectedNodeTitle">Tasks: {{ selectedNode.name }}</span>
+        <button
+          mat-stroked-button
+          class="import-btn"
+          translate="importBtn"
+          (click)="importTasks()"
+        ></button>
+      </div>
+
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"
@@ -298,7 +315,7 @@
         </app-page>
       </ng-container>
     </div>
-    <div class="iphone-width" *ngIf="false">
+    <div class="iphone-width m-t-20" *ngIf="isPreviewActive" @previewSlide>
       <app-iphone></app-iphone>
     </div>
   </div>
