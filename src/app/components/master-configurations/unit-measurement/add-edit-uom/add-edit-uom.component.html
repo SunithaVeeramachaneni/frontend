@@ -12,7 +12,7 @@
 </div>
 
 <div id="add-edit-slider">
-  <p class="m-l-5 m-t-5">
+  <p class="m-l-5 m-t-5"  *ngIf="!this.unitEditData">
     <mat-form-field appearance="outline" class="unit-measurement">
       <mat-label translate>unitOfMeasurement </mat-label>
       <mat-select
@@ -27,6 +27,43 @@
       </mat-select>
     </mat-form-field>
   </p>
+<div class="m-l-5 m-t-5 display-flex" *ngIf="this.unitEditData">
+  <div class="show-measurement">
+      <a class="width-90" *ngIf="!isEditMeasurement">
+        <input
+          #measurement
+          type="text"
+          [size]="measurement.value !== '' ? getSize(measurement.value) : 20"
+          class="form_title_input"
+          [(ngModel)]="unitOfMeasurement"
+          autofocus="true"
+          autocomplete="off"
+         
+          (blur)="isEditMeasurement = true"
+        />
+      </a>
+  <p *ngIf="isEditMeasurement">
+      {{unitOfMeasurement}}
+   <button
+     class="edit-icon" 
+     (click)="editMeasurement()"
+   >
+     <img
+       src="../../../../../assets/rdf-forms-icons/edit-icon.svg"
+       alt="edit-icon"
+       class="edit-icon-img"
+     />
+   </button>
+  </p>
+</div>
+  <span class="delete-icon" (click)="deleteMeasurement()">
+    <img
+      src="../../../../../assets/rdf-forms-icons/delete-icon.svg"
+      class="list-icons"
+    />
+  </span>
+</div>
+
 
   <div
     [formGroup]="unitMeasurementForm"

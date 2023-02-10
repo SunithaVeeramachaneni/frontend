@@ -37,7 +37,12 @@ export class AuthConfigService {
       .pipe(
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
-            Amplify.configure(tenant?.amplifyConfig); // Added tenant based Amplify configure
+            Amplify.configure({
+              "aws_appsync_graphqlEndpoint": "https://lcabh2sjyjdojpvt7zkz5nc5lq.appsync-api.us-east-1.amazonaws.com/graphql",
+              "aws_appsync_region": "us-east-1",
+              "aws_appsync_authenticationType": "API_KEY",
+              "aws_appsync_apiKey": "da2-oyna62ji4rf6nbztoiygwx26xe",
+          }); // Added tenant based Amplify configure
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();

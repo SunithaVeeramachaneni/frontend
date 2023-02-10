@@ -112,3 +112,37 @@
     color: rgb(8, 7, 7);
   }
 }
+.show-measurement{
+  color: rgb(8, 7, 7);
+}
+
+.edit-icon {
+  border: none;
+  background-color: transparent;
+  position: relative;
+  .edit-icon-img {
+    width: 14px;
+  }
+}
+.delete-icon{
+  margin: 0px 12px;
+
+}
+
+.display-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form_title_input {
+  border: none;
+  cursor: pointer;
+  max-width: 90%;
+  background: none;
+  text-overflow: ellipsis;
+  padding: 3px 10px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+}

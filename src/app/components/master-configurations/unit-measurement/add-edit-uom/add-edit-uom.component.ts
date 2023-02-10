@@ -47,6 +47,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   errors: ValidationError = {};
   public unitMeasurementForm: FormGroup;
   public units: FormArray;
+  public isEditMeasurement:boolean=true;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -57,6 +58,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.unitEditData?.rows?.length > 0) {
+      this.initForm();
       this.unitOfMeasurement = this.unitEditData?.unitType ?? '';
       const units = this.unitMeasurementForm.get('units') as FormArray;
       this.unitEditData?.rows?.forEach(() => this.addNewUmo());
@@ -194,5 +196,20 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       this.unitOfMeasurement = '';
       this.slideInOut.emit('out');
     });
+  }
+
+  editMeasurement = () => {
+  this.isEditMeasurement = false;
+  }
+
+  deleteMeasurement = () => {
+    console.log("delete measurement")
+  }
+
+  getSize(value) {
+    if (value && value === value.toUpperCase()) {
+      return value.length;
+    }
+    return value.length - 1;
   }
 }

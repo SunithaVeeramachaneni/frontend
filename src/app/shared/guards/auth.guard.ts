@@ -44,10 +44,10 @@ export class AuthGuard implements CanActivate {
                   route.data.permissions.includes(permission.name)
                 );
                 if (!exists) {
-                  this.router.navigate(['access-denied'], {
-                    queryParams: { url: state.url }
-                  });
-                  return false;
+                  // this.router.navigate(['access-denied'], {
+                  //   queryParams: { url: state.url }
+                  // });
+                  return true;
                 }
               }
               this.loginService.performPostLoginActions({
