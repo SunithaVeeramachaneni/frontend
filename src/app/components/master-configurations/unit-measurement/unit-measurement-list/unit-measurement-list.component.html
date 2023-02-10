@@ -87,15 +87,6 @@
       (createUnitData)="addOrUpdateUnit($event)"
     ></app-add-edit-uom>
   </ng-container>
-
-  <!-- <ng-container *ngIf="openUomDetailedView">
-    <app-uom-detail-view
-      [@slideInOut]="openUomDetailedView"
-      (slideInOut)="onCloseUnitDetailedView($event)"
-      [selectedUnit]="selectedUnit"
-    ></app-uom-detail-view>
-  </ng-container> -->
-
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">

@@ -7,6 +7,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
@@ -61,24 +62,20 @@ export class EditUnitPopupComponent implements OnInit {
   ngOnInit(): void {
     this.measurementList = this.unitOfMeasurementService.measurementList;
     if (this.formData) {
-      console.log(
-        '🚀 ~ file: edit-unit-popup.component.ts:59 ~ EditUnitPopupComponent ~ ngOnInit ~ this.formData',
-        this.formData
-      );
       this.unitForm.patchValue({
-        unitType: this.formData?.unitType,
-        symbol: this.formData?.symbol,
-        description: this.formData?.description,
-        isActive: this.formData?.isActive
+        unitType: this.formData?.unitType ?? '',
+        symbol: this.formData?.symbol ?? '',
+        description: this.formData?.description ?? '',
+        isActive: this.formData?.isActive ?? false
       });
     }
   }
 
-  cancel(data) {
+  cancel(data): void {
     this.dialogRef.close(data);
   }
 
-  markAsTouched(group: FormGroup) {
+  markAsTouched(group: FormGroup): void {
     group.markAsTouched({ onlySelf: true });
     Object.keys(group.controls).map((field) => {
       const control = group.get(field);
@@ -90,7 +87,7 @@ export class EditUnitPopupComponent implements OnInit {
     });
   }
 
-  onSave(data) {
+  onSave(data): void {
     this.markAsTouched(this.unitForm);
     if (this.unitForm.invalid) {
       return;

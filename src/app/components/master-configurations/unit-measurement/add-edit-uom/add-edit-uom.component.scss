@@ -26,7 +26,8 @@
     box-shadow: none;
   }
 
-  .cancel {
+  .cancel,
+  .add-new-btn {
     cursor: pointer;
   }
 
@@ -112,7 +113,7 @@
     color: rgb(8, 7, 7);
   }
 }
-.show-measurement{
+.show-measurement {
   color: rgb(8, 7, 7);
 }
 
@@ -124,9 +125,11 @@
     width: 14px;
   }
 }
-.delete-icon{
+.delete-icon {
   margin: 0px 12px;
-
+  img {
+    width: 15px;
+  }
 }
 
 .display-flex {

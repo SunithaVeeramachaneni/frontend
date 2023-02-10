@@ -36,7 +36,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { GetUnitMeasumentQuery } from 'src/app/API.service';
+import {
+  GetUnitMeasumentQuery,
+  UpdateUnitMeasumentMutation
+} from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
@@ -192,7 +195,6 @@ export class UnitMeasurementListComponent implements OnInit {
       hasConditionalStyles: false
     }
   ];
-
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
@@ -217,34 +219,28 @@ export class UnitMeasurementListComponent implements OnInit {
       action: null,
       form: {} as any
     });
-  formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
   searchUom: FormControl;
-  addCopyFormCount = false;
-  isPopoverOpen = false;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetUnitMeasumentQuery = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   unitOfMeasurements$: Observable<{
     columns: Column[];
-    data: any[];
+    data: GetUnitMeasumentQuery[];
   }>;
   fetchUOM$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  openUomDetailedView = 'out';
   unitAddOrEditOpenState = 'out';
-  unitEditData: any;
-  selectedUnit: any;
-  allUnitData: any[] = [];
+  unitEditData: any = null;
+  private allUnitData: GetUnitMeasumentQuery[] = [];
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
-    public dialog: MatDialog
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -434,18 +430,18 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitAddOrEditOpenState = 'in';
   }
 
-  onCloseUomAddOrEditOpenState(event) {
+  onCloseUomAddOrEditOpenState(event): void {
     this.unitAddOrEditOpenState = event;
     this.fetchUOM$.next({ data: 'load' });
   }
 
-  addOrUpdateUnit(locationData) {
-    if (locationData?.status === 'add') {
+  addOrUpdateUnit(data): void {
+    if (data?.status === 'add') {
       this.toast.show({
         text: 'Unit of Measurement created successfully!',
         type: 'success'
       });
-    } else if (locationData?.status === 'edit') {
+    } else if (data?.status === 'edit') {
       this.toast.show({
         text: 'Unit of Measurement updated successfully!',
         type: 'success'
@@ -453,15 +449,7 @@ export class UnitMeasurementListComponent implements OnInit {
     }
   }
 
-  onCloseUnitDetailedView(event) {
-    this.openUomDetailedView = event.status;
-    if (event.data !== '') {
-      this.unitEditData = event.data;
-      this.unitAddOrEditOpenState = 'in';
-    }
-  }
-
-  private onDeleteUnit(data: GetUnitMeasumentQuery) {
+  private onDeleteUnit(data: GetUnitMeasumentQuery): void {
     const deleteReportRef = this.dialog.open(
       UnitOfMeasurementDeleteModalComponent,
       {
@@ -477,17 +465,19 @@ export class UnitMeasurementListComponent implements OnInit {
             isDeleted: true,
             _version: data._version
           })
-          .subscribe((result) => {
-            this.addEditCopyForm$.next({
-              action: 'delete',
-              form: result
-            });
+          .subscribe((result: UpdateUnitMeasumentMutation) => {
+            if (result) {
+              this.addEditCopyForm$.next({
+                action: 'delete',
+                form: result
+              });
+            }
           });
       }
     });
   }
 
-  private onSetIsDefault(unit: GetUnitMeasumentQuery) {
+  private onSetIsDefault(unit: GetUnitMeasumentQuery): void {
     if (this.allUnitData?.length === 0) {
       return;
     }
@@ -498,13 +488,15 @@ export class UnitMeasurementListComponent implements OnInit {
         _version: unit._version
       })
       .subscribe((res: GetUnitMeasumentQuery) => {
-        this.updateListAfterIsDefault(res, unit);
+        if (res) {
+          this.updateListAfterIsDefault(res, unit);
+        }
       });
   }
 
-  private onEditUnit(unit: GetUnitMeasumentQuery) {
+  private onEditUnit(data: GetUnitMeasumentQuery): void {
     const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
-      data: unit
+      data
     });
 
     deleteReportRef.afterClosed().subscribe((res) => {
@@ -519,12 +511,14 @@ export class UnitMeasurementListComponent implements OnInit {
             searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
             _version: res?._version
           })
-          .subscribe((result) => {
-            this.addEditCopyForm$.next({
-              action: 'edit',
-              form: result
-            });
-            this.fetchUOM$.next({ data: 'load' });
+          .subscribe((result: UpdateUnitMeasumentMutation) => {
+            if (result) {
+              this.addEditCopyForm$.next({
+                action: 'edit',
+                form: result
+              });
+              this.fetchUOM$.next({ data: 'load' });
+            }
           });
       }
     });
@@ -533,13 +527,13 @@ export class UnitMeasurementListComponent implements OnInit {
   private updateListAfterIsDefault(
     res: GetUnitMeasumentQuery,
     unit: GetUnitMeasumentQuery
-  ) {
+  ): void {
     const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
       (d) => d?.unitlistID === unit?.unitlistID && d?.id !== unit?.id
     );
     if (result && Object.keys(result)?.length > 0) {
       const unitObservables = [];
-      result?.forEach((element) => {
+      result?.forEach((element: GetUnitMeasumentQuery) => {
         unitObservables.push(
           this.unitMeasurementService.updateUnitMeasurement$({
             id: element?.id,
@@ -566,19 +560,21 @@ export class UnitMeasurementListComponent implements OnInit {
     }
   }
 
-  private onChangeStatus(unit: GetUnitMeasumentQuery) {
+  private onChangeStatus(unit: GetUnitMeasumentQuery): void {
     this.unitMeasurementService
       .updateUnitMeasurement$({
         id: unit?.id,
         isActive: unit?.isActive ? false : true,
         _version: unit?._version
       })
-      .subscribe((result) => {
-        this.addEditCopyForm$.next({
-          action: 'status',
-          form: result
-        });
-        this.fetchUOM$.next({ data: 'load' });
+      .subscribe((result: UpdateUnitMeasumentMutation) => {
+        if (result) {
+          this.addEditCopyForm$.next({
+            action: 'status',
+            form: result
+          });
+          this.fetchUOM$.next({ data: 'load' });
+        }
       });
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
@@ -20,7 +21,7 @@ import { groupBy } from 'lodash-es';
   providedIn: 'root'
 })
 export class UnitMeasurementService {
-  measurementList = ['Length', 'Area', 'Volume', 'Temperature'];
+  measurementList = ['Length', 'Area', 'Volume', 'Temperature', 'Mass'];
   constructor(private readonly awsApiService: APIService) {}
 
   getUnitOfMeasurementList$(queryParams: {
@@ -36,7 +37,6 @@ export class UnitMeasurementService {
     ) {
       const isSearch = queryParams.fetchType === 'search';
       return from(
-        // eslint-disable-next-line no-underscore-dangle
         this._ListUnitMeasuments(
           {
             ...(queryParams.searchKey && {
@@ -103,13 +103,18 @@ export class UnitMeasurementService {
 
   private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {
     const groupedData: any = groupBy(resp?.items, 'unitList.name');
-    const rows = resp?.items?.map((item: any) => ({
-      ...item,
-      noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-      unitType: item?.unitList?.name,
-      isDefaultText: item?.isDefault ? 'Default' : '',
-      isActive: item?.isActive === null ? true : item?.isActive
-    }));
+    const rows = resp?.items
+      ?.sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      ?.map((item: any) => ({
+        ...item,
+        noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
+        unitType: item?.unitList?.name,
+        isDefaultText: item?.isDefault ? 'Default' : '',
+        isActive: item?.isActive === null ? true : item?.isActive
+      }));
     const count = rows?.length || 0;
     const nextToken = resp?.nextToken;
     return {
