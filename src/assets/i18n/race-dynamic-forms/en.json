@@ -58,6 +58,11 @@
   "cancel": "Cancel",
   "mcqHeading": "Multiple Choice Responses",
   "globalMcqHeading": "Global Response Set",
+  "hyperlink": "Hyperlink",
+  "title": "Title",
+  "untitledLink": "Untitled Link",
+  "url": "URL",
+  "isInvalidURL": "Invalid URL provided",
   "response": "Response",
   "addRes": " + Add Response",
   "addColumn": " Add Column",
@@ -70,6 +75,7 @@
   "typeQuestion": "Type Question",
   "responseTitle": "Response Title",
   "addLogicBtn": "Add Logic",
+  "addLinkBtn": "Add Link",
   "askQuestions": "Ask Questions",
   "mandateQuestions": "Mandate Questions",
   "hideQuestions": "Hide Questions",
@@ -122,5 +128,10 @@
   "upperLimitTxt": "Upper Limit",
   "upperLimitConditionTxt": "When answer is greater than Upper Limit",
   "addFormDesc": "Add Form description",
-  "enterMessage": "Enter message here"
+  "enterMessage": "Enter message here",
+  "download": "Download",
+  "status": "Status",
+  "location": "Location",
+  "lastEditedBy": "Last Edited by",
+  "viewReport": "View Report"
 }
