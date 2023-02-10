@@ -3,8 +3,9 @@ import { BehaviorSubject, from, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateAssetsInput,
-  DeleteAssetsListInput,
-  ListAssetsQuery} from 'src/app/API.service';
+  DeleteAssetsInput,
+  ListAssetsQuery
+} from 'src/app/API.service';
 import { map } from 'rxjs/operators';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 import { formatDistance } from 'date-fns';
@@ -20,8 +21,7 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  constructor(
-    private readonly awsApiService: APIService  ) {}
+  constructor(private readonly awsApiService: APIService) {}
 
   setFormCreatedUpdated(data: any) {
     this.assetsCreatedUpdatedSubject.next(data);
@@ -130,7 +130,7 @@ export class AssetsService {
     );
   }
 
-  deleteAssets$(values: DeleteAssetsListInput) {
+  deleteAssets$(values: DeleteAssetsInput) {
     return from(this.awsApiService.DeleteAssets({ ...values }));
   }
 }
