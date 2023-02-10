@@ -10,7 +10,7 @@
       <h1 class="heading">{{ locationTitle }}</h1>
     </div>
     <div>
-      <p class="m-0">Image</p>
+      <p class="m-0" translate="image"></p>
       <p>
         <img
           src="assets/master-configurations/image-placeholder.svg"
@@ -27,8 +27,12 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Name</mat-label>
-          <input matInput placeholder="Name" formControlName="name" />
+          <mat-label translate="name"></mat-label>
+          <input
+            matInput
+            [placeholder]="'name' | translate"
+            formControlName="name"
+          />
 
           <mat-error
             *ngIf="processValidationErrors('name')"
@@ -46,10 +50,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Location Id</mat-label>
+          <mat-label translate="locationId"></mat-label>
           <input
             matInput
-            placeholder="Location Id"
+            [placeholder]="'locationId' | translate"
             formControlName="locationId"
           />
           <mat-error
@@ -68,16 +72,20 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Model</mat-label>
-          <input matInput placeholder="Model" formControlName="model" />
+          <mat-label translate="model"></mat-label>
+          <input
+            matInput
+            [placeholder]="'model' | translate"
+            formControlName="model"
+          />
         </mat-form-field>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Description</mat-label>
+          <mat-label translate="description"></mat-label>
           <textarea
             matInput
-            placeholder="Description"
+            [placeholder]="'description' | translate"
             formControlName="description"
           >
           </textarea>
@@ -85,11 +93,11 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Parent</mat-label>
+          <mat-label translate="parent"></mat-label>
           <mat-select formControlName="parentId">
             <input
               class="searchable-input"
-              placeholder="Search"
+              [placeholder]="'search' | translate"
               (keyup)="onKey($event.target.value)"
             />
             <mat-option
@@ -115,9 +123,8 @@
         class="cancel-btn"
         type="button"
         (click)="cancel()"
-      >
-        Cancel
-      </button>
+        translate="cancelBtn"
+      ></button>
     </div>
   </mat-card>
 </div>

@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  OnChanges,
   Output,
   ChangeDetectionStrategy
 } from '@angular/core';
@@ -13,8 +12,6 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
@@ -25,7 +22,7 @@ import { AssetsService } from '../services/assets.service';
   styleUrls: ['./add-edit-assets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditAssetsComponent implements OnInit, OnChanges {
+export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() set assetsEditData(data) {
@@ -34,6 +31,7 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
+      this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';
       this.assetTitle = 'Edit Asset';
@@ -94,14 +92,14 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
       parentType: 'location',
       parentId: ''
     });
-  }
 
-  ngOnChanges() {
-    if (this.assetForm?.get('parentType').value === 'location') {
-      this.getAllLocations();
-    } else if (this.assetForm?.get('parentType').value === 'asset') {
-      this.getAllAssets();
-    }
+    this.assetForm.get('parentType').valueChanges.subscribe((value) => {
+      if (value === 'location') {
+        this.getAllLocations();
+      } else if (value === 'asset') {
+        this.getAllAssets();
+      }
+    });
   }
 
   create() {
@@ -122,9 +120,7 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
         data: this.assetForm.value,
         version: this.assEditData._version
       };
-      console.log(updateData);
       this.assetService.updateAssets$(updateData).subscribe((res) => {
-        console.log(res);
         this.createdAssetsData.emit({
           status: this.assetStatus,
           data: res
@@ -153,7 +149,6 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().then((allLocations) => {
-      console.log(allLocations);
       this.parentInformation = allLocations.items;
       this.allParentsData = this.parentInformation;
     });
@@ -161,11 +156,10 @@ export class AddEditAssetsComponent implements OnInit, OnChanges {
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().then((allAssets) => {
-      console.log(allAssets);
-      this.parentInformation = allAssets.items;
+      this.parentInformation = allAssets.items.filter(
+        (loc) => loc.id !== this.assEditData?.id
+      );
       this.allParentsData = this.parentInformation;
-      console.log(this.parentInformation);
-      console.log(this.allParentsData);
     });
   }
 

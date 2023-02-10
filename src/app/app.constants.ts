@@ -187,7 +187,11 @@ export const routingUrls = {
     title: 'Submissions',
     permission: permissions.viewORPlanSubmissions
   },
-
+  roundPlanArchivedForms: {
+    url: '/operator-rounds/archived',
+    title: 'Archived',
+    permission: permissions.viewArchivedORP
+  },
   masterConfiguration: {
     url: '/master-configuration',
     title: 'Master Configuration',
@@ -204,7 +208,6 @@ export const routingUrls = {
     permission: permissions.viewAssets
   }
 };
-
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',
