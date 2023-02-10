@@ -502,23 +502,30 @@ export class UnitMeasurementListComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res?.action === 'save') {
         this.unitMeasurementService
-          .updateUnitMeasurement$({
-            id: res?.id,
-            symbol: res?.symbol,
-            description: res?.description,
-            isActive: res?.isActive === null ? true : res?.isActive,
-            unitlistID: res?.unitlistID,
-            searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
-            _version: res?._version
+          .updateUnitList$({
+            id: res?.unitList?.id,
+            name: res?.unitType || res?.unitList?.name,
+            _version: res?.unitList?._version
           })
-          .subscribe((result: UpdateUnitMeasumentMutation) => {
-            if (result) {
-              this.addEditCopyForm$.next({
-                action: 'edit',
-                form: result
+          .subscribe(() => {
+            this.unitMeasurementService
+              .updateUnitMeasurement$({
+                id: res?.id,
+                symbol: res?.symbol,
+                description: res?.description,
+                isActive: res?.isActive === null ? true : res?.isActive,
+                searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
+                _version: res?._version
+              })
+              .subscribe((result: UpdateUnitMeasumentMutation) => {
+                if (result) {
+                  this.addEditCopyForm$.next({
+                    action: 'edit',
+                    form: result
+                  });
+                  this.fetchUOM$.next({ data: 'load' });
+                }
               });
-              this.fetchUOM$.next({ data: 'load' });
-            }
           });
       }
     });

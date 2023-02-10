@@ -16,17 +16,9 @@
 
     <div id="add-edit-slider" [formGroup]="unitForm">
       <p class="m-l-5 m-t-5">
-        <mat-form-field appearance="outline" class="unit-measurement">
-          <mat-label translate>unitType </mat-label>
-          <mat-select name="unitType" formControlName="unitType">
-            <mat-option
-              disabled
-              *ngFor="let unit of measurementList"
-              [value]="unit"
-            >
-              {{ unit }}
-            </mat-option>
-          </mat-select>
+        <mat-form-field appearance="outline" class="m-b-10 m-l-5 unitType">
+          <mat-label>{{ 'unitType' | translate }}</mat-label>
+          <input matInput formControlName="unitType" />
           <mat-error
             *ngIf="processValidationErrors('unitType')"
             class="m-t-5 error-fields"
