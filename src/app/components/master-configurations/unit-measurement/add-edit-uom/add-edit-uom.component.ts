@@ -55,6 +55,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   public units: FormArray;
   public isEditMeasurement = true;
   public isEditForm = false;
+  isLoading = false;
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
@@ -103,6 +104,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     if (this.unitMeasurementForm?.get('units')?.invalid) {
       return;
     }
+    this.isLoading = true;
 
     if (this.isEditForm) {
       this.unitOfMeasurementService
@@ -114,6 +116,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         .subscribe((result: UpdateUnitListMutation) => {
           if (result) {
             this.createUpdateUnitListItems(result, 'edit');
+          } else {
+            this.isLoading = false;
           }
         });
     } else {
@@ -223,9 +227,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             isDeleted: true,
             _version: this.unitEditData?.unitList?._version
           })
-          .subscribe((result) => {
-            this.createUpdateUnitListItems(result, 'delete');
-          });
+          .subscribe(
+            (result) => {
+              this.isLoading = false;
+              this.createUpdateUnitListItems(result, 'delete');
+            },
+            () => (this.isLoading = false)
+          );
       }
     });
   }
@@ -245,6 +253,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     response: CreateUnitListMutation | UpdateUnitListMutation,
     type: 'create' | 'edit' | 'delete'
   ) {
+    this.isLoading = true;
     const units = this.unitMeasurementForm?.get('units')?.value;
     const unitObservables = [];
     units?.forEach(
@@ -303,12 +312,16 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         }
       }
     );
-    forkJoin(unitObservables).subscribe(() => {
-      this.unitMeasurementForm.reset();
-      this.units = null;
-      this.unitType = '';
-      this.unitEditData = null;
-      this.slideInOut.emit('out');
-    });
+    forkJoin(unitObservables).subscribe(
+      () => {
+        this.isLoading = false;
+        this.unitMeasurementForm.reset();
+        this.units = null;
+        this.unitType = '';
+        this.unitEditData = null;
+        this.slideInOut.emit('out');
+      },
+      () => (this.isLoading = false)
+    );
   }
 }

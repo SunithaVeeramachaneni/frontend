@@ -60,6 +60,11 @@
   }
 }
 
+::ng-deep .mat-progress-spinner.mat-accent circle,
+.mat-spinner.mat-accent circle {
+  stroke: #ffffff !important;
+}
+
 .searchable-input {
   width: 92%;
   border: 1px solid $border-color;

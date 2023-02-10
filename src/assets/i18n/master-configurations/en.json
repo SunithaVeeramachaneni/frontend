@@ -24,5 +24,11 @@
   "id": "ID",
   "uploadExcel": "Upload Excel",
   "addManually": "Add Manually",
-  "downloadTemplate": "Download Template"
+  "downloadTemplate": "Download Template",
+  "addNew": "Add new",
+  "editUOM": "Edit UOM",
+  "unitType": "Unit of measure",
+  "delete": "Delete",
+  "deleteTitle": "Delete",
+  "deleteSubTitle": "Are you sure to delete"
 }

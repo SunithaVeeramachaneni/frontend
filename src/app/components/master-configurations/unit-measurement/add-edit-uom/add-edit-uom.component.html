@@ -14,7 +14,7 @@
 <div id="add-edit-slider">
   <p class="m-l-5 m-t-5" *ngIf="!this.unitEditData">
     <mat-form-field appearance="outline" class="unit-measurement">
-      <mat-label translate>unitOfMeasurement </mat-label>
+      <mat-label translate="unitOfMeasurement"></mat-label>
       <mat-select
         [(ngModel)]="unitType"
         name="unitType"
@@ -76,35 +76,35 @@
     >
       <div [formGroupName]="i">
         <mat-form-field appearance="outline" class="m-b-10 m-l-5 description">
-          <mat-label>{{ 'description' | translate }}</mat-label>
+          <mat-label translate="description"></mat-label>
           <input matInput formControlName="description" />
           <mat-error
             *ngIf="processValidationErrors(i, 'description')"
             class="m-t-5 error-fields"
           >
             {{
-              errors.description.name
+              errors?.description?.name
                 | translate
                   : {
                       name: 'description' | translate,
-                      length: errors.description.length
+                      length: errors?.description?.length
                     }
             }}
           </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="m-b-10 m-l-5 symbol">
-          <mat-label>{{ 'symbol' | translate }}</mat-label>
+          <mat-label translate="symbol"></mat-label>
           <input matInput formControlName="symbol" />
           <mat-error
             *ngIf="processValidationErrors(i, 'symbol')"
             class="m-t-5 error-fields"
           >
             {{
-              errors.symbol.name
+              errors?.symbol?.name
                 | translate
                   : {
                       name: 'symbol' | translate,
-                      length: errors.symbol.length
+                      length: errors?.symbol?.length
                     }
             }}
           </mat-error>
@@ -115,7 +115,7 @@
 
   <span (click)="addNewUmo()" class="add-new-btn">
     <img src="assets/img/add-new.svg" alt="add-new-icon" class="add-new-icon" />
-    <label>Add new</label>
+    <label translate="addNew"></label>
   </span>
 </div>
 
@@ -128,8 +128,11 @@
     color="primary"
     (click)="onSave()"
     class="save-btn"
-    [disabled]="unitMeasurementForm.invalid"
+    [disabled]="unitMeasurementForm.invalid || isLoading"
   >
     {{ 'save' | translate | uppercase }}
+    <mat-icon *ngIf="isLoading"
+      ><mat-spinner color="accent" diameter="20"> </mat-spinner
+    ></mat-icon>
   </button>
 </mat-dialog-actions>

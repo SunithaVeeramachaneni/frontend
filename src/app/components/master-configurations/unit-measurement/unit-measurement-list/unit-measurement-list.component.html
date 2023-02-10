@@ -40,7 +40,7 @@
               alt="add manually"
               class="add-manually-icon"
             />
-            <span>Add Manually</span>
+            <span translate="addManually"></span>
           </button>
         </mat-menu>
 
@@ -59,7 +59,7 @@
               alt="Excel"
               class="menu-icons"
             />
-            <span>Download Template</span>
+            <span translate="downloadTemplate"></span>
           </button>
         </mat-menu>
       </div>
@@ -87,6 +87,7 @@
       (createUnitData)="addOrUpdateUnit($event)"
     ></app-add-edit-uom>
   </ng-container>
+
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">

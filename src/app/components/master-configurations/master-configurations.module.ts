@@ -40,6 +40,7 @@ import { EditUnitPopupComponent } from './unit-measurement/edit-unit-popup/edit-
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UnitOfMeasurementDeleteModalComponent } from './unit-measurement/uom-delete-modal/uom-delete-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -93,7 +94,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatDialogModule,
     MatSlideToggleModule,
     MatRadioModule,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,
