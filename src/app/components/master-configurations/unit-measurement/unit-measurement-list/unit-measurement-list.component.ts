@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import {
   trigger,
   state,
@@ -11,6 +10,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
+  forkJoin,
   Observable,
   of,
   ReplaySubject
@@ -31,15 +31,16 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { GetUnitMeasumentQuery } from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
-import { MatDialog } from '@angular/material/dialog';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
+import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -345,7 +346,6 @@ export class UnitMeasurementListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
         this.skip = initial.data.length;
         this.allUnitData = initial.data;
         this.dataSource = new MatTableDataSource(initial.data);
@@ -434,7 +434,7 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitAddOrEditOpenState = 'in';
   }
 
-  onCloseLocationAddOrEditOpenState(event) {
+  onCloseUomAddOrEditOpenState(event) {
     this.unitAddOrEditOpenState = event;
     this.fetchUOM$.next({ data: 'load' });
   }
@@ -534,32 +534,28 @@ export class UnitMeasurementListComponent implements OnInit {
     res: GetUnitMeasumentQuery,
     unit: GetUnitMeasumentQuery
   ) {
-    const result = this.allUnitData?.filter(
+    const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
       (d) => d?.unitlistID === unit?.unitlistID && d?.id !== unit?.id
     );
     if (result && Object.keys(result)?.length > 0) {
-      const promises = [];
-      result?.forEach((r) => {
-        promises.push(
-          this.unitMeasurementService.updateUnitMeasurementPromise({
-            id: r?.id,
+      const unitObservables = [];
+      result?.forEach((element) => {
+        unitObservables.push(
+          this.unitMeasurementService.updateUnitMeasurement$({
+            id: element?.id,
             isDefault: false,
-            _version: r?._version
+            _version: element?._version
           })
         );
       });
-      if (promises?.length > 0) {
-        Promise.all(promises)
-          .catch((err) => {
-            throw err;
-          })
-          .then(() => {
-            this.addEditCopyForm$.next({
-              action: 'setAsDefault',
-              form: res
-            });
-            this.fetchUOM$.next({ data: 'load' });
+      if (unitObservables?.length > 0) {
+        forkJoin(unitObservables).subscribe(() => {
+          this.addEditCopyForm$.next({
+            action: 'setAsDefault',
+            form: res
           });
+          this.fetchUOM$.next({ data: 'load' });
+        });
       } else {
         this.addEditCopyForm$.next({
           action: 'setAsDefault',

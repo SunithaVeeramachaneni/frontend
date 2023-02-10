@@ -5,7 +5,6 @@ import {
   APIService,
   CreateUnitListInput,
   CreateUnitMeasumentInput,
-  ListUnitListsQuery,
   ListUnitMeasumentsQuery,
   ModelUnitListFilterInput,
   UpdateUnitMeasumentInput,
@@ -94,25 +93,15 @@ export class UnitMeasurementService {
     return from(this.awsApiService.UpdateUnitMeasument(input));
   }
 
-  updateUnitMeasurementPromise(
-    input: UpdateUnitMeasumentInput
-  ): Promise<UpdateUnitMeasumentMutation> {
-    return this.awsApiService.UpdateUnitMeasument(input);
-  }
-
   private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {
     const groupedData: any = groupBy(resp?.items, 'unitList.name');
     const rows = resp?.items?.map((item: any) => ({
       ...item,
       noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
       unitType: item?.unitList?.name,
-      isDefaultText: item.isDefault ? 'Default' : '',
-      isActive: item.isActive || false
+      isDefaultText: item?.isDefault ? 'Default' : '',
+      isActive: item?.isActive === null ? true : item?.isActive
     }));
-    console.log(
-      '🚀 ~ file: unit-measurement.service.ts:64 ~ UnitMeasurementService ~ rows ~ rows',
-      rows
-    );
     const count = rows?.length || 0;
     const nextToken = resp?.nextToken;
     return {
@@ -174,53 +163,4 @@ export class UnitMeasurementService {
     )) as any;
     return response?.data?.listUnitMeasuments as ListUnitMeasumentsQuery;
   }
-
-  // private async _ListUnitLists(
-  //   filter?: ModelUnitListFilterInput,
-  //   limit?: number,
-  //   nextToken?: string
-  // ): Promise<ListUnitListsQuery> {
-  //   const statement = `query ListUnitLists($filter: ModelUnitListFilterInput, $limit: Int, $nextToken: String) {
-  //       listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
-  //         __typename
-  //         items {
-  //           __typename
-  //           id
-  //           name
-  //           searchTerm
-  //           isDeleted
-  //           createdAt
-  //           updatedAt
-  //           _version
-  //           unitMeasuments(filter: {isDeleted: {eq: false}}) {
-  //             items {
-  //               description
-  //               createdAt
-  //               id
-  //               isDefault
-  //               isDeleted
-  //               symbol
-  //               unitlistID
-  //             }
-  //           }
-  //         }
-  //         nextToken
-  //         startedAt
-  //       }
-  //     }`;
-  //   const gqlAPIServiceArguments: any = {};
-  //   if (filter) {
-  //     gqlAPIServiceArguments.filter = filter;
-  //   }
-  //   if (limit) {
-  //     gqlAPIServiceArguments.limit = limit;
-  //   }
-  //   if (nextToken) {
-  //     gqlAPIServiceArguments.nextToken = nextToken;
-  //   }
-  //   const response = (await API.graphql(
-  //     graphqlOperation(statement, gqlAPIServiceArguments)
-  //   )) as any;
-  //   return response?.data?.listUnitLists as ListUnitListsQuery;
-  // }
 }

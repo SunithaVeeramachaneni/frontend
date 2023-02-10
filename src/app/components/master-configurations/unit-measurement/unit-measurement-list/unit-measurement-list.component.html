@@ -82,7 +82,7 @@
   <ng-container *ngIf="unitAddOrEditOpenState">
     <app-add-edit-uom
       [@slideInOut]="unitAddOrEditOpenState"
-      (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+      (slideInOut)="onCloseUomAddOrEditOpenState($event)"
       [unitEditData]="unitEditData"
       (createUnitData)="addOrUpdateUnit($event)"
     ></app-add-edit-uom>
