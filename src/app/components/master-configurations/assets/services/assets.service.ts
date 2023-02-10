@@ -95,7 +95,8 @@ export class AssetsService {
         model: formAssetsQuery.model,
         assetsId: formAssetsQuery.assetsId,
         parentType: formAssetsQuery.parentType,
-        parentId: formAssetsQuery.parentId
+        parentId: formAssetsQuery.parentId,
+        searchTerm: formAssetsQuery.name.toLowerCase()
       })
     );
   }
@@ -157,5 +158,17 @@ export class AssetsService {
       rows,
       nextToken
     };
+  }
+
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterApiUrl,
+      'api/v1/assets-excel-upload',
+      form,
+      info
+    );
   }
 }

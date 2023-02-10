@@ -460,4 +460,27 @@ export class AssetsListComponent implements OnInit {
       this.assetsAddOrEditOpenState = 'in';
     }
   }
+
+  uploadFile(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.assetService.uploadExcel(formData).subscribe((resp) => {
+      if (resp.status == 200) {
+        for (const item of resp.data) {
+          this.assetService.createAssets$(item).subscribe((res) => {
+            this.addOrUpdateAssets({
+              status: 'add',
+              data: res
+            });
+          });
+        }
+      }
+    });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
 }
