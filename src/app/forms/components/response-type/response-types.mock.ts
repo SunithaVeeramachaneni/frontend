@@ -25,6 +25,10 @@ export const fieldTypesMock = {
       description: 'Date & Time'
     },
     {
+      type: 'HL',
+      description: 'Hyperlink'
+    },
+    {
       type: 'CB',
       description: 'Checkbox'
     },

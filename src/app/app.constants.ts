@@ -174,6 +174,11 @@ export const routingUrls = {
     url: '/operator-rounds/submissions',
     title: 'Submissions',
     permission: permissions.viewORPlanSubmissions
+  },
+  roundPlanArchivedForms: {
+    url: '/operator-rounds/archived',
+    title: 'Archived',
+    permission: permissions.viewArchivedORP
   }
 };
 

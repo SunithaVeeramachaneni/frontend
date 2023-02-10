@@ -205,11 +205,36 @@
                 class="action"
               >
                 <app-date
-                  [question]="questionForm"
+                  [question]="questionForm.get('value')"
                   (checkedToDefaultDateAndTime)="
                     questionForm.get('value').setValue($event)
                   "
                 ></app-date>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'HL'"
+                class="action"
+              >
+                <button
+                  mat-button
+                  color="primary"
+                  class="addLogicBtn"
+                  (click)="toggleHyperLink()"
+                  [matTooltip]="
+                    questionForm.get('value').value &&
+                    questionForm.get('value').value?.link
+                      ? questionForm.get('value').value.link
+                      : 'Enter URL'
+                  "
+                >
+                  <mat-icon class="icon">link</mat-icon>
+                  <span>{{
+                    questionForm.get('value').value.title
+                      ? questionForm.get('value').value.title
+                      : ('addLinkBtn' | translate)
+                  }}</span>
+                </button>
               </span>
 
               <span
@@ -296,4 +321,11 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="isHyperLinkOpen">
+  <app-hyperlink-side-drawer
+    [questionToBeHyperlinked]="question"
+    (hyperlinkHandler)="handlerHyperlink($event)"
+  ></app-hyperlink-side-drawer>
 </div>

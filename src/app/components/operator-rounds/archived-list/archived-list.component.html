@@ -1,0 +1,60 @@
+<div class="list-view">
+  <div class="main-container">
+    <div class="forms-header">
+      <h2 class="heading" translate="archived"></h2>
+      <span class="custom-form-field-gray-color search">
+        <span
+          class="no-of-forms"
+          *ngIf="archivedFormsListCount$ | async as totalCount"
+        >
+          <span class="forms-count">
+            {{ totalCount }}
+          </span>
+          <span class="forms-text">{{
+            'archived'
+              | translate
+                : {
+                    count: totalCount || 0
+                  }
+          }}</span>
+        </span>
+
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchArchivedForm' | translate"
+            autocomplete="off"
+            [formControl]="searchForm"
+          />
+        </mat-form-field>
+        <img
+          *ngIf="false"
+          [src]="filterIcon"
+          class="common-filter-icon"
+          alt="Open Filter"
+        />
+      </span>
+    </div>
+
+    <div *ngIf="(formArchived$ | async) && (isLoading$ | async) === false">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="padding-lr-20">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</div>
