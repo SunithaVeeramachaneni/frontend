@@ -11,7 +11,7 @@
             <input
               matInput
               type="text"
-              [placeholder]="'searchLocation' | translate"
+              [placeholder]="'search' | translate"
               autocomplete="off"
               [formControl]="searchAssets"
             />
@@ -32,7 +32,7 @@
               alt="Excel"
               class="menu-icons"
             />
-            <span>Upload Excel</span>
+            <span translate="uploadExcel"></span>
           </button>
           <button mat-menu-item (click)="addManually()" class="menu-buttons">
             <img
@@ -40,7 +40,7 @@
               alt="add manually"
               class="add-manually-icon"
             />
-            <span>Add Manually</span>
+            <span translate="addManually"></span>
           </button>
         </mat-menu>
 
@@ -58,7 +58,7 @@
               alt="Excel"
               class="menu-icons"
             />
-            <span>Download Template</span>
+            <span translate="downloadTemplate"></span>
           </button>
         </mat-menu>
       </div>

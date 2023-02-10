@@ -14,20 +14,25 @@
       </p>
       <h1 class="heading">{{ selectedLocation.name }}</h1>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings">ID</p>
+      <p class="m-0 sub-headings" translate="id"></p>
       <p class="m-0 sub-headings-value">{{ selectedLocation.locationId }}</p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings">Parent</p>
+      <p class="m-0 sub-headings" translate="parent"></p>
       <p class="m-0 sub-headings-value">
         {{ selectedLocation.parentId ? selectedLocation.parentId : '--' }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings">Description</p>
+      <p class="m-0 sub-headings" translate="description"></p>
       <p class="m-0 sub-headings-value">
         {{ selectedLocation.description }}
       </p>
       <hr class="horizon-line" />
-      <button mat-raised-button class="edit-btn" (click)="edit()">Edit</button>
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
     </div>
   </mat-card>
 </div>

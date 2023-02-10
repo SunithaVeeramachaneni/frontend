@@ -10,8 +10,8 @@
       <h1 class="heading">{{ assetTitle }}</h1>
     </div>
     <div>
-      <p class="m-0">Image</p>
-      <p style="margin: 10px 0 5px 0">
+      <p class="m-0" translate="image"></p>
+      <p class="image-container">
         <img
           src="assets/master-configurations/image-placeholder.svg"
           alt="Image Placeholder"
@@ -27,8 +27,12 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Name</mat-label>
-          <input matInput placeholder="Name" formControlName="name" />
+          <mat-label translate="name"></mat-label>
+          <input
+            matInput
+            [placeholder]="'name' | translate"
+            formControlName="name"
+          />
 
           <mat-error
             *ngIf="processValidationErrors('name')"
@@ -46,8 +50,12 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Asset Id</mat-label>
-          <input matInput placeholder="Asset Id" formControlName="assetsId" />
+          <mat-label translate="assetsId"></mat-label>
+          <input
+            matInput
+            [placeholder]="'assetsId' | translate"
+            formControlName="assetsId"
+          />
           <mat-error
             *ngIf="processValidationErrors('assetsId')"
             class="m-t-5 error-fields"
@@ -64,47 +72,52 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Model</mat-label>
-          <input matInput placeholder="Model" formControlName="model" />
+          <mat-label translate="model"></mat-label>
+          <input
+            matInput
+            [placeholder]="'model' | translate"
+            formControlName="model"
+          />
         </mat-form-field>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Description</mat-label>
+          <mat-label translate="description"></mat-label>
           <textarea
             matInput
-            placeholder="Description"
+            [placeholder]="'description' | translate"
             formControlName="description"
           >
           </textarea>
         </mat-form-field>
       </p>
-      <p style="margin: 10px 5px">
-        <span style="margin-right: 20px">Parent Type</span>
-        <mat-radio-group
-          formControlName="parentType"
-          style="position: relative; top: -2px"
-        >
-          <mat-radio-button value="location" style="margin-right: 20px">
-            Location
+      <p class="parent-type">
+        <span class="m-r-20" translate="parentType"></span>
+        <mat-radio-group formControlName="parentType" class="parent-type-radio">
+          <mat-radio-button
+            value="location"
+            class="m-r-20"
+            translate="location"
+          >
           </mat-radio-button>
-          <mat-radio-button value="asset"> Asset </mat-radio-button>
+          <mat-radio-button value="asset" translate="asset"> </mat-radio-button>
         </mat-radio-group>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label>Parent</mat-label>
+          <mat-label translate="parent"></mat-label>
           <mat-select formControlName="parentId">
             <input
               class="searchable-input"
-              placeholder="Search"
+              [placeholder]="'search' | translate"
               (keyup)="onKey($event.target.value)"
             />
             <mat-option
               [value]="parent.name"
               *ngFor="let parent of allParentsData"
-              >{{ parent.name }}</mat-option
             >
+              {{ parent.name }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
       </p>
@@ -123,9 +136,8 @@
         class="cancel-btn"
         type="button"
         (click)="cancel()"
-      >
-        Cancel
-      </button>
+        translate="cancelBtn"
+      ></button>
     </div>
   </mat-card>
 </div>
