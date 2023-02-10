@@ -38,6 +38,7 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 
 @Component({
   selector: 'app-locations-list',
@@ -311,8 +312,6 @@ export class LocationsListComponent implements OnInit {
         return initial;
       })
     );
-
-    this.locations$.subscribe(console.log);
   }
 
   getLocations() {
@@ -421,7 +420,6 @@ export class LocationsListComponent implements OnInit {
   };
 
   deleteLocation(location: any): void {
-    console.log(location);
     const deleteData = {
       id: location.id,
       _version: location._version
@@ -454,5 +452,16 @@ export class LocationsListComponent implements OnInit {
       this.locationEditData = event.data;
       this.locationAddOrEditOpenState = 'in';
     }
+  }
+
+  exportAsXLSX(): void {
+    this.locationService
+      .downloadSampleLocationTemplate()
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Location_Sample_Template');
+        })
+      )
+      .subscribe();
   }
 }

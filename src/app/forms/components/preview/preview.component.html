@@ -76,21 +76,42 @@
                 />
               </div>
 
-              <!-- date  -->
-              <input
-                type="date"
-                class="text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'DF'"
-              />
+              <!-- date and time -->
+              <div *ngIf="question.fieldType === 'DT'">
+                <input
+                  type="date"
+                  class="text-answer"
+                  [placeholder]="'enter' | translate"
+                  *ngIf="question.value.date"
+                />
 
-              <!-- time  -->
-              <input
-                type="time"
-                class="text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'TIF'"
-              />
+                <input
+                  type="time"
+                  class="text-answer"
+                  [placeholder]="'enter' | translate"
+                  *ngIf="question.value.time"
+                />
+              </div>
+
+              <!-- Hyperlink  -->
+              <div *ngIf="question.fieldType === 'HL'">
+                <span
+                  class="hyperlink"
+                  (click)="openURL(question.value)"
+                  *ngIf="
+                    question.value && question.value?.link;
+                    else addUrlBlock
+                  "
+                  >{{
+                    question.value.title?.length
+                      ? question.value.title
+                      : question.value.link
+                  }}</span
+                >
+                <ng-template #addUrlBlock>
+                  <span translate="addLinkBtn" class="add-link"></span>
+                </ng-template>
+              </div>
 
               <!-- checkbox  -->
               <mat-checkbox

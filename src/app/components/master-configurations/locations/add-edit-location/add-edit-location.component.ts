@@ -15,7 +15,6 @@ import {
 import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
-import { ToastService } from 'src/app/shared/toast';
 import { LocationService } from '../services/location.service';
 
 @Component({
@@ -48,6 +47,7 @@ export class AddEditLocationComponent implements OnInit {
         parentId: this.locEditData.parentId
       };
       this.locationForm.patchValue(locdata);
+      this.getAllLocations();
     }
   }
   get locationEditData() {
@@ -61,20 +61,7 @@ export class AddEditLocationComponent implements OnInit {
   locationImage = '';
   locationButton;
 
-  parentInformation = [
-    { name: 'parent 1' },
-    { name: 'parent 2' },
-    { name: 'parent 3' },
-    { name: 'parent 4' },
-    { name: 'parent 5' },
-    { name: 'parent 6' },
-    { name: 'parent 7' },
-    { name: 'parent 8' },
-    { name: 'parent 9' },
-    { name: 'parent 10' },
-    { name: 'ABC' },
-    { name: 'ABCDEF' }
-  ];
+  parentInformation;
   allParentsData;
   private locEditData;
 
@@ -93,45 +80,16 @@ export class AddEditLocationComponent implements OnInit {
       description: '',
       parentId: ''
     });
-    this.allParentsData = this.parentInformation;
-    this.getAllParent();
-  }
-  getAllParent() {
-    const locationsOnLoadSearch$ = this.locationService.fetchLocations$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        return this.getLocations();
-      })
-    );
-    const initial = {
-      data: []
-    };
-    this.locations$ = combineLatest([locationsOnLoadSearch$]).pipe(
-      map(([rows]) => {
-        initial.data = rows;
-        return initial;
-      })
-    );
-   
-    this.locations$.subscribe(console.log);
+    this.getAllLocations();
   }
 
-  getLocations() {
-    return this.locationService
-      .getLocationsList$({
-        nextToken: null,
-        limit: 20000,
-        searchKey: '',
-        fetchType: 'load'
-      })
-      .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          return of(rows);
-        }),
-        catchError(() => {
-          return of([]);
-        })
+  getAllLocations() {
+    this.locationService.fetchAllLocations$().then((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (loc) => loc.id !== this.locEditData?.id
       );
+      this.allParentsData = this.parentInformation;
+    });
   }
 
   create() {
@@ -166,14 +124,13 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   onKey(value) {
-    console.log(value);
     this.allParentsData = this.search(value);
   }
 
   search(value: string) {
-    const filter = value.toLowerCase();
+    const searchValue = value.toLowerCase();
     return this.parentInformation.filter((parent) =>
-      parent.name.toLowerCase().startsWith(filter)
+      parent.name.toLowerCase().startsWith(searchValue)
     );
   }
 

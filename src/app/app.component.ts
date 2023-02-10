@@ -60,7 +60,8 @@ const {
   masterConfiguration,
   locations,
   assets,
-  unitOfMeasurement
+  unitOfMeasurement,
+  roundPlanArchivedForms
 } = routingUrls;
 
 @Component({
@@ -176,6 +177,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: roundPlanSubmissions.title,
           url: roundPlanSubmissions.url,
           permission: roundPlanSubmissions.permission
+        },
+        {
+          title: roundPlanArchivedForms.title,
+          url: roundPlanArchivedForms.url,
+          permission: roundPlanArchivedForms.permission
         }
       ]
     },

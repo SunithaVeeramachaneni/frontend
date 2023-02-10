@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateAssetsInput,
@@ -7,8 +7,15 @@ import {
   ListAssetsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../../interfaces';
 import { formatDistance } from 'date-fns';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +28,16 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  constructor(private readonly awsApiService: APIService) {}
+  constructor(
+    private _appService: AppService,
+    private readonly awsApiService: APIService
+  ) {}
 
   setFormCreatedUpdated(data: any) {
     this.assetsCreatedUpdatedSubject.next(data);
   }
+
+  fetchAllAssets$ = () => this.awsApiService.ListAssets({}, 20000, '');
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -88,11 +100,11 @@ export class AssetsService {
     );
   }
 
-  updateAssets$(formMetaDataDetails) {
+  updateAssets$(assetDetails) {
     return from(
       this.awsApiService.UpdateAssets({
-        ...formMetaDataDetails.formMetadata,
-        _version: formMetaDataDetails.formListDynamoDBVersion
+        ...assetDetails.data,
+        _version: assetDetails.version
       })
     );
   }
@@ -101,8 +113,20 @@ export class AssetsService {
     return from(this.awsApiService.DeleteAssets({ ...values }));
   }
 
+  downloadSampleAssetTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterApiUrl,
+      'api/v1/download-sample-assets',
+      info,
+      true,
+      {}
+    );
+  }
+
   private formatGraphQAssetsResponse(resp: ListAssetsQuery) {
-    const rows =
+    let rows =
       resp.items
         .sort(
           (a, b) =>
@@ -127,6 +151,7 @@ export class AssetsService {
         })) || [];
     const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;
+    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,

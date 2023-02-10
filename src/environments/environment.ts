@@ -8,6 +8,7 @@ export const environment = {
   mccAbapApiUrl: 'http://localhost:8003/',
   spccAbapApiUrl: 'http://localhost:8003/',
   wiApiUrl: 'http://localhost:8001/',
+  masterApiUrl: 'http://localhost:8009/',
   wiAbapApiUrl: 'http://localhost:8002/',
   userRoleManagementApiUrl: 'http://localhost:8007/',
   rdfApiUrl: 'http://localhost:8008/',

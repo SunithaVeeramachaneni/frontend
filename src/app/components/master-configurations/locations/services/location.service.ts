@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateLocationInput,
   ListLocationsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
+import {
+  ErrorInfo,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../../interfaces';
 import { formatDistance } from 'date-fns';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +27,16 @@ export class LocationService {
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
 
-  constructor(private readonly awsApiService: APIService) {}
+  constructor(
+    private _appService: AppService,
+    private readonly awsApiService: APIService
+  ) {}
 
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
   }
+
+  fetchAllLocations$ = () => this.awsApiService.ListLocations({}, 20000, '');
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -93,8 +105,20 @@ export class LocationService {
     return from(this.awsApiService.DeleteLocation({ ...values }));
   }
 
+  downloadSampleLocationTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterApiUrl,
+      'api/v1/download-sample-location',
+      info,
+      true,
+      {}
+    );
+  }
+
   private formatGraphQLocationResponse(resp: ListLocationsQuery) {
-    const rows =
+    let rows =
       resp.items
         .sort(
           (a, b) =>
@@ -119,6 +143,7 @@ export class LocationService {
         })) || [];
     const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;
+    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
