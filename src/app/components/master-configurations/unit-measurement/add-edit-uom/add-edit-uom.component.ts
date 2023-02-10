@@ -101,11 +101,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           });
       }
     );
-    if (this.unitMeasurementForm?.get('units')?.invalid) {
+    if (
+      this.unitMeasurementForm?.get('units')?.invalid ||
+      this.unitMeasurementForm?.get('units')?.value?.length === 0
+    ) {
       return;
     }
     this.isLoading = true;
-
     if (this.isEditForm) {
       this.unitOfMeasurementService
         .updateUnitList$({
