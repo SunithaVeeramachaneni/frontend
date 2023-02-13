@@ -261,8 +261,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               !isEqual(this.formDetails, formDetails)
             ) {
               const pagesWithoutBlankQuestions = this.getPagesWithoutBlankQuestions(pages);
-              if((this.formDetails === undefined && !isEqual(pages, pagesWithoutBlankQuestions)) ||
-                (this.formDetails !== undefined && !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))) {
+              if((!this.formDetails && !isEqual(pages, pagesWithoutBlankQuestions)) ||
+                (this.formDetails && !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))) {
                 this.store.dispatch(
                   FormConfigurationActions.updateAuthoredFormDetail({
                     formStatus,
