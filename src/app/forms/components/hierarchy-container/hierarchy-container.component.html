@@ -1,35 +1,43 @@
-<div class="header">
-  <div>
-    <span>Assets ({{ hierarchyList.length ? hierarchyList.length : 0 }})</span>
-    <button mat-icon-button class="addBtn" *ngIf="hierarchyList.length">
-      <mat-icon>add</mat-icon>
-    </button>
+<div *ngIf="formMetadata$ | async as formMetadata">
+  <div class="header">
+    <div>
+      <span
+        >Assets ({{ hierarchyList.length ? hierarchyList.length : 0 }})</span
+      >
+      <button mat-icon-button class="addBtn" *ngIf="hierarchyList.length">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+    <span *ngIf="hierarchyList.length">Tasks (1)</span>
   </div>
-  <span *ngIf="hierarchyList.length">Tasks (1)</span>
-</div>
-<span class="custom-form-field-gray-color search" *ngIf="hierarchyList.length">
-  <mat-form-field appearance="outline" class="searchField">
-    <mat-icon matPrefix class="searchIcon">search</mat-icon>
-    <input
-      matInput
-      type="text"
-      [placeholder]="'Search...'"
-      autocomplete="off"
-    />
-    <img [src]="filterIcon" matSuffix alt="Open Filter" />
-  </mat-form-field>
-</span>
-<div class="hierarchy" *ngIf="hierarchyList.length">
-  <app-node
-    [node]="node"
-    (nodeRemoved)="removeNodeHandler($event)"
-    *ngFor="let node of hierarchyList"
-    [ngClass]="{
-      displayInlineBlock: node.hasChildren
-    }"
-  ></app-node>
-</div>
-<div *ngIf="!hierarchyList.length" class="emptyHierarchy">
-  <span>You have not added any assets yet</span>
-  <button mat-raised-button color="primary">Add Assets</button>
+  <span
+    class="custom-form-field-gray-color search"
+    *ngIf="hierarchyList.length"
+  >
+    <mat-form-field appearance="outline" class="searchField">
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        disabled
+        matInput
+        type="text"
+        [placeholder]="'Search...'"
+        autocomplete="off"
+      />
+      <img [src]="filterIcon" matSuffix alt="Open Filter" />
+    </mat-form-field>
+  </span>
+  <div class="hierarchy" *ngIf="hierarchyList.length">
+    <app-node
+      [node]="node"
+      (nodeRemoved)="removeNodeHandler($event)"
+      *ngFor="let node of hierarchyList"
+      [ngClass]="{
+        displayInlineBlock: node.hasChildren
+      }"
+    ></app-node>
+  </div>
+  <div *ngIf="!hierarchyList.length" class="emptyHierarchy">
+    <span>You have not added any assets yet</span>
+    <button mat-raised-button color="primary">Add Assets</button>
+  </div>
 </div>

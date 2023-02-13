@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ChangeDetectorRef
 } from '@angular/core';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -24,12 +25,14 @@ export class NodeComponent implements OnInit {
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
-    private operatorRoundsService: OperatorRoundsService
+    private operatorRoundsService: OperatorRoundsService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.operatorRoundsService.selectedNode$.subscribe((data) => {
       this.selectedNode = data;
+      this.cdrf.detectChanges();
     });
   }
 

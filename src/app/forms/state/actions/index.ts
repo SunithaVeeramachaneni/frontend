@@ -5,6 +5,8 @@ import * as MCQResponseApiActions from './multiple-choice-response-api.actions';
 import * as AddLogicActions from './add-logic.actions';
 import * as RoundPlanConfigurationActions from './round-plan-configuration.actions';
 import * as RoundPlanConfigurationApiActions from './round-plan-configuration-api.actions';
+import * as BuilderConfigurationActions from '../builder/builder.actions';
+import * as BuilderConfigurationsApiActions from '../builder/builder-configuration-api.actions';
 
 export {
   FormConfigurationActions,
@@ -13,5 +15,7 @@ export {
   MCQResponseApiActions,
   AddLogicActions,
   RoundPlanConfigurationActions,
-  RoundPlanConfigurationApiActions
+  RoundPlanConfigurationApiActions,
+  BuilderConfigurationActions,
+  BuilderConfigurationsApiActions
 };

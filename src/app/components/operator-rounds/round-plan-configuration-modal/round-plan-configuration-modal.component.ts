@@ -32,6 +32,7 @@ import {
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { hierarchyMock } from '../round-plan-configuration/hierarchyMock';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -67,14 +68,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef
   ) {
-    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
-      if (tags && tags.length) {
-        this.allTags = tags[0].values;
-        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
-        this.tagsCtrl.setValue('');
-        this.cdrf.detectChanges();
-      }
-    });
+    // this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
+    //   if (tags && tags.length) {
+    //     this.allTags = tags[0].values;
+    //     this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+    //     this.tagsCtrl.setValue('');
+    //     this.cdrf.detectChanges();
+    //   }
+    // });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -157,16 +158,19 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         type: 'tags',
         values: newTags
       };
-      this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-        // do nothing
-      });
+      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+      //   // do nothing
+      // });
     }
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value,
+          formMetadata: {
+            ...this.headerDataForm.value,
+            hierarchy: hierarchyMock
+          },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })
@@ -180,6 +184,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
+            hierarchy: hierarchyMock,
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }

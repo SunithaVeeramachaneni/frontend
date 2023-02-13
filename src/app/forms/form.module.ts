@@ -37,8 +37,6 @@ import { ReadOnlyComponent } from './components/field-types/read-only/read-only.
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
-import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
@@ -47,6 +45,7 @@ import { AddPageOrSelectExistingPageModalComponent } from './components/import-q
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
+import { BuilderComponent } from './components/builder/builder.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +70,8 @@ import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
-    HyperlinkSideDrawerComponent
+    HyperlinkSideDrawerComponent,
+    BuilderComponent
   ],
   imports: [
     FormsModule,
@@ -110,6 +110,7 @@ import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer
     AddLogicComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    BuilderComponent,
     NgxShimmerLoadingModule
   ]
 })

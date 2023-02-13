@@ -8,6 +8,7 @@ import { State } from 'src/app/forms/state';
 
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
+import { hierarchyMock } from '../round-plan-configuration/hierarchyMock';
 import { OperatorRoundsService } from './operator-rounds.service';
 
 @Injectable({ providedIn: 'root' })
@@ -63,12 +64,19 @@ export class RoundPlanResolverService
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          hierarchy: hierarchyMock
         };
+        const hierarchyPagesMap = {};
+        hierarchyMock.forEach((h) => {
+          hierarchyPagesMap[`pages_${h.id}`] = [];
+        });
+        console.log(hierarchyPagesMap);
         return {
           formMetadata,
           counter,
           pages: JSON.parse(pages),
+          ...hierarchyPagesMap,
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),

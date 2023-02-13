@@ -17,12 +17,7 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  pairwise,
-  tap
-} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
 import {
@@ -37,26 +32,18 @@ import {
 } from 'src/app/interfaces';
 
 import {
-  getSectionQuestions,
   getFormMetadata,
-  getPageIndexes,
-  getQuestionIndexes,
-  getSectionIds,
-  getSectionIndexes,
   getFormDetails,
-  getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
   getIsFormCreated,
-  getQuestionIds,
   getQuestionCounter,
   State
-} from 'src/app/forms/state';
+} from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
-  MCQResponseActions,
-  FormConfigurationActions,
+  BuilderConfigurationActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import {
@@ -68,10 +55,10 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -121,6 +108,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   selectedNode: any;
   selectedNode$: Observable<any>;
+  selectedNodeLoadStatus = false;
+  isHierarchyLoaded = false;
 
   isPreviewActive = false;
 
@@ -133,14 +122,52 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
-    private formConfigurationService: FormConfigurationService,
+    private roundPlanConfigurationService: RoundPlanConfigurationService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
     private operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
-    this.selectedNode$ = this.operatorRoundsService.selectedNode$;
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
+      tap((data) => {
+        if (Object.keys(data).length) {
+          this.selectedNode = data;
+          this.selectedNodeLoadStatus = true;
+          this.store.dispatch(
+            BuilderConfigurationActions.initPage({
+              subFormId: this.selectedNode.id
+            })
+          );
+        }
+      })
+    );
+
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        if (Object.keys(formMetadata).length) {
+          const { name, description, id, formLogo, formStatus } = formMetadata;
+          this.formMetadata = formMetadata;
+          this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
+
+          this.formConfiguration.patchValue(
+            {
+              name,
+              description,
+              id,
+              formLogo,
+              formStatus
+            },
+            { emitEvent: false }
+          );
+          const formName = name ? name : 'Untitled Form';
+          this.headerService.setHeaderTitle(formName);
+          this.breadcrumbService.set('@formName', {
+            label: formName
+          });
+        }
+      })
+    );
 
     this.formConfiguration = this.fb.group({
       id: [''],
@@ -161,70 +188,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    this.store.dispatch(
-      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    );
-    this.formConfiguration.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        pairwise(),
-        tap(([previous, current]) => {
-          if (!this.formConfiguration.invalid) {
-            const {
-              counter: prevCounter,
-              id: prevId,
-              formStatus: prevFormStatus,
-              ...prev
-            } = previous;
-            const {
-              counter: currCounter,
-              id: currId,
-              formStatus: currFormStatus,
-              ...curr
-            } = current;
-
-            if (!isEqual(prev, curr)) {
-              this.store.dispatch(
-                FormConfigurationActions.updateFormMetadata({
-                  formMetadata: curr,
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
-
-              this.store.dispatch(
-                RoundPlanConfigurationActions.updateRoundPlan({
-                  formMetadata: this.formMetadata,
-                  formListDynamoDBVersion: this.formListVersion
-                })
-              );
-            }
-          }
-        })
-      )
-      .subscribe();
-
-    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
-        this.formMetadata = formMetadata;
-        this.formConfiguration.patchValue(
-          {
-            name,
-            description,
-            id,
-            formLogo,
-            formStatus
-          },
-          { emitEvent: false }
-        );
-        const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
-        this.breadcrumbService.set('@formName', {
-          label: formName
-        });
-      })
-    );
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
       tap((counter) => {
         this.formConfiguration.patchValue(
@@ -235,15 +198,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         );
       })
     );
-    this.pageIndexes$ = this.store.select(getPageIndexes);
-    this.sectionIndexes$ = this.store
-      .select(getSectionIndexes)
-      .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
-    this.sectionIds$ = this.store.select(getSectionIds);
-    this.questionIds$ = this.store.select(getQuestionIds);
-    this.questionIndexes$ = this.store
-      .select(getQuestionIndexes)
-      .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+
     this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
       tap((isFormCreated) => {
         if (isFormCreated) {
@@ -374,29 +329,32 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       if (data.form && Object.keys(data.form).length) {
         this.formConf.counter.setValue(data.form.counter);
         this.store.dispatch(
-          FormConfigurationActions.updateFormConfiguration({
+          BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form
           })
         );
         data.form.pages.forEach((page, index) => {
           if (index === 0) {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: false
+                isOpen: false,
+                subFormId: this.selectedNode.id
               })
             );
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: true
+                isOpen: true,
+                subFormId: this.selectedNode.id
               })
             );
           } else {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: false
+                isOpen: false,
+                subFormId: this.selectedNode.id
               })
             );
           }
@@ -404,17 +362,27 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.route.params.subscribe((params) => {
-      if (!params.id) {
-        this.formConfigurationService.addPage(
-          0,
-          1,
-          1,
-          this.sectionIndexes,
-          this.formConf.counter.value
-        );
-      }
-    });
+    // this.route.params.subscribe((params) => {
+    //   if (!params.id) {
+    //     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+    //       tap((formMetadata) => {
+    //         if (Object.keys(formMetadata).length) {
+    //           const { hierarchy } = formMetadata;
+    //           this.selectedNode = hierarchy[0] || [];
+    //         }
+    //       })
+    //     );
+    //   } else {
+    //     // this.roundPlanConfigurationService.addPage(
+    //     //   0,
+    //     //   1,
+    //     //   1,
+    //     //   this.sectionIndexes,
+    //     //   this.formConf.counter.value,
+    //     //   this.selectedNode.id
+    //     // );
+    //   }
+    // });
   }
 
   getImage = (imageName: string, active: boolean) =>
@@ -447,21 +415,23 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addPage(
+          this.roundPlanConfigurationService.addPage(
             pageIndex,
             1,
             1,
             this.sectionIndexes,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            null
           );
         }
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deletePage({
+          BuilderConfigurationActions.deletePage({
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -473,35 +443,38 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addSections(
+          this.roundPlanConfigurationService.addSections(
             pageIndex,
             1,
             1,
             sectionIndex,
             this.sectionIndexes,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            this.selectedNode.id
           );
         }
         break;
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateSection({
+          BuilderConfigurationActions.updateSection({
             section,
             sectionIndex,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteSection({
+          BuilderConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -513,35 +486,38 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addQuestions(
+          this.roundPlanConfigurationService.addQuestions(
             pageIndex,
             sectionId,
             1,
             questionIndex,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            this.selectedNode.id
           );
         }
         break;
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateQuestion({
+          BuilderConfigurationActions.updateQuestion({
             question,
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteQuestion({
+          BuilderConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -554,12 +530,12 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   publishFormDetail() {
     this.store.dispatch(
-      FormConfigurationActions.updateFormPublishStatus({
+      BuilderConfigurationActions.updateFormPublishStatus({
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateIsFormDetailPublished({
+      BuilderConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true
       })
     );
@@ -575,10 +551,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        FormConfigurationActions.updatePageSections({
+        BuilderConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: this.selectedNode.id
         })
       );
     }
@@ -593,14 +570,15 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionBySection({
+          BuilderConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
             }),
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
       });
@@ -613,34 +591,35 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
       this.store.dispatch(
-        FormConfigurationActions.transferQuestionFromSection({
+        BuilderConfigurationActions.transferQuestionFromSection({
           questionId,
           currentIndex: event.currentIndex,
           previousIndex: event.previousIndex,
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
           pageIndex,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: this.selectedNode.id
         })
       );
     }
   }
 
-  getQuestionsOfSection(pageIndex, sectionIndex) {
-    let sectionQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionIndex))
-      .subscribe((v) => (sectionQuestions = v));
-    return sectionQuestions;
-  }
+  // getQuestionsOfSection(pageIndex, sectionIndex) {
+  //   let sectionQuestions;
+  //   this.store
+  //     .select(getSectionQuestions(pageIndex, sectionIndex))
+  //     .subscribe((v) => (sectionQuestions = v));
+  //   return sectionQuestions;
+  // }
 
-  getSectionsOfPage(pageIndex) {
-    let pageSections;
-    this.store
-      .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v?.sections));
-    return pageSections;
-  }
+  // getSectionsOfPage(pageIndex) {
+  //   let pageSections;
+  //   this.store
+  //     .select(getPage(pageIndex))
+  //     .subscribe((v) => (pageSections = v?.sections));
+  //   return pageSections;
+  // }
 
   getFormConfigurationStatuses() {
     return {
@@ -690,16 +669,17 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
+    this.roundPlanConfigurationService.addQuestions(
       pageIndex,
       sectionIndex,
       1,
       questionIndex,
-      this.formConf.counter.value
+      this.formConf.counter.value,
+      this.selectedNode.id
     );
   }
 }

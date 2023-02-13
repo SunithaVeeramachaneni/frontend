@@ -1,5 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { FormMetadata } from 'src/app/interfaces';
+import { getFormMetadata, State } from 'src/app/forms/state';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -8,99 +14,30 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyContainerComponent implements OnInit {
+  formMetadata$: Observable<FormMetadata>;
+
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
 
-  hierarchyList = [
-    {
-      id: 'node1',
-      type: 'Location',
-      name: 'Node1',
-      image: '',
-      hasChildren: true,
-      isExpanded: true,
-      children: [
-        {
-          id: 'n1c1',
-          type: 'Location',
-          name: 'N1C1',
-          image: '',
-          hasChildren: true,
-          isExpanded: true,
-          children: [
-            {
-              id: 'n1c1a',
-              type: 'Asset',
-              name: 'N1C1A',
-              image: '',
-              hasChildren: false,
-              isExpanded: false,
-              children: []
-            },
-            {
-              id: 'n1c1b',
-              type: 'Asset',
-              name: 'N1C1B',
-              image: '',
-              hasChildren: false,
-              isExpanded: false,
-              children: []
-            }
-          ]
-        },
-        {
-          id: 'n1c2',
-          type: 'Location',
-          name: 'N1C2',
-          image: '',
-          hasChildren: true,
-          isExpanded: true,
-          children: [
-            {
-              id: 'n1c2a',
-              type: 'Asset',
-              name: 'N1C2A',
-              image: '',
-              hasChildren: false,
-              isExpanded: false,
-              children: []
-            },
-            {
-              id: 'n1c2b',
-              type: 'Asset',
-              name: 'N1C2B',
-              image: '',
-              hasChildren: false,
-              isExpanded: false,
-              children: []
-            }
-          ]
+  hierarchyList = [];
+
+  constructor(
+    private operatorRoundsService: OperatorRoundsService,
+    private store: Store<State>
+  ) {
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        if (Object.keys(formMetadata).length) {
+          this.hierarchyList = formMetadata.hierarchy;
+          this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
         }
-      ]
-    }
-  ];
-  hierarchyListEmpty = [];
-
-  constructor(private operatorRoundsService: OperatorRoundsService) {}
-
-  ngOnInit(): void {
-    this.operatorRoundsService.setSelectedNode(this.hierarchyList[0]);
+      })
+    );
   }
+
+  ngOnInit(): void {}
 
   removeNodeHandler(event) {
     this.promoteChildren([...this.hierarchyList], event);
-
-    // const index = this.hierarchyList.findIndex((h) => h.id === event.id);
-    // if (index > -1) {
-    //   if (event.children && event.children.length) {
-    //     this.hierarchyList = [
-    //       ...this.hierarchyList.slice(0, index),
-    //       ...event.children,
-    //       ...this.hierarchyList.slice(index + 1)
-    //     ];
-    //   } else {
-    //     this.hierarchyList.splice(index, 1);
-    //   }
-    // }
   }
   promoteChildren(list, node) {
     list = list.map((l) => {

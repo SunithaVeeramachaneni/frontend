@@ -45,7 +45,7 @@ import { RoundPlanListComponent } from './round-plan-list/round-plan-list.compon
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
 import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
 import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';

@@ -12,7 +12,8 @@
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async,
-    questionCounter: questionCounter$ | async
+    questionCounter: questionCounter$ | async,
+    selectedNodeObj: selectedNode$ | async
   } as props"
 >
   <div class="dis-flex form-header">
@@ -163,7 +164,7 @@
     </div>
     <div
       class="questions-responses-width"
-      *ngIf="selectedNode$ | async as selectedNode"
+      *ngIf="selectedNode; else loadingSelectedNode"
     >
       <div class="selectedNode">
         <span class="selectedNodeTitle">Tasks: {{ selectedNode.name }}</span>
@@ -174,146 +175,10 @@
           (click)="importTasks()"
         ></button>
       </div>
-
-      <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
-        <app-page
-          [pageIndex]="pageIndex"
-          (pageEvent)="pageEventHandler($event)"
-          cdkDropListGroup
-        >
-          <ng-container *ngIf="sectionIds$ | async as sectionIds">
-            <div
-              cdkDropList
-              (cdkDropListDropped)="dropSection($event, pageIndex)"
-              [cdkDropListData]="getSectionsOfPage(pageIndex)"
-            >
-              <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
-                <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
-                  <div class="dis-flex" cdkDrag>
-                    <div class="section-drag-handler">
-                      <img
-                        cdkDragHandle
-                        src="assets/rdf-forms-icons/six-dots-white.svg"
-                        alt="six-dots"
-                        class="section-six-dots"
-                      />
-                    </div>
-
-                    <app-section
-                      class="sectionContainer"
-                      [pageIndex]="pageIndex"
-                      [sectionIndex]="sectionIndex"
-                      [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                      (sectionEvent)="sectionEventHandler($event)"
-                    >
-                      <div
-                        class="sectionMinimumDragArea"
-                        cdkDropList
-                        id="{{ sectionIds[pageIndex][sectionIndex] }}"
-                        [cdkDropListConnectedTo]="sectionIds[pageIndex]"
-                        (cdkDropListDropped)="
-                          drop(
-                            $event,
-                            pageIndex,
-                            sectionIds[pageIndex][sectionIndex]
-                          )
-                        "
-                        [cdkDropListData]="
-                          getQuestionsOfSection(
-                            pageIndex,
-                            sectionIds[pageIndex][sectionIndex]
-                          )
-                        "
-                        [id]="sectionIds[pageIndex][sectionIndex]"
-                      >
-                        <ng-container
-                          *ngIf="questionIds$ | async as questionIds"
-                        >
-                          <div
-                            *ngIf="
-                              getQuestionsOfSection(
-                                pageIndex,
-                                sectionIds[pageIndex][sectionIndex]
-                              ).length === 0
-                            "
-                          >
-                            <span
-                              class="sectionEmpty"
-                              translate="sectionEmptyMessage"
-                            >
-                            </span>
-                            <div class="floating-btns empty-section">
-                              <button
-                                class="questions-btn"
-                                (click)="
-                                  addQuestion(
-                                    pageIndex,
-                                    sectionIds[pageIndex][sectionIndex],
-                                    0
-                                  )
-                                "
-                              >
-                                <img
-                                  src="assets/rdf-forms-icons/add-question.svg"
-                                  alt="add questions"
-                                />
-                                <p
-                                  class="questions-delete-btn-text"
-                                  translate="question"
-                                ></p>
-                              </button>
-                            </div>
-                          </div>
-                          <ng-container
-                            *ngFor="
-                              let questionId of questionIds[pageIndex][
-                                sectionIds[pageIndex][sectionIndex]
-                              ];
-                              let questionIndex = index
-                            "
-                          >
-                            <div
-                              cdkDrag
-                              class="questionContainer"
-                              [ngClass]="{
-                                'highlight-bg':
-                                  getQuestionsOfSection(
-                                    pageIndex,
-                                    sectionIds[pageIndex][sectionIndex]
-                                  )[questionIndex].isOpen === true
-                              }"
-                            >
-                              <div class="question-drag-handler">
-                                <img
-                                  cdkDragHandle
-                                  src="assets/rdf-forms-icons/six-dots.svg"
-                                  alt="six-dots"
-                                  class="question-six-dots"
-                                />
-                              </div>
-
-                              <app-question
-                                class="question"
-                                [pageIndex]="pageIndex"
-                                [sectionId]="
-                                  sectionIds[pageIndex][sectionIndex]
-                                "
-                                [questionId]="questionId"
-                                [questionIndex]="questionIndex"
-                                (questionEvent)="questionEventHandler($event)"
-                              ></app-question>
-                            </div>
-                          </ng-container>
-                        </ng-container>
-                      </div>
-                    </app-section>
-                  </div>
-                </div>
-              </ng-container>
-            </div>
-          </ng-container>
-        </app-page>
-      </ng-container>
+      <app-builder
+        *ngIf="selectedNodeLoadStatus"
+        [selectedNode]="selectedNode"
+      ></app-builder>
     </div>
     <div class="iphone-width m-t-20" *ngIf="isPreviewActive" @previewSlide>
       <app-iphone></app-iphone>
@@ -331,3 +196,48 @@
     ></app-import-questions-slider>
   </div>
 </div>
+
+<ng-template #loadingSelectedNode>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
