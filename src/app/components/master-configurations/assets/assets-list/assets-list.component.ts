@@ -446,7 +446,6 @@ export class AssetsListComponent implements OnInit {
       .downloadSampleAssetTemplate()
       .pipe(
         tap((data) => {
-          console.log(data);
           downloadFile(data, 'Asset_Sample_Template');
         })
       )

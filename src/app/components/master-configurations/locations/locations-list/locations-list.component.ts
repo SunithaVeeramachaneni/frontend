@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -219,8 +214,7 @@ export class LocationsListComponent implements OnInit {
 
   constructor(
     private locationService: LocationService,
-    private readonly toast: ToastService,
-    private cdrf: ChangeDetectorRef
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -355,7 +349,7 @@ export class LocationsListComponent implements OnInit {
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
-        // this.locationService.fetchLocations$.next({ data: 'search' });
+        this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
         this.addEditCopyDeleteLocations$.next({
           action: 'edit',
@@ -365,7 +359,6 @@ export class LocationsListComponent implements OnInit {
           text: 'Location updated successfully!',
           type: 'success'
         });
-        // this.cdrf.markForCheck();
       }
     }
     this.locationService.fetchLocations$.next({ data: 'load' });
