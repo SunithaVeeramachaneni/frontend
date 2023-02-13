@@ -46,8 +46,8 @@ import { UnitMeasurementService } from '../services';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
-import { AppService } from 'src/app/shared/services/app.services';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -246,7 +246,7 @@ export class UnitMeasurementListComponent implements OnInit {
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
     public readonly dialog: MatDialog,
-    private _appService: AppService
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -371,9 +371,10 @@ export class UnitMeasurementListComponent implements OnInit {
           this.isLoading$.next(false);
           return of(rows);
         }),
-        catchError(() => {
+        catchError((err) => {
           this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
+          this.errorHandlerService.handleError(err);
           return of([]);
         })
       );
