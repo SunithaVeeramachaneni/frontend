@@ -123,5 +123,6 @@
   "status": "Status",
   "location": "Location",
   "lastEditedBy": "Last Edited by",
-  "viewReport": "View Report"
+  "viewReport": "View Report",
+  "selectedLocations": "Location(s) selected"
 }

@@ -1,0 +1,130 @@
+@import '../../../../scss/colors.scss';
+
+.locations-modal {
+  height: 500px;
+  width: 500px;
+  overflow: hidden;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+
+  .heading-conatiner {
+    justify-content: space-between;
+    padding: 10px 10px 0 15px;
+
+    .heading {
+      font-size: 120%;
+      margin-top: 10px;
+    }
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+    }
+
+    .clear-icon {
+      font-size: 130%;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  }
+
+  .search {
+    margin: 0 15px;
+
+    .icon {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  .actions {
+    float: right;
+    margin-right: 15px;
+  }
+
+  .list-container {
+    height: 315px;
+    overflow-y: auto;
+
+    .list-item-conatiner {
+      border-bottom: 1px solid $gray8;
+      margin: 0 15px;
+
+      .selected-list-element {
+        list-style-type: none;
+        display: flex;
+        width: 100%;
+        cursor: pointer;
+
+        .form-name {
+          padding: 0 15px;
+          color: black;
+          font-size: 110%;
+          margin: 7px 0 0 0;
+          font-weight: 500;
+          text-transform: capitalize;
+        }
+
+        .form-des {
+          padding: 0 15px;
+          color: $gray4;
+          font-size: 100%;
+          margin: 5px 0;
+        }
+
+        .no-of-ques {
+          float: right;
+          padding-right: 15px;
+          color: $gray4;
+          font-size: 100%;
+        }
+      }
+
+      .selected-list-element:hover {
+        background: $blue4-hover;
+        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .active {
+        background: $blue4-hover;
+        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+        border-radius: 5px;
+      }
+    }
+
+    .no-records {
+      background: $white;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
+}
+
+.ghost-loading {
+  padding: 0 15px;
+}
+
+.master-checkbox {
+  margin-left: 25px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.node-container {
+  padding: 0px 30px;
+}
+
+.node-break {
+  color: $border-color;
+}
+
+.selected-items {
+  margin-top: 35px;
+  margin-left: 10px;
+  font-weight: bold;
+}
