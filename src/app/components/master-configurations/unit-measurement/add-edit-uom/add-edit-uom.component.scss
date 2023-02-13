@@ -1,8 +1,8 @@
 @import '../../../../../scss/colors.scss';
 
 :host {
-  background: #fff;
-  color: #fff;
+  background: $white;
+  color: $white;
   position: absolute;
   left: auto;
   top: 0;
@@ -37,7 +37,7 @@
   }
 
   .image {
-    border: 1px solid #bbbbbb;
+    border: 1px solid $disabled-color;
     border-radius: 8px;
     padding: 20px;
   }
@@ -62,7 +62,7 @@
 
 ::ng-deep .mat-progress-spinner.mat-accent circle,
 .mat-spinner.mat-accent circle {
-  stroke: #ffffff !important;
+  stroke: $white !important;
 }
 
 .searchable-input {
@@ -75,8 +75,8 @@
 
 .save-btn {
   margin-right: 20px;
-  background-color: #1351d8;
-  color: #ffffff !important;
+  background-color: $blue-main;
+  color: $white !important;
 }
 
 .cancel-btn {
@@ -108,18 +108,18 @@
 .description {
   width: 45%;
   input {
-    color: rgb(8, 7, 7);
+    color: $black;
   }
 }
 
 .symbol {
   width: 45%;
   input {
-    color: rgb(8, 7, 7);
+    color: $black;
   }
 }
 .show-measurement {
-  color: rgb(8, 7, 7);
+  color: $black;
 }
 
 .edit-icon {

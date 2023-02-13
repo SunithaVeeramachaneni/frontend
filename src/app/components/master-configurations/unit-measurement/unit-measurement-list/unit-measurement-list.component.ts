@@ -82,7 +82,7 @@ export class UnitMeasurementListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'unitType',
-      displayName: 'UMO',
+      displayName: 'UOM',
       type: 'string',
       order: 1,
       searchable: false,
@@ -407,12 +407,12 @@ export class UnitMeasurementListComponent implements OnInit {
         icon: 'edit',
         title: 'Edit',
         action: 'edit'
-      },
-      {
-        icon: 'delete',
-        title: 'Delete',
-        action: 'delete'
       }
+      // {
+      //   icon: 'delete',
+      //   title: 'Delete',
+      //   action: 'delete'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;

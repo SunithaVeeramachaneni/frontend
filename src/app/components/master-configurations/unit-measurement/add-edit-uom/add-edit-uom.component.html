@@ -16,6 +16,7 @@
     <mat-form-field appearance="outline" class="unit-measurement">
       <mat-label translate="unitOfMeasurement"></mat-label>
       <mat-select
+        *ngIf="false"
         [(ngModel)]="unitType"
         name="unitType"
         (selectionChange)="onMeasurementChange($event)"
@@ -25,12 +26,14 @@
           {{ unit }}
         </mat-option>
       </mat-select>
-
+      <input matInput [(ngModel)]="unitType" name="unitType" />
     </mat-form-field>
-    <mat-error class="m-l-5 m-t-2" style="color: red;" *ngIf="!unitType && isSubmittedForm">
-      {{
-        'selectmsg' | translate | uppercase
-      }}
+    <mat-error
+      class="m-l-5 m-t-2"
+      style="color: red"
+      *ngIf="!unitType && isSubmittedForm"
+    >
+      {{ 'selectmsg' | translate | uppercase }}
     </mat-error>
   </p>
   <div class="m-l-5 m-t-5 display-flex" *ngIf="unitEditData">
@@ -119,7 +122,7 @@
     </div>
   </div>
 
-  <span (click)="addNewUmo()" class="add-new-btn">
+  <span *ngIf="unitType" (click)="addNewUmo()" class="add-new-btn">
     <img src="assets/img/add-new.svg" alt="add-new-icon" class="add-new-icon" />
     <label translate="addNew"></label>
   </span>
@@ -129,12 +132,7 @@
   <button mat-button class="cancel-btn" (click)="cancel()">
     {{ 'cancel' | translate | uppercase }}
   </button>
-  <button
-    mat-button
-    color="primary"
-    (click)="onSave()"
-    class="save-btn"
-  >
+  <button mat-button color="primary" (click)="onSave()" class="save-btn">
     {{ 'save' | translate | uppercase }}
     <mat-icon *ngIf="isLoading"
       ><mat-spinner color="accent" diameter="20"> </mat-spinner
