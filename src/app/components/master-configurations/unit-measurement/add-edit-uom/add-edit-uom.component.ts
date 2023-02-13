@@ -1,3 +1,4 @@
+import { ErrorHandlerService } from './../../../../shared/error-handler/error-handler.service';
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { OnChanges } from '@angular/core';
@@ -60,7 +61,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog
+    public readonly dialog: MatDialog,
+    private errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnChanges(): void {
@@ -118,13 +120,16 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           name: this.unitType || this.unitEditData?.unitList?.name,
           _version: this.unitEditData?.unitList?._version
         })
-        .subscribe((result: UpdateUnitListMutation) => {
-          if (result) {
-            this.createUpdateUnitListItems(result, 'edit');
-          } else {
-            this.isLoading = false;
-          }
-        });
+        .subscribe(
+          (result: UpdateUnitListMutation) => {
+            if (result) {
+              this.createUpdateUnitListItems(result, 'edit');
+            } else {
+              this.isLoading = false;
+            }
+          },
+          (err) => this.errorHandlerService.handleError(err)
+        );
     } else {
       this.unitOfMeasurementService
         .getSingleUnitListByName$(this.unitType)
@@ -136,11 +141,14 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
               .CreateUnitList$({
                 name: this.unitType
               })
-              .subscribe((response: CreateUnitListMutation) => {
-                if (response) {
-                  this.createUpdateUnitListItems(response, 'create');
-                }
-              });
+              .subscribe(
+                (response: CreateUnitListMutation) => {
+                  if (response) {
+                    this.createUpdateUnitListItems(response, 'create');
+                  }
+                },
+                (err) => this.errorHandlerService.handleError(err)
+              );
           }
         });
     }
@@ -237,7 +245,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
               this.isLoading = false;
               this.createUpdateUnitListItems(result, 'delete');
             },
-            () => (this.isLoading = false)
+            (err) => {
+              this.isLoading = false;
+              this.errorHandlerService.handleError(err);
+            }
           );
       }
     });
