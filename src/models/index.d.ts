@@ -1,6 +1,6 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
 
 
@@ -184,6 +184,7 @@ type EagerAuthoredRoundPlanDetail = {
   readonly counter?: number | null;
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
+  readonly subForms?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -200,6 +201,7 @@ type LazyAuthoredRoundPlanDetail = {
   readonly counter?: number | null;
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
+  readonly subForms?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -258,14 +260,15 @@ type EagerRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly formType?: string | null;
+  readonly hierarchy?: string | null;
   readonly isArchived?: boolean | null;
-  readonly searchTerm?: string | null;
+  readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
   readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
   readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly isDeleted?: boolean | null;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -288,14 +291,15 @@ type LazyRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly formType?: string | null;
+  readonly hierarchy?: string | null;
   readonly isArchived?: boolean | null;
-  readonly searchTerm?: string | null;
+  readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
   readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
   readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly isDeleted?: boolean | null;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

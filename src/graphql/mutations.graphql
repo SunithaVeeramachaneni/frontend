@@ -269,6 +269,7 @@ mutation CreateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -288,6 +289,7 @@ mutation UpdateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -307,6 +309,7 @@ mutation DeleteAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -377,9 +380,9 @@ mutation CreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -394,6 +397,7 @@ mutation CreateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -419,9 +423,9 @@ mutation UpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -436,6 +440,7 @@ mutation UpdateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -461,9 +466,9 @@ mutation DeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -478,6 +483,7 @@ mutation DeleteRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
