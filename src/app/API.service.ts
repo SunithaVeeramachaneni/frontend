@@ -226,6 +226,16 @@ export type DeleteUnitListInput = {
   _version?: number | null;
 };
 
+export type DeleteAssetsListInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type DeleteLocationListInput = {
+  id: string;
+  _version?: number | null;
+};
+
 export type CreateAssetsInput = {
   id?: string | null;
   name?: string | null;
@@ -10506,4 +10516,5 @@ export class APIService {
       SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
     >;
   }
+
 }
