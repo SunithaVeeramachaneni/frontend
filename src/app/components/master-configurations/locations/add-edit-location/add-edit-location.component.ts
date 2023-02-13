@@ -86,7 +86,7 @@ export class AddEditLocationComponent implements OnInit {
   getAllLocations() {
     this.locationService.fetchAllLocations$().then((allLocations) => {
       this.parentInformation = allLocations.items.filter(
-        (loc) => loc.id !== this.locEditData?.id
+        (loc) => loc.id !== this.locEditData?.id && loc._deleted !== true
       );
       this.allParentsData = this.parentInformation;
     });

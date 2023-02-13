@@ -351,11 +351,11 @@ export class AssetsListComponent implements OnInit {
           action: 'edit',
           form: assetData.data
         });
+        this.toast.show({
+          text: 'Asset updated successfully!',
+          type: 'success'
+        });
       }
-      this.toast.show({
-        text: 'Asset updated successfully!',
-        type: 'success'
-      });
     }
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
