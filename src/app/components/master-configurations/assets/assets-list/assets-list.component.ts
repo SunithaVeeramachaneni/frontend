@@ -389,7 +389,7 @@ export class AssetsListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = data;
+        this.assetsEditData = { ...data };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -439,14 +439,6 @@ export class AssetsListComponent implements OnInit {
 
   onCloseAssetsAddOrEditOpenState(event) {
     this.assetsAddOrEditOpenState = event;
-  }
-
-  onCloseLocationDetailedView(event) {
-    this.openAssetsDetailedView = event.status;
-    if (event.data !== '') {
-      this.assetsEditData = event.data;
-      this.assetsAddOrEditOpenState = 'in';
-    }
   }
 
   exportAsXLSX(): void {

@@ -405,7 +405,7 @@ export class LocationsListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.locationEditData = data;
+        this.locationEditData = { ...data };
         this.locationAddOrEditOpenState = 'in';
         break;
       case 'delete':
