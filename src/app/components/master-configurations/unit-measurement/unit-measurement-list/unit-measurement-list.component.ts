@@ -474,7 +474,6 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitMeasurementService.uploadExcel(formData).subscribe(
       (resp: any) => {
         if (resp?.data) {
-          // TODO: Need to check is handled properly or not.
           for (const [key, value] of Object.entries(resp?.data)) {
             this.unitMeasurementService
               .getSingleUnitListByName$(key)
@@ -530,7 +529,9 @@ export class UnitMeasurementListComponent implements OnInit {
       }
     );
     forkJoin(unitObservables).subscribe(
-      () => {},
+      () => {
+        this.fetchUOM$.next({ data: 'load' });
+      },
       (err) => this.errorHandlerService.handleError(err)
     );
   }
