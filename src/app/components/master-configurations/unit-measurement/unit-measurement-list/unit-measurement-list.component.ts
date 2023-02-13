@@ -34,7 +34,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 
 import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import {
   CreateUnitListMutation,
@@ -79,6 +79,7 @@ export interface FormTableUpdate {
   ]
 })
 export class UnitMeasurementListComponent implements OnInit {
+  readonly perms = perms;
   columns: Column[] = [
     {
       id: 'unitType',

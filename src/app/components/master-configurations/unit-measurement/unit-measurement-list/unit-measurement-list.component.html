@@ -30,6 +30,7 @@
             mat-menu-item
             class="menu-buttons"
             (click)="uploader?.click()"
+            *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
           >
             <img
               src="assets/master-configurations/upload-from-excel.svg"
@@ -38,7 +39,12 @@
             />
             <span translate="uploadExcel"></span>
           </button>
-          <button mat-menu-item (click)="addManually()" class="menu-buttons">
+          <button
+            mat-menu-item
+            (click)="addManually()"
+            *appCheckUserHasPermission="[perms.createUnitOfMeasurement]"
+            class="menu-buttons"
+          >
             <img
               src="assets/master-configurations/add-manually.svg"
               alt="add manually"
@@ -56,7 +62,12 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #moreMenu="matMenu">
-          <button mat-menu-item class="menu-buttons" (click)="exportAsXLSX()">
+          <button
+            mat-menu-item
+            class="menu-buttons"
+            *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
+            (click)="exportAsXLSX()"
+          >
             <img
               src="assets/master-configurations/upload-from-excel.svg"
               alt="Excel"

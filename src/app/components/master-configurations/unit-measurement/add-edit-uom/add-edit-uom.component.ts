@@ -46,7 +46,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     unitList: null,
     rows: []
   };
-  public unitType: string='';
+  public unitType = '';
   public measurementList: string[];
   errors: ValidationError = {};
   public unitMeasurementForm = new FormGroup({
