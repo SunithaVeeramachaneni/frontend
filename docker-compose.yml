@@ -381,7 +381,6 @@ services:
         - MYSQL_USER_NAME=${MYSQL_USER_NAME}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - CATALOG_TABLE_NAME=${CATALOG_TABLE_NAME}
         - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
         - REDIS_HOST_NAME=${REDIS_HOST_NAME}
         - REDIS_PORT=${REDIS_PORT}
