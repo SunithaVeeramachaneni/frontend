@@ -384,14 +384,14 @@ export class LocationsListComponent implements OnInit {
       });
     }
 
-    if (
-      this.loginService.checkUserHasPermission(permissions, 'DELETE_LOCATION')
-    ) {
-      menuActions.push({
-        title: 'Delete',
-        action: 'delete'
-      });
-    }
+    // if (
+    //   this.loginService.checkUserHasPermission(permissions, 'DELETE_LOCATION')
+    // ) {
+    //   menuActions.push({
+    //     title: 'Delete',
+    //     action: 'delete'
+    //   });
+    // } Implementation is done but required validations based on parent
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
