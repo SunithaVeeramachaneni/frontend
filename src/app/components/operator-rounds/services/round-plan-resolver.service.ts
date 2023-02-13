@@ -6,7 +6,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { State } from 'src/app/forms/state';
 
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { hierarchyMock } from '../round-plan-configuration/hierarchyMock';
 import { OperatorRoundsService } from './operator-rounds.service';
@@ -30,7 +30,7 @@ export class RoundPlanResolverService
     }).pipe(
       map(({ form, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
-          FormConfigurationActions.updateCreateOrEditForm({
+          BuilderConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
           })
         );
@@ -44,12 +44,15 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
+          hierarchy,
           _version: formListDynamoDBVersion
         } = form;
+
         const {
           id: authoredFormDetailId,
           counter,
           pages,
+          subForms,
           formDetailPublishStatus,
           version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
@@ -65,18 +68,15 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
-          hierarchy: hierarchyMock
+          hierarchy: JSON.parse(hierarchy)
         };
-        const hierarchyPagesMap = {};
-        hierarchyMock.forEach((h) => {
-          hierarchyPagesMap[`pages_${h.id}`] = [];
-        });
-        console.log(hierarchyPagesMap);
+
+        const subFormsMap = JSON.parse(subForms);
         return {
           formMetadata,
           counter,
           pages: JSON.parse(pages),
-          ...hierarchyPagesMap,
+          ...subFormsMap,
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),

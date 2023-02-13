@@ -31,7 +31,11 @@ export class RoundPlanConfigurationEffects {
           map((response) => {
             this.operatorRoundsService.setFormCreatedUpdated(response);
             return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata },
+              formMetadata: {
+                id: response.id,
+                ...action.formMetadata,
+                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+              },
               formSaveStatus: formConfigurationStatus.saved
             });
           }),
@@ -53,7 +57,10 @@ export class RoundPlanConfigurationEffects {
         this.operatorRoundsService.updateForm$(action).pipe(
           map(() =>
             RoundPlanConfigurationApiActions.updateRoundPlanSuccess({
-              formMetadata: action.formMetadata,
+              formMetadata: {
+                ...action.formMetadata,
+                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+              },
               formSaveStatus: formConfigurationStatus.saved
             })
           ),
@@ -92,6 +99,7 @@ export class RoundPlanConfigurationEffects {
               }),
               this.operatorRoundsService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
+                subForms: {},
                 formDetailPublishStatus: formConfigurationStatus.published,
                 authoredFormDetailVersion:
                   authoredFormDetail.authoredFormDetailVersion + 1

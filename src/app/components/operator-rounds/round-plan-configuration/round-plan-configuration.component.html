@@ -178,6 +178,7 @@
       <app-builder
         *ngIf="selectedNodeLoadStatus"
         [selectedNode]="selectedNode"
+        [counter]="formConfiguration.get('counter').value"
       ></app-builder>
     </div>
     <div class="iphone-width m-t-20" *ngIf="isPreviewActive" @previewSlide>

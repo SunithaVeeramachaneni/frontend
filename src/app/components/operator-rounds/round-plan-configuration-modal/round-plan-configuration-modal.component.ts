@@ -27,7 +27,7 @@ import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import {
-  FormConfigurationActions,
+  BuilderConfigurationActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -166,7 +166,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
-        FormConfigurationActions.addFormMetadata({
+        BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
             ...this.headerDataForm.value,
             hierarchy: hierarchyMock
@@ -176,7 +176,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        FormConfigurationActions.updateCreateOrEditForm({
+        BuilderConfigurationActions.updateCreateOrEditForm({
           createOrEditForm: true
         })
       );
@@ -184,7 +184,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
-            hierarchy: hierarchyMock,
+            hierarchy: JSON.stringify(hierarchyMock),
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }

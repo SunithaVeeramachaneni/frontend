@@ -32,7 +32,8 @@ import {
   getPage,
   getQuestionIds,
   State,
-  getSubFormPages
+  getSubFormPages,
+  getQuestionCounter
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
@@ -64,6 +65,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
   get selectedNode(): any {
     return this._selectedNode;
   }
+  @Input() counter;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -73,10 +75,10 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
   questionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   questionIndexes: any;
+
+  questionCounter$: Observable<number>;
+
   isPreviewActive = false;
-
-  counter = 0;
-
   formMetadata$: Observable<FormMetadata>;
 
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -102,6 +104,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes(this.selectedNode.id))
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+    this.questionCounter$ = this.store.select(getQuestionCounter);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -132,7 +135,6 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   addPage() {
-    this.counter++;
     this.roundPlanConfigurationService.addPage(
       0,
       1,

@@ -17,7 +17,12 @@ import {
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  tap
+} from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
 import {
@@ -188,6 +193,46 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
+    this.formConfiguration.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (!this.formConfiguration.invalid) {
+            const {
+              counter: prevCounter,
+              id: prevId,
+              formStatus: prevFormStatus,
+              ...prev
+            } = previous;
+            const {
+              counter: currCounter,
+              id: currId,
+              formStatus: currFormStatus,
+              ...curr
+            } = current;
+
+            if (!isEqual(prev, curr)) {
+              this.store.dispatch(
+                BuilderConfigurationActions.updateFormMetadata({
+                  formMetadata: curr,
+                  ...this.getFormConfigurationStatuses()
+                })
+              );
+
+              this.store.dispatch(
+                BuilderConfigurationActions.updateForm({
+                  formMetadata: this.formMetadata,
+                  formListDynamoDBVersion: this.formListVersion
+                })
+              );
+            }
+          }
+        })
+      )
+      .subscribe();
+
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
       tap((counter) => {
         this.formConfiguration.patchValue(
@@ -215,6 +260,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           formStatus,
           counter,
           pages,
+          subForms,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -225,12 +271,19 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           formDetailDynamoDBVersion,
           authoredFormDetailDynamoDBVersion
         } = formDetails;
+
+        const subFormsObj = {};
+        let formKeys = Object.keys(formDetails);
+        formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+        formKeys.forEach((key) => {
+          subFormsObj[key] = formDetails[key];
+        });
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
-        if (pages.length && formListId) {
+        if (formListId) {
           if (authoredFormDetailId) {
             if (
               formSaveStatus !== 'Saved' &&
@@ -244,6 +297,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   formListId,
                   counter,
                   pages,
+                  subForms: subFormsObj,
                   authoredFormDetailId,
                   authoredFormDetailDynamoDBVersion
                 })
@@ -251,6 +305,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             }
             this.formDetails = formDetails;
           } else {
+            // 0 maintain forms to asset mapping;
+            // 1 find all sub forms and pass it as subForms property to `createAuthoredRoundPlanDetail`;
+            // 2
+
             this.store.dispatch(
               RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
                 formStatus,
@@ -258,6 +316,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 counter,
                 pages,
+                subForms,
                 authoredFormDetailVersion
               })
             );
@@ -269,6 +328,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
+                subForms,
                 formDetailId,
                 formDetailDynamoDBVersion,
                 authoredFormDetail: {
@@ -289,6 +349,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
+                subForms,
                 authoredFormDetail: {
                   formStatus,
                   formListId,
@@ -421,7 +482,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             1,
             this.sectionIndexes,
             this.formConf.counter.value,
-            null
+            this.selectedNode.id
           );
         }
         break;

@@ -223,6 +223,7 @@ export class OperatorRoundsService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'hierarchy'
     >
   ) {
     return from(
@@ -233,6 +234,7 @@ export class OperatorRoundsService {
         formStatus: formListQuery.formStatus,
         author: formListQuery.author,
         formType: formListQuery.formType,
+        hierarchy: formListQuery.hierarchy,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
@@ -290,6 +292,7 @@ export class OperatorRoundsService {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
+        subForms: JSON.stringify(formDetails.subForms),
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         version: formDetails.authoredFormDetailVersion.toString()
@@ -304,6 +307,7 @@ export class OperatorRoundsService {
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
+        subForms: JSON.stringify(formDetails.subForms),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
         _version: formDetails.authoredFormDetailDynamoDBVersion

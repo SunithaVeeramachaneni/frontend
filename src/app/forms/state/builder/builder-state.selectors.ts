@@ -221,21 +221,7 @@ export const getQuestionIndexes = (subFormId: string) =>
 
 export const getFormDetails = createSelector(
   selectFormConfigurationState,
-  (state) => ({
-    formMetadata: state.formMetadata,
-    formStatus: state.formStatus,
-    counter: state.counter,
-    pages: state.pages,
-    authoredFormDetailId: state.authoredFormDetailId,
-    formDetailId: state.formDetailId,
-    authoredFormDetailVersion: state.authoredFormDetailVersion,
-    isFormDetailPublished: state.isFormDetailPublished,
-    formSaveStatus: state.formSaveStatus,
-    formListDynamoDBVersion: state.formListDynamoDBVersion,
-    formDetailDynamoDBVersion: state.formDetailDynamoDBVersion,
-    authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion,
-    formDetailPublishStatus: state.formDetailPublishStatus
-  })
+  (state) => ({ ...state })
 );
 
 export const getCreateOrEditForm = createSelector(
