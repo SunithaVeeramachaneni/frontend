@@ -554,6 +554,7 @@ query GetAuthoredRoundPlanDetail($id: ID!) {
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -579,6 +580,7 @@ query ListAuthoredRoundPlanDetails(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
       createdAt
       updatedAt
       _version
@@ -609,6 +611,7 @@ query SyncAuthoredRoundPlanDetails(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
       createdAt
       updatedAt
       _version
@@ -641,6 +644,7 @@ query AuthoredRoundPlanDetailsByFormlistID(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
       createdAt
       updatedAt
       _version
@@ -752,9 +756,9 @@ query GetRoundPlanList($id: ID!) {
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -769,6 +773,7 @@ query GetRoundPlanList($id: ID!) {
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -796,11 +801,12 @@ query ListRoundPlanLists(
       tags
       lastPublishedBy
       author
-      formType
+      hierarchy
       isArchived
-      searchTerm
+      formType
       isArchivedAt
       isDeleted
+      searchTerm
       createdAt
       updatedAt
       _version
@@ -837,11 +843,12 @@ query SyncRoundPlanLists(
       tags
       lastPublishedBy
       author
-      formType
+      hierarchy
       isArchived
-      searchTerm
+      formType
       isArchivedAt
       isDeleted
+      searchTerm
       createdAt
       updatedAt
       _version

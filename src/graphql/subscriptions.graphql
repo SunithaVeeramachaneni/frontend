@@ -379,6 +379,7 @@ subscription OnCreateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -397,6 +398,7 @@ subscription OnUpdateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -415,6 +417,7 @@ subscription OnDeleteAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -481,9 +484,9 @@ subscription OnCreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -498,6 +501,7 @@ subscription OnCreateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -522,9 +526,9 @@ subscription OnUpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -539,6 +543,7 @@ subscription OnUpdateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -563,9 +568,9 @@ subscription OnDeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -580,6 +585,7 @@ subscription OnDeleteRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
