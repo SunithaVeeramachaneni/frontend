@@ -1,105 +1,131 @@
 <div class="locations-list-view">
-  <div class="main-container">
-    <div class="locations-header">
-      <div>
-        <h2 class="heading" translate="locations"></h2>
+  <ng-container *ngIf="userInfo$ | async">
+    <div class="main-container">
+      <div class="locations-header">
+        <div>
+          <h2 class="heading" translate="locations"></h2>
+        </div>
+        <div>
+          <span class="custom-form-field-gray-color search">
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'search' | translate"
+                autocomplete="off"
+                [formControl]="searchLocation"
+              />
+              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+            </mat-form-field>
+          </span>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="createMenu"
+            translate="createNew"
+            class="create-new-btn"
+            *appCheckUserHasPermission="[
+              perms.createLocation,
+              perms.importLocations
+            ]"
+          ></button>
+          <mat-menu #createMenu="matMenu">
+            <button
+              mat-menu-item
+              (click)="uploader.click()"
+              class="menu-buttons"
+              *appCheckUserHasPermission="[perms.importLocations]"
+            >
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="uploadExcel"></span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="addManually()"
+              class="menu-buttons"
+              *appCheckUserHasPermission="[perms.createLocation]"
+            >
+              <img
+                src="assets/master-configurations/add-manually.svg"
+                alt="add manually"
+                class="add-manually-icon"
+              />
+              <span translate="addManually"></span>
+            </button>
+          </mat-menu>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="moreMenu"
+            class="more-btn"
+            *appCheckUserHasPermission="[perms.importLocations]"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="downloadTemplate"></span>
+            </button>
+          </mat-menu>
+          <input
+            id="upload"
+            hidden
+            type="file"
+            #uploader
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+            (change)="uploadFile($event)"
+            (click)="resetFile($event)"
+          />
+        </div>
       </div>
-      <div>
-        <span class="custom-form-field-gray-color search">
-          <mat-form-field appearance="outline">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
-            <input
-              matInput
-              type="text"
-              [placeholder]="'search' | translate"
-              autocomplete="off"
-              [formControl]="searchLocation"
-            />
-            <img [src]="filterIcon" matSuffix alt="Open Filter" />
-          </mat-form-field>
-        </span>
 
-        <button
-          mat-raised-button
-          [matMenuTriggerFor]="createMenu"
-          translate="createNew"
-          class="create-new-btn"
-        ></button>
-        <mat-menu #createMenu="matMenu">
-          <button mat-menu-item class="menu-buttons" disabled>
-            <img
-              src="assets/master-configurations/upload-from-excel.svg"
-              alt="Excel"
-              class="menu-icons"
-            />
-            <span translate="uploadExcel"></span>
-          </button>
-          <button mat-menu-item (click)="addManually()" class="menu-buttons">
-            <img
-              src="assets/master-configurations/add-manually.svg"
-              alt="add manually"
-              class="add-manually-icon"
-            />
-            <span translate="addManually"></span>
-          </button>
-        </mat-menu>
-
-        <button
-          mat-raised-button
-          [matMenuTriggerFor]="moreMenu"
-          class="more-btn"
-        >
-          <mat-icon>more_horiz</mat-icon>
-        </button>
-        <mat-menu #moreMenu="matMenu">
-          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-            <img
-              src="assets/master-configurations/upload-from-excel.svg"
-              alt="Excel"
-              class="menu-icons"
-            />
-            <span translate="downloadTemplate"></span>
-          </button>
-        </mat-menu>
+      <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
       </div>
     </div>
 
-    <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
-      <cwp-dynamictable
-        [dataSource]="dataSource"
-        [configOptions]="configOptions"
-        (fetchDataCallback)="handleTableEvent($event)"
-        (rowLevelActionHandler)="rowLevelActionHandler($event)"
-        (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-        (cellClickActionHandler)="cellClickActionHandler($event)"
-        class="width-100"
-      ></cwp-dynamictable>
-    </div>
-  </div>
+    <ng-container *ngIf="locationAddOrEditOpenState">
+      <app-add-edit-location
+        [@slideInOut]="locationAddOrEditOpenState"
+        (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+        [locationEditData]="locationEditData"
+        (createdLocationData)="addOrUpdateLocation($event)"
+      ></app-add-edit-location>
+    </ng-container>
 
-  <ng-container *ngIf="locationAddOrEditOpenState">
-    <app-add-edit-location
-      [@slideInOut]="locationAddOrEditOpenState"
-      (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
-      [locationEditData]="locationEditData"
-      (createdLocationData)="addOrUpdateLocation($event)"
-    ></app-add-edit-location>
+    <ng-container *ngIf="openLocationDetailedView">
+      <app-location-detail-view
+        [@slideInOut]="openLocationDetailedView"
+        (slideInOut)="onCloseLocationDetailedView($event)"
+        [selectedLocation]="selectedLocation"
+      ></app-location-detail-view>
+    </ng-container>
+
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
   </ng-container>
-
-  <ng-container *ngIf="openLocationDetailedView">
-    <app-location-detail-view
-      [@slideInOut]="openLocationDetailedView"
-      (slideInOut)="onCloseLocationDetailedView($event)"
-      [selectedLocation]="selectedLocation"
-    ></app-location-detail-view>
-  </ng-container>
-
-  <div *ngIf="isLoading$ | async">
-    <div class="ghost-loading">
-      <div *ngFor="let number of ghostLoading">
-        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-        </ngx-shimmer-loading>
-      </div>
-    </div>
-  </div>
 </div>

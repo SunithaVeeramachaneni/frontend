@@ -1,8 +1,8 @@
 @import '../../../../../scss/colors.scss';
 
 :host {
-  background: #fff;
-  color: #fff;
+  background: $white;
+  color: $white;
   position: absolute;
   left: auto;
   top: 0;
@@ -31,7 +31,7 @@
   }
 
   .image {
-    border: 1px solid #bbbbbb;
+    border: 1px solid $border-color;
     border-radius: 8px;
     padding: 20px;
   }

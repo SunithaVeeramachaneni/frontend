@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -22,12 +17,14 @@ import {
   tap
 } from 'rxjs/operators';
 import { GetFormListQuery } from 'src/app/API.service';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
   FormTableUpdate,
-  TableEvent
+  Permission,
+  TableEvent,
+  UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { AssetsService } from '../services/assets.service';
@@ -39,6 +36,7 @@ import {
   trigger
 } from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { LoginService } from 'src/app/components/login/services/login.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -64,6 +62,7 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
   ]
 })
 export class AssetsListComponent implements OnInit {
+  readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   columns: Column[] = [
     {
@@ -204,11 +203,12 @@ export class AssetsListComponent implements OnInit {
   limit = defaultLimit;
   fetchType = 'load';
   nextToken = '';
+  userInfo$: Observable<UserInfo>;
 
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
-    private cdrf: ChangeDetectorRef
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -241,7 +241,9 @@ export class AssetsListComponent implements OnInit {
       })
     );
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   getDisplayedAssets(): void {
@@ -349,26 +351,32 @@ export class AssetsListComponent implements OnInit {
           action: 'edit',
           form: assetData.data
         });
+        this.toast.show({
+          text: 'Asset updated successfully!',
+          type: 'success'
+        });
       }
-      this.toast.show({
-        text: 'Asset updated successfully!',
-        type: 'success'
-      });
     }
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_ASSET')) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
-        title: 'Delete',
-        action: 'delete'
-      }
-    ];
+      });
+    }
+
+    // if (this.loginService.checkUserHasPermission(permissions, 'DELETE_ASSET')) {
+    //   menuActions.push({
+    //     title: 'Delete',
+    //     action: 'delete'
+    //   });
+    // }  Implementation is done but required validations based on parent
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -381,7 +389,7 @@ export class AssetsListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = data;
+        this.assetsEditData = { ...data };
         this.assetsAddOrEditOpenState = 'in';
         break;
       case 'delete':
@@ -433,20 +441,11 @@ export class AssetsListComponent implements OnInit {
     this.assetsAddOrEditOpenState = event;
   }
 
-  onCloseLocationDetailedView(event) {
-    this.openAssetsDetailedView = event.status;
-    if (event.data !== '') {
-      this.assetsEditData = event.data;
-      this.assetsAddOrEditOpenState = 'in';
-    }
-  }
-
   exportAsXLSX(): void {
     this.assetService
       .downloadSampleAssetTemplate()
       .pipe(
         tap((data) => {
-          console.log(data);
           downloadFile(data, 'Asset_Sample_Template');
         })
       )
@@ -459,5 +458,28 @@ export class AssetsListComponent implements OnInit {
       this.assetsEditData = event.data;
       this.assetsAddOrEditOpenState = 'in';
     }
+  }
+
+  uploadFile(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.assetService.uploadExcel(formData).subscribe((resp) => {
+      if (resp.status === 200) {
+        for (const item of resp.data) {
+          this.assetService.createAssets$(item).subscribe((res) => {
+            this.addOrUpdateAssets({
+              status: 'add',
+              data: res
+            });
+          });
+        }
+      }
+    });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }

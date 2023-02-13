@@ -34,6 +34,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { MatRadioModule } from '@angular/material/radio';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -72,6 +73,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
+    SharedModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
