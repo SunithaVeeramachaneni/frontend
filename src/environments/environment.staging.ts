@@ -8,6 +8,7 @@ export const environment = {
   userRoleManagementApiUrl:
     'https://cwpdemo.innovapptive.com/userrolemanagementapi/',
   rdfApiUrl: 'https://cwpdemo.innovapptive.com/rdfapi/',
+  masterApiUrl: 'https://cbodemo.innovapptive.com/masterapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5,
