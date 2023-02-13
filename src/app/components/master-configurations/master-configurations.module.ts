@@ -28,7 +28,6 @@ import { AssetsDetailViewComponent } from './assets/assets-detail-view/assets-de
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -41,6 +40,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UnitOfMeasurementDeleteModalComponent } from './unit-measurement/uom-delete-modal/uom-delete-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -83,6 +84,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
+    SharedModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,

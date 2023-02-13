@@ -149,7 +149,9 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().then((allLocations) => {
-      this.parentInformation = allLocations.items;
+      this.parentInformation = allLocations.items.filter(
+        (loc) => loc._deleted !== true
+      );
       this.allParentsData = this.parentInformation;
     });
   }
@@ -157,7 +159,7 @@ export class AddEditAssetsComponent implements OnInit {
   getAllAssets() {
     this.assetService.fetchAllAssets$().then((allAssets) => {
       this.parentInformation = allAssets.items.filter(
-        (loc) => loc.id !== this.assEditData?.id
+        (ass) => ass.id !== this.assEditData?.id && ass._deleted !== true
       );
       this.allParentsData = this.parentInformation;
     });
