@@ -37,13 +37,17 @@ import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import {
+  CreateUnitListMutation,
   GetUnitMeasumentQuery,
+  UpdateUnitListMutation,
   UpdateUnitMeasumentMutation
 } from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
+import { AppService } from 'src/app/shared/services/app.services';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -240,7 +244,8 @@ export class UnitMeasurementListComponent implements OnInit {
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog
+    public readonly dialog: MatDialog,
+    private _appService: AppService
   ) {}
 
   ngOnInit(): void {
@@ -447,6 +452,79 @@ export class UnitMeasurementListComponent implements OnInit {
         type: 'success'
       });
     }
+  }
+
+  exportAsXLSX(): void {
+    this.unitMeasurementService
+      .downloadSampleAssetTemplate()
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'UOM_Sample_Template');
+        })
+      )
+      .subscribe();
+  }
+
+  uploadFile(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.unitMeasurementService.uploadExcel(formData).subscribe((resp: any) => {
+      if (resp?.data) {
+        // TODO: Need to check is handled properly or not.
+        for (const [key, value] of Object.entries(resp?.data)) {
+          this.unitMeasurementService
+            .getSingleUnitListByName$(key)
+            .subscribe(({ items }) => {
+              if (items?.length > 0) {
+                this.createUpdateUnitListItems(items[0], value as any);
+              } else {
+                this.unitMeasurementService
+                  .CreateUnitList$({
+                    name: key
+                  })
+                  .subscribe((response: CreateUnitListMutation) => {
+                    if (response) {
+                      this.createUpdateUnitListItems(response, value as any);
+                    }
+                  });
+              }
+            });
+        }
+      }
+    });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
+
+  private createUpdateUnitListItems(
+    response: CreateUnitListMutation | UpdateUnitListMutation,
+    units: any[]
+  ) {
+    const unitObservables = [];
+    units?.forEach(
+      (element: {
+        id: string | number;
+        description: string;
+        symbol: string;
+        version?: number | null;
+      }) => {
+        unitObservables.push(
+          this.unitMeasurementService.createUnitOfMeasurement$({
+            unitlistID: response?.id,
+            description: element?.description || '',
+            searchTerm: `${element?.description?.toLowerCase() || ''} ${
+              response?.name?.toLowerCase() || ''
+            }`,
+            symbol: element?.symbol || ''
+          })
+        );
+      }
+    );
+    forkJoin(unitObservables).subscribe(() => {});
   }
 
   private onDeleteUnit(data: GetUnitMeasumentQuery): void {

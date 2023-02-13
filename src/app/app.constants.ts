@@ -74,7 +74,7 @@ export const permissions = Object.freeze({
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
 
-  viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENT',
+  viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
   deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',

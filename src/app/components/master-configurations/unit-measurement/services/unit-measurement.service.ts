@@ -16,13 +16,19 @@ import {
 import { map } from 'rxjs/operators';
 import { API, graphqlOperation } from 'aws-amplify';
 import { groupBy } from 'lodash-es';
+import { ErrorInfo } from 'src/app/interfaces';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UnitMeasurementService {
   measurementList = ['Length', 'Area', 'Volume', 'Temperature', 'Mass'];
-  constructor(private readonly awsApiService: APIService) {}
+  constructor(
+    private readonly awsApiService: APIService,
+    private readonly _appService: AppService
+  ) {}
 
   getUnitOfMeasurementList$(queryParams: {
     nextToken?: string;
@@ -99,6 +105,27 @@ export class UnitMeasurementService {
     input: UpdateUnitMeasumentInput
   ): Observable<UpdateUnitMeasumentMutation> {
     return from(this.awsApiService.UpdateUnitMeasument(input));
+  }
+
+  uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
+    return this._appService._postData(
+      environment.masterApiUrl,
+      'api/v1/uom-excel-upload',
+      form,
+      info
+    );
+  }
+
+  downloadSampleAssetTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterApiUrl,
+      'api/v1/download-sample-uom',
+      info,
+      true,
+      {}
+    );
   }
 
   private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {
