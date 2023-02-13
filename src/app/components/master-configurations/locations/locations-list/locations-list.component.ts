@@ -17,12 +17,14 @@ import {
   tap
 } from 'rxjs/operators';
 import { GetFormListQuery } from 'src/app/API.service';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
   FormTableUpdate,
-  TableEvent
+  Permission,
+  TableEvent,
+  UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { LocationService } from '../services/location.service';
@@ -34,6 +36,7 @@ import {
   trigger
 } from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
   selector: 'app-locations-list',
@@ -60,6 +63,7 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
   ]
 })
 export class LocationsListComponent implements OnInit {
+  readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   columns: Column[] = [
     {
@@ -211,10 +215,12 @@ export class LocationsListComponent implements OnInit {
   limit = defaultLimit;
   fetchType = 'load';
   nextToken = '';
+  userInfo$: Observable<UserInfo>;
 
   constructor(
     private locationService: LocationService,
-    private readonly toast: ToastService
+    private readonly toast: ToastService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -247,7 +253,9 @@ export class LocationsListComponent implements OnInit {
       })
     );
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   getDisplayedLocations(): void {
@@ -364,17 +372,27 @@ export class LocationsListComponent implements OnInit {
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_LOCATION')
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'DELETE_LOCATION')
+    ) {
+      menuActions.push({
         title: 'Delete',
         action: 'delete'
-      }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -463,7 +481,7 @@ export class LocationsListComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', file);
     this.locationService.uploadExcel(formData).subscribe((resp) => {
-      if (resp.status == 200) {
+      if (resp.status === 200) {
         for (const item of resp.data) {
           this.locationService.createLocation$(item).subscribe((res) => {
             this.addOrUpdateLocation({
