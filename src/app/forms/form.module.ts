@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
@@ -47,6 +48,7 @@ import { AddPageOrSelectExistingPageModalComponent } from './components/import-q
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
+import { HeaderDataComponent } from './components/header-data/header-data.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +73,8 @@ import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
-    HyperlinkSideDrawerComponent
+    HyperlinkSideDrawerComponent,
+    HeaderDataComponent
   ],
   imports: [
     FormsModule,
@@ -90,6 +93,7 @@ import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer
     MatChipsModule,
     MatTabsModule,
     MatCheckboxModule,
+    MatAutocompleteModule,
     MatButtonToggleModule,
     MatRadioModule,
     MatDividerModule,
@@ -101,6 +105,7 @@ import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer
   ],
   exports: [
     FormWidgetComponent,
+    HeaderDataComponent,
     PageComponent,
     SectionComponent,
     QuestionComponent,

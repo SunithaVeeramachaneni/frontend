@@ -54,6 +54,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allTags: string[] = [];
   originalTags: string[] = [];
 
+  stepperList = ['Round Plan', 'Allocation'];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -145,9 +147,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
 
-  next() {
+  next(event: any) {
+    const { headerDataForm, tags } = event;
     const newTags = [];
-    this.tags.forEach((selectedTag) => {
+    tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
       }
@@ -162,7 +165,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
     }
 
-    if (this.headerDataForm.valid) {
+    if (headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
