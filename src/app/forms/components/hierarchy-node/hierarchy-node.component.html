@@ -1,0 +1,10 @@
+<div class="node">
+  <mat-checkbox
+    [(ngModel)]="isChecked"
+    (change)="clicked($event)"
+    class="checkbox"
+  ></mat-checkbox>
+
+  <img [src]="masterData?.image" class="master-data-image" />
+  <div class="master-data-title">{{ masterData.name }}</div>
+</div>

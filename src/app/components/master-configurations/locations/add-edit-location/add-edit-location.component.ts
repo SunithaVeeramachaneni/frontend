@@ -13,7 +13,8 @@ import {
   Validators
 } from '@angular/forms';
 import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 
@@ -26,6 +27,7 @@ import { LocationService } from '../services/location.service';
 export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
+  allLocations$: Observable<ListLocationsQuery>;
   @Input() set locationEditData(data) {
     this.locEditData = data;
     if (this.locEditData === undefined) {
@@ -84,12 +86,17 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.locationService.fetchAllLocations$().then((allLocations) => {
-      this.parentInformation = allLocations.items.filter(
-        (loc) => loc.id !== this.locEditData?.id && loc._deleted !== true
-      );
-      this.allParentsData = this.parentInformation;
-    });
+    this.allLocations$ = this.locationService.fetchAllLocations$();
+    this.allLocations$
+      .pipe(
+        tap((allLocations) => {
+          this.parentInformation = allLocations.items.filter(
+            (loc) => loc.id !== this.locEditData?.id && loc._deleted !== true
+          );
+          this.allParentsData = this.parentInformation;
+        })
+      )
+      .subscribe();
   }
 
   create() {
