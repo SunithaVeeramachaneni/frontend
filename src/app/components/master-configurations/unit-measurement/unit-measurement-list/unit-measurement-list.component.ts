@@ -48,6 +48,7 @@ import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-d
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
+import { groupBy } from 'lodash-es';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -503,7 +504,9 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitMeasurementService.uploadExcel(formData).subscribe(
       (resp: any) => {
         if (resp?.data) {
-          for (const [key, value] of Object.entries(resp?.data)) {
+          for (const [key, value] of Object.entries(
+            groupBy(resp?.data, 'name')
+          )) {
             this.unitMeasurementService
               .getSingleUnitListByName$(key)
               .subscribe(({ items }) => {
