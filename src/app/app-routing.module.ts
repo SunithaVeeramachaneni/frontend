@@ -82,6 +82,14 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'master-configuration',
+    loadChildren: () =>
+      import(
+        './components/master-configurations/master-configurations.module'
+      ).then((m) => m.MasterConfigurationsModule)
+  },
+
+  {
     path: 'user-settings',
     loadChildren: () =>
       import('./components/user-settings/user-settings.module').then(

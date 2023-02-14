@@ -57,6 +57,9 @@ const {
   operatorRoundPlans,
   myRoundPlans,
   roundPlanSubmissions,
+  masterConfiguration,
+  locations,
+  assets,
   roundPlanArchivedForms
 } = routingUrls;
 
@@ -215,6 +218,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       ],
       disable: false
+    },
+    {
+      title: masterConfiguration.title,
+      url: masterConfiguration.url,
+      imageName: 'master-configuration',
+      showSubMenu: false,
+      permission: masterConfiguration.permission,
+      disable: false,
+      subPages: [
+        {
+          title: locations.title,
+          url: locations.url,
+          permission: locations.permission
+        },
+        {
+          title: assets.title,
+          url: assets.url,
+          permission: assets.permission
+        }
+      ]
     }
   ];
   loggedIn = false;

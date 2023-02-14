@@ -1,9 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
-import { Injectable } from "@angular/core";
-import API, { graphqlOperation, GraphQLResult } from "@aws-amplify/api-graphql";
-import { Observable } from "zen-observable-ts";
+import { Injectable } from '@angular/core';
+import API, { graphqlOperation, GraphQLResult } from '@aws-amplify/api-graphql';
+import { Observable } from 'zen-observable-ts';
 
 export interface SubscriptionResponse<T> {
   value: GraphQLResult<T>;
@@ -99,16 +99,16 @@ export type ModelStringInput = {
 };
 
 export enum ModelAttributeTypes {
-  binary = "binary",
-  binarySet = "binarySet",
-  bool = "bool",
-  list = "list",
-  map = "map",
-  number = "number",
-  numberSet = "numberSet",
-  string = "string",
-  stringSet = "stringSet",
-  _null = "_null"
+  binary = 'binary',
+  binarySet = 'binarySet',
+  bool = 'bool',
+  list = 'list',
+  map = 'map',
+  number = 'number',
+  numberSet = 'numberSet',
+  string = 'string',
+  stringSet = 'stringSet',
+  _null = '_null'
 }
 
 export type ModelSizeInput = {
@@ -145,7 +145,7 @@ export type ModelIDInput = {
 };
 
 export type UnitMeasument = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -163,7 +163,7 @@ export type UnitMeasument = {
 };
 
 export type UnitList = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
@@ -176,7 +176,7 @@ export type UnitList = {
 };
 
 export type ModelUnitMeasumentConnection = {
-  __typename: "ModelUnitMeasumentConnection";
+  __typename: 'ModelUnitMeasumentConnection';
   items: Array<UnitMeasument | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -226,6 +226,16 @@ export type DeleteUnitListInput = {
   _version?: number | null;
 };
 
+export type DeleteAssetsListInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type DeleteLocationListInput = {
+  id: string;
+  _version?: number | null;
+};
+
 export type CreateAssetsInput = {
   id?: string | null;
   name?: string | null;
@@ -254,7 +264,7 @@ export type ModelAssetsConditionInput = {
 };
 
 export type Assets = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -315,7 +325,7 @@ export type ModelLocationConditionInput = {
 };
 
 export type Location = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -366,7 +376,7 @@ export type ModelRoundPlanSubmissionDetailsConditionInput = {
 };
 
 export type RoundPlanSubmissionDetails = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -427,7 +437,7 @@ export type ModelRoundPlanSubmissionListConditionInput = {
 };
 
 export type RoundPlanSubmissionList = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -450,7 +460,7 @@ export type RoundPlanSubmissionList = {
 };
 
 export type ModelRoundPlanSubmissionDetailsConnection = {
-  __typename: "ModelRoundPlanSubmissionDetailsConnection";
+  __typename: 'ModelRoundPlanSubmissionDetailsConnection';
   items: Array<RoundPlanSubmissionDetails | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -516,7 +526,7 @@ export type ModelIntInput = {
 };
 
 export type AuthoredRoundPlanDetail = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -565,7 +575,7 @@ export type ModelRoundPlanDetailConditionInput = {
 };
 
 export type RoundPlanDetail = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -636,7 +646,7 @@ export type ModelRoundPlanListConditionInput = {
 };
 
 export type RoundPlanList = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -667,14 +677,14 @@ export type RoundPlanList = {
 };
 
 export type ModelAuthoredRoundPlanDetailConnection = {
-  __typename: "ModelAuthoredRoundPlanDetailConnection";
+  __typename: 'ModelAuthoredRoundPlanDetailConnection';
   items: Array<AuthoredRoundPlanDetail | null>;
   nextToken?: string | null;
   startedAt?: number | null;
 };
 
 export type ModelRoundPlanDetailConnection = {
-  __typename: "ModelRoundPlanDetailConnection";
+  __typename: 'ModelRoundPlanDetailConnection';
   items: Array<RoundPlanDetail | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -730,7 +740,7 @@ export type ModelResponseSetConditionInput = {
 };
 
 export type ResponseSet = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -777,7 +787,7 @@ export type ModelFormSubmissionDetailConditionInput = {
 };
 
 export type FormSubmissionDetail = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -826,7 +836,7 @@ export type ModelAuthoredFormDetailConditionInput = {
 };
 
 export type AuthoredFormDetail = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -893,7 +903,7 @@ export type ModelFormSubmissionListConditionInput = {
 };
 
 export type FormSubmissionList = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -916,7 +926,7 @@ export type FormSubmissionList = {
 };
 
 export type ModelFormSubmissionDetailConnection = {
-  __typename: "ModelFormSubmissionDetailConnection";
+  __typename: 'ModelFormSubmissionDetailConnection';
   items: Array<FormSubmissionDetail | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -990,7 +1000,7 @@ export type ModelFormListConditionInput = {
 };
 
 export type FormList = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1020,21 +1030,21 @@ export type FormList = {
 };
 
 export type ModelAuthoredFormDetailConnection = {
-  __typename: "ModelAuthoredFormDetailConnection";
+  __typename: 'ModelAuthoredFormDetailConnection';
   items: Array<AuthoredFormDetail | null>;
   nextToken?: string | null;
   startedAt?: number | null;
 };
 
 export type ModelFormDetailConnection = {
-  __typename: "ModelFormDetailConnection";
+  __typename: 'ModelFormDetailConnection';
   items: Array<FormDetail | null>;
   nextToken?: string | null;
   startedAt?: number | null;
 };
 
 export type FormDetail = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -1114,8 +1124,8 @@ export type ModelUnitMeasumentFilterInput = {
 };
 
 export enum ModelSortDirection {
-  ASC = "ASC",
-  DESC = "DESC"
+  ASC = 'ASC',
+  DESC = 'DESC'
 }
 
 export type ModelUnitListFilterInput = {
@@ -1128,7 +1138,7 @@ export type ModelUnitListFilterInput = {
 };
 
 export type ModelUnitListConnection = {
-  __typename: "ModelUnitListConnection";
+  __typename: 'ModelUnitListConnection';
   items: Array<UnitList | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1150,7 +1160,7 @@ export type ModelAssetsFilterInput = {
 };
 
 export type ModelAssetsConnection = {
-  __typename: "ModelAssetsConnection";
+  __typename: 'ModelAssetsConnection';
   items: Array<Assets | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1171,7 +1181,7 @@ export type ModelLocationFilterInput = {
 };
 
 export type ModelLocationConnection = {
-  __typename: "ModelLocationConnection";
+  __typename: 'ModelLocationConnection';
   items: Array<Location | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1207,7 +1217,7 @@ export type ModelRoundPlanSubmissionListFilterInput = {
 };
 
 export type ModelRoundPlanSubmissionListConnection = {
-  __typename: "ModelRoundPlanSubmissionListConnection";
+  __typename: 'ModelRoundPlanSubmissionListConnection';
   items: Array<RoundPlanSubmissionList | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1262,7 +1272,7 @@ export type ModelRoundPlanListFilterInput = {
 };
 
 export type ModelRoundPlanListConnection = {
-  __typename: "ModelRoundPlanListConnection";
+  __typename: 'ModelRoundPlanListConnection';
   items: Array<RoundPlanList | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1281,7 +1291,7 @@ export type ModelResponseSetFilterInput = {
 };
 
 export type ModelResponseSetConnection = {
-  __typename: "ModelResponseSetConnection";
+  __typename: 'ModelResponseSetConnection';
   items: Array<ResponseSet | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1330,7 +1340,7 @@ export type ModelFormSubmissionListFilterInput = {
 };
 
 export type ModelFormSubmissionListConnection = {
-  __typename: "ModelFormSubmissionListConnection";
+  __typename: 'ModelFormSubmissionListConnection';
   items: Array<FormSubmissionList | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1361,7 +1371,7 @@ export type ModelFormListFilterInput = {
 };
 
 export type ModelFormListConnection = {
-  __typename: "ModelFormListConnection";
+  __typename: 'ModelFormListConnection';
   items: Array<FormList | null>;
   nextToken?: string | null;
   startedAt?: number | null;
@@ -1625,7 +1635,7 @@ export type ModelSubscriptionFormDetailFilterInput = {
 };
 
 export type CreateUnitMeasumentMutation = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -1634,7 +1644,7 @@ export type CreateUnitMeasumentMutation = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -1653,7 +1663,7 @@ export type CreateUnitMeasumentMutation = {
 };
 
 export type UpdateUnitMeasumentMutation = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -1662,7 +1672,7 @@ export type UpdateUnitMeasumentMutation = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -1681,7 +1691,7 @@ export type UpdateUnitMeasumentMutation = {
 };
 
 export type DeleteUnitMeasumentMutation = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -1690,7 +1700,7 @@ export type DeleteUnitMeasumentMutation = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -1709,12 +1719,12 @@ export type DeleteUnitMeasumentMutation = {
 };
 
 export type CreateUnitListMutation = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1726,12 +1736,12 @@ export type CreateUnitListMutation = {
 };
 
 export type UpdateUnitListMutation = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1743,12 +1753,12 @@ export type UpdateUnitListMutation = {
 };
 
 export type DeleteUnitListMutation = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1760,7 +1770,7 @@ export type DeleteUnitListMutation = {
 };
 
 export type CreateAssetsMutation = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1778,7 +1788,7 @@ export type CreateAssetsMutation = {
 };
 
 export type UpdateAssetsMutation = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1796,7 +1806,7 @@ export type UpdateAssetsMutation = {
 };
 
 export type DeleteAssetsMutation = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1814,7 +1824,7 @@ export type DeleteAssetsMutation = {
 };
 
 export type CreateLocationMutation = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1831,7 +1841,7 @@ export type CreateLocationMutation = {
 };
 
 export type UpdateLocationMutation = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1848,7 +1858,7 @@ export type UpdateLocationMutation = {
 };
 
 export type DeleteLocationMutation = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1865,7 +1875,7 @@ export type DeleteLocationMutation = {
 };
 
 export type CreateRoundPlanSubmissionDetailsMutation = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -1878,7 +1888,7 @@ export type CreateRoundPlanSubmissionDetailsMutation = {
 };
 
 export type UpdateRoundPlanSubmissionDetailsMutation = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -1891,7 +1901,7 @@ export type UpdateRoundPlanSubmissionDetailsMutation = {
 };
 
 export type DeleteRoundPlanSubmissionDetailsMutation = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -1904,7 +1914,7 @@ export type DeleteRoundPlanSubmissionDetailsMutation = {
 };
 
 export type CreateRoundPlanSubmissionListMutation = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1919,7 +1929,7 @@ export type CreateRoundPlanSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1931,7 +1941,7 @@ export type CreateRoundPlanSubmissionListMutation = {
 };
 
 export type UpdateRoundPlanSubmissionListMutation = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1946,7 +1956,7 @@ export type UpdateRoundPlanSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1958,7 +1968,7 @@ export type UpdateRoundPlanSubmissionListMutation = {
 };
 
 export type DeleteRoundPlanSubmissionListMutation = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -1973,7 +1983,7 @@ export type DeleteRoundPlanSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -1985,7 +1995,7 @@ export type DeleteRoundPlanSubmissionListMutation = {
 };
 
 export type CreateAuthoredRoundPlanDetailMutation = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2002,7 +2012,7 @@ export type CreateAuthoredRoundPlanDetailMutation = {
 };
 
 export type UpdateAuthoredRoundPlanDetailMutation = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2019,7 +2029,7 @@ export type UpdateAuthoredRoundPlanDetailMutation = {
 };
 
 export type DeleteAuthoredRoundPlanDetailMutation = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2036,7 +2046,7 @@ export type DeleteAuthoredRoundPlanDetailMutation = {
 };
 
 export type CreateRoundPlanDetailMutation = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2048,7 +2058,7 @@ export type CreateRoundPlanDetailMutation = {
 };
 
 export type UpdateRoundPlanDetailMutation = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2060,7 +2070,7 @@ export type UpdateRoundPlanDetailMutation = {
 };
 
 export type DeleteRoundPlanDetailMutation = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2072,7 +2082,7 @@ export type DeleteRoundPlanDetailMutation = {
 };
 
 export type CreateRoundPlanListMutation = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2091,17 +2101,17 @@ export type CreateRoundPlanListMutation = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2115,7 +2125,7 @@ export type CreateRoundPlanListMutation = {
 };
 
 export type UpdateRoundPlanListMutation = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2134,17 +2144,17 @@ export type UpdateRoundPlanListMutation = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2158,7 +2168,7 @@ export type UpdateRoundPlanListMutation = {
 };
 
 export type DeleteRoundPlanListMutation = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2177,17 +2187,17 @@ export type DeleteRoundPlanListMutation = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2201,7 +2211,7 @@ export type DeleteRoundPlanListMutation = {
 };
 
 export type CreateResponseSetMutation = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -2216,7 +2226,7 @@ export type CreateResponseSetMutation = {
 };
 
 export type UpdateResponseSetMutation = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -2231,7 +2241,7 @@ export type UpdateResponseSetMutation = {
 };
 
 export type DeleteResponseSetMutation = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -2246,7 +2256,7 @@ export type DeleteResponseSetMutation = {
 };
 
 export type CreateFormSubmissionDetailMutation = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2259,7 +2269,7 @@ export type CreateFormSubmissionDetailMutation = {
 };
 
 export type UpdateFormSubmissionDetailMutation = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2272,7 +2282,7 @@ export type UpdateFormSubmissionDetailMutation = {
 };
 
 export type DeleteFormSubmissionDetailMutation = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2285,7 +2295,7 @@ export type DeleteFormSubmissionDetailMutation = {
 };
 
 export type CreateAuthoredFormDetailMutation = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2301,7 +2311,7 @@ export type CreateAuthoredFormDetailMutation = {
 };
 
 export type UpdateAuthoredFormDetailMutation = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2317,7 +2327,7 @@ export type UpdateAuthoredFormDetailMutation = {
 };
 
 export type DeleteAuthoredFormDetailMutation = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -2333,7 +2343,7 @@ export type DeleteAuthoredFormDetailMutation = {
 };
 
 export type CreateFormSubmissionListMutation = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2348,7 +2358,7 @@ export type CreateFormSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2360,7 +2370,7 @@ export type CreateFormSubmissionListMutation = {
 };
 
 export type UpdateFormSubmissionListMutation = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2375,7 +2385,7 @@ export type UpdateFormSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2387,7 +2397,7 @@ export type UpdateFormSubmissionListMutation = {
 };
 
 export type DeleteFormSubmissionListMutation = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2402,7 +2412,7 @@ export type DeleteFormSubmissionListMutation = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2414,7 +2424,7 @@ export type DeleteFormSubmissionListMutation = {
 };
 
 export type CreateFormListMutation = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2433,17 +2443,17 @@ export type CreateFormListMutation = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2456,7 +2466,7 @@ export type CreateFormListMutation = {
 };
 
 export type UpdateFormListMutation = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2475,17 +2485,17 @@ export type UpdateFormListMutation = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2498,7 +2508,7 @@ export type UpdateFormListMutation = {
 };
 
 export type DeleteFormListMutation = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2517,17 +2527,17 @@ export type DeleteFormListMutation = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2540,7 +2550,7 @@ export type DeleteFormListMutation = {
 };
 
 export type CreateFormDetailMutation = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2552,7 +2562,7 @@ export type CreateFormDetailMutation = {
 };
 
 export type UpdateFormDetailMutation = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2564,7 +2574,7 @@ export type UpdateFormDetailMutation = {
 };
 
 export type DeleteFormDetailMutation = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2576,7 +2586,7 @@ export type DeleteFormDetailMutation = {
 };
 
 export type GetUnitMeasumentQuery = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -2585,7 +2595,7 @@ export type GetUnitMeasumentQuery = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -2604,9 +2614,9 @@ export type GetUnitMeasumentQuery = {
 };
 
 export type ListUnitMeasumentsQuery = {
-  __typename: "ModelUnitMeasumentConnection";
+  __typename: 'ModelUnitMeasumentConnection';
   items: Array<{
-    __typename: "UnitMeasument";
+    __typename: 'UnitMeasument';
     id: string;
     description?: string | null;
     symbol?: string | null;
@@ -2626,9 +2636,9 @@ export type ListUnitMeasumentsQuery = {
 };
 
 export type SyncUnitMeasumentsQuery = {
-  __typename: "ModelUnitMeasumentConnection";
+  __typename: 'ModelUnitMeasumentConnection';
   items: Array<{
-    __typename: "UnitMeasument";
+    __typename: 'UnitMeasument';
     id: string;
     description?: string | null;
     symbol?: string | null;
@@ -2648,9 +2658,9 @@ export type SyncUnitMeasumentsQuery = {
 };
 
 export type UnitMeasumentsByUnitlistIDQuery = {
-  __typename: "ModelUnitMeasumentConnection";
+  __typename: 'ModelUnitMeasumentConnection';
   items: Array<{
-    __typename: "UnitMeasument";
+    __typename: 'UnitMeasument';
     id: string;
     description?: string | null;
     symbol?: string | null;
@@ -2670,12 +2680,12 @@ export type UnitMeasumentsByUnitlistIDQuery = {
 };
 
 export type GetUnitListQuery = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2687,9 +2697,9 @@ export type GetUnitListQuery = {
 };
 
 export type ListUnitListsQuery = {
-  __typename: "ModelUnitListConnection";
+  __typename: 'ModelUnitListConnection';
   items: Array<{
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -2704,9 +2714,9 @@ export type ListUnitListsQuery = {
 };
 
 export type SyncUnitListsQuery = {
-  __typename: "ModelUnitListConnection";
+  __typename: 'ModelUnitListConnection';
   items: Array<{
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -2721,7 +2731,7 @@ export type SyncUnitListsQuery = {
 };
 
 export type GetAssetsQuery = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2739,9 +2749,9 @@ export type GetAssetsQuery = {
 };
 
 export type ListAssetsQuery = {
-  __typename: "ModelAssetsConnection";
+  __typename: 'ModelAssetsConnection';
   items: Array<{
-    __typename: "Assets";
+    __typename: 'Assets';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -2762,9 +2772,9 @@ export type ListAssetsQuery = {
 };
 
 export type SyncAssetsQuery = {
-  __typename: "ModelAssetsConnection";
+  __typename: 'ModelAssetsConnection';
   items: Array<{
-    __typename: "Assets";
+    __typename: 'Assets';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -2785,7 +2795,7 @@ export type SyncAssetsQuery = {
 };
 
 export type GetLocationQuery = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2802,9 +2812,9 @@ export type GetLocationQuery = {
 };
 
 export type ListLocationsQuery = {
-  __typename: "ModelLocationConnection";
+  __typename: 'ModelLocationConnection';
   items: Array<{
-    __typename: "Location";
+    __typename: 'Location';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -2824,9 +2834,9 @@ export type ListLocationsQuery = {
 };
 
 export type SyncLocationsQuery = {
-  __typename: "ModelLocationConnection";
+  __typename: 'ModelLocationConnection';
   items: Array<{
-    __typename: "Location";
+    __typename: 'Location';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -2846,7 +2856,7 @@ export type SyncLocationsQuery = {
 };
 
 export type GetRoundPlanSubmissionDetailsQuery = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -2859,9 +2869,9 @@ export type GetRoundPlanSubmissionDetailsQuery = {
 };
 
 export type ListRoundPlanSubmissionDetailsQuery = {
-  __typename: "ModelRoundPlanSubmissionDetailsConnection";
+  __typename: 'ModelRoundPlanSubmissionDetailsConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionDetails";
+    __typename: 'RoundPlanSubmissionDetails';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -2877,9 +2887,9 @@ export type ListRoundPlanSubmissionDetailsQuery = {
 };
 
 export type SyncRoundPlanSubmissionDetailsQuery = {
-  __typename: "ModelRoundPlanSubmissionDetailsConnection";
+  __typename: 'ModelRoundPlanSubmissionDetailsConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionDetails";
+    __typename: 'RoundPlanSubmissionDetails';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -2895,9 +2905,9 @@ export type SyncRoundPlanSubmissionDetailsQuery = {
 };
 
 export type RoundPlanSubmissionDetailsByFormlistIDQuery = {
-  __typename: "ModelRoundPlanSubmissionDetailsConnection";
+  __typename: 'ModelRoundPlanSubmissionDetailsConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionDetails";
+    __typename: 'RoundPlanSubmissionDetails';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -2913,9 +2923,9 @@ export type RoundPlanSubmissionDetailsByFormlistIDQuery = {
 };
 
 export type RoundPlanSubmissionDetailsByFormsubmissionlistIDQuery = {
-  __typename: "ModelRoundPlanSubmissionDetailsConnection";
+  __typename: 'ModelRoundPlanSubmissionDetailsConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionDetails";
+    __typename: 'RoundPlanSubmissionDetails';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -2931,7 +2941,7 @@ export type RoundPlanSubmissionDetailsByFormsubmissionlistIDQuery = {
 };
 
 export type GetRoundPlanSubmissionListQuery = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -2946,7 +2956,7 @@ export type GetRoundPlanSubmissionListQuery = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -2958,9 +2968,9 @@ export type GetRoundPlanSubmissionListQuery = {
 };
 
 export type ListRoundPlanSubmissionListsQuery = {
-  __typename: "ModelRoundPlanSubmissionListConnection";
+  __typename: 'ModelRoundPlanSubmissionListConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionList";
+    __typename: 'RoundPlanSubmissionList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -2985,9 +2995,9 @@ export type ListRoundPlanSubmissionListsQuery = {
 };
 
 export type SyncRoundPlanSubmissionListsQuery = {
-  __typename: "ModelRoundPlanSubmissionListConnection";
+  __typename: 'ModelRoundPlanSubmissionListConnection';
   items: Array<{
-    __typename: "RoundPlanSubmissionList";
+    __typename: 'RoundPlanSubmissionList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3012,7 +3022,7 @@ export type SyncRoundPlanSubmissionListsQuery = {
 };
 
 export type GetAuthoredRoundPlanDetailQuery = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -3029,9 +3039,9 @@ export type GetAuthoredRoundPlanDetailQuery = {
 };
 
 export type ListAuthoredRoundPlanDetailsQuery = {
-  __typename: "ModelAuthoredRoundPlanDetailConnection";
+  __typename: 'ModelAuthoredRoundPlanDetailConnection';
   items: Array<{
-    __typename: "AuthoredRoundPlanDetail";
+    __typename: 'AuthoredRoundPlanDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3051,9 +3061,9 @@ export type ListAuthoredRoundPlanDetailsQuery = {
 };
 
 export type SyncAuthoredRoundPlanDetailsQuery = {
-  __typename: "ModelAuthoredRoundPlanDetailConnection";
+  __typename: 'ModelAuthoredRoundPlanDetailConnection';
   items: Array<{
-    __typename: "AuthoredRoundPlanDetail";
+    __typename: 'AuthoredRoundPlanDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3073,9 +3083,9 @@ export type SyncAuthoredRoundPlanDetailsQuery = {
 };
 
 export type AuthoredRoundPlanDetailsByFormlistIDQuery = {
-  __typename: "ModelAuthoredRoundPlanDetailConnection";
+  __typename: 'ModelAuthoredRoundPlanDetailConnection';
   items: Array<{
-    __typename: "AuthoredRoundPlanDetail";
+    __typename: 'AuthoredRoundPlanDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3095,7 +3105,7 @@ export type AuthoredRoundPlanDetailsByFormlistIDQuery = {
 };
 
 export type GetRoundPlanDetailQuery = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -3107,9 +3117,9 @@ export type GetRoundPlanDetailQuery = {
 };
 
 export type ListRoundPlanDetailsQuery = {
-  __typename: "ModelRoundPlanDetailConnection";
+  __typename: 'ModelRoundPlanDetailConnection';
   items: Array<{
-    __typename: "RoundPlanDetail";
+    __typename: 'RoundPlanDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3124,9 +3134,9 @@ export type ListRoundPlanDetailsQuery = {
 };
 
 export type SyncRoundPlanDetailsQuery = {
-  __typename: "ModelRoundPlanDetailConnection";
+  __typename: 'ModelRoundPlanDetailConnection';
   items: Array<{
-    __typename: "RoundPlanDetail";
+    __typename: 'RoundPlanDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3141,9 +3151,9 @@ export type SyncRoundPlanDetailsQuery = {
 };
 
 export type RoundPlanDetailsByFormlistIDQuery = {
-  __typename: "ModelRoundPlanDetailConnection";
+  __typename: 'ModelRoundPlanDetailConnection';
   items: Array<{
-    __typename: "RoundPlanDetail";
+    __typename: 'RoundPlanDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3158,7 +3168,7 @@ export type RoundPlanDetailsByFormlistIDQuery = {
 };
 
 export type GetRoundPlanListQuery = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3177,17 +3187,17 @@ export type GetRoundPlanListQuery = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3201,9 +3211,9 @@ export type GetRoundPlanListQuery = {
 };
 
 export type ListRoundPlanListsQuery = {
-  __typename: "ModelRoundPlanListConnection";
+  __typename: 'ModelRoundPlanListConnection';
   items: Array<{
-    __typename: "RoundPlanList";
+    __typename: 'RoundPlanList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3234,9 +3244,9 @@ export type ListRoundPlanListsQuery = {
 };
 
 export type SyncRoundPlanListsQuery = {
-  __typename: "ModelRoundPlanListConnection";
+  __typename: 'ModelRoundPlanListConnection';
   items: Array<{
-    __typename: "RoundPlanList";
+    __typename: 'RoundPlanList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3267,7 +3277,7 @@ export type SyncRoundPlanListsQuery = {
 };
 
 export type GetResponseSetQuery = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -3282,9 +3292,9 @@ export type GetResponseSetQuery = {
 };
 
 export type ListResponseSetsQuery = {
-  __typename: "ModelResponseSetConnection";
+  __typename: 'ModelResponseSetConnection';
   items: Array<{
-    __typename: "ResponseSet";
+    __typename: 'ResponseSet';
     id: string;
     type?: string | null;
     name?: string | null;
@@ -3302,9 +3312,9 @@ export type ListResponseSetsQuery = {
 };
 
 export type SyncResponseSetsQuery = {
-  __typename: "ModelResponseSetConnection";
+  __typename: 'ModelResponseSetConnection';
   items: Array<{
-    __typename: "ResponseSet";
+    __typename: 'ResponseSet';
     id: string;
     type?: string | null;
     name?: string | null;
@@ -3322,7 +3332,7 @@ export type SyncResponseSetsQuery = {
 };
 
 export type GetFormSubmissionDetailQuery = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -3335,9 +3345,9 @@ export type GetFormSubmissionDetailQuery = {
 };
 
 export type ListFormSubmissionDetailsQuery = {
-  __typename: "ModelFormSubmissionDetailConnection";
+  __typename: 'ModelFormSubmissionDetailConnection';
   items: Array<{
-    __typename: "FormSubmissionDetail";
+    __typename: 'FormSubmissionDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3353,9 +3363,9 @@ export type ListFormSubmissionDetailsQuery = {
 };
 
 export type SyncFormSubmissionDetailsQuery = {
-  __typename: "ModelFormSubmissionDetailConnection";
+  __typename: 'ModelFormSubmissionDetailConnection';
   items: Array<{
-    __typename: "FormSubmissionDetail";
+    __typename: 'FormSubmissionDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3371,9 +3381,9 @@ export type SyncFormSubmissionDetailsQuery = {
 };
 
 export type FormSubmissionDetailsByFormlistIDQuery = {
-  __typename: "ModelFormSubmissionDetailConnection";
+  __typename: 'ModelFormSubmissionDetailConnection';
   items: Array<{
-    __typename: "FormSubmissionDetail";
+    __typename: 'FormSubmissionDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3389,9 +3399,9 @@ export type FormSubmissionDetailsByFormlistIDQuery = {
 };
 
 export type FormSubmissionDetailsByFormsubmissionlistIDQuery = {
-  __typename: "ModelFormSubmissionDetailConnection";
+  __typename: 'ModelFormSubmissionDetailConnection';
   items: Array<{
-    __typename: "FormSubmissionDetail";
+    __typename: 'FormSubmissionDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3407,7 +3417,7 @@ export type FormSubmissionDetailsByFormsubmissionlistIDQuery = {
 };
 
 export type GetAuthoredFormDetailQuery = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -3423,9 +3433,9 @@ export type GetAuthoredFormDetailQuery = {
 };
 
 export type ListAuthoredFormDetailsQuery = {
-  __typename: "ModelAuthoredFormDetailConnection";
+  __typename: 'ModelAuthoredFormDetailConnection';
   items: Array<{
-    __typename: "AuthoredFormDetail";
+    __typename: 'AuthoredFormDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3444,9 +3454,9 @@ export type ListAuthoredFormDetailsQuery = {
 };
 
 export type SyncAuthoredFormDetailsQuery = {
-  __typename: "ModelAuthoredFormDetailConnection";
+  __typename: 'ModelAuthoredFormDetailConnection';
   items: Array<{
-    __typename: "AuthoredFormDetail";
+    __typename: 'AuthoredFormDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3465,9 +3475,9 @@ export type SyncAuthoredFormDetailsQuery = {
 };
 
 export type AuthoredFormDetailsByFormlistIDQuery = {
-  __typename: "ModelAuthoredFormDetailConnection";
+  __typename: 'ModelAuthoredFormDetailConnection';
   items: Array<{
-    __typename: "AuthoredFormDetail";
+    __typename: 'AuthoredFormDetail';
     id: string;
     formStatus?: string | null;
     version?: string | null;
@@ -3486,7 +3496,7 @@ export type AuthoredFormDetailsByFormlistIDQuery = {
 };
 
 export type GetFormSubmissionListQuery = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3501,7 +3511,7 @@ export type GetFormSubmissionListQuery = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3513,9 +3523,9 @@ export type GetFormSubmissionListQuery = {
 };
 
 export type ListFormSubmissionListsQuery = {
-  __typename: "ModelFormSubmissionListConnection";
+  __typename: 'ModelFormSubmissionListConnection';
   items: Array<{
-    __typename: "FormSubmissionList";
+    __typename: 'FormSubmissionList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3540,9 +3550,9 @@ export type ListFormSubmissionListsQuery = {
 };
 
 export type SyncFormSubmissionListsQuery = {
-  __typename: "ModelFormSubmissionListConnection";
+  __typename: 'ModelFormSubmissionListConnection';
   items: Array<{
-    __typename: "FormSubmissionList";
+    __typename: 'FormSubmissionList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3567,7 +3577,7 @@ export type SyncFormSubmissionListsQuery = {
 };
 
 export type GetFormListQuery = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3586,17 +3596,17 @@ export type GetFormListQuery = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3609,9 +3619,9 @@ export type GetFormListQuery = {
 };
 
 export type ListFormListsQuery = {
-  __typename: "ModelFormListConnection";
+  __typename: 'ModelFormListConnection';
   items: Array<{
-    __typename: "FormList";
+    __typename: 'FormList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3641,9 +3651,9 @@ export type ListFormListsQuery = {
 };
 
 export type SyncFormListsQuery = {
-  __typename: "ModelFormListConnection";
+  __typename: 'ModelFormListConnection';
   items: Array<{
-    __typename: "FormList";
+    __typename: 'FormList';
     id: string;
     name?: string | null;
     description?: string | null;
@@ -3673,7 +3683,7 @@ export type SyncFormListsQuery = {
 };
 
 export type GetFormDetailQuery = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -3685,9 +3695,9 @@ export type GetFormDetailQuery = {
 };
 
 export type ListFormDetailsQuery = {
-  __typename: "ModelFormDetailConnection";
+  __typename: 'ModelFormDetailConnection';
   items: Array<{
-    __typename: "FormDetail";
+    __typename: 'FormDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3702,9 +3712,9 @@ export type ListFormDetailsQuery = {
 };
 
 export type SyncFormDetailsQuery = {
-  __typename: "ModelFormDetailConnection";
+  __typename: 'ModelFormDetailConnection';
   items: Array<{
-    __typename: "FormDetail";
+    __typename: 'FormDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3719,9 +3729,9 @@ export type SyncFormDetailsQuery = {
 };
 
 export type FormDetailsByFormlistIDQuery = {
-  __typename: "ModelFormDetailConnection";
+  __typename: 'ModelFormDetailConnection';
   items: Array<{
-    __typename: "FormDetail";
+    __typename: 'FormDetail';
     id: string;
     formData?: string | null;
     formlistID: string;
@@ -3736,7 +3746,7 @@ export type FormDetailsByFormlistIDQuery = {
 };
 
 export type OnCreateUnitMeasumentSubscription = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -3745,7 +3755,7 @@ export type OnCreateUnitMeasumentSubscription = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -3764,7 +3774,7 @@ export type OnCreateUnitMeasumentSubscription = {
 };
 
 export type OnUpdateUnitMeasumentSubscription = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -3773,7 +3783,7 @@ export type OnUpdateUnitMeasumentSubscription = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -3792,7 +3802,7 @@ export type OnUpdateUnitMeasumentSubscription = {
 };
 
 export type OnDeleteUnitMeasumentSubscription = {
-  __typename: "UnitMeasument";
+  __typename: 'UnitMeasument';
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -3801,7 +3811,7 @@ export type OnDeleteUnitMeasumentSubscription = {
   unitlistID: string;
   searchTerm?: string | null;
   unitList?: {
-    __typename: "UnitList";
+    __typename: 'UnitList';
     id: string;
     name?: string | null;
     isDeleted?: boolean | null;
@@ -3820,12 +3830,12 @@ export type OnDeleteUnitMeasumentSubscription = {
 };
 
 export type OnCreateUnitListSubscription = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3837,12 +3847,12 @@ export type OnCreateUnitListSubscription = {
 };
 
 export type OnUpdateUnitListSubscription = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3854,12 +3864,12 @@ export type OnUpdateUnitListSubscription = {
 };
 
 export type OnDeleteUnitListSubscription = {
-  __typename: "UnitList";
+  __typename: 'UnitList';
   id: string;
   name?: string | null;
   isDeleted?: boolean | null;
   unitMeasuments?: {
-    __typename: "ModelUnitMeasumentConnection";
+    __typename: 'ModelUnitMeasumentConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -3871,7 +3881,7 @@ export type OnDeleteUnitListSubscription = {
 };
 
 export type OnCreateAssetsSubscription = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3889,7 +3899,7 @@ export type OnCreateAssetsSubscription = {
 };
 
 export type OnUpdateAssetsSubscription = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3907,7 +3917,7 @@ export type OnUpdateAssetsSubscription = {
 };
 
 export type OnDeleteAssetsSubscription = {
-  __typename: "Assets";
+  __typename: 'Assets';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3925,7 +3935,7 @@ export type OnDeleteAssetsSubscription = {
 };
 
 export type OnCreateLocationSubscription = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3942,7 +3952,7 @@ export type OnCreateLocationSubscription = {
 };
 
 export type OnUpdateLocationSubscription = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3959,7 +3969,7 @@ export type OnUpdateLocationSubscription = {
 };
 
 export type OnDeleteLocationSubscription = {
-  __typename: "Location";
+  __typename: 'Location';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -3976,7 +3986,7 @@ export type OnDeleteLocationSubscription = {
 };
 
 export type OnCreateRoundPlanSubmissionDetailsSubscription = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -3989,7 +3999,7 @@ export type OnCreateRoundPlanSubmissionDetailsSubscription = {
 };
 
 export type OnUpdateRoundPlanSubmissionDetailsSubscription = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4002,7 +4012,7 @@ export type OnUpdateRoundPlanSubmissionDetailsSubscription = {
 };
 
 export type OnDeleteRoundPlanSubmissionDetailsSubscription = {
-  __typename: "RoundPlanSubmissionDetails";
+  __typename: 'RoundPlanSubmissionDetails';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4015,7 +4025,7 @@ export type OnDeleteRoundPlanSubmissionDetailsSubscription = {
 };
 
 export type OnCreateRoundPlanSubmissionListSubscription = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4030,7 +4040,7 @@ export type OnCreateRoundPlanSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4042,7 +4052,7 @@ export type OnCreateRoundPlanSubmissionListSubscription = {
 };
 
 export type OnUpdateRoundPlanSubmissionListSubscription = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4057,7 +4067,7 @@ export type OnUpdateRoundPlanSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4069,7 +4079,7 @@ export type OnUpdateRoundPlanSubmissionListSubscription = {
 };
 
 export type OnDeleteRoundPlanSubmissionListSubscription = {
-  __typename: "RoundPlanSubmissionList";
+  __typename: 'RoundPlanSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4084,7 +4094,7 @@ export type OnDeleteRoundPlanSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4096,7 +4106,7 @@ export type OnDeleteRoundPlanSubmissionListSubscription = {
 };
 
 export type OnCreateAuthoredRoundPlanDetailSubscription = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4113,7 +4123,7 @@ export type OnCreateAuthoredRoundPlanDetailSubscription = {
 };
 
 export type OnUpdateAuthoredRoundPlanDetailSubscription = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4130,7 +4140,7 @@ export type OnUpdateAuthoredRoundPlanDetailSubscription = {
 };
 
 export type OnDeleteAuthoredRoundPlanDetailSubscription = {
-  __typename: "AuthoredRoundPlanDetail";
+  __typename: 'AuthoredRoundPlanDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4147,7 +4157,7 @@ export type OnDeleteAuthoredRoundPlanDetailSubscription = {
 };
 
 export type OnCreateRoundPlanDetailSubscription = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4159,7 +4169,7 @@ export type OnCreateRoundPlanDetailSubscription = {
 };
 
 export type OnUpdateRoundPlanDetailSubscription = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4171,7 +4181,7 @@ export type OnUpdateRoundPlanDetailSubscription = {
 };
 
 export type OnDeleteRoundPlanDetailSubscription = {
-  __typename: "RoundPlanDetail";
+  __typename: 'RoundPlanDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4183,7 +4193,7 @@ export type OnDeleteRoundPlanDetailSubscription = {
 };
 
 export type OnCreateRoundPlanListSubscription = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4202,17 +4212,17 @@ export type OnCreateRoundPlanListSubscription = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4226,7 +4236,7 @@ export type OnCreateRoundPlanListSubscription = {
 };
 
 export type OnUpdateRoundPlanListSubscription = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4245,17 +4255,17 @@ export type OnUpdateRoundPlanListSubscription = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4269,7 +4279,7 @@ export type OnUpdateRoundPlanListSubscription = {
 };
 
 export type OnDeleteRoundPlanListSubscription = {
-  __typename: "RoundPlanList";
+  __typename: 'RoundPlanList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4288,17 +4298,17 @@ export type OnDeleteRoundPlanListSubscription = {
   formType?: string | null;
   isArchivedAt?: string | null;
   RoundPlanSubmissionDetails?: {
-    __typename: "ModelRoundPlanSubmissionDetailsConnection";
+    __typename: 'ModelRoundPlanSubmissionDetailsConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   AuthoredRoundPlanDetails?: {
-    __typename: "ModelAuthoredRoundPlanDetailConnection";
+    __typename: 'ModelAuthoredRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   RoundPlanDetails?: {
-    __typename: "ModelRoundPlanDetailConnection";
+    __typename: 'ModelRoundPlanDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4312,7 +4322,7 @@ export type OnDeleteRoundPlanListSubscription = {
 };
 
 export type OnCreateResponseSetSubscription = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -4327,7 +4337,7 @@ export type OnCreateResponseSetSubscription = {
 };
 
 export type OnUpdateResponseSetSubscription = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -4342,7 +4352,7 @@ export type OnUpdateResponseSetSubscription = {
 };
 
 export type OnDeleteResponseSetSubscription = {
-  __typename: "ResponseSet";
+  __typename: 'ResponseSet';
   id: string;
   type?: string | null;
   name?: string | null;
@@ -4357,7 +4367,7 @@ export type OnDeleteResponseSetSubscription = {
 };
 
 export type OnCreateFormSubmissionDetailSubscription = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4370,7 +4380,7 @@ export type OnCreateFormSubmissionDetailSubscription = {
 };
 
 export type OnUpdateFormSubmissionDetailSubscription = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4383,7 +4393,7 @@ export type OnUpdateFormSubmissionDetailSubscription = {
 };
 
 export type OnDeleteFormSubmissionDetailSubscription = {
-  __typename: "FormSubmissionDetail";
+  __typename: 'FormSubmissionDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4396,7 +4406,7 @@ export type OnDeleteFormSubmissionDetailSubscription = {
 };
 
 export type OnCreateAuthoredFormDetailSubscription = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4412,7 +4422,7 @@ export type OnCreateAuthoredFormDetailSubscription = {
 };
 
 export type OnUpdateAuthoredFormDetailSubscription = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4428,7 +4438,7 @@ export type OnUpdateAuthoredFormDetailSubscription = {
 };
 
 export type OnDeleteAuthoredFormDetailSubscription = {
-  __typename: "AuthoredFormDetail";
+  __typename: 'AuthoredFormDetail';
   id: string;
   formStatus?: string | null;
   version?: string | null;
@@ -4444,7 +4454,7 @@ export type OnDeleteAuthoredFormDetailSubscription = {
 };
 
 export type OnCreateFormSubmissionListSubscription = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4459,7 +4469,7 @@ export type OnCreateFormSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4471,7 +4481,7 @@ export type OnCreateFormSubmissionListSubscription = {
 };
 
 export type OnUpdateFormSubmissionListSubscription = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4486,7 +4496,7 @@ export type OnUpdateFormSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4498,7 +4508,7 @@ export type OnUpdateFormSubmissionListSubscription = {
 };
 
 export type OnDeleteFormSubmissionListSubscription = {
-  __typename: "FormSubmissionList";
+  __typename: 'FormSubmissionList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4513,7 +4523,7 @@ export type OnDeleteFormSubmissionListSubscription = {
   submittedBy?: string | null;
   searchTerm?: string | null;
   formSubmissionListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4525,7 +4535,7 @@ export type OnDeleteFormSubmissionListSubscription = {
 };
 
 export type OnCreateFormListSubscription = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4544,17 +4554,17 @@ export type OnCreateFormListSubscription = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4567,7 +4577,7 @@ export type OnCreateFormListSubscription = {
 };
 
 export type OnUpdateFormListSubscription = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4586,17 +4596,17 @@ export type OnUpdateFormListSubscription = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4609,7 +4619,7 @@ export type OnUpdateFormListSubscription = {
 };
 
 export type OnDeleteFormListSubscription = {
-  __typename: "FormList";
+  __typename: 'FormList';
   id: string;
   name?: string | null;
   description?: string | null;
@@ -4628,17 +4638,17 @@ export type OnDeleteFormListSubscription = {
   searchTerm?: string | null;
   isArchivedAt?: string | null;
   formListFormSubmissionDetail?: {
-    __typename: "ModelFormSubmissionDetailConnection";
+    __typename: 'ModelFormSubmissionDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListAuthoredFormDetail?: {
-    __typename: "ModelAuthoredFormDetailConnection";
+    __typename: 'ModelAuthoredFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
   formListFormDetail?: {
-    __typename: "ModelFormDetailConnection";
+    __typename: 'ModelFormDetailConnection';
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
@@ -4651,7 +4661,7 @@ export type OnDeleteFormListSubscription = {
 };
 
 export type OnCreateFormDetailSubscription = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4663,7 +4673,7 @@ export type OnCreateFormDetailSubscription = {
 };
 
 export type OnUpdateFormDetailSubscription = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4675,7 +4685,7 @@ export type OnUpdateFormDetailSubscription = {
 };
 
 export type OnDeleteFormDetailSubscription = {
-  __typename: "FormDetail";
+  __typename: 'FormDetail';
   id: string;
   formData?: string | null;
   formlistID: string;
@@ -4687,7 +4697,7 @@ export type OnDeleteFormDetailSubscription = {
 };
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class APIService {
   async CreateUnitMeasument(
@@ -8698,7 +8708,7 @@ export class APIService {
   OnCreateUnitMeasumentListener(
     filter?: ModelSubscriptionUnitMeasumentFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitMeasument">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateUnitMeasument'>>
   > {
     const statement = `subscription OnCreateUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
         onCreateUnitMeasument(filter: $filter) {
@@ -8737,7 +8747,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateUnitMeasument">
+        Pick<__SubscriptionContainer, 'onCreateUnitMeasument'>
       >
     >;
   }
@@ -8745,7 +8755,7 @@ export class APIService {
   OnUpdateUnitMeasumentListener(
     filter?: ModelSubscriptionUnitMeasumentFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitMeasument">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateUnitMeasument'>>
   > {
     const statement = `subscription OnUpdateUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
         onUpdateUnitMeasument(filter: $filter) {
@@ -8784,7 +8794,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateUnitMeasument">
+        Pick<__SubscriptionContainer, 'onUpdateUnitMeasument'>
       >
     >;
   }
@@ -8792,7 +8802,7 @@ export class APIService {
   OnDeleteUnitMeasumentListener(
     filter?: ModelSubscriptionUnitMeasumentFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitMeasument">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteUnitMeasument'>>
   > {
     const statement = `subscription OnDeleteUnitMeasument($filter: ModelSubscriptionUnitMeasumentFilterInput) {
         onDeleteUnitMeasument(filter: $filter) {
@@ -8831,7 +8841,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteUnitMeasument">
+        Pick<__SubscriptionContainer, 'onDeleteUnitMeasument'>
       >
     >;
   }
@@ -8839,7 +8849,7 @@ export class APIService {
   OnCreateUnitListListener(
     filter?: ModelSubscriptionUnitListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateUnitList'>>
   > {
     const statement = `subscription OnCreateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
         onCreateUnitList(filter: $filter) {
@@ -8866,14 +8876,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateUnitList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateUnitList'>>
     >;
   }
 
   OnUpdateUnitListListener(
     filter?: ModelSubscriptionUnitListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateUnitList'>>
   > {
     const statement = `subscription OnUpdateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
         onUpdateUnitList(filter: $filter) {
@@ -8900,14 +8910,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateUnitList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateUnitList'>>
     >;
   }
 
   OnDeleteUnitListListener(
     filter?: ModelSubscriptionUnitListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteUnitList'>>
   > {
     const statement = `subscription OnDeleteUnitList($filter: ModelSubscriptionUnitListFilterInput) {
         onDeleteUnitList(filter: $filter) {
@@ -8934,14 +8944,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteUnitList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteUnitList'>>
     >;
   }
 
   OnCreateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
   > {
     const statement = `subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onCreateAssets(filter: $filter) {
@@ -8969,14 +8979,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateAssets'>>
     >;
   }
 
   OnUpdateAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
   > {
     const statement = `subscription OnUpdateAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onUpdateAssets(filter: $filter) {
@@ -9004,14 +9014,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateAssets'>>
     >;
   }
 
   OnDeleteAssetsListener(
     filter?: ModelSubscriptionAssetsFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
   > {
     const statement = `subscription OnDeleteAssets($filter: ModelSubscriptionAssetsFilterInput) {
         onDeleteAssets(filter: $filter) {
@@ -9039,14 +9049,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteAssets">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteAssets'>>
     >;
   }
 
   OnCreateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
   > {
     const statement = `subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onCreateLocation(filter: $filter) {
@@ -9073,14 +9083,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateLocation'>>
     >;
   }
 
   OnUpdateLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
   > {
     const statement = `subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
         onUpdateLocation(filter: $filter) {
@@ -9107,14 +9117,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateLocation'>>
     >;
   }
 
   OnDeleteLocationListener(
     filter?: ModelSubscriptionLocationFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
   > {
     const statement = `subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
         onDeleteLocation(filter: $filter) {
@@ -9141,7 +9151,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteLocation">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteLocation'>>
     >;
   }
 
@@ -9149,7 +9159,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -9174,7 +9184,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -9183,7 +9193,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -9208,7 +9218,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -9217,7 +9227,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionDetails($filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput) {
@@ -9242,7 +9252,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionDetails">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionDetails'>
       >
     >;
   }
@@ -9251,7 +9261,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -9290,7 +9300,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanSubmissionList'>
       >
     >;
   }
@@ -9299,7 +9309,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -9338,7 +9348,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanSubmissionList'>
       >
     >;
   }
@@ -9347,7 +9357,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanSubmissionList($filter: ModelSubscriptionRoundPlanSubmissionListFilterInput) {
@@ -9386,7 +9396,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanSubmissionList">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanSubmissionList'>
       >
     >;
   }
@@ -9395,7 +9405,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnCreateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -9424,7 +9434,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onCreateAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -9433,7 +9443,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnUpdateAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -9462,7 +9472,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onUpdateAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -9471,7 +9481,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnDeleteAuthoredRoundPlanDetail($filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput) {
@@ -9500,7 +9510,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteAuthoredRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onDeleteAuthoredRoundPlanDetail'>
       >
     >;
   }
@@ -9509,7 +9519,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnCreateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -9533,7 +9543,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanDetail'>
       >
     >;
   }
@@ -9542,7 +9552,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnUpdateRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -9566,7 +9576,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanDetail'>
       >
     >;
   }
@@ -9575,7 +9585,7 @@ export class APIService {
     filter?: ModelSubscriptionRoundPlanDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
+      Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
     >
   > {
     const statement = `subscription OnDeleteRoundPlanDetail($filter: ModelSubscriptionRoundPlanDetailFilterInput) {
@@ -9599,7 +9609,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanDetail">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanDetail'>
       >
     >;
   }
@@ -9607,7 +9617,7 @@ export class APIService {
   OnCreateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>>
   > {
     const statement = `subscription OnCreateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onCreateRoundPlanList(filter: $filter) {
@@ -9661,7 +9671,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateRoundPlanList">
+        Pick<__SubscriptionContainer, 'onCreateRoundPlanList'>
       >
     >;
   }
@@ -9669,7 +9679,7 @@ export class APIService {
   OnUpdateRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>>
   > {
     const statement = `subscription OnUpdateRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onUpdateRoundPlanList(filter: $filter) {
@@ -9723,7 +9733,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateRoundPlanList">
+        Pick<__SubscriptionContainer, 'onUpdateRoundPlanList'>
       >
     >;
   }
@@ -9731,7 +9741,7 @@ export class APIService {
   OnDeleteRoundPlanListListener(
     filter?: ModelSubscriptionRoundPlanListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteRoundPlanList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>>
   > {
     const statement = `subscription OnDeleteRoundPlanList($filter: ModelSubscriptionRoundPlanListFilterInput) {
         onDeleteRoundPlanList(filter: $filter) {
@@ -9785,7 +9795,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteRoundPlanList">
+        Pick<__SubscriptionContainer, 'onDeleteRoundPlanList'>
       >
     >;
   }
@@ -9793,7 +9803,7 @@ export class APIService {
   OnCreateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
   > {
     const statement = `subscription OnCreateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onCreateResponseSet(filter: $filter) {
@@ -9818,14 +9828,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateResponseSet'>>
     >;
   }
 
   OnUpdateResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
   > {
     const statement = `subscription OnUpdateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onUpdateResponseSet(filter: $filter) {
@@ -9850,14 +9860,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateResponseSet'>>
     >;
   }
 
   OnDeleteResponseSetListener(
     filter?: ModelSubscriptionResponseSetFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
   > {
     const statement = `subscription OnDeleteResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
         onDeleteResponseSet(filter: $filter) {
@@ -9882,7 +9892,7 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteResponseSet'>>
     >;
   }
 
@@ -9890,7 +9900,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnCreateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -9915,7 +9925,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onCreateFormSubmissionDetail'>
       >
     >;
   }
@@ -9924,7 +9934,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -9949,7 +9959,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionDetail'>
       >
     >;
   }
@@ -9958,7 +9968,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
+      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionDetail($filter: ModelSubscriptionFormSubmissionDetailFilterInput) {
@@ -9983,7 +9993,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteFormSubmissionDetail">
+        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionDetail'>
       >
     >;
   }
@@ -9992,7 +10002,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnCreateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -10020,7 +10030,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onCreateAuthoredFormDetail'>
       >
     >;
   }
@@ -10029,7 +10039,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnUpdateAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -10057,7 +10067,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onUpdateAuthoredFormDetail'>
       >
     >;
   }
@@ -10066,7 +10076,7 @@ export class APIService {
     filter?: ModelSubscriptionAuthoredFormDetailFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
+      Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
     >
   > {
     const statement = `subscription OnDeleteAuthoredFormDetail($filter: ModelSubscriptionAuthoredFormDetailFilterInput) {
@@ -10094,7 +10104,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteAuthoredFormDetail">
+        Pick<__SubscriptionContainer, 'onDeleteAuthoredFormDetail'>
       >
     >;
   }
@@ -10103,7 +10113,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
     >
   > {
     const statement = `subscription OnCreateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -10142,7 +10152,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onCreateFormSubmissionList'>
       >
     >;
   }
@@ -10151,7 +10161,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
     >
   > {
     const statement = `subscription OnUpdateFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -10190,7 +10200,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onUpdateFormSubmissionList'>
       >
     >;
   }
@@ -10199,7 +10209,7 @@ export class APIService {
     filter?: ModelSubscriptionFormSubmissionListFilterInput
   ): Observable<
     SubscriptionResponse<
-      Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
+      Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
     >
   > {
     const statement = `subscription OnDeleteFormSubmissionList($filter: ModelSubscriptionFormSubmissionListFilterInput) {
@@ -10238,7 +10248,7 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteFormSubmissionList">
+        Pick<__SubscriptionContainer, 'onDeleteFormSubmissionList'>
       >
     >;
   }
@@ -10246,7 +10256,7 @@ export class APIService {
   OnCreateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
   > {
     const statement = `subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onCreateFormList(filter: $filter) {
@@ -10298,14 +10308,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormList'>>
     >;
   }
 
   OnUpdateFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
   > {
     const statement = `subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
         onUpdateFormList(filter: $filter) {
@@ -10357,14 +10367,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormList'>>
     >;
   }
 
   OnDeleteFormListListener(
     filter?: ModelSubscriptionFormListFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
   > {
     const statement = `subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
         onDeleteFormList(filter: $filter) {
@@ -10416,14 +10426,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormList'>>
     >;
   }
 
   OnCreateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
   > {
     const statement = `subscription OnCreateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onCreateFormDetail(filter: $filter) {
@@ -10445,14 +10455,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onCreateFormDetail'>>
     >;
   }
 
   OnUpdateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
   > {
     const statement = `subscription OnUpdateFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onUpdateFormDetail(filter: $filter) {
@@ -10474,14 +10484,14 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onUpdateFormDetail'>>
     >;
   }
 
   OnDeleteFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
+    SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
   > {
     const statement = `subscription OnDeleteFormDetail($filter: ModelSubscriptionFormDetailFilterInput) {
         onDeleteFormDetail(filter: $filter) {
@@ -10503,7 +10513,8 @@ export class APIService {
     return API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormDetail">>
+      SubscriptionResponse<Pick<__SubscriptionContainer, 'onDeleteFormDetail'>>
     >;
   }
+
 }

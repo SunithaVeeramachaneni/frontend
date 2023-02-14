@@ -1,0 +1,23 @@
+{
+  "locations": "Locations",
+  "createNew": "Create New",
+  "name": "Name",
+  "locationId": "Location Id",
+  "required": "{name} is required",
+  "assets": "Assets",
+  "image": "Image",
+  "assetsId": "Asset Id",
+  "model": "Model",
+  "description": "Description",
+  "parentType": "Parent Type",
+  "location": "Location",
+  "asset": "Asset",
+  "parent": "Parent",
+  "cancelBtn": "Cancel",
+  "search": "Search",
+  "editBtn": "Edit",
+  "id": "ID",
+  "uploadExcel": "Upload Excel",
+  "addManually": "Add Manually",
+  "downloadTemplate": "Download Template"
+}

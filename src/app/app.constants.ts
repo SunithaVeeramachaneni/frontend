@@ -42,6 +42,18 @@ export const permissions = Object.freeze({
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
 
+  viewLocations: 'VIEW_LOCATIONS',
+  createLocation: 'CREATE_LOCATION',
+  updateLocation: 'UPDATE_LOCATION',
+  deleteLocation: 'DELETE_LOCATION',
+  importLocations: 'IMPORT_LOCATIONS',
+
+  viewAssets: 'VIEW_ASSETS',
+  createAsset: 'CREATE_ASSET',
+  updateAsset: 'UPDATE_ASSET',
+  deleteAsset: 'DELETE_ASSET',
+  importAssets: 'IMPORT_ASSETS',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -179,9 +191,23 @@ export const routingUrls = {
     url: '/operator-rounds/archived',
     title: 'Archived',
     permission: permissions.viewArchivedORP
+  },
+  masterConfiguration: {
+    url: '/master-configuration',
+    title: 'Master Configuration',
+    permission: permissions.viewLocations
+  },
+  locations: {
+    url: '/master-configuration',
+    title: 'Locations',
+    permission: permissions.viewLocations
+  },
+  assets: {
+    url: '/master-configuration/assets',
+    title: 'Assets',
+    permission: permissions.viewAssets
   }
 };
-
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',
