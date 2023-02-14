@@ -30,5 +30,6 @@
   "unitType": "Unit of measure",
   "delete": "Delete",
   "deleteTitle": "Delete",
-  "deleteSubTitle": "Are you sure to delete"
+  "deleteSubTitle": "Are you sure to delete",
+  "selectmsg":"please select value"
 }
