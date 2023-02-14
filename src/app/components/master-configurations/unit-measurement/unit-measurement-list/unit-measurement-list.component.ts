@@ -488,7 +488,7 @@ export class UnitMeasurementListComponent implements OnInit {
 
   exportAsXLSX(): void {
     this.unitMeasurementService
-      .downloadSampleAssetTemplate()
+      .downloadSampleUomTemplate()
       .pipe(
         tap((data) => {
           downloadFile(data, 'UOM_Sample_Template');

@@ -136,7 +136,7 @@ export class UnitMeasurementService {
     );
   }
 
-  downloadSampleAssetTemplate(
+  downloadSampleUomTemplate(
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService.downloadFile(
