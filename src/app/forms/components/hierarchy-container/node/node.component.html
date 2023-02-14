@@ -7,11 +7,11 @@
     <img src="assets/rdf-forms-icons/form-image-upload.svg" />
     <div class="description">
       <span>{{ node.name }}</span>
-      <span> &lt; Additional Field: Value &gt; </span>
+      <!-- <span> &lt; Additional Field: Value &gt; </span> -->
     </div>
   </div>
   <div class="right">
-    <span>{{ this.assetHierarchyUtil.getTasksCountByNode(node) }}</span>
+    <span> {{ getTasksCountByNodeId(node.id) }} </span>
     <span
       [matMenuTriggerFor]="hierarchyMenu"
       class="more-icon"
@@ -20,8 +20,12 @@
       <mat-icon>more_horiz</mat-icon>
     </span>
     <mat-menu #hierarchyMenu="matMenu" xPosition="before">
-      <button mat-menu-item class="text-red" (click)="onRemoveNode(node)">
-        <span>Remove Node</span>
+      <button
+        mat-menu-item
+        class="text-red"
+        (click)="onRemoveNode($event, node)"
+      >
+        <span>Delete</span>
       </button>
     </mat-menu>
   </div>

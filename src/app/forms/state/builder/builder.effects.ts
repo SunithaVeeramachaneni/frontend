@@ -3,21 +3,20 @@ import { Injectable } from '@angular/core';
 
 import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   BuilderConfigurationActions,
-  FormConfigurationApiActions
+  RoundPlanConfigurationApiActions
 } from '../actions';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 @Injectable()
-export class FormConfigurationEffects {
+export class BuilderConfigurationEffects {
   constructor(
     private actions$: Actions,
-    private raceDynamicFormService: RaceDynamicFormService,
+    private operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService
   ) {}
 
@@ -25,17 +24,19 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(BuilderConfigurationActions.createForm),
       concatMap((action) =>
-        this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
+        this.operatorRoundsService.createForm$(action.formMetadata).pipe(
           map((response) => {
-            this.raceDynamicFormService.setFormCreatedUpdated(response);
-            return FormConfigurationApiActions.createFormSuccess({
+            this.operatorRoundsService.setFormCreatedUpdated(response);
+            return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
               formMetadata: { id: response.id, ...action.formMetadata },
               formSaveStatus: formConfigurationStatus.saved
             });
           }),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
-            return of(FormConfigurationApiActions.createFormFailure({ error }));
+            this.operatorRoundsService.handleError(error);
+            return of(
+              RoundPlanConfigurationApiActions.createRoundPlanFailure({ error })
+            );
           })
         )
       )
@@ -46,16 +47,18 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(BuilderConfigurationActions.updateForm),
       concatMap((action) =>
-        this.raceDynamicFormService.updateForm$(action).pipe(
+        this.operatorRoundsService.updateForm$(action).pipe(
           map(() =>
-            FormConfigurationApiActions.updateFormSuccess({
+            RoundPlanConfigurationApiActions.updateRoundPlanSuccess({
               formMetadata: action.formMetadata,
               formSaveStatus: formConfigurationStatus.saved
             })
           ),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
-            return of(FormConfigurationApiActions.updateFormFailure({ error }));
+            this.operatorRoundsService.handleError(error);
+            return of(
+              RoundPlanConfigurationApiActions.updateRoundPlanFailure({ error })
+            );
           })
         )
       )
@@ -67,10 +70,10 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.createFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        return this.raceDynamicFormService.createFormDetail$(formDetail).pipe(
+        return this.operatorRoundsService.createFormDetail$(formDetail).pipe(
           mergeMap((response) =>
             forkJoin([
-              this.raceDynamicFormService.updateForm$({
+              this.operatorRoundsService.updateForm$({
                 formMetadata: {
                   ...formDetail.formMetadata,
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
@@ -79,12 +82,12 @@ export class FormConfigurationEffects {
                 },
                 formListDynamoDBVersion: action.formListDynamoDBVersion
               }),
-              this.raceDynamicFormService.updateAuthoredFormDetail$({
+              this.operatorRoundsService.updateAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formStatus: formConfigurationStatus.published,
                 formDetailPublishStatus: formConfigurationStatus.published
               }),
-              this.raceDynamicFormService.createAuthoredFormDetail$({
+              this.operatorRoundsService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formDetailPublishStatus: formConfigurationStatus.published,
                 authoredFormDetailVersion:
@@ -92,7 +95,7 @@ export class FormConfigurationEffects {
               })
             ]).pipe(
               map(([, , createAuthoredFormDetail]) =>
-                FormConfigurationApiActions.createFormDetailSuccess({
+                RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess({
                   formDetail: response,
                   authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
@@ -102,9 +105,9 @@ export class FormConfigurationEffects {
             )
           ),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
+            this.operatorRoundsService.handleError(error);
             return of(
-              FormConfigurationApiActions.createFormDetailFailure({
+              RoundPlanConfigurationApiActions.createRoundPlanDetailFailure({
                 error
               })
             );
@@ -119,10 +122,10 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.updateFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        return this.raceDynamicFormService.updateFormDetail$(formDetail).pipe(
+        return this.operatorRoundsService.updateFormDetail$(formDetail).pipe(
           mergeMap((response) =>
             forkJoin([
-              this.raceDynamicFormService.updateForm$({
+              this.operatorRoundsService.updateForm$({
                 formMetadata: {
                   ...formDetail.formMetadata,
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
@@ -130,12 +133,12 @@ export class FormConfigurationEffects {
                 },
                 formListDynamoDBVersion: action.formListDynamoDBVersion
               }),
-              this.raceDynamicFormService.updateAuthoredFormDetail$({
+              this.operatorRoundsService.updateAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formStatus: formConfigurationStatus.published,
                 formDetailPublishStatus: formConfigurationStatus.published
               }),
-              this.raceDynamicFormService.createAuthoredFormDetail$({
+              this.operatorRoundsService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formDetailPublishStatus: formConfigurationStatus.published,
                 authoredFormDetailVersion:
@@ -143,7 +146,7 @@ export class FormConfigurationEffects {
               })
             ]).pipe(
               map(([, , createAuthoredFormDetail]) =>
-                FormConfigurationApiActions.updateFormDetailSuccess({
+                RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess({
                   formDetail: response,
                   authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
@@ -153,9 +156,9 @@ export class FormConfigurationEffects {
             )
           ),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
+            this.operatorRoundsService.handleError(error);
             return of(
-              FormConfigurationApiActions.updateFormDetailFailure({
+              RoundPlanConfigurationApiActions.updateRoundPlanDetailFailure({
                 error
               })
             );
@@ -169,20 +172,24 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(BuilderConfigurationActions.createAuthoredFormDetail),
       concatMap((action) =>
-        this.raceDynamicFormService.createAuthoredFormDetail$(action).pipe(
+        this.operatorRoundsService.createAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
-            FormConfigurationApiActions.createAuthoredFromDetailSuccess({
-              authoredFormDetail,
-              formSaveStatus: formConfigurationStatus.saved,
-              isFormCreated: true
-            })
+            RoundPlanConfigurationApiActions.createAuthoredRoundPlanDetailSuccess(
+              {
+                authoredFormDetail,
+                formSaveStatus: formConfigurationStatus.saved,
+                isFormCreated: true
+              }
+            )
           ),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
+            this.operatorRoundsService.handleError(error);
             return of(
-              FormConfigurationApiActions.createAuthoredFromDetailFailure({
-                error
-              })
+              RoundPlanConfigurationApiActions.createAuthoredRoundPlanDetailFailure(
+                {
+                  error
+                }
+              )
             );
           })
         )
@@ -194,19 +201,23 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(BuilderConfigurationActions.updateAuthoredFormDetail),
       concatMap((action) =>
-        this.raceDynamicFormService.updateAuthoredFormDetail$(action).pipe(
+        this.operatorRoundsService.updateAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
-            FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
-              authoredFormDetail,
-              formSaveStatus: formConfigurationStatus.saved
-            })
+            RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess(
+              {
+                authoredFormDetail,
+                formSaveStatus: formConfigurationStatus.saved
+              }
+            )
           ),
           catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
+            this.operatorRoundsService.handleError(error);
             return of(
-              FormConfigurationApiActions.updateAuthoredFromDetailFailure({
-                error
-              })
+              RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailFailure(
+                {
+                  error
+                }
+              )
             );
           })
         )

@@ -7,6 +7,11 @@ import {
   EventEmitter,
   ChangeDetectorRef
 } from '@angular/core';
+import { Store } from '@ngrx/store';
+import {
+  getTasksCountByNodeId,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
@@ -26,7 +31,8 @@ export class NodeComponent implements OnInit {
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -36,11 +42,20 @@ export class NodeComponent implements OnInit {
     });
   }
 
+  getTasksCountByNodeId(nodeId) {
+    let count = 0;
+    this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
+      count = c;
+    });
+    return count;
+  }
+
   setSelectedNode(node) {
     this.operatorRoundsService.setSelectedNode(node);
   }
 
-  onRemoveNode(node) {
+  onRemoveNode(event, node) {
+    event.stopPropagation();
     this.nodeRemoved.emit(node);
   }
 

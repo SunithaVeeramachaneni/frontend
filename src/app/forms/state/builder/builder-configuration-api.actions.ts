@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import {
-  CreateAuthoredFormDetailMutation,
+  CreateAuthoredRoundPlanDetailMutation,
   CreateFormDetailMutation,
   UpdateAuthoredFormDetailMutation,
   UpdateFormDetailMutation
@@ -31,7 +31,7 @@ export const createFormDetailSuccess = createAction(
   '[Form Configuration API] createFormDetailSuccess',
   props<{
     formDetail: CreateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -48,7 +48,7 @@ export const updateFormDetailSuccess = createAction(
   '[Form Configuration API] updateFormDetailSuccess',
   props<{
     formDetail: UpdateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -64,7 +64,7 @@ export const updateFormDetailFailure = createAction(
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] createAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
     formSaveStatus: string;
     isFormCreated: boolean;
   }>()

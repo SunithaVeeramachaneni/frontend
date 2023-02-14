@@ -155,7 +155,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
             1,
             1,
             this.sectionIndexes,
-            1,
+            this.counter,
             this.selectedNode.id
           );
         }
@@ -184,7 +184,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
             1,
             sectionIndex,
             this.sectionIndexes,
-            1,
+            this.counter,
             this.selectedNode.id
           );
         }
@@ -226,7 +226,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
             sectionId,
             1,
             questionIndex,
-            1,
+            this.counter,
             this.selectedNode.id
           );
         }

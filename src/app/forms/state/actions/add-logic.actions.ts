@@ -7,7 +7,7 @@ export const addLogicToQuestion = createAction(
     pageIndex: number;
     questionId: string;
     logic: any;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 export const removeLogicsOfQuestion = createAction(
@@ -15,7 +15,7 @@ export const removeLogicsOfQuestion = createAction(
   props<{
     pageIndex: number;
     questionId: string;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 
@@ -25,7 +25,7 @@ export const updateQuestionLogic = createAction(
     questionId: string;
     pageIndex: number;
     logic: any;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 
@@ -35,7 +35,7 @@ export const deleteQuestionLogic = createAction(
     questionId: string;
     pageIndex: number;
     logicId: string;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 
@@ -47,7 +47,7 @@ export const askQuestionsCreate = createAction(
     logicIndex: number;
     logicId: string;
     question: Question;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 
@@ -57,7 +57,7 @@ export const askQuestionsUpdate = createAction(
     questionId: string;
     pageIndex: number;
     question: Question;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );
 export const askQuestionsDelete = createAction(
@@ -65,6 +65,6 @@ export const askQuestionsDelete = createAction(
   props<{
     questionId: string;
     pageIndex: number;
-    subFormId?: string;
+    subFormId: string;
   }>()
 );

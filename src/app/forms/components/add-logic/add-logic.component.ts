@@ -23,7 +23,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getQuestionLogics, getSectionQuestions, State } from '../../state';
+import {
+  getQuestionLogics,
+  getSectionQuestions,
+  State
+} from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
@@ -35,6 +39,7 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddLogicComponent implements OnInit {
+  @Input() selectedNode: any;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set questionId(id: string) {
@@ -103,7 +108,9 @@ export class AddLogicComponent implements OnInit {
   ngOnInit() {
     let logicsFormArray = [];
     this.store
-      .select(getQuestionLogics(this.pageIndex, this.questionId))
+      .select(
+        getQuestionLogics(this.pageIndex, this.questionId, this.selectedNode.id)
+      )
       .subscribe((logicsT) => {
         // eslint-disable-next-line arrow-body-style
         logicsFormArray = logicsT.map((logic, index) => {
@@ -221,7 +228,7 @@ export class AddLogicComponent implements OnInit {
     const sectionId = `AQ_${logicId}`;
     let askQuestions;
     this.store
-      .select(getSectionQuestions(pageIndex, sectionId))
+      .select(getSectionQuestions(pageIndex, sectionId, this.selectedNode.id))
       .subscribe((v) => {
         askQuestions = v;
       });
@@ -252,7 +259,8 @@ export class AddLogicComponent implements OnInit {
             pageIndex: this.pageIndex,
             logicIndex,
             logicId: logic.id,
-            question: newQuestion
+            question: newQuestion,
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -261,7 +269,8 @@ export class AddLogicComponent implements OnInit {
           AddLogicActions.askQuestionsUpdate({
             questionId: event.question.id,
             pageIndex: event.pageIndex,
-            question: event.question
+            question: event.question,
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -269,7 +278,8 @@ export class AddLogicComponent implements OnInit {
         this.store.dispatch(
           AddLogicActions.askQuestionsDelete({
             questionId: event.questionId,
-            pageIndex: event.pageIndex
+            pageIndex: event.pageIndex,
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -328,7 +338,8 @@ export class AddLogicComponent implements OnInit {
         logic,
         viewMode,
         pageIndex: this.pageIndex,
-        questionId: this.questionId
+        questionId: this.questionId,
+        subFormId: this.selectedNode.id
       }
     });
     dialogRef.afterClosed().subscribe((result) => {

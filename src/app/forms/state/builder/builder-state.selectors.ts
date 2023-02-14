@@ -34,10 +34,49 @@ export const getPages = createSelector(
   (state) => state.pages
 );
 
-export const getPagesCount = createSelector(
-  selectFormConfigurationState,
-  (state) => state.pages.length
-);
+export const getPagesCount = (subFormId) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key].length;
+  });
+
+export const getTasksCountByNodeId = (subFormId) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const subForm = state[key] || [];
+    let count = 0;
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    subForm.forEach((f) => {
+      count += f.questions.length;
+    });
+    return count;
+  });
+
+export const getTotalTasksCount = () =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let count = 0;
+    const subFormKeys = Object.keys(state).filter((sf) =>
+      sf.startsWith('pages')
+    );
+    const allSubForms = [];
+    subFormKeys.forEach((key) => {
+      allSubForms.push(state[key]);
+    });
+    allSubForms.forEach((f) => {
+      f.forEach((page) => {
+        if (page.questions && page.questions.length) {
+          count += page.questions.length;
+        }
+      });
+    });
+    return count;
+  });
 
 export const getSubFormPages = (subFormId) =>
   createSelector(selectFormConfigurationState, (state) => {
@@ -67,19 +106,30 @@ export const getPageIndexes = (subFormId: string) =>
     return new Array(state[key].length).fill(0).map((v, i) => i);
   });
 
-export const getSection = (pageIndex: number, sectionIndex: number) =>
-  createSelector(selectFormConfigurationState, (state) =>
-    state.pages
+export const getSection = (
+  pageIndex: number,
+  sectionIndex: number,
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]
       .find((page, index) => index === pageIndex)
-      ?.sections.find((section, index) => index === sectionIndex)
-  );
+      ?.sections.find((section, index) => index === sectionIndex);
+  });
 
-export const getSectionsCount = (pageIndex: number) =>
-  createSelector(
-    selectFormConfigurationState,
-    (state) =>
-      state.pages.find((page, index) => index === pageIndex)?.sections.length
-  );
+export const getSectionsCount = (pageIndex: number, subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key].find((page, index) => index === pageIndex)?.sections
+      .length;
+  });
 
 export const getSectionIndexes = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
@@ -142,16 +192,21 @@ export const getQuestion = (
 export const getQuestionByID = (
   pageIndex: number,
   sectionId: string,
-  questionId: string
+  questionId: string,
+  subFormId: string
 ) =>
-  createSelector(selectFormConfigurationState, (state) =>
-    state.pages
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]
       .find((page, index) => index === pageIndex)
       ?.questions.find(
         (question) =>
           question.sectionId === sectionId && question.id === questionId
-      )
-  );
+      );
+  });
 
 export const getQuestionByQuestionID = (
   pageIndex: number,
@@ -163,12 +218,20 @@ export const getQuestionByQuestionID = (
       ?.questions.find((question) => question.id === questionId)
   );
 
-export const getQuestionLogics = (pageIndex: number, questionId: string) =>
-  createSelector(selectFormConfigurationState, (state) =>
-    state.pages
+export const getQuestionLogics = (
+  pageIndex: number,
+  questionId: string,
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]
       .find((page, index) => index === pageIndex)
-      .logics?.filter((logic) => logic.questionId === questionId)
-  );
+      .logics?.filter((logic) => logic.questionId === questionId);
+  });
 
 export const getSectionQuestions = (
   pageIndex: number,
@@ -187,16 +250,18 @@ export const getSectionQuestions = (
 
 export const getSectionQuestionsCount = (
   pageIndex: number,
-  sectionId: string
+  sectionId: string,
+  subFormId: string
 ) =>
-  createSelector(
-    selectFormConfigurationState,
-    (state) =>
-      state.pages
-        .find((page, index) => index === pageIndex)
-        ?.questions.filter((question) => question.sectionId === sectionId)
-        .length
-  );
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]
+      .find((page, index) => index === pageIndex)
+      ?.questions.filter((question) => question.sectionId === sectionId).length;
+  });
 
 export const getQuestionIndexes = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {

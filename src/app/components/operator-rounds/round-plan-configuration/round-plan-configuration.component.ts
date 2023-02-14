@@ -305,10 +305,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             }
             this.formDetails = formDetails;
           } else {
-            // 0 maintain forms to asset mapping;
-            // 1 find all sub forms and pass it as subForms property to `createAuthoredRoundPlanDetail`;
-            // 2
-
             this.store.dispatch(
               RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
                 formStatus,
@@ -741,6 +737,27 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       questionIndex,
       this.formConf.counter.value,
       this.selectedNode.id
+    );
+  }
+
+  hierarchyEventHandler(event: any) {
+    const { hierarchy } = event;
+    const {
+      counter: currCounter,
+      formStatus: currFormStatus,
+      ...formMetadata
+    } = this.formConfiguration.value;
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormMetadata({
+        formMetadata: { ...formMetadata, hierarchy },
+        ...this.getFormConfigurationStatuses()
+      })
+    );
+    this.store.dispatch(
+      RoundPlanConfigurationActions.updateRoundPlan({
+        formMetadata: { ...formMetadata, hierarchy: JSON.stringify(hierarchy) },
+        formListDynamoDBVersion: this.formListVersion
+      })
     );
   }
 }

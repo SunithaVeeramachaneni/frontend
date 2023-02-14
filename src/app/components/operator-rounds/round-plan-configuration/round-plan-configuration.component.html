@@ -160,7 +160,9 @@
   </div>
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" *ngIf="!isPreviewActive">
-      <app-hierarchy-container></app-hierarchy-container>
+      <app-hierarchy-container
+        (hierarchyEvent)="hierarchyEventHandler($event)"
+      ></app-hierarchy-container>
     </div>
     <div
       class="questions-responses-width"

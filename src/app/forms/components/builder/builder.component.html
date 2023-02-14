@@ -2,7 +2,8 @@
   <div
     *ngIf="{
       pageIndexes: pageIndexes$ | async,
-      subFormPages: subFormPages$ | async
+      subFormPages: subFormPages$ | async,
+      questionCounter: questionCounter$ | async
     } as props"
   >
     <ng-container *ngFor="let pageIndex of props.pageIndexes">
@@ -10,6 +11,7 @@
         [pageIndex]="pageIndex"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
+        [selectedNode]="selectedNode"
       >
         <ng-container *ngIf="sectionIds$ | async as sectionIds">
           <div
@@ -37,6 +39,7 @@
                     [sectionIndex]="sectionIndex"
                     [sectionId]="sectionIds[pageIndex][sectionIndex]"
                     (sectionEvent)="sectionEventHandler($event)"
+                    [selectedNode]="selectedNode"
                   >
                     <div
                       class="sectionMinimumDragArea"
@@ -131,6 +134,7 @@
                               [questionId]="questionId"
                               [questionIndex]="questionIndex"
                               (questionEvent)="questionEventHandler($event)"
+                              [selectedNode]="selectedNode"
                             ></app-question>
                           </div>
                         </ng-container>

@@ -8,7 +8,7 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    <span *ngIf="hierarchyList.length">Tasks (1)</span>
+    <span *ngIf="hierarchyList.length">Tasks ({{ getTotalTasksCount() }})</span>
   </div>
   <span
     class="custom-form-field-gray-color search"
@@ -29,11 +29,11 @@
   <div class="hierarchy" *ngIf="hierarchyList.length">
     <app-node
       [node]="node"
-      (nodeRemoved)="removeNodeHandler($event)"
       *ngFor="let node of hierarchyList"
       [ngClass]="{
         displayInlineBlock: node.hasChildren
       }"
+      (nodeRemoved)="removeNodeHandler($event)"
     ></app-node>
   </div>
   <div *ngIf="!hierarchyList.length" class="emptyHierarchy">

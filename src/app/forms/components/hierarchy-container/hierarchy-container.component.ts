@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Output
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -6,6 +12,7 @@ import { Store } from '@ngrx/store';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { FormMetadata } from 'src/app/interfaces';
 import { getFormMetadata, State } from 'src/app/forms/state';
+import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -14,6 +21,8 @@ import { getFormMetadata, State } from 'src/app/forms/state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyContainerComponent implements OnInit {
+  @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
+
   formMetadata$: Observable<FormMetadata>;
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
@@ -36,9 +45,23 @@ export class HierarchyContainerComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  removeNodeHandler(event) {
-    this.promoteChildren([...this.hierarchyList], event);
+  getTotalTasksCount() {
+    let count = 0;
+    this.store.select(getTotalTasksCount()).subscribe((c) => {
+      count = c;
+    });
+    return count;
   }
+
+  removeNodeHandler(event) {
+    const hierarchyListClone = JSON.parse(JSON.stringify(this.hierarchyList));
+    const hierarchyUpdated = this.promoteChildren(
+      [...hierarchyListClone],
+      event
+    );
+    this.hierarchyEvent.emit({ hierarchy: hierarchyUpdated });
+  }
+
   promoteChildren(list, node) {
     list = list.map((l) => {
       if (l.children && l.children.length) {

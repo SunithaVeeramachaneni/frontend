@@ -19,9 +19,13 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
-import { getSection, getSectionsCount, State } from 'src/app/forms/state';
+import {
+  getSection,
+  getSectionsCount,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
-import { FormConfigurationActions } from '../../state/actions';
+import { BuilderConfigurationActions } from '../../state/actions';
 
 @Component({
   selector: 'app-section',
@@ -49,6 +53,9 @@ export class SectionComponent implements OnInit {
   get sectionId() {
     return this._sectionId;
   }
+
+  @Input() selectedNode: any;
+
   @Output() sectionEvent: EventEmitter<SectionEvent> =
     new EventEmitter<SectionEvent>();
   sectionForm: FormGroup = this.fb.group({
@@ -90,7 +97,9 @@ export class SectionComponent implements OnInit {
       .subscribe();
 
     this.section$ = this.store
-      .select(getSection(this.pageIndex, this.sectionIndex))
+      .select(
+        getSection(this.pageIndex, this.sectionIndex, this.selectedNode.id)
+      )
       .pipe(
         tap((section) => {
           this.sectionForm.patchValue(section, {
@@ -99,7 +108,9 @@ export class SectionComponent implements OnInit {
         })
       );
 
-    this.sectionsCount$ = this.store.select(getSectionsCount(this.pageIndex));
+    this.sectionsCount$ = this.store.select(
+      getSectionsCount(this.pageIndex, this.selectedNode.id)
+    );
   }
 
   addSection() {
@@ -115,10 +126,11 @@ export class SectionComponent implements OnInit {
       .get('isOpen')
       .setValue(!this.sectionForm.get('isOpen').value);
     this.store.dispatch(
-      FormConfigurationActions.updateSectionState({
+      BuilderConfigurationActions.updateSectionState({
         sectionId: this.sectionId,
         pageIndex: this.pageIndex,
-        isOpen: this.sectionForm.get('isOpen').value
+        isOpen: this.sectionForm.get('isOpen').value,
+        subFormId: this.selectedNode.id
       })
     );
   };
