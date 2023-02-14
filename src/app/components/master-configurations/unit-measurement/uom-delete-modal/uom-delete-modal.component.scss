@@ -7,31 +7,24 @@
   padding: 17px;
   background: $white;
   border-radius: 4px;
-}
 
-.cancel-title {
-  font-size: 110%;
-  font-weight: 600;
-  margin: 0;
-}
+  .cancel-title {
+    font-size: 110%;
+    font-weight: 600;
+    margin: 0;
+  }
 
-.cancel-subtitle {
-  font-size: 100%;
-}
+  .cancel-subtitle {
+    font-size: 100%;
+  }
 
-.delete-btn {
-  color: $orange-text;
-  border-radius: 4px;
-  background: $white;
-  float: right;
-  border: none;
-}
+  .delete-btn {
+    float: right;
+  }
 
-.cancel-btn {
-  color: $blue-head;
-  background: $white;
-  border-radius: 4px;
-  float: right;
-  margin-right: 15px;
-  border: 1px solid $blue-head;
+  .cancel-btn {
+    color: $blue-head;
+    float: right;
+    margin-right: 15px;
+  }
 }

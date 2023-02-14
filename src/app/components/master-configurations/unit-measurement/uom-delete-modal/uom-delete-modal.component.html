@@ -1,18 +1,17 @@
-<div>
-  <div class="uom-delete-modal">
-    <p class="cancel-title" translate="delete"></p>
-    <p class="cancel-subtitle" translate="deleteSubTitle"></p>
-    <button
-      mat-button
-      class="delete-btn pr-2"
-      (click)="deleteForm('delete')"
-      translate="delete"
-    ></button>
-    <button
-      mat-raised-button
-      class="cancel-btn"
-      (click)="deleteForm('cancel')"
-      translate="cancel"
-    ></button>
-  </div>
+<div class="uom-delete-modal">
+  <p class="cancel-title" translate="delete"></p>
+  <p class="cancel-subtitle" translate="deleteSubTitle"></p>
+  <button
+    mat-raised-button
+    color="warn"
+    class="delete-btn pr-2"
+    (click)="deleteForm('delete')"
+    translate="delete"
+  ></button>
+  <button
+    mat-button
+    class="cancel-btn"
+    (click)="deleteForm('cancel')"
+    translate="cancel"
+  ></button>
 </div>

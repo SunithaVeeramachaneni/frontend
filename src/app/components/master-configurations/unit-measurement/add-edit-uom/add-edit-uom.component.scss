@@ -8,9 +8,9 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 450px;
-  min-width: 450px;
-  overflow-y: scroll;
+  width: 400px;
+  min-width: 400px;
+  overflow: hidden;
   z-index: 9999;
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
@@ -46,11 +46,24 @@
     margin: 0;
   }
 
+  .add-edit-content {
+    overflow-y: auto;
+    height: 78%;
+  }
+
   .unit-measurement {
     width: 100%;
   }
 
-  .add-new-icon {
+  .add-more-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .add-more-icon {
     width: 15px;
     margin-top: 5px;
     position: relative;
@@ -58,12 +71,20 @@
     margin-right: 5px;
   }
 
-  .add-new-btn {
-    color: $blue-main;
-    border: none;
-    background: none;
-    padding: 10px;
-    cursor: pointer;
+  .description-heading {
+    width: 48%;
+    margin-left: 10px;
+    letter-spacing: 0.419185px;
+    color: $gray4;
+    margin: 7px;
+  }
+
+  .symbol-heading {
+    width: 48%;
+    margin-left: 10px;
+    letter-spacing: 0.419185px;
+    color: $gray4;
+    margin: 7px;
   }
 
   .description {
@@ -73,7 +94,7 @@
     }
   }
   .newUnitType {
-    width: 90%;
+    width: 100%;
     input {
       color: $black;
     }
@@ -100,6 +121,7 @@
   }
 
   .delete-icon {
+    cursor: pointer;
     margin: 0px 12px;
     img {
       width: 15px;
@@ -126,18 +148,37 @@
 
   .footer-buttons {
     position: absolute;
-    bottom: 15px;
+    bottom: 0;
     right: 0;
+    background: $footer-bg-color;
+    width: 100%;
+    padding: 15px 0;
 
     .cancel-btn {
+      float: right;
       color: $blue-main;
-      margin-right: 15px;
     }
 
     .save-btn {
-      margin-right: 20px;
+      float: right;
+      margin-right: 15px;
       background-color: $blue-main;
       color: $white;
     }
   }
+
+  .unit-type-name {
+    font-size: 160%;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.add-new-btn {
+  color: $blue-main;
+}
+
+.add-icon {
+  font-size: 150%;
+  margin-right: 0 !important;
 }
