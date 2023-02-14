@@ -88,11 +88,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
-    (state, action): FormConfigurationState => ({
-      ...state,
-      formSaveStatus: action.formSaveStatus,
-      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
-    })
+    (state, action): FormConfigurationState => {
+      if(action.authoredFormDetail === null) {
+        return state;
+      } else {
+        return {...state,
+        formSaveStatus: action.formSaveStatus,
+        authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version};
+      }
+    }
   ),
   on(
     FormConfigurationApiActions.createFormDetailSuccess,
