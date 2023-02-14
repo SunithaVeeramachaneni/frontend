@@ -169,6 +169,7 @@ export class ReportConfigurationService {
         id,
         displayName,
         type,
+        controlType: 'string',
         order,
         hasSubtitle: false,
         showMenuOptions: true,

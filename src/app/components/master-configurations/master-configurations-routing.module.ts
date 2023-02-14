@@ -5,6 +5,7 @@ import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { AssetsListComponent } from './assets/assets-list/assets-list.component';
 
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
+import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Asssets' },
           permissions: [permissions.viewAssets]
+        }
+      },
+      {
+        path: 'unit-measurement',
+        component: UnitMeasurementListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Unit of Measurement' },
+          permissions: [permissions.viewUnitOfMeasurement]
         }
       }
     ]

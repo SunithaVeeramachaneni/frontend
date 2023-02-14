@@ -33,8 +33,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { AddEditUnitOfMeasurementComponent } from './unit-measurement/add-edit-uom/add-edit-uom.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EditUnitPopupComponent } from './unit-measurement/edit-unit-popup/edit-unit-popup.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { UnitOfMeasurementDeleteModalComponent } from './unit-measurement/uom-delete-modal/uom-delete-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -48,8 +55,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     MasterConfigurationsContainerComponent,
     LocationsListComponent,
     AssetsListComponent,
+    UnitMeasurementListComponent,
     LocationDetailViewComponent,
     AddEditLocationComponent,
+    AddEditUnitOfMeasurementComponent,
+    EditUnitPopupComponent,
+    UnitOfMeasurementDeleteModalComponent,
     AddEditAssetsComponent,
     AssetsDetailViewComponent
   ],
@@ -81,11 +92,16 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatButtonModule,
     MatCardModule,
     MatSelectModule,
+    NgxShimmerLoadingModule,
+    MatDialogModule,
+    MatSlideToggleModule,
     MatRadioModule,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,
+    UnitMeasurementListComponent,
     LocationsListComponent,
     AssetsListComponent,
     LocationDetailViewComponent,

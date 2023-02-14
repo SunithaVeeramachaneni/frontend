@@ -72,7 +72,13 @@ export const permissions = Object.freeze({
   downloadORPSubmission: 'DOWNLOAD_OR_SUBMISSION',
   shareORPSubmission: 'SHARE_OR_SUBMISSION',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
-  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS'
+  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+
+  viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
+  createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
+  updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
+  deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
 });
 
 export const routingUrls = {
@@ -206,6 +212,11 @@ export const routingUrls = {
     url: '/master-configuration/assets',
     title: 'Assets',
     permission: permissions.viewAssets
+  },
+  unitOfMeasurement: {
+    url: '/master-configuration/unit-measurement',
+    title: 'Unit of Measurement',
+    permission: permissions.viewUnitOfMeasurement
   }
 };
 export const formConfigurationStatus = Object.freeze({
