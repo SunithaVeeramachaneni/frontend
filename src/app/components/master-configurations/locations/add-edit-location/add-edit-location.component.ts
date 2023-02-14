@@ -12,8 +12,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
@@ -86,17 +85,12 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc.id !== this.locEditData?.id && loc._deleted !== true
-          );
-          this.allParentsData = this.parentInformation;
-        })
-      )
-      .subscribe();
+    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (location) => location.id !== this.locEditData?.id
+      );
+      this.allParentsData = this.parentInformation;
+    });
   }
 
   create() {

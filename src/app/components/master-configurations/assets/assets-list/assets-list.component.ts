@@ -540,9 +540,9 @@ export class AssetsListComponent implements OnInit {
   }
 
   getAllAssets() {
-    this.assetService.fetchAllAssets$().then((allAssets) => {
+    this.assetService.fetchAllAssets$().subscribe((allAssets) => {
       this.allParentsAssets = allAssets.items.filter(
-        (ass) => ass._deleted !== true
+        (asset) => !asset._deleted
       );
     });
   }
