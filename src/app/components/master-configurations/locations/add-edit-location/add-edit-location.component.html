@@ -101,7 +101,7 @@
               (keyup)="onKey($event.target.value)"
             />
             <mat-option
-              [value]="parent.name"
+              [value]="parent.id"
               *ngFor="let parent of allParentsData"
               >{{ parent.name }}</mat-option
             >
