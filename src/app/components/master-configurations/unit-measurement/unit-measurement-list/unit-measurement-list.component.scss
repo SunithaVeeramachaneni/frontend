@@ -5,12 +5,24 @@
   height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
-    width: 60%;
+    width: 20%;
+  }
+
+  ::ng-deep .mat-column-description {
+    width: 40%;
   }
 
   ::ng-deep .mat-column-unitType,
   ::ng-deep .mat-column-noOfUnits {
     border-right: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  ::ng-deep .mat-column-description > div > span {
+    display: flex;
+  }
+
+  ::ng-deep .mat-column-description > div > span > span:first-of-type {
+    line-height: 25px;
   }
 
   .heading {

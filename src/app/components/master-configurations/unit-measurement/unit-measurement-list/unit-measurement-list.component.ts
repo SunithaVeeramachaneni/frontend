@@ -83,8 +83,9 @@ export class UnitMeasurementListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'unitType',
-      displayName: 'UOM',
+      displayName: 'Unit Type',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: false,
@@ -111,8 +112,9 @@ export class UnitMeasurementListComponent implements OnInit {
     },
     {
       id: 'noOfUnits',
-      displayName: 'No. of Unit',
+      displayName: 'No. of Units',
       type: 'number',
+      controlType: 'string',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -133,8 +135,9 @@ export class UnitMeasurementListComponent implements OnInit {
     },
     {
       id: 'description',
-      displayName: 'Description',
+      displayName: 'UOM',
       type: 'string',
+      controlType: 'string',
       order: 3,
       hasSubtitle: true,
       showMenuOptions: false,
@@ -149,7 +152,12 @@ export class UnitMeasurementListComponent implements OnInit {
       subtitleColumn: 'isDefaultText',
       titleStyle: {},
       subtitleStyle: {
-        background: 'rgba(103, 58, 183, 0.2)'
+        background: 'rgba(103, 58, 183, 0.2)',
+        borderRadius: '30px',
+        padding: '4px 10px',
+        color: '#673AB7',
+        fontWeight: '600',
+        marginLeft: '10px'
       },
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -159,6 +167,7 @@ export class UnitMeasurementListComponent implements OnInit {
       id: 'symbol',
       displayName: 'Symbol',
       type: 'string',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -181,6 +190,7 @@ export class UnitMeasurementListComponent implements OnInit {
       id: 'isActive',
       displayName: 'Status',
       type: 'string',
+      controlType: 'slide-toggle',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -315,7 +325,7 @@ export class UnitMeasurementListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
         } else {
@@ -418,12 +428,10 @@ export class UnitMeasurementListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
-        icon: 'star',
         title: 'Set as Default',
         action: 'setAsDefault'
       },
       {
-        icon: 'edit',
         title: 'Edit',
         action: 'edit'
       }
