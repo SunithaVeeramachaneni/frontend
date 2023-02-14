@@ -62,7 +62,7 @@ export class QuestionComponent implements OnInit {
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
 
-  @Input() selectedNode: any;
+  @Input() selectedNodeId: any;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -217,7 +217,7 @@ export class QuestionComponent implements OnInit {
           this.pageIndex,
           this.sectionId,
           this.questionId,
-          this.selectedNode.id
+          this.selectedNodeId
         )
       )
       .pipe(
@@ -247,7 +247,7 @@ export class QuestionComponent implements OnInit {
       getSectionQuestionsCount(
         this.pageIndex,
         this.sectionId,
-        this.selectedNode.id
+        this.selectedNodeId
       )
     );
   }
@@ -409,7 +409,7 @@ export class QuestionComponent implements OnInit {
             isResponseTypeModalOpen: this.questionForm.get(
               'isResponseTypeModalOpen'
             ).value,
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNodeId
           })
         );
       }
@@ -434,7 +434,7 @@ export class QuestionComponent implements OnInit {
 
   getQuestionLogics(pageIndex: number, questionId: string) {
     return this.store.select(
-      getQuestionLogics(pageIndex, questionId, this.selectedNode.id)
+      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
     );
   }
 
@@ -444,7 +444,7 @@ export class QuestionComponent implements OnInit {
         pageIndex,
         questionId,
         logic: this.constructLogic(pageIndex, questionId),
-        subFormId: this.selectedNode.id
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -454,7 +454,7 @@ export class QuestionComponent implements OnInit {
       AddLogicActions.removeLogicsOfQuestion({
         pageIndex,
         questionId,
-        subFormId: this.selectedNode.id
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -485,7 +485,7 @@ export class QuestionComponent implements OnInit {
             pageIndex,
             questionId,
             logic: this.constructLogic(pageIndex, questionId),
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -495,7 +495,7 @@ export class QuestionComponent implements OnInit {
             questionId,
             pageIndex,
             logic: event.logic,
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -505,7 +505,7 @@ export class QuestionComponent implements OnInit {
             questionId,
             pageIndex,
             logicId: event.logicId,
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -531,7 +531,7 @@ export class QuestionComponent implements OnInit {
             logicIndex: event.logicIndex,
             logicId: event.logic.id,
             question: newQuestion,
-            subFormId: this.selectedNode.id
+            subFormId: this.selectedNodeId
           })
         );
         break;

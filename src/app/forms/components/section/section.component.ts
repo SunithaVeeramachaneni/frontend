@@ -54,7 +54,7 @@ export class SectionComponent implements OnInit {
     return this._sectionId;
   }
 
-  @Input() selectedNode: any;
+  @Input() selectedNodeId: any;
 
   @Output() sectionEvent: EventEmitter<SectionEvent> =
     new EventEmitter<SectionEvent>();
@@ -98,7 +98,7 @@ export class SectionComponent implements OnInit {
 
     this.section$ = this.store
       .select(
-        getSection(this.pageIndex, this.sectionIndex, this.selectedNode.id)
+        getSection(this.pageIndex, this.sectionIndex, this.selectedNodeId)
       )
       .pipe(
         tap((section) => {
@@ -109,7 +109,7 @@ export class SectionComponent implements OnInit {
       );
 
     this.sectionsCount$ = this.store.select(
-      getSectionsCount(this.pageIndex, this.selectedNode.id)
+      getSectionsCount(this.pageIndex, this.selectedNodeId)
     );
   }
 
@@ -130,7 +130,7 @@ export class SectionComponent implements OnInit {
         sectionId: this.sectionId,
         pageIndex: this.pageIndex,
         isOpen: this.sectionForm.get('isOpen').value,
-        subFormId: this.selectedNode.id
+        subFormId: this.selectedNodeId
       })
     );
   };

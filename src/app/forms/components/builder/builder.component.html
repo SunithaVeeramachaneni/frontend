@@ -11,7 +11,7 @@
         [pageIndex]="pageIndex"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
-        [selectedNode]="selectedNode"
+        [selectedNodeId]="selectedNode.id"
       >
         <ng-container *ngIf="sectionIds$ | async as sectionIds">
           <div
@@ -39,7 +39,7 @@
                     [sectionIndex]="sectionIndex"
                     [sectionId]="sectionIds[pageIndex][sectionIndex]"
                     (sectionEvent)="sectionEventHandler($event)"
-                    [selectedNode]="selectedNode"
+                    [selectedNodeId]="selectedNode.id"
                   >
                     <div
                       class="sectionMinimumDragArea"
@@ -134,7 +134,7 @@
                               [questionId]="questionId"
                               [questionIndex]="questionIndex"
                               (questionEvent)="questionEventHandler($event)"
-                              [selectedNode]="selectedNode"
+                              [selectedNodeId]="selectedNode.id"
                             ></app-question>
                           </div>
                         </ng-container>

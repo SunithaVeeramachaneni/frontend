@@ -26,7 +26,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageComponent implements OnInit {
-  @Input() selectedNode: any;
+  @Input() selectedNodeId: any;
 
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -50,7 +50,7 @@ export class PageComponent implements OnInit {
 
   ngOnInit() {
     this.page$ = this.store
-      .select(getPage(this.pageIndex, this.selectedNode.id))
+      .select(getPage(this.pageIndex, this.selectedNodeId))
       .pipe(
         tap((page) => {
           this.pageForm.patchValue(page, {
@@ -59,7 +59,7 @@ export class PageComponent implements OnInit {
         })
       );
 
-    this.pagesCount$ = this.store.select(getPagesCount(this.selectedNode.id));
+    this.pagesCount$ = this.store.select(getPagesCount(this.selectedNodeId));
   }
 
   addPage() {
@@ -72,7 +72,7 @@ export class PageComponent implements OnInit {
       BuilderConfigurationActions.updatePageState({
         pageIndex: this.pageIndex,
         isOpen: this.pageForm.get('isOpen').value,
-        subFormId: this.selectedNode.id
+        subFormId: this.selectedNodeId
       })
     );
   };
