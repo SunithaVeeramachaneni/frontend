@@ -1,4 +1,3 @@
-import { ErrorHandlerService } from './../../../../shared/error-handler/error-handler.service';
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { OnChanges } from '@angular/core';
@@ -19,6 +18,7 @@ import {
   Validators
 } from '@angular/forms';
 import { forkJoin, Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -29,7 +29,7 @@ import {
   UpdateUnitListMutation
 } from 'src/app/API.service';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
-import { MatDialog } from '@angular/material/dialog';
+import { ErrorHandlerService } from './../../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -44,9 +44,9 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     unitList: any;
     rows: GetUnitMeasumentQuery[];
   } = {
-      unitList: null,
-      rows: []
-    };
+    unitList: null,
+    rows: []
+  };
   public unitType = '';
   public newUnitType = '';
   public measurementList: any[] = [];
@@ -64,7 +64,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     private readonly unitOfMeasurementService: UnitMeasurementService,
     public readonly dialog: MatDialog,
     private errorHandlerService: ErrorHandlerService
-  ) { }
+  ) {}
 
   ngOnChanges(): void {
     this.isEditForm = !!this.unitEditData;
@@ -87,8 +87,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.unitOfMeasurementService.getUnitLists().subscribe((units) => {
-      this.measurementList = units
-    })
+      this.measurementList = units;
+    });
   }
 
   cancel(): void {
@@ -111,11 +111,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           });
       }
     );
+    // eslint-disable-next-line no-debugger
+    debugger;
     this.isSubmittedForm = true;
     const isAddNewUnit = this.unitType === 'addNew';
     if (
-      (this.unitMeasurementForm?.get('units')?.invalid ||
-        this.unitMeasurementForm?.get('units')?.value?.length === 0) ||
+      this.unitMeasurementForm?.get('units')?.invalid ||
+      this.unitMeasurementForm?.get('units')?.value?.length === 0 ||
       (isAddNewUnit && this.newUnitType === '')
     ) {
       return;
@@ -140,14 +142,17 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           (err) => this.errorHandlerService.handleError(err)
         );
     } else {
-      const foundUnitType = this.measurementList?.find(m => m?.name === unitType);
-      let observable: Observable<any> = null
+      const foundUnitType = this.measurementList?.find(
+        (m) => m?.name === unitType
+      );
+      let observable: Observable<any> = null;
       if (foundUnitType) {
-        observable = this.unitOfMeasurementService
-          .getSingleUnitListById$(foundUnitType.id)
+        observable = this.unitOfMeasurementService.getSingleUnitListById$(
+          foundUnitType.id
+        );
       } else {
-        observable = this.unitOfMeasurementService
-          .getSingleUnitListByName$(unitType)
+        observable =
+          this.unitOfMeasurementService.getSingleUnitListByName$(unitType);
       }
       observable?.subscribe(({ items }) => {
         if (items?.length > 0) {
@@ -309,10 +314,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             unitObservables.push(
               this.unitOfMeasurementService.updateUnitMeasurement$({
                 id: element?.id.toString(),
-                description: element?.description ?? '',
-                searchTerm: `${element?.description?.toLowerCase() ?? ''} ${response?.name?.toLowerCase() ?? ''
-                  }`,
-                symbol: element?.symbol ?? '',
+                description: element?.description || '',
+                searchTerm: `${element?.description?.toLowerCase() || ''} ${
+                  response?.name?.toLowerCase() || ''
+                }`,
+                symbol: element?.symbol || '',
                 _version: element?.version
               })
             );
@@ -320,10 +326,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             unitObservables.push(
               this.unitOfMeasurementService.createUnitOfMeasurement$({
                 unitlistID: response?.id,
-                description: element?.description ?? '',
-                searchTerm: `${element?.description?.toLowerCase() ?? ''} ${response?.name?.toLowerCase() ?? ''
-                  }`,
-                symbol: element?.symbol ?? ''
+                description: element?.description || '',
+                searchTerm: `${element?.description?.toLowerCase() || ''} ${
+                  response?.name?.toLowerCase() || ''
+                }`,
+                symbol: element?.symbol || ''
               })
             );
           }
@@ -332,10 +339,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           unitObservables.push(
             this.unitOfMeasurementService.createUnitOfMeasurement$({
               unitlistID: response?.id,
-              description: element?.description ?? '',
-              searchTerm: `${element?.description?.toLowerCase() ?? ''} ${response?.name?.toLowerCase() ?? ''
-                }`,
-              symbol: element?.symbol ?? ''
+              description: element?.description || '',
+              searchTerm: `${element?.description?.toLowerCase() || ''} ${
+                response?.name?.toLowerCase() || ''
+              }`,
+              symbol: element?.symbol || ''
             })
           );
         }
@@ -349,7 +357,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         this.unitType = '';
         this.unitEditData = null;
         this.slideInOut.emit('out');
-        this.isSubmittedForm = false
+        this.isSubmittedForm = false;
       },
       () => {
         this.isLoading = false;

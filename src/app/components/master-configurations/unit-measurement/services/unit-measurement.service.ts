@@ -28,7 +28,7 @@ export class UnitMeasurementService {
   constructor(
     private readonly awsApiService: APIService,
     private readonly _appService: AppService
-  ) { }
+  ) {}
 
   getUnitOfMeasurementList$(queryParams: {
     nextToken?: string;
@@ -130,7 +130,7 @@ export class UnitMeasurementService {
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'api/v1/uom-excel-upload',
+      'uom-excel-upload',
       form,
       info
     );
@@ -141,7 +141,7 @@ export class UnitMeasurementService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'api/v1/download-sample-uom',
+      'download-sample-uom',
       info,
       true,
       {}

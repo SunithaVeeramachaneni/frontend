@@ -39,13 +39,13 @@
               {{ unit?.name }}
             </mat-option>
           </mat-select>
+          <mat-error
+            class="m-l-5 m-t-2 text-red"
+            *ngIf="!unitType && isSubmittedForm"
+          >
+            {{ 'selectmsg' | translate | uppercase }}
+          </mat-error>
         </mat-form-field>
-        <mat-error
-          class="m-l-5 m-t-2 text-red"
-          *ngIf="!unitType && isSubmittedForm"
-        >
-          {{ 'selectmsg' | translate | uppercase }}
-        </mat-error>
       </p>
       <div
         class="display-flex custom-form-field-white-color"
@@ -54,13 +54,15 @@
         <mat-form-field appearance="outline" class="newUnitType">
           <mat-label translate="unit_type"></mat-label>
           <input matInput [(ngModel)]="newUnitType" required />
+          <mat-error
+            class="m-l-5 m-t-2 text-red"
+            *ngIf="
+              unitType === 'addNew' && newUnitType === '' && isSubmittedForm
+            "
+          >
+            {{ 'unitTypeError' | translate }}
+          </mat-error>
         </mat-form-field>
-        <mat-error
-          class="m-l-5 m-t-2 text-red"
-          *ngIf="unitType === 'addNew' && newUnitType === '' && isSubmittedForm"
-        >
-          {{ 'selectmsg' | translate | uppercase }}
-        </mat-error>
       </div>
       <div class="m-l-5 m-t-5 display-flex" *ngIf="unitEditData">
         <div class="show-measurement">

@@ -184,7 +184,7 @@ export class UnitMeasurementListComponent implements OnInit {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasConditionalStyles: false
     },
     {
       id: 'isActive',
@@ -225,7 +225,11 @@ export class UnitMeasurementListComponent implements OnInit {
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: [],
-    conditionalStyles: {}
+    conditionalStyles: {
+      isDefaultText: {
+        background: 'none'
+      }
+    }
   };
   dataSource: MatTableDataSource<any>;
   formsCount$: Observable<Count>;

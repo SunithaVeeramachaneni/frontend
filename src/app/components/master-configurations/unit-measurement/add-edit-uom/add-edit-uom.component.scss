@@ -71,20 +71,15 @@
     margin-right: 5px;
   }
 
-  .description-heading {
-    width: 48%;
-    margin-left: 10px;
-    letter-spacing: 0.419185px;
-    color: $gray4;
-    margin: 7px;
-  }
-
-  .symbol-heading {
-    width: 48%;
-    margin-left: 10px;
-    letter-spacing: 0.419185px;
-    color: $gray4;
-    margin: 7px;
+  .add-new-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 10px;
+    cursor: pointer;
+    img {
+      margin-right: 10px;
+    }
   }
 
   .description {
@@ -94,7 +89,7 @@
     }
   }
   .newUnitType {
-    width: 100%;
+    width: 98%;
     input {
       color: $black;
     }
