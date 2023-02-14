@@ -112,7 +112,7 @@ export class LocationService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService.downloadFile(
-      environment.masterApiUrl,
+      environment.masterConfigApiUrl,
       'api/v1/download-sample-location',
       info,
       true,
@@ -159,7 +159,7 @@ export class LocationService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService._postData(
-      environment.masterApiUrl,
+      environment.masterConfigApiUrl,
       'api/v1/location-excel-upload',
       form,
       info

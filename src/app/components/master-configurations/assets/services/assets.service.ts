@@ -118,7 +118,7 @@ export class AssetsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService.downloadFile(
-      environment.masterApiUrl,
+      environment.masterConfigApiUrl,
       'api/v1/download-sample-assets',
       info,
       true,
@@ -165,7 +165,7 @@ export class AssetsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService._postData(
-      environment.masterApiUrl,
+      environment.masterConfigApiUrl,
       'api/v1/assets-excel-upload',
       form,
       info
