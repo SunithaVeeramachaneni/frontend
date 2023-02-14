@@ -83,8 +83,9 @@ export class UnitMeasurementListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'unitType',
-      displayName: 'UOM',
+      displayName: 'Unit Type',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: false,
@@ -111,8 +112,9 @@ export class UnitMeasurementListComponent implements OnInit {
     },
     {
       id: 'noOfUnits',
-      displayName: 'No. of Unit',
+      displayName: 'No. of Units',
       type: 'number',
+      controlType: 'string',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -133,8 +135,9 @@ export class UnitMeasurementListComponent implements OnInit {
     },
     {
       id: 'description',
-      displayName: 'Description',
+      displayName: 'UOM',
       type: 'string',
+      controlType: 'string',
       order: 3,
       hasSubtitle: true,
       showMenuOptions: false,
@@ -149,7 +152,12 @@ export class UnitMeasurementListComponent implements OnInit {
       subtitleColumn: 'isDefaultText',
       titleStyle: {},
       subtitleStyle: {
-        background: 'rgba(103, 58, 183, 0.2)'
+        background: 'rgba(103, 58, 183, 0.2)',
+        borderRadius: '30px',
+        padding: '4px 10px',
+        color: '#673AB7',
+        fontWeight: '600',
+        marginLeft: '10px'
       },
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -159,6 +167,7 @@ export class UnitMeasurementListComponent implements OnInit {
       id: 'symbol',
       displayName: 'Symbol',
       type: 'string',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -181,6 +190,7 @@ export class UnitMeasurementListComponent implements OnInit {
       id: 'isActive',
       displayName: 'Status',
       type: 'string',
+      controlType: 'slide-toggle',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -315,7 +325,7 @@ export class UnitMeasurementListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
         } else {
@@ -327,6 +337,23 @@ export class UnitMeasurementListComponent implements OnInit {
             });
             form.action = null;
           } else if (form.action === 'edit') {
+            const currentData = [...(initial?.data || [])];
+            const idx = initial?.data?.findIndex(
+              (d) => d?.id === form?.form?.id
+            );
+            if (idx !== -1) {
+              if (
+                initial?.data[idx]?.unitList?.id === form?.form?.unitList?.id
+              ) {
+                currentData[idx] = {
+                  ...form.form,
+                  noOfUnits: initial.data[idx]?.noOfUnits || 0,
+                  isDefaultText: initial.data[idx]?.isDefaultText || '',
+                  unitType: initial.data[idx]?.unitType || ''
+                };
+                initial.data = currentData;
+              }
+            }
             this.toast.show({
               text: 'UOM edited successfully!',
               type: 'success'
@@ -401,12 +428,10 @@ export class UnitMeasurementListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
-        icon: 'star',
         title: 'Set as Default',
         action: 'setAsDefault'
       },
       {
-        icon: 'edit',
         title: 'Edit',
         action: 'edit'
       }
@@ -588,19 +613,22 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   private onEditUnit(data: GetUnitMeasumentQuery): void {
-    const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
-      data
-    });
+    this.unitMeasurementService.getUnitLists().subscribe((units) => {
+      const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
+        data: {
+          ...data,
+          units
+        }
+      });
 
-    deleteReportRef.afterClosed().subscribe((res) => {
-      if (res?.action === 'save') {
-        this.unitMeasurementService
-          .updateUnitList$({
-            id: res?.unitList?.id,
-            name: res?.unitType || res?.unitList?.name,
-            _version: res?.unitList?._version
-          })
-          .subscribe(() => {
+      deleteReportRef.afterClosed().subscribe((res) => {
+        if (res?.action === 'save') {
+          const unit: any = { ...data };
+          if (res?.unitType !== unit?.unitType) {
+            const changedUnitType = res?.units?.find(
+              (u) => u?.name === res?.unitType
+            );
+
             this.unitMeasurementService
               .updateUnitMeasurement$({
                 id: res?.id,
@@ -608,7 +636,10 @@ export class UnitMeasurementListComponent implements OnInit {
                 description: res?.description,
                 isActive: res?.isActive === null ? true : res?.isActive,
                 searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
-                _version: res?._version
+                _version: res?._version,
+                unitlistID: changedUnitType
+                  ? changedUnitType?.id
+                  : res.unitlistID
               })
               .subscribe(
                 (result: UpdateUnitMeasumentMutation) => {
@@ -622,8 +653,38 @@ export class UnitMeasurementListComponent implements OnInit {
                 },
                 (err) => this.errorHandlerService.handleError(err)
               );
-          });
-      }
+          } else {
+            this.unitMeasurementService
+              .updateUnitList$({
+                id: res?.unitList?.id,
+                name: res?.unitType || res?.unitList?.name,
+                _version: res?.unitList?._version
+              })
+              .subscribe(() => {
+                this.unitMeasurementService
+                  .updateUnitMeasurement$({
+                    id: res?.id,
+                    symbol: res?.symbol,
+                    description: res?.description,
+                    isActive: res?.isActive === null ? true : res?.isActive,
+                    searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
+                    _version: res?._version
+                  })
+                  .subscribe(
+                    (result: UpdateUnitMeasumentMutation) => {
+                      if (result) {
+                        this.addEditCopyForm$.next({
+                          action: 'edit',
+                          form: result
+                        });
+                      }
+                    },
+                    (err) => this.errorHandlerService.handleError(err)
+                  );
+              });
+          }
+        }
+      });
     });
   }
 

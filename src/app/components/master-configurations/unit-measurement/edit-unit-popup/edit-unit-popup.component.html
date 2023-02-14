@@ -18,7 +18,12 @@
       <p class="m-l-5 m-t-5">
         <mat-form-field appearance="outline" class="m-b-10 m-l-5 unitType">
           <mat-label>{{ 'unitType' | translate }}</mat-label>
-          <input matInput formControlName="unitType" />
+          <input *ngIf="false" matInput formControlName="unitType" />
+          <mat-select formControlName="unitType">
+            <mat-option *ngFor="let unit of unitList" [value]="unit?.name">
+              {{ unit?.name }}
+            </mat-option>
+          </mat-select>
           <mat-error
             *ngIf="processValidationErrors('unitType')"
             class="m-t-5 error-fields"

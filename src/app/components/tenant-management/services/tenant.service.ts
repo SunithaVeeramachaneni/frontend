@@ -156,6 +156,7 @@ export class TenantService {
         id,
         displayName,
         type,
+        controlType: 'string',
         visible,
         sticky: false,
         searchable: true,
