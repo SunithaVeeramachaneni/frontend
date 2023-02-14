@@ -327,6 +327,23 @@ export class UnitMeasurementListComponent implements OnInit {
             });
             form.action = null;
           } else if (form.action === 'edit') {
+            const currentData = [...(initial?.data || [])];
+            const idx = initial?.data?.findIndex(
+              (d) => d?.id === form?.form?.id
+            );
+            if (idx !== -1) {
+              if (
+                initial?.data[idx]?.unitList?.id === form?.form?.unitList?.id
+              ) {
+                currentData[idx] = {
+                  ...form.form,
+                  noOfUnits: initial.data[idx]?.noOfUnits || 0,
+                  isDefaultText: initial.data[idx]?.isDefaultText || '',
+                  unitType: initial.data[idx]?.unitType || ''
+                };
+                initial.data = currentData;
+              }
+            }
             this.toast.show({
               text: 'UOM edited successfully!',
               type: 'success'
@@ -588,19 +605,22 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   private onEditUnit(data: GetUnitMeasumentQuery): void {
-    const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
-      data
-    });
+    this.unitMeasurementService.getUnitLists().subscribe((units) => {
+      const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
+        data: {
+          ...data,
+          units
+        }
+      });
 
-    deleteReportRef.afterClosed().subscribe((res) => {
-      if (res?.action === 'save') {
-        this.unitMeasurementService
-          .updateUnitList$({
-            id: res?.unitList?.id,
-            name: res?.unitType || res?.unitList?.name,
-            _version: res?.unitList?._version
-          })
-          .subscribe(() => {
+      deleteReportRef.afterClosed().subscribe((res) => {
+        if (res?.action === 'save') {
+          const unit: any = { ...data };
+          if (res?.unitType !== unit?.unitType) {
+            const changedUnitType = res?.units?.find(
+              (u) => u?.name === res?.unitType
+            );
+
             this.unitMeasurementService
               .updateUnitMeasurement$({
                 id: res?.id,
@@ -608,7 +628,10 @@ export class UnitMeasurementListComponent implements OnInit {
                 description: res?.description,
                 isActive: res?.isActive === null ? true : res?.isActive,
                 searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
-                _version: res?._version
+                _version: res?._version,
+                unitlistID: changedUnitType
+                  ? changedUnitType?.id
+                  : res.unitlistID
               })
               .subscribe(
                 (result: UpdateUnitMeasumentMutation) => {
@@ -622,8 +645,38 @@ export class UnitMeasurementListComponent implements OnInit {
                 },
                 (err) => this.errorHandlerService.handleError(err)
               );
-          });
-      }
+          } else {
+            this.unitMeasurementService
+              .updateUnitList$({
+                id: res?.unitList?.id,
+                name: res?.unitType || res?.unitList?.name,
+                _version: res?.unitList?._version
+              })
+              .subscribe(() => {
+                this.unitMeasurementService
+                  .updateUnitMeasurement$({
+                    id: res?.id,
+                    symbol: res?.symbol,
+                    description: res?.description,
+                    isActive: res?.isActive === null ? true : res?.isActive,
+                    searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
+                    _version: res?._version
+                  })
+                  .subscribe(
+                    (result: UpdateUnitMeasumentMutation) => {
+                      if (result) {
+                        this.addEditCopyForm$.next({
+                          action: 'edit',
+                          form: result
+                        });
+                      }
+                    },
+                    (err) => this.errorHandlerService.handleError(err)
+                  );
+              });
+          }
+        }
+      });
     });
   }
 

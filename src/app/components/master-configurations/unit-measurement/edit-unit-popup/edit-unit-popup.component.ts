@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
@@ -10,7 +11,6 @@ import {
 
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { UnitMeasurementService } from '../services';
 
 @Component({
   selector: 'app-edit-unit-popup',
@@ -18,9 +18,7 @@ import { UnitMeasurementService } from '../services';
   styleUrls: ['./edit-unit-popup.component.scss']
 })
 export class EditUnitPopupComponent implements OnInit {
-  public unitType: string;
-  public measurementList: any[];
-  errors: ValidationError = {};
+  public errors: ValidationError = {};
   public unitForm = this.formBuilder.group({
     unitType: [
       '',
@@ -52,16 +50,16 @@ export class EditUnitPopupComponent implements OnInit {
     ],
     isActive: [false, [Validators.required]]
   });
+  public unitList: any[] = [];
   constructor(
     private readonly dialogRef: MatDialogRef<EditUnitPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public formData: any,
-    private readonly formBuilder: FormBuilder,
-    private readonly unitOfMeasurementService: UnitMeasurementService
+    private readonly formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.measurementList = this.unitOfMeasurementService.measurementList;
     if (this.formData) {
+      this.unitList = this.formData?.units || [];
       this.unitForm.patchValue({
         unitType: this.formData?.unitType ?? '',
         symbol: this.formData?.symbol ?? '',

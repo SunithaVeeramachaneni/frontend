@@ -65,6 +65,16 @@ export class UnitMeasurementService {
     }
   }
 
+  getUnitLists() {
+    return from(
+      this.awsApiService.ListUnitLists({
+        isDeleted: {
+          eq: false
+        }
+      })
+    ).pipe(map(({ items }) => items));
+  }
+
   getSingleUnitListByName$(name: string) {
     return from(
       this.awsApiService.ListUnitLists({
