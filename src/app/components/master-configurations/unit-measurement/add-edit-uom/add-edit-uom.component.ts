@@ -89,7 +89,9 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   cancel(): void {
-    this.initForm();
+    this.unitMeasurementForm = new FormGroup({
+      units: new FormArray([])
+    });
     this.unitType = '';
     this.isSubmittedForm = false;
     this.slideInOut.emit('out');
