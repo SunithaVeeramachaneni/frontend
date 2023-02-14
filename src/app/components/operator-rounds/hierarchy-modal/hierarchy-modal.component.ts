@@ -30,7 +30,7 @@ export class HierarchyModalComponent implements OnInit {
       })
     );
     this.allAssets$ = this.assetService.fetchAllAssets$();
-    this.allAssets$.subscribe(console.log);
+    this.allAssets$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (event: any) => {
