@@ -11,6 +11,7 @@ export class HierarchyNodeComponent implements OnInit {
 
   @Input() set nodeData(data: any) {
     this.masterData = data ? data : ({} as any);
+    console.log(this.masterData);
   }
 
   @Input() set isMasterChecked(isMasterCheckedData: any) {
@@ -23,7 +24,9 @@ export class HierarchyNodeComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('Hit');
+  }
 
   clicked = (event: MatCheckboxChange) => {
     const { checked } = event;

@@ -1,0 +1,7 @@
+<div *ngFor="let node of hierarchyList">
+  <app-hierarchy-node
+    [nodeData]="node"
+    [isMasterChecked]="false"
+    (checkboxToggleHandler)="handle()"
+  ></app-hierarchy-node>
+</div>

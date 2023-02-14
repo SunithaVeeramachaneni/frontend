@@ -77,6 +77,15 @@
     font-size: 100%;
   }
 
+  .location-assets-btn {
+    width: 160px;
+    height: 36px;
+    border: 1px solid $blue-primary;
+    color: $blue-primary;
+    margin: 12px 0 0 12px;
+    border-radius: 8px;
+  }
+
   .import-btn {
     width: 160px;
     height: 36px;
@@ -316,6 +325,6 @@
         color: $black;
       }
     }
-    
+
 }
 

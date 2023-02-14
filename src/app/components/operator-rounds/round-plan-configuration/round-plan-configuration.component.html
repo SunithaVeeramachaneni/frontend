@@ -125,6 +125,14 @@
       >
         {{ 'publishingChanges' | translate }}
       </div>
+
+      <button
+        mat-stroked-button
+        class="location-assets-btn"
+        translate="Location/Assets"
+        (click)="locations()"
+      ></button>
+
       <button
         mat-stroked-button
         class="import-btn"
@@ -221,7 +229,13 @@
                             <div class="floating-btns empty-section">
                               <button
                                 class="questions-btn"
-                                (click)="addQuestion(pageIndex, sectionIds[pageIndex][sectionIndex], 0)"
+                                (click)="
+                                  addQuestion(
+                                    pageIndex,
+                                    sectionIds[pageIndex][sectionIndex],
+                                    0
+                                  )
+                                "
                               >
                                 <img
                                   src="assets/rdf-forms-icons/add-question.svg"

@@ -70,6 +70,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
+import { HierarchyModalComponent } from '../hierarchy-modal/hierarchy-modal.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -633,6 +634,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       formSaveStatus: formConfigurationStatus.saving
     };
   }
+
+  locations = () => {
+    const dialogRef = this.dialog.open(HierarchyModalComponent, {});
+  };
 
   importTasks = () => {
     const dialogRef = this.dialog.open(ImportTaskModalComponent, {
