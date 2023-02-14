@@ -3,7 +3,7 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateAssetsInput,
-  DeleteAssetsInput,
+  DeleteAssetsListInput,
   ListAssetsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
@@ -110,7 +110,7 @@ export class AssetsService {
     );
   }
 
-  deleteAssets$(values: DeleteAssetsInput) {
+  deleteAssets$(values: DeleteAssetsListInput) {
     return from(this.awsApiService.DeleteAssets({ ...values }));
   }
 
