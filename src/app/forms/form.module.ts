@@ -46,6 +46,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
 import { BuilderComponent } from './components/builder/builder.component';
+import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { BuilderComponent } from './components/builder/builder.component';
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
-    BuilderComponent
+    BuilderComponent,
+    HierarchyNodeComponent
   ],
   imports: [
     FormsModule,
@@ -108,6 +110,7 @@ import { BuilderComponent } from './components/builder/builder.component';
     PreviewComponent,
     IphoneComponent,
     AddLogicComponent,
+    HierarchyNodeComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
     BuilderComponent,
