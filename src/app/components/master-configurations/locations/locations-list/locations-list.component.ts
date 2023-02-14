@@ -65,6 +65,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 export class LocationsListComponent implements OnInit {
   readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  allParentsLocations: any[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -138,7 +139,7 @@ export class LocationsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'parentId',
+      id: 'parent',
       displayName: 'Parent',
       type: 'timeAgo',
       order: 4,
@@ -197,6 +198,7 @@ export class LocationsListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   locations$: Observable<any>;
+  allLocations$: Observable<any>;
   locationsCount$: Observable<Count>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
@@ -216,6 +218,7 @@ export class LocationsListComponent implements OnInit {
   fetchType = 'load';
   nextToken = '';
   userInfo$: Observable<UserInfo>;
+  parentInformation: any;
 
   constructor(
     private locationService: LocationService,
@@ -239,7 +242,7 @@ export class LocationsListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     //this.locationsListCount$ = this.locationService.getFormsListCount$();
     this.getDisplayedLocations();
-
+    this.getAllLocations();
     this.locationsCount$ = combineLatest([
       this.locationsCount$,
       this.locationsCountUpdate$
@@ -308,7 +311,18 @@ export class LocationsListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
+        for (let item of initial.data) {
+          if (item.parentId) {
+            const parent = this.allParentsLocations.find(
+              (d) => d.id == item.parentId
+            );
+            if (parent) {
+              item.parent = parent.name;
+            } else {
+              item.parent = '';
+            }
+          }
+        }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -483,6 +497,14 @@ export class LocationsListComponent implements OnInit {
     this.locationService.uploadExcel(formData).subscribe((resp) => {
       if (resp.status === 200) {
         for (const item of resp.data) {
+          const parent = this.allParentsLocations.find(
+            (d) => d.name == item.parentId
+          );
+          if (parent) {
+            item.parentId = parent.id;
+          } else {
+            item.parentId = '';
+          }
           this.locationService.createLocation$(item).subscribe((res) => {
             this.addOrUpdateLocation({
               status: 'add',
@@ -497,5 +519,19 @@ export class LocationsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  getAllLocations() {
+    this.allLocations$ = this.locationService.fetchAllLocations$();
+    this.allLocations$
+      .pipe(
+        tap((allLocations) => {
+          this.parentInformation = allLocations.items.filter(
+            (loc) => loc._deleted !== true
+          );
+          this.allParentsLocations = this.parentInformation;
+        })
+      )
+      .subscribe();
   }
 }
