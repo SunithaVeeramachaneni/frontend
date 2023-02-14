@@ -32,5 +32,6 @@
   "deleteTitle": "Delete",
   "deleteSubTitle": "Are you sure to delete",
   "selectmsg":"please select value",
-  "createUnit": "Create Unit"
+  "createUnit": "Create Unit",
+  "unit_type":"Unit Type"
 }

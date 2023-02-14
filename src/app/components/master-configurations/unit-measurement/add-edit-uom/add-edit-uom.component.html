@@ -2,120 +2,90 @@
   <mat-card>
     <div class="add-edit-header">
       <h1 *ngIf="!unitEditData" class="heading" translate="createUnit"></h1>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+      <img (click)="cancel()" src="assets/rdf-forms-icons/close.svg" alt="close" class="cancel" />
     </div>
     <div class="p-10">
-      <p class="m-l-5 m-t-5" *ngIf="!unitEditData">
-        <mat-form-field appearance="outline" class="unit-measurement">
+      <p class="m-l-5 m-t-5" *ngIf="!unitEditData && unitType != 'addNew'">
+        <mat-form-field appearance="outline" class="unit-measurement" *ngIf="unitType != 'addNew'">
           <mat-label translate="unitOfMeasurement"></mat-label>
-          <mat-select
-            *ngIf="false"
-            [(ngModel)]="unitType"
-            name="unitType"
-            (selectionChange)="onMeasurementChange($event)"
-            [(value)]="unitType"
-          >
-            <mat-option *ngFor="let unit of measurementList" [value]="unit">
-              {{ unit }}
+          <mat-select [(ngModel)]="unitType" name="unitType" (selectionChange)="onMeasurementChange($event)"
+            [(value)]="unitType">
+            <mat-option value="addNew">
+              <span class="add-new-btn">
+                <img src="assets/img/add-new.svg" alt="add-new-icon" class="add-new-icon" />
+                <label translate="addNew"></label>
+              </span>
+            </mat-option>
+            <mat-option *ngFor="let unit of measurementList" [value]="unit?.name">
+              {{ unit?.name }}
             </mat-option>
           </mat-select>
-          <input matInput [(ngModel)]="unitType" name="unitType" />
         </mat-form-field>
-        <mat-error
-          class="m-l-5 m-t-2 text-red"
-          *ngIf="!unitType && isSubmittedForm"
-        >
+        <mat-error class="m-l-5 m-t-2 text-red" *ngIf="!unitType && isSubmittedForm">
           {{ 'selectmsg' | translate | uppercase }}
         </mat-error>
       </p>
+      <div class="m-l-5 m-t-5 display-flex" *ngIf="unitType === 'addNew'">
+        <mat-form-field appearance="outline" class="m-b-10 m-l-5 newUnitType">
+          <mat-label translate="unit_type"></mat-label>
+          <input matInput [(ngModel)]="newUnitType" required />
+        </mat-form-field>
+        <mat-error class="m-l-5 m-t-2" style="color: red"
+          *ngIf="this.unitType === 'addNew' && this.newUnitType == '' && isSubmittedForm">
+          {{ 'selectmsg' | translate | uppercase }}
+        </mat-error>
+      </div>
       <div class="m-l-5 m-t-5 display-flex" *ngIf="unitEditData">
         <div class="show-measurement">
           <a class="width-90" *ngIf="!isEditMeasurement">
-            <input
-              #measurement
-              type="text"
-              [size]="
+            <input #measurement type="text" [size]="
                 measurement.value !== '' ? getSize(measurement.value) : 20
-              "
-              class="form_title_input"
-              [(ngModel)]="unitType"
-              autofocus="true"
-              autocomplete="off"
-              (blur)="isEditMeasurement = true"
-            />
+              " class="form_title_input" [(ngModel)]="unitType" autofocus="true" autocomplete="off"
+              (blur)="isEditMeasurement = true" />
           </a>
           <p *ngIf="isEditMeasurement">
             {{ unitType }}
             <button class="edit-icon" (click)="editMeasurement()">
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
+              <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" class="edit-icon-img" />
             </button>
           </p>
         </div>
         <span class="delete-icon" (click)="deleteUnitAndUOM()">
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            class="list-icons"
-            alt="delete-icon"
-          />
+          <img src="assets/rdf-forms-icons/delete-icon.svg" class="list-icons" alt="delete-icon" />
         </span>
       </div>
 
-      <div
-        [formGroup]="unitMeasurementForm"
-        class="custom-form-field-white-color m-t-15"
-      >
-        <div
-          class="input-container"
-          formArrayName="units"
-          *ngFor="
+      <div [formGroup]="unitMeasurementForm" class="custom-form-field-white-color m-t-15">
+        <div class="input-container" formArrayName="units" *ngFor="
             let item of unitMeasurementForm?.get('units')?.controls;
             let i = index
-          "
-        >
+          ">
           <div [formGroupName]="i">
-            <mat-form-field
-              appearance="outline"
-              class="m-b-10 m-l-5 description"
-            >
+            <mat-form-field appearance="outline" class="m-b-10 m-l-5 description">
               <mat-label translate="description"></mat-label>
               <input matInput formControlName="description" />
-              <mat-error
-                *ngIf="processValidationErrors(i, 'description')"
-                class="m-t-5 error-fields"
-              >
+              <mat-error *ngIf="processValidationErrors(i, 'description')" class="m-t-5 error-fields">
                 {{
-                  errors?.description?.name
-                    | translate
-                      : {
-                          name: 'description' | translate,
-                          length: errors?.description?.length
-                        }
+                errors?.description?.name
+                | translate
+                : {
+                name: 'description' | translate,
+                length: errors?.description?.length
+                }
                 }}
               </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" class="m-b-10 m-l-5 symbol">
               <mat-label translate="symbol"></mat-label>
               <input matInput formControlName="symbol" />
-              <mat-error
-                *ngIf="processValidationErrors(i, 'symbol')"
-                class="m-t-5 error-fields"
-              >
+              <mat-error *ngIf="processValidationErrors(i, 'symbol')" class="m-t-5 error-fields">
                 {{
-                  errors?.symbol?.name
-                    | translate
-                      : {
-                          name: 'symbol' | translate,
-                          length: errors?.symbol?.length
-                        }
+                errors?.symbol?.name
+                | translate
+                : {
+                name: 'symbol' | translate,
+                length: errors?.symbol?.length
+                }
                 }}
               </mat-error>
             </mat-form-field>
@@ -124,11 +94,7 @@
       </div>
 
       <span *ngIf="unitType" (click)="addNewUmo()" class="add-new-btn">
-        <img
-          src="assets/img/add-new.svg"
-          alt="add-new-icon"
-          class="add-new-icon"
-        />
+        <img src="assets/img/add-new.svg" alt="add-new-icon" class="add-new-icon" />
         <label translate="addNew"></label>
       </span>
     </div>

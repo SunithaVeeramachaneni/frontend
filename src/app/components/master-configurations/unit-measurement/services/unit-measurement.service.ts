@@ -28,7 +28,7 @@ export class UnitMeasurementService {
   constructor(
     private readonly awsApiService: APIService,
     private readonly _appService: AppService
-  ) {}
+  ) { }
 
   getUnitOfMeasurementList$(queryParams: {
     nextToken?: string;
@@ -80,6 +80,16 @@ export class UnitMeasurementService {
       this.awsApiService.ListUnitLists({
         name: {
           eq: name
+        }
+      })
+    );
+  }
+
+  getSingleUnitListById$(id: string) {
+    return from(
+      this.awsApiService.ListUnitLists({
+        id: {
+          eq: id
         }
       })
     );
