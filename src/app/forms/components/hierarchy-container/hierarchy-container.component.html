@@ -27,14 +27,19 @@
     </mat-form-field>
   </span>
   <div class="hierarchy" *ngIf="hierarchyList.length">
-    <app-node
-      [node]="node"
+    <div
       *ngFor="let node of hierarchyList"
       [ngClass]="{
-        displayInlineBlock: node.hasChildren
+        displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat',
+        flatHierarchyNode: hierarchyMode === 'flat'
       }"
-      (nodeRemoved)="removeNodeHandler($event)"
-    ></app-node>
+    >
+      <app-node
+        [node]="node"
+        [hierarchyMode]="hierarchyMode"
+        (nodeRemoved)="removeNodeHandler($event)"
+      ></app-node>
+    </div>
   </div>
   <div *ngIf="!hierarchyList.length" class="emptyHierarchy">
     <span>You have not added any assets yet</span>

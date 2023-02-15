@@ -23,6 +23,7 @@ import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 })
 export class NodeComponent implements OnInit {
   @Input() node;
+  @Input() hierarchyMode;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';

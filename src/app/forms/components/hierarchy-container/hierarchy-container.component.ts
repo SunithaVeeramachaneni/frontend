@@ -13,6 +13,7 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
 import { FormMetadata } from 'src/app/interfaces';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -28,15 +29,21 @@ export class HierarchyContainerComponent implements OnInit {
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
 
   hierarchyList = [];
+  hierarchyMode = 'flat';
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
+    public assetHierarchyUtil: AssetHierarchyUtil,
     private store: Store<State>
   ) {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         if (Object.keys(formMetadata).length) {
-          this.hierarchyList = formMetadata.hierarchy;
+          const { hierarchy } = formMetadata;
+          if (this.hierarchyMode === 'flat') {
+            this.hierarchyList =
+              assetHierarchyUtil.convertHierarchyToFlatList(hierarchy);
+          }
           this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
         }
       })

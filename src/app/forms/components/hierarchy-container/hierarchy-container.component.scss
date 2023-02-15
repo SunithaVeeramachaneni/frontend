@@ -29,6 +29,9 @@
 .displayInlineBlock {
   display: inline-block;
 }
+.flatHierarchyNode {
+  height: 30px !important;
+}
 .emptyHierarchy {
   display: flex;
   height: calc(100vh - 275px);

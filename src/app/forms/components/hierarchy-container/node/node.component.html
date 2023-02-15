@@ -30,7 +30,7 @@
     </mat-menu>
   </div>
 </div>
-<div *ngIf="node.hasChildren" class="children">
+<div *ngIf="node.hasChildren && hierarchyMode !== 'flat'" class="children">
   <div
     class="childrenHead"
     [ngClass]="{ inactive: !assetHierarchyUtil.getAssetCountByNode(node) }"
@@ -43,7 +43,7 @@
     <span>{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets</span>
   </div>
   <div
-    *ngIf="node.isExpanded"
+    *ngIf="node.isExpanded && hierarchyMode !== 'flat'"
     [ngClass]="{ displayInlineBlock: !node.isExpanded }"
   >
     <app-node

@@ -28,4 +28,18 @@ export class AssetHierarchyUtil {
   getTasksCountByNode(node) {
     return 0;
   }
+
+  convertHierarchyToFlatList(hierarchy) {
+    let flatHierarchy = [];
+    hierarchy.forEach((node) => {
+      flatHierarchy.push(node);
+      if (node.hasChildren && node.children.length) {
+        const childFlatHierarchy = this.convertHierarchyToFlatList(
+          node.children
+        );
+        flatHierarchy = [...flatHierarchy, ...childFlatHierarchy];
+      }
+    });
+    return flatHierarchy;
+  }
 }
