@@ -16,7 +16,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
+import { GetFormListQuery, ListLocationsQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -37,6 +37,7 @@ import {
 } from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { LocationService } from '../../locations/services/location.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -63,7 +64,10 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
+  allLocations$: Observable<ListLocationsQuery>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  parentInformation;
+  allParentsData;
   columns: Column[] = [
     {
       id: 'name',
@@ -140,9 +144,9 @@ export class AssetsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'parentId',
+      id: 'parent',
       displayName: 'Parent',
-      type: 'timeAgo',
+      type: 'string',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -208,10 +212,13 @@ export class AssetsListComponent implements OnInit {
   fetchType = 'load';
   nextToken = '';
   userInfo$: Observable<UserInfo>;
+  allParentsAssets: any[] = [];
+  allParentsLocations: any[] = [];
 
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
+    private locationService: LocationService,
     private loginService: LoginService
   ) {}
 
@@ -230,6 +237,8 @@ export class AssetsListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     //this.assetsListCount$ = this.assetService.getFormsListCount$();
+    this.getAllLocations();
+    this.getAllAssets();
     this.getDisplayedAssets();
 
     this.assetsCount$ = combineLatest([
@@ -300,7 +309,27 @@ export class AssetsListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
+        for (const item of initial.data) {
+          if (item.parentType.toLowerCase() === 'location') {
+            const parent = this.allParentsLocations.find(
+              (d) => d.id === item.parentId
+            );
+            if (parent) {
+              item.parent = parent.name;
+            } else {
+              item.parent = '';
+            }
+          } else {
+            const parent = this.allParentsAssets.find(
+              (d) => d.id === item.parentId
+            );
+            if (parent) {
+              item.parent = parent.name;
+            } else {
+              item.parent = '';
+            }
+          }
+        }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -374,13 +403,6 @@ export class AssetsListComponent implements OnInit {
       });
     }
 
-    // if (this.loginService.checkUserHasPermission(permissions, 'DELETE_ASSET')) {
-    //   menuActions.push({
-    //     title: 'Delete',
-    //     action: 'delete'
-    //   });
-    // }  Implementation is done but required validations based on parent
-
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -433,7 +455,7 @@ export class AssetsListComponent implements OnInit {
 
   addManually() {
     this.assetsAddOrEditOpenState = 'in';
-    this.assetsEditData = undefined;
+    this.assetsEditData = null;
   }
 
   showAssetDetail(row: GetFormListQuery): void {
@@ -471,6 +493,26 @@ export class AssetsListComponent implements OnInit {
     this.assetService.uploadExcel(formData).subscribe((resp) => {
       if (resp.status === 200) {
         for (const item of resp.data) {
+          if (item.parentType.toLowerCase() === 'location') {
+            const parent = this.allParentsLocations.find(
+              (d) => d.locationId === item.parentId
+            );
+            if (parent) {
+              item.parentStatus = true;
+              item.parentId = parent.id;
+            } else {
+              item.parentId = '';
+            }
+          } else {
+            const parent = this.allParentsAssets.find(
+              (d) => d.assetsId === item.parentId
+            );
+            if (parent) {
+              item.parentId = parent.id;
+            } else {
+              item.parentId = '';
+            }
+          }
           this.assetService.createAssets$(item).subscribe((res) => {
             this.addOrUpdateAssets({
               status: 'add',
@@ -485,5 +527,27 @@ export class AssetsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  getAllLocations() {
+    this.allLocations$ = this.locationService.fetchAllLocations$();
+    this.allLocations$
+      .pipe(
+        tap((allLocations) => {
+          this.parentInformation = allLocations.items.filter(
+            (loc) => loc._deleted !== true
+          );
+          this.allParentsLocations = this.parentInformation;
+        })
+      )
+      .subscribe();
+  }
+
+  getAllAssets() {
+    this.assetService.fetchAllAssets$().subscribe((allAssets) => {
+      this.allParentsAssets = allAssets.items.filter(
+        (asset) => !asset._deleted
+      );
+    });
   }
 }

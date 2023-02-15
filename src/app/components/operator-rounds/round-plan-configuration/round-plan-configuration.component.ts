@@ -262,10 +262,14 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               formStatus !== 'Published' &&
               !isEqual(this.formDetails, formDetails)
             ) {
-              const pagesWithoutBlankQuestions = this.getPagesWithoutBlankQuestions(pages);
-              console.log(pagesWithoutBlankQuestions);
-              if((!this.formDetails && !isEqual(pages, pagesWithoutBlankQuestions)) ||
-                (this.formDetails && !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))) {
+              const pagesWithoutBlankQuestions =
+                this.getPagesWithoutBlankQuestions(pages);
+              if (
+                (!this.formDetails &&
+                  !isEqual(pages, pagesWithoutBlankQuestions)) ||
+                (this.formDetails &&
+                  !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))
+              ) {
                 this.store.dispatch(
                   RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
                     formStatus,
@@ -281,10 +285,13 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 // dispatches the action to trigger the reducer directly, causing a state update
                 // without calling the effect that saves the form to DynamoDB.
                 this.store.dispatch(
-                  RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess({
-                    authoredFormDetail: null,
-                    formSaveStatus: formConfigurationStatus.saved,
-                }))
+                  RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess(
+                    {
+                      authoredFormDetail: null,
+                      formSaveStatus: formConfigurationStatus.saved
+                    }
+                  )
+                );
               }
               this.formDetails = formDetails;
             }
@@ -689,14 +696,19 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   getPagesWithoutBlankQuestions(pages: Page[]) {
     var pagesCopy = JSON.parse(JSON.stringify(pages));
-    return pagesCopy.map(page => {
+    return pagesCopy.map((page) => {
       // if all questions of a page are blank, leave the first question behind. Otherwise filter as normal.
-      if(page.questions.filter(question => question.name.trim().length !== 0).length === 0) {
-          page.questions = page.questions.slice(0, 1);
+      if (
+        page.questions.filter((question) => question.name.trim().length !== 0)
+          .length === 0
+      ) {
+        page.questions = page.questions.slice(0, 1);
       } else {
-          page.questions = page.questions.filter(question => question.name.trim().length !== 0)
+        page.questions = page.questions.filter(
+          (question) => question.name.trim().length !== 0
+        );
       }
       return page;
-    })
+    });
   }
 }
