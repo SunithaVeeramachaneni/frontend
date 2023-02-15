@@ -25,3 +25,4 @@ export * from './response-type';
 export * from './hyperlink';
 export * from './date-time';
 export * from './operator-rounds';
+export * from './hierarchy-entity';

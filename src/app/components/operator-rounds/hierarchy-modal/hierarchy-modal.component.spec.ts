@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationsModalComponent } from './locations-modal.component';
+import { HierarchyModalComponent } from './hierarchy-modal.component';
 
-describe('LocationsModalComponent', () => {
-  let component: LocationsModalComponent;
-  let fixture: ComponentFixture<LocationsModalComponent>;
+describe('HierarchyModalComponent', () => {
+  let component: HierarchyModalComponent;
+  let fixture: ComponentFixture<HierarchyModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LocationsModalComponent ]
+      declarations: [ HierarchyModalComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationsModalComponent);
+    fixture = TestBed.createComponent(HierarchyModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

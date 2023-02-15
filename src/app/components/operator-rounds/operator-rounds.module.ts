@@ -61,7 +61,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
-import { LocationsModalComponent } from './locations-modal/locations-modal.component';
+import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hierarchy-locations-list.component';
+import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
+import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -82,7 +84,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedDeleteModalComponent,
     RoundPlanSchedulerConfigurationComponent,
     AssetsModalComponent,
-    LocationsModalComponent
+    HierarchyLocationsListComponent,
+    HierarchyModalComponent,
+    HierarchyAssetsListComponent
   ],
   imports: [
     FormsModule,
