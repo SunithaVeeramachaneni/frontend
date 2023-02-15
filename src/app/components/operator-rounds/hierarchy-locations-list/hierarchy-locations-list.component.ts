@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-hierarchy-locations-list',
@@ -15,16 +16,19 @@ export class HierarchyLocationsListComponent implements OnInit {
     this.allLocations$ = data ? data : ({} as Observable<any>);
   }
   allLocations$: Observable<any>;
+  filteredLocations: [];
   public isMasterChecked: boolean;
   public isMasterCheckedData: any = {
     checked: false,
     masterToggle: false
   };
   public selectedItems = [];
+  searchLocations: FormControl;
   private allItems = [];
   constructor() {}
 
   ngOnInit(): void {
+    this.searchLocations = new FormControl('');
     this.isMasterChecked = false;
     this.allLocations$
       .pipe(
@@ -32,9 +36,25 @@ export class HierarchyLocationsListComponent implements OnInit {
           allLocations.items.forEach((location) =>
             this.allItems.push(location.id)
           );
+          this.filteredLocations = allLocations.items;
         })
       )
       .subscribe();
+
+    this.searchLocations.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((searchString) => {
+        this.allLocations$
+          .pipe(
+            tap(
+              (allLocations) =>
+                (this.filteredLocations = allLocations.items.filter(
+                  (location) => location.name.includes(searchString.trim())
+                ))
+            )
+          )
+          .subscribe();
+      });
   }
 
   handleDataCount = (event: any) => {
