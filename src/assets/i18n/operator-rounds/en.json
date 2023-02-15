@@ -139,5 +139,6 @@
   "after": "After",
   "startDate": "Start Date",
   "endDate": "End Date",
-  "selectDates": "Select Dates"
+  "selectDates": "Select Dates",
+  "selectedLocations": "Location(s) selected"
 }

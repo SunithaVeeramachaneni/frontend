@@ -1,0 +1,30 @@
+@import '../../../../../scss/colors.scss';
+
+.uom-delete-modal {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: $white;
+  border-radius: 4px;
+
+  .cancel-title {
+    font-size: 110%;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .cancel-subtitle {
+    font-size: 100%;
+  }
+
+  .delete-btn {
+    float: right;
+  }
+
+  .cancel-btn {
+    color: $blue-head;
+    float: right;
+    margin-right: 15px;
+  }
+}

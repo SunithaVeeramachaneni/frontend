@@ -1,0 +1,76 @@
+<div class="locations-modal">
+  <div class="dis-flex heading-conatiner">
+    <h2 class="heading" translate>Select Location</h2>
+  </div>
+  <div class="search">
+    <span>
+      <mat-form-field class="width-100" appearance="outline">
+        <mat-icon matPrefix class="icon">search</mat-icon>
+        <input
+          matInput
+          [placeholder]="'Search Location' | translate"
+          class="width-100"
+          autocomplete="off"
+        />
+      </mat-form-field>
+    </span>
+  </div>
+  <div class="list-container">
+    <div class="dis-flex list-item-conatiner">
+      <li class="selected-list-element">
+        <div class="width-100">
+          <p class="form-name"></p>
+          <p class="form-des"></p>
+        </div>
+        <!-- <div class="width-30">
+          <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
+        </div> -->
+      </li>
+    </div>
+
+    <div class="node-container">
+      <mat-checkbox
+        class="master-checkbox"
+        [(ngModel)]="isMasterChecked"
+        (change)="handleMasterToggle($event)"
+      ></mat-checkbox>
+      <hr class="node-break" />
+      <div *ngIf="allLocations$ | async as allLocations; else loadingLocations">
+        <div *ngFor="let location of allLocations.items">
+          <app-hierarchy-node
+            [nodeData]="location"
+            [isMasterChecked]="isMasterCheckedData"
+            (checkboxToggleHandler)="handleDataCount($event)"
+          ></app-hierarchy-node>
+          <hr />
+        </div>
+      </div>
+    </div>
+    <!-- <div class="dis-flex no-records"  translate>
+      noResults
+    </div> -->
+  </div>
+
+  <div class="selected-items">
+    {{ selectedItems.length }}
+    {{ 'selectedLocations' | translate }}
+  </div>
+
+  <div mat-dialog-actions class="actions">
+    <button
+      mat-stroked-button
+      mat-dialog-close="true"
+      translate="Cancel"
+    ></button>
+    <button mat-raised-button color="primary" translate="Next"></button>
+  </div>
+</div>
+
+<ng-template #loadingLocations>
+  <div class="ghost-loading">
+    <div>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+</ng-template>

@@ -60,6 +60,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
+import { AssetsModalComponent } from './assets-modal/assets-modal.component';
+import { LocationsModalComponent } from './locations-modal/locations-modal.component';
+
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -77,7 +80,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     SubmissionViewComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
-    RoundPlanSchedulerConfigurationComponent
+    RoundPlanSchedulerConfigurationComponent,
+    AssetsModalComponent,
+    LocationsModalComponent
   ],
   imports: [
     FormsModule,

@@ -1,0 +1,179 @@
+@import '../../../../../scss/colors.scss';
+
+:host {
+  background: $white;
+  color: $white;
+  position: absolute;
+  left: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  min-width: 400px;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
+
+.cdk-text-field-autofill-monitored:not(:-webkit-autofill) {
+  color: $black;
+}
+
+#add-edit-uom-slider {
+  height: 100%;
+
+  .mat-card {
+    box-shadow: none;
+    padding: 0;
+    height: 100%;
+  }
+
+  .cancel {
+    cursor: pointer;
+  }
+
+  .add-edit-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .heading {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .add-edit-content {
+    overflow-y: auto;
+    height: 78%;
+  }
+
+  .unit-measurement {
+    width: 100%;
+  }
+
+  .add-more-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .add-more-icon {
+    width: 15px;
+    margin-top: 5px;
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
+  }
+
+  .add-new-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 10px;
+    cursor: pointer;
+    img {
+      margin-right: 10px;
+    }
+  }
+
+  .description {
+    width: 48%;
+    input {
+      color: $black;
+    }
+  }
+  .newUnitType {
+    width: 98%;
+    input {
+      color: $black;
+    }
+  }
+
+  .symbol {
+    width: 48%;
+    input {
+      color: $black;
+    }
+  }
+
+  .show-measurement {
+    color: $black;
+  }
+
+  .edit-icon {
+    border: none;
+    background-color: transparent;
+    position: relative;
+    .edit-icon-img {
+      width: 14px;
+    }
+  }
+
+  .delete-icon {
+    cursor: pointer;
+    margin: 0px 12px;
+    img {
+      width: 15px;
+    }
+  }
+
+  .display-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .form_title_input {
+    border: none;
+    cursor: pointer;
+    max-width: 90%;
+    background: none;
+    text-overflow: ellipsis;
+    padding: 3px 10px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .footer-buttons {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: $footer-bg-color;
+    width: 100%;
+    padding: 15px 0;
+
+    .cancel-btn {
+      float: right;
+      color: $blue-main;
+    }
+
+    .save-btn {
+      float: right;
+      margin-right: 15px;
+      background-color: $blue-main;
+      color: $white;
+    }
+  }
+
+  .unit-type-name {
+    font-size: 160%;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.add-new-btn {
+  color: $blue-main;
+}
+
+.add-icon {
+  font-size: 150%;
+  margin-right: 0 !important;
+}

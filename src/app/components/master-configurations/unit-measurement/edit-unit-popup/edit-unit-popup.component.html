@@ -1,0 +1,116 @@
+<div class="edit-unit-modal">
+  <div class="edit-modal-header">
+    <h1 class="heading">{{ 'editUOM' | translate }}</h1>
+
+    <img
+      (click)="cancel('cancel')"
+      src="assets/rdf-forms-icons/close.svg"
+      alt="close"
+      class="cancel"
+    />
+  </div>
+
+  <div [formGroup]="unitForm" class="p-10">
+    <p class="m-0 custom-form-field-white-color">
+      <mat-form-field appearance="outline" class="unitType">
+        <mat-label>{{ 'unitType' | translate }}</mat-label>
+        <input *ngIf="false" matInput formControlName="unitType" />
+        <mat-select formControlName="unitType">
+          <mat-option *ngFor="let unit of unitList" [value]="unit?.name">
+            {{ unit?.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="processValidationErrors('unitType')"
+          class="m-t-5 error-fields"
+        >
+          {{
+            errors?.unitType?.name
+              | translate
+                : {
+                    name: 'unitType' | translate,
+                    length: errors?.unitType?.length
+                  }
+          }}
+        </mat-error>
+      </mat-form-field>
+    </p>
+
+    <div class="custom-form-field-white-color m-t-5">
+      <div class="input-container">
+        <mat-form-field appearance="outline" class="description">
+          <mat-label>{{ 'description' | translate }}</mat-label>
+          <input matInput formControlName="description" />
+          <mat-error
+            *ngIf="processValidationErrors('description')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors?.description?.name
+                | translate
+                  : {
+                      name: 'description' | translate,
+                      length: errors?.description?.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="symbol">
+          <mat-label>{{ 'symbol' | translate }}</mat-label>
+          <input matInput formControlName="symbol" />
+          <mat-error
+            *ngIf="processValidationErrors('symbol')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors?.symbol?.name
+                | translate
+                  : {
+                      name: 'symbol' | translate,
+                      length: errors?.symbol?.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-label class="status m-l-5">{{ 'status' | translate }}</mat-label>
+        <mat-slide-toggle
+          formControlName="isActive"
+          [checked]="unitForm.value.isActive"
+          class="slide-toggle"
+        >
+          {{ unitForm.value.isActive ? 'Active' : 'InActive' }}
+        </mat-slide-toggle>
+        <mat-error
+          *ngIf="processValidationErrors('isActive')"
+          class="m-t-5 error-fields"
+        >
+          {{
+            errors?.isActive?.name
+              | translate
+                : {
+                    name: 'isActive' | translate,
+                    length: errors?.isActive?.length
+                  }
+          }}
+        </mat-error>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave('save')"
+      class="save-btn"
+      [disabled]="unitForm?.invalid"
+    >
+      {{ 'done' | translate }}
+    </button>
+    <button mat-button class="cancel-btn" (click)="cancel('cancel')">
+      {{ 'cancel' | translate }}
+    </button>
+  </div>
+</div>
+
+`
