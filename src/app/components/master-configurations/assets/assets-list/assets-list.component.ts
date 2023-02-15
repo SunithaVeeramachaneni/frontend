@@ -143,7 +143,7 @@ export class AssetsListComponent implements OnInit {
     {
       id: 'parent',
       displayName: 'Parent',
-      type: 'timeAgo',
+      type: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -451,7 +451,7 @@ export class AssetsListComponent implements OnInit {
 
   addManually() {
     this.assetsAddOrEditOpenState = 'in';
-    this.assetsEditData = undefined;
+    this.assetsEditData = null;
   }
 
   showAssetDetail(row: GetFormListQuery): void {

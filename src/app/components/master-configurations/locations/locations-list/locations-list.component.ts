@@ -141,7 +141,7 @@ export class LocationsListComponent implements OnInit {
     {
       id: 'parent',
       displayName: 'Parent',
-      type: 'timeAgo',
+      type: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,

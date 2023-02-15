@@ -264,7 +264,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             ) {
               const pagesWithoutBlankQuestions =
                 this.getPagesWithoutBlankQuestions(pages);
-              console.log(pagesWithoutBlankQuestions);
               if (
                 (!this.formDetails &&
                   !isEqual(pages, pagesWithoutBlankQuestions)) ||
