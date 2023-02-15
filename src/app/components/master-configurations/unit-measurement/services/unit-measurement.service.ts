@@ -130,7 +130,7 @@ export class UnitMeasurementService {
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'umo-excel-upload',
+      'uom/upload',
       form,
       info
     );
@@ -141,7 +141,7 @@ export class UnitMeasurementService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-umo',
+      'uom/download/sample-template',
       info,
       true,
       {}

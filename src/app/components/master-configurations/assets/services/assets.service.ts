@@ -119,7 +119,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-assets',
+      'assets/download/sample-template',
       info,
       true,
       {}
@@ -166,7 +166,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'assets-excel-upload',
+      'assets/upload',
       form,
       info
     );
