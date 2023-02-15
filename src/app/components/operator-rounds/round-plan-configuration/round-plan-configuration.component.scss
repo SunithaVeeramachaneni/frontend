@@ -297,25 +297,23 @@
 }
 
 .floating-btns.empty-section {
-   display: flex;
-    justify-content: center;
-    position: absolute;
-    left: -62px;
-    top: 0px;
-    .questions-btn{
-      background-color: $white;
-      border: 1px solid $border-color;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  left: -62px;
+  top: 0px;
+  .questions-btn {
+    background-color: $white;
+    border: 1px solid $border-color;
     border-radius: 7px;
-      width: 55px;
-      padding: 5px 0px;
-      p{
-        margin: 0;
-        font-size: 75%;
-        font-weight: 400;
-        letter-spacing: 0.4px;
-        color: $black;
-      }
+    width: 55px;
+    padding: 5px 0px;
+    p {
+      margin: 0;
+      font-size: 75%;
+      font-weight: 400;
+      letter-spacing: 0.4px;
+      color: $black;
     }
-    
+  }
 }
-

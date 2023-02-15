@@ -7,4 +7,9 @@
 
   <img [src]="masterData?.image" class="master-data-image" />
   <div class="master-data-title">{{ masterData.name }}</div>
+  <div *ngIf="masterData?.hasChildren">
+    <app-hierarchy-node
+      [nodeData]="masterData.children[0]"
+    ></app-hierarchy-node>
+  </div>
 </div>

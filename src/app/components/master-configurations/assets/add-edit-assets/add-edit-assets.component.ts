@@ -13,7 +13,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
@@ -31,7 +30,7 @@ export class AddEditAssetsComponent implements OnInit {
   allLocations$: Observable<ListLocationsQuery>;
   @Input() set assetsEditData(data) {
     this.assEditData = data;
-    if (this.assEditData === undefined) {
+    if (this.assEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
@@ -54,7 +53,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetForm.patchValue(assdata);
     }
     if (
-      this.assEditData === undefined ||
+      this.assEditData === null ||
       this.assEditData.parentType === 'location'
     ) {
       this.getAllLocations();
@@ -152,25 +151,17 @@ export class AddEditAssetsComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc._deleted !== true
-          );
-          this.allParentsData = this.parentInformation;
-        })
-      )
-      .subscribe();
+    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+      this.parentInformation = allLocations.items;
+      this.allParentsData = this.parentInformation;
+    });
   }
 
   getAllAssets() {
-    this.assetService.fetchAllAssets$().then((allAssets) => {
+    this.assetService.fetchAllAssets$().subscribe((allAssets) => {
       this.parentInformation = allAssets.items.filter(
-        (ass) => ass.id !== this.assEditData?.id && ass._deleted !== true
+        (asset) => asset.id !== this.assEditData?.id && !asset._deleted
       );
-      this.allParentsData = this.parentInformation;
     });
   }
 
