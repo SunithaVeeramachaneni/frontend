@@ -17,7 +17,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { ValidationError } from 'src/app/interfaces';
@@ -29,7 +29,6 @@ import {
   UpdateUnitListMutation
 } from 'src/app/API.service';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
-import { ErrorHandlerService } from './../../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -62,8 +61,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog,
-    private errorHandlerService: ErrorHandlerService
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnChanges(): void {
@@ -71,13 +69,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     if (this.unitEditData?.rows?.length > 0) {
       this.initForm();
       this.unitType = '';
-      this.unitType = this.unitEditData?.unitList?.name ?? '';
+      this.unitType = this.unitEditData?.unitList?.name || '';
       const units = this.unitMeasurementForm.get('units') as FormArray;
       this.unitEditData?.rows?.forEach(() => this.addNewUmo());
       this.unitEditData?.rows?.forEach((row, idx) => {
         units?.at(idx)?.patchValue({
-          description: row?.description ?? '',
-          symbol: row?.symbol ?? '',
+          description: row?.description || '',
+          symbol: row?.symbol || '',
           id: row?.id,
           version: row?._version
         });
@@ -111,8 +109,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           });
       }
     );
-    // eslint-disable-next-line no-debugger
-    debugger;
     this.isSubmittedForm = true;
     const isAddNewUnit = this.unitType === 'addNew';
     if (
@@ -139,7 +135,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
               this.isLoading = false;
             }
           },
-          (err) => this.errorHandlerService.handleError(err)
+          (err) => {
+            this.isLoading = false;
+            this.unitOfMeasurementService.handleError(err);
+          }
         );
     } else {
       const foundUnitType = this.measurementList?.find(
@@ -168,7 +167,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
                   this.createUpdateUnitListItems(response, 'create');
                 }
               },
-              (err) => this.errorHandlerService.handleError(err)
+              (err) => {
+                this.isLoading = false;
+                this.unitOfMeasurementService.handleError(err);
+              }
             );
         }
       });
@@ -268,7 +270,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             },
             (err) => {
               this.isLoading = false;
-              this.errorHandlerService.handleError(err);
+              this.unitOfMeasurementService.handleError(err);
             }
           );
       }
@@ -309,7 +311,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             })
           );
         }
-        if (type === 'edit') {
+        if (type === 'edit' && element?.description && element?.symbol) {
           if (element?.id) {
             unitObservables.push(
               this.unitOfMeasurementService.updateUnitMeasurement$({
@@ -335,7 +337,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             );
           }
         }
-        if (type === 'create') {
+        if (type === 'create' && element?.description && element?.symbol) {
           unitObservables.push(
             this.unitOfMeasurementService.createUnitOfMeasurement$({
               unitlistID: response?.id,
@@ -356,12 +358,15 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         this.units = null;
         this.unitType = '';
         this.unitEditData = null;
-        this.slideInOut.emit('out');
+        this.createUnitData.emit({
+          status: type
+        });
         this.isSubmittedForm = false;
       },
-      () => {
+      (err) => {
         this.isLoading = false;
         this.isSubmittedForm = false;
+        this.unitOfMeasurementService.handleError(err);
       }
     );
   }

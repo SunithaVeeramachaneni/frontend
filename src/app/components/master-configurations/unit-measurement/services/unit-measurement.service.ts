@@ -19,6 +19,7 @@ import { groupBy } from 'lodash-es';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import { ToastService } from 'src/app/shared/toast';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,8 @@ export class UnitMeasurementService {
   measurementList = ['Length', 'Area', 'Volume', 'Temperature', 'Mass'];
   constructor(
     private readonly awsApiService: APIService,
-    private readonly _appService: AppService
+    private readonly _appService: AppService,
+    private toastService: ToastService
   ) {}
 
   getUnitOfMeasurementList$(queryParams: {
@@ -146,6 +148,16 @@ export class UnitMeasurementService {
       true,
       {}
     );
+  }
+
+  handleError(error: any) {
+    const message = error.errors?.length
+      ? error.errors[0].message.split(':')[0]
+      : error.message;
+    this.toastService.show({
+      type: 'warning',
+      text: message
+    });
   }
 
   private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {

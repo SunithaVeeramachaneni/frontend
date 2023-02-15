@@ -47,7 +47,6 @@ import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.compo
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
-import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 import { groupBy } from 'lodash-es';
 
 export interface FormTableUpdate {
@@ -260,8 +259,7 @@ export class UnitMeasurementListComponent implements OnInit {
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog,
-    private errorHandlerService: ErrorHandlerService
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -365,12 +363,43 @@ export class UnitMeasurementListComponent implements OnInit {
             });
             form.action = null;
           } else if (form.action === 'status') {
+            const idx = initial?.data?.findIndex(
+              (d) => d?.id === form?.form?.id
+            );
+            const obj = {
+              ...initial?.data[idx],
+              isActive: form.form.isActive,
+              _version: form.form._version
+            };
+            if (idx !== -1) {
+              initial.data[idx] = obj;
+            }
             this.toast.show({
               text: 'UOM status changed successfully!',
               type: 'success'
             });
             form.action = null;
           } else if (form.action === 'setAsDefault') {
+            initial.data = initial?.data?.map((d) => {
+              const obj = { ...d };
+              if (obj?.unitlistID === form?.form?.unitlistID) {
+                if (obj?.id === form?.form?.id) {
+                  obj.isDefault = form.form.isDefault;
+                  obj._version = form.form._version;
+                  obj.isDefaultText = 'Default';
+                } else {
+                  obj.isDefault = false;
+                  obj.isDefaultText = '';
+                }
+              }
+              return obj;
+            });
+            this.toast.show({
+              text: 'UOM set as default successfully!',
+              type: 'success'
+            });
+            form.action = null;
+          } else if (form.action === 'add') {
             this.toast.show({
               text: 'UOM set as default successfully!',
               type: 'success'
@@ -406,7 +435,7 @@ export class UnitMeasurementListComponent implements OnInit {
         catchError((err) => {
           this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
-          this.errorHandlerService.handleError(err);
+          this.unitMeasurementService.handleError(err);
           return of([]);
         })
       );
@@ -469,21 +498,25 @@ export class UnitMeasurementListComponent implements OnInit {
 
   onCloseUomAddOrEditOpenState(event): void {
     this.unitAddOrEditOpenState = event;
+    this.nextToken = '';
     this.fetchUOM$.next({ data: 'load' });
   }
 
   addOrUpdateUnit(data): void {
-    if (data?.status === 'add') {
+    if (data?.status === 'create') {
       this.toast.show({
-        text: 'Unit of Measurement created successfully!',
+        text: 'UOM added successfully!',
         type: 'success'
       });
     } else if (data?.status === 'edit') {
       this.toast.show({
-        text: 'Unit of Measurement updated successfully!',
+        text: 'UOM edited successfully!',
         type: 'success'
       });
     }
+    this.unitAddOrEditOpenState = 'out';
+    this.nextToken = '';
+    this.fetchUOM$.next({ data: 'load' });
   }
 
   exportAsXLSX(): void {
@@ -507,9 +540,8 @@ export class UnitMeasurementListComponent implements OnInit {
           for (const [key, value] of Object.entries(
             groupBy(resp?.data, 'name')
           )) {
-            this.unitMeasurementService
-              .getSingleUnitListByName$(key)
-              .subscribe(({ items }) => {
+            this.unitMeasurementService.getSingleUnitListByName$(key).subscribe(
+              ({ items }) => {
                 if (items?.length > 0) {
                   this.createUpdateUnitListItems(items[0], value as any);
                 } else {
@@ -523,11 +555,17 @@ export class UnitMeasurementListComponent implements OnInit {
                       }
                     });
                 }
-              });
+              },
+              (err) => {
+                this.unitMeasurementService.handleError(err);
+              }
+            );
           }
         }
       },
-      (err) => this.errorHandlerService.handleError(err)
+      (err) => {
+        this.unitMeasurementService.handleError(err);
+      }
     );
   }
 
@@ -548,23 +586,28 @@ export class UnitMeasurementListComponent implements OnInit {
         symbol: string;
         version?: number | null;
       }) => {
-        unitObservables.push(
-          this.unitMeasurementService.createUnitOfMeasurement$({
-            unitlistID: response?.id,
-            description: element?.description || '',
-            searchTerm: `${element?.description?.toLowerCase() || ''} ${
-              response?.name?.toLowerCase() || ''
-            }`,
-            symbol: element?.symbol || ''
-          })
-        );
+        if (response && element?.description && element?.symbol) {
+          unitObservables.push(
+            this.unitMeasurementService.createUnitOfMeasurement$({
+              unitlistID: response?.id,
+              description: element?.description || '',
+              searchTerm: `${element?.description?.toLowerCase() || ''} ${
+                response?.name?.toLowerCase() || ''
+              }`,
+              symbol: element?.symbol || ''
+            })
+          );
+        }
       }
     );
     forkJoin(unitObservables).subscribe(
       () => {
+        this.nextToken = '';
         this.fetchUOM$.next({ data: 'load' });
       },
-      (err) => this.errorHandlerService.handleError(err)
+      (err) => {
+        this.unitMeasurementService.handleError(err);
+      }
     );
   }
 
@@ -593,7 +636,9 @@ export class UnitMeasurementListComponent implements OnInit {
                 });
               }
             },
-            (err) => this.errorHandlerService.handleError(err)
+            (err) => {
+              this.unitMeasurementService.handleError(err);
+            }
           );
       }
     });
@@ -615,7 +660,9 @@ export class UnitMeasurementListComponent implements OnInit {
             this.updateListAfterIsDefault(res, unit);
           }
         },
-        (err) => this.errorHandlerService.handleError(err)
+        (err) => {
+          this.unitMeasurementService.handleError(err);
+        }
       );
   }
 
@@ -651,14 +698,13 @@ export class UnitMeasurementListComponent implements OnInit {
               .subscribe(
                 (result: UpdateUnitMeasumentMutation) => {
                   if (result) {
-                    this.addEditCopyForm$.next({
-                      action: 'edit',
-                      form: result
-                    });
+                    this.nextToken = '';
                     this.fetchUOM$.next({ data: 'load' });
                   }
                 },
-                (err) => this.errorHandlerService.handleError(err)
+                (err) => {
+                  this.unitMeasurementService.handleError(err);
+                }
               );
           } else {
             this.unitMeasurementService
@@ -686,7 +732,9 @@ export class UnitMeasurementListComponent implements OnInit {
                         });
                       }
                     },
-                    (err) => this.errorHandlerService.handleError(err)
+                    (err) => {
+                      this.unitMeasurementService.handleError(err);
+                    }
                   );
               });
           }
@@ -720,16 +768,16 @@ export class UnitMeasurementListComponent implements OnInit {
               action: 'setAsDefault',
               form: res
             });
-            this.fetchUOM$.next({ data: 'load' });
           },
-          (err) => this.errorHandlerService.handleError(err)
+          (err) => {
+            this.unitMeasurementService.handleError(err);
+          }
         );
       } else {
         this.addEditCopyForm$.next({
           action: 'setAsDefault',
           form: res
         });
-        this.fetchUOM$.next({ data: 'load' });
       }
     }
   }
@@ -748,10 +796,11 @@ export class UnitMeasurementListComponent implements OnInit {
               action: 'status',
               form: result
             });
-            this.fetchUOM$.next({ data: 'load' });
           }
         },
-        (err) => this.errorHandlerService.handleError(err)
+        (err) => {
+          this.unitMeasurementService.handleError(err);
+        }
       );
   }
 }
