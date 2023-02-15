@@ -1,4 +1,4 @@
-import { OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -28,9 +28,11 @@ import {
   TableEvent,
   LoadEvent,
   SearchEvent,
-  CellClickActionEvent
+  CellClickActionEvent,
+  Permission,
+  UserInfo
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { GetFormListQuery } from 'src/app/API.service';
 import {
   animate,
@@ -39,13 +41,14 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('slideInOut', [
       state(
@@ -96,9 +99,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'formStatus',
-      displayName: 'Status',
-      type: 'string',
+      id: 'floc',
+      displayName: 'F.Loc',
+      type: 'number',
       order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -111,31 +114,15 @@ export class PlansComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '80px',
-        height: '24px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasPostTextImage: false
     },
     {
-      id: 'submittedBy',
-      displayName: 'User',
-      type: 'string',
-      isMultiValued: true,
+      id: 'assets',
+      displayName: 'Assets',
+      type: 'number',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -147,16 +134,16 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
+      groupable: true,
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'responses',
-      displayName: 'Responses',
-      type: 'string',
+      id: 'tasks',
+      displayName: 'Tasks',
+      type: 'number',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -175,8 +162,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'updatedAt',
-      displayName: 'Modified',
+      id: 'schedule',
+      displayName: 'Schedule',
       type: 'string',
       order: 5,
       hasSubtitle: false,
@@ -196,10 +183,52 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'createdAt',
-      displayName: 'Submitted',
-      type: 'string',
+      id: 'roundsGenerated',
+      displayName: 'Rounds Generated',
+      type: 'number',
       order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'operator',
+      displayName: 'Operator',
+      type: 'string',
+      order: 7,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'start',
+      displayName: 'Start - Ends',
+      type: 'string',
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -244,7 +273,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     }
   };
   dataSource: MatTableDataSource<any>;
-  formSubmissions$: Observable<{
+  roundPlans$: Observable<{
     columns: Column[];
     data: any[];
   }>;
@@ -261,15 +290,13 @@ export class PlansComponent implements OnInit, OnDestroy {
   submissionDetail: any;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  isOperatorRounds = false;
+  userInfo$: Observable<UserInfo>;
+  readonly perms = perms;
+
   constructor(
-    private readonly router: Router,
-    private readonly operatorRoundsService: OperatorRoundsService
-  ) {
-    if (this.router.url.includes('/operator-rounds/submissions')) {
-      this.isOperatorRounds = true;
-    }
-  }
+    private readonly operatorRoundsService: OperatorRoundsService,
+    private loginService: LoginService
+  ) {}
 
   ngOnInit(): void {
     this.fetchForms$.next({ data: 'load' });
@@ -287,12 +314,15 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
     this.roundPlansCount$ =
       this.operatorRoundsService.getFormsListCount$('Published');
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
     this.displayRoundPlans();
     this.configOptions.allColumns = this.columns;
   }
 
   displayRoundPlans(): void {
-    const formsOnLoadSearch$ = this.fetchForms$.pipe(
+    const roundPlansOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -302,7 +332,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       })
     );
 
-    const onScrollForms$ = this.fetchForms$.pipe(
+    const onScrollRoundPlans$ = this.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -318,9 +348,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.formSubmissions$ = combineLatest([
-      formsOnLoadSearch$,
-      onScrollForms$
+    this.roundPlans$ = combineLatest([
+      roundPlansOnLoadSearch$,
+      onScrollRoundPlans$
     ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
@@ -375,11 +405,42 @@ export class PlansComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
-      this.menuState = this.menuState === 'out' ? 'in' : 'out';
-    } else {
-      this.menuState = 'in';
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'schedule':
+        this.operatorRoundsService.openRoundPlanSchedulerConfiguration(true);
+        this.operatorRoundsService.setRoundPlanDetails(event.row);
+        break;
+      default:
+        if (this.submissionDetail && this.submissionDetail.id === id) {
+          this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        } else {
+          this.menuState = 'in';
+        }
+        this.submissionDetail = event.row;
     }
-    this.submissionDetail = event.row;
   };
+
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.scheduleRounds
+      )
+    ) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
+  }
 }

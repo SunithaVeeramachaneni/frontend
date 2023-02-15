@@ -51,11 +51,14 @@ import { SchedulerComponent } from './scheduler/scheduler.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PlansComponent } from './plans/plans.component';
 import { RoundsComponent } from './rounds/rounds.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { RoundPlanSchedulerConfigurationComponent } from './round-plan-scheduler-configuration/round-plan-scheduler-configuration.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -70,16 +73,17 @@ export const customTranslateLoader = (http: HttpClient) =>
     SchedulerComponent,
     PlansComponent,
     RoundsComponent,
-    SubmissionComponent,
     SubmissionSliderComponent,
     SubmissionViewComponent,
     ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    ArchivedDeleteModalComponent,
+    RoundPlanSchedulerConfigurationComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
+    RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
     FormModule,
@@ -98,6 +102,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatExpansionModule,
     MatTooltipModule,
     MatTabsModule,
+    MatRadioModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

@@ -57,9 +57,10 @@ export const permissions = Object.freeze({
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
-  viewScheduler: 'VIEW_SCHEDULER',
+  viewRounds: 'VIEW_ROUNDS',
+  downloadRounds: 'DOWNLOAD_ROUNDS',
+  shareRounds: 'SHARE_ROUNDS',
   scheduleRounds: 'SCHEDULE_ROUNDS',
-  editScheduleRounds: 'EDIT_SCHEDULE_ROUNDS',
   deleteRounds: 'DELETE_ROUNDS'
 });
 
@@ -173,7 +174,7 @@ export const routingUrls = {
   roundPlanSubmissions: {
     url: '/operator-rounds/scheduler/0',
     title: 'Scheduler',
-    permission: permissions.viewScheduler
+    permission: permissions.viewORPlans
   },
   roundPlanArchivedForms: {
     url: '/operator-rounds/archived',

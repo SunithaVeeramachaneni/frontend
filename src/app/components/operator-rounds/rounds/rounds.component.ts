@@ -1,4 +1,4 @@
-import { OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -47,6 +47,7 @@ import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.ser
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
   styleUrls: ['./rounds.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('slideInOut', [
       state(

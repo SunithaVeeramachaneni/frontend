@@ -12,5 +12,16 @@
         <app-rounds></app-rounds>
       </mat-tab>
     </mat-tab-group>
+    <ng-container
+      *ngIf="{
+        openBasicScheduler: openBasicScheduler$ | async,
+        roundPlanDetails: roundPlanDetails$ | async
+      } as props"
+    >
+      <app-round-plan-scheduler-configuration
+        *ngIf="props.openBasicScheduler"
+        [roundPlanDetails]="props.roundPlanDetails"
+      ></app-round-plan-scheduler-configuration>
+    </ng-container>
   </div>
 </div>

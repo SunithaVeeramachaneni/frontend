@@ -37,11 +37,18 @@ const limit = 10000;
 })
 export class OperatorRoundsService {
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
+  private openRoundPlanSchedulerConfigurationSubject$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
+  private roundPlanDetailsSubject$: BehaviorSubject<any> =
+    new BehaviorSubject<any>({});
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+  roundPlanSchedulerConfigurationAction$ =
+    this.openRoundPlanSchedulerConfigurationSubject$.asObservable();
+  roundPlanDetailsAction$ = this.roundPlanDetailsSubject$.asObservable();
 
   constructor(
     private readonly awsApiService: APIService,
@@ -52,6 +59,14 @@ export class OperatorRoundsService {
 
   setFormCreatedUpdated(data: any) {
     this.formCreatedUpdatedSubject.next(data);
+  }
+
+  openRoundPlanSchedulerConfiguration(open: boolean) {
+    this.openRoundPlanSchedulerConfigurationSubject$.next(open);
+  }
+
+  setRoundPlanDetails(roundPlan: any) {
+    this.roundPlanDetailsSubject$.next(roundPlan);
   }
 
   createTags$ = (
@@ -181,9 +196,9 @@ export class OperatorRoundsService {
     isArchived: boolean = false
   ): Observable<number> {
     const statement = `query {
-      listRoundPlanLists(limit: ${limit}, filter: { and: [{isArchived: { eq: ${isArchived} } }, isDeleted: { eq: false } } ${
-      formStatus !== 'All' ? `,{ formStatus: { eq: "${formStatus}" }}` : ''
-    }] }) {
+      listRoundPlanLists(limit: ${limit}, filter: { isArchived: { eq: ${isArchived} } , isDeleted: { eq: false } ${
+      formStatus !== 'All' ? `, formStatus: { eq: "${formStatus}" }` : ''
+    }}) {
         items {
           id
         }

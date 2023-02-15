@@ -4,6 +4,7 @@
   "exportExcel": "Convert Excel into Plan",
   "myPlans": "Round Plans",
   "plans": "Plans",
+  "plan": "Plan",
   "rounds": "Rounds",
   "importBtn": "Import Tasks",
   "publishBtn": "Publish",
@@ -125,5 +126,18 @@
   "status": "Status",
   "location": "Location",
   "lastEditedBy": "Last Edited by",
-  "viewReport": "View Report"
+  "viewReport": "View Report",
+  "schedulePlan": "Schedule Plan",
+  "schedule": "Schedule",
+  "byFrequency": "By Frequency",
+  "byDate": "By Date",
+  "repeatEvery": "Repeat every",
+  "repeatOn": "Repeat On",
+  "ends": "Ends",
+  "never": "Never",
+  "on": "On",
+  "after": "After",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "selectDates": "Select Dates"
 }

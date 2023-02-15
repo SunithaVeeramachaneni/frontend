@@ -46,7 +46,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Scheduler' },
-          permissions: [permissions.viewScheduler]
+          permissions: [permissions.viewORPlans]
         }
       },
       {
