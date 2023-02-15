@@ -24,3 +24,4 @@ export * from './form-configuration';
 export * from './response-type';
 export * from './hyperlink';
 export * from './date-time';
+export * from './hierarchy-entity';

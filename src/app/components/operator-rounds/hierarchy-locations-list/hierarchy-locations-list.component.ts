@@ -1,30 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { AssetsModalComponent } from '../assets-modal/assets-modal.component';
-import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
-  selector: 'app-locations-modal',
-  templateUrl: './locations-modal.component.html',
-  styleUrls: ['./locations-modal.component.scss']
+  selector: 'app-hierarchy-locations-list',
+  templateUrl: './hierarchy-locations-list.component.html',
+  styleUrls: ['./hierarchy-locations-list.component.scss']
 })
-export class LocationsModalComponent implements OnInit {
+export class HierarchyLocationsListComponent implements OnInit {
+  @Output() handleLocationHierarchy: EventEmitter<any> =
+    new EventEmitter<any>();
+  @Input() set locationsData(data: any) {
+    this.allLocations$ = data ? data : ({} as Observable<any>);
+  }
   allLocations$: Observable<any>;
   public isMasterChecked: boolean;
-  public isMasterCheckedData: any;
+  public isMasterCheckedData: any = {
+    checked: false,
+    masterToggle: false
+  };
   public selectedItems = [];
   private allItems = [];
-  constructor(
-    private dialog: MatDialog,
-    private locationService: LocationService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.isMasterChecked = false;
-    this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allLocations$
       .pipe(
         tap((allLocations) => {
@@ -35,10 +36,6 @@ export class LocationsModalComponent implements OnInit {
       )
       .subscribe();
   }
-
-  assets = () => {
-    const dialogRef = this.dialog.open(AssetsModalComponent, {});
-  };
 
   handleDataCount = (event: any) => {
     const { masterDataId } = event;
@@ -66,5 +63,11 @@ export class LocationsModalComponent implements OnInit {
       checked: this.isMasterChecked,
       masterToggle: true
     };
+  };
+
+  submitSelectedLocations = () => {
+    this.handleLocationHierarchy.emit({
+      ids: this.selectedItems
+    });
   };
 }

@@ -37,7 +37,7 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => this.awsApiService.ListAssets({}, 20000, '');
+  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 20000, ''));
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -119,7 +119,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'api/v1/download-sample-assets',
+      'assets/download/sample-template',
       info,
       true,
       {}
@@ -166,7 +166,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'api/v1/assets-excel-upload',
+      'assets/upload',
       form,
       info
     );
