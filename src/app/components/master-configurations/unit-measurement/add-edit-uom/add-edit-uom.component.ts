@@ -17,7 +17,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { ValidationError } from 'src/app/interfaces';
@@ -29,7 +29,6 @@ import {
   UpdateUnitListMutation
 } from 'src/app/API.service';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
-import { ErrorHandlerService } from './../../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-add-edit-uom',
@@ -62,8 +61,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog,
-    private errorHandlerService: ErrorHandlerService
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnChanges(): void {
@@ -139,7 +137,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           },
           (err) => {
             this.isLoading = false;
-            this.errorHandlerService.handleError(err);
+            this.unitOfMeasurementService.handleError(err);
+            return of({});
           }
         );
     } else {
@@ -171,7 +170,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
               },
               (err) => {
                 this.isLoading = false;
-                this.errorHandlerService.handleError(err);
+                this.unitOfMeasurementService.handleError(err);
+                return of({});
               }
             );
         }
@@ -272,7 +272,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             },
             (err) => {
               this.isLoading = false;
-              this.errorHandlerService.handleError(err);
+              this.unitOfMeasurementService.handleError(err);
+              return of({});
             }
           );
       }
@@ -365,9 +366,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         });
         this.isSubmittedForm = false;
       },
-      () => {
+      (err) => {
         this.isLoading = false;
         this.isSubmittedForm = false;
+        this.unitOfMeasurementService.handleError(err);
+        return of({});
       }
     );
   }

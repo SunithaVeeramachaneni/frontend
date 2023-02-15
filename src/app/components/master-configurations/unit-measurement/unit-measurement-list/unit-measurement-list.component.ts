@@ -47,7 +47,6 @@ import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.compo
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
-import { ErrorHandlerService } from 'src/app/shared/error-handler/error-handler.service';
 import { groupBy } from 'lodash-es';
 
 export interface FormTableUpdate {
@@ -260,8 +259,7 @@ export class UnitMeasurementListComponent implements OnInit {
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog,
-    private errorHandlerService: ErrorHandlerService
+    public readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -437,7 +435,7 @@ export class UnitMeasurementListComponent implements OnInit {
         catchError((err) => {
           this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
-          this.errorHandlerService.handleError(err);
+          this.unitMeasurementService.handleError(err);
           return of([]);
         })
       );
@@ -542,9 +540,8 @@ export class UnitMeasurementListComponent implements OnInit {
           for (const [key, value] of Object.entries(
             groupBy(resp?.data, 'name')
           )) {
-            this.unitMeasurementService
-              .getSingleUnitListByName$(key)
-              .subscribe(({ items }) => {
+            this.unitMeasurementService.getSingleUnitListByName$(key).subscribe(
+              ({ items }) => {
                 if (items?.length > 0) {
                   this.createUpdateUnitListItems(items[0], value as any);
                 } else {
@@ -558,11 +555,19 @@ export class UnitMeasurementListComponent implements OnInit {
                       }
                     });
                 }
-              });
+              },
+              (err) => {
+                this.unitMeasurementService.handleError(err);
+                return of({});
+              }
+            );
           }
         }
       },
-      (err) => this.errorHandlerService.handleError(err)
+      (err) => {
+        this.unitMeasurementService.handleError(err);
+        return of({});
+      }
     );
   }
 
@@ -602,7 +607,10 @@ export class UnitMeasurementListComponent implements OnInit {
         this.nextToken = '';
         this.fetchUOM$.next({ data: 'load' });
       },
-      (err) => this.errorHandlerService.handleError(err)
+      (err) => {
+        this.unitMeasurementService.handleError(err);
+        return of({});
+      }
     );
   }
 
@@ -631,7 +639,10 @@ export class UnitMeasurementListComponent implements OnInit {
                 });
               }
             },
-            (err) => this.errorHandlerService.handleError(err)
+            (err) => {
+              this.unitMeasurementService.handleError(err);
+              return of({});
+            }
           );
       }
     });
@@ -653,7 +664,10 @@ export class UnitMeasurementListComponent implements OnInit {
             this.updateListAfterIsDefault(res, unit);
           }
         },
-        (err) => this.errorHandlerService.handleError(err)
+        (err) => {
+          this.unitMeasurementService.handleError(err);
+          return of({});
+        }
       );
   }
 
@@ -693,7 +707,10 @@ export class UnitMeasurementListComponent implements OnInit {
                     this.fetchUOM$.next({ data: 'load' });
                   }
                 },
-                (err) => this.errorHandlerService.handleError(err)
+                (err) => {
+                  this.unitMeasurementService.handleError(err);
+                  return of({});
+                }
               );
           } else {
             this.unitMeasurementService
@@ -721,7 +738,10 @@ export class UnitMeasurementListComponent implements OnInit {
                         });
                       }
                     },
-                    (err) => this.errorHandlerService.handleError(err)
+                    (err) => {
+                      this.unitMeasurementService.handleError(err);
+                      return of({});
+                    }
                   );
               });
           }
@@ -756,7 +776,10 @@ export class UnitMeasurementListComponent implements OnInit {
               form: res
             });
           },
-          (err) => this.errorHandlerService.handleError(err)
+          (err) => {
+            this.unitMeasurementService.handleError(err);
+            return of({});
+          }
         );
       } else {
         this.addEditCopyForm$.next({
@@ -783,7 +806,10 @@ export class UnitMeasurementListComponent implements OnInit {
             });
           }
         },
-        (err) => this.errorHandlerService.handleError(err)
+        (err) => {
+          this.unitMeasurementService.handleError(err);
+          return of({});
+        }
       );
   }
 }
