@@ -493,9 +493,9 @@ export class AssetsListComponent implements OnInit {
     this.assetService.uploadExcel(formData).subscribe((resp) => {
       if (resp.status === 200) {
         for (const item of resp.data) {
-          if (item.parentType.toLowerCase() == 'location') {
+          if (item.parentType.toLowerCase() === 'location') {
             const parent = this.allParentsLocations.find(
-              (d) => d.locationId == item.parentId
+              (d) => d.locationId === item.parentId
             );
             if (parent) {
               item.parentStatus = true;
@@ -505,7 +505,7 @@ export class AssetsListComponent implements OnInit {
             }
           } else {
             const parent = this.allParentsAssets.find(
-              (d) => d.assetsId == item.parentId
+              (d) => d.assetsId === item.parentId
             );
             if (parent) {
               item.parentId = parent.id;
