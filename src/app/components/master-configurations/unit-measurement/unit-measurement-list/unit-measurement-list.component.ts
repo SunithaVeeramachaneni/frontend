@@ -558,7 +558,6 @@ export class UnitMeasurementListComponent implements OnInit {
               },
               (err) => {
                 this.unitMeasurementService.handleError(err);
-                return of({});
               }
             );
           }
@@ -566,7 +565,6 @@ export class UnitMeasurementListComponent implements OnInit {
       },
       (err) => {
         this.unitMeasurementService.handleError(err);
-        return of({});
       }
     );
   }
@@ -609,7 +607,6 @@ export class UnitMeasurementListComponent implements OnInit {
       },
       (err) => {
         this.unitMeasurementService.handleError(err);
-        return of({});
       }
     );
   }
@@ -641,7 +638,6 @@ export class UnitMeasurementListComponent implements OnInit {
             },
             (err) => {
               this.unitMeasurementService.handleError(err);
-              return of({});
             }
           );
       }
@@ -666,7 +662,6 @@ export class UnitMeasurementListComponent implements OnInit {
         },
         (err) => {
           this.unitMeasurementService.handleError(err);
-          return of({});
         }
       );
   }
@@ -709,7 +704,6 @@ export class UnitMeasurementListComponent implements OnInit {
                 },
                 (err) => {
                   this.unitMeasurementService.handleError(err);
-                  return of({});
                 }
               );
           } else {
@@ -740,7 +734,6 @@ export class UnitMeasurementListComponent implements OnInit {
                     },
                     (err) => {
                       this.unitMeasurementService.handleError(err);
-                      return of({});
                     }
                   );
               });
@@ -778,7 +771,6 @@ export class UnitMeasurementListComponent implements OnInit {
           },
           (err) => {
             this.unitMeasurementService.handleError(err);
-            return of({});
           }
         );
       } else {
@@ -808,7 +800,6 @@ export class UnitMeasurementListComponent implements OnInit {
         },
         (err) => {
           this.unitMeasurementService.handleError(err);
-          return of({});
         }
       );
   }

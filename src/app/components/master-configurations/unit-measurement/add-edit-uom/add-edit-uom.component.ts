@@ -138,7 +138,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           (err) => {
             this.isLoading = false;
             this.unitOfMeasurementService.handleError(err);
-            return of({});
           }
         );
     } else {
@@ -171,7 +170,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
               (err) => {
                 this.isLoading = false;
                 this.unitOfMeasurementService.handleError(err);
-                return of({});
               }
             );
         }
@@ -273,7 +271,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
             (err) => {
               this.isLoading = false;
               this.unitOfMeasurementService.handleError(err);
-              return of({});
             }
           );
       }
@@ -370,7 +367,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         this.isLoading = false;
         this.isSubmittedForm = false;
         this.unitOfMeasurementService.handleError(err);
-        return of({});
       }
     );
   }
