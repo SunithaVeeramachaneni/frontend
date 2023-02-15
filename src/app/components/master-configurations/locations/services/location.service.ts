@@ -113,7 +113,7 @@ export class LocationService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-location',
+      'location/download/sample-template',
       info,
       true,
       {}
@@ -160,7 +160,7 @@ export class LocationService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'location-excel-upload',
+      'location/upload',
       form,
       info
     );
