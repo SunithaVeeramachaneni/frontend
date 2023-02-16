@@ -7,6 +7,7 @@ export const hierarchyMock = [
     hasChildren: true,
     isExpanded: true,
     subFormId: '',
+    sequence: 1,
     children: [
       {
         id: 'n1c1',
@@ -16,6 +17,7 @@ export const hierarchyMock = [
         hasChildren: true,
         isExpanded: true,
         subFormId: '',
+        sequence: 2,
         children: [
           {
             id: 'n1c1a',
@@ -25,6 +27,7 @@ export const hierarchyMock = [
             hasChildren: false,
             isExpanded: false,
             subFormId: '',
+            sequence: 3,
             children: []
           },
           {
@@ -35,6 +38,7 @@ export const hierarchyMock = [
             hasChildren: false,
             isExpanded: false,
             subFormId: '',
+            sequence: 4,
             children: []
           }
         ]
@@ -47,6 +51,7 @@ export const hierarchyMock = [
         hasChildren: true,
         isExpanded: true,
         subFormId: '',
+        sequence: 5,
         children: [
           {
             id: 'n1c2a',
@@ -56,6 +61,7 @@ export const hierarchyMock = [
             hasChildren: false,
             isExpanded: false,
             subFormId: '',
+            sequence: 6,
             children: []
           },
           {
@@ -66,6 +72,7 @@ export const hierarchyMock = [
             hasChildren: false,
             isExpanded: false,
             subFormId: '',
+            sequence: 7,
             children: []
           }
         ]

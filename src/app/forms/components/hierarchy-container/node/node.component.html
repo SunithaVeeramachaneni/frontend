@@ -30,7 +30,7 @@
     </mat-menu>
   </div>
 </div>
-<div *ngIf="node.hasChildren && hierarchyMode !== 'flat'" class="children">
+<div *ngIf="hierarchyMode !== 'flat' && node.hasChildren" class="children">
   <div
     class="childrenHead"
     [ngClass]="{ inactive: !assetHierarchyUtil.getAssetCountByNode(node) }"

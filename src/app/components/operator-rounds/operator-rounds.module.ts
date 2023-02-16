@@ -59,6 +59,7 @@ import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
 import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
+import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -71,6 +72,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanConfigurationModalComponent,
     ImportTaskModalComponent,
     HierarchyContainerComponent,
+    HierarchyDeleteConfirmationDialogComponent,
     NodeComponent,
     SubmissionComponent,
     SubmissionSliderComponent,

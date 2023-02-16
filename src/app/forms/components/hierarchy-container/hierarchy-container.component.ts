@@ -3,10 +3,11 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   EventEmitter,
-  Output
+  Output,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -14,6 +15,10 @@ import { FormMetadata } from 'src/app/interfaces';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
+import { BuilderConfigurationActions } from '../../state/actions';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -24,33 +29,68 @@ import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
 
+  searchHierarchyKey: FormControl;
   formMetadata$: Observable<FormMetadata>;
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
 
-  hierarchyList = [];
+  filteredHierarchyList = [];
+
+  hierarchy = [];
+  totalAssetsCount = 0;
+
   hierarchyMode = 'flat';
+  flatHierarchyList = [];
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
     public assetHierarchyUtil: AssetHierarchyUtil,
+    public dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
     private store: Store<State>
   ) {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         if (Object.keys(formMetadata).length) {
           const { hierarchy } = formMetadata;
+          this.totalAssetsCount =
+            assetHierarchyUtil.getTotalAssetCount(hierarchy);
+          this.hierarchy = JSON.parse(JSON.stringify(hierarchy));
           if (this.hierarchyMode === 'flat') {
-            this.hierarchyList =
+            this.flatHierarchyList =
               assetHierarchyUtil.convertHierarchyToFlatList(hierarchy);
+            this.filteredHierarchyList = JSON.parse(
+              JSON.stringify(this.flatHierarchyList)
+            );
           }
+          this.cdrf.detectChanges();
           this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
         }
       })
     );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.searchHierarchyKey = new FormControl('');
+    this.searchHierarchyKey.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap((searchKey) => {
+          if (searchKey.length > 3) {
+            this.filteredHierarchyList = this.flatHierarchyList.filter((node) =>
+              node.name.toLowerCase().includes(searchKey.toLowerCase())
+            );
+          } else if (searchKey.length < 3) {
+            this.filteredHierarchyList = JSON.parse(
+              JSON.stringify(this.flatHierarchyList)
+            );
+          }
+          this.cdrf.detectChanges();
+        })
+      )
+      .subscribe();
+  }
 
   getTotalTasksCount() {
     let count = 0;
@@ -61,12 +101,28 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   removeNodeHandler(event) {
-    const hierarchyListClone = JSON.parse(JSON.stringify(this.hierarchyList));
-    const hierarchyUpdated = this.promoteChildren(
-      [...hierarchyListClone],
-      event
+    const deleteConfirmationDialogRef = this.dialog.open(
+      HierarchyDeleteConfirmationDialogComponent,
+      {
+        width: '450px',
+        height: '165px',
+        disableClose: true,
+        data: { node: event }
+      }
     );
-    this.hierarchyEvent.emit({ hierarchy: hierarchyUpdated });
+    deleteConfirmationDialogRef.afterClosed().subscribe((resp) => {
+      if (!resp) return;
+      const hierarchyUpdated = this.promoteChildren([...this.hierarchy], event);
+      this.store.dispatch(
+        BuilderConfigurationActions.removeSubForm({
+          subFormId: event.id
+        })
+      );
+      this.hierarchyEvent.emit({
+        hierarchy: hierarchyUpdated,
+        node: event
+      });
+    });
   }
 
   promoteChildren(list, node) {

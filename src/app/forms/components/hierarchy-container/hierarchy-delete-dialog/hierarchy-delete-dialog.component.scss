@@ -1,0 +1,27 @@
+@import '../../../../../scss/colors.scss';
+
+.dialogHead {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0px;
+  margin-top: 15px;
+}
+.dialogContent {
+  margin: 0px;
+  height: 40px;
+}
+.dialogFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0px 15px;
+}
+.confirmBtn {
+  background: $alert-bg;
+  color: $white;
+}
+.noBtn {
+  color: $blue;
+}
