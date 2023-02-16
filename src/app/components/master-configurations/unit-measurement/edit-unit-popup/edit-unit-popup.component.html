@@ -103,7 +103,7 @@
       color="primary"
       (click)="onSave('save')"
       class="save-btn"
-      [disabled]="unitForm?.invalid"
+      [disabled]="unitForm?.pristine || unitForm?.invalid"
     >
       {{ 'done' | translate }}
     </button>
