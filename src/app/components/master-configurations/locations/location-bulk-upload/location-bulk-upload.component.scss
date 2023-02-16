@@ -1,0 +1,106 @@
+ul.bulk-upload-instructions-list {
+  padding: 0;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+ul.bulk-upload-instructions-list li {
+  line-height: 2.5rem;
+}
+
+.example-h2 {
+  margin: 10px;
+}
+
+.bulkupload-margin {
+  margin: 10px 10px 0px 10px;
+  float: left;
+  display: inline-block;
+}
+
+.bulkupload-success-mark-position {
+  position: relative;
+  top: 8px;
+}
+
+.custom-modal-card {
+  width: 400px;
+  background-color: #ffffff;
+}
+.building-wi {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 130%;
+  line-height: 32px;
+  letter-spacing: 0.15px;
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0;
+}
+.hrline-modal {
+  margin: 0px 0px 0px -20px;
+  width: 450px;
+}
+.cancel-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  line-height: 24px;
+  letter-spacing: 0.3px;
+  color: #76767b;
+  background-color: transparent;
+  border: none;
+  margin-right: 10px;
+}
+.publishnow-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  line-height: 24px;
+  letter-spacing: 0.3px;
+  color: #1351d8;
+  background-color: transparent;
+  border: none;
+}
+.okay-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 100%;
+  line-height: 24px;
+  letter-spacing: 0.3px;
+  color: #ffffff;
+  background: #1351d8;
+  border-radius: 4px;
+  border: none;
+  margin-right: 18px;
+  padding: 6px 16px;
+}
+
+.bulk-upload .modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 15px 0px 0px 0px;
+  height: 35px;
+  border-top: 1px solid #c8ced3;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  width: 450px;
+  margin-left: -30px;
+}
+.delete-forever-icon {
+  position: relative;
+  top: 6px;
+  color: #76767b;
+  cursor: pointer;
+}
+.illustration_bulkupload {
+  height: 220px;
+  width: 200px;
+  margin-left: 70px;
+}
+.illustration_bulkupload_success {
+  height: 200px;
+  width: 200px;
+  margin-left: 70px;
+}

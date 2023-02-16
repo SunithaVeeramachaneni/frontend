@@ -42,6 +42,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
+import { LocationBulkUploadComponent } from './locations/location-bulk-upload/location-bulk-upload.component';
+import { AssetsBulkUploadComponent } from './assets/assets-bulk-upload/assets-bulk-upload.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -62,7 +66,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     EditUnitPopupComponent,
     UnitOfMeasurementDeleteModalComponent,
     AddEditAssetsComponent,
-    AssetsDetailViewComponent
+    AssetsDetailViewComponent,
+    LocationBulkUploadComponent,
+    AssetsBulkUploadComponent
   ],
   imports: [
     FormsModule,
@@ -70,6 +76,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MasterConfigurationsRoutingModule,
     CommonModule,
     FormModule,
+    MatProgressBarModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

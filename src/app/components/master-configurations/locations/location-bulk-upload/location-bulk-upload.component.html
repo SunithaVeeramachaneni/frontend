@@ -1,0 +1,67 @@
+<div class="modal-card custom-modal-card p-20 bulk-upload">
+  <h3 *ngIf="!loadResults" class="building-wi">
+    Building your Locations...
+  </h3>
+  <h3 *ngIf="loadResults" class="building-wi">All done!</h3>
+  <img
+    *ngIf="!loadResults"
+    class="illustration_bulkupload"
+    src="assets/work-instructions-icons/svg/illustration_bulkupload.svg"
+    alt="Bulk Upload"
+  />
+  <img
+    *ngIf="loadResults"
+    class="illustration_bulkupload_success"
+    src="assets/work-instructions-icons/svg/illustration_bulkupload_success.svg"
+    alt="Bulk Upload Success"
+  />
+  <img
+    *ngIf="loadResults"
+    class="illustration_bulkupload_success"
+    src="assets/work-instructions-icons/svg/illustration_bulkupload_failure.svg"
+    alt="Bulk Upload Failure"
+  />
+  <br />
+  <mat-progress-bar
+    *ngIf="!loadResults"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <div
+    class="font-weight-bold"
+    *ngIf="loadResults"
+  >
+    7 Locations have saved in liberary
+  </div>
+   
+  <br />
+  <hr class="hrline-modal" [ngStyle]="getBorderStyle(true)" />
+  
+  <div class="modal-footer" [ngStyle]="getBorderStyle()">
+    <button
+      type="button"
+      disabled="disabled"
+      *ngIf="loadResults"
+      class="publishnow-btn"
+    >
+      Publish Now
+    </button>
+    <button
+      type="button"
+      *ngIf="loadResults"
+      (click)="close()"
+      class="okay-btn"
+      data-dismiss="modal"
+    >
+      Okay
+    </button>
+    <button
+      type="button"
+      *ngIf="!loadResults"
+      (click)="close()"
+      class="cancel-btn"
+      data-dismiss="modal"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
