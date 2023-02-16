@@ -96,8 +96,8 @@ export class AddEditAssetsComponent implements OnInit {
       parentId: ''
     });
 
-    this.assetForm.get('parentType').valueChanges.subscribe((value) => { 
-      this.assetForm.get('parentId').setValue("");
+    this.assetForm.get('parentType').valueChanges.subscribe((value) => {
+      this.assetForm.get('parentId').setValue('');
       if (value === 'location') {
         this.getAllLocations();
       } else if (value === 'asset') {
@@ -117,7 +117,7 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
-         this.assetForm?.get('parentType').setValue('location');
+        this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     } else if (this.assetStatus === 'edit') {
@@ -131,13 +131,14 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
-         this.assetForm?.get('parentType').setValue('location');
+        this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     }
   }
 
-  onKey(value) {
+  onKey($event) {
+    const value = $event.target.value || '';
     this.allParentsData = this.search(value);
   }
 
@@ -151,7 +152,7 @@ export class AddEditAssetsComponent implements OnInit {
   cancel() {
     this.slideInOut.emit('out');
     this.assetForm.reset();
-     this.assetForm?.get('parentType').setValue('location');
+    this.assetForm?.get('parentType').setValue('location');
   }
 
   getAllLocations() {

@@ -288,6 +288,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     return value?.length - 1;
   }
 
+  get unitMeasurementFormControl() {
+    return (this.unitMeasurementForm?.get('units') as any)?.controls;
+  }
+
   private createUpdateUnitListItems(
     response: CreateUnitListMutation | UpdateUnitListMutation,
     type: 'create' | 'edit' | 'delete'
