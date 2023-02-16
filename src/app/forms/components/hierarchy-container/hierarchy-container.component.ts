@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Output
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -12,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { FormMetadata } from 'src/app/interfaces';
 import { getFormMetadata, State } from 'src/app/forms/state';
+import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
@@ -34,7 +36,8 @@ export class HierarchyContainerComponent implements OnInit {
   constructor(
     private operatorRoundsService: OperatorRoundsService,
     public assetHierarchyUtil: AssetHierarchyUtil,
-    private store: Store<State>
+    private store: Store<State>,
+    private dialog: MatDialog
   ) {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
@@ -87,4 +90,10 @@ export class HierarchyContainerComponent implements OnInit {
     });
     return list;
   }
+
+  openHierarchyModal = () => {
+    const dialogRef = this.dialog.open(HierarchyModalComponent, {});
+
+    dialogRef.afterClosed().subscribe(() => console.log('Hit'));
+  };
 }

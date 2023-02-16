@@ -1,7 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+
+import { HierarchyEntity } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-hierarchy-locations-list',
@@ -11,10 +13,12 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 export class HierarchyLocationsListComponent implements OnInit {
   @Output() handleLocationHierarchy: EventEmitter<any> =
     new EventEmitter<any>();
-  @Input() set locationsData(data: any) {
-    this.allLocations$ = data ? data : ({} as Observable<any>);
+  @Input() set locationsData(data: Observable<HierarchyEntity[]>) {
+    this.allLocations$ = data
+      ? data
+      : (of([]) as Observable<HierarchyEntity[]>);
   }
-  allLocations$: Observable<any>;
+  allLocations$: Observable<HierarchyEntity[]>;
   public isMasterChecked: boolean;
   public isMasterCheckedData: any = {
     checked: false,
@@ -29,21 +33,17 @@ export class HierarchyLocationsListComponent implements OnInit {
     this.allLocations$
       .pipe(
         tap((allLocations) => {
-          allLocations.items.forEach((location) =>
-            this.allItems.push(location.id)
-          );
+          this.allItems = allLocations;
         })
       )
       .subscribe();
   }
 
-  handleDataCount = (event: any) => {
-    const { masterDataId } = event;
-    if (this.selectedItems.find((item) => item === masterDataId)) {
-      this.selectedItems = this.selectedItems.filter(
-        (item) => item !== masterDataId
-      );
-    } else this.selectedItems = [...this.selectedItems, masterDataId];
+  handleNodeToggle = (event: any) => {
+    const { id, isSelected } = event;
+    if (isSelected) this.selectedItems = [...this.selectedItems, event];
+    else
+      this.selectedItems = this.selectedItems.filter((item) => item.id !== id);
 
     this.isMasterChecked = this.selectedItems.length === this.allItems.length;
 
@@ -55,19 +55,13 @@ export class HierarchyLocationsListComponent implements OnInit {
 
   handleMasterToggle = (event: MatCheckboxChange) => {
     const { checked } = event;
-    if (checked) {
-      this.selectedItems = this.allItems;
-    } else this.selectedItems = [];
-
     this.isMasterCheckedData = {
-      checked: this.isMasterChecked,
+      checked,
       masterToggle: true
     };
   };
 
   submitSelectedLocations = () => {
-    this.handleLocationHierarchy.emit({
-      ids: this.selectedItems
-    });
+    this.handleLocationHierarchy.emit(this.selectedItems);
   };
 }

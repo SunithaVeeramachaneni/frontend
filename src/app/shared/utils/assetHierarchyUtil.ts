@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
+import { HierarchyEntity } from 'src/app/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -42,4 +44,54 @@ export class AssetHierarchyUtil {
     });
     return flatHierarchy;
   }
+
+  getHierarchyCount = (hierarchyList: HierarchyEntity[]) => {
+    let count = 0;
+    hierarchyList.forEach((hierarchyItem) => {
+      if (!hierarchyItem.hasChildren) count++;
+      else count += this.getHierarchyCount(hierarchyItem.children) + 1;
+    });
+    return count;
+  };
+
+  getCountByNodeType = (hierarchyList: HierarchyEntity[], type: string) => {
+    let count = 0;
+    hierarchyList.forEach((node) => {
+      if (node.isSelected && !node.hasChildren && node.type === type) count++;
+      else count += this.getCountByNodeType(node.children, type);
+    });
+    return count;
+  };
+
+  prepareHierarchyList = (flatList: any[], parentId = null) => {
+    const nodes: HierarchyEntity[] = [];
+    const filteredFlatList = flatList.filter((item) => item.parentId);
+    flatList.forEach((node) => {
+      const { name, type, image } = node;
+      const leafNode = {
+        id: uuidv4(),
+        name,
+        type,
+        image,
+        sequence: null,
+        hasChildren: false,
+        subFormId: '',
+        isSelected: false,
+        isToggledView: false,
+        children: []
+      } as HierarchyEntity;
+
+      if (!node.parentId || (parentId && node.parentId === parentId)) {
+        if (!flatList.findIndex((item) => item.parentId === node.id))
+          nodes.push(leafNode);
+        else
+          nodes.push({
+            ...leafNode,
+            children: this.prepareHierarchyList(filteredFlatList, node.id)
+          } as HierarchyEntity);
+      }
+    });
+
+    return nodes;
+  };
 }

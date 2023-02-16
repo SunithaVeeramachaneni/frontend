@@ -1,0 +1,45 @@
+@import '../../../../scss/colors.scss';
+
+.assets-modal {
+  height: 500px;
+  width: 500px;
+  overflow: hidden;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+
+  .heading-container {
+    justify-content: space-between;
+    padding: 10px 10px 0 15px;
+
+    .heading {
+      font-size: 120%;
+      margin-top: 10px;
+    }
+  }
+
+  .list-container {
+    height: 315px;
+    overflow-y: auto;
+  }
+
+  .actions {
+    float: right;
+    margin-right: 15px;
+  }
+}
+.node-container {
+  padding: 0px 30px;
+}
+.selected-items {
+  margin-top: 35px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.assets-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

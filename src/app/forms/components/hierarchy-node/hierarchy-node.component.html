@@ -1,15 +1,24 @@
 <div class="node">
   <mat-checkbox
-    [(ngModel)]="isChecked"
-    (change)="clicked($event)"
+    [(ngModel)]="masterData.isSelected"
+    (change)="nodeCheckboxToggled($event)"
     class="checkbox"
   ></mat-checkbox>
 
   <img [src]="masterData?.image" class="master-data-image" />
   <div class="master-data-title">{{ masterData.name }}</div>
-  <div *ngIf="masterData?.hasChildren">
-    <app-hierarchy-node
-      [nodeData]="masterData.children[0]"
-    ></app-hierarchy-node>
+  <div *ngIf="selectionMode === 'selectAssets' && masterData?.children?.length">
+    <div *ngFor="let data of masterData.children">
+      <button (click)="data.isToggledView = !data.isToggledView">-</button>
+      {{ hierarchyCount(data) }}
+      <div *ngIf="data.isToggledView">
+        <app-hierarchy-node
+          [nodeData]="data"
+          (checkboxToggleHandler)="handleChildEntityToggle($event)"
+          [mode]="'selectAssets'"
+        ></app-hierarchy-node>
+      </div>
+    </div>
   </div>
+  <hr class="node-break" />
 </div>

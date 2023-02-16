@@ -6,6 +6,8 @@ export interface HierarchyEntity {
   sequence: number | null;
   hasChildren: boolean;
   subFormId: string;
+  isSelected: boolean;
+  isToggledView: boolean;
   children: HierarchyEntity[];
 }
 

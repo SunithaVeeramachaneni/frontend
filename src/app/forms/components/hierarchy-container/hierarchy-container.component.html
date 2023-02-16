@@ -4,7 +4,12 @@
       <span
         >Assets ({{ hierarchyList.length ? hierarchyList.length : 0 }})</span
       >
-      <button mat-icon-button class="addBtn" *ngIf="hierarchyList.length">
+      <button
+        mat-icon-button
+        class="addBtn"
+        *ngIf="hierarchyList.length"
+        (click)="openHierarchyModal()"
+      >
         <mat-icon>add</mat-icon>
       </button>
     </div>

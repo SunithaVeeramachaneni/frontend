@@ -1,6 +1,6 @@
 <app-hierarchy-locations-list
   *ngIf="mode === 'location'"
-  [locationsData]="allLocations$"
+  [locationsData]="allHierarchyItems$"
   (handleLocationHierarchy)="prepareHierarchyForSelectedLocations($event)"
 ></app-hierarchy-locations-list>
 <app-hierarchy-assets-list
