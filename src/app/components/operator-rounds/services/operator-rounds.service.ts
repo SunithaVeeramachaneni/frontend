@@ -121,6 +121,9 @@ export class OperatorRoundsService {
             }),
             isArchived: {
               eq: isArchived
+            },
+            isDeleted: {
+              eq: false
             }
           },
           !isSearch && queryParams.limit,
@@ -170,7 +173,7 @@ export class OperatorRoundsService {
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     const statement = isArchived
       ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -178,7 +181,7 @@ export class OperatorRoundsService {
     }
     `
       : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}, isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -225,7 +228,8 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        isArchived: false
+        isArchived: false,
+        isDeleted: false
       })
     );
   }
@@ -526,9 +530,26 @@ export class OperatorRoundsService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
+              }
+
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
               }
 
               return questionItem;
@@ -700,7 +721,7 @@ export class OperatorRoundsService {
               condition: true
             },
             responses,
-            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            createdAt: format(new Date(p?.createdAt), 'do MMM'),
             updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
               addSuffix: true
             })

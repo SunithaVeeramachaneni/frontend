@@ -1,7 +1,8 @@
 <div class="preview" *ngIf="previewFormData$ | async as pageData">
-  <div *ngFor="let page of pageData;let i=index;"
-   class="pages"
-    [ngClass]="{'active': pageIndex === (i+1) }"
+  <div
+    *ngFor="let page of pageData; let i = index"
+    class="pages"
+    [ngClass]="{ active: pageIndex === i + 1 }"
   >
     <div *ngFor="let section of page.sections" class="preview-content">
       <div class="section-header">
@@ -75,21 +76,42 @@
                 />
               </div>
 
-              <!-- date  -->
-              <input
-                type="date"
-                class="text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'DF'"
-              />
+              <!-- date and time -->
+              <div *ngIf="question.fieldType === 'DT'">
+                <input
+                  type="date"
+                  class="text-answer"
+                  [placeholder]="'enter' | translate"
+                  *ngIf="question.value.date"
+                />
 
-              <!-- time  -->
-              <input
-                type="time"
-                class="text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'TIF'"
-              />
+                <input
+                  type="time"
+                  class="text-answer"
+                  [placeholder]="'enter' | translate"
+                  *ngIf="question.value.time"
+                />
+              </div>
+
+              <!-- Hyperlink  -->
+              <div *ngIf="question.fieldType === 'HL'">
+                <span
+                  class="hyperlink"
+                  (click)="openURL(question.value)"
+                  *ngIf="
+                    question.value && question.value?.link;
+                    else addUrlBlock
+                  "
+                  >{{
+                    question.value.title?.length
+                      ? question.value.title
+                      : question.value.link
+                  }}</span
+                >
+                <ng-template #addUrlBlock>
+                  <span translate="addLinkBtn" class="add-link"></span>
+                </ng-template>
+              </div>
 
               <!-- checkbox  -->
               <mat-checkbox
@@ -121,7 +143,11 @@
                   [ngModelOptions]="{ standalone: true }"
                   color="primary"
                   class="slider"
+                  showTickMarks
+                  discrete
+                  [displayWith]="formatLabel"
                 >
+                  <input matSliderThumb />
                 </mat-slider>
                 <span class="slider-values">{{ question.value.max }}</span>
               </div>
@@ -171,7 +197,11 @@
               </div>
 
               <!-- Dropdown -->
-              <div *ngIf="question.fieldType === 'DD' && question.value.value.length > 4">
+              <div
+                *ngIf="
+                  question.fieldType === 'DD' && question.value.value.length > 4
+                "
+              >
                 <mat-form-field appearance="outline" class="dropdown">
                   <mat-select
                     [multiple]="question.multi"
@@ -189,7 +219,12 @@
               </div>
 
               <!-- Dropdown -->
-              <div *ngIf="question.fieldType === 'DD' && question.value.value.length <= 4">
+              <div
+                *ngIf="
+                  question.fieldType === 'DD' &&
+                  question.value.value.length <= 4
+                "
+              >
                 <mat-button-toggle-group>
                   <mat-button-toggle
                     *ngFor="let question of question.value.value"

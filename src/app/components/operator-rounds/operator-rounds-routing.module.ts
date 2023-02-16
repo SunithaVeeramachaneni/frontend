@@ -3,9 +3,9 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
-import { SubmissionComponent } from '../race-dynamic-form/submission/submission.component';
-import { SubmissionViewComponent } from '../race-dynamic-form/submission-view/submission-view.component';
-import { ArchivedListComponent } from '../race-dynamic-form/archived-list/archived-list.component';
+import { SubmissionComponent } from './submission/submission.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';

@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { DateAndTime } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-date',
@@ -6,8 +7,8 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   styleUrls: ['./date.component.scss']
 })
 export class DateComponent implements OnInit {
-  @Output() checkedToDefaultDate: EventEmitter<boolean> =
-    new EventEmitter<boolean>();
+  @Output() checkedToDefaultDateAndTime: EventEmitter<any> =
+    new EventEmitter<any>();
   @Input() set question(data) {
     this.questionInfo = data;
   }
@@ -16,16 +17,31 @@ export class DateComponent implements OnInit {
     return this.questionInfo;
   }
 
-  defaultChecked;
+  defaultDateChecked = true;
+  defaultTimeChecked = true;
   private questionInfo;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.defaultChecked = this.questionInfo.get('value').value;
+    if (this.question && this.isDateAndTime(this.question.value)) {
+      this.defaultDateChecked = this.question.value.date;
+      this.defaultTimeChecked = this.question.value.time;
+    }
+
+    this.toggleChecked();
+  }
+
+  isDateAndTime(object: any) {
+    return (
+      object && object.hasOwnProperty('date') && object.hasOwnProperty('time')
+    );
   }
 
   toggleChecked() {
-    this.checkedToDefaultDate.emit(this.defaultChecked);
+    this.checkedToDefaultDateAndTime.emit({
+      date: this.defaultDateChecked,
+      time: this.defaultTimeChecked
+    } as DateAndTime);
   }
 }

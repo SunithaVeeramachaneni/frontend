@@ -1,4 +1,274 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateUnitMeasument(
+  $input: CreateUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  createUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateUnitMeasument(
+  $input: UpdateUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  updateUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteUnitMeasument(
+  $input: DeleteUnitMeasumentInput!
+  $condition: ModelUnitMeasumentConditionInput
+) {
+  deleteUnitMeasument(input: $input, condition: $condition) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateUnitList(
+  $input: CreateUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  createUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateUnitList(
+  $input: UpdateUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  updateUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteUnitList(
+  $input: DeleteUnitListInput!
+  $condition: ModelUnitListConditionInput
+) {
+  deleteUnitList(input: $input, condition: $condition) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateAssets(
+  $input: CreateAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  createAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateAssets(
+  $input: UpdateAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  updateAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteAssets(
+  $input: DeleteAssetsInput!
+  $condition: ModelAssetsConditionInput
+) {
+  deleteAssets(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateLocation(
+  $input: CreateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  createLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateLocation(
+  $input: UpdateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  updateLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteLocation(
+  $input: DeleteLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  deleteLocation(input: $input, condition: $condition) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateRoundPlanSubmissionDetails(
   $input: CreateRoundPlanSubmissionDetailsInput!
   $condition: ModelRoundPlanSubmissionDetailsConditionInput
@@ -146,6 +416,7 @@ mutation CreateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -165,6 +436,7 @@ mutation UpdateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -184,6 +456,7 @@ mutation DeleteAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
     createdAt
     updatedAt
     _version
@@ -254,9 +527,9 @@ mutation CreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -271,6 +544,7 @@ mutation CreateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -296,9 +570,9 @@ mutation UpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -313,6 +587,7 @@ mutation UpdateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -338,9 +613,9 @@ mutation DeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
+    hierarchy
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -355,6 +630,7 @@ mutation DeleteRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version

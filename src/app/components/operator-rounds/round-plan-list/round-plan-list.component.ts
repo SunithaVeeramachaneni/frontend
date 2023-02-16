@@ -77,6 +77,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'name',
       displayName: 'Plan Name',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: false,
@@ -105,6 +106,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
+      controlType: 'string',
       order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -141,6 +143,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
+      controlType: 'string',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -162,6 +165,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -183,6 +187,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'author',
       displayName: 'Owner',
       type: 'number',
+      controlType: 'string',
       isMultiValued: true,
       order: 5,
       hasSubtitle: false,
@@ -462,7 +467,10 @@ export class RoundPlanListComponent implements OnInit {
       .updateForm$({
         formMetadata: {
           id: form?.id,
-          isArchived: true
+          isArchived: true,
+          name: form?.name,
+          description: form?.description,
+          isArchivedAt: new Date().toISOString()
         },
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
@@ -508,15 +516,15 @@ export class RoundPlanListComponent implements OnInit {
       {
         title: 'Copy',
         action: 'copy'
-      }
-      /* {
-        title: 'Archive',
-        action: 'archive'
       },
       {
-        title: 'Upload to Public Library',
-        action: 'upload'
-      } */
+        title: 'Archive',
+        action: 'archive'
+      }
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
