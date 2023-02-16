@@ -38,7 +38,7 @@ export class LocationService {
   }
 
   fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 20000, ''));
+    from(this.awsApiService.ListLocations({}, 2000000, ''));
 
   getLocationsList$(queryParams: {
     nextToken?: string;

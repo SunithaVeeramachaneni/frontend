@@ -31,8 +31,7 @@
             ]"
           ></button>
           <mat-menu #createMenu="matMenu">
-            <button
-              disabled
+            <!-- <button
               mat-menu-item
               (click)="uploader.click()"
               class="menu-buttons"
@@ -44,7 +43,7 @@
                 class="menu-icons"
               />
               <span translate="uploadExcel"></span>
-            </button>
+            </button> -->
             <button
               mat-menu-item
               (click)="addManually()"
@@ -60,8 +59,7 @@
             </button>
           </mat-menu>
 
-          <button
-            disabled
+          <!-- <button
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
@@ -70,12 +68,7 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #moreMenu="matMenu">
-            <button
-              disabled
-              (click)="exportAsXLSX()"
-              mat-menu-item
-              class="menu-buttons"
-            >
+          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
                 alt="Excel"
@@ -83,7 +76,7 @@
               />
               <span translate="downloadTemplate"></span>
             </button>
-          </mat-menu>
+          </mat-menu> -->
           <input
             id="upload"
             hidden

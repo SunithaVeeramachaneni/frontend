@@ -28,7 +28,7 @@
           ></button>
           <mat-menu #createMenu="matMenu">
             <button
-              disabled
+              ngIf="false"
               mat-menu-item
               class="menu-buttons"
               (click)="uploader?.click()"
@@ -57,7 +57,7 @@
           </mat-menu>
 
           <button
-            disabled
+            *ngIf="false"
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"

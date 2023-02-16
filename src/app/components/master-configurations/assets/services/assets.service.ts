@@ -37,7 +37,7 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 20000, ''));
+  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 2000000, ''));
 
   getAssetsList$(queryParams: {
     nextToken?: string;
