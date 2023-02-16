@@ -28,8 +28,9 @@ export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   allLocations$: Observable<ListLocationsQuery>;
+  private assEditData = null;
   @Input() set assetsEditData(data) {
-    this.assEditData = data;
+    this.assEditData = data || null;
     if (this.assEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
@@ -76,7 +77,6 @@ export class AddEditAssetsComponent implements OnInit {
   assets$;
   parentInformation;
   allParentsData;
-  private assEditData;
 
   constructor(
     private fb: FormBuilder,
@@ -96,7 +96,8 @@ export class AddEditAssetsComponent implements OnInit {
       parentId: ''
     });
 
-    this.assetForm.get('parentType').valueChanges.subscribe((value) => {
+    this.assetForm.get('parentType').valueChanges.subscribe((value) => { 
+      this.assetForm.get('parentId').setValue("");
       if (value === 'location') {
         this.getAllLocations();
       } else if (value === 'asset') {
@@ -116,6 +117,7 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
+         this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     } else if (this.assetStatus === 'edit') {
@@ -129,6 +131,7 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
+         this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     }
@@ -148,6 +151,7 @@ export class AddEditAssetsComponent implements OnInit {
   cancel() {
     this.slideInOut.emit('out');
     this.assetForm.reset();
+     this.assetForm?.get('parentType').setValue('location');
   }
 
   getAllLocations() {
@@ -162,6 +166,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.parentInformation = allAssets.items.filter(
         (asset) => asset.id !== this.assEditData?.id && !asset._deleted
       );
+      this.allParentsData = this.parentInformation;
     });
   }
 
