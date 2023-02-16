@@ -102,6 +102,10 @@
     }
   }
 
+  .symbol-heading {
+    margin-left: 32%;
+  }
+
   .show-measurement {
     color: $black;
   }
@@ -159,6 +163,10 @@
       margin-right: 15px;
       background-color: $blue-main;
       color: $white;
+    }
+    .save-btn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
     }
   }
 

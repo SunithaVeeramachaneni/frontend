@@ -33,7 +33,13 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 
-import { CellClickActionEvent, Count, TableEvent } from 'src/app/interfaces';
+import {
+  CellClickActionEvent,
+  Count,
+  Permission,
+  TableEvent,
+  UserInfo
+} from 'src/app/interfaces';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import {
@@ -48,6 +54,7 @@ import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-d
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { groupBy } from 'lodash-es';
+import { LoginService } from './../../../login/services/login.service';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -255,11 +262,13 @@ export class UnitMeasurementListComponent implements OnInit {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   unitAddOrEditOpenState = 'out';
   unitEditData: any = null;
+  userInfo$: Observable<UserInfo>;
   private allUnitData: GetUnitMeasumentQuery[] = [];
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
-    public readonly dialog: MatDialog
+    public readonly dialog: MatDialog,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -277,7 +286,9 @@ export class UnitMeasurementListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -459,22 +470,32 @@ export class UnitMeasurementListComponent implements OnInit {
     this.fetchUOM$.next(event);
   };
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_UNIT_OF_MEASUREMENT'
+      )
+    ) {
+      menuActions.push({
         title: 'Set as Default',
         action: 'setAsDefault'
-      },
-      {
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_UNIT_OF_MEASUREMENT'
+      )
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      }
-      // {
-      //   icon: 'delete',
-      //   title: 'Delete',
-      //   action: 'delete'
-      // }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -773,11 +794,6 @@ export class UnitMeasurementListComponent implements OnInit {
             this.unitMeasurementService.handleError(err);
           }
         );
-      } else {
-        this.addEditCopyForm$.next({
-          action: 'setAsDefault',
-          form: res
-        });
       }
     }
   }
@@ -792,6 +808,7 @@ export class UnitMeasurementListComponent implements OnInit {
       .subscribe(
         (result: UpdateUnitMeasumentMutation) => {
           if (result) {
+            this.nextToken = '';
             this.addEditCopyForm$.next({
               action: 'status',
               form: result
