@@ -137,8 +137,8 @@ export class AddEditAssetsComponent implements OnInit {
     }
   }
 
-  onKey($event) {
-    const value = $event.target.value || '';
+  onKey(event) {
+    const value = event.target.value || '';
     this.allParentsData = this.search(value);
   }
 
