@@ -14,13 +14,18 @@ export class HierarchyAssetsListComponent implements OnInit {
   }
 
   public hierarchyList: HierarchyEntity[];
+  public locationsCount: number;
+  public assetsCount: number;
 
   constructor(
     private assetHierarchyUtil: AssetHierarchyUtil,
     private dialogRef: MatDialogRef<HierarchyAssetsListComponent>
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.locationsCount = this.hierarchyList.length;
+    this.assetsCount = 0;
+  }
 
   handleHierarchyElementChange = (event) => {
     const { id } = event;
@@ -37,6 +42,6 @@ export class HierarchyAssetsListComponent implements OnInit {
   };
 
   submitSelectedElementsInHierarchy = () => {
-    console.log(this.hierarchyList);
+    this.dialogRef.close(this.hierarchyList);
   };
 }

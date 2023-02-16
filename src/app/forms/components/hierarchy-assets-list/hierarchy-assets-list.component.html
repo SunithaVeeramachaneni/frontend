@@ -16,7 +16,16 @@
   </div>
 
   <div class="assets-footer">
-    <div class="selected-items"></div>
+    <div class="selected-items">
+      {{
+        'selectedLocationsAndAssets'
+          | translate
+            : {
+                locationsCount: locationsCount,
+                assetsCount: assetsCount
+              }
+      }}
+    </div>
 
     <div mat-dialog-actions class="actions">
       <button

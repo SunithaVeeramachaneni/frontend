@@ -124,5 +124,6 @@
   "location": "Location",
   "lastEditedBy": "Last Edited by",
   "viewReport": "View Report",
-  "selectedLocations": "Location(s) selected"
+  "selectedLocations": "Location(s) selected",
+  "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected"
 }

@@ -94,6 +94,6 @@ export class HierarchyContainerComponent implements OnInit {
   openHierarchyModal = () => {
     const dialogRef = this.dialog.open(HierarchyModalComponent, {});
 
-    dialogRef.afterClosed().subscribe(() => console.log('Hit'));
+    dialogRef.afterClosed().subscribe();
   };
 }

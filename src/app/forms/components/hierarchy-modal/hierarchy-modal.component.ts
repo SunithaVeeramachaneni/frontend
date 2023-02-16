@@ -39,7 +39,7 @@ export class HierarchyModalComponent implements OnInit {
       })
     );
 
-    this.allHierarchyItems$.subscribe(console.log);
+    this.allHierarchyItems$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (
