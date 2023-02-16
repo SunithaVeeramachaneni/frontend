@@ -103,6 +103,11 @@
       color: $white;
     }
 
+    .save-btn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
+
     .cancel-btn {
       color: $blue-main;
       border-color: $blue-main;

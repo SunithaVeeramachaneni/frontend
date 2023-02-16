@@ -56,29 +56,38 @@
           <input matInput [(ngModel)]="newUnitType" required />
           <mat-error
             class="m-l-5 m-t-2 text-red"
-            *ngIf="
-              unitType === 'addNew' && newUnitType === '' && isSubmittedForm
-            "
+            *ngIf="unitType === 'addNew' && newUnitType === ''"
           >
             {{ 'unitTypeError' | translate }}
           </mat-error>
         </mat-form-field>
       </div>
-      <div class="m-l-5 m-t-5 display-flex" *ngIf="unitEditData">
+      <div
+        class="m-l-5 m-t-5 display-flex custom-form-field-white-color"
+        *ngIf="unitEditData"
+      >
         <div class="show-measurement">
           <a class="width-90" *ngIf="!isEditMeasurement">
             <input
               #measurement
               type="text"
               [size]="
-                measurement.value !== '' ? getSize(measurement.value) : 20
+                measurement?.value !== '' ? getSize(measurement?.value) : 20
               "
               class="form_title_input"
               [(ngModel)]="unitType"
               autofocus="true"
               autocomplete="off"
+              (keyup.enter)="isEditMeasurement = true"
               (blur)="isEditMeasurement = true"
+              required
             />
+            <mat-error
+              class="m-l-5 m-t-2 text-red"
+              *ngIf="!isEditMeasurement && unitType === ''"
+            >
+              {{ 'unitTypeError' | translate }}
+            </mat-error>
           </a>
           <p *ngIf="isEditMeasurement" class="unit-type-name">
             {{ unitType }}
@@ -91,7 +100,7 @@
             </button>
           </p>
         </div>
-        <span class="delete-icon" (click)="deleteUnitAndUOM()">
+        <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
           <img
             src="assets/rdf-forms-icons/delete-icon.svg"
             class="list-icons"
@@ -174,7 +183,12 @@
       </span>
     </div>
     <div class="footer-buttons">
-      <button mat-raised-button (click)="onSave()" class="save-btn">
+      <button
+        mat-raised-button
+        [disabled]="!unitType || unitMeasurementForm?.invalid"
+        (click)="onSave()"
+        class="save-btn"
+      >
         {{ 'save' | translate }}
       </button>
       <button mat-button class="cancel-btn" (click)="cancel()">

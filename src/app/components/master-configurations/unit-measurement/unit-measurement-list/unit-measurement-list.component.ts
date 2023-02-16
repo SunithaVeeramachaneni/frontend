@@ -773,11 +773,6 @@ export class UnitMeasurementListComponent implements OnInit {
             this.unitMeasurementService.handleError(err);
           }
         );
-      } else {
-        this.addEditCopyForm$.next({
-          action: 'setAsDefault',
-          form: res
-        });
       }
     }
   }
@@ -792,6 +787,7 @@ export class UnitMeasurementListComponent implements OnInit {
       .subscribe(
         (result: UpdateUnitMeasumentMutation) => {
           if (result) {
+            this.nextToken = '';
             this.addEditCopyForm$.next({
               action: 'status',
               form: result
