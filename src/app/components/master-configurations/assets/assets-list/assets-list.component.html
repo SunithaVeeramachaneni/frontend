@@ -65,12 +65,7 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #moreMenu="matMenu">
-            <button
-              disabled
-              mat-menu-item
-              (click)="exportAsXLSX()"
-              class="menu-buttons"
-            >
+            <button mat-menu-item (click)="exportAsXLSX()" class="menu-buttons">
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
                 alt="Excel"
