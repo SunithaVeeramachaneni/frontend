@@ -1,5 +1,6 @@
 export interface HierarchyEntity {
   id: string;
+  dynamoDBId: string;
   type: 'location' | 'asset';
   name: string;
   image: string;

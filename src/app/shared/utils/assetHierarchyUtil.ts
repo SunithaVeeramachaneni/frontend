@@ -70,6 +70,7 @@ export class AssetHierarchyUtil {
       const { name, type, image } = node;
       const leafNode = {
         id: uuidv4(),
+        dynamoDBId: node.id,
         name,
         type,
         image,
