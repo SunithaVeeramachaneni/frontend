@@ -14,9 +14,24 @@ export const hierarchyMock = [
     parentId: null
   },
   {
+    id: 'Root Node 3',
+    name: 'Root Node 3',
+    type: 'location',
+    image: '',
+    parentId: null
+  },
+  {
+    id: 'Child Node 3.1',
+    name: 'Child Node 3.1',
+    type: 'asset',
+    image: '',
+    parentId: 'Root Node 3'
+  },
+
+  {
     id: 'Child Node 1.1',
     name: 'Child Node 1.1',
-    type: 'location',
+    type: 'asset',
     image: '',
     parentId: 'Root Node 1'
   },

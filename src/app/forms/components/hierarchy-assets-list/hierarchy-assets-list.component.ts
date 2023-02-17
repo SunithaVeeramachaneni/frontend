@@ -32,9 +32,17 @@ export class HierarchyAssetsListComponent implements OnInit {
     const indexInHierarchy = this.hierarchyList.findIndex(
       (element) => element.id === id
     );
-    if (indexInHierarchy > -1) this.hierarchyList[indexInHierarchy] = event;
-
-    /// Fix get selected count by node
+    if (indexInHierarchy > -1) {
+      this.hierarchyList[indexInHierarchy] = event;
+      this.locationsCount = this.assetHierarchyUtil.getCountByNodeType(
+        this.hierarchyList,
+        'location'
+      );
+      this.assetsCount = this.assetHierarchyUtil.getCountByNodeType(
+        this.hierarchyList,
+        'asset'
+      );
+    }
   };
 
   cancel = () => {
@@ -42,6 +50,8 @@ export class HierarchyAssetsListComponent implements OnInit {
   };
 
   submitSelectedElementsInHierarchy = () => {
-    this.dialogRef.close(this.hierarchyList);
+    const cleanedHierarchyList =
+      this.assetHierarchyUtil.cleanSelectedHierarchyList(this.hierarchyList);
+    this.dialogRef.close(cleanedHierarchyList);
   };
 }

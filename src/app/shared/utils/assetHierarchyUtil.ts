@@ -57,13 +57,17 @@ export class AssetHierarchyUtil {
   getCountByNodeType = (hierarchyList: HierarchyEntity[], type: string) => {
     let count = 0;
     hierarchyList.forEach((node) => {
-      if (node.isSelected && !node.hasChildren && node.type === type) count++;
-      else count += this.getCountByNodeType(node.children, type);
+      if (node.type === type && node.isSelected) count++;
+      if (node.children.length)
+        count += this.getCountByNodeType(node.children, type);
     });
     return count;
   };
 
-  prepareHierarchyList = (flatList: any[], parentId = null) => {
+  prepareHierarchyList = (
+    flatList: any[],
+    parentId = null
+  ): HierarchyEntity[] => {
     const nodes: HierarchyEntity[] = [];
     const filteredFlatList = flatList.filter((item) => item.parentId);
     flatList.forEach((node) => {
@@ -79,7 +83,7 @@ export class AssetHierarchyUtil {
         subFormId: '',
         isSelected: false,
         isToggledView: false,
-        children: []
+        children: [] as HierarchyEntity[]
       } as HierarchyEntity;
 
       if (!node.parentId || (parentId && node.parentId === parentId)) {
@@ -92,6 +96,52 @@ export class AssetHierarchyUtil {
             hasChildren: true,
             children: this.prepareHierarchyList(filteredFlatList, node.id)
           } as HierarchyEntity);
+      }
+    });
+
+    return nodes;
+  };
+
+  getHierarchyByNodeId = (
+    hierarchyList: HierarchyEntity[],
+    nodeId: string
+  ): HierarchyEntity => {
+    let leafNode = {} as HierarchyEntity;
+    for (const node of hierarchyList) {
+      if (node.dynamoDBId === nodeId) {
+        leafNode = {
+          ...node,
+          hasChildren: false,
+          children: [] as HierarchyEntity[]
+        };
+        break;
+      } else if (node.dynamoDBId !== nodeId && node.children.length) {
+        leafNode = {
+          ...node,
+          children: [
+            this.getHierarchyByNodeId(node.children, nodeId)
+          ] as HierarchyEntity[]
+        };
+        break;
+      }
+    }
+    return leafNode;
+  };
+
+  cleanSelectedHierarchyList = (hierarchyList): HierarchyEntity[] => {
+    let nodes = [] as HierarchyEntity[];
+    hierarchyList.forEach((node) => {
+      if (node.isSelected && !node.hasChildren) {
+        nodes.push(node);
+      } else {
+        const childNodes = this.cleanSelectedHierarchyList(node.children);
+        if (node.isSelected)
+          nodes.push({
+            ...node,
+            children: childNodes
+          });
+        // If current node is selected, only selected child nodes get filtered into its children[].
+        else nodes = [...nodes, ...childNodes]; // If current node is not selected but children are, children get promoted to previous node's level in the hierarchy.
       }
     });
 

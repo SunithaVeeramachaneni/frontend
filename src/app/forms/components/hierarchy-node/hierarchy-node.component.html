@@ -1,6 +1,7 @@
 <div class="node">
   <div class="dis-flex">
     <mat-checkbox
+      *ngIf="viewMode === false"
       [(ngModel)]="masterData.isSelected"
       (change)="nodeCheckboxToggled($event)"
       class="checkbox"
@@ -12,7 +13,10 @@
   <hr class="borders" />
   <div *ngIf="selectionMode === 'selectAssets' && masterData?.hasChildren">
     <div *ngFor="let data of masterData.children" class="child-node">
-      <a (click)="data.isToggledView = !data.isToggledView">
+      <a
+        *ngIf="viewMode === false"
+        (click)="data.isToggledView = !data.isToggledView"
+      >
         <mat-icon *ngIf="data.isToggledView === false" class="arrows">
           keyboard_arrow_right
         </mat-icon>
@@ -20,12 +24,18 @@
           keyboard_arrow_down
         </mat-icon>
       </a>
-      <a class="count-assets">{{ hierarchyCount(data) }} Assets</a>
-      <hr class="borders" *ngIf="data.isToggledView === false" />
-      <div *ngIf="data.isToggledView">
+      <a *ngIf="viewMode === false" class="count-assets"
+        >{{ hierarchyCount(data) }} Assets</a
+      >
+      <hr
+        class="borders"
+        *ngIf="data.isToggledView === false || viewMode === true"
+      />
+      <div *ngIf="data.isToggledView || viewMode === true">
         <app-hierarchy-node
           [nodeData]="data"
           (checkboxToggleHandler)="handleChildEntityToggle($event)"
+          [displayMode]="viewMode"
           [mode]="'selectAssets'"
         ></app-hierarchy-node>
       </div>

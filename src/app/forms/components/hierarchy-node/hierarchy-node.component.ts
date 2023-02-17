@@ -26,10 +26,15 @@ export class HierarchyNodeComponent implements OnInit {
     this.selectionMode = modeType;
   }
 
+  @Input() set displayMode(type: boolean) {
+    this.viewMode = type;
+  }
+
   public selectionMode: string;
   public masterData: HierarchyEntity;
   public isChecked = false;
   public isTreeViewToggled = false;
+  public viewMode = false;
 
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
 

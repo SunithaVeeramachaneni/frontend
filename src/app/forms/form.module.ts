@@ -50,6 +50,7 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
 import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-modal.component';
 import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
+import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list
     HierarchyNodeComponent,
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
-    HierarchyAssetsListComponent
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent
   ],
   imports: [
     FormsModule,
@@ -120,6 +122,7 @@ import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
     BuilderComponent,

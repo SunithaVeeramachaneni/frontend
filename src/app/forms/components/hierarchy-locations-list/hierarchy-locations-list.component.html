@@ -16,7 +16,7 @@
     </span>
   </div>
   <div class="list-container">
-    <div class="node-container">
+    <div *ngIf="allItems.length; else loadingLocations" class="node-container">
       <mat-checkbox
         class="master-checkbox"
         [(ngModel)]="isMasterChecked"
@@ -46,6 +46,7 @@
         class="cancel-btn"
         mat-dialog-close="true"
         translate="Cancel"
+        (click)="cancel()"
       ></button>
       <button
         mat-raised-button

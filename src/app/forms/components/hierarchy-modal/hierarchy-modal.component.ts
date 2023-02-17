@@ -35,7 +35,6 @@ export class HierarchyModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Hit');
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
     this.allHierarchyItems$ = combineLatest([
@@ -44,19 +43,18 @@ export class HierarchyModalComponent implements OnInit {
     ]).pipe(
       map(([allLocations, allAssets]) => {
         const hierarchyItems = [...allLocations.items, ...allAssets.items];
+        this.allHierarchyItems =
+          this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
         this.store.dispatch(
           HierarchyActions.setMasterHierarchyList({
-            masterHierarchy:
-              this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock)
+            masterHierarchy: this.allHierarchyItems
           })
         );
-        return this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
+        return this.allHierarchyItems;
       })
     );
 
-    this.allHierarchyItems$.subscribe(
-      (list) => (this.allHierarchyItems = list)
-    );
+    this.allHierarchyItems$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { HierarchyEntity } from 'src/app/interfaces';
@@ -24,7 +23,9 @@ export class HierarchyLocationsListComponent implements OnInit {
   };
   public selectedItems = [];
   private allItems = [];
-  constructor() {}
+  constructor(
+    private dialogRef: MatDialogRef<HierarchyLocationsListComponent>
+  ) {}
 
   ngOnInit(): void {
     this.isMasterChecked = false;
@@ -50,6 +51,10 @@ export class HierarchyLocationsListComponent implements OnInit {
       checked,
       masterToggle: true
     };
+  };
+
+  cancel = () => {
+    this.dialogRef.close();
   };
 
   submitSelectedLocations = () => {

@@ -18,12 +18,10 @@ export class ShowHierarchyPopupComponent implements OnInit {
   ngOnInit(): void {
     this.hierarchyList =
       this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
-    console.log(this.hierarchyList);
 
     this.hierarchyToBeDisplayed = this.assetHierarchyUtil.getHierarchyByNodeId(
       this.hierarchyList,
       'Subchild Node 1'
     );
-    console.log(this.hierarchyToBeDisplayed);
   }
 }
