@@ -30,13 +30,14 @@
     <div mat-dialog-actions class="actions">
       <button
         mat-stroked-button
+        class="cancel-btn"
         mat-dialog-close="true"
         translate="Cancel"
         (click)="cancel()"
       ></button>
       <button
         mat-raised-button
-        color="primary"
+        class="next-btn"
         translate="Next"
         (click)="submitSelectedElementsInHierarchy()"
       ></button>
