@@ -33,6 +33,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
+import { hierarchyReducer } from 'src/app/forms/state/hierarchy.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
@@ -119,7 +120,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
-      responseSet: responseSetReducer
+      responseSet: responseSetReducer,
+      hierarchy: hierarchyReducer
     }),
     EffectsModule.forFeature([
       RoundPlanConfigurationEffects,

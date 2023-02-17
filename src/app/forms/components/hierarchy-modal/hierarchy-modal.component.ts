@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { State } from 'src/app/forms/state';
@@ -23,6 +23,7 @@ export class HierarchyModalComponent implements OnInit {
   allLocations = [];
   allAssets$: Observable<any>;
   allHierarchyItems$: Observable<any>;
+  allHierarchyItems = [];
   mode = 'location';
   selectedLocationsHierarchy: HierarchyEntity[];
 
@@ -34,6 +35,7 @@ export class HierarchyModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('Hit');
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
     this.allHierarchyItems$ = combineLatest([
@@ -52,7 +54,9 @@ export class HierarchyModalComponent implements OnInit {
       })
     );
 
-    this.allHierarchyItems$.subscribe();
+    this.allHierarchyItems$.subscribe(
+      (list) => (this.allHierarchyItems = list)
+    );
   }
 
   prepareHierarchyForSelectedLocations = (

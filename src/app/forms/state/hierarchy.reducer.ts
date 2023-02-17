@@ -14,9 +14,12 @@ export const hierarchyReducer = createReducer<HierarchyState>(
   initialState,
   on(
     HierarchyActions.setMasterHierarchyList,
-    (state, action): HierarchyState => ({
-      ...state,
-      masterHierarchy: action.masterHierarchy
-    })
+    (state, action): HierarchyState => {
+      console.log(action);
+      return {
+        ...state,
+        masterHierarchy: action.masterHierarchy
+      };
+    }
   )
 );

@@ -13,12 +13,10 @@ import { HierarchyEntity } from 'src/app/interfaces';
 export class HierarchyLocationsListComponent implements OnInit {
   @Output() handleLocationHierarchy: EventEmitter<any> =
     new EventEmitter<any>();
-  @Input() set locationsData(data: Observable<HierarchyEntity[]>) {
-    this.allLocations$ = data
-      ? data
-      : (of([]) as Observable<HierarchyEntity[]>);
+  @Input() set locationsData(data: HierarchyEntity[]) {
+    this.allItems = data ? data : ([] as HierarchyEntity[]);
   }
-  allLocations$: Observable<HierarchyEntity[]>;
+  allLocations: HierarchyEntity[];
   public isMasterChecked: boolean;
   public isMasterCheckedData: any = {
     checked: false,
@@ -30,13 +28,6 @@ export class HierarchyLocationsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.isMasterChecked = false;
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          this.allItems = allLocations;
-        })
-      )
-      .subscribe();
   }
 
   handleNodeToggle = (event: any) => {
