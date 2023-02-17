@@ -124,6 +124,8 @@
   "location": "Location",
   "lastEditedBy": "Last Edited by",
   "viewReport": "View Report",
-  "selectedLocations": "Location(s) selected",
+  "selectHierarchyType": "Select {type}",
+  "selectedLocations": "{count} Location(s) selected",
+  "assetsCount": "{count} Asset(s)",
   "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected"
 }

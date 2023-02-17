@@ -24,9 +24,13 @@
           keyboard_arrow_down
         </mat-icon>
       </a>
-      <a *ngIf="viewMode === false" class="count-assets"
-        >{{ hierarchyCount(data) }} Assets</a
-      >
+      <a *ngIf="viewMode === false" class="count-assets">{{
+        'assetsCount'
+          | translate
+            : {
+                count: hierarchyCount(data)
+              }
+      }}</a>
       <hr
         class="borders"
         *ngIf="data.isToggledView === false || viewMode === true"

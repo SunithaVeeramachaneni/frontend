@@ -1,6 +1,14 @@
 <div class="assets-modal">
   <div class="dis-flex heading-container">
-    <h2 class="heading" translate>Select Assets</h2>
+    <h2 class="heading">
+      {{
+        'selectHierarchyType'
+          | translate
+            : {
+                type: 'Assets'
+              }
+      }}
+    </h2>
   </div>
 
   <div class="list-container">
@@ -38,7 +46,7 @@
       <button
         mat-raised-button
         class="next-btn"
-        translate="Next"
+        translate="Add"
         (click)="submitSelectedElementsInHierarchy()"
       ></button>
     </div>
