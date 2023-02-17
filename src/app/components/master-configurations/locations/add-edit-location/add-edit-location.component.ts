@@ -124,7 +124,8 @@ export class AddEditLocationComponent implements OnInit {
     }
   }
 
-  onKey(value) {
+  onKey(event) {
+    const value = event.target.value || "";
     this.allParentsData = this.search(value);
   }
 
