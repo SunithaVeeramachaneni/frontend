@@ -7,7 +7,7 @@
 
   <img [src]="masterData?.image" class="master-data-image" />
   <div class="master-data-title">{{ masterData.name }}</div>
-  <div *ngIf="selectionMode === 'selectAssets' && masterData?.children?.length">
+  <div *ngIf="selectionMode === 'selectAssets' && masterData?.hasChildren">
     <div *ngFor="let data of masterData.children">
       <button (click)="data.isToggledView = !data.isToggledView">-</button>
       {{ hierarchyCount(data) }}
