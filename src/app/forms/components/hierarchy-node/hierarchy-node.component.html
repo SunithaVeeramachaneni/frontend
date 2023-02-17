@@ -1,16 +1,17 @@
 <div class="node">
   <div class="dis-flex">
-    <mat-checkbox
-      *ngIf="viewMode === false"
-      [(ngModel)]="masterData.isSelected"
-      (change)="nodeCheckboxToggled($event)"
-      class="checkbox"
-    ></mat-checkbox>
+    <div *ngIf="viewMode === false">
+      <mat-checkbox
+        [(ngModel)]="masterData.isSelected"
+        (change)="nodeCheckboxToggled($event)"
+        class="checkbox"
+      ></mat-checkbox>
 
-    <img [src]="masterData?.image" class="master-data-image" />
+      <img [src]="masterData?.image" class="master-data-image" />
+    </div>
     <div class="master-data-title">{{ masterData.name }}</div>
   </div>
-  <hr class="borders" />
+  <hr class="borders" *ngIf="viewMode === false" />
   <div *ngIf="selectionMode === 'selectAssets' && masterData?.hasChildren">
     <div *ngFor="let data of masterData.children" class="child-node">
       <a
@@ -31,10 +32,7 @@
                 count: hierarchyCount(data)
               }
       }}</a>
-      <hr
-        class="borders"
-        *ngIf="data.isToggledView === false || viewMode === true"
-      />
+      <hr class="borders" *ngIf="data.isToggledView === false" />
       <div *ngIf="data.isToggledView || viewMode === true">
         <app-hierarchy-node
           [nodeData]="data"

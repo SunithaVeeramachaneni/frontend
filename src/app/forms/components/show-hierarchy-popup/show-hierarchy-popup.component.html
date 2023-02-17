@@ -1,5 +1,15 @@
-<app-hierarchy-node
-  [nodeData]="hierarchyToBeDisplayed"
-  [displayMode]="true"
-  [mode]="'selectAssets'"
-></app-hierarchy-node>
+<div class="show-hierarchy-container">
+  <div class="heading">
+    <a translate>hierarchy</a>
+    <button class="cancel-icon" (click)="closeShowHierarchy()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="node-container">
+    <app-hierarchy-node
+      [nodeData]="hierarchyToBeDisplayed"
+      [displayMode]="true"
+      [mode]="'selectAssets'"
+    ></app-hierarchy-node>
+  </div>
+</div>
