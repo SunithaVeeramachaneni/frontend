@@ -126,6 +126,7 @@
   "viewReport": "View Report",
   "hierarchy": "Hierarchy",
   "selectHierarchyType": "Select {type}",
+  "searchLocation": "Search Location",
   "selectedLocations": "{count} Location(s) selected",
   "assetsCount": "{count} Asset(s)",
   "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected"
