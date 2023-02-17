@@ -502,6 +502,7 @@ subscription OnCreateRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -544,6 +545,7 @@ subscription OnUpdateRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -586,6 +588,7 @@ subscription OnDeleteRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
