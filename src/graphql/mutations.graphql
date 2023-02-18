@@ -545,6 +545,7 @@ mutation CreateRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -588,6 +589,7 @@ mutation UpdateRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -631,6 +633,7 @@ mutation DeleteRoundPlanList(
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version

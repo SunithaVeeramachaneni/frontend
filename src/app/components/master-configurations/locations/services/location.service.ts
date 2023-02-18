@@ -3,7 +3,7 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateLocationInput,
-  DeleteLocationListInput,
+  DeleteLocationInput,
   ListLocationsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
@@ -38,7 +38,7 @@ export class LocationService {
   }
 
   fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 20000, ''));
+    from(this.awsApiService.ListLocations({}, 2000000, ''));
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -104,7 +104,7 @@ export class LocationService {
     );
   }
 
-  deleteLocation$(values: DeleteLocationListInput) {
+  deleteLocation$(values: DeleteLocationInput) {
     return from(this.awsApiService.DeleteLocation({ ...values }));
   }
 
@@ -113,7 +113,7 @@ export class LocationService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-location',
+      'location/download/sample-template',
       info,
       true,
       {}
@@ -160,7 +160,7 @@ export class LocationService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'location-excel-upload',
+      'location/upload',
       form,
       info
     );

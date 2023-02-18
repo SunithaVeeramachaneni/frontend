@@ -5,11 +5,7 @@
   height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
-    width: 20%;
-  }
-
-  ::ng-deep .mat-column-description {
-    width: 40%;
+    width: 30%;
   }
 
   ::ng-deep .mat-column-unitType,
@@ -52,6 +48,7 @@
   .create-new-btn {
     background: $blue-main;
     color: $white;
+    margin-right: 10px; // Remove once export and excel button used
   }
 
   .more-btn {

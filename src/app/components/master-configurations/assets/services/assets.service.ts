@@ -3,7 +3,7 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateAssetsInput,
-  DeleteAssetsListInput,
+  DeleteAssetsInput,
   ListAssetsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 20000, ''));
+  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 2000000, ''));
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -110,7 +110,7 @@ export class AssetsService {
     );
   }
 
-  deleteAssets$(values: DeleteAssetsListInput) {
+  deleteAssets$(values: DeleteAssetsInput) {
     return from(this.awsApiService.DeleteAssets({ ...values }));
   }
 
@@ -119,7 +119,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-assets',
+      'assets/download/sample-template',
       info,
       true,
       {}
@@ -166,7 +166,7 @@ export class AssetsService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'assets-excel-upload',
+      'assets/upload',
       form,
       info
     );

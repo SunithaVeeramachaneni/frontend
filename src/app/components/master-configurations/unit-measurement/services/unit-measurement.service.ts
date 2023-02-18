@@ -19,6 +19,7 @@ import { groupBy } from 'lodash-es';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import { ToastService } from 'src/app/shared/toast';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,8 @@ export class UnitMeasurementService {
   measurementList = ['Length', 'Area', 'Volume', 'Temperature', 'Mass'];
   constructor(
     private readonly awsApiService: APIService,
-    private readonly _appService: AppService
+    private readonly _appService: AppService,
+    private toastService: ToastService
   ) {}
 
   getUnitOfMeasurementList$(queryParams: {
@@ -130,7 +132,7 @@ export class UnitMeasurementService {
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'umo-excel-upload',
+      'uom/upload',
       form,
       info
     );
@@ -141,11 +143,21 @@ export class UnitMeasurementService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'download-sample-umo',
+      'uom/download/sample-template',
       info,
       true,
       {}
     );
+  }
+
+  handleError(error: any) {
+    const message = error.errors?.length
+      ? error.errors[0].message.split(':')[0]
+      : error.message;
+    this.toastService.show({
+      type: 'warning',
+      text: message
+    });
   }
 
   private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {

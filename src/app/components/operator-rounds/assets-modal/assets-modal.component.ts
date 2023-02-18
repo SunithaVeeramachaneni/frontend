@@ -8,13 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./assets-modal.component.scss']
 })
 export class AssetsModalComponent implements OnInit {
+  constructor(private dialog: MatDialog) {}
 
-  constructor(
-    private dialog: MatDialog,
-  ) { }
-
-  ngOnInit(): void {
-  }
-
+  assets() { }
   
+  ngOnInit(): void {}
 }

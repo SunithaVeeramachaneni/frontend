@@ -774,6 +774,7 @@ query GetRoundPlanList($id: ID!) {
     }
     isDeleted
     searchTerm
+    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -807,6 +808,7 @@ query ListRoundPlanLists(
       isArchivedAt
       isDeleted
       searchTerm
+      hierarchyMode
       createdAt
       updatedAt
       _version
@@ -849,6 +851,7 @@ query SyncRoundPlanLists(
       isArchivedAt
       isDeleted
       searchTerm
+      hierarchyMode
       createdAt
       updatedAt
       _version
