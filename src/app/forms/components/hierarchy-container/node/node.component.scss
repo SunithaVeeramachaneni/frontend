@@ -2,7 +2,6 @@
 
 .node {
   &:hover {
-    cursor: pointer;
     background: $hover-bg;
     color: $black;
   }
@@ -31,11 +30,18 @@
       justify-content: center;
     }
   }
+
   .right {
     display: flex;
     width: 10%;
     align-items: center;
   }
+}
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: inherit;
 }
 .children {
   margin-left: 40px;
@@ -61,4 +67,10 @@
 .active {
   background: $active-blue;
   color: $white;
+}
+.question-six-dots {
+  position: relative;
+  width: 10px;
+  cursor: move;
+  margin-right: 10px;
 }

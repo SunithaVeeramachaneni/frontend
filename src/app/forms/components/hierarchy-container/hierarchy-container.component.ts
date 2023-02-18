@@ -19,6 +19,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -58,7 +59,7 @@ export class HierarchyContainerComponent implements OnInit {
           this.hierarchy = JSON.parse(JSON.stringify(hierarchy));
           if (this.hierarchyMode === 'flat') {
             this.flatHierarchyList =
-              assetHierarchyUtil.convertHierarchyToFlatList(hierarchy);
+              assetHierarchyUtil.convertHierarchyToFlatList(hierarchy, 0);
             this.filteredHierarchyList = JSON.parse(
               JSON.stringify(this.flatHierarchyList)
             );
@@ -90,6 +91,24 @@ export class HierarchyContainerComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  drop(event: CdkDragDrop<any>) {
+    moveItemInArray(
+      this.filteredHierarchyList,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.filteredHierarchyList.map((node, index) => {
+      if (index >= event.currentIndex) {
+        node.sequence = index;
+      }
+      return node;
+    });
+    this.hierarchyEvent.emit({
+      hierarchy: this.filteredHierarchyList,
+      node: event.item?.data
+    });
   }
 
   getTotalTasksCount() {

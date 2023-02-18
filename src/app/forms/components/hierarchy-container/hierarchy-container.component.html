@@ -33,15 +33,19 @@
         <strong>{{ searchHierarchyKey.value }} </strong></span
       >
     </div>
-    <app-node
-      [node]="node"
-      [hierarchyMode]="hierarchyMode"
-      (nodeRemoved)="removeNodeHandler($event)"
-      *ngFor="let node of filteredHierarchyList"
-      [ngClass]="{
-        displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat'
-      }"
-    ></app-node>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
+      <app-node
+        cdkDrag
+        [cdkDragData]="node"
+        [node]="node"
+        [hierarchyMode]="hierarchyMode"
+        (nodeRemoved)="removeNodeHandler($event)"
+        *ngFor="let node of filteredHierarchyList"
+        [ngClass]="{
+          displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat'
+        }"
+      ></app-node>
+    </div>
   </div>
   <div *ngIf="!hierarchy.length" class="emptyHierarchy">
     <span>You have not added any assets yet</span>
