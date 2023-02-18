@@ -2,57 +2,57 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ErrorInfo } from 'src/app/interfaces';
-import { RoundPlanSchedulerConfiguration } from 'src/app/interfaces';
+import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoundPlanSchedulerConfigurationService {
+export class RoundPlanScheduleConfigurationService {
   constructor(private appService: AppService) {}
 
-  createRoundPlanSchedulerConfiguration$ = (
-    roundPlansSchedulerConfiguration: RoundPlanSchedulerConfiguration,
+  createRoundPlanScheduleConfiguration$ = (
+    roundPlansScheduleConfiguration: RoundPlanScheduleConfiguration,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanSchedulerConfiguration> =>
+  ): Observable<RoundPlanScheduleConfiguration> =>
     this.appService._postData(
       environment.operatorRoundsApiUrl,
-      'round-plan-scheduler-configuration',
-      roundPlansSchedulerConfiguration,
+      'round-plan-schedule-configuration',
+      roundPlansScheduleConfiguration,
       info
     );
 
-  updateRoundPlanSchedulerConfiguration$ = (
-    schedulerId: string,
-    roundPlansSchedulerConfiguration: RoundPlanSchedulerConfiguration,
+  updateRoundPlanScheduleConfiguration$ = (
+    scheduleId: string,
+    roundPlansScheduleConfiguration: RoundPlanScheduleConfiguration,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanSchedulerConfiguration> =>
+  ): Observable<RoundPlanScheduleConfiguration> =>
     this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan-scheduler-configuration/${schedulerId}`,
-      roundPlansSchedulerConfiguration,
+      `round-plan-schedule-configuration/${scheduleId}`,
+      roundPlansScheduleConfiguration,
       info
     );
 
-  fetchRoundPlanSchedulerConfigurationByRoundPlanId$ = (
+  fetchRoundPlanScheduleConfigurationByRoundPlanId$ = (
     roundPlanId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanSchedulerConfiguration[]> =>
+  ): Observable<RoundPlanScheduleConfiguration[]> =>
     this.appService._getRespById(
       environment.operatorRoundsApiUrl,
-      `round-plan-scheduler-configuration/`,
+      `round-plan-schedule-configuration/`,
       roundPlanId,
       { displayToast: true, failureResponse: [] }
     );
 
-  deleteRoundPlanSchedulerConfigurationByRoundPlanId$ = (
+  deleteRoundPlanScheduleConfigurationByRoundPlanId$ = (
     roundPlanId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanSchedulerConfiguration> =>
+  ): Observable<RoundPlanScheduleConfiguration> =>
     this.appService._removeData(
       environment.operatorRoundsApiUrl,
-      `round-plan-scheduler-configuration/${roundPlanId}`,
+      `round-plan-schedule-configuration/${roundPlanId}`,
       info
     );
 }

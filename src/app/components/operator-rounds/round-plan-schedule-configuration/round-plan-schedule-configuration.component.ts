@@ -7,18 +7,27 @@ import {
   OnInit
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { addDays, daysToWeeks, format, getDay } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  daysToWeeks,
+  differenceInDays,
+  format,
+  getDay,
+  weeksToDays
+} from 'date-fns';
 import { tap } from 'rxjs/operators';
+import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { RoundPlanSchedulerConfigurationService } from '../services/round-plan-scheduler-configuration.service';
+import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 
 @Component({
-  selector: 'app-round-plan-scheduler-configuration',
-  templateUrl: './round-plan-scheduler-configuration.component.html',
-  styleUrls: ['./round-plan-scheduler-configuration.component.scss'],
+  selector: 'app-round-plan-schedule-configuration',
+  templateUrl: './round-plan-schedule-configuration.component.html',
+  styleUrls: ['./round-plan-schedule-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanSchedulerConfigurationComponent implements OnInit {
+export class RoundPlanScheduleConfigurationComponent implements OnInit {
   @Input() set roundPlanDetails(roundPlanDetails: any) {
     this._roundPlanDetails = roundPlanDetails;
     if (roundPlanDetails) {
@@ -30,7 +39,6 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
   }
   scheduleTypes: string[] = ['byFrequency', 'byDate'];
   scheduleEndTypes: string[] = ['never', 'on', 'after'];
-  scheduleEndTypeValue: string[] = ['', 'date', 'occurrences'];
   repeatTypes: string[] = ['day', 'week', 'month'];
   daysOfWeek: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   weeksOfMonth: string[] = [
@@ -48,8 +56,9 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
   constructor(
     private operatorRoundService: OperatorRoundsService,
     private fb: FormBuilder,
-    private rpscService: RoundPlanSchedulerConfigurationService,
-    private cdrf: ChangeDetectorRef
+    private rpscService: RoundPlanScheduleConfigurationService,
+    private cdrf: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -59,14 +68,14 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
       scheduleType: 'byFrequency',
       repeatDuration: [1, [Validators.required, Validators.min(1)]],
       repeatEvery: 'day',
-      repeatDays: [[getDay(new Date())]],
-      weekWiseRepeatDays: this.fb.array(
-        this.initWeekWiseRepeatDays(this.weeksOfMonth.length)
+      daysOfWeek: [[getDay(new Date())]],
+      monthlyDaysOfWeek: this.fb.array(
+        this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
       ),
       scheduleEndType: 'never',
       scheduleEndOn: [
         {
-          value: format(addDays(new Date(), 30), 'MMM d, yyyy'),
+          value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
           disabled: true
         }
       ],
@@ -108,90 +117,92 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
       switch (repeatEvery) {
         case 'day':
           this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 30), 'MMM d, yyyy')
+            format(addDays(new Date(), 29), 'MMM d, yyyy')
           );
           this.form.scheduleEndOccurrences.patchValue(30);
           this.form.endDate.patchValue(
-            format(addDays(new Date(), 30), 'd MMMM yyyy')
+            format(addDays(new Date(), 29), 'd MMMM yyyy')
           );
           break;
         case 'week':
           this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 91), 'MMM d, yyyy')
+            format(addDays(new Date(), 90), 'MMM d, yyyy')
           );
           this.form.scheduleEndOccurrences.patchValue(daysToWeeks(91));
-          this.form.repeatDays.patchValue([getDay(new Date())]);
+          this.form.daysOfWeek.patchValue([getDay(new Date())]);
           this.form.endDate.patchValue(
-            format(addDays(new Date(), 91), 'd MMMM yyyy')
+            format(addDays(new Date(), 90), 'd MMMM yyyy')
           );
           break;
         case 'month':
           this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 365), 'MMM d, yyyy')
+            format(addDays(new Date(), 364), 'MMM d, yyyy')
           );
-          this.form.scheduleEndOccurrences.patchValue(daysToWeeks(365));
+          this.form.scheduleEndOccurrences.patchValue(12);
           this.form.endDate.patchValue(
-            format(addDays(new Date(), 365), 'd MMMM yyyy')
+            format(addDays(new Date(), 364), 'd MMMM yyyy')
           );
           break;
       }
     });
 
-    this.form.repeatDays.valueChanges.subscribe((repeatDays) => {
-      if (repeatDays.length === 0) {
-        this.form.repeatDays.patchValue([getDay(new Date())]);
+    this.form.daysOfWeek.valueChanges.subscribe((daysOfWeek) => {
+      if (daysOfWeek.length === 0) {
+        this.form.daysOfWeek.patchValue([getDay(new Date())]);
       }
     });
 
-    this.form.weekWiseRepeatDays.valueChanges.subscribe(
-      (weekWiseRepeatDays) => {
-        const weekWiseRepeatDaysCount = weekWiseRepeatDays.reduce(
-          (acc: number, curr: number[]) => {
-            acc += curr.length;
-            return acc;
-          },
-          0
-        );
-        if (weekWiseRepeatDaysCount === 0) {
-          for (const weekRepeatDays of this.weekWiseRepeatDays.controls) {
-            weekRepeatDays.patchValue([getDay(new Date())]);
-          }
+    this.form.monthlyDaysOfWeek.valueChanges.subscribe((monthlyDaysOfWeek) => {
+      const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
+        (acc: number, curr: number[]) => {
+          acc += curr.length;
+          return acc;
+        },
+        0
+      );
+      if (monthlyDaysOfWeekCount === 0) {
+        for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
+          weekRepeatDays.patchValue([getDay(new Date())]);
         }
       }
-    );
+    });
 
     this.form.scheduleEndOccurrences.valueChanges.subscribe((occurrences) => {
       if (occurrences > 0) {
+        let days = 0;
         switch (this.form.repeatEvery.value) {
+          case 'day':
+            days = occurrences;
+            break;
           case 'week':
-            if (occurrences > 13) {
-              occurrences = 91 + (occurrences - 13) * 7;
-            } else if (occurrences < 13) {
-              occurrences = 91 - (13 - occurrences) * 7;
-            } else {
-              occurrences = 91;
-            }
+            days = weeksToDays(13);
             break;
           case 'month':
-            if (occurrences > 52) {
-              occurrences = 365 + (occurrences - 52) * 7;
-            } else if (occurrences < 52) {
-              occurrences = 365 - (52 - occurrences) * 7;
-            } else {
-              occurrences = 365;
-            }
+            days = differenceInDays(
+              addMonths(new Date(), occurrences),
+              new Date()
+            );
             break;
         }
         this.form.endDate.patchValue(
-          format(addDays(new Date(), occurrences), 'd MMMM yyyy')
+          format(
+            addDays(new Date(), days * this.form.repeatDuration.value - 1),
+            'd MMMM yyyy'
+          )
         );
       }
+    });
+
+    this.form.repeatDuration.valueChanges.subscribe(() => {
+      this.form.scheduleEndOccurrences.patchValue(
+        this.form.scheduleEndOccurrences.value
+      );
     });
 
     this.currentDate = new Date();
     this.selected = new Date();
 
-    for (const weekRepeatDays of this.weekWiseRepeatDays.controls) {
+    for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
       weekRepeatDays.patchValue([getDay(new Date())]);
     }
 
@@ -202,19 +213,19 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
     return this.roundPlanSchedulerConfigForm.controls;
   }
 
-  initWeekWiseRepeatDays(weeksCount: number) {
+  initMonthWiseWeeklyDaysOfWeek(weeksCount: number) {
     return new Array(weeksCount).fill(0).map((v, i) => this.fb.control([[]]));
   }
 
-  get weekWiseRepeatDays(): FormArray {
-    return this.form.weekWiseRepeatDays as FormArray;
+  get monthlyDaysOfWeek(): FormArray {
+    return this.form.monthlyDaysOfWeek as FormArray;
   }
 
   cancel() {
     this.operatorRoundService.openRoundPlanSchedulerConfiguration(false);
   }
 
-  scheduleRounds() {
+  scheduleConfiguration() {
     if (
       this.roundPlanSchedulerConfigForm.valid &&
       this.roundPlanSchedulerConfigForm.valid
@@ -226,7 +237,7 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
       const time = format(new Date(), 'HH:mm:ss');
       if (id) {
         this.rpscService
-          .updateRoundPlanSchedulerConfiguration$(id, {
+          .updateRoundPlanScheduleConfiguration$(id, {
             ...roundPlanSchedulerConfig,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
@@ -234,15 +245,21 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
             scheduleByDate: new Date(`${scheduleByDate} ${time}`).toISOString()
           })
           .pipe(
-            tap(() => {
-              this.roundPlanSchedulerConfigForm.markAsPristine();
-              this.cdrf.markForCheck();
+            tap((scheduleConfig) => {
+              if (scheduleConfig && Object.keys(scheduleConfig).length) {
+                this.toastService.show({
+                  text: 'Round plan schedule updated sucessfully',
+                  type: 'success'
+                });
+                this.roundPlanSchedulerConfigForm.markAsPristine();
+                this.cdrf.markForCheck();
+              }
             })
           )
           .subscribe();
       } else {
         this.rpscService
-          .createRoundPlanSchedulerConfiguration$({
+          .createRoundPlanScheduleConfiguration$({
             ...roundPlanSchedulerConfig,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
@@ -250,10 +267,16 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
             scheduleByDate: new Date(`${scheduleByDate} ${time}`).toISOString()
           })
           .pipe(
-            tap((config) => {
-              this.form.id.patchValue(config.id);
-              this.roundPlanSchedulerConfigForm.markAsPristine();
-              this.cdrf.markForCheck();
+            tap((scheduleConfig) => {
+              if (scheduleConfig && Object.keys(scheduleConfig).length) {
+                this.toastService.show({
+                  text: 'Round plan schedule created sucessfully',
+                  type: 'success'
+                });
+                this.form.id.patchValue(scheduleConfig.id);
+                this.roundPlanSchedulerConfigForm.markAsPristine();
+                this.cdrf.markForCheck();
+              }
             })
           )
           .subscribe();
@@ -277,7 +300,7 @@ export class RoundPlanSchedulerConfigurationComponent implements OnInit {
 
   getRoundPlanSchedulerConfiguration(roundPlandId: string) {
     return this.rpscService
-      .fetchRoundPlanSchedulerConfigurationByRoundPlanId$(roundPlandId)
+      .fetchRoundPlanScheduleConfigurationByRoundPlanId$(roundPlandId)
       .pipe(
         tap(([config]) => {
           if (config && Object.keys(config).length) {

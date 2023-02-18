@@ -1,10 +1,10 @@
-export interface RoundPlanSchedulerConfiguration {
+export interface RoundPlanScheduleConfiguration {
   id?: string;
   scheduleType: string;
   repeatDuration: number;
   repeatEvery: string;
-  repeatDays: number[];
-  weekWiseRepeatDays: any[];
+  daysOfWeek: number[];
+  monthlyDaysOfWeek: any[];
   scheduleEndType: string;
   scheduleEndOn: string;
   scheduleEndOccurrences: number;

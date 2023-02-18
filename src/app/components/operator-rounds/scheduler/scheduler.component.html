@@ -18,10 +18,10 @@
         roundPlanDetails: roundPlanDetails$ | async
       } as props"
     >
-      <app-round-plan-scheduler-configuration
+      <app-round-plan-schedule-configuration
         *ngIf="props.openBasicScheduler"
         [roundPlanDetails]="props.roundPlanDetails"
-      ></app-round-plan-scheduler-configuration>
+      ></app-round-plan-schedule-configuration>
     </ng-container>
   </div>
 </div>

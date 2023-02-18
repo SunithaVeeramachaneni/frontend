@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoundPlanSchedulerConfigurationComponent } from './round-plan-scheduler-configuration.component';
+import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration.component';
 
 describe('RoundsSchedulerConfigurationComponent', () => {
-  let component: RoundPlanSchedulerConfigurationComponent;
-  let fixture: ComponentFixture<RoundPlanSchedulerConfigurationComponent>;
+  let component: RoundPlanScheduleConfigurationComponent;
+  let fixture: ComponentFixture<RoundPlanScheduleConfigurationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RoundPlanSchedulerConfigurationComponent]
+      declarations: [RoundPlanScheduleConfigurationComponent]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoundPlanSchedulerConfigurationComponent);
+    fixture = TestBed.createComponent(RoundPlanScheduleConfigurationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
