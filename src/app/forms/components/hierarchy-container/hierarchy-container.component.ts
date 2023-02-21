@@ -6,7 +6,6 @@ import {
   Output,
   ChangeDetectorRef
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
