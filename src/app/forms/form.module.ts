@@ -47,6 +47,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
 import { BuilderComponent } from './components/builder/builder.component';
 import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
+import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-modal.component';
+import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
+import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
+import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +77,11 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
-    HierarchyNodeComponent
+    HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent
   ],
   imports: [
     FormsModule,
@@ -111,6 +119,10 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     IphoneComponent,
     AddLogicComponent,
     HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
     BuilderComponent,

@@ -7,6 +7,7 @@ import {
   EventEmitter,
   ChangeDetectorRef
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import {
   getTasksCountByNodeId,
@@ -14,6 +15,7 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import { ShowHierarchyPopupComponent } from '../../show-hierarchy-popup/show-hierarchy-popup.component';
 
 @Component({
   selector: 'app-node',
@@ -33,7 +35,8 @@ export class NodeComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef,
-    private store: Store<State>
+    private store: Store<State>,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -65,4 +68,8 @@ export class NodeComponent implements OnInit {
   removeNodeHandler(event) {
     this.nodeRemoved.emit(event);
   }
+
+  openShowHierarchyPopup = () => {
+    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {});
+  };
 }

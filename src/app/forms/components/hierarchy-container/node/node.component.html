@@ -27,6 +27,9 @@
       <mat-icon>more_horiz</mat-icon>
     </span>
     <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+      <button mat-menu-item class="text-red">
+        <span (click)="openShowHierarchyPopup()">Show Hierarchy</span>
+      </button>
       <button
         mat-menu-item
         class="text-red"

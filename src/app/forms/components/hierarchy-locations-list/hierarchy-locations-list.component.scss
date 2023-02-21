@@ -2,14 +2,19 @@
 
 .locations-modal {
   height: 500px;
-  width: 500px;
+  width: 700px;
   overflow: hidden;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
   }
 
-  .heading-conatiner {
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: #e5e5e5;
+    border-radius: 4px;
+  }
+
+  .heading-container {
     justify-content: space-between;
     padding: 10px 10px 0 15px;
 
@@ -31,7 +36,8 @@
   }
 
   .search {
-    margin: 0 15px;
+    margin: 0 10px;
+    padding: 0 80px;
 
     .icon {
       position: relative;
@@ -42,11 +48,35 @@
   .actions {
     float: right;
     margin-right: 15px;
+    margin-top: 20px;
+    .cancel-btn {
+      border-color: $blue-main;
+      color: $blue-main;
+      width: 160px;
+      background-color: $white;
+      margin-right: 10px;
+    }
+
+    .next-btn {
+      background-color: $blue-main;
+      color: $white;
+      width: 160px;
+    }
+
+    .next-btn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
   }
 
   .list-container {
     height: 315px;
     overflow-y: auto;
+
+    .borders {
+      border-bottom: 1px solid $border-color;
+      border-top: none;
+    }
 
     .list-item-conatiner {
       border-bottom: 1px solid $gray8;
@@ -57,29 +87,6 @@
         display: flex;
         width: 100%;
         cursor: pointer;
-
-        .form-name {
-          padding: 0 15px;
-          color: black;
-          font-size: 110%;
-          margin: 7px 0 0 0;
-          font-weight: 500;
-          text-transform: capitalize;
-        }
-
-        .form-des {
-          padding: 0 15px;
-          color: $gray4;
-          font-size: 100%;
-          margin: 5px 0;
-        }
-
-        .no-of-ques {
-          float: right;
-          padding-right: 15px;
-          color: $gray4;
-          font-size: 100%;
-        }
       }
 
       .selected-list-element:hover {
@@ -116,17 +123,14 @@
 }
 
 .node-container {
-  padding: 0px 30px;
-}
-
-.node-break {
-  color: $border-color;
+  padding: 0px 80px;
 }
 
 .selected-items {
-  margin-top: 35px;
-  margin-left: 10px;
-  font-weight: bold;
+  margin-top: 30px;
+  margin-left: 15px;
+  font-weight: 500;
+  color: $black;
 }
 
 .locations-footer {
@@ -136,7 +140,7 @@
 }
 
 .no-results-text {
-  margin-top: 150px;
+  margin-top: 120px;
   text-align: center;
   font-weight: bold;
 }

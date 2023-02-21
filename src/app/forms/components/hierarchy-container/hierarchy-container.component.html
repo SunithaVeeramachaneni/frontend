@@ -2,7 +2,12 @@
   <div class="header">
     <div>
       <span>Assets ({{ totalAssetsCount }})</span>
-      <button mat-icon-button class="addBtn" *ngIf="hierarchy.length">
+      <button
+        mat-icon-button
+        class="addBtn"
+        *ngIf="hierarchy.length"
+        (click)="openHierarchyModal()"
+      >
         <mat-icon>add</mat-icon>
       </button>
     </div>
