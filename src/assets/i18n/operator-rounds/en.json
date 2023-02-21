@@ -129,5 +129,6 @@
   "searchLocation": "Search Location",
   "selectedLocations": "{count} Location(s) selected",
   "assetsCount": "{count} Asset(s)",
-  "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected"
+  "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected",
+  "noResults": "No Results Found!"
 }

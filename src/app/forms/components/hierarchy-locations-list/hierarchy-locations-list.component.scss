@@ -126,11 +126,6 @@
   padding: 0px 80px;
 }
 
-// .node-break {
-//   border-bottom: $border-color;
-//   border-top: none;
-// }
-
 .selected-items {
   margin-top: 30px;
   margin-left: 15px;
@@ -142,4 +137,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.no-results-text {
+  margin-top: 120px;
+  text-align: center;
+  font-weight: bold;
 }

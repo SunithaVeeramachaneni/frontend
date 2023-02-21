@@ -19,6 +19,7 @@
           [placeholder]="'searchLocation' | translate"
           class="width-100"
           autocomplete="off"
+          [formControl]="searchLocations"
         />
       </mat-form-field>
     </span>
@@ -31,14 +32,21 @@
         (change)="handleMasterToggle($event)"
       ></mat-checkbox>
       <hr class="borders" />
-      <div *ngFor="let location of allItems">
-        <app-hierarchy-node
-          [nodeData]="location"
-          [isMasterChecked]="isMasterCheckedData"
-          (checkboxToggleHandler)="handleNodeToggle($event)"
-          [mode]="'selectLocations'"
-        ></app-hierarchy-node>
+      <div *ngIf="searchFilterItems.length; else noResults">
+        <div *ngFor="let location of searchFilterItems">
+          <app-hierarchy-node
+            [nodeData]="location"
+            [isMasterChecked]="isMasterCheckedData"
+            (checkboxToggleHandler)="handleNodeToggle($event)"
+            [mode]="'selectLocations'"
+          ></app-hierarchy-node>
+        </div>
       </div>
+      <ng-template #noResults
+        ><p class="no-results-text">
+          {{ 'noResults' | translate }}
+        </p></ng-template
+      >
     </div>
   </div>
 

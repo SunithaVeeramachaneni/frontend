@@ -3,6 +3,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { HierarchyEntity } from 'src/app/interfaces';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-hierarchy-locations-list',
@@ -14,6 +16,7 @@ export class HierarchyLocationsListComponent implements OnInit {
     new EventEmitter<any>();
   @Input() set locationsData(data: HierarchyEntity[]) {
     this.allItems = data ? data : ([] as HierarchyEntity[]);
+    this.searchFilterItems = this.allItems;
   }
   allLocations: HierarchyEntity[];
   public isMasterChecked: boolean;
@@ -21,14 +24,28 @@ export class HierarchyLocationsListComponent implements OnInit {
     checked: false,
     masterToggle: false
   };
+  public searchLocations: FormControl;
   public selectedItems = [];
-  private allItems = [];
+  public allItems = [];
+  public searchFilterItems = [];
   constructor(
     private dialogRef: MatDialogRef<HierarchyLocationsListComponent>
   ) {}
 
   ngOnInit(): void {
     this.isMasterChecked = false;
+    this.searchLocations = new FormControl('');
+    this.searchLocations.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        map((searchInput: string) => {
+          this.searchFilterItems = this.allItems.filter(
+            (item: HierarchyEntity) => item.name.includes(searchInput.trim())
+          );
+        })
+      )
+      .subscribe();
   }
 
   handleNodeToggle = (event: any) => {
