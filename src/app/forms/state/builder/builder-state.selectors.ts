@@ -69,11 +69,13 @@ export const getTotalTasksCount = () =>
       allSubForms.push(state[key]);
     });
     allSubForms.forEach((f) => {
-      f.forEach((page) => {
-        if (page.questions && page.questions.length) {
-          count += page.questions.length;
-        }
-      });
+      if (f) {
+        f.forEach((page) => {
+          if (page.questions && page.questions.length) {
+            count += page.questions.length;
+          }
+        });
+      }
     });
     return count;
   });
@@ -103,7 +105,11 @@ export const getPageIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return new Array(state[key].length).fill(0).map((v, i) => i);
+    if (state[key]) {
+      return new Array(state[key].length).fill(0).map((v, i) => i);
+    } else {
+      return [];
+    }
   });
 
 export const getSection = (

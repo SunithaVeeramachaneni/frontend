@@ -49,10 +49,7 @@ import {
 
 import {
   BuilderConfigurationActions,
-  MCQResponseActions,
-  FormConfigurationActions,
-  RoundPlanConfigurationActions,
-  RoundPlanConfigurationApiActions
+  RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
@@ -142,6 +139,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (Object.keys(data).length) {
           this.selectedNode = data;
           this.selectedNodeLoadStatus = true;
+          this.cdrf.detectChanges();
           this.store.dispatch(
             BuilderConfigurationActions.initPage({
               subFormId: this.selectedNode.id
@@ -293,38 +291,39 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               formStatus !== 'Published' &&
               !isEqual(this.formDetails, formDetails)
             ) {
-              const pagesWithoutBlankQuestions =
-                this.getPagesWithoutBlankQuestions(pages);
-              if (
-                (!this.formDetails &&
-                  !isEqual(pages, pagesWithoutBlankQuestions)) ||
-                (this.formDetails &&
-                  !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))
-              ) {
-                this.store.dispatch(
-                  RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
-                    formStatus,
-                    formDetailPublishStatus,
-                    formListId,
-                    counter,
-                    pages: pagesWithoutBlankQuestions,
-                    subForms: subFormsObj,
-                    authoredFormDetailId,
-                    authoredFormDetailDynamoDBVersion
-                  })
-                );
-              } else {
-                // dispatches the action to trigger the reducer directly, causing a state update
-                // without calling the effect that saves the form to DynamoDB.
-                this.store.dispatch(
-                  RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess(
-                    {
-                      authoredFormDetail: null,
-                      formSaveStatus: formConfigurationStatus.saved
-                    }
-                  )
-                );
-              }
+              this.store.dispatch(
+                RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
+                  formStatus,
+                  formDetailPublishStatus,
+                  formListId,
+                  counter,
+                  pages: null,
+                  subForms: subFormsObj,
+                  authoredFormDetailId,
+                  authoredFormDetailDynamoDBVersion
+                })
+              );
+              // const pagesWithoutBlankQuestions =
+              //   this.getPagesWithoutBlankQuestions(pages);
+              // if (
+              //   (!this.formDetails &&
+              //     !isEqual(pages, pagesWithoutBlankQuestions)) ||
+              //   (this.formDetails &&
+              //     !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))
+              // ) {
+
+              // } else {
+              //   // dispatches the action to trigger the reducer directly, causing a state update
+              //   // without calling the effect that saves the form to DynamoDB.
+              //   this.store.dispatch(
+              //     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess(
+              //       {
+              //         authoredFormDetail: null,
+              //         formSaveStatus: formConfigurationStatus.saved
+              //       }
+              //     )
+              //   );
+              // }
               this.formDetails = formDetails;
             }
           } else {
@@ -413,32 +412,44 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             formConfiguration: data.form
           })
         );
-        data.form.pages.forEach((page, index) => {
-          if (index === 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: this.selectedNode.id
-              })
-            );
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: true,
-                subFormId: this.selectedNode.id
-              })
-            );
-          } else {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: this.selectedNode.id
-              })
-            );
-          }
-        });
+
+        if (this.selectedNode && this.selectedNode.id) {
+          const subFormsObj = {};
+          let formKeys = Object.keys(data.form);
+          formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+          formKeys.forEach((key) => {
+            subFormsObj[key] = data.form[key];
+          });
+
+          Object.keys(subFormsObj).forEach((subForm) => {
+            subFormsObj[subForm].forEach((page, index) => {
+              if (index === 0) {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updatePageState({
+                    pageIndex: index,
+                    isOpen: false,
+                    subFormId: this.selectedNode.id
+                  })
+                );
+                this.store.dispatch(
+                  BuilderConfigurationActions.updatePageState({
+                    pageIndex: index,
+                    isOpen: true,
+                    subFormId: this.selectedNode.id
+                  })
+                );
+              } else {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updatePageState({
+                    pageIndex: index,
+                    isOpen: false,
+                    subFormId: this.selectedNode.id
+                  })
+                );
+              }
+            });
+          });
+        }
       }
     });
 

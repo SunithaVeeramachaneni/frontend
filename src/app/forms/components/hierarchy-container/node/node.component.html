@@ -1,13 +1,20 @@
 <div
   class="parentNode node"
-  (click)="setSelectedNode(node)"
   [ngClass]="{ active: selectedNode.id === node.id }"
 >
   <div class="left">
-    <img src="assets/rdf-forms-icons/form-image-upload.svg" />
-    <div class="description">
-      <span>{{ node.name }}</span>
-      <!-- <span> &lt; Additional Field: Value &gt; </span> -->
+    <img
+      cdkDragHandle
+      src="assets/rdf-forms-icons/six-dots.svg"
+      alt="six-dots"
+      class="question-six-dots"
+    />
+    <div class="nodeContent" (click)="setSelectedNode(node)">
+      <img src="assets/rdf-forms-icons/form-image-upload.svg" />
+      <div class="description">
+        <span>{{ node.name }}</span>
+        <!-- <span> &lt; Additional Field: Value &gt; </span> -->
+      </div>
     </div>
   </div>
   <div class="right">
@@ -33,7 +40,7 @@
     </mat-menu>
   </div>
 </div>
-<div *ngIf="node.hasChildren && hierarchyMode !== 'flat'" class="children">
+<div *ngIf="hierarchyMode !== 'flat' && node.hasChildren" class="children">
   <div
     class="childrenHead"
     [ngClass]="{ inactive: !assetHierarchyUtil.getAssetCountByNode(node) }"

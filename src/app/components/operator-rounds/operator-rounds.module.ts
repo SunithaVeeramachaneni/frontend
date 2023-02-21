@@ -57,6 +57,7 @@ import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
+import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -69,6 +70,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanConfigurationModalComponent,
     ImportTaskModalComponent,
     HierarchyContainerComponent,
+    HierarchyDeleteConfirmationDialogComponent,
     NodeComponent,
     SubmissionComponent,
     SubmissionSliderComponent,

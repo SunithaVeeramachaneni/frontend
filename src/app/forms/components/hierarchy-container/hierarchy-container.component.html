@@ -13,40 +13,48 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
-    <span *ngIf="hierarchyList.length">Tasks ({{ getTotalTasksCount() }})</span>
+    <span *ngIf="hierarchy.length">Tasks ({{ getTotalTasksCount() }})</span>
   </div>
-  <span
-    class="custom-form-field-gray-color search"
-    *ngIf="hierarchyList.length"
-  >
+  <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
     <mat-form-field appearance="outline" class="searchField">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
-        disabled
+        [disabled]="hierarchyMode !== 'flat'"
         matInput
         type="text"
         [placeholder]="'Search...'"
         autocomplete="off"
+        [formControl]="searchHierarchyKey"
       />
       <img [src]="filterIcon" matSuffix alt="Open Filter" />
     </mat-form-field>
   </span>
-  <div class="hierarchy" *ngIf="hierarchyList.length">
-    <div
-      *ngFor="let node of hierarchyList"
-      [ngClass]="{
-        displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat',
-        flatHierarchyNode: hierarchyMode === 'flat'
-      }"
-    >
+  <div
+    class="hierarchy"
+    *ngIf="hierarchy.length"
+    [ngClass]="{ displayGrid: hierarchyMode !== 'flat' }"
+  >
+    <div *ngIf="!filteredHierarchyList.length" class="emptySearchResult">
+      <span
+        >No Assets/Locations found for:
+        <strong>{{ searchHierarchyKey.value }} </strong></span
+      >
+    </div>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
       <app-node
+        cdkDrag
+        [cdkDragData]="node"
         [node]="node"
         [hierarchyMode]="hierarchyMode"
         (nodeRemoved)="removeNodeHandler($event)"
+        *ngFor="let node of filteredHierarchyList"
+        [ngClass]="{
+          displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat'
+        }"
       ></app-node>
     </div>
   </div>
-  <div *ngIf="!hierarchyList.length" class="emptyHierarchy">
+  <div *ngIf="!hierarchy.length" class="emptyHierarchy">
     <span>You have not added any assets yet</span>
     <button mat-raised-button color="primary">Add Assets</button>
   </div>

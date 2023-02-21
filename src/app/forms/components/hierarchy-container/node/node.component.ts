@@ -55,7 +55,9 @@ export class NodeComponent implements OnInit {
   }
 
   setSelectedNode(node) {
-    this.operatorRoundsService.setSelectedNode(node);
+    if (this.selectedNode.id !== node.id) {
+      this.operatorRoundsService.setSelectedNode(node);
+    }
   }
 
   onRemoveNode(event, node) {
@@ -65,22 +67,6 @@ export class NodeComponent implements OnInit {
 
   removeNodeHandler(event) {
     this.nodeRemoved.emit(event);
-    // let parentList = event.children;
-    // const index = parentList.findIndex((h) => h.id === event.id);
-    // if (index > -1) {
-    //   if (event.children && event.children.length) {
-    //     parentList = [
-    //       ...parentList.slice(0, index),
-    //       ...event.children,
-    //       ...parentList.slice(index + 1)
-    //     ];
-    //   } else {
-    //     parentList.splice(index, 1);
-    //   }
-    //   this.node.children = [...parentList];
-    // } else {
-    //   this.nodeRemoved.emit(event);
-    // }
   }
 
   openShowHierarchyPopup = () => {

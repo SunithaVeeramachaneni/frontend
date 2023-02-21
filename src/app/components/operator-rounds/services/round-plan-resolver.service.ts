@@ -8,7 +8,6 @@ import { State } from 'src/app/forms/state';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
-import { hierarchyMock } from '../round-plan-configuration/hierarchyMock';
 import { OperatorRoundsService } from './operator-rounds.service';
 
 @Injectable({ providedIn: 'root' })
