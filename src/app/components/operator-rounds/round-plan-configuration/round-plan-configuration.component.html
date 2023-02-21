@@ -160,7 +160,7 @@
     </div>
   </div>
   <div class="dis-flex form">
-    <div class="assetHierarchyContainer" *ngIf="!isPreviewActive">
+    <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
       <app-hierarchy-container
         (hierarchyEvent)="hierarchyEventHandler($event)"
       ></app-hierarchy-container>
@@ -184,8 +184,8 @@
         [counter]="formConfiguration.get('counter').value"
       ></app-builder>
     </div>
-    <div class="iphone-width m-t-20" *ngIf="isPreviewActive" @previewSlide>
-      <app-iphone></app-iphone>
+    <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
+      <app-iphone [subFormId]="selectedNode.id"></app-iphone>
     </div>
   </div>
 </div>

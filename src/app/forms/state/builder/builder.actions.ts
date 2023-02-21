@@ -107,6 +107,13 @@ export const initPage = createAction(
   }>()
 );
 
+export const removeSubForm = createAction(
+  '[Builder Configuration] removeSubForm',
+  props<{
+    subFormId: string;
+  }>()
+);
+
 export const addPage = createAction(
   '[Builder Configuration] addPage',
   props<{

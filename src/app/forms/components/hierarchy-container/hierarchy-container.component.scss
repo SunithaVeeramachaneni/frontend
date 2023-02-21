@@ -10,6 +10,7 @@
   padding: 10px 15px;
   .addBtn {
     margin-top: -5px;
+    color: $blue;
   }
 }
 .search {
@@ -24,13 +25,12 @@
   overflow-y: auto;
   height: calc(100vh - 275px);
   width: -webkit-fill-available;
+}
+.displayGrid {
   display: grid;
 }
 .displayInlineBlock {
   display: inline-block;
-}
-.flatHierarchyNode {
-  height: 30px !important;
 }
 .emptyHierarchy {
   display: flex;
@@ -48,4 +48,12 @@
     background: $blue-main;
     color: $white;
   }
+}
+.emptySearchResult {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: $gray4;
+  font-style: italic;
 }

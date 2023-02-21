@@ -194,6 +194,18 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    BuilderConfigurationActions.removeSubForm,
+    (state, action): FormConfigurationState => {
+      let key = 'pages';
+      const subFormId = action.subFormId;
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      delete state[key];
+      return state;
+    }
+  ),
+  on(
     BuilderConfigurationActions.addPage,
     (state, action): FormConfigurationState => {
       let key = 'pages';
