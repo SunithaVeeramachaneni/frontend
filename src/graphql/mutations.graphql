@@ -471,6 +471,7 @@ mutation CreateRoundPlanDetail(
   createRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
     createdAt
     updatedAt
@@ -486,6 +487,7 @@ mutation UpdateRoundPlanDetail(
   updateRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
     createdAt
     updatedAt
@@ -501,6 +503,7 @@ mutation DeleteRoundPlanDetail(
   deleteRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
     createdAt
     updatedAt

@@ -293,6 +293,7 @@ type EagerRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
+  readonly flatHierarchy?: string | null;
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -305,6 +306,7 @@ type LazyRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
+  readonly flatHierarchy?: string | null;
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
