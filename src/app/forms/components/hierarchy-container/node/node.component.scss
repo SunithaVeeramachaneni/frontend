@@ -19,6 +19,7 @@
   .left {
     display: flex;
     width: 90%;
+    flex-direction: column;
     img {
       max-width: 40px;
       max-height: 40px;
@@ -28,6 +29,13 @@
       flex-direction: column;
       margin-left: 10px;
       justify-content: center;
+      line-height: 1.5;
+      .title {
+        font-weight: 500;
+      }
+      .subTitle {
+        font-weight: 400;
+      }
     }
   }
 
@@ -35,6 +43,9 @@
     display: flex;
     width: 10%;
     align-items: center;
+    .more-icon {
+      cursor: pointer;
+    }
   }
 }
 .nodeContent {
@@ -45,24 +56,25 @@
 }
 .children {
   margin-left: 40px;
-  .childrenHead {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    color: $blue-main;
-    .expandCollapseBtn {
-      cursor: pointer;
-    }
-    .rotate-270 {
-      transform: rotate(270deg);
-    }
+}
+.childrenHead {
+  // padding: 10px;
+  display: flex;
+  align-items: center;
+  // color: $blue-main;
+  margin-left: 45px;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
   }
 }
 .displayInlineBlock {
   display: inline-block;
 }
 .inactive {
-  color: $light-gray !important;
+  color: $blue-main;
 }
 .active {
   background: $active-blue;

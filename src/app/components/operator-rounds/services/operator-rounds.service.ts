@@ -264,10 +264,7 @@ export class OperatorRoundsService {
     return from(
       this.awsApiService.CreateRoundPlanDetail({
         formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        )
+        formData: this.formatFormData(formDetails)
       })
     );
   }
@@ -277,10 +274,7 @@ export class OperatorRoundsService {
       this.awsApiService.UpdateRoundPlanDetail({
         id: formDetails.formDetailId,
         formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
+        formData: this.formatFormData(formDetails),
         _version: formDetails.formDetailDynamoDBVersion
       } as UpdateFormDetailInput)
     );
@@ -415,166 +409,187 @@ export class OperatorRoundsService {
     });
   }
 
-  formatFormData = (form, pages): string => {
+  formatFormData = (formDetails): string => {
+    const { formMetadata } = formDetails;
+
+    let subFormKeys = Object.keys(formDetails);
+    subFormKeys = subFormKeys.filter((key) => key.startsWith('pages'));
     const forms = [];
-    const arrayFieldTypeQuestions = [];
-    const formData = {
-      FORMNAME: form.name,
-      PAGES: []
-    };
-    formData.PAGES = pages.map((page) => {
-      // eslint-disable-next-line prefer-const
-      let { sections, questions, logics } = page;
+    subFormKeys.forEach((key) => {
+      const pages = formDetails[key];
+      if (!pages || !pages.length) {
+        return;
+      }
+      let nodeId = '';
+      if (key.startsWith('pages_')) {
+        nodeId = key.replace('pages_', '');
+      } else {
+        nodeId = key.replace('pages', '');
+      }
+      const arrayFieldTypeQuestions = [];
+      const formData = {
+        FORMNAME: nodeId, //formMetadata.name,
+        PAGES: []
+      };
+      formData.PAGES = pages.map((page) => {
+        // eslint-disable-next-line prefer-const
+        let { sections, questions, logics } = page;
 
-      const pageItem = {
-        SECTIONS: sections.map((section) => {
-          let questionsBySection = questions.filter(
-            (item) => item.sectionId === section.id
-          );
-          const logicQuestions = [];
-
-          questionsBySection.forEach((question) => {
-            const questionLogics = logics.filter(
-              (l) => l.questionId === question.id
+        const pageItem = {
+          SECTIONS: sections.map((section) => {
+            let questionsBySection = questions.filter(
+              (item) => item.sectionId === section.id
             );
+            const logicQuestions = [];
 
-            if (questionLogics && questionLogics.length) {
-              questionLogics.forEach((logic) => {
-                questions.forEach((q) => {
-                  if (q.sectionId === `AQ_${logic.id}`) {
-                    logicQuestions.push(q);
-                  }
-                });
-              });
-            }
-          });
+            questionsBySection.forEach((question) => {
+              const questionLogics = logics.filter(
+                (l) => l.questionId === question.id
+              );
 
-          questionsBySection = [...questionsBySection, ...logicQuestions];
-          const sectionItem = {
-            SECTIONNAME: section.name,
-            FIELDS: questionsBySection.map((question) => {
-              if (question.fieldType === 'TF') {
-                question.fieldType = question.value;
-              }
-              const questionItem = {
-                UNIQUEKEY: question.id,
-                FIELDLABEL: question.name,
-                UIFIELDTYPE: question.fieldType,
-                UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '' as any,
-                UIVALIDATION: this.getValidationExpression(
-                  question.id,
-                  question,
-                  questions,
-                  logics
-                ),
-                MANDATORY: question.required === true ? 'X' : ''
-              };
-
-              if (question.fieldType === 'ARD') {
-                Object.assign(questionItem, { SUBFORMNAME: question.name }); // Might be name or id.
-                arrayFieldTypeQuestions.push(question);
-              }
-
-              if (
-                question.fieldType === 'VI' ||
-                question.value?.type === 'quickResponse'
-              ) {
-                const viVALUE = this.prepareDDValue(question.value?.value);
-                Object.assign(questionItem, {
-                  DDVALUE: viVALUE
+              if (questionLogics && questionLogics.length) {
+                questionLogics.forEach((logic) => {
+                  questions.forEach((q) => {
+                    if (q.sectionId === `AQ_${logic.id}`) {
+                      logicQuestions.push(q);
+                    }
+                  });
                 });
               }
+            });
 
-              if (question.fieldType === 'NF') {
-                Object.assign(questionItem, {
-                  MEASUREMENT:
-                    question.unitOfMeasurement !== 'None'
-                      ? question.unitOfMeasurement
-                      : ''
-                });
-                if (question.rangeMetadata.min && question.rangeMetadata.max) {
+            questionsBySection = [...questionsBySection, ...logicQuestions];
+            const sectionItem = {
+              SECTIONNAME: section.name,
+              FIELDS: questionsBySection.map((question) => {
+                if (question.fieldType === 'TF') {
+                  question.fieldType = question.value;
+                }
+                const questionItem = {
+                  UNIQUEKEY: question.id,
+                  FIELDLABEL: question.name,
+                  UIFIELDTYPE: question.fieldType,
+                  UIFIELDDESC: question.fieldType,
+                  DEFAULTVALUE: '' as any,
+                  UIVALIDATION: this.getValidationExpression(
+                    question.id,
+                    question,
+                    questions,
+                    logics
+                  ),
+                  MANDATORY: question.required === true ? 'X' : ''
+                };
+
+                if (question.fieldType === 'ARD') {
+                  Object.assign(questionItem, { SUBFORMNAME: question.name }); // Might be name or id.
+                  arrayFieldTypeQuestions.push(question);
+                }
+
+                if (
+                  question.fieldType === 'VI' ||
+                  question.value?.type === 'quickResponse'
+                ) {
+                  const viVALUE = this.prepareDDValue(question.value?.value);
                   Object.assign(questionItem, {
-                    DEFAULTVALUE: JSON.stringify({
-                      min: question.rangeMetadata.min + '',
-                      max: question.rangeMetadata.max + '',
-                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
-                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
-                      value: ''
-                    })
+                    DDVALUE: viVALUE
                   });
                 }
-              }
 
-              if (
-                question.fieldType === 'DD' &&
-                question.value?.type === 'globalResponse'
-              ) {
-                let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.store
-                  .select(getResponseSets)
-                  .pipe(
-                    tap((responses) => {
-                      currentGlobalResponseValues = JSON.parse(
-                        responses.find((item) => item.id === question.value.id)
-                          ?.values
-                      );
-                    })
-                  );
-                currenGlobalResponse$.subscribe();
-                questionItem.UIFIELDTYPE = question.multi
-                  ? 'DDM'
-                  : question.fieldType;
-                Object.assign(questionItem, {
-                  DDVALUE: currentGlobalResponseValues
-                    ? this.prepareDDValue(currentGlobalResponseValues)
-                    : []
-                });
-              }
+                if (question.fieldType === 'NF') {
+                  Object.assign(questionItem, {
+                    MEASUREMENT:
+                      question.unitOfMeasurement !== 'None'
+                        ? question.unitOfMeasurement
+                        : ''
+                  });
+                  if (
+                    question.rangeMetadata.min &&
+                    question.rangeMetadata.max
+                  ) {
+                    Object.assign(questionItem, {
+                      DEFAULTVALUE: JSON.stringify({
+                        min: question.rangeMetadata.min + '',
+                        max: question.rangeMetadata.max + '',
+                        minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                        maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                        value: ''
+                      })
+                    });
+                  }
+                }
 
-              if (question.fieldType === 'RT') {
-                const { min, max, increment } = question.value;
-                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
-              }
+                if (
+                  question.fieldType === 'DD' &&
+                  question.value?.type === 'globalResponse'
+                ) {
+                  let currentGlobalResponseValues;
+                  const currenGlobalResponse$ = this.store
+                    .select(getResponseSets)
+                    .pipe(
+                      tap((responses) => {
+                        currentGlobalResponseValues = JSON.parse(
+                          responses.find(
+                            (item) => item.id === question.value.id
+                          )?.values
+                        );
+                      })
+                    );
+                  currenGlobalResponse$.subscribe();
+                  questionItem.UIFIELDTYPE = question.multi
+                    ? 'DDM'
+                    : question.fieldType;
+                  Object.assign(questionItem, {
+                    DDVALUE: currentGlobalResponseValues
+                      ? this.prepareDDValue(currentGlobalResponseValues)
+                      : []
+                  });
+                }
 
-              if (question.fieldType === 'LF') {
-                questionItem.DEFAULTVALUE = question.value;
-              }
+                if (question.fieldType === 'RT') {
+                  const { min, max, increment } = question.value;
+                  questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
+                }
 
-              if (question.fieldType === 'DT') {
-                questionItem.UIFIELDTYPE =
-                  question.value.date && question.value.time
-                    ? 'DT'
-                    : question.value.date
-                    ? 'DF'
-                    : 'TIF';
-                questionItem.DEFAULTVALUE =
-                  question.value.date && question.value.time
-                    ? 'CDT'
-                    : question.value.date
-                    ? 'CD'
-                    : 'CT';
-              }
+                if (question.fieldType === 'LF') {
+                  questionItem.DEFAULTVALUE = question.value;
+                }
 
-              if (question.fieldType === 'HL') {
-                questionItem.DEFAULTVALUE = question.value.title;
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.link
-                });
-              }
+                if (question.fieldType === 'DT') {
+                  questionItem.UIFIELDTYPE =
+                    question.value.date && question.value.time
+                      ? 'DT'
+                      : question.value.date
+                      ? 'DF'
+                      : 'TIF';
+                  questionItem.DEFAULTVALUE =
+                    question.value.date && question.value.time
+                      ? 'CDT'
+                      : question.value.date
+                      ? 'CD'
+                      : 'CT';
+                }
 
-              return questionItem;
-            })
-          };
+                if (question.fieldType === 'HL') {
+                  questionItem.DEFAULTVALUE = question.value.title;
+                  Object.assign(questionItem, {
+                    FIELDVALUE: question.value.link
+                  });
+                }
 
-          return sectionItem;
-        })
-      };
+                return questionItem;
+              })
+            };
 
-      return pageItem;
+            return sectionItem;
+          })
+        };
+
+        return pageItem;
+      });
+
+      forms.push(formData);
     });
-
-    forms.push(formData);
+    console.log(JSON.stringify({ FORMS: forms }));
     return JSON.stringify({ FORMS: forms });
   };
 
