@@ -42,7 +42,6 @@ export class HierarchyAssetsListComponent implements OnInit {
     );
     if (indexInHierarchy > -1) {
       this.hierarchyList[indexInHierarchy] = event;
-      console.log(this.hierarchyList);
       this.locationsCount = this.assetHierarchyUtil.getCountByNodeType(
         this.hierarchyList,
         'location'

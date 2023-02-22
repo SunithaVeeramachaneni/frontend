@@ -22,6 +22,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
+import { HierarchyActions } from '../../state/actions';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -150,6 +151,11 @@ export class HierarchyContainerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        this.store.dispatch(
+          HierarchyActions.updateSelectedHierarchyList({
+            selectedHierarchy: selectedHierarchyList
+          })
+        );
         this.formService.setSelectedHierarchyList(selectedHierarchyList);
       });
   };

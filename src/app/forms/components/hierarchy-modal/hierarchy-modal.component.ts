@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+
+import { State } from '../../state';
+import { HierarchyActions } from '../../state/actions';
 
 import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
 import { AssetsService } from 'src/app/components/master-configurations/assets/services/assets.service';
@@ -28,7 +32,8 @@ export class HierarchyModalComponent implements OnInit {
     private locationService: LocationService,
     private assetService: AssetsService,
     private formService: FormService,
-    private assetHierarchyUtil: AssetHierarchyUtil
+    private assetHierarchyUtil: AssetHierarchyUtil,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +52,12 @@ export class HierarchyModalComponent implements OnInit {
           ...allAssets.items.map((asset) => ({ ...asset, type: 'asset' }))
         ];
         this.masterHierarchyList =
-          this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
+          this.assetHierarchyUtil.prepareHierarchyList(hierarchyItems);
+        this.store.dispatch(
+          HierarchyActions.setMasterHierarchyList({
+            masterHierarchy: this.masterHierarchyList
+          })
+        );
         this.formService.setMasterHierarchyList(this.masterHierarchyList);
         return this.masterHierarchyList;
       })

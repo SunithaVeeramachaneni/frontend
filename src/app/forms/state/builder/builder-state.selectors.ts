@@ -3,16 +3,16 @@ import * as AppState from '../../../state/app.state';
 import { ResponseSetState } from '../multiple-choice-response.reducer';
 import { FormConfigurationState } from './builder.reducer';
 
-export interface FromModuleState {
+export interface FormModuleState {
   formConfiguration: FormConfigurationState;
   responseSet: ResponseSetState;
 }
 
 export interface State extends AppState.State {
-  feature: FromModuleState;
+  feature: FormModuleState;
 }
 
-const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
+const selectFeatureState = createFeatureSelector<FormModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(
   selectFeatureState,

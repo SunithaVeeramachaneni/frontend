@@ -47,6 +47,7 @@ export const createAuthoredRoundPlanDetail = createAction(
     subForms: any;
     formListId: string;
     authoredFormDetailVersion: number;
+    hierarchy: any;
   }>()
 );
 
@@ -61,5 +62,6 @@ export const updateAuthoredRoundPlanDetail = createAction(
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailDynamoDBVersion: number;
+    hierarchy: any;
   }>()
 );
