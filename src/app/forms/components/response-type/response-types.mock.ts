@@ -38,7 +38,7 @@ export const fieldTypesMock = {
     },
     {
       type: 'ATT',
-      description: 'Take Picture/Photo'
+      description: 'Attachments'
     },
     {
       type: 'VI',
