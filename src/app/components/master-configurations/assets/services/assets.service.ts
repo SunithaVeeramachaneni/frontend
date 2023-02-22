@@ -6,7 +6,7 @@ import {
   DeleteAssetsListInput,
   ListAssetsQuery
 } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -37,7 +37,8 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 20000, ''));
+  fetchAllAssets$ = () =>
+    from(this.awsApiService.ListAssets({}, 20000, '')).pipe(shareReplay(1));
 
   getAssetsList$(queryParams: {
     nextToken?: string;

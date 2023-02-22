@@ -6,7 +6,7 @@ import {
   DeleteLocationListInput,
   ListLocationsQuery
 } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -38,7 +38,7 @@ export class LocationService {
   }
 
   fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 20000, ''));
+    from(this.awsApiService.ListLocations({}, 20000, '')).pipe(shareReplay(1));
 
   getLocationsList$(queryParams: {
     nextToken?: string;

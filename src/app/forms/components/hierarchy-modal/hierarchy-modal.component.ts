@@ -3,7 +3,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
-import { State } from '../../state';
+import { getMasterHierarchyList, State } from '../../state';
 import { HierarchyActions } from '../../state/actions';
 
 import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
@@ -39,11 +39,15 @@ export class HierarchyModalComponent implements OnInit {
   ngOnInit(): void {
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
+
     this.masterHierarchyList$ = combineLatest([
       this.allLocations$,
-      this.allAssets$
+      this.allAssets$,
+      this.store.select(getMasterHierarchyList)
     ]).pipe(
-      map(([allLocations, allAssets]) => {
+      map(([allLocations, allAssets, masterHierarchy]) => {
+        if (masterHierarchy.length) return masterHierarchy;
+
         const hierarchyItems = [
           ...allLocations.items.map((location) => ({
             ...location,
@@ -51,8 +55,10 @@ export class HierarchyModalComponent implements OnInit {
           })),
           ...allAssets.items.map((asset) => ({ ...asset, type: 'asset' }))
         ];
+
         this.masterHierarchyList =
           this.assetHierarchyUtil.prepareHierarchyList(hierarchyItems);
+
         this.store.dispatch(
           HierarchyActions.setMasterHierarchyList({
             masterHierarchy: this.masterHierarchyList
