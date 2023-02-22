@@ -37,6 +37,7 @@ import {
 } from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { ConsoleLogger } from '@aws-amplify/core';
 
 @Component({
   selector: 'app-locations-list',
@@ -233,6 +234,7 @@ export class LocationsListComponent implements OnInit {
   ngOnInit(): void {
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
+    this.allLocations$ = this.locationService.fetchAllLocations$();
     this.searchLocation = new FormControl('');
 
     this.searchLocation.valueChanges
@@ -246,7 +248,6 @@ export class LocationsListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     //this.locationsListCount$ = this.locationService.getFormsListCount$();
     this.getDisplayedLocations();
-    this.getAllLocations();
     this.locationsCount$ = combineLatest([
       this.locationsCount$,
       this.locationsCountUpdate$
@@ -294,9 +295,12 @@ export class LocationsListComponent implements OnInit {
     this.locations$ = combineLatest([
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
-      onScrollLocations$
+      onScrollLocations$,
+      this.allLocations$
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, form, scrollData, allLocations]) => {
+        const { items: unfilteredParentLocations } = allLocations;
+        this.allParentsLocations = unfilteredParentLocations.filter((location) => location._deleted !== true);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -317,7 +321,7 @@ export class LocationsListComponent implements OnInit {
         }
         for (const item of initial.data) {
           if (item.parentId) {
-            const parent = this.allParentsLocations.find(
+            const parent = unfilteredParentLocations.find(
               (d) => d.id === item.parentId
             );
             if (parent) {
@@ -523,19 +527,5 @@ export class LocationsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-  }
-
-  getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc._deleted !== true
-          );
-          this.allParentsLocations = this.parentInformation;
-        })
-      )
-      .subscribe();
   }
 }
