@@ -4,7 +4,7 @@ export interface RoundPlanScheduleConfiguration {
   repeatDuration: number;
   repeatEvery: string;
   daysOfWeek: number[];
-  monthlyDaysOfWeek: any[];
+  monthlyDaysOfWeek: MonthlyDaysOfWeek[];
   scheduleEndType: string;
   scheduleEndOn: string;
   scheduleEndOccurrences: number;
@@ -20,4 +20,8 @@ export interface RoundPlanScheduleConfiguration {
 export interface ScheduleByDate {
   date: Date;
   scheduled: boolean;
+}
+
+export interface MonthlyDaysOfWeek {
+  [key: number]: number[];
 }
