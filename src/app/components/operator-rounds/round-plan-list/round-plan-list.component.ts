@@ -71,7 +71,14 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -247,7 +254,6 @@ export class RoundPlanListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
@@ -279,7 +285,7 @@ export class RoundPlanListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
     this.getDisplayedForms();
-
+    this.getAllOperatorRounds();
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -440,13 +446,14 @@ export class RoundPlanListComponent implements OnInit {
   }
 
   getForms() {
+    console.log('this.fetchType=', this.fetchType);
     return this.operatorRoundsService
       .getFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+        fetchType: this.fetchType,
+      }, false, this.filter)
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -564,5 +571,50 @@ export class RoundPlanListComponent implements OnInit {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllOperatorRounds() {
+    this.formsList$ = this.operatorRoundsService.fetchAllOperatorRounds$();
+    this.formsList$
+      .pipe(
+        tap((formsList) => {
+          const uniqueLastPublishedBy = formsList.items
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueLastPublishedBy) {
+            if (item) {
+              this.lastPublishedBy.push(item);
+            }
+          }
+          const uniqueAuthoredBy = formsList.items
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueAuthoredBy) {
+            if (item) {
+              this.authoredBy.push(item);
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  applyFilter() {
+    console.log(this.filter);
+    this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: ''
+    };
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }

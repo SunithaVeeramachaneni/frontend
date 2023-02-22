@@ -105,7 +105,8 @@ export class RaceDynamicFormService {
       searchKey: string;
       fetchType: string;
     },
-    isArchived: boolean = false
+    isArchived: boolean = false,
+    filterParam: any = null
   ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -113,19 +114,41 @@ export class RaceDynamicFormService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
+      let filter = {
+        ...(queryParams.searchKey && {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        }),
+        isArchived: {
+          eq: isArchived
+        },
+        isDeleted: {
+          eq: false
+        }
+      };
+      if (filterParam && filterParam.status) {
+        filter['formStatus'] = {
+          eq: filterParam.status
+        };
+      }
+      if (filterParam && filterParam.modifiedBy) {
+        filter['lastPublishedBy'] = {
+          eq: filterParam.modifiedBy
+        };
+      }
+      if (filterParam && filterParam.authoredBy) {
+        filter['author'] = {
+          eq: filterParam.authoredBy
+        };
+      }
+      if (filterParam && filterParam.lastModifiedOn) {
+        filter['updatedAt'] = {
+          eq: new Date(filterParam.lastModifiedOn).toISOString()
+        };
+      }
+      console.log(filter);
       return from(
         this.awsApiService.ListFormLists(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            }),
-            isArchived: {
-              eq: isArchived
-            },
-            isDeleted: {
-              eq: false
-            }
-          },
+          filter,
           !isSearch && queryParams.limit,
           !isSearch && queryParams.nextToken
         )
@@ -827,4 +850,7 @@ export class RaceDynamicFormService {
     });
     return `${updatedResponse.count}/${updatedResponse.total}`;
   }
+
+  fetchAllForms$ = () =>
+    from(this.awsApiService.ListFormLists({}, 20000000, ''));
 }

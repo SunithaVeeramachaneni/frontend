@@ -68,7 +68,8 @@ import { FormConfigurationActions } from 'src/app/forms/state/actions';
 export class FormListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
   columns: Column[] = [
     {
       id: 'name',
@@ -231,6 +232,12 @@ export class FormListComponent implements OnInit {
       }
     }
   };
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: ''
+  };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
   formsCount$: Observable<Count>;
@@ -244,7 +251,6 @@ export class FormListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
@@ -275,6 +281,7 @@ export class FormListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+    this.getAllForms();
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -443,7 +450,7 @@ export class FormListComponent implements OnInit {
         limit: this.limit,
         searchKey: this.searchForm.value,
         fetchType: this.fetchType
-      })
+      }, false, this.filter)
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -564,5 +571,49 @@ export class FormListComponent implements OnInit {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllForms() {
+    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
+    this.formsList$
+      .pipe(
+        tap((formsList) => {
+          const uniqueLastPublishedBy = formsList.items
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueLastPublishedBy) {
+            if (item) {
+              this.lastPublishedBy.push(item);
+            }
+          }
+          const uniqueAuthoredBy = formsList.items
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueAuthoredBy) {
+            if (item) {
+              this.authoredBy.push(item);
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  applyFilter() {
+    console.log(this.filter);
+    this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: ''
+    };
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }

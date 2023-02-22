@@ -24,7 +24,14 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
-          <img [src]="filterIcon" matSuffix alt="Open Filter" />
+          <img
+            [src]="filterIcon"
+            cdkOverlayOrigin
+            #trigger="cdkOverlayOrigin"
+            (click)="isPopoverOpen = !isPopoverOpen"
+            matSuffix
+            alt="Open Filter"
+          />
         </mat-form-field>
       </span>
     </div>
@@ -59,4 +66,103 @@
       </div>
     </div>
   </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <div
+      class="filter-report-modal custom-form-field-white-color"
+    >
+      <div class="m-b-10 filter-header">
+        <span class="filter-modal-heading">Filter</span>
+        <button
+          class="filter-modal-cancel"
+          (click)="isPopoverOpen = false"
+          aria-label="Close Filter"
+        >
+          <img
+            src="../../../../assets/img/svg/cancel-icon.svg"
+            alt="Close Filter"
+          />
+        </button>
+      </div>
+      <div class="filter-form-fields" style="max-height: 350px">
+         <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Status</mat-label>
+            <mat-select
+             [(ngModel)]="filter.status"
+              name="showStatus"
+            >
+            <mat-option
+                *ngFor="let showdue of status"
+                [value]="showdue"
+              >
+                {{ showdue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Modified By</mat-label>
+            <mat-select
+            [(ngModel)]="filter.modifiedBy"
+              name="showPublishedBy"
+            >
+             <mat-option
+                *ngFor="let showdue of lastPublishedBy"
+                [value]="showdue"
+              >
+                {{ showdue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="mat-field date-picker">
+            <mat-label>Last Modified On</mat-label>
+            <div class="date-picker-wrap">
+            <input [(ngModel)]="filter.lastModifiedOn" readonly="" matInput [matDatepicker]="picker" (click)="picker.open()">
+            <mat-icon matDatepickerToggleIcon (click)="picker.open()">arrow_drop_down</mat-icon>
+            </div>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Authored By</mat-label>
+            <mat-select
+            [(ngModel)]="filter.authoredBy"
+              name="showAuthoredBy"
+            >
+            <mat-option
+                *ngFor="let showdue of authoredBy"
+                [value]="showdue"
+              >
+                {{ showdue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+      <button
+        mat-raised-button
+        class="btn apply-filters-btn"
+        type="button"
+        (click)="applyFilter()"
+        aria-label="Apply Filter"
+      >
+        Apply
+      </button>
+      <button
+        mat-button
+        color="primary"
+        (click)="resetFilter()"
+        class="btn reset-filters-btn"
+        aria-label="Cancel Filter"
+      >
+       Reset
+      </button>
+    </div>
+  </ng-template>
 </div>

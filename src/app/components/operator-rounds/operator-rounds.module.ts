@@ -24,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -92,6 +92,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatToolbarModule,
     MatChipsModule,
     MatFormFieldModule,
+    MatDatepickerModule,
     MatIconModule,
     MatAutocompleteModule,
     MatCardModule,
