@@ -95,13 +95,14 @@ export class AssetHierarchyUtil {
     const nodes: HierarchyEntity[] = [];
     const filteredFlatList = flatList.filter((item) => item.parentId);
     flatList.forEach((node) => {
-      const { name, type, image } = node;
+      const { name, type, image, description } = node;
       const leafNode = {
-        id: uuidv4(),
-        dynamoDBId: node.id,
+        uid: node.id,
         name,
         type,
         image,
+        nodeId: type === 'location' ? node.locationId : node.assetsId,
+        nodeDescription: description,
         sequence: null,
         hasChildren: false,
         subFormId: '',
@@ -132,14 +133,14 @@ export class AssetHierarchyUtil {
   ): HierarchyEntity => {
     let leafNode = {} as HierarchyEntity;
     for (const node of hierarchyList) {
-      if (node.dynamoDBId === nodeId) {
+      if (node.uid === nodeId) {
         leafNode = {
           ...node,
           hasChildren: false,
           children: [] as HierarchyEntity[]
         };
         break;
-      } else if (node.dynamoDBId !== nodeId && node.children.length) {
+      } else if (node.uid !== nodeId && node.children.length) {
         leafNode = {
           ...node,
           children: [
@@ -152,17 +153,31 @@ export class AssetHierarchyUtil {
     return leafNode;
   };
 
-  cleanSelectedHierarchyList = (hierarchyList): HierarchyEntity[] => {
+  cleanSelectedHierarchyList = (
+    hierarchyList,
+    ancestralPath = []
+  ): HierarchyEntity[] => {
     let nodes = [] as HierarchyEntity[];
     hierarchyList.forEach((node) => {
+      const { type, nodeId: id, nodeDescription: description } = node;
+      const nodePath = [...ancestralPath, { type, id, description }];
       if (node.isSelected && !node.hasChildren) {
-        nodes.push(node);
+        nodes.push({
+          ...node,
+          id: uuidv4(),
+          hierarchyPath: nodePath
+        });
       } else {
-        const childNodes = this.cleanSelectedHierarchyList(node.children);
+        const childNodes = this.cleanSelectedHierarchyList(
+          node.children,
+          nodePath
+        );
         if (node.isSelected)
           nodes.push({
             ...node,
-            children: childNodes
+            id: uuidv4(),
+            children: childNodes,
+            hierarchyPath: nodePath
           });
         // If current node is selected, only selected child nodes get filtered into its children[].
         else nodes = [...nodes, ...childNodes]; // If current node is not selected but children are, children get promoted to previous node's level in the hierarchy.

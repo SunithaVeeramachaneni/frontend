@@ -2,12 +2,10 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
 import { FormConfigurationState } from './form-configuration.reducer';
 import { ResponseSetState } from './multiple-choice-response.reducer';
-import { HierarchyState } from './hierarchy.reducer';
 
 export interface FromModuleState {
   formConfiguration: FormConfigurationState;
   responseSet: ResponseSetState;
-  hierarchy: HierarchyState;
 }
 
 export interface State extends AppState.State {
@@ -24,11 +22,6 @@ const selectFormConfigurationState = createSelector(
 const selectResponseSetState = createSelector(
   selectFeatureState,
   (state) => state.responseSet
-);
-
-const selectHierarchyState = createSelector(
-  selectFeatureState,
-  (state) => state.hierarchy
 );
 
 export const getFormMetadata = createSelector(
@@ -237,9 +230,4 @@ export const getQuestionCounter = createSelector(
 export const getResponseSets = createSelector(
   selectResponseSetState,
   (state) => state.globalResponses
-);
-
-export const getMasterHierarchyList = createSelector(
-  selectHierarchyState,
-  (state) => state.masterHierarchy
 );

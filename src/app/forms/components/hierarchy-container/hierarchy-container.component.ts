@@ -11,7 +11,8 @@ import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
-import { FormMetadata } from 'src/app/interfaces';
+import { FormService } from '../../services/form.service';
+import { FormMetadata, HierarchyEntity } from 'src/app/interfaces';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
@@ -46,6 +47,7 @@ export class HierarchyContainerComponent implements OnInit {
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
+    private formService: FormService,
     public assetHierarchyUtil: AssetHierarchyUtil,
     private store: Store<State>,
     private dialog: MatDialog,
@@ -167,6 +169,10 @@ export class HierarchyContainerComponent implements OnInit {
   openHierarchyModal = () => {
     const dialogRef = this.dialog.open(HierarchyModalComponent, {});
 
-    dialogRef.afterClosed().subscribe(console.log);
+    dialogRef
+      .afterClosed()
+      .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        this.formService.setSelectedHierarchyList(selectedHierarchyList);
+      });
   };
 }

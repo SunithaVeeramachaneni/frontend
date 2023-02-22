@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
-
-import { State } from 'src/app/forms/state';
-import { HierarchyActions } from '../../state/actions';
+import { map } from 'rxjs/operators';
 
 import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
 import { AssetsService } from 'src/app/components/master-configurations/assets/services/assets.service';
+import { FormService } from '../../services/form.service';
 import { HierarchyEntity } from 'src/app/interfaces';
 
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -22,39 +19,41 @@ export class HierarchyModalComponent implements OnInit {
   allLocations$: Observable<any>;
   allLocations = [];
   allAssets$: Observable<any>;
-  allHierarchyItems$: Observable<any>;
-  allHierarchyItems = [];
+  masterHierarchyList$: Observable<any>;
+  masterHierarchyList = [];
   mode = 'location';
   selectedLocationsHierarchy: HierarchyEntity[];
 
   constructor(
     private locationService: LocationService,
     private assetService: AssetsService,
-    private assetHierarchyUtil: AssetHierarchyUtil,
-    private store: Store<State>
+    private formService: FormService,
+    private assetHierarchyUtil: AssetHierarchyUtil
   ) {}
 
   ngOnInit(): void {
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
-    this.allHierarchyItems$ = combineLatest([
+    this.masterHierarchyList$ = combineLatest([
       this.allLocations$,
       this.allAssets$
     ]).pipe(
       map(([allLocations, allAssets]) => {
-        const hierarchyItems = [...allLocations.items, ...allAssets.items];
-        this.allHierarchyItems =
+        const hierarchyItems = [
+          ...allLocations.items.map((location) => ({
+            ...location,
+            type: 'location'
+          })),
+          ...allAssets.items.map((asset) => ({ ...asset, type: 'asset' }))
+        ];
+        this.masterHierarchyList =
           this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
-        this.store.dispatch(
-          HierarchyActions.setMasterHierarchyList({
-            masterHierarchy: this.allHierarchyItems
-          })
-        );
-        return this.allHierarchyItems;
+        this.formService.setMasterHierarchyList(this.masterHierarchyList);
+        return this.masterHierarchyList;
       })
     );
 
-    this.allHierarchyItems$.subscribe();
+    this.masterHierarchyList$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (

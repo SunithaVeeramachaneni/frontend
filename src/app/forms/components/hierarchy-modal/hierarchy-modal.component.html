@@ -1,7 +1,7 @@
 <div class="modal-container">
   <app-hierarchy-locations-list
     *ngIf="mode === 'location'"
-    [locationsData]="allHierarchyItems"
+    [locationsData]="masterHierarchyList"
     (handleLocationHierarchy)="prepareHierarchyForSelectedLocations($event)"
   ></app-hierarchy-locations-list>
   <app-hierarchy-assets-list
