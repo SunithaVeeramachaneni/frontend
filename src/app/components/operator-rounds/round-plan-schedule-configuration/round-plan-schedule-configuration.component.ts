@@ -4,9 +4,14 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
-  OnInit
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  MatCalendar,
+  MatDatepickerInputEvent
+} from '@angular/material/datepicker';
 import {
   addDays,
   addMonths,
@@ -17,6 +22,7 @@ import {
   weeksToDays
 } from 'date-fns';
 import { tap } from 'rxjs/operators';
+import { ScheduleByDate } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
@@ -28,6 +34,7 @@ import { RoundPlanScheduleConfigurationService } from '../services/round-plan-sc
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoundPlanScheduleConfigurationComponent implements OnInit {
+  @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Input() set roundPlanDetails(roundPlanDetails: any) {
     this._roundPlanDetails = roundPlanDetails;
     if (roundPlanDetails) {
@@ -50,7 +57,13 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   ];
   roundPlanSchedulerConfigForm: FormGroup;
   currentDate: Date;
-  selected: Date | null;
+  scheduleByDates: ScheduleByDate[] = [
+    {
+      date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
+      scheduled: false
+    }
+  ];
+  disableSchedule = false;
   private _roundPlanDetails: any;
 
   constructor(
@@ -79,19 +92,22 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
           disabled: true
         }
       ],
+      scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
       scheduleEndOccurrences: [
         { value: 30, disabled: true },
         [Validators.required, Validators.min(1)]
       ],
       scheduleEndOccurrencesText: [{ value: 'occurrences', disabled: true }],
       startDate: format(new Date(), 'd MMMM yyyy'),
+      startDatePicker: new Date(),
       endDate: [
         {
           value: format(addDays(new Date(), 30), 'd MMMM yyyy'),
           disabled: true
         }
       ],
-      scheduleByDate: format(new Date(), 'yyyy-MM-dd')
+      endDatePicker: new Date(addDays(new Date(), 30)),
+      scheduledTill: null
     });
 
     this.form.scheduleEndType.valueChanges.subscribe((scheduleEndType) => {
@@ -175,7 +191,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             days = occurrences;
             break;
           case 'week':
-            days = weeksToDays(13);
+            days = weeksToDays(occurrences);
             break;
           case 'month':
             days = differenceInDays(
@@ -200,7 +216,6 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     });
 
     this.currentDate = new Date();
-    this.selected = new Date();
 
     for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
       weekRepeatDays.patchValue([getDay(new Date())]);
@@ -230,22 +245,28 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       this.roundPlanSchedulerConfigForm.valid &&
       this.roundPlanSchedulerConfigForm.valid
     ) {
+      this.disableSchedule = true;
       const roundPlanSchedulerConfig =
         this.roundPlanSchedulerConfigForm.getRawValue();
-      const { id, startDate, endDate, scheduleEndOn, scheduleByDate } =
+      const { id, startDate, endDate, scheduleEndOn } =
         roundPlanSchedulerConfig;
-      const time = format(new Date(), 'HH:mm:ss');
+      const time = format(new Date(), 'HH:00:00');
+      const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
+        roundPlanSchedulerConfig;
+      const scheduleByDates = this.prepareScheduleByDates();
+
       if (id) {
         this.rpscService
           .updateRoundPlanScheduleConfiguration$(id, {
-            ...roundPlanSchedulerConfig,
+            ...rest,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
             scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
-            scheduleByDate: new Date(`${scheduleByDate} ${time}`).toISOString()
+            scheduleByDates
           })
           .pipe(
             tap((scheduleConfig) => {
+              this.disableSchedule = false;
               if (scheduleConfig && Object.keys(scheduleConfig).length) {
                 this.toastService.show({
                   text: 'Round plan schedule updated sucessfully',
@@ -260,14 +281,15 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       } else {
         this.rpscService
           .createRoundPlanScheduleConfiguration$({
-            ...roundPlanSchedulerConfig,
+            ...rest,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
             scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
-            scheduleByDate: new Date(`${scheduleByDate} ${time}`).toISOString()
+            scheduleByDates
           })
           .pipe(
             tap((scheduleConfig) => {
+              this.disableSchedule = false;
               if (scheduleConfig && Object.keys(scheduleConfig).length) {
                 this.toastService.show({
                   text: 'Round plan schedule created sucessfully',
@@ -284,7 +306,10 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     }
   }
 
-  updateDate(event: any, formControlDateField: string) {
+  updateDate(
+    event: MatDatepickerInputEvent<Date>,
+    formControlDateField: string
+  ) {
     this.roundPlanSchedulerConfigForm.patchValue({
       [formControlDateField]:
         formControlDateField !== 'scheduleEndOn'
@@ -294,8 +319,18 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     this.roundPlanSchedulerConfigForm.markAsDirty();
   }
 
-  updateScheduleByDate(date: Date) {
-    this.form.scheduleByDate.patchValue(format(date, 'yyyy-MM-dd'));
+  updateScheduleByDates(date: Date) {
+    const index = this.findDate(date);
+    if (index === -1) {
+      this.scheduleByDates = [
+        ...this.scheduleByDates,
+        { date, scheduled: false }
+      ];
+    } else {
+      this.scheduleByDates.splice(index, 1);
+    }
+    this.roundPlanSchedulerConfigForm.markAsDirty();
+    this.calendar.updateTodaysDate();
   }
 
   getRoundPlanSchedulerConfiguration(roundPlandId: string) {
@@ -304,21 +339,54 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       .pipe(
         tap(([config]) => {
           if (config && Object.keys(config).length) {
-            const { startDate, endDate, scheduleEndOn, scheduleByDate } =
-              config;
+            const {
+              startDate,
+              endDate,
+              scheduleEndOn,
+              scheduledTill,
+              scheduleByDates
+            } = config;
             config = {
               ...config,
               startDate: format(new Date(startDate), 'd MMMM yyyy'),
               endDate: format(new Date(endDate), 'd MMMM yyyy'),
               scheduleEndOn: format(new Date(scheduleEndOn), 'MMM d, yyyy'),
-              scheduleByDate: format(new Date(scheduleByDate), 'yyyy-MM-dd')
+              startDatePicker: new Date(startDate),
+              endDatePicker: new Date(endDate),
+              scheduleEndOnPicker: new Date(scheduleEndOn)
             };
-            this.selected = new Date(scheduleByDate);
+            this.scheduleByDates = scheduleByDates.map((scheduleByDate) => ({
+              ...scheduleByDate,
+              date: new Date(scheduleByDate.date)
+            }));
             this.roundPlanSchedulerConfigForm.patchValue(config);
+            if (scheduledTill !== null) {
+              this.form.startDate.disable();
+            }
             this.roundPlanSchedulerConfigForm.markAsPristine();
           }
         })
       )
       .subscribe();
+  }
+
+  findDate(date: Date): number {
+    return this.scheduleByDates
+      .map((scheduleByDate) => +scheduleByDate.date)
+      .indexOf(+date);
+  }
+
+  dateClass = (date: Date) => {
+    if (this.findDate(date) !== -1) {
+      return ['selected'];
+    }
+    return [];
+  };
+
+  prepareScheduleByDates() {
+    return this.scheduleByDates.map((scheduleByDate) => ({
+      ...scheduleByDate,
+      date: new Date(format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'))
+    }));
   }
 }

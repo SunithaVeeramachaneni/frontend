@@ -1,10 +1,12 @@
-<!-- <div class="search-container">
+<div class="search-container">
   <div id="openviewtab">
-    <app-submission-slider
+    <app-form-detail
       [@slideInOut]="menuState"
-      (slideInOut)="menuState = 'out'"
-      [submission]="submissionDetail"
-    ></app-submission-slider>
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+      [moduleName]="'OPERATOR_ROUNDS'"
+      (formDetailAction)="roundPlanDetailActionHandler($event)"
+    ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-forms" *ngIf="roundPlansCount$ | async as totalCount">
@@ -65,7 +67,7 @@
       <div>{{ 'filters' | translate }}</div>
     </div>
   </ng-template>
-</div> -->
+</div>
 <ng-container *ngIf="userInfo$ | async">
   <div *ngIf="(roundPlans$ | async) && (isLoading$ | async) === false">
     <cwp-dynamictable

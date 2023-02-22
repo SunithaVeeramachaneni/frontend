@@ -43,6 +43,10 @@ import {
 } from '@angular/animations';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.state';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-plans',
@@ -299,11 +303,14 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  selectedForm: GetFormListQuery = null;
   readonly perms = perms;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private store: Store<State>,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -433,7 +440,12 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   prepareMenuActions(permissions: Permission[]): void {
-    const menuActions = [];
+    const menuActions = [
+      {
+        title: 'Show Details',
+        action: 'showDetails'
+      }
+    ];
 
     if (
       this.loginService.checkUserHasPermission(
@@ -442,13 +454,23 @@ export class PlansComponent implements OnInit, OnDestroy {
       )
     ) {
       menuActions.push({
-        title: 'Edit',
-        action: 'edit'
+        title: 'Schedule',
+        action: 'schedule'
       });
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+    this.store.dispatch(FormConfigurationActions.resetPages());
+  }
+  roundPlanDetailActionHandler(event) {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 }
