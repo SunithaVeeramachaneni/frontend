@@ -33,11 +33,11 @@
           keyboard_arrow_down
         </mat-icon>
       </a>
-      <mat-checkbox
+      <!-- <mat-checkbox
         [(ngModel)]="isParentCheckedData.checked"
         (change)="isParentToggled($event)"
         class="checkbox"
-      ></mat-checkbox>
+      ></mat-checkbox> -->
       <a *ngIf="viewMode === false" class="count-assets">{{
         'assetsCount'
           | translate
@@ -47,25 +47,6 @@
       }}</a>
     </div>
     <div *ngFor="let data of masterData.children" class="child-node">
-      <!-- <a
-        *ngIf="viewMode === false"
-        (click)="data.isToggledView = !data.isToggledView"
-      >
-        <mat-icon *ngIf="data.isToggledView === false" class="arrows">
-          keyboard_arrow_right
-        </mat-icon>
-        <mat-icon *ngIf="data.isToggledView === true" class="arrows">
-          keyboard_arrow_down
-        </mat-icon>
-      </a>
-      <a *ngIf="viewMode === false" class="count-assets">{{
-        'assetsCount'
-          | translate
-            : {
-                count: hierarchyCount(data)
-              }
-      }}</a> -->
-      <!-- <hr class="borders" *ngIf="data.isToggledView === false" /> -->
       <div *ngIf="masterData.isToggledView || viewMode === true">
         <app-hierarchy-node
           [nodeData]="data"
