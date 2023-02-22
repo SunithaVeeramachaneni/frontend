@@ -67,7 +67,8 @@
         transform: translateY(0%);
       }
 
-      ::ng-deep .mat-icon-button {
+      ::ng-deep .cancel-side-drawer .mat-icon-button,
+      ::ng-deep mat-datepicker-toggle .mat-icon-button {
         position: absolute;
         top: -3px;
         right: -10px;
@@ -179,6 +180,10 @@
         ::ng-deep .mat-checkbox-layout {
           white-space: pre-wrap;
         }
+
+        ::ng-deep .mat-form-field-underline {
+          bottom: 1px;
+        }
       }
 
       mat-radio-button {
@@ -193,6 +198,19 @@
       .by-date {
         mat-calendar {
           padding: 0 32px;
+
+          ::ng-deep
+            .mat-calendar-body-cell.selected
+            > .mat-calendar-body-cell-content,
+          ::ng-deep
+            .mat-calendar-body-cell.selected:hover
+            > .mat-calendar-body-cell-content,
+          ::ng-deep
+            .mat-calendar-body-cell.selected
+            > .mat-calendar-body-cell-content:hover {
+            background-color: $blue-primary !important;
+            color: $white !important;
+          }
         }
       }
     }

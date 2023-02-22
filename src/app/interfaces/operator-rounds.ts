@@ -10,5 +10,14 @@ export interface RoundPlanScheduleConfiguration {
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
-  scheduleByDate: string;
+  scheduleByDates: ScheduleByDate[];
+  scheduledTill?: string;
+  startDatePicker?: Date;
+  endDatePicker?: Date;
+  scheduleEndOnPicker?: Date;
+}
+
+export interface ScheduleByDate {
+  date: Date;
+  scheduled: boolean;
 }
