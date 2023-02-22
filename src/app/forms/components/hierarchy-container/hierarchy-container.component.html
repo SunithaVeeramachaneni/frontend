@@ -17,7 +17,7 @@
     <mat-form-field appearance="outline" class="searchField">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
-        [disabled]="hierarchyMode !== 'flat'"
+        [disabled]="hierarchyMode !== 'asset_hierarchy'"
         matInput
         type="text"
         [placeholder]="'Search...'"
@@ -30,7 +30,7 @@
   <div
     class="hierarchy"
     *ngIf="hierarchy.length"
-    [ngClass]="{ displayGrid: hierarchyMode !== 'flat' }"
+    [ngClass]="{ displayGrid: hierarchyMode !== 'asset_hierarchy' }"
   >
     <div *ngIf="!filteredHierarchyList.length" class="emptySearchResult">
       <span
@@ -38,17 +38,12 @@
         <strong>{{ searchHierarchyKey.value }} </strong></span
       >
     </div>
-    <div cdkDropList (cdkDropListDropped)="drop($event)">
+    <div *ngIf="hierarchyMode === 'asset_hierarchy'">
       <app-node
-        cdkDrag
-        [cdkDragData]="node"
         [node]="node"
         [hierarchyMode]="hierarchyMode"
         (nodeRemoved)="removeNodeHandler($event)"
         *ngFor="let node of filteredHierarchyList"
-        [ngClass]="{
-          displayInlineBlock: node.hasChildren && hierarchyMode !== 'flat'
-        }"
       ></app-node>
     </div>
   </div>
