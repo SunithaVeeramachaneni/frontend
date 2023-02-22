@@ -380,6 +380,7 @@ subscription OnCreateAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -399,6 +400,7 @@ subscription OnUpdateAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -418,6 +420,7 @@ subscription OnDeleteAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -433,6 +436,7 @@ subscription OnCreateRoundPlanDetail(
     formData
     flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -448,6 +452,7 @@ subscription OnUpdateRoundPlanDetail(
     formData
     flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -463,6 +468,7 @@ subscription OnDeleteRoundPlanDetail(
     formData
     flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -487,7 +493,6 @@ subscription OnCreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -505,7 +510,6 @@ subscription OnCreateRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -530,7 +534,6 @@ subscription OnUpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -548,7 +551,6 @@ subscription OnUpdateRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -573,7 +575,6 @@ subscription OnDeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -591,7 +592,6 @@ subscription OnDeleteRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
