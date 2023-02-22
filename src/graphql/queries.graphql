@@ -555,6 +555,7 @@ query GetAuthoredRoundPlanDetail($id: ID!) {
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -581,6 +582,7 @@ query ListAuthoredRoundPlanDetails(
       formDetailPublishStatus
       formlistID
       subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -612,6 +614,7 @@ query SyncAuthoredRoundPlanDetails(
       formDetailPublishStatus
       formlistID
       subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -645,6 +648,7 @@ query AuthoredRoundPlanDetailsByFormlistID(
       formDetailPublishStatus
       formlistID
       subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -661,6 +665,7 @@ query GetRoundPlanDetail($id: ID!) {
     formData
     flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -679,6 +684,7 @@ query ListRoundPlanDetails(
       formData
       flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -706,6 +712,7 @@ query SyncRoundPlanDetails(
       formData
       flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -735,6 +742,7 @@ query RoundPlanDetailsByFormlistID(
       formData
       flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -760,7 +768,6 @@ query GetRoundPlanList($id: ID!) {
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -778,7 +785,6 @@ query GetRoundPlanList($id: ID!) {
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -806,13 +812,11 @@ query ListRoundPlanLists(
       tags
       lastPublishedBy
       author
-      hierarchy
       isArchived
       formType
       isArchivedAt
       isDeleted
       searchTerm
-      hierarchyMode
       createdAt
       updatedAt
       _version
@@ -849,13 +853,11 @@ query SyncRoundPlanLists(
       tags
       lastPublishedBy
       author
-      hierarchy
       isArchived
       formType
       isArchivedAt
       isDeleted
       searchTerm
-      hierarchyMode
       createdAt
       updatedAt
       _version
