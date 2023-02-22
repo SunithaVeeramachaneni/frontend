@@ -28,9 +28,10 @@ export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   allLocations$: Observable<ListLocationsQuery>;
+  private assetEditData = null;
   @Input() set assetsEditData(data) {
-    this.assEditData = data;
-    if (this.assEditData === null) {
+    this.assetEditData = data || null;
+    if (this.assetEditData === null) {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
@@ -39,30 +40,30 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetStatus = 'edit';
       this.assetTitle = 'Edit Asset';
       this.assetButton = 'Update';
-      this.assetImage = this.assEditData.image;
+      this.assetImage = this.assetEditData.image;
       const assdata = {
-        id: this.assEditData.id,
-        image: this.assEditData.image,
-        name: this.assEditData.name,
-        assetsId: this.assEditData.assetsId,
-        model: this.assEditData.model,
-        description: this.assEditData.description,
-        parentType: this.assEditData.parentType,
-        parentId: this.assEditData.parentId
+        id: this.assetEditData.id,
+        image: this.assetEditData.image,
+        name: this.assetEditData.name,
+        assetsId: this.assetEditData.assetsId,
+        model: this.assetEditData.model,
+        description: this.assetEditData.description,
+        parentType: this.assetEditData.parentType,
+        parentId: this.assetEditData.parentId
       };
       this.assetForm.patchValue(assdata);
     }
     if (
-      this.assEditData === null ||
-      this.assEditData.parentType === 'location'
+      this.assetEditData === null ||
+      this.assetEditData.parentType === 'location'
     ) {
       this.getAllLocations();
-    } else if (this.assEditData.parentType === 'asset') {
+    } else if (this.assetEditData.parentType === 'asset') {
       this.getAllAssets();
     }
   }
   get assetsEditData() {
-    return this.assEditData;
+    return this.assetEditData;
   }
   errors: ValidationError = {};
   assetForm: FormGroup;
@@ -76,7 +77,6 @@ export class AddEditAssetsComponent implements OnInit {
   assets$;
   parentInformation;
   allParentsData;
-  private assEditData;
 
   constructor(
     private fb: FormBuilder,
@@ -97,6 +97,7 @@ export class AddEditAssetsComponent implements OnInit {
     });
 
     this.assetForm.get('parentType').valueChanges.subscribe((value) => {
+      this.assetForm.get('parentId').setValue('');
       if (value === 'location') {
         this.getAllLocations();
       } else if (value === 'asset') {
@@ -116,12 +117,13 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
+        this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     } else if (this.assetStatus === 'edit') {
       const updateData = {
         data: this.assetForm.value,
-        version: this.assEditData._version
+        version: this.assetEditData._version
       };
       this.assetService.updateAssets$(updateData).subscribe((res) => {
         this.createdAssetsData.emit({
@@ -129,12 +131,14 @@ export class AddEditAssetsComponent implements OnInit {
           data: res
         });
         this.assetForm.reset();
+        this.assetForm?.get('parentType').setValue('location');
         this.slideInOut.emit('out');
       });
     }
   }
 
-  onKey(value) {
+  onKey(event) {
+    const value = event.target.value || '';
     this.allParentsData = this.search(value);
   }
 
@@ -148,6 +152,7 @@ export class AddEditAssetsComponent implements OnInit {
   cancel() {
     this.slideInOut.emit('out');
     this.assetForm.reset();
+    this.assetForm?.get('parentType').setValue('location');
   }
 
   getAllLocations() {
@@ -160,8 +165,9 @@ export class AddEditAssetsComponent implements OnInit {
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
       this.parentInformation = allAssets.items.filter(
-        (asset) => asset.id !== this.assEditData?.id && !asset._deleted
+        (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
       );
+      this.allParentsData = this.parentInformation;
     });
   }
 
