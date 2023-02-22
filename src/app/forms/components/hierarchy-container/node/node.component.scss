@@ -43,6 +43,9 @@
     display: flex;
     width: 10%;
     align-items: center;
+    .more-icon {
+      cursor: pointer;
+    }
   }
 }
 .nodeContent {

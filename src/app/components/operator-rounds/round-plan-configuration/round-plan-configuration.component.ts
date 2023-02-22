@@ -335,6 +335,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 counter,
                 pages,
                 subForms,
+                ...subFormsObj,
                 authoredFormDetailVersion
               })
             );
@@ -347,6 +348,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 pages,
                 subForms,
+                ...subFormsObj,
                 formDetailId,
                 formDetailDynamoDBVersion,
                 authoredFormDetail: {
@@ -368,6 +370,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 pages,
                 subForms,
+                ...subFormsObj,
                 authoredFormDetail: {
                   formStatus,
                   formListId,
