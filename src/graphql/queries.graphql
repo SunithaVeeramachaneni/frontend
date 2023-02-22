@@ -659,6 +659,7 @@ query GetRoundPlanDetail($id: ID!) {
   getRoundPlanDetail(id: $id) {
     id
     formData
+    flatHierarchy
     formlistID
     createdAt
     updatedAt
@@ -676,6 +677,7 @@ query ListRoundPlanDetails(
     items {
       id
       formData
+      flatHierarchy
       formlistID
       createdAt
       updatedAt
@@ -702,6 +704,7 @@ query SyncRoundPlanDetails(
     items {
       id
       formData
+      flatHierarchy
       formlistID
       createdAt
       updatedAt
@@ -730,6 +733,7 @@ query RoundPlanDetailsByFormlistID(
     items {
       id
       formData
+      flatHierarchy
       formlistID
       createdAt
       updatedAt
