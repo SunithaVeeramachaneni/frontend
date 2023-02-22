@@ -786,6 +786,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "flatHierarchy": {
+                    "name": "flatHierarchy",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "formlistID": {
                     "name": "formlistID",
                     "isArray": false,
@@ -1810,5 +1817,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "d42eb94f72201d396e21b664b7196726"
+    "version": "d0ad1050d20370347e1732ed920a6df0"
 };

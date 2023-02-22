@@ -552,12 +552,14 @@ export type DeleteAuthoredRoundPlanDetailInput = {
 export type CreateRoundPlanDetailInput = {
   id?: string | null;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   _version?: number | null;
 };
 
 export type ModelRoundPlanDetailConditionInput = {
   formData?: ModelStringInput | null;
+  flatHierarchy?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelRoundPlanDetailConditionInput | null> | null;
   or?: Array<ModelRoundPlanDetailConditionInput | null> | null;
@@ -568,6 +570,7 @@ export type RoundPlanDetail = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -579,6 +582,7 @@ export type RoundPlanDetail = {
 export type UpdateRoundPlanDetailInput = {
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID?: string | null;
   _version?: number | null;
 };
@@ -1234,6 +1238,7 @@ export type ModelAuthoredRoundPlanDetailFilterInput = {
 export type ModelRoundPlanDetailFilterInput = {
   id?: ModelIDInput | null;
   formData?: ModelStringInput | null;
+  flatHierarchy?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelRoundPlanDetailFilterInput | null> | null;
   or?: Array<ModelRoundPlanDetailFilterInput | null> | null;
@@ -1519,6 +1524,7 @@ export type ModelSubscriptionIntInput = {
 export type ModelSubscriptionRoundPlanDetailFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   formData?: ModelSubscriptionStringInput | null;
+  flatHierarchy?: ModelSubscriptionStringInput | null;
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionRoundPlanDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionRoundPlanDetailFilterInput | null> | null;
@@ -2045,6 +2051,7 @@ export type CreateRoundPlanDetailMutation = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -2057,6 +2064,7 @@ export type UpdateRoundPlanDetailMutation = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -2069,6 +2077,7 @@ export type DeleteRoundPlanDetailMutation = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -3107,6 +3116,7 @@ export type GetRoundPlanDetailQuery = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -3121,6 +3131,7 @@ export type ListRoundPlanDetailsQuery = {
     __typename: "RoundPlanDetail";
     id: string;
     formData?: string | null;
+    flatHierarchy?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -3138,6 +3149,7 @@ export type SyncRoundPlanDetailsQuery = {
     __typename: "RoundPlanDetail";
     id: string;
     formData?: string | null;
+    flatHierarchy?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -3155,6 +3167,7 @@ export type RoundPlanDetailsByFormlistIDQuery = {
     __typename: "RoundPlanDetail";
     id: string;
     formData?: string | null;
+    flatHierarchy?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -4162,6 +4175,7 @@ export type OnCreateRoundPlanDetailSubscription = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -4174,6 +4188,7 @@ export type OnUpdateRoundPlanDetailSubscription = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -4186,6 +4201,7 @@ export type OnDeleteRoundPlanDetailSubscription = {
   __typename: "RoundPlanDetail";
   id: string;
   formData?: string | null;
+  flatHierarchy?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -5479,6 +5495,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -5507,6 +5524,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -5535,6 +5553,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -7476,6 +7495,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -7504,6 +7524,7 @@ export class APIService {
             __typename
             id
             formData
+            flatHierarchy
             formlistID
             createdAt
             updatedAt
@@ -7543,6 +7564,7 @@ export class APIService {
             __typename
             id
             formData
+            flatHierarchy
             formlistID
             createdAt
             updatedAt
@@ -7586,6 +7608,7 @@ export class APIService {
             __typename
             id
             formData
+            flatHierarchy
             formlistID
             createdAt
             updatedAt
@@ -9538,6 +9561,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -9571,6 +9595,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
@@ -9604,6 +9629,7 @@ export class APIService {
           __typename
           id
           formData
+          flatHierarchy
           formlistID
           createdAt
           updatedAt
