@@ -1,4 +1,4 @@
-<div class="show-hierarchy-container">
+<div class="show-hierarchy-container" *ngIf="hierarchyList$ | async">
   <div class="heading">
     <a translate>hierarchy</a>
     <button class="cancel-icon" (click)="closeShowHierarchy()">
