@@ -8,7 +8,7 @@ export interface HierarchyEntity {
   nodeDescription?: string | null;
   sequence: number | null;
   hasChildren: boolean;
-  subFormId: string;
+  subFormId?: string;
   isSelected: boolean;
   isToggledView: boolean;
   children: HierarchyEntity[];
