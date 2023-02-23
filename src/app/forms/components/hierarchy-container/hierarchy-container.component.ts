@@ -61,6 +61,10 @@ export class HierarchyContainerComponent implements OnInit {
           this.totalAssetsCount =
             assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
+
+          const stitchedHierarchy =
+            assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
+
           this.filteredHierarchyList = JSON.parse(
             JSON.stringify(this.hierarchy)
           );

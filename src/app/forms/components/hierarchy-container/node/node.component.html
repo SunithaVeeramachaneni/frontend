@@ -4,7 +4,7 @@
 >
   <div class="left">
     <div class="nodeContent" (click)="setSelectedNode(node)">
-      <img src="assets/rdf-forms-icons/form-image-upload.svg" />
+      <img [src]="node.image" />
       <div class="description">
         <span class="title">{{ node.name }}</span>
         <span class="subTitle">
