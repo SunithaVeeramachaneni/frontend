@@ -51,6 +51,18 @@ export class AssetHierarchyUtil {
     return count;
   }
 
+  getAllChildrenIDsByNode(node) {
+    let childrenIds = [];
+    childrenIds.push(node.id);
+    if (node.hasChildren && node.children && node.children.length) {
+      node.children.forEach((child) => {
+        const recursiveChildIds = this.getAllChildrenIDsByNode(child);
+        childrenIds = [...childrenIds, ...recursiveChildIds];
+      });
+    }
+    return childrenIds;
+  }
+
   convertHierarchyToFlatList(hierarchy: any[], sequenceNum: number) {
     let flatHierarchy = [];
     hierarchy.forEach((node) => {

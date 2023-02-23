@@ -24,7 +24,10 @@
           >expand_circle_down</mat-icon
         ></span
       >
-      <span>{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets</span>
+      <span
+        >{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets, &nbsp;
+        {{ getTotalTasksCountByNode(node) }} Tasks</span
+      >
     </div>
   </div>
   <div class="right">

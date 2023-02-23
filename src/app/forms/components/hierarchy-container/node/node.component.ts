@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import {
   getTasksCountByNodeId,
+  getTasksCountByNodeIds,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -51,6 +52,19 @@ export class NodeComponent implements OnInit {
     this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
       count = c;
     });
+    return count;
+  }
+
+  getTotalTasksCountByNode(node) {
+    const allChildNodeIds =
+      this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
+
+    let count = 0;
+    this.store
+      .select(getTasksCountByNodeIds(allChildNodeIds))
+      .subscribe((c) => {
+        count = c;
+      });
     return count;
   }
 

@@ -58,6 +58,24 @@ export const getTasksCountByNodeId = (subFormId) =>
     return count;
   });
 
+export const getTasksCountByNodeIds = (subFormIds) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let count = 0;
+    console.log(subFormIds);
+    subFormIds.forEach((subFormId) => {
+      let key = 'pages';
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      const subForm = state[key] || [];
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      subForm.forEach((f) => {
+        count += f.questions.length;
+      });
+    });
+    return count;
+  });
+
 export const getTotalTasksCount = () =>
   createSelector(selectFormConfigurationState, (state) => {
     let count = 0;
