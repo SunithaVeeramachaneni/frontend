@@ -288,6 +288,15 @@ export const transferQuestionFromSection = createAction(
   }>()
 );
 
+export const updateFormStatuses = createAction(
+  '[Builder Configuration] updateRoundPlanStatuses',
+  props<{
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
+);
+
 export const updateFormConfiguration = createAction(
   '[Builder Configuration] updateFormConfiguration',
   props<{ formConfiguration: FormConfigurationState }>()

@@ -375,14 +375,8 @@ export class OperatorRoundsService {
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => b._version - a._version);
+        return items[0];
       })
     );
   }

@@ -65,27 +65,10 @@ export class HierarchyContainerComponent implements OnInit {
             JSON.stringify(this.hierarchy)
           );
           this.cdrf.detectChanges();
-          console.log('this.hierarchy', this.hierarchy);
-          console.log('this.filteredHierarchyList', this.filteredHierarchyList);
           this.operatorRoundsService.setSelectedNode(selectedHierarchy[0]);
         }
       })
     );
-    // this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-    //   tap((formMetadata) => {
-    //     if (Object.keys(formMetadata).length) {
-    //       const { hierarchy } = formMetadata;
-    //       this.totalAssetsCount =
-    //         assetHierarchyUtil.getTotalAssetCount(hierarchy);
-    //       this.hierarchy = JSON.parse(JSON.stringify(hierarchy));
-    //       this.filteredHierarchyList = JSON.parse(
-    //         JSON.stringify(this.hierarchy)
-    //       );
-    //       this.cdrf.detectChanges();
-    //       this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
-    //     }
-    //   })
-    // );
   }
 
   ngOnInit(): void {
@@ -170,6 +153,13 @@ export class HierarchyContainerComponent implements OnInit {
         this.store.dispatch(
           HierarchyActions.updateSelectedHierarchyList({
             selectedHierarchy: selectedHierarchyList
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormStatuses({
+            formStatus: 'Draft',
+            formDetailPublishStatus: 'Draft',
+            formSaveStatus: 'Saving'
           })
         );
         this.formService.setSelectedHierarchyList(selectedHierarchyList);

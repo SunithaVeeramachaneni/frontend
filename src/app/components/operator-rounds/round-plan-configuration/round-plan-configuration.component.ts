@@ -268,8 +268,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([formDetails, selectedHierarchyList]) => {
-        console.log('selectedHierarchyList', selectedHierarchyList);
-        console.log('this.selectedHierarchyList', this.selectedHierarchyList);
         const {
           formMetadata,
           formStatus,
@@ -301,10 +299,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (formListId) {
           if (authoredFormDetailId) {
             if (
-              (formSaveStatus !== 'Saved' &&
-                formStatus !== 'Published' &&
-                !isEqual(this.formDetails, formDetails)) ||
-              !isEqual(this.selectedHierarchyList, selectedHierarchyList)
+              formSaveStatus !== 'Saved' &&
+              formStatus !== 'Published' &&
+              selectedHierarchyList.length &&
+              (!isEqual(this.formDetails, formDetails) ||
+                !isEqual(this.selectedHierarchyList, selectedHierarchyList))
             ) {
               this.store.dispatch(
                 RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
@@ -435,6 +434,16 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         const { formConfigurationState, hierarchyState } = data.form || {};
         if (createOrEditForm && componentMode === 'create')
           this.openHierarchyModal();
+
+        if (Object.keys(hierarchyState).length) {
+          const { selectedHierarchy } = hierarchyState;
+          this.store.dispatch(
+            HierarchyActions.updateSelectedHierarchyList({
+              selectedHierarchy
+            })
+          );
+        }
+
         if (
           formConfigurationState &&
           Object.keys(formConfigurationState).length
@@ -453,15 +462,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             formKeys.forEach((key) => {
               subFormsObj[key] = formConfigurationState[key];
             });
-
-            if (Object.keys(hierarchyState).length) {
-              const { selectedHierarchy } = hierarchyState;
-              this.store.dispatch(
-                HierarchyActions.updateSelectedHierarchyList({
-                  selectedHierarchy
-                })
-              );
-            }
 
             Object.keys(subFormsObj).forEach((subForm) => {
               subFormsObj[subForm].forEach((page, index) => {

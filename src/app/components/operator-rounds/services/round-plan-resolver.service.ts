@@ -96,7 +96,7 @@ export class RoundPlanResolverService
           } as FormConfigurationState,
           hierarchyState: {
             masterHierarchy: [],
-            selectedHierarchy: JSON.parse(hierarchy)
+            selectedHierarchy: hierarchy ? JSON.parse(hierarchy) : []
           } as HierarchyState
         };
       }),

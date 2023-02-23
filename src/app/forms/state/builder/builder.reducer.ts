@@ -973,6 +973,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    BuilderConfigurationActions.updateFormStatuses,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      ...action
+    })
+  ),
+  on(
     BuilderConfigurationActions.initPages,
     (state, action): FormConfigurationState => {
       let key = 'pages';
