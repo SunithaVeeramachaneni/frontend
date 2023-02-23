@@ -259,6 +259,7 @@ type EagerAuthoredRoundPlanDetail = {
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
   readonly subForms?: string | null;
+  readonly hierarchy?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -276,6 +277,7 @@ type LazyAuthoredRoundPlanDetail = {
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
   readonly subForms?: string | null;
+  readonly hierarchy?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -295,6 +297,7 @@ type EagerRoundPlanDetail = {
   readonly formData?: string | null;
   readonly flatHierarchy?: string | null;
   readonly formlistID: string;
+  readonly scheduledAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -308,6 +311,7 @@ type LazyRoundPlanDetail = {
   readonly formData?: string | null;
   readonly flatHierarchy?: string | null;
   readonly formlistID: string;
+  readonly scheduledAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -336,7 +340,6 @@ type EagerRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly hierarchy?: string | null;
   readonly isArchived?: boolean | null;
   readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
@@ -345,7 +348,6 @@ type EagerRoundPlanList = {
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly isDeleted?: boolean | null;
   readonly searchTerm?: string | null;
-  readonly hierarchyMode?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -368,7 +370,6 @@ type LazyRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly hierarchy?: string | null;
   readonly isArchived?: boolean | null;
   readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
@@ -377,7 +378,6 @@ type LazyRoundPlanList = {
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly isDeleted?: boolean | null;
   readonly searchTerm?: string | null;
-  readonly hierarchyMode?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
