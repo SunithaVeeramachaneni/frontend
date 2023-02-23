@@ -30,6 +30,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getResponseSets } from 'src/app/forms/state';
 import { isJson } from '../../race-dynamic-form/utils/utils';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
 const limit = 10000;
 @Injectable({
@@ -47,6 +48,7 @@ export class OperatorRoundsService {
   selectedNode$ = this.selectedNodeSubject.asObservable();
 
   constructor(
+    public assetHierarchyUtil: AssetHierarchyUtil,
     private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService,
@@ -223,7 +225,6 @@ export class OperatorRoundsService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
-      | 'hierarchy'
     >
   ) {
     return from(
@@ -234,7 +235,6 @@ export class OperatorRoundsService {
         formStatus: formListQuery.formStatus,
         author: formListQuery.author,
         formType: formListQuery.formType,
-        hierarchy: formListQuery.hierarchy,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
@@ -261,20 +261,31 @@ export class OperatorRoundsService {
   }
 
   createFormDetail$(formDetails) {
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      formDetails.hierarchy,
+      0
+    );
+
     return from(
       this.awsApiService.CreateRoundPlanDetail({
         formlistID: formDetails.formListId,
-        formData: this.formatFormData(formDetails)
+        formData: this.formatFormData(formDetails),
+        flatHierarchy: JSON.stringify(flatHierarchy)
       })
     );
   }
 
   updateFormDetail$(formDetails) {
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      formDetails.hierarchy,
+      0
+    );
     return from(
       this.awsApiService.UpdateRoundPlanDetail({
         id: formDetails.formDetailId,
         formlistID: formDetails.formListId,
         formData: this.formatFormData(formDetails),
+        flatHierarchy: JSON.stringify(flatHierarchy),
         _version: formDetails.formDetailDynamoDBVersion
       } as UpdateFormDetailInput)
     );
