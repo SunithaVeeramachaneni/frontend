@@ -464,30 +464,21 @@ export class UnitMeasurementListComponent implements OnInit {
   };
 
   prepareMenuActions(permissions: Permission[]) {
-    const menuActions = [];
-    if (
-      this.loginService.checkUserHasPermission(
+    const menuActions = [
+      ...(this.loginService.checkUserHasPermission(
         permissions,
         'UPDATE_UNIT_OF_MEASUREMENT'
-      )
-    ) {
-      menuActions.push({
-        title: 'Set as Default',
-        action: 'setAsDefault'
-      });
-    }
-
-    if (
-      this.loginService.checkUserHasPermission(
-        permissions,
-        'UPDATE_UNIT_OF_MEASUREMENT'
-      )
-    ) {
-      menuActions.push({
-        title: 'Edit',
-        action: 'edit'
-      });
-    }
+      ) && [
+        {
+          title: 'Set as Default',
+          action: 'setAsDefault'
+        },
+        {
+          title: 'Set as Default',
+          action: 'setAsDefault'
+        }
+      ])
+    ];
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -549,8 +540,8 @@ export class UnitMeasurementListComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', file);
     this.unitMeasurementService.uploadExcel(formData).subscribe(
-      (resp) => {
-        if (resp) {
+      (response) => {
+        if (Object.keys(response).length) {
           this.toast.show({
             text: 'File uploaded successfully!',
             type: 'success'
@@ -583,11 +574,11 @@ export class UnitMeasurementListComponent implements OnInit {
         this.unitMeasurementService
           .deleteUnitOfMeasurement$(data?.id)
           .subscribe(
-            (result) => {
-              if (result) {
+            (response) => {
+              if (Object.keys(response).length) {
                 this.addEditCopyForm$.next({
                   action: 'delete',
-                  form: result?.data
+                  form: response
                 });
               }
             },
@@ -608,8 +599,8 @@ export class UnitMeasurementListComponent implements OnInit {
         unitlistID: unit?.unitlistID
       })
       .subscribe(
-        (result) => {
-          if (result) {
+        (response) => {
+          if (Object.keys(response).length) {
             this.nextToken = '';
             this.fetchUOM$.next({ data: 'load' });
           }
@@ -621,7 +612,7 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   private onEditUnit(data: GetUnitMeasumentQuery): void {
-    this.unitMeasurementService.getUnitLists().subscribe(({ items: units }) => {
+    this.unitMeasurementService.getUnitLists().subscribe((units) => {
       const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
         data: { ...data, units }
       });
@@ -636,8 +627,8 @@ export class UnitMeasurementListComponent implements OnInit {
               isActive: res?.isActive
             })
             .subscribe(
-              (result) => {
-                if (result) {
+              (response) => {
+                if (Object.keys(response).length) {
                   this.nextToken = '';
                   this.fetchUOM$.next({ data: 'load' });
                 }
@@ -658,12 +649,12 @@ export class UnitMeasurementListComponent implements OnInit {
         _version: unit?._version
       })
       .subscribe(
-        (result) => {
-          if (result) {
+        (response) => {
+          if (Object.keys(response).length) {
             this.nextToken = '';
             this.addEditCopyForm$.next({
               action: 'status',
-              form: result
+              form: response
             });
           }
         },

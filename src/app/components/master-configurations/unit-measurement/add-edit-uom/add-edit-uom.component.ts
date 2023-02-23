@@ -78,8 +78,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.unitOfMeasurementService.getUnitLists().subscribe(({ items }) => {
-      this.measurementList = items;
+    this.unitOfMeasurementService.getUnitLists().subscribe((units) => {
+      this.measurementList = units;
     });
   }
 
@@ -122,7 +122,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         })
         .subscribe(
           (response) => {
-            if (response) {
+            if (Object.keys(response).length) {
               this.resetFormState();
               this.createUnitData.emit({
                 status: 'edit'
@@ -142,7 +142,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         })
         .subscribe(
           (response) => {
-            if (response) {
+            if (Object.keys(response).length) {
               this.resetFormState();
               this.createUnitData.emit({
                 status: 'create'
@@ -240,8 +240,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         this.unitOfMeasurementService
           .deleteUOMWithType$(this.unitEditData?.unitList?.id)
           .subscribe(
-            (result) => {
-              if (result) {
+            (response) => {
+              if (Object.keys(response).length) {
                 this.resetFormState();
                 this.createUnitData.emit({
                   status: 'delete'
