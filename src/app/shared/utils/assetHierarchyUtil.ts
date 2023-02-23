@@ -117,6 +117,7 @@ export class AssetHierarchyUtil {
         nodeDescription: description,
         sequence: null,
         hasChildren: false,
+        parentId,
         subFormId: '',
         isSelected: false,
         isToggledView: false,
@@ -191,7 +192,8 @@ export class AssetHierarchyUtil {
         nodes.push({
           ...node,
           id: uuidv4(),
-          hierarchyPath: nodePath
+          hierarchyPath: nodePath,
+          isExpanded: true
         });
       } else {
         const childNodes = this.cleanSelectedHierarchyList(
@@ -202,6 +204,7 @@ export class AssetHierarchyUtil {
           nodes.push({
             ...node,
             id: uuidv4(),
+            isExpanded: true,
             children: childNodes,
             hierarchyPath: nodePath
           });

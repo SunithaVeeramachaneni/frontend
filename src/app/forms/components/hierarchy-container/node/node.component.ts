@@ -84,6 +84,8 @@ export class NodeComponent implements OnInit {
   }
 
   openShowHierarchyPopup = () => {
-    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {});
+    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
+      data: { uid: this.node.uid }
+    });
   };
 }

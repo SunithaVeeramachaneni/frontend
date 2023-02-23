@@ -1,10 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+
+import { Store } from '@ngrx/store';
 
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
-import { hierarchyMock } from 'src/app/forms/components/utils/utils';
 import { HierarchyEntity } from 'src/app/interfaces';
+import { State } from '../../state';
+import { getMasterHierarchyList } from '../../state';
+import { tap } from 'rxjs/operators';
+
+interface ShowHierarchyPopupData {
+  uid: string;
+}
 
 @Component({
   selector: 'app-show-hierarchy-popup',
@@ -12,23 +21,25 @@ import { HierarchyEntity } from 'src/app/interfaces';
   styleUrls: ['./show-hierarchy-popup.component.scss']
 })
 export class ShowHierarchyPopupComponent implements OnInit {
+  public hierarchyList$: Observable<HierarchyEntity[]>;
   public hierarchyList: any[];
   public hierarchyToBeDisplayed = {} as HierarchyEntity;
 
   constructor(
+    private store: Store<State>,
     private assetHierarchyUtil: AssetHierarchyUtil,
-    private dialogRef: MatDialogRef<ShowHierarchyPopupComponent>
+    private dialogRef: MatDialogRef<ShowHierarchyPopupComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ShowHierarchyPopupData
   ) {}
 
   ngOnInit(): void {
-    // Replace the below close with ngrx once its working
-
-    this.hierarchyList =
-      this.assetHierarchyUtil.prepareHierarchyList(hierarchyMock);
-
-    this.hierarchyToBeDisplayed = this.assetHierarchyUtil.getHierarchyByNodeId(
-      this.hierarchyList,
-      'Subchild Node 1'
+    const { uid } = this.data;
+    this.hierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
+      tap((masterHierarchyList) => {
+        this.hierarchyList = masterHierarchyList;
+        this.hierarchyToBeDisplayed =
+          this.assetHierarchyUtil.getHierarchyByNodeId(this.hierarchyList, uid);
+      })
     );
   }
 

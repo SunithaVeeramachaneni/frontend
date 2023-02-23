@@ -7,14 +7,20 @@ import {
   Output,
   ChangeDetectorRef
 } from '@angular/core';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
+import { AssetsService } from 'src/app/components/master-configurations/assets/services/assets.service';
 import { FormService } from '../../services/form.service';
 import { FormMetadata, HierarchyEntity } from 'src/app/interfaces';
-import { getSelectedHierarchyList, State } from 'src/app/forms/state';
+import {
+  getMasterHierarchyList,
+  getSelectedHierarchyList,
+  State
+} from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -35,9 +41,14 @@ export class HierarchyContainerComponent implements OnInit {
 
   searchHierarchyKey: FormControl;
   selectedHierarchy$: Observable<any>;
+  allLocations$: Observable<any>;
+  masterHierarchyList$: Observable<any>;
+  allAssets$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+
+  masterHierarchyList = [];
 
   filteredHierarchyList = [];
 
@@ -49,6 +60,8 @@ export class HierarchyContainerComponent implements OnInit {
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
+    private locationService: LocationService,
+    private assetService: AssetsService,
     private formService: FormService,
     public assetHierarchyUtil: AssetHierarchyUtil,
     private store: Store<State>,
@@ -76,6 +89,41 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.allLocations$ = this.locationService.fetchAllLocations$();
+    this.allAssets$ = this.assetService.fetchAllAssets$();
+
+    this.masterHierarchyList$ = combineLatest([
+      this.allLocations$,
+      this.allAssets$,
+      this.store.select(getMasterHierarchyList)
+    ]).pipe(
+      map(([allLocations, allAssets, masterHierarchy]) => {
+        if (masterHierarchy.length)
+          return (this.masterHierarchyList = masterHierarchy);
+
+        const hierarchyItems = [
+          ...allLocations.items.map((location) => ({
+            ...location,
+            type: 'location'
+          })),
+          ...allAssets.items.map((asset) => ({ ...asset, type: 'asset' }))
+        ];
+
+        this.masterHierarchyList =
+          this.assetHierarchyUtil.prepareHierarchyList(hierarchyItems);
+
+        this.store.dispatch(
+          HierarchyActions.setMasterHierarchyList({
+            masterHierarchy: this.masterHierarchyList
+          })
+        );
+        this.formService.setMasterHierarchyList(this.masterHierarchyList);
+        return this.masterHierarchyList;
+      })
+    );
+
+    this.masterHierarchyList$.subscribe();
+
     this.searchHierarchyKey = new FormControl('');
     this.searchHierarchyKey.valueChanges
       .pipe(

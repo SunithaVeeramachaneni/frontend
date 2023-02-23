@@ -13,6 +13,8 @@ export interface HierarchyEntity {
   isToggledView: boolean;
   children: HierarchyEntity[];
   hierarchyPath: string[];
+  isExpanded?: boolean;
+  parentId?: string;
 }
 
 export enum EntityType {
