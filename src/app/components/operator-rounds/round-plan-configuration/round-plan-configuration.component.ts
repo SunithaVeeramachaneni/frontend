@@ -33,7 +33,8 @@ import {
   Page,
   Question,
   Section,
-  ValidationError
+  ValidationError,
+  HierarchyEntity
 } from 'src/app/interfaces';
 
 import {
@@ -49,6 +50,7 @@ import {
 
 import {
   BuilderConfigurationActions,
+  HierarchyActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import {
@@ -63,8 +65,10 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { FormService } from 'src/app/forms/services/form.service';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
+import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -96,6 +100,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
+  isDataResolved$: Observable<any>;
   formSaveStatus$: Observable<string>;
   formDetailPublishStatus$: Observable<string>;
   isFormCreated$: Observable<boolean>;
@@ -108,6 +113,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  selectedHierarchyList: any;
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
@@ -116,6 +122,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   selectedNode$: Observable<any>;
   selectedNodeLoadStatus = false;
   isHierarchyLoaded = false;
+  createOrEditForm: boolean;
 
   isPreviewActive = false;
 
@@ -129,6 +136,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private roundPlanConfigurationService: RoundPlanConfigurationService,
+    private formService: FormService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
     private operatorRoundsService: OperatorRoundsService
@@ -260,6 +268,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([formDetails, selectedHierarchyList]) => {
+        console.log('selectedHierarchyList', selectedHierarchyList);
+        console.log('this.selectedHierarchyList', this.selectedHierarchyList);
         const {
           formMetadata,
           formStatus,
@@ -291,9 +301,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (formListId) {
           if (authoredFormDetailId) {
             if (
-              formSaveStatus !== 'Saved' &&
-              formStatus !== 'Published' &&
-              !isEqual(this.formDetails, formDetails)
+              (formSaveStatus !== 'Saved' &&
+                formStatus !== 'Published' &&
+                !isEqual(this.formDetails, formDetails)) ||
+              !isEqual(this.selectedHierarchyList, selectedHierarchyList)
             ) {
               this.store.dispatch(
                 RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
@@ -330,6 +341,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               //   );
               // }
               this.formDetails = formDetails;
+              this.selectedHierarchyList = selectedHierarchyList;
             }
           } else {
             this.store.dispatch(
@@ -396,6 +408,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
     this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
       tap((createOrEditForm) => {
+        this.createOrEditForm = createOrEditForm;
         if (!createOrEditForm) {
           this.router.navigate(['/operator-rounds']);
         }
@@ -413,54 +426,138 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         )
       );
 
-    this.route.data.subscribe((data) => {
-      if (data.form && Object.keys(data.form).length) {
-        this.formConf.counter.setValue(data.form.counter);
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormConfiguration({
-            formConfiguration: data.form
-          })
-        );
+    this.isDataResolved$ = combineLatest([
+      this.route.data,
+      this.createOrEditForm$
+    ]).pipe(
+      tap(([data, createOrEditForm]) => {
+        const { componentMode } = data;
+        const { formConfigurationState, hierarchyState } = data.form || {};
+        if (createOrEditForm && componentMode === 'create')
+          this.openHierarchyModal();
+        if (
+          formConfigurationState &&
+          Object.keys(formConfigurationState).length
+        ) {
+          this.formConf.counter.setValue(formConfigurationState.counter);
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormConfiguration({
+              formConfiguration: formConfigurationState
+            })
+          );
 
-        if (this.selectedNode && this.selectedNode.id) {
-          const subFormsObj = {};
-          let formKeys = Object.keys(data.form);
-          formKeys = formKeys.filter((k) => k.startsWith('pages_'));
-          formKeys.forEach((key) => {
-            subFormsObj[key] = data.form[key];
-          });
-
-          Object.keys(subFormsObj).forEach((subForm) => {
-            subFormsObj[subForm].forEach((page, index) => {
-              if (index === 0) {
-                this.store.dispatch(
-                  BuilderConfigurationActions.updatePageState({
-                    pageIndex: index,
-                    isOpen: false,
-                    subFormId: this.selectedNode.id
-                  })
-                );
-                this.store.dispatch(
-                  BuilderConfigurationActions.updatePageState({
-                    pageIndex: index,
-                    isOpen: true,
-                    subFormId: this.selectedNode.id
-                  })
-                );
-              } else {
-                this.store.dispatch(
-                  BuilderConfigurationActions.updatePageState({
-                    pageIndex: index,
-                    isOpen: false,
-                    subFormId: this.selectedNode.id
-                  })
-                );
-              }
+          if (this.selectedNode && this.selectedNode.id) {
+            const subFormsObj = {};
+            let formKeys = Object.keys(formConfigurationState);
+            formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+            formKeys.forEach((key) => {
+              subFormsObj[key] = formConfigurationState[key];
             });
-          });
+
+            if (Object.keys(hierarchyState).length) {
+              const { selectedHierarchy } = hierarchyState;
+              this.store.dispatch(
+                HierarchyActions.updateSelectedHierarchyList({
+                  selectedHierarchy
+                })
+              );
+            }
+
+            Object.keys(subFormsObj).forEach((subForm) => {
+              subFormsObj[subForm].forEach((page, index) => {
+                if (index === 0) {
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: false,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: true,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                } else {
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: false,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                }
+              });
+            });
+          }
         }
-      }
-    });
+      })
+    );
+
+    // this.route.data.subscribe((data) => {
+    //   const { componentMode } = data;
+    //   const { formConfigurationState, hierarchyState } = data.form || {};
+    //   if (
+    //     formConfigurationState &&
+    //     Object.keys(formConfigurationState).length
+    //   ) {
+    //     this.formConf.counter.setValue(formConfigurationState.counter);
+    //     this.store.dispatch(
+    //       BuilderConfigurationActions.updateFormConfiguration({
+    //         formConfiguration: formConfigurationState
+    //       })
+    //     );
+
+    //     if (this.selectedNode && this.selectedNode.id) {
+    //       const subFormsObj = {};
+    //       let formKeys = Object.keys(formConfigurationState);
+    //       formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+    //       formKeys.forEach((key) => {
+    //         subFormsObj[key] = formConfigurationState[key];
+    //       });
+
+    //       if (Object.keys(hierarchyState).length) {
+    //         const { selectedHierarchy } = hierarchyState;
+    //         this.store.dispatch(
+    //           HierarchyActions.updateSelectedHierarchyList({
+    //             selectedHierarchy
+    //           })
+    //         );
+    //       }
+
+    //       Object.keys(subFormsObj).forEach((subForm) => {
+    //         subFormsObj[subForm].forEach((page, index) => {
+    //           if (index === 0) {
+    //             this.store.dispatch(
+    //               BuilderConfigurationActions.updatePageState({
+    //                 pageIndex: index,
+    //                 isOpen: false,
+    //                 subFormId: this.selectedNode.id
+    //               })
+    //             );
+    //             this.store.dispatch(
+    //               BuilderConfigurationActions.updatePageState({
+    //                 pageIndex: index,
+    //                 isOpen: true,
+    //                 subFormId: this.selectedNode.id
+    //               })
+    //             );
+    //           } else {
+    //             this.store.dispatch(
+    //               BuilderConfigurationActions.updatePageState({
+    //                 pageIndex: index,
+    //                 isOpen: false,
+    //                 subFormId: this.selectedNode.id
+    //               })
+    //             );
+    //           }
+    //         });
+    //       });
+    //     }
+    //   }
+    // });
 
     // this.route.params.subscribe((params) => {
     //   if (!params.id) {
@@ -821,4 +918,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       return page;
     });
   }
+
+  openHierarchyModal = () => {
+    const dialogRef = this.dialog
+      .open(HierarchyModalComponent, {})
+      .afterClosed()
+      .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        this.store.dispatch(
+          HierarchyActions.updateSelectedHierarchyList({
+            selectedHierarchy: selectedHierarchyList
+          })
+        );
+        this.formService.setSelectedHierarchyList(selectedHierarchyList);
+      });
+  };
 }

@@ -25,7 +25,10 @@ export const hierarchyReducer = createReducer<HierarchyState>(
     HierarchyActions.updateSelectedHierarchyList,
     (state, action): HierarchyState => ({
       ...state,
-      selectedHierarchy: [...state.selectedHierarchy, action.selectedHierarchy]
+      selectedHierarchy: [
+        ...state.selectedHierarchy,
+        ...action.selectedHierarchy
+      ]
     })
   )
 );

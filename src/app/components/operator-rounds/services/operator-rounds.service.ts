@@ -223,7 +223,6 @@ export class OperatorRoundsService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
-      | 'hierarchy'
     >
   ) {
     return from(
@@ -234,7 +233,6 @@ export class OperatorRoundsService {
         formStatus: formListQuery.formStatus,
         author: formListQuery.author,
         formType: formListQuery.formType,
-        hierarchy: formListQuery.hierarchy,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
@@ -289,7 +287,8 @@ export class OperatorRoundsService {
         subForms: JSON.stringify(formDetails.subForms),
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
+        version: formDetails.authoredFormDetailVersion.toString(),
+        hierarchy: JSON.stringify(formDetails.hierarchy)
       })
     );
   }
@@ -304,7 +303,8 @@ export class OperatorRoundsService {
         subForms: JSON.stringify(formDetails.subForms),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
+        _version: formDetails.authoredFormDetailDynamoDBVersion,
+        hierarchy: JSON.stringify(formDetails.hierarchy)
       } as UpdateAuthoredRoundPlanDetailInput)
     );
   }

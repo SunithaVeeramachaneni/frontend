@@ -26,7 +26,8 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
-          permissions: [permissions.createForm]
+          permissions: [permissions.createForm],
+          componentMode: 'create'
         }
       },
       {
@@ -36,7 +37,8 @@ const routes: Routes = [
         resolve: { form: RoundPlanResolverService },
         data: {
           breadcrumb: { label: 'Edit Form', alias: 'formName' },
-          permissions: [permissions.updateForm]
+          permissions: [permissions.updateForm],
+          componentMode: 'edit'
         }
       },
       {
