@@ -4,17 +4,17 @@ import { FormConfigurationState } from './form-configuration.reducer';
 import { ResponseSetState } from './multiple-choice-response.reducer';
 import { HierarchyState } from './hierarchy.reducer';
 
-export interface FromModuleState {
+export interface FormModuleState {
   formConfiguration: FormConfigurationState;
   responseSet: ResponseSetState;
   hierarchy: HierarchyState;
 }
 
 export interface State extends AppState.State {
-  feature: FromModuleState;
+  feature: FormModuleState;
 }
 
-const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
+const selectFeatureState = createFeatureSelector<FormModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(
   selectFeatureState,
@@ -239,7 +239,14 @@ export const getResponseSets = createSelector(
   (state) => state.globalResponses
 );
 
+// Hierarchy related selectors
+
 export const getMasterHierarchyList = createSelector(
   selectHierarchyState,
   (state) => state.masterHierarchy
+);
+
+export const getSelectedHierarchyList = createSelector(
+  selectHierarchyState,
+  (state) => state.selectedHierarchy
 );

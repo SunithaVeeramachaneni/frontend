@@ -4,10 +4,12 @@ import { HierarchyActions } from './actions';
 
 export interface HierarchyState {
   masterHierarchy: HierarchyEntity[];
+  selectedHierarchy: HierarchyEntity[];
 }
 
 const initialState = {
-  masterHierarchy: [] as HierarchyEntity[]
+  masterHierarchy: [] as HierarchyEntity[],
+  selectedHierarchy: [] as HierarchyEntity[]
 };
 
 export const hierarchyReducer = createReducer<HierarchyState>(
@@ -17,6 +19,13 @@ export const hierarchyReducer = createReducer<HierarchyState>(
     (state, action): HierarchyState => ({
       ...state,
       masterHierarchy: action.masterHierarchy
+    })
+  ),
+  on(
+    HierarchyActions.updateSelectedHierarchyList,
+    (state, action): HierarchyState => ({
+      ...state,
+      selectedHierarchy: [...state.selectedHierarchy, action.selectedHierarchy]
     })
   )
 );

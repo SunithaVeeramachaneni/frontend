@@ -16,7 +16,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -64,6 +64,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
+import { getSelectedHierarchyList } from 'src/app/forms/state';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -254,8 +255,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
-      tap((formDetails) => {
+    this.authoredFormDetail$ = combineLatest([
+      this.store.select(getFormDetails),
+      this.store.select(getSelectedHierarchyList)
+    ]).pipe(
+      tap(([formDetails, selectedHierarchyList]) => {
         const {
           formMetadata,
           formStatus,
@@ -300,7 +304,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   pages: null,
                   subForms: subFormsObj,
                   authoredFormDetailId,
-                  authoredFormDetailDynamoDBVersion
+                  authoredFormDetailDynamoDBVersion,
+                  hierarchy: selectedHierarchyList
                 })
               );
               // const pagesWithoutBlankQuestions =
@@ -336,7 +341,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 pages,
                 subForms,
                 ...subFormsObj,
-                authoredFormDetailVersion
+                authoredFormDetailVersion,
+                hierarchy: selectedHierarchyList
               })
             );
           }

@@ -7,3 +7,10 @@ export const setMasterHierarchyList = createAction(
     masterHierarchy: HierarchyEntity[];
   }>()
 );
+
+export const updateSelectedHierarchyList = createAction(
+  '[Asset Hierarchy] updateSelectedHierarchyList',
+  props<{
+    selectedHierarchy: any;
+  }>()
+);
