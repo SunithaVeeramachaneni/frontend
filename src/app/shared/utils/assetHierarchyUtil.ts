@@ -140,6 +140,20 @@ export class AssetHierarchyUtil {
     return nodes;
   };
 
+  prepareAssetHierarchy = (selectedHierarchy: any[]): any => {
+    const flatList = this.convertHierarchyToFlatList(selectedHierarchy, 0);
+    const uniqueNodes = this.removeDuplicateNodes(flatList);
+    console.log(uniqueNodes);
+    return uniqueNodes;
+  };
+
+  removeDuplicateNodes = (flatList) =>
+    flatList.filter(
+      (value, index, self) =>
+        index ===
+        self.findIndex((t) => t.place === value.place && t.name === value.name)
+    );
+
   getHierarchyByNodeId = (
     hierarchyList: HierarchyEntity[],
     nodeId: string
