@@ -12,7 +12,7 @@ export class AssetHierarchyUtil {
     let count = 0;
     if (node.hasChildren && node.children && node.children.length) {
       node.children.forEach((child) => {
-        if (child.type === 'Asset') {
+        if (child.type === 'asset') {
           count++;
           count += this.getAssetCountByNode(child);
         } else if (
@@ -30,12 +30,12 @@ export class AssetHierarchyUtil {
   getTotalAssetCount(rootNode) {
     let count = 0;
     rootNode.forEach((node) => {
-      if (node.type === 'Asset') {
+      if (node.type === 'asset') {
         count++;
       }
       if (node.hasChildren && node.children && node.children.length) {
         node.children.forEach((child) => {
-          if (child.type === 'Asset') {
+          if (child.type === 'asset') {
             count++;
             count += this.getAssetCountByNode(child);
           } else if (

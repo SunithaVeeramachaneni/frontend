@@ -16,6 +16,7 @@ export const createRoundPlanDetail = createAction(
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
+    hierarchy: any;
     subForms: any;
     formListId: string;
     authoredFormDetail: any;
@@ -28,6 +29,7 @@ export const updateRoundPlanDetail = createAction(
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
+    hierarchy: any;
     subForms: any;
     formListId: string;
     formDetailId: string;

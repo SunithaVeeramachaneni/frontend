@@ -7,7 +7,9 @@
       <img src="assets/rdf-forms-icons/form-image-upload.svg" />
       <div class="description">
         <span class="title">{{ node.name }}</span>
-        <span class="subTitle"> {{ node.type }} Id: {{ node.id }} </span>
+        <span class="subTitle">
+          {{ node.type | titlecase }} Id: {{ node.nodeId }}
+        </span>
       </div>
     </div>
     <div

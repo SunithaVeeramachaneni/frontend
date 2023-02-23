@@ -163,7 +163,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (Object.keys(formMetadata).length) {
           const { name, description, id, formLogo, formStatus } = formMetadata;
           this.formMetadata = formMetadata;
-          this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
 
           this.formConfiguration.patchValue(
             {
@@ -361,6 +360,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           if (isFormDetailPublished && formDetailId) {
             this.store.dispatch(
               RoundPlanConfigurationActions.updateRoundPlanDetail({
+                hierarchy: selectedHierarchyList,
                 formMetadata,
                 formListId,
                 pages,
@@ -383,6 +383,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           } else if (isFormDetailPublished && !formDetailId) {
             this.store.dispatch(
               RoundPlanConfigurationActions.createRoundPlanDetail({
+                hierarchy: selectedHierarchyList,
                 formMetadata,
                 formListId,
                 pages,
@@ -435,7 +436,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (createOrEditForm && componentMode === 'create')
           this.openHierarchyModal();
 
-        if (Object.keys(hierarchyState).length) {
+        if (hierarchyState && Object.keys(hierarchyState).length) {
           const { selectedHierarchy } = hierarchyState;
           this.store.dispatch(
             HierarchyActions.updateSelectedHierarchyList({
