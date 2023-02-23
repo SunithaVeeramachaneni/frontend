@@ -116,14 +116,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     const unitType = isAddNewUnit ? this.newUnitType : this.unitType;
     if (this.isEditForm) {
       this.unitOfMeasurementService
-        .updateUOMWithType$({
+        .updateUOMWithType$(this.unitEditData?.unitList?.id, {
           unitType,
-          unitlistID: this.unitEditData?.unitList?.id,
           units: this.unitMeasurementForm?.get('units')?.value
         })
         .subscribe(
           (response) => {
-            if (response?.status === 200) {
+            if (response) {
               this.resetFormState();
               this.createUnitData.emit({
                 status: 'edit'
@@ -143,7 +142,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
         })
         .subscribe(
           (response) => {
-            if (response?.status === 200) {
+            if (response) {
               this.resetFormState();
               this.createUnitData.emit({
                 status: 'create'
@@ -242,7 +241,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           .deleteUOMWithType$(this.unitEditData?.unitList?.id)
           .subscribe(
             (result) => {
-              if (result?.status === 200) {
+              if (result) {
                 this.resetFormState();
                 this.createUnitData.emit({
                   status: 'delete'

@@ -550,7 +550,7 @@ export class UnitMeasurementListComponent implements OnInit {
     formData.append('file', file);
     this.unitMeasurementService.uploadExcel(formData).subscribe(
       (resp) => {
-        if (resp?.status === 200) {
+        if (resp) {
           this.toast.show({
             text: 'File uploaded successfully!',
             type: 'success'
@@ -584,7 +584,7 @@ export class UnitMeasurementListComponent implements OnInit {
           .deleteUnitOfMeasurement$(data?.id)
           .subscribe(
             (result) => {
-              if (result?.status === 200) {
+              if (result) {
                 this.addEditCopyForm$.next({
                   action: 'delete',
                   form: result?.data
@@ -604,13 +604,12 @@ export class UnitMeasurementListComponent implements OnInit {
       return;
     }
     this.unitMeasurementService
-      .setAsDefault$({
-        id: unit?.id,
+      .setAsDefault$(unit?.id, {
         unitlistID: unit?.unitlistID
       })
       .subscribe(
         (result) => {
-          if (result?.status === 200) {
+          if (result) {
             this.nextToken = '';
             this.fetchUOM$.next({ data: 'load' });
           }
@@ -630,8 +629,7 @@ export class UnitMeasurementListComponent implements OnInit {
       deleteReportRef.afterClosed().subscribe((res) => {
         if (res?.action === 'save') {
           this.unitMeasurementService
-            .editUnitOfMeasurement$({
-              id: res?.id,
+            .editUnitOfMeasurement$(res?.id, {
               symbol: res?.symbol,
               description: res?.description,
               unitType: res?.unitType,
@@ -639,7 +637,7 @@ export class UnitMeasurementListComponent implements OnInit {
             })
             .subscribe(
               (result) => {
-                if (result?.status === 200) {
+                if (result) {
                   this.nextToken = '';
                   this.fetchUOM$.next({ data: 'load' });
                 }
@@ -655,18 +653,17 @@ export class UnitMeasurementListComponent implements OnInit {
 
   private onChangeStatus(unit: GetUnitMeasumentQuery): void {
     this.unitMeasurementService
-      .onChangeUomStatus$({
-        id: unit?.id,
+      .onChangeUomStatus$(unit?.id, {
         isActive: unit?.isActive ? false : true,
         _version: unit?._version
       })
       .subscribe(
         (result) => {
-          if (result?.status === 200) {
+          if (result) {
             this.nextToken = '';
             this.addEditCopyForm$.next({
               action: 'status',
-              form: result?.data
+              form: result
             });
           }
         },

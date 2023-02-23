@@ -32,23 +32,20 @@ export class UnitMeasurementService {
         queryParams?.nextToken !== null)
     ) {
       const isSearch = queryParams?.fetchType === 'search';
+      const params = new URLSearchParams();
+      if (queryParams?.searchKey) {
+        params.set('searchTerm', queryParams.searchKey);
+      }
+      if (!isSearch) {
+        params.set('limit', queryParams.limit.toString());
+        params.set('nextToken', queryParams.nextToken);
+      }
       return this._appService
-        ._postData(environment.masterConfigApiUrl, 'uom/unit-measurement', {
-          filter: {
-            isDeleted: {
-              eq: false
-            },
-            ...(queryParams?.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          limit: isSearch ? null : queryParams?.limit,
-          nextToken: isSearch ? null : queryParams?.nextToken
-          // limit: queryParams?.limit,
-          // nextToken: queryParams?.nextToken,
-          // fetchType: queryParams?.fetchType
-        })
-        .pipe(map(({ data }) => this.formatGraphQAssetsResponse(data)));
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'unit-of-measurement?' + params.toString()
+        )
+        .pipe(map((data) => this.formatGraphQAssetsResponse(data)));
     } else {
       return of({
         count: 0,
@@ -59,15 +56,10 @@ export class UnitMeasurementService {
   }
 
   getUnitLists() {
-    return this._appService
-      ._postData(environment.masterConfigApiUrl, 'uom/unit-lists', {
-        filter: {
-          isDeleted: {
-            eq: false
-          }
-        }
-      })
-      .pipe(map(({ data }) => data));
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'uom/unit-lists'
+    );
   }
 
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
@@ -91,27 +83,29 @@ export class UnitMeasurementService {
     );
   }
 
-  onChangeUomStatus$(values, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._postData(
+  onChangeUomStatus$(
+    unitMeasurementId: string,
+    values,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    return this._appService.patchData(
       environment.masterConfigApiUrl,
-      'uom/unit-measurement/status',
-      {
-        ...values
-      },
-      info,
-      {}
+      `unit-of-measurement/${unitMeasurementId}/status`,
+      { ...values },
+      info
     );
   }
 
-  setAsDefault$(values, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._postData(
+  setAsDefault$(
+    unitMeasurementId: string,
+    values,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    return this._appService.patchData(
       environment.masterConfigApiUrl,
-      'uom/unit-measurement/default',
-      {
-        ...values
-      },
-      info,
-      {}
+      `unit-of-measurement/${unitMeasurementId}/default`,
+      { ...values },
+      info
     );
   }
 
@@ -125,33 +119,41 @@ export class UnitMeasurementService {
     );
   }
 
-  updateUOMWithType$(values, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._updateData(
+  updateUOMWithType$(
+    unitTypeId: string,
+    values,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    return this._appService.patchData(
       environment.masterConfigApiUrl,
-      'uom/update',
+      `uom/${unitTypeId}/edit`,
       { ...values },
       info
     );
   }
 
-  editUnitOfMeasurement$(values, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._updateData(
+  editUnitOfMeasurement$(
+    unitMeasurementId: string,
+    values,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    return this._appService.patchData(
       environment.masterConfigApiUrl,
-      'uom/unit-measurement/edit',
+      `unit-of-measurement/${unitMeasurementId}/edit`,
       { ...values },
       info
     );
   }
 
-  deleteUOMWithType$(id, info: ErrorInfo = {} as ErrorInfo) {
+  deleteUOMWithType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `uom/delete/${id}`,
+      `uom/${id}/delete`,
       info
     );
   }
 
-  deleteUnitOfMeasurement$(id, info: ErrorInfo = {} as ErrorInfo) {
+  deleteUnitOfMeasurement$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `uom/unit-measurement/delete/${id}`,
