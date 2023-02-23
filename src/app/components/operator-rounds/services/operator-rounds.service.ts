@@ -596,7 +596,6 @@ export class OperatorRoundsService {
 
       forms.push(formData);
     });
-    console.log(JSON.stringify({ FORMS: forms }));
     return JSON.stringify({ FORMS: forms });
   };
 
