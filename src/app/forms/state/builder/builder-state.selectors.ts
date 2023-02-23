@@ -61,7 +61,6 @@ export const getTasksCountByNodeId = (subFormId) =>
 export const getTasksCountByNodeIds = (subFormIds) =>
   createSelector(selectFormConfigurationState, (state) => {
     let count = 0;
-    console.log(subFormIds);
     subFormIds.forEach((subFormId) => {
       let key = 'pages';
       if (subFormId) {
