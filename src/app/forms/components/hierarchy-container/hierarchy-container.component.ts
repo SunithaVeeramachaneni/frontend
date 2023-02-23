@@ -14,7 +14,7 @@ import { Store } from '@ngrx/store';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { FormService } from '../../services/form.service';
 import { FormMetadata, HierarchyEntity } from 'src/app/interfaces';
-import { getFormMetadata, State } from 'src/app/forms/state';
+import { getSelectedHierarchyList, State } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -34,6 +34,7 @@ export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
 
   searchHierarchyKey: FormControl;
+  selectedHierarchy$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
@@ -54,18 +55,17 @@ export class HierarchyContainerComponent implements OnInit {
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {
-    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        if (Object.keys(formMetadata).length) {
-          const { hierarchy } = formMetadata;
+    this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
+      tap((selectedHierarchy) => {
+        if (selectedHierarchy.length) {
           this.totalAssetsCount =
-            assetHierarchyUtil.getTotalAssetCount(hierarchy);
-          this.hierarchy = JSON.parse(JSON.stringify(hierarchy));
+            assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
+          this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
           this.filteredHierarchyList = JSON.parse(
             JSON.stringify(this.hierarchy)
           );
           this.cdrf.detectChanges();
-          this.operatorRoundsService.setSelectedNode(formMetadata.hierarchy[0]);
+          this.operatorRoundsService.setSelectedNode(selectedHierarchy[0]);
         }
       })
     );
@@ -146,14 +146,20 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   openHierarchyModal = () => {
-    const dialogRef = this.dialog.open(HierarchyModalComponent, {});
-
-    dialogRef
+    const dialogRef = this.dialog
+      .open(HierarchyModalComponent, {})
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
         this.store.dispatch(
           HierarchyActions.updateSelectedHierarchyList({
             selectedHierarchy: selectedHierarchyList
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormStatuses({
+            formStatus: 'Draft',
+            formDetailPublishStatus: 'Draft',
+            formSaveStatus: 'Saving'
           })
         );
         this.formService.setSelectedHierarchyList(selectedHierarchyList);

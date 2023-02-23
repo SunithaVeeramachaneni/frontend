@@ -1,4 +1,4 @@
-<div *ngIf="formMetadata$ | async as formMetadata">
+<div *ngIf="selectedHierarchy$ | async as formMetadata">
   <div class="header">
     <div>
       <span>Assets ({{ totalAssetsCount }})</span>
@@ -49,6 +49,8 @@
   </div>
   <div *ngIf="!hierarchy.length" class="emptyHierarchy">
     <span>You have not added any assets yet</span>
-    <button mat-raised-button color="primary">Add Assets</button>
+    <button mat-raised-button color="primary" (click)="openHierarchyModal()">
+      Add Assets
+    </button>
   </div>
 </div>

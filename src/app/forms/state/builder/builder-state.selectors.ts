@@ -40,7 +40,7 @@ export const getPagesCount = (subFormId) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].length;
+    return state[key]?.length;
   });
 
 export const getTasksCountByNodeId = (subFormId) =>

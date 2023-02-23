@@ -46,7 +46,8 @@ export class HierarchyModalComponent implements OnInit {
       this.store.select(getMasterHierarchyList)
     ]).pipe(
       map(([allLocations, allAssets, masterHierarchy]) => {
-        if (masterHierarchy.length) return masterHierarchy;
+        if (masterHierarchy.length)
+          return (this.masterHierarchyList = masterHierarchy);
 
         const hierarchyItems = [
           ...allLocations.items.map((location) => ({

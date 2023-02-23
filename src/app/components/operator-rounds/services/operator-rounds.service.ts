@@ -300,7 +300,8 @@ export class OperatorRoundsService {
         subForms: JSON.stringify(formDetails.subForms),
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
+        version: formDetails.authoredFormDetailVersion.toString(),
+        hierarchy: JSON.stringify(formDetails.hierarchy)
       })
     );
   }
@@ -315,7 +316,8 @@ export class OperatorRoundsService {
         subForms: JSON.stringify(formDetails.subForms),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
+        _version: formDetails.authoredFormDetailDynamoDBVersion,
+        hierarchy: JSON.stringify(formDetails.hierarchy)
       } as UpdateAuthoredRoundPlanDetailInput)
     );
   }
@@ -386,14 +388,8 @@ export class OperatorRoundsService {
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => b._version - a._version);
+        return items[0];
       })
     );
   }

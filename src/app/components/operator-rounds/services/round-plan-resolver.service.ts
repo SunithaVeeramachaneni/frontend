@@ -8,18 +8,26 @@ import { State } from 'src/app/forms/state';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
+import { HierarchyState } from 'src/app/forms/state/hierarchy.reducer';
 import { OperatorRoundsService } from './operator-rounds.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoundPlanResolverService
-  implements Resolve<FormConfigurationState>
+  implements
+    Resolve<{
+      formConfigurationState: FormConfigurationState;
+      hierarchyState: HierarchyState;
+    }>
 {
   constructor(
     private operatorRoundsService: OperatorRoundsService,
     private store: Store<State>
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
+  resolve(route: ActivatedRouteSnapshot): Observable<{
+    formConfigurationState: FormConfigurationState;
+    hierarchyState: HierarchyState;
+  }> {
     const id = route.params.id;
     return forkJoin({
       form: this.operatorRoundsService.getFormById$(id),
@@ -43,7 +51,6 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
-          hierarchy,
           _version: formListDynamoDBVersion
         } = form;
 
@@ -54,7 +61,8 @@ export class RoundPlanResolverService
           subForms,
           formDetailPublishStatus,
           version: authoredFormDetailVersion,
-          _version: authoredFormDetailDynamoDBVersion
+          _version: authoredFormDetailDynamoDBVersion,
+          hierarchy
         } = authoredFormDetail;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
@@ -66,30 +74,38 @@ export class RoundPlanResolverService
           isPublic,
           formStatus,
           formType,
-          tags,
-          hierarchy: JSON.parse(hierarchy)
+          tags
         };
 
         const subFormsMap = JSON.parse(subForms);
         return {
-          formMetadata,
-          counter,
-          pages: JSON.parse(pages),
-          ...subFormsMap,
-          authoredFormDetailId,
-          formDetailId,
-          authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),
-          createOrEditForm: true,
-          formStatus: formDetailPublishStatus,
-          formDetailPublishStatus,
-          formListDynamoDBVersion,
-          authoredFormDetailDynamoDBVersion,
-          formDetailDynamoDBVersion
-        } as FormConfigurationState;
+          formConfigurationState: {
+            formMetadata,
+            counter,
+            pages: JSON.parse(pages),
+            ...subFormsMap,
+            authoredFormDetailId,
+            formDetailId,
+            authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),
+            createOrEditForm: true,
+            formStatus: formDetailPublishStatus,
+            formDetailPublishStatus,
+            formListDynamoDBVersion,
+            authoredFormDetailDynamoDBVersion,
+            formDetailDynamoDBVersion
+          } as FormConfigurationState,
+          hierarchyState: {
+            masterHierarchy: [],
+            selectedHierarchy: hierarchy ? JSON.parse(hierarchy) : []
+          } as HierarchyState
+        };
       }),
       catchError((error) => {
         this.operatorRoundsService.handleError(error);
-        return of({} as FormConfigurationState);
+        return of({
+          formConfigurationState: {} as FormConfigurationState,
+          hierarchyState: {} as HierarchyState
+        });
       })
     );
   }
