@@ -142,17 +142,47 @@ export class AssetHierarchyUtil {
 
   prepareAssetHierarchy = (selectedHierarchy: any[]): any => {
     const flatList = this.convertHierarchyToFlatList(selectedHierarchy, 0);
-    const uniqueNodes = this.removeDuplicateNodes(flatList);
-    console.log(uniqueNodes);
-    return uniqueNodes;
+    const instanceIdMappings = {};
+    flatList.forEach((node) => {
+      if (instanceIdMappings[node.uid]) {
+        const { children, ...rest } = node;
+        instanceIdMappings[node.uid].push(rest);
+      } else {
+        instanceIdMappings[node.uid] = [];
+        const { children, ...rest } = node;
+        instanceIdMappings[node.uid].push(rest);
+      }
+    });
+
+    const uniqueNodes = this.getUniqueRootNodes(flatList);
+    const hierarchy = [];
+    uniqueNodes.forEach((root) => {
+      const convertedHierarchy = this.flatListToHierarchy(flatList, root);
+      hierarchy.push(convertedHierarchy);
+    });
+    return { stitchedHierarchy: hierarchy, instanceIdMappings };
   };
 
   removeDuplicateNodes = (flatList) =>
-    flatList.filter(
-      (value, index, self) =>
-        index ===
-        self.findIndex((t) => t.place === value.place && t.name === value.name)
-    );
+    flatList
+      .filter((v, i, a) => a.findIndex((v2) => v2.uid === v.uid) === i)
+      .filter((v) => v.parentId !== null);
+
+  getUniqueRootNodes = (flatList) =>
+    flatList
+      .filter((v, i, a) => a.findIndex((v2) => v2.uid === v.uid) === i)
+      .filter((v) => v.parentId === null);
+
+  flatListToHierarchy = (array, parent) => {
+    parent = parent !== null ? parent : { id: null };
+    const children = array.filter((child) => child.parentId === parent.uid);
+    if (children && children.length) {
+      const nonDuplicateChildren = this.removeDuplicateNodes(children);
+      parent.children = nonDuplicateChildren;
+      children.forEach((child) => this.flatListToHierarchy(array, child));
+    }
+    return parent;
+  };
 
   getHierarchyByNodeId = (
     hierarchyList: HierarchyEntity[],

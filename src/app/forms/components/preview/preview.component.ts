@@ -54,18 +54,20 @@ export class PreviewComponent implements OnInit, OnChanges {
         .pipe(
           map((previewFormData) => {
             let sectionData;
-            pageData = previewFormData.map((page) => {
-              sectionData = page.sections.map((section) => {
-                const questionsArray = [];
-                page.questions.forEach((question) => {
-                  if (section.id === question.sectionId) {
-                    questionsArray.push(question);
-                  }
+            if (previewFormData) {
+              pageData = previewFormData.map((page) => {
+                sectionData = page.sections.map((section) => {
+                  const questionsArray = [];
+                  page.questions.forEach((question) => {
+                    if (section.id === question.sectionId) {
+                      questionsArray.push(question);
+                    }
+                  });
+                  return { ...section, questions: questionsArray };
                 });
-                return { ...section, questions: questionsArray };
+                return { ...page, sections: sectionData };
               });
-              return { ...page, sections: sectionData };
-            });
+            }
             return pageData;
           })
         );
