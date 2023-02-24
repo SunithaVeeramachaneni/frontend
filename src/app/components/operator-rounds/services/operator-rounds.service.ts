@@ -244,9 +244,10 @@ export class OperatorRoundsService {
   }
 
   updateForm$(formMetaDataDetails) {
+    const { hierarchy, ...formMetadata } = formMetaDataDetails.formMetadata;
     return from(
       this.awsApiService.UpdateRoundPlanList({
-        ...formMetaDataDetails.formMetadata,
+        ...formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );

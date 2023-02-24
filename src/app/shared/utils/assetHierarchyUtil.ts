@@ -67,8 +67,9 @@ export class AssetHierarchyUtil {
     let flatHierarchy = [];
     hierarchy.forEach((node) => {
       node.sequence = sequenceNum++;
-      const tempNode = JSON.parse(JSON.stringify(node));
-      tempNode.children = [];
+      const tempNode = JSON.parse(
+        JSON.stringify(this.cleanedHierarchyEntity(node))
+      );
       flatHierarchy.push(tempNode);
       if (node.hasChildren && node.children.length) {
         const childFlatHierarchy = this.convertHierarchyToFlatList(
@@ -118,7 +119,6 @@ export class AssetHierarchyUtil {
         sequence: null,
         hasChildren: false,
         parentId,
-        subFormId: '',
         isSelected: false,
         isToggledView: false,
         children: [] as HierarchyEntity[]
@@ -245,4 +245,15 @@ export class AssetHierarchyUtil {
 
     return nodes;
   };
+
+  cleanedHierarchyEntity = ({
+    id,
+    nodeId,
+    type,
+    name,
+    image,
+    sequence,
+    hierarchyPath,
+    ...node
+  }) => ({ id, nodeId, type, name, image, sequence, hierarchyPath });
 }

@@ -86,7 +86,6 @@ export class RoundPlanConfigurationEffects {
               this.operatorRoundsService.updateForm$({
                 formMetadata: {
                   ...formDetail.formMetadata,
-                  hierarchy: JSON.stringify(formDetail.formMetadata.hierarchy),
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
                   publishedDate: new Date().toISOString(),
                   formStatus: formConfigurationStatus.published
