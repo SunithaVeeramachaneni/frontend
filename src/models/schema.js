@@ -718,6 +718,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "hierarchy": {
+                    "name": "hierarchy",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -798,6 +805,13 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "scheduledAt": {
+                    "name": "scheduledAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -946,13 +960,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "hierarchy": {
-                    "name": "hierarchy",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "isArchived": {
                     "name": "isArchived",
                     "isArray": false,
@@ -1031,13 +1038,6 @@ export const schema = {
                 },
                 "searchTerm": {
                     "name": "searchTerm",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "hierarchyMode": {
-                    "name": "hierarchyMode",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -1817,5 +1817,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "d0ad1050d20370347e1732ed920a6df0"
+    "version": "1db02972d46dfc6fc0a27bc893146ee6"
 };
