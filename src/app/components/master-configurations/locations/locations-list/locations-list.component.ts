@@ -37,7 +37,6 @@ import {
 } from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { ConsoleLogger } from '@aws-amplify/core';
 
 @Component({
   selector: 'app-locations-list',
@@ -321,7 +320,7 @@ export class LocationsListComponent implements OnInit {
         }
         for (const item of initial.data) {
           if (item.parentId) {
-            const parent = unfilteredParentLocations.find(
+            const parent = this.allParentsLocations.find(
               (d) => d.id === item.parentId
             );
             if (parent) {
