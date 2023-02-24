@@ -160,6 +160,19 @@ export class OperatorRoundsService {
     }
   }
 
+  getRoundsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    return of({
+      count: 0,
+      rows: [],
+      nextToken: null
+    });
+  }
+
   getSubmissionFormsList$(queryParams: {
     nextToken?: string;
     limit: number;
@@ -211,6 +224,10 @@ export class OperatorRoundsService {
           listRoundPlanLists?.items?.length || 0
       )
     );
+  }
+
+  getRoundsListCount$(): Observable<number> {
+    return of(0);
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
@@ -310,15 +327,21 @@ export class OperatorRoundsService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredRoundPlanDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredRoundPlanDetailInput)
+      this.awsApiService.UpdateAuthoredRoundPlanDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion
+        } as UpdateAuthoredRoundPlanDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -374,21 +397,17 @@ export class OperatorRoundsService {
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        items.sort((a, b) => b._version - a._version);
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
         return items[0];
       })
     );

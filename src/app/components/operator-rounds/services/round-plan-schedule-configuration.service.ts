@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
@@ -28,12 +29,16 @@ export class RoundPlanScheduleConfigurationService {
     roundPlansScheduleConfiguration: RoundPlanScheduleConfiguration,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundPlanScheduleConfiguration> =>
-    this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `round-plan-schedule-configuration/${scheduleId}`,
-      roundPlansScheduleConfiguration,
-      info
-    );
+    this.appService
+      .patchData(
+        environment.operatorRoundsApiUrl,
+        `round-plan-schedule-configuration/${scheduleId}`,
+        roundPlansScheduleConfiguration,
+        info
+      )
+      .pipe(
+        map((resp) => (resp === null ? roundPlansScheduleConfiguration : resp))
+      );
 
   fetchRoundPlanScheduleConfigurationByRoundPlanId$ = (
     roundPlanId: string,

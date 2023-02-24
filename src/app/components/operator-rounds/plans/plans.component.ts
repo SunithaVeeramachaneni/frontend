@@ -5,7 +5,8 @@ import {
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  timer
 } from 'rxjs';
 import {
   debounceTime,
@@ -299,11 +300,11 @@ export class PlansComponent implements OnInit, OnDestroy {
   nextToken = '';
   menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  submissionDetail: any;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedForm: GetFormListQuery = null;
+  zIndexDelay = 0;
   readonly perms = perms;
 
   constructor(
@@ -430,12 +431,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         this.operatorRoundsService.setRoundPlanDetails(event.row);
         break;
       default:
-        if (this.submissionDetail && this.submissionDetail.id === id) {
-          this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        } else {
-          this.menuState = 'in';
-        }
-        this.submissionDetail = event.row;
+        this.showFormDetail(event.row);
     }
   };
 
@@ -468,7 +464,18 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.selectedForm = null;
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
+    timer(400)
+      .pipe(tap(() => (this.zIndexDelay = 0)))
+      .subscribe();
   }
+
+  showFormDetail(row: GetFormListQuery): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
+    this.zIndexDelay = 400;
+  }
+
   roundPlanDetailActionHandler(event) {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);

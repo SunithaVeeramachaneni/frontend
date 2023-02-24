@@ -5,7 +5,8 @@ import {
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  timer
 } from 'rxjs';
 import {
   debounceTime,
@@ -28,9 +29,11 @@ import {
   TableEvent,
   LoadEvent,
   SearchEvent,
-  CellClickActionEvent
+  CellClickActionEvent,
+  Permission,
+  UserInfo
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { GetFormListQuery } from 'src/app/API.service';
 import {
   animate,
@@ -39,9 +42,12 @@ import {
   transition,
   trigger
 } from '@angular/animations';
-import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
-import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.service';
+import { LoginService } from '../../login/services/login.service';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.state';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-rounds',
@@ -83,7 +89,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '100%',
+        color: '#000000'
+      },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
@@ -95,8 +105,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'status',
-      displayName: 'Status',
+      id: 'assets',
+      displayName: 'Assets',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -111,32 +121,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '90px',
-        height: '25px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasPostTextImage: false
     },
     {
-      id: 'submittedBy',
-      displayName: 'User',
+      id: 'tasksCompleted',
+      displayName: 'Tasks Completed',
       type: 'string',
       controlType: 'string',
-      isMultiValued: true,
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -148,15 +142,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
+      groupable: true,
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'responses',
-      displayName: 'Responses',
+      id: 'dueDate',
+      displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
       order: 4,
@@ -177,8 +171,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'updatedAt',
-      displayName: 'Modified',
+      id: 'schedule',
+      displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -199,8 +193,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'createdAt',
-      displayName: 'Submitted',
+      id: 'status',
+      displayName: 'Status',
       type: 'string',
       controlType: 'string',
       order: 6,
@@ -219,10 +213,32 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
+    },
+    {
+      id: 'operator',
+      displayName: 'Operator',
+      type: 'string',
+      controlType: 'string',
+      order: 7,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
     }
   ];
   configOptions: ConfigOptions = {
-    tableID: 'formsTable',
+    tableID: 'plansTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -237,82 +253,84 @@ export class RoundsComponent implements OnInit, OnDestroy {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
-      },
-      'in-progress': {
+      draft: {
         'background-color': '#FEF3C7',
         color: '#92400E'
+      },
+      published: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
       }
     }
   };
   dataSource: MatTableDataSource<any>;
-  formSubmissions$: Observable<{
+  rounds$: Observable<{
     columns: Column[];
     data: any[];
   }>;
-  fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
-  submissionFormsListCount$: Observable<number>;
+  roundsCount$: Observable<number>;
   nextToken = '';
-  public menuState = 'out';
+  menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  submissionDetail: any;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  isOperatorRounds = false;
+  userInfo$: Observable<UserInfo>;
+  selectedForm: GetFormListQuery = null;
+  zIndexDelay = 0;
+  readonly perms = perms;
+
   constructor(
-    private readonly raceDynamicFormService: RaceDynamicFormService,
-    private readonly router: Router,
-    private readonly operatorRoundsService: OperatorRoundsService
-  ) {
-    if (this.router.url.includes('/operator-rounds/submissions')) {
-      this.isOperatorRounds = true;
-    }
-  }
+    private readonly operatorRoundsService: OperatorRoundsService,
+    private loginService: LoginService,
+    private store: Store<State>,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.fetchForms$.next({ data: 'load' });
-    this.fetchForms$.next({} as TableEvent);
+    this.fetchRounds$.next({ data: 'load' });
+    this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => this.fetchForms$.next({ data: 'search' }))
+        tap(() => {
+          this.fetchRounds$.next({ data: 'search' });
+          this.isLoading$.next(true);
+        })
       )
-      .subscribe(() => this.isLoading$.next(true));
-    this.submissionFormsListCount$ = this.isOperatorRounds
-      ? this.operatorRoundsService.getSubmissionFormsListCount$()
-      : this.raceDynamicFormService.getSubmissionFormsListCount$();
-    this.getDisplayedForms();
+      .subscribe();
+    this.roundsCount$ = this.operatorRoundsService.getRoundsListCount$();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.displayRounds();
     this.configOptions.allColumns = this.columns;
   }
 
-  getDisplayedForms(): void {
-    const formsOnLoadSearch$ = this.fetchForms$.pipe(
+  displayRounds(): void {
+    const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getSubmissionFormsList();
+        return this.getRoundPlanList();
       })
     );
 
-    const onScrollForms$ = this.fetchForms$.pipe(
+    const onScrollRounds$ = this.fetchRounds$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getSubmissionFormsList();
+          return this.getRoundPlanList();
         } else {
           return of([] as GetFormListQuery[]);
         }
@@ -323,10 +341,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.formSubmissions$ = combineLatest([
-      formsOnLoadSearch$,
-      onScrollForms$
-    ]).pipe(
+    this.rounds$ = combineLatest([roundsOnLoadSearch$, onScrollRounds$]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -338,27 +353,21 @@ export class RoundsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(scrollData);
         }
         this.skip = initial.data.length;
-        initial.data = initial.data.map((item) => ({
-          ...item,
-          status: this.prepareStatus(item.status)
-        }));
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
   }
 
-  getSubmissionFormsList() {
+  getRoundPlanList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
       searchKey: this.searchForm.value,
       fetchType: this.fetchType
     };
-    const observable = this.isOperatorRounds
-      ? this.operatorRoundsService.getSubmissionFormsList$(obj)
-      : this.raceDynamicFormService.getSubmissionFormsList$(obj);
-    return observable.pipe(
+
+    return this.operatorRoundsService.getRoundsList$(obj).pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
@@ -372,7 +381,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchForms$.next(event);
+    this.fetchRounds$.next(event);
   };
 
   applyFilters(): void {
@@ -386,16 +395,40 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
-      this.menuState = this.menuState === 'out' ? 'in' : 'out';
-    } else {
-      this.menuState = 'in';
-    }
-    this.submissionDetail = event.row;
+    this.showFormDetail(event.row);
   };
 
-  prepareStatus = (status) => {
-    if (status === 'IN-PROGRESS') return 'In-Progress';
-    else return `${status.slice(0, 1)}${status.slice(1).toLowerCase()}`;
-  };
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [
+      {
+        title: 'Show Details',
+        action: 'showDetails'
+      }
+    ];
+
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
+  }
+
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    timer(400)
+      .pipe(tap(() => (this.zIndexDelay = 0)))
+      .subscribe();
+  }
+
+  showFormDetail(row: GetFormListQuery): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
+    this.zIndexDelay = 400;
+  }
+
+  roundsDetailActionHandler(event) {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+  }
 }

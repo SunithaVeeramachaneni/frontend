@@ -88,19 +88,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
-    (state, action): FormConfigurationState => {
-      if(action.authoredFormDetail === null) {
-        return state;
-      } else {
-        return {...state,
-        formSaveStatus: action.formSaveStatus,
-        authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version};
-      }
-    }
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formSaveStatus: action.formSaveStatus,
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
+    })
   ),
   on(
     FormConfigurationApiActions.createFormDetailSuccess,
-    RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -120,7 +115,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateFormDetailSuccess,
-    RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -129,6 +123,23 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       isFormDetailPublished: false,
       formDetailPublishStatus: action.formDetailPublishStatus,
       formDetailDynamoDBVersion: action.formDetail._version,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      authoredFormDetailDynamoDBVersion: 1,
+      authoredFormDetailId: action.authoredFormDetail.id
+    })
+  ),
+  on(
+    RoundPlanConfigurationApiActions.publishRoundPlanSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus,
+      formMetadata: {
+        ...state.formMetadata,
+        formStatus: 'Published'
+      },
+      authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
+      isFormDetailPublished: false,
+      formDetailPublishStatus: action.formDetailPublishStatus,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
       authoredFormDetailDynamoDBVersion: 1,
       authoredFormDetailId: action.authoredFormDetail.id

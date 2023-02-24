@@ -29,6 +29,10 @@
   }
 }
 
+::ng-deep .remove-zindex th {
+  z-index: 0 !important;
+}
+
 .padding-lr-20 {
   padding: 0 20px;
 }
