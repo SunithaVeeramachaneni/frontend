@@ -169,20 +169,27 @@
       class="questions-responses-width"
       *ngIf="selectedNode; else loadingSelectedNode"
     >
-      <div class="selectedNode">
-        <span class="selectedNodeTitle">Tasks: {{ selectedNode.name }}</span>
-        <button
-          mat-stroked-button
-          class="import-btn"
-          translate="importBtn"
-          (click)="importTasks()"
-        ></button>
+      <div
+        *ngFor="let selectedNodeInstance of selectedNodeInstances"
+        class="nodeInstance"
+      >
+        <div class="selectedNode">
+          <span class="selectedNodeTitle">
+            Tasks of {{ selectedNodeInstance.name }}
+          </span>
+          <button
+            mat-stroked-button
+            class="import-btn"
+            translate="importBtn"
+            (click)="importTasks()"
+          ></button>
+        </div>
+        <app-builder
+          *ngIf="selectedNodeLoadStatus"
+          [selectedNode]="selectedNodeInstance"
+          [counter]="formConfiguration.get('counter').value"
+        ></app-builder>
       </div>
-      <app-builder
-        *ngIf="selectedNodeLoadStatus"
-        [selectedNode]="selectedNode"
-        [counter]="formConfiguration.get('counter').value"
-      ></app-builder>
     </div>
     <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
       <app-iphone [subFormId]="selectedNode?.id"></app-iphone>

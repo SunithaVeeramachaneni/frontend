@@ -24,6 +24,7 @@ export class FormService {
 
   private masterHierarchyData: HierarchyEntity[] = [];
   private selectedHierarchyList: HierarchyEntity[] = [];
+  private instanceIdMappings: any;
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
@@ -47,6 +48,12 @@ export class FormService {
   };
 
   getMasterHierarchyList = () => this.masterHierarchyData;
+
+  setInstanceIdMappings = (mapping: any) => {
+    this.instanceIdMappings = mapping;
+  };
+  getInstanceIdMappings = () => this.instanceIdMappings;
+  getInstanceIdMappingsByUid = (uid) => this.instanceIdMappings[uid];
 
   setSelectedHierarchyList = (hierarchyData: HierarchyEntity[]) => {
     this.selectedHierarchyList = [

@@ -119,6 +119,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   currentFormData: any;
 
   selectedNode: any;
+  selectedNodeInstances: any[];
+
   selectedNode$: Observable<any>;
   selectedNodeLoadStatus = false;
   isHierarchyLoaded = false;
@@ -148,6 +150,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (Object.keys(data).length) {
           this.selectedNode = data;
           this.selectedNodeLoadStatus = true;
+          this.selectedNodeInstances =
+            this.formService.getInstanceIdMappingsByUid(this.selectedNode.uid);
           this.cdrf.detectChanges();
           this.store.dispatch(
             BuilderConfigurationActions.initPage({
@@ -883,23 +887,19 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   hierarchyEventHandler(event: any) {
     const { hierarchy } = event;
-    const {
-      counter: currCounter,
-      formStatus: currFormStatus,
-      ...formMetadata
-    } = this.formConfiguration.value;
     this.store.dispatch(
-      BuilderConfigurationActions.updateFormMetadata({
-        formMetadata: { ...formMetadata, hierarchy },
-        ...this.getFormConfigurationStatuses()
+      HierarchyActions.updateSelectedHierarchyList({
+        selectedHierarchy: hierarchy
       })
     );
     this.store.dispatch(
-      RoundPlanConfigurationActions.updateRoundPlan({
-        formMetadata: { ...formMetadata, hierarchy: JSON.stringify(hierarchy) },
-        formListDynamoDBVersion: this.formListVersion
+      BuilderConfigurationActions.updateFormStatuses({
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
       })
     );
+    this.formService.setSelectedHierarchyList(hierarchy);
   }
 
   getPagesWithoutBlankQuestions(pages: Page[]) {

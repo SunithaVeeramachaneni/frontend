@@ -113,6 +113,12 @@ export const removeSubForm = createAction(
     subFormId: string;
   }>()
 );
+export const removeSubFormInstances = createAction(
+  '[Builder Configuration] removeSubFormInstances',
+  props<{
+    subFormIds: string[];
+  }>()
+);
 
 export const addPage = createAction(
   '[Builder Configuration] addPage',

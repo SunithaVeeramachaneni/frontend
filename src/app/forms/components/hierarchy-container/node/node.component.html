@@ -13,7 +13,7 @@
       </div>
     </div>
     <div
-      *ngIf="node.hasChildren && node.children"
+      *ngIf="node.hasChildren && node.children && node.children.length"
       class="childrenHead"
       [ngClass]="{ inactive: selectedNode.id !== node.id }"
     >
@@ -31,9 +31,10 @@
     </div>
   </div>
   <div class="right">
-    <span> {{ getTasksCountByNodeId(node.id) }} </span>
+    <span> {{ getTasksCountByNode(node) }} </span>
     <span
       [matMenuTriggerFor]="hierarchyMenu"
+      #hierarchyMenuTrigger="matMenuTrigger"
       class="more-icon"
       aria-label="More Options"
     >

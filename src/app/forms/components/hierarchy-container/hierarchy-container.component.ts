@@ -18,11 +18,13 @@ import { FormService } from '../../services/form.service';
 import { FormMetadata, HierarchyEntity } from 'src/app/interfaces';
 import {
   getMasterHierarchyList,
-  getSelectedHierarchyList,
-  State
+  getSelectedHierarchyList
 } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
-import { getTotalTasksCount } from '../../state/builder/builder-state.selectors';
+import {
+  getTotalTasksCount,
+  State
+} from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -52,6 +54,8 @@ export class HierarchyContainerComponent implements OnInit {
 
   filteredHierarchyList = [];
 
+  instanceIdMappings = {};
+
   hierarchy = [];
   totalAssetsCount = 0;
 
@@ -75,11 +79,12 @@ export class HierarchyContainerComponent implements OnInit {
             assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
 
-          const stitchedHierarchy =
+          const { stitchedHierarchy, instanceIdMappings } =
             assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
-
+          this.instanceIdMappings = instanceIdMappings;
+          this.formService.setInstanceIdMappings(this.instanceIdMappings);
           this.filteredHierarchyList = JSON.parse(
-            JSON.stringify(this.hierarchy)
+            JSON.stringify(stitchedHierarchy)
           );
           this.cdrf.detectChanges();
           this.operatorRoundsService.setSelectedNode(selectedHierarchy[0]);
@@ -160,22 +165,74 @@ export class HierarchyContainerComponent implements OnInit {
         width: '450px',
         height: '165px',
         disableClose: true,
-        data: { node: event }
+        data: { node: event, hierarchyMode: this.hierarchyMode }
       }
     );
     deleteConfirmationDialogRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
-      const hierarchyUpdated = this.promoteChildren([...this.hierarchy], event);
-      this.store.dispatch(
-        BuilderConfigurationActions.removeSubForm({
-          subFormId: event.id
-        })
-      );
-      this.hierarchyEvent.emit({
-        hierarchy: hierarchyUpdated,
-        node: event
-      });
+      if (this.hierarchyMode === 'asset_hierarchy') {
+        const node = event;
+        // eslint-disable-next-line prefer-const
+        let nodeChildrenUIDs = [];
+        const hierarchyUpdated = this.pruneChildren(
+          JSON.parse(JSON.stringify(this.hierarchy)),
+          event
+        );
+        this.hierarchyEvent.emit({
+          hierarchy: hierarchyUpdated,
+          node: event
+        });
+        const instanceIdMappings = this.formService.getInstanceIdMappings();
+        let instances = [];
+        nodeChildrenUIDs.forEach((uid) => {
+          const temp = instanceIdMappings[uid];
+          instances = [...instances, ...temp];
+        });
+        const instanceIds = instances.map((i) => i.id);
+        this.store.dispatch(
+          BuilderConfigurationActions.removeSubFormInstances({
+            subFormIds: instanceIds
+          })
+        );
+      } else {
+        const hierarchyUpdated = this.promoteChildren(
+          [...this.hierarchy],
+          event
+        );
+        this.hierarchyEvent.emit({
+          hierarchy: hierarchyUpdated,
+          node: event
+        });
+        this.store.dispatch(
+          BuilderConfigurationActions.removeSubForm({
+            subFormId: event.id
+          })
+        );
+      }
     });
+  }
+
+  pruneChildren(array, node) {
+    for (let i = 0; i < array.length; ++i) {
+      const obj = array[i];
+      if (obj.id === node.id || obj.uid === node.uid) {
+        array.splice(i, 1);
+        const index = array.findIndex((c) => c.uid === node.uid);
+        if (index > -1) {
+          array.splice(index, 1);
+        }
+        return array;
+      }
+      if (obj.children) {
+        if (this.pruneChildren(obj.children, node)) {
+          if (obj.children.length === 0) {
+            delete obj.children;
+            array.splice(i, 1);
+          }
+        }
+      }
+    }
+    return array;
   }
 
   promoteChildren(list, node) {

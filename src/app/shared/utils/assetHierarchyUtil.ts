@@ -63,13 +63,25 @@ export class AssetHierarchyUtil {
     return childrenIds;
   }
 
+  getAllChildrenUIDsByNode(node) {
+    let childrenIds = [];
+    if (node.hasChildren && node.children && node.children.length) {
+      node.children.forEach((child) => {
+        childrenIds.push(child.uid);
+        const recursiveChildIds = this.getAllChildrenIDsByNode(child);
+        childrenIds = [...childrenIds, ...recursiveChildIds];
+      });
+    }
+    return childrenIds;
+  }
+
   convertHierarchyToFlatList(hierarchy: any[], sequenceNum: number) {
     let flatHierarchy = [];
     hierarchy.forEach((node) => {
       node.sequence = sequenceNum++;
-      const tempNode = JSON.parse(
-        JSON.stringify(this.cleanedHierarchyEntity(node))
-      );
+      const tempNode = JSON.parse(JSON.stringify(node));
+      tempNode.children = [];
+      // tempNode = JSON.parse(JSON.stringify(this.cleanedHierarchyEntity(node)));
       flatHierarchy.push(tempNode);
       if (node.hasChildren && node.children.length) {
         const childFlatHierarchy = this.convertHierarchyToFlatList(
@@ -174,7 +186,7 @@ export class AssetHierarchyUtil {
       .filter((v) => v.parentId === null);
 
   flatListToHierarchy = (array, parent) => {
-    parent = parent !== null ? parent : { id: null };
+    parent = parent !== null ? parent : { uid: null };
     const children = array.filter((child) => child.parentId === parent.uid);
     if (children && children.length) {
       const nonDuplicateChildren = this.removeDuplicateNodes(children);
@@ -248,12 +260,24 @@ export class AssetHierarchyUtil {
 
   cleanedHierarchyEntity = ({
     id,
+    uid,
     nodeId,
+    parentId,
     type,
     name,
     image,
     sequence,
     hierarchyPath,
     ...node
-  }) => ({ id, nodeId, type, name, image, sequence, hierarchyPath });
+  }) => ({
+    id,
+    uid,
+    nodeId,
+    parentId,
+    type,
+    name,
+    image,
+    sequence,
+    hierarchyPath
+  });
 }

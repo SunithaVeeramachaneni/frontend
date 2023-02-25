@@ -5,7 +5,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -17,6 +18,8 @@ import {
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ShowHierarchyPopupComponent } from '../../show-hierarchy-popup/show-hierarchy-popup.component';
+import { FormService } from 'src/app/forms/services/form.service';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-node',
@@ -29,12 +32,15 @@ export class NodeComponent implements OnInit {
   @Input() hierarchyMode;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
 
+  @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
+
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   selectedNode: any;
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
+    private formService: FormService,
     private cdrf: ChangeDetectorRef,
     private store: Store<State>,
     private dialog: MatDialog
@@ -47,25 +53,54 @@ export class NodeComponent implements OnInit {
     });
   }
 
-  getTasksCountByNodeId(nodeId) {
+  getTasksCountByNode(node) {
+    let nodeId = node.id;
     let count = 0;
-    this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
-      count = c;
-    });
-    return count;
+    if (this.hierarchyMode === 'asset_hierarchy') {
+      nodeId = node.uid;
+      const instanceIdMappings = this.formService.getInstanceIdMappings();
+      const instances = instanceIdMappings[nodeId];
+      const instanceIds = instances.map((i) => i.id);
+      this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
+        count = c;
+      });
+      return count;
+    } else {
+      this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
+        count = c;
+      });
+      return count;
+    }
   }
 
   getTotalTasksCountByNode(node) {
-    const allChildNodeIds =
-      this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
-
     let count = 0;
-    this.store
-      .select(getTasksCountByNodeIds(allChildNodeIds))
-      .subscribe((c) => {
+    if (this.hierarchyMode === 'asset_hierarchy') {
+      let instanceIds = [];
+      const instanceIdMappings = this.formService.getInstanceIdMappings();
+      const allChildNodeUIds =
+        this.assetHierarchyUtil.getAllChildrenUIDsByNode(node);
+      allChildNodeUIds.forEach((childNode) => {
+        const instances = instanceIdMappings[childNode];
+        if (instances) {
+          const instanceIdArr = instances.map((i) => i.id);
+          instanceIds = [...instanceIds, ...instanceIdArr];
+        }
+      });
+      this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
         count = c;
       });
-    return count;
+      return count;
+    } else {
+      const allChildNodeIds =
+        this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
+      this.store
+        .select(getTasksCountByNodeIds(allChildNodeIds))
+        .subscribe((c) => {
+          count = c;
+        });
+      return count;
+    }
   }
 
   setSelectedNode(node) {
@@ -75,6 +110,7 @@ export class NodeComponent implements OnInit {
   }
 
   onRemoveNode(event, node) {
+    this.hierarchyMenuTrigger.closeMenu();
     event.stopPropagation();
     this.nodeRemoved.emit(node);
   }
@@ -84,6 +120,7 @@ export class NodeComponent implements OnInit {
   }
 
   openShowHierarchyPopup = () => {
+    this.hierarchyMenuTrigger.closeMenu();
     const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
       data: { uid: this.node.uid }
     });
