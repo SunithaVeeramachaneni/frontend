@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnDestroy
+} from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -31,47 +35,25 @@ import {
   SearchEvent,
   CellClickActionEvent,
   Permission,
-  UserInfo
+  UserInfo,
+  RowLevelActionEvent
 } from 'src/app/interfaces';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { GetFormListQuery } from 'src/app/API.service';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { Router } from '@angular/router';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class PlansComponent implements OnInit, OnDestroy {
   columns: Column[] = [
@@ -299,19 +281,24 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlansCount$: Observable<number>;
   nextToken = '';
   menuState = 'out';
-  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedForm: GetFormListQuery = null;
+  roundPlanDetail: GetFormListQuery = null;
+  scheduleRoundPlanDetail: GetFormListQuery = null;
   zIndexDelay = 0;
+  zIndexScheduleDelay = 0;
+  openScheduleConfig$: Observable<boolean>;
+  scheduleConfigState = 'out';
   readonly perms = perms;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -421,17 +408,13 @@ export class PlansComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const {
-      columnId,
-      row: { id }
-    } = event;
+    const { columnId, row } = event;
     switch (columnId) {
       case 'schedule':
-        this.operatorRoundsService.openRoundPlanSchedulerConfiguration(true);
-        this.operatorRoundsService.setRoundPlanDetails(event.row);
+        this.openScheduleConfigHandler(row);
         break;
       default:
-        this.showFormDetail(event.row);
+        this.openRoundPlanHandler(event.row);
     }
   };
 
@@ -460,24 +443,64 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions = { ...this.configOptions };
   }
 
-  onCloseViewDetail() {
-    this.selectedForm = null;
+  closeRoundPlanHandler() {
+    this.roundPlanDetail = null;
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
-      .pipe(tap(() => (this.zIndexDelay = 0)))
+      .pipe(
+        tap(() => {
+          this.zIndexDelay = 0;
+          this.cdrf.markForCheck();
+        })
+      )
       .subscribe();
   }
 
-  showFormDetail(row: GetFormListQuery): void {
+  openRoundPlanHandler(row: GetFormListQuery): void {
+    this.closeScheduleConfigHandler('out');
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
+    this.roundPlanDetail = row;
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
   roundPlanDetailActionHandler(event) {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+    this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
+
+  openScheduleConfigHandler(row: GetFormListQuery) {
+    this.closeRoundPlanHandler();
+    this.scheduleRoundPlanDetail = row;
+    this.scheduleConfigState = 'in';
+    this.zIndexScheduleDelay = 400;
+  }
+
+  closeScheduleConfigHandler(event: string) {
+    this.scheduleRoundPlanDetail = null;
+    this.scheduleConfigState = event;
+    timer(400)
+      .pipe(
+        tap(() => {
+          this.zIndexScheduleDelay = 0;
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+  }
+
+  rowLevelActionHandler = (event: RowLevelActionEvent) => {
+    const { action, data } = event;
+    switch (action) {
+      case 'schedule':
+        this.openScheduleConfigHandler(data);
+        break;
+      case 'showDetails':
+        this.openRoundPlanHandler(data);
+        break;
+      default:
+      // do nothing
+    }
+  };
 }

@@ -1,16 +1,19 @@
 @import '../../../../scss/colors.scss';
 
-#scheduler-customizer {
+:host {
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
   top: 0;
   right: 0;
   width: 457px;
-  z-index: 999;
+  min-width: 457px;
+  height: 100%;
+  z-index: 9999;
   background-color: $white;
   border-left: 1px solid $border-color;
-  box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
+}
 
+#scheduler-customizer {
   .mat-card {
     margin: 0;
     border-radius: 0;
@@ -216,9 +219,13 @@
     }
   }
 
+  .mat-card:not([class*='mat-elevation-z']) {
+    box-shadow: none;
+  }
+
   .footer {
     padding: 0 15px 10px 15px;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 5px;
     display: flex;

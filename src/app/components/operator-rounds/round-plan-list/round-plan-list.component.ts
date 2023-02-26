@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
@@ -43,30 +36,14 @@ import {
   generateCopyRegex
 } from '../../race-dynamic-form/utils/utils';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-round-plan-list',
   templateUrl: './round-plan-list.component.html',
   styleUrls: ['./round-plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';

@@ -37,18 +37,10 @@ const limit = 10000;
 })
 export class OperatorRoundsService {
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-  private openRoundPlanSchedulerConfigurationSubject$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(false);
-  private roundPlanDetailsSubject$: BehaviorSubject<any> =
-    new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
-  roundPlanSchedulerConfigurationAction$ =
-    this.openRoundPlanSchedulerConfigurationSubject$.asObservable();
-  roundPlanDetailsAction$ = this.roundPlanDetailsSubject$.asObservable();
 
   constructor(
     private readonly awsApiService: APIService,
@@ -59,14 +51,6 @@ export class OperatorRoundsService {
 
   setFormCreatedUpdated(data: any) {
     this.formCreatedUpdatedSubject.next(data);
-  }
-
-  openRoundPlanSchedulerConfiguration(open: boolean) {
-    this.openRoundPlanSchedulerConfigurationSubject$.next(open);
-  }
-
-  setRoundPlanDetails(roundPlan: any) {
-    this.roundPlanDetailsSubject$.next(roundPlan);
   }
 
   createTags$ = (

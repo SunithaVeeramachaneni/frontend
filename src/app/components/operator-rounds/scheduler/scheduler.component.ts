@@ -6,9 +6,7 @@ import {
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
   selector: 'app-scheduler',
@@ -18,14 +16,11 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 })
 export class SchedulerComponent implements OnInit, OnDestroy {
   tabIndex: number;
-  openBasicScheduler$: Observable<boolean>;
-  roundPlanDetails$: Observable<any>;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private headerService: HeaderService,
-    private operatorRoundsService: OperatorRoundsService
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
@@ -33,9 +28,6 @@ export class SchedulerComponent implements OnInit, OnDestroy {
       this.tabIndex = tabIndex;
     });
     this.headerService.setHeaderTitle('Scheduler');
-    this.openBasicScheduler$ =
-      this.operatorRoundsService.roundPlanSchedulerConfigurationAction$;
-    this.roundPlanDetails$ = this.operatorRoundsService.roundPlanDetailsAction$;
   }
 
   getSelectedIndex(): number {
@@ -47,7 +39,5 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     this.router.navigate(['/operator-rounds/scheduler', this.tabIndex]);
   }
 
-  ngOnDestroy(): void {
-    this.operatorRoundsService.openRoundPlanSchedulerConfiguration(false);
-  }
+  ngOnDestroy(): void {}
 }

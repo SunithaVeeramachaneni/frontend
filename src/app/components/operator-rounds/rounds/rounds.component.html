@@ -1,12 +1,12 @@
 <div class="search-container">
   <div id="openviewtab">
-    <!-- <app-form-detail
+    <app-form-detail
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
       (formDetailAction)="roundsDetailActionHandler($event)"
-    ></app-form-detail> -->
+    ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-forms" *ngIf="roundsCount$ | async as totalCount">

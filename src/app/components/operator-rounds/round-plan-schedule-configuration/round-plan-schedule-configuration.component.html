@@ -13,7 +13,7 @@
         autocomplete="off"
       >
         <p translate class="field-info">plan</p>
-        <div class="field-name">{{ roundPlanDetails.name }}</div>
+        <div class="field-name">{{ roundPlanDetail?.name }}</div>
         <div class="schedule">{{ 'schedule' | translate }}</div>
         <mat-radio-group formControlName="scheduleType">
           <mat-radio-button
@@ -24,7 +24,12 @@
             {{ scheduleType | translate }}</mat-radio-button
           >
         </mat-radio-group>
-        <ng-container *ngIf="form.scheduleType.value === 'byFrequency'">
+        <ng-container
+          *ngIf="
+            roundPlanSchedulerConfigForm.get('scheduleType').value ===
+            'byFrequency'
+          "
+        >
           <div class="by-frequency">
             <div class="dis-flex">
               <p class="f-w-400">{{ 'repeatEvery' | translate }}</p>
@@ -46,7 +51,11 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <ng-container *ngIf="form.repeatEvery.value === 'week'">
+            <ng-container
+              *ngIf="
+                roundPlanSchedulerConfigForm.get('repeatEvery').value === 'week'
+              "
+            >
               <div class="row-title">
                 {{ 'repeatOn' | translate }}
               </div>
@@ -62,7 +71,12 @@
                 >
               </mat-button-toggle-group>
             </ng-container>
-            <ng-container *ngIf="form.repeatEvery.value === 'month'">
+            <ng-container
+              *ngIf="
+                roundPlanSchedulerConfigForm.get('repeatEvery').value ===
+                'month'
+              "
+            >
               <div class="row-title">
                 {{ 'repeatOn' | translate }}
               </div>
@@ -168,17 +182,24 @@
               matIconSuffix
               [for]="startDate"
               (click)="startDate.open()"
-              [disabled]="form.scheduledTill.value !== null"
+              [disabled]="
+                roundPlanSchedulerConfigForm.get('scheduledTill').value !== null
+              "
             ></mat-datepicker-toggle>
             <mat-datepicker
               #startDate
-              [disabled]="form.scheduledTill.value !== null"
+              [disabled]="
+                roundPlanSchedulerConfigForm.get('scheduledTill').value !== null
+              "
             ></mat-datepicker>
           </mat-form-field>
           <mat-form-field
             appearance="outline"
             class="width-100"
-            *ngIf="form.scheduleEndType.value === 'after'"
+            *ngIf="
+              roundPlanSchedulerConfigForm.get('scheduleEndType').value ===
+              'after'
+            "
           >
             <mat-label translate>endDate</mat-label>
             <input matInput formControlName="endDate" readonly />
@@ -193,7 +214,11 @@
           </mat-form-field>
         </ng-container>
 
-        <ng-container *ngIf="form.scheduleType.value === 'byDate'">
+        <ng-container
+          *ngIf="
+            roundPlanSchedulerConfigForm.get('scheduleType').value === 'byDate'
+          "
+        >
           <div class="by-date">
             <p class="f-w-500 f-s-120" translate>selectDates</p>
             <mat-calendar

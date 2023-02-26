@@ -3,8 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -24,7 +26,6 @@ import {
 import { tap } from 'rxjs/operators';
 import { ScheduleByDate } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 
 @Component({
@@ -35,15 +36,17 @@ import { RoundPlanScheduleConfigurationService } from '../services/round-plan-sc
 })
 export class RoundPlanScheduleConfigurationComponent implements OnInit {
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  @Input() set roundPlanDetails(roundPlanDetails: any) {
-    this._roundPlanDetails = roundPlanDetails;
-    if (roundPlanDetails) {
-      this.getRoundPlanSchedulerConfiguration(roundPlanDetails.id);
+  @Input() set roundPlanDetail(roundPlanDetail: any) {
+    this._roundPlanDetail = roundPlanDetail;
+    if (roundPlanDetail) {
+      this.getRoundPlanSchedulerConfiguration(roundPlanDetail.id);
     }
   }
-  get roundPlanDetails(): any {
-    return this._roundPlanDetails;
+  get roundPlanDetail(): any {
+    return this._roundPlanDetail;
   }
+  @Output() scheduleConfigState: EventEmitter<string> =
+    new EventEmitter<string>();
   scheduleTypes: string[] = ['byFrequency', 'byDate'];
   scheduleEndTypes: string[] = ['never', 'on', 'after'];
   repeatTypes: string[] = ['day', 'week', 'month'];
@@ -64,10 +67,9 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     }
   ];
   disableSchedule = false;
-  private _roundPlanDetails: any;
+  private _roundPlanDetail: any;
 
   constructor(
-    private operatorRoundService: OperatorRoundsService,
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
@@ -77,7 +79,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.roundPlanSchedulerConfigForm = this.fb.group({
       id: '',
-      roundPlanId: this.roundPlanDetails.id,
+      roundPlanId: this.roundPlanDetail?.id,
       scheduleType: 'byFrequency',
       repeatDuration: [1, [Validators.required, Validators.min(1)]],
       repeatEvery: 'day',
@@ -109,123 +111,163 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null
     });
-
-    this.form.scheduleEndType.valueChanges.subscribe((scheduleEndType) => {
-      switch (scheduleEndType) {
-        case 'on':
-          this.form.scheduleEndOn.enable();
-          this.form.scheduleEndOccurrences.disable();
-          this.form.scheduleEndOccurrencesText.disable();
-          break;
-        case 'after':
-          this.form.scheduleEndOn.disable();
-          this.form.scheduleEndOccurrences.enable();
-          this.form.scheduleEndOccurrencesText.enable();
-          break;
-        default:
-          this.form.scheduleEndOn.disable();
-          this.form.scheduleEndOccurrences.disable();
-          this.form.scheduleEndOccurrencesText.disable();
-      }
-    });
-
-    this.form.repeatEvery.valueChanges.subscribe((repeatEvery) => {
-      switch (repeatEvery) {
-        case 'day':
-          this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 29), 'MMM d, yyyy')
-          );
-          this.form.scheduleEndOccurrences.patchValue(30);
-          this.form.endDate.patchValue(
-            format(addDays(new Date(), 29), 'd MMMM yyyy')
-          );
-          break;
-        case 'week':
-          this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 90), 'MMM d, yyyy')
-          );
-          this.form.scheduleEndOccurrences.patchValue(daysToWeeks(91));
-          this.form.daysOfWeek.patchValue([getDay(new Date())]);
-          this.form.endDate.patchValue(
-            format(addDays(new Date(), 90), 'd MMMM yyyy')
-          );
-          break;
-        case 'month':
-          this.form.scheduleEndOn.patchValue(
-            format(addDays(new Date(), 364), 'MMM d, yyyy')
-          );
-          this.form.scheduleEndOccurrences.patchValue(12);
-          this.form.endDate.patchValue(
-            format(addDays(new Date(), 364), 'd MMMM yyyy')
-          );
-          break;
-      }
-    });
-
-    this.form.daysOfWeek.valueChanges.subscribe((daysOfWeek) => {
-      if (daysOfWeek.length === 0) {
-        this.form.daysOfWeek.patchValue([getDay(new Date())]);
-      }
-    });
-
-    this.form.monthlyDaysOfWeek.valueChanges.subscribe((monthlyDaysOfWeek) => {
-      const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
-        (acc: number, curr: number[]) => {
-          acc += curr.length;
-          return acc;
-        },
-        0
-      );
-      if (monthlyDaysOfWeekCount === 0) {
-        for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
-          weekRepeatDays.patchValue([getDay(new Date())]);
+    this.roundPlanSchedulerConfigForm
+      .get('scheduleEndType')
+      .valueChanges.subscribe((scheduleEndType) => {
+        switch (scheduleEndType) {
+          case 'on':
+            this.roundPlanSchedulerConfigForm.get('scheduleEndOn').enable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .disable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrencesText')
+              .disable();
+            break;
+          case 'after':
+            this.roundPlanSchedulerConfigForm.get('scheduleEndOn').disable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .enable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrencesText')
+              .enable();
+            break;
+          default:
+            this.roundPlanSchedulerConfigForm.get('scheduleEndOn').disable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .disable();
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrencesText')
+              .disable();
         }
-      }
-    });
+      });
 
-    this.form.scheduleEndOccurrences.valueChanges.subscribe((occurrences) => {
-      if (occurrences > 0) {
-        let days = 0;
-        switch (this.form.repeatEvery.value) {
+    this.roundPlanSchedulerConfigForm
+      .get('repeatEvery')
+      .valueChanges.subscribe((repeatEvery) => {
+        switch (repeatEvery) {
           case 'day':
-            days = occurrences;
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOn')
+              .patchValue(format(addDays(new Date(), 29), 'MMM d, yyyy'));
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .patchValue(30);
+            this.roundPlanSchedulerConfigForm
+              .get('endDate')
+              .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
             break;
           case 'week':
-            days = weeksToDays(occurrences);
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOn')
+              .patchValue(format(addDays(new Date(), 90), 'MMM d, yyyy'));
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .patchValue(daysToWeeks(91));
+            this.roundPlanSchedulerConfigForm
+              .get('daysOfWeek')
+              .patchValue([getDay(new Date())]);
+            this.roundPlanSchedulerConfigForm
+              .get('endDate')
+              .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
             break;
           case 'month':
-            days = differenceInDays(
-              addMonths(new Date(), occurrences),
-              new Date()
-            );
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOn')
+              .patchValue(format(addDays(new Date(), 364), 'MMM d, yyyy'));
+            this.roundPlanSchedulerConfigForm
+              .get('scheduleEndOccurrences')
+              .patchValue(12);
+            this.roundPlanSchedulerConfigForm
+              .get('endDate')
+              .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
             break;
         }
-        this.form.endDate.patchValue(
-          format(
-            addDays(new Date(), days * this.form.repeatDuration.value - 1),
-            'd MMMM yyyy'
-          )
-        );
-      }
-    });
+      });
 
-    this.form.repeatDuration.valueChanges.subscribe(() => {
-      this.form.scheduleEndOccurrences.patchValue(
-        this.form.scheduleEndOccurrences.value
-      );
-    });
+    this.roundPlanSchedulerConfigForm
+      .get('daysOfWeek')
+      .valueChanges.subscribe((daysOfWeek) => {
+        if (daysOfWeek.length === 0) {
+          this.roundPlanSchedulerConfigForm
+            .get('daysOfWeek')
+            .patchValue([getDay(new Date())]);
+        }
+      });
+
+    this.roundPlanSchedulerConfigForm
+      .get('monthlyDaysOfWeek')
+      .valueChanges.subscribe((monthlyDaysOfWeek) => {
+        const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
+          (acc: number, curr: number[]) => {
+            acc += curr.length;
+            return acc;
+          },
+          0
+        );
+        if (monthlyDaysOfWeekCount === 0) {
+          this.setMonthlyDaysOfWeek();
+        }
+      });
+
+    this.roundPlanSchedulerConfigForm
+      .get('scheduleEndOccurrences')
+      .valueChanges.subscribe((occurrences) => {
+        if (occurrences > 0) {
+          let days = 0;
+          switch (this.roundPlanSchedulerConfigForm.get('repeatEvery').value) {
+            case 'day':
+              days = occurrences;
+              break;
+            case 'week':
+              days = weeksToDays(occurrences);
+              break;
+            case 'month':
+              days = differenceInDays(
+                addMonths(new Date(), occurrences),
+                new Date()
+              );
+              break;
+          }
+          this.roundPlanSchedulerConfigForm
+            .get('endDate')
+            .patchValue(
+              format(
+                addDays(
+                  new Date(),
+                  days *
+                    this.roundPlanSchedulerConfigForm.get('repeatDuration')
+                      .value -
+                    1
+                ),
+                'd MMMM yyyy'
+              )
+            );
+        }
+      });
+
+    this.roundPlanSchedulerConfigForm
+      .get('repeatDuration')
+      .valueChanges.subscribe(() => {
+        this.roundPlanSchedulerConfigForm
+          .get('scheduleEndOccurrences')
+          .patchValue(
+            this.roundPlanSchedulerConfigForm.get('scheduleEndOccurrences')
+              .value
+          );
+      });
 
     this.currentDate = new Date();
-
-    for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
-      weekRepeatDays.patchValue([getDay(new Date())]);
-    }
-
+    this.setMonthlyDaysOfWeek();
     this.roundPlanSchedulerConfigForm.markAsDirty();
   }
 
-  get form() {
-    return this.roundPlanSchedulerConfigForm.controls;
+  setMonthlyDaysOfWeek() {
+    for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
+      weekRepeatDays.patchValue([getDay(new Date())]);
+    }
   }
 
   initMonthWiseWeeklyDaysOfWeek(weeksCount: number) {
@@ -233,11 +275,13 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
 
   get monthlyDaysOfWeek(): FormArray {
-    return this.form.monthlyDaysOfWeek as FormArray;
+    return this.roundPlanSchedulerConfigForm.get(
+      'monthlyDaysOfWeek'
+    ) as FormArray;
   }
 
   cancel() {
-    this.operatorRoundService.openRoundPlanSchedulerConfiguration(false);
+    this.scheduleConfigState.emit('out');
   }
 
   scheduleConfiguration() {
@@ -253,7 +297,10 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       const time = format(new Date(), 'HH:00:00');
       const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
         roundPlanSchedulerConfig;
-      const scheduleByDates = this.prepareScheduleByDates();
+      const scheduleByDates =
+        roundPlanSchedulerConfig.scheduleType === 'byDate'
+          ? this.prepareScheduleByDates()
+          : [];
 
       if (id) {
         this.rpscService
@@ -295,7 +342,9 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
                   text: 'Round plan schedule created sucessfully',
                   type: 'success'
                 });
-                this.form.id.patchValue(scheduleConfig.id);
+                this.roundPlanSchedulerConfigForm
+                  .get('id')
+                  .patchValue(scheduleConfig.id);
                 this.roundPlanSchedulerConfigForm.markAsPristine();
                 this.cdrf.markForCheck();
               }
@@ -334,7 +383,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
 
   getRoundPlanSchedulerConfiguration(roundPlandId: string) {
-    return this.rpscService
+    this.rpscService
       .fetchRoundPlanScheduleConfigurationByRoundPlanId$(roundPlandId)
       .pipe(
         tap(([config]) => {
@@ -361,13 +410,44 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             }));
             this.roundPlanSchedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
-              this.form.startDate.disable();
+              this.roundPlanSchedulerConfigForm.get('startDate').disable();
             }
             this.roundPlanSchedulerConfigForm.markAsPristine();
+            this.calendar?.updateTodaysDate();
+          } else {
+            this.setDefaultRoundPlanSchedulerConfig(roundPlandId);
           }
         })
       )
       .subscribe();
+  }
+
+  setDefaultRoundPlanSchedulerConfig(roundPlanId: string) {
+    this.scheduleByDates = [
+      {
+        date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
+        scheduled: false
+      }
+    ];
+    this.roundPlanSchedulerConfigForm.patchValue({
+      id: '',
+      roundPlanId,
+      scheduleType: 'byFrequency',
+      repeatDuration: 1,
+      repeatEvery: 'day',
+      daysOfWeek: [getDay(new Date())],
+      monthlyDaysOfWeek: this.setMonthlyDaysOfWeek(),
+      scheduleEndType: 'never',
+      scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
+      scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
+      scheduleEndOccurrences: 30,
+      scheduleEndOccurrencesText: 'occurrences',
+      startDate: format(new Date(), 'd MMMM yyyy'),
+      startDatePicker: new Date(),
+      endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
+      endDatePicker: new Date(addDays(new Date(), 30)),
+      scheduledTill: null
+    });
   }
 
   findDate(date: Date): number {

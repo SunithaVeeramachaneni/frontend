@@ -35,43 +35,20 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { GetFormListQuery } from 'src/app/API.service';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { Router } from '@angular/router';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
   styleUrls: ['./rounds.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
   columns: Column[] = [
@@ -277,7 +254,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundsCount$: Observable<number>;
   nextToken = '';
   menuState = 'out';
-  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
