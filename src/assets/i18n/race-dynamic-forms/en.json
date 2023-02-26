@@ -133,5 +133,8 @@
   "status": "Status",
   "location": "Location",
   "lastEditedBy": "Last Edited by",
-  "viewReport": "View Report"
+  "viewReport": "View Report",
+  "formOverview": "Form Overview",
+  "lastUpdated": "Last updated:",
+  "filledBy": "Filled By"
 }
