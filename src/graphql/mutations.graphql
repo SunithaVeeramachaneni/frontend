@@ -417,6 +417,7 @@ mutation CreateAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -437,6 +438,7 @@ mutation UpdateAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -457,6 +459,7 @@ mutation DeleteAuthoredRoundPlanDetail(
     formDetailPublishStatus
     formlistID
     subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -471,7 +474,9 @@ mutation CreateRoundPlanDetail(
   createRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -486,7 +491,9 @@ mutation UpdateRoundPlanDetail(
   updateRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -501,7 +508,9 @@ mutation DeleteRoundPlanDetail(
   deleteRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -527,7 +536,6 @@ mutation CreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -545,7 +553,6 @@ mutation CreateRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -571,7 +578,6 @@ mutation UpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -589,7 +595,6 @@ mutation UpdateRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
@@ -615,7 +620,6 @@ mutation DeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    hierarchy
     isArchived
     formType
     isArchivedAt
@@ -633,7 +637,6 @@ mutation DeleteRoundPlanList(
     }
     isDeleted
     searchTerm
-    hierarchyMode
     createdAt
     updatedAt
     _version
