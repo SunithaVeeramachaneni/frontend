@@ -474,8 +474,8 @@ export class UnitMeasurementListComponent implements OnInit {
           action: 'setAsDefault'
         },
         {
-          title: 'Set as Default',
-          action: 'setAsDefault'
+          title: 'Edit',
+          action: 'edit'
         }
       ])
     ];
@@ -631,6 +631,10 @@ export class UnitMeasurementListComponent implements OnInit {
                 if (Object.keys(response).length) {
                   this.nextToken = '';
                   this.fetchUOM$.next({ data: 'load' });
+                  this.toast.show({
+                    text: 'UOM edited successfully!',
+                    type: 'success'
+                  });
                 }
               },
               (err) => {

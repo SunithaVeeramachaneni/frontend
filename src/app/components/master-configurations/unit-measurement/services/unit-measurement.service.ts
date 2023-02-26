@@ -58,14 +58,14 @@ export class UnitMeasurementService {
   getUnitLists() {
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'uom/unit-lists'
+      'unit-of-measurement/types'
     );
   }
 
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'uom/upload',
+      'unit-of-measurement/upload',
       form,
       info
     );
@@ -76,7 +76,7 @@ export class UnitMeasurementService {
   ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
-      'uom/download/sample-template',
+      'unit-of-measurement/download/sample-template',
       info,
       true,
       {}
@@ -112,7 +112,7 @@ export class UnitMeasurementService {
   createUOMWithType$(values, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'uom/create',
+      'unit-of-measurement/types',
       { ...values },
       info,
       {}
@@ -126,7 +126,7 @@ export class UnitMeasurementService {
   ) {
     return this._appService.patchData(
       environment.masterConfigApiUrl,
-      `uom/${unitTypeId}/edit`,
+      `unit-of-measurement/types/${unitTypeId}`,
       { ...values },
       info
     );
@@ -139,7 +139,7 @@ export class UnitMeasurementService {
   ) {
     return this._appService.patchData(
       environment.masterConfigApiUrl,
-      `unit-of-measurement/${unitMeasurementId}/edit`,
+      `unit-of-measurement/${unitMeasurementId}`,
       { ...values },
       info
     );
@@ -148,7 +148,7 @@ export class UnitMeasurementService {
   deleteUOMWithType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `uom/${id}/delete`,
+      `unit-of-measurement/types/${id}`,
       info
     );
   }
@@ -156,7 +156,7 @@ export class UnitMeasurementService {
   deleteUnitOfMeasurement$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `uom/unit-measurement/delete/${id}`,
+      `unit-of-measurement/types/${id}`,
       info
     );
   }
