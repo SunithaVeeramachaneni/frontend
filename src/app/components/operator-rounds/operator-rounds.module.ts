@@ -58,6 +58,8 @@ import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-d
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -72,6 +74,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     HierarchyContainerComponent,
     HierarchyDeleteConfirmationDialogComponent,
     NodeComponent,
+    RoutePlanComponent,
     SubmissionComponent,
     SubmissionSliderComponent,
     SubmissionViewComponent,
@@ -83,12 +86,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
-
     RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
     FormModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatToolbarModule,
     MatChipsModule,

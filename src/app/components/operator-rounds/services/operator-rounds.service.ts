@@ -38,6 +38,7 @@ const limit = 10000;
 })
 export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
+  private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
 
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
@@ -46,6 +47,7 @@ export class OperatorRoundsService {
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
   selectedNode$ = this.selectedNodeSubject.asObservable();
+  hierarchyMode$ = this.hierarchyModeSubject.asObservable();
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -57,6 +59,9 @@ export class OperatorRoundsService {
 
   setSelectedNode(node: any) {
     this.selectedNodeSubject.next(node);
+  }
+  setHierarchyMode(mode: string) {
+    this.hierarchyModeSubject.next(mode);
   }
 
   setFormCreatedUpdated(data: any) {

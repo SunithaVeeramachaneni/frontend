@@ -30,6 +30,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 export class NodeComponent implements OnInit {
   @Input() node;
   @Input() hierarchyMode;
+  @Input() dropTargetIds;
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;

@@ -1,0 +1,88 @@
+<ng-template #tmplNode let-node="node">
+  <div class="node-item" [attr.data-id]="node.id" [attr.id]="'node-' + node.id">
+    <div
+      class="parentNode node"
+      [ngClass]="{ active: selectedNode.id === node.id }"
+    >
+      <div class="left">
+        <img
+          *ngIf="hierarchyMode !== 'asset_hierarchy'"
+          cdkDragHandle
+          src="assets/rdf-forms-icons/six-dots.svg"
+          alt="six-dots"
+          class="question-six-dots"
+        />
+        <div
+          class="nodeContent"
+          class="nodeContent"
+          (click)="setSelectedNode(node)"
+        >
+          <img [src]="node.image" />
+          <div class="description">
+            <span class="title">{{ node.name }}</span>
+            <span class="subTitle">
+              {{ node.type | titlecase }} Id: {{ node.nodeId }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <!-- <span> {{ getTasksCountByNodeId(node.id) }} </span> -->
+        <span
+          [matMenuTriggerFor]="hierarchyMenu"
+          class="more-icon"
+          aria-label="More Options"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </span>
+        <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+          <button mat-menu-item class="text-red">
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <div
+      *ngIf="node.isExpanded && node.children.length"
+      class="node-children"
+      cdkDropList
+      [cdkDropListData]="node.children"
+      [id]="node.id"
+      [cdkDropListConnectedTo]="dropTargetIds"
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListSortingDisabled]="true"
+    >
+      <div
+        *ngFor="let child of node.children"
+        cdkDrag
+        [cdkDragData]="child.id"
+        (cdkDragMoved)="dragMoved($event)"
+      >
+        <ng-container
+          *ngTemplateOutlet="tmplNode; context: { node: child }"
+        ></ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div
+  cdkDropList
+  [cdkDropListData]="hierarchy"
+  [id]="'main'"
+  [cdkDropListConnectedTo]="dropTargetIds"
+  (cdkDropListDropped)="drop($event)"
+  [cdkDropListSortingDisabled]="true"
+>
+  <div
+    *ngFor="let node of hierarchy"
+    cdkDrag
+    [cdkDragData]="node.id"
+    (cdkDragMoved)="dragMoved($event)"
+  >
+    <ng-container
+      *ngTemplateOutlet="tmplNode; context: { node: node }"
+    ></ng-container>
+  </div>
+</div>

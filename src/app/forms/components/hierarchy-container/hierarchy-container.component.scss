@@ -57,3 +57,20 @@
   color: $gray4;
   font-style: italic;
 }
+.toggle-btn-icon {
+  margin-top: -20px;
+}
+.toggle-btn-group {
+  padding: 0px;
+  height: 30px;
+  border-radius: 15px;
+  border: 0.781564px solid $border-color;
+}
+.toggle-btn {
+  width: 55px;
+  height: -webkit-fill-available;
+}
+
+.activeBtn {
+  background: $blue-head;
+}

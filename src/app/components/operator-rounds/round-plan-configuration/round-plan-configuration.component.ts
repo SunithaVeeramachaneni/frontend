@@ -119,6 +119,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   currentFormData: any;
 
   selectedNode: any;
+  hierarchyMode$: Observable<any>;
+  hierarchyMode: 'asset_hierarchy';
   selectedNodeInstances: any[];
 
   selectedNode$: Observable<any>;
@@ -159,6 +161,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         }
+      })
+    );
+    this.hierarchyMode$ = this.operatorRoundsService.hierarchyMode$.pipe(
+      tap((data) => {
+        this.hierarchyMode = data;
       })
     );
 

@@ -26,7 +26,7 @@ import {
   State
 } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
@@ -68,9 +68,10 @@ export class HierarchyContainerComponent implements OnInit {
     private assetService: AssetsService,
     private formService: FormService,
     public assetHierarchyUtil: AssetHierarchyUtil,
-    private store: Store<State>,
-    private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    public dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private store: Store<State>
   ) {
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
@@ -274,4 +275,14 @@ export class HierarchyContainerComponent implements OnInit {
         this.formService.setSelectedHierarchyList(selectedHierarchyList);
       });
   };
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/rdf-forms-icons/${imageName}-white.svg`
+      : `assets/rdf-forms-icons/${imageName}-gray.svg`;
+
+  toggleHierarchyMode(event) {
+    this.hierarchyMode = event.value;
+    this.operatorRoundsService.setHierarchyMode(event.value);
+    this.cdrf.detectChanges();
+  }
 }

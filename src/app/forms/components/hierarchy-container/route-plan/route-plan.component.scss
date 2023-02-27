@@ -1,0 +1,110 @@
+@import '../../../../../scss/colors.scss';
+
+.cdk-drag-placeholder {
+  display: none;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  background: red;
+  opacity: 0.3;
+}
+.drop-inside {
+  border: 1px solid yellow;
+}
+.drop-before {
+  border-top: 1px solid rgba(30, 255, 0, 0.582);
+}
+.drop-after {
+  border-bottom: 1px solid #00f;
+}
+.node-children {
+  position: relative;
+  transition: height 0.2s;
+  margin-left: 40px;
+}
+
+.node-title {
+  padding: 15px;
+  margin: 5px;
+  background: #eee;
+  cursor: grab;
+}
+
+// NODE CSS
+
+.node {
+  &:hover {
+    background: $hover-bg;
+    color: $black;
+  }
+}
+
+.parentNode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 10px;
+  // width: 100%;
+  min-width: max-content;
+  .left {
+    display: flex;
+    width: 90%;
+    img {
+      max-width: 40px;
+      max-height: 40px;
+    }
+    .description {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+      justify-content: center;
+    }
+  }
+
+  .right {
+    display: flex;
+    width: 10%;
+    align-items: center;
+  }
+}
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: inherit;
+}
+.children {
+  margin-left: 40px;
+  .childrenHead {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    color: $blue-main;
+    .expandCollapseBtn {
+      cursor: pointer;
+    }
+    .rotate-270 {
+      transform: rotate(270deg);
+    }
+  }
+}
+.displayInlineBlock {
+  display: inline-block;
+}
+.inactive {
+  color: $light-gray !important;
+}
+.active {
+  background: $active-blue;
+  color: $white;
+}
+.question-six-dots {
+  position: relative;
+  width: 10px;
+  cursor: move;
+  margin-right: 10px;
+}

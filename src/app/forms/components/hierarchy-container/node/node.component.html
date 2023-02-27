@@ -1,69 +1,87 @@
-<div
-  class="parentNode node"
-  [ngClass]="{ active: selectedNode.id === node.id }"
->
-  <div class="left">
-    <div class="nodeContent" (click)="setSelectedNode(node)">
-      <img [src]="node.image" />
-      <div class="description">
-        <span class="title">{{ node.name }}</span>
-        <span class="subTitle">
-          {{ node.type | titlecase }} Id: {{ node.nodeId }}
-        </span>
+<div class="node-item">
+  <div
+    class="parentNode node"
+    [ngClass]="{ active: selectedNode.id === node.id }"
+    [attr.data-id]="node.id"
+    [attr.id]="'node-' + node.id"
+  >
+    <div class="left">
+      <img
+        *ngIf="hierarchyMode !== 'asset_hierarchy'"
+        cdkDragHandle
+        src="assets/rdf-forms-icons/six-dots.svg"
+        alt="six-dots"
+        class="question-six-dots"
+      />
+      <div class="nodeContent" (click)="setSelectedNode(node)">
+        <img [src]="node.image" />
+        <div class="description">
+          <span class="title">{{ node.name }}</span>
+          <span class="subTitle">
+            {{ node.type | titlecase }} Id: {{ node.nodeId }}
+          </span>
+        </div>
+      </div>
+      <div
+        *ngIf="node.hasChildren && node.children && node.children.length"
+        class="childrenHead"
+        [ngClass]="{ inactive: selectedNode.id !== node.id }"
+      >
+        <span
+          class="expandCollapseBtn"
+          (click)="node.isExpanded = !node.isExpanded"
+          ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
+            >expand_circle_down</mat-icon
+          ></span
+        >
+        <span
+          >{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets, &nbsp;
+          {{ getTotalTasksCountByNode(node) }} Tasks</span
+        >
       </div>
     </div>
-    <div
-      *ngIf="node.hasChildren && node.children && node.children.length"
-      class="childrenHead"
-      [ngClass]="{ inactive: selectedNode.id !== node.id }"
-    >
+    <div class="right">
+      <span> {{ getTasksCountByNode(node) }} </span>
       <span
-        class="expandCollapseBtn"
-        (click)="node.isExpanded = !node.isExpanded"
-        ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
-          >expand_circle_down</mat-icon
-        ></span
+        [matMenuTriggerFor]="hierarchyMenu"
+        #hierarchyMenuTrigger="matMenuTrigger"
+        class="more-icon"
+        aria-label="More Options"
       >
-      <span
-        >{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets, &nbsp;
-        {{ getTotalTasksCountByNode(node) }} Tasks</span
-      >
+        <mat-icon>more_horiz</mat-icon>
+      </span>
+      <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+        <button mat-menu-item>
+          <span (click)="openShowHierarchyPopup()">Show Hierarchy</span>
+        </button>
+        <button
+          mat-menu-item
+          class="text-red"
+          (click)="onRemoveNode($event, node)"
+        >
+          <span>Delete</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
-  <div class="right">
-    <span> {{ getTasksCountByNode(node) }} </span>
-    <span
-      [matMenuTriggerFor]="hierarchyMenu"
-      #hierarchyMenuTrigger="matMenuTrigger"
-      class="more-icon"
-      aria-label="More Options"
+  <div *ngIf="node.hasChildren" class="children">
+    <div
+      *ngIf="node.isExpanded && hierarchyMode !== 'flat'"
+      cdkDropList
+      class="node-children"
+      [cdkDropListData]="node.children"
+      [id]="node.id"
+      [cdkDropListConnectedTo]="dropTargetIds"
+      [cdkDropListSortingDisabled]="true"
     >
-      <mat-icon>more_horiz</mat-icon>
-    </span>
-    <mat-menu #hierarchyMenu="matMenu" xPosition="before">
-      <button mat-menu-item>
-        <span (click)="openShowHierarchyPopup()">Show Hierarchy</span>
-      </button>
-      <button
-        mat-menu-item
-        class="text-red"
-        (click)="onRemoveNode($event, node)"
-      >
-        <span>Delete</span>
-      </button>
-    </mat-menu>
-  </div>
-</div>
-<div *ngIf="node.hasChildren" class="children">
-  <div
-    *ngIf="node.isExpanded"
-    [ngClass]="{ displayInlineBlock: !node.isExpanded }"
-  >
-    <app-node
-      [node]="node"
-      [hierarchyMode]="hierarchyMode"
-      *ngFor="let node of node.children"
-      (nodeRemoved)="removeNodeHandler($event)"
-    ></app-node>
+      <app-node
+        class="node-item"
+        [node]="node"
+        [hierarchyMode]="hierarchyMode"
+        [dropTargetIds]="dropTargetIds"
+        *ngFor="let node of node.children"
+        (nodeRemoved)="removeNodeHandler($event)"
+      ></app-node>
+    </div>
   </div>
 </div>

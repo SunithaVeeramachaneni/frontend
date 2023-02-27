@@ -13,7 +13,8 @@
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async,
     questionCounter: questionCounter$ | async,
-    selectedNodeObj: selectedNode$ | async
+    selectedNodeObj: selectedNode$ | async,
+    hierarchyMode: hierarchyMode$ | async
   } as props"
 >
   <div class="dis-flex form-header">
@@ -169,13 +170,33 @@
       class="questions-responses-width"
       *ngIf="selectedNode; else loadingSelectedNode"
     >
-      <div
-        *ngFor="let selectedNodeInstance of selectedNodeInstances"
-        class="nodeInstance"
-      >
+      <div *ngIf="props.hierarchyMode === 'asset_hierarchy'">
+        <div
+          *ngFor="let selectedNodeInstance of selectedNodeInstances"
+          class="nodeInstance"
+        >
+          <div class="selectedNode">
+            <span class="selectedNodeTitle">
+              Tasks of {{ selectedNodeInstance.name }}
+            </span>
+            <button
+              mat-stroked-button
+              class="import-btn"
+              translate="importBtn"
+              (click)="importTasks()"
+            ></button>
+          </div>
+          <app-builder
+            *ngIf="selectedNodeLoadStatus"
+            [selectedNode]="selectedNodeInstance"
+            [counter]="formConfiguration.get('counter').value"
+          ></app-builder>
+        </div>
+      </div>
+      <div *ngIf="props.hierarchyMode === 'route_plan'">
         <div class="selectedNode">
           <span class="selectedNodeTitle">
-            Tasks of {{ selectedNodeInstance.name }}
+            Tasks of {{ selectedNode.name }}
           </span>
           <button
             mat-stroked-button
@@ -186,7 +207,7 @@
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"
-          [selectedNode]="selectedNodeInstance"
+          [selectedNode]="selectedNode"
           [counter]="formConfiguration.get('counter').value"
         ></app-builder>
       </div>

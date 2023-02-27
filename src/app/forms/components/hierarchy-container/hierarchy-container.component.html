@@ -11,6 +11,37 @@
         <mat-icon>add</mat-icon>
       </button>
     </div>
+    <mat-button-toggle-group
+      class="toggle-btn-group"
+      (change)="toggleHierarchyMode($event)"
+    >
+      <mat-button-toggle
+        value="asset_hierarchy"
+        class="toggle-btn"
+        [ngClass]="{
+          activeBtn: hierarchyMode === 'asset_hierarchy'
+        }"
+      >
+        <img
+          [src]="
+            getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')
+          "
+          class="toggle-btn-icon"
+        />
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="route_plan"
+        class="toggle-btn"
+        [ngClass]="{
+          activeBtn: hierarchyMode === 'route_plan'
+        }"
+      >
+        <img
+          [src]="getImage('round-plan', hierarchyMode === 'route_plan')"
+          class="toggle-btn-icon"
+        />
+      </mat-button-toggle>
+    </mat-button-toggle-group>
     <span *ngIf="hierarchy.length">Tasks ({{ getTotalTasksCount() }})</span>
   </div>
   <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
@@ -37,6 +68,12 @@
         >No Assets/Locations found for:
         <strong>{{ searchHierarchyKey.value }} </strong></span
       >
+    </div>
+    <div *ngIf="hierarchyMode !== 'asset_hierarchy'">
+      <app-route-plan
+        [hierarchy]="hierarchy"
+        [hierarchyMode]="hierarchyMode"
+      ></app-route-plan>
     </div>
     <div *ngIf="hierarchyMode === 'asset_hierarchy'">
       <app-node
