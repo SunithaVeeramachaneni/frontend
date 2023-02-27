@@ -172,27 +172,32 @@ export class HierarchyContainerComponent implements OnInit {
     deleteConfirmationDialogRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
       if (this.hierarchyMode === 'asset_hierarchy') {
-        const node = event;
-        // eslint-disable-next-line prefer-const
-        let nodeChildrenUIDs = [];
-        const hierarchyUpdated = this.pruneChildren(
-          JSON.parse(JSON.stringify(this.hierarchy)),
-          event
-        );
-        this.hierarchyEvent.emit({
-          hierarchy: hierarchyUpdated,
-          node: event
-        });
-        const instanceIdMappings = this.formService.getInstanceIdMappings();
-        let instances = [];
-        nodeChildrenUIDs.forEach((uid) => {
-          const temp = instanceIdMappings[uid];
-          instances = [...instances, ...temp];
-        });
-        const instanceIds = instances.map((i) => i.id);
+        // const node = event;
+        // // eslint-disable-next-line prefer-const
+        // let nodeChildrenUIDs = [];
+        // const hierarchyUpdated = this.pruneChildren(
+        //   JSON.parse(JSON.stringify(this.hierarchy)),
+        //   event
+        // );
+        // this.hierarchyEvent.emit({
+        //   hierarchy: hierarchyUpdated,
+        //   node: event
+        // });
+        // const instanceIdMappings = this.formService.getInstanceIdMappings();
+        // let instances = [];
+        // nodeChildrenUIDs.forEach((uid) => {
+        //   const temp = instanceIdMappings[uid];
+        //   instances = [...instances, ...temp];
+        // });
+        // const instanceIds = instances.map((i) => i.id);
+        // this.store.dispatch(
+        //   BuilderConfigurationActions.removeSubFormInstances({
+        //     subFormIds: instanceIds
+        //   })
+        //        );
         this.store.dispatch(
-          BuilderConfigurationActions.removeSubFormInstances({
-            subFormIds: instanceIds
+          HierarchyActions.deleteNodeFromSelectedHierarchy({
+            id: event.id
           })
         );
       } else {

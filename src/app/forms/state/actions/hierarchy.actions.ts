@@ -11,6 +11,13 @@ export const setMasterHierarchyList = createAction(
 export const updateSelectedHierarchyList = createAction(
   '[Asset Hierarchy] updateSelectedHierarchyList',
   props<{
-    selectedHierarchy: any;
+    selectedHierarchy: HierarchyEntity[];
+  }>()
+);
+
+export const deleteNodeFromSelectedHierarchy = createAction(
+  '[Asset Hierarchy] deleteNodeFromSelectedHierarchy',
+  props<{
+    id: string;
   }>()
 );

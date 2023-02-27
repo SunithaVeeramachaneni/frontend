@@ -281,3 +281,27 @@ export class AssetHierarchyUtil {
     hierarchyPath
   });
 }
+
+// Wrote the below function outside class as its used in hierarchy.reducer where dependency injection cannot be used.
+
+export const deleteNodeFromHierarchy = (
+  hierarchyList: HierarchyEntity[],
+  id
+) => {
+  let nodes = [] as HierarchyEntity[];
+  for (const node of hierarchyList) {
+    if (node.id === id) {
+      nodes = [...hierarchyList.filter((item) => item.id !== id)];
+      break;
+    } else {
+      nodes.push({
+        ...node,
+        children: node.children.length
+          ? deleteNodeFromHierarchy(node.children, id)
+          : ([] as HierarchyEntity[])
+      });
+    }
+  }
+
+  return nodes;
+};
