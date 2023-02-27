@@ -78,10 +78,10 @@
     </div>
   </div>
 
-  <div *ngIf="menuState === 'in'">
+  <div [hidden]="hideSubmissionSlider">
     <app-submission-slider
       [@slideInOut]="menuState"
-      (slideInOut)="menuState = 'out'"
+      (slideInOut)="openCloseSubmissionSlider($event)"
       [submission]="submissionDetail"
     ></app-submission-slider>
   </div>
