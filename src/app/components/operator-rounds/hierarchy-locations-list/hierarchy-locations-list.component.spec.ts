@@ -8,9 +8,8 @@ describe('HierarchyLocationsListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HierarchyLocationsListComponent ]
-    })
-    .compileComponents();
+      declarations: [HierarchyLocationsListComponent]
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,11 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -48,6 +41,7 @@ import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-d
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from './../../../login/services/login.service';
+import { slideInOut } from 'src/app/animations';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -59,24 +53,7 @@ export interface FormTableUpdate {
   templateUrl: './unit-measurement-list.component.html',
   styleUrls: ['./unit-measurement-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class UnitMeasurementListComponent implements OnInit {
   readonly perms = perms;

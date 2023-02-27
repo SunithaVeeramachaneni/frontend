@@ -27,40 +27,6 @@ export const updateRoundPlanFailure = createAction(
   props<{ error: string }>()
 );
 
-export const createRoundPlanDetailSuccess = createAction(
-  '[Round Plan Configuration API] createRoundPlanDetailSuccess',
-  props<{
-    formDetail: CreateRoundPlanDetailMutation;
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
-    formStatus: string;
-    formDetailPublishStatus: string;
-  }>()
-);
-
-export const createRoundPlanDetailFailure = createAction(
-  '[Round Plan Configuration API] createRoundPlanDetailFailure',
-  props<{
-    error: string;
-  }>()
-);
-
-export const updateRoundPlanDetailSuccess = createAction(
-  '[Round Plan Configuration API] updateRoundPlanDetailSuccess',
-  props<{
-    formDetail: UpdateRoundPlanDetailMutation;
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
-    formStatus: string;
-    formDetailPublishStatus: string;
-  }>()
-);
-
-export const updateRoundPlanDetailFailure = createAction(
-  '[Round Plan Configuration API] updateRoundPlanDetailFailure',
-  props<{
-    error: string;
-  }>()
-);
-
 export const createAuthoredRoundPlanDetailSuccess = createAction(
   '[Round Plan Configuration API] createAuthoredRoundPlanDetailSuccess',
   props<{
@@ -85,5 +51,19 @@ export const updateAuthoredRoundPlanDetailSuccess = createAction(
 
 export const updateAuthoredRoundPlanDetailFailure = createAction(
   '[Round Plan Configuration API] updateAuthoredRoundPlanDetailFailure',
+  props<{ error: string }>()
+);
+
+export const publishRoundPlanSuccess = createAction(
+  '[Round Plan Configuration API] publishRoundPlanSuccess',
+  props<{
+    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    formStatus: string;
+    formDetailPublishStatus: string;
+  }>()
+);
+
+export const publishRoundPlanFailure = createAction(
+  '[Round Plan Configuration API] publishRoundPlanFailure',
   props<{ error: string }>()
 );
