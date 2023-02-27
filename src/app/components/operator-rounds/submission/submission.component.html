@@ -77,13 +77,13 @@
     </div>
   </div>
 
-  <!-- <ng-container *ngIf="menuState">
+  <ng-container *ngIf="menuState">
     <app-submission-slider
       [@slideInOut]="menuState"
       (slideInOut)="menuState = 'out'"
       [submission]="submissionDetail"
     ></app-submission-slider>
-  </ng-container> -->
+  </ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">

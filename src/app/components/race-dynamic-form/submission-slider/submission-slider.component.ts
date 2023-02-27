@@ -8,7 +8,6 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { SubmissionViewComponent } from '../submission-view/submission-view.component';
 
 @Component({

@@ -25,7 +25,10 @@
         <div class="page-heading-title">
           <h1>{{ data.name }}</h1>
           <p>
-            {{ data.descripition ? data.descripition : 'Form Description' }}
+            {{
+              (data.description ? data.description : 'formDescription')
+                | translate
+            }}
           </p>
         </div>
       </div>

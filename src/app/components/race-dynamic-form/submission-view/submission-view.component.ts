@@ -30,7 +30,8 @@ export class SubmissionViewComponent implements OnInit {
     );
     const responsesPercentage = this.data.responses.split('/');
     this.data.responses = Math.round(
-      (parseInt(responsesPercentage[0]) / parseInt(responsesPercentage[1])) *
+      (parseInt(responsesPercentage[0], 10) /
+        parseInt(responsesPercentage[1], 10)) *
         100
     );
 
