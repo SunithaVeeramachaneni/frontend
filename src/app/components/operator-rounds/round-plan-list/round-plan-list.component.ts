@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
@@ -43,30 +36,14 @@ import {
   generateCopyRegex
 } from '../../race-dynamic-form/utils/utils';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-round-plan-list',
   templateUrl: './round-plan-list.component.html',
   styleUrls: ['./round-plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
@@ -277,7 +254,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -363,7 +340,7 @@ export class RoundPlanListComponent implements OnInit {
                 } as any
               });
               this.formsListCount$ =
-                this.operatorRoundsService.getFormsListCount$();
+                this.operatorRoundsService.getFormsListCount$('All');
             });
         }
       });
@@ -441,12 +418,15 @@ export class RoundPlanListComponent implements OnInit {
 
   getForms() {
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        'All'
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -480,7 +460,8 @@ export class RoundPlanListComponent implements OnInit {
           action: 'delete',
           form: updatedForm
         });
-        this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+        this.formsListCount$ =
+          this.operatorRoundsService.getFormsListCount$('All');
       });
   }
 

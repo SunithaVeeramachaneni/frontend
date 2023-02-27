@@ -1,4 +1,3 @@
-import { query } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HeaderService } from '../../services/header.service';

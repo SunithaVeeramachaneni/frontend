@@ -9,6 +9,7 @@ import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
+import { SchedulerComponent } from './scheduler/scheduler.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,7 @@ const routes: Routes = [
     component: OperatorRoundsContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: 'Plans' },
+      breadcrumb: { label: 'Operator Rounds' },
       permissions: [permissions.viewForms]
     },
     children: [
@@ -40,12 +41,12 @@ const routes: Routes = [
         }
       },
       {
-        path: 'submissions',
-        component: SubmissionComponent,
+        path: 'scheduler/:tabIndex',
+        component: SchedulerComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Submissions', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          breadcrumb: { label: 'Scheduler' },
+          permissions: [permissions.viewORPlans]
         }
       },
       {

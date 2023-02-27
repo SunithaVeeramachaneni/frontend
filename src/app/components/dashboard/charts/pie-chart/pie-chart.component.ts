@@ -1,4 +1,3 @@
-import { trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import {
   Component,
