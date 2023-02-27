@@ -15,6 +15,7 @@ export interface HierarchyEntity {
   hierarchyPath: string[];
   isExpanded?: boolean;
   parentId?: string;
+  isRootNode?: boolean;
 }
 
 export enum EntityType {

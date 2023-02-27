@@ -27,7 +27,7 @@ export class HierarchyLocationsListComponent implements OnInit {
     masterToggle: false
   };
   public searchLocations: FormControl;
-  public selectedItems = [];
+  public selectedItems = [] as HierarchyEntity[];
   public allItems = [];
   public searchFilterItems = [];
   constructor(
@@ -51,10 +51,12 @@ export class HierarchyLocationsListComponent implements OnInit {
   }
 
   handleNodeToggle = (event: any) => {
-    const { id, isSelected } = event;
+    const { uid, isSelected } = event;
     if (isSelected) this.selectedItems = [...this.selectedItems, event];
     else
-      this.selectedItems = this.selectedItems.filter((item) => item.id !== id);
+      this.selectedItems = this.selectedItems.filter(
+        (item) => item.uid !== uid
+      );
 
     this.isMasterChecked = this.selectedItems.length === this.allItems.length;
 
@@ -70,6 +72,8 @@ export class HierarchyLocationsListComponent implements OnInit {
       checked,
       masterToggle: true
     };
+    if (checked) this.selectedItems = this.allItems;
+    else this.selectedItems = [] as HierarchyEntity[];
   };
 
   cancel = () => {
