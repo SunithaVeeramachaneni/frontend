@@ -1,7 +1,6 @@
 import {
   Component,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -20,8 +19,6 @@ import { SubmissionViewComponent } from '../submission-view/submission-view.comp
 export class SubmissionSliderComponent implements OnInit, OnChanges {
   @Input()
   submission: any;
-
-  // @HostListener('click', ['$event.target'])
   @Output()
   slideInOut: EventEmitter<any> = new EventEmitter();
 

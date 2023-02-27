@@ -70,6 +70,10 @@
   margin-right: 20px;
 }
 
+.m-r-40 {
+  margin-right: 40px;
+}
+
 .p-r-0 {
   padding-right: 0px;
 }
@@ -338,6 +342,26 @@ li {
 
 a {
   text-decoration: none;
+}
+
+.f-w-400 {
+  font-weight: 400;
+}
+
+.f-w-500 {
+  font-weight: 500;
+}
+
+.f-s-100 {
+  font-size: 100%;
+}
+
+.f-s-120 {
+  font-size: 120%;
+}
+
+.f-s-80 {
+  font-size: 80%;
 }
 
 @media screen and (min-width: 769px) {

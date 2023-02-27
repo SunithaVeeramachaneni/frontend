@@ -28,39 +28,16 @@ import {
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { AssetsService } from '../services/assets.service';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { LocationService } from '../../locations/services/location.service';
+import { slideInOut } from 'src/app/animations';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
   styleUrls: ['./assets-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;

@@ -1,7 +1,6 @@
 import {
   Component,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnInit,
@@ -18,8 +17,6 @@ import { Router } from '@angular/router';
 export class SubmissionSliderComponent implements OnInit, OnChanges {
   @Input()
   submission: any;
-
-  @HostListener('click', ['$event.target'])
   @Output()
   slideInOut: EventEmitter<any> = new EventEmitter();
 
