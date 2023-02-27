@@ -55,11 +55,10 @@ export class UnitMeasurementService {
     }
   }
 
-  getUnitLists() {
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'unit-of-measurement/types'
-    );
+  getUnitTypes() {
+    return this._appService
+      ._getResp(environment.masterConfigApiUrl, 'unit-of-measurement/types')
+      .pipe(map((data) => data));
   }
 
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
@@ -109,7 +108,7 @@ export class UnitMeasurementService {
     );
   }
 
-  createUOMWithType$(values, info: ErrorInfo = {} as ErrorInfo) {
+  createUnitType$(values, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
       'unit-of-measurement/types',
@@ -119,7 +118,7 @@ export class UnitMeasurementService {
     );
   }
 
-  updateUOMWithType$(
+  updateUnitType$(
     unitTypeId: string,
     values,
     info: ErrorInfo = {} as ErrorInfo
@@ -145,7 +144,7 @@ export class UnitMeasurementService {
     );
   }
 
-  deleteUOMWithType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
+  deleteUnitType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `unit-of-measurement/types/${id}`,
@@ -176,7 +175,7 @@ export class UnitMeasurementService {
     const rows = resp?.items
       ?.sort(
         (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
       )
       ?.map((item: any) => ({
         ...item,

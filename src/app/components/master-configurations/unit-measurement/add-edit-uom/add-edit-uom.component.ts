@@ -51,7 +51,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   public isEditMeasurement = true;
   public isEditForm = false;
   public isSubmittedForm = false;
-  isLoading = false;
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly unitOfMeasurementService: UnitMeasurementService,
@@ -78,9 +77,9 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.unitOfMeasurementService.getUnitLists().subscribe((units) => {
-      this.measurementList = units;
-    });
+    this.unitOfMeasurementService
+      .getUnitTypes()
+      .subscribe((units) => (this.measurementList = units));
   }
 
   cancel(): void {
@@ -112,48 +111,35 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     ) {
       return;
     }
-    this.isLoading = true;
     const unitType = isAddNewUnit ? this.newUnitType : this.unitType;
     if (this.isEditForm) {
       this.unitOfMeasurementService
-        .updateUOMWithType$(this.unitEditData?.unitList?.id, {
+        .updateUnitType$(this.unitEditData?.unitList?.id, {
           unitType,
           units: this.unitMeasurementForm?.get('units')?.value
         })
-        .subscribe(
-          (response) => {
-            if (Object.keys(response).length) {
-              this.resetFormState();
-              this.createUnitData.emit({
-                status: 'edit'
-              });
-            }
-          },
-          (err) => {
-            this.isLoading = false;
-            this.unitOfMeasurementService.handleError(err);
+        .subscribe((response) => {
+          if (Object.keys(response)?.length) {
+            this.resetFormState();
+            this.createUnitData.emit({
+              status: 'edit'
+            });
           }
-        );
+        });
     } else {
       this.unitOfMeasurementService
-        .createUOMWithType$({
+        .createUnitType$({
           unitType,
           units: this.unitMeasurementForm?.get('units')?.value
         })
-        .subscribe(
-          (response) => {
-            if (Object.keys(response).length) {
-              this.resetFormState();
-              this.createUnitData.emit({
-                status: 'create'
-              });
-            }
-          },
-          (err) => {
-            this.isLoading = false;
-            this.unitOfMeasurementService.handleError(err);
+        .subscribe((response) => {
+          if (Object.keys(response)?.length) {
+            this.resetFormState();
+            this.createUnitData.emit({
+              status: 'create'
+            });
           }
-        );
+        });
     }
   }
 
@@ -238,21 +224,15 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.unitOfMeasurementService
-          .deleteUOMWithType$(this.unitEditData?.unitList?.id)
-          .subscribe(
-            (response) => {
-              if (Object.keys(response).length) {
-                this.resetFormState();
-                this.createUnitData.emit({
-                  status: 'delete'
-                });
-              }
-            },
-            (err) => {
-              this.isLoading = false;
-              this.unitOfMeasurementService.handleError(err);
+          .deleteUnitType$(this.unitEditData?.unitList?.id)
+          .subscribe((response) => {
+            if (Object.keys(response).length) {
+              this.resetFormState();
+              this.createUnitData.emit({
+                status: 'delete'
+              });
             }
-          );
+          });
       }
     });
   }
@@ -273,7 +253,6 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   private resetFormState() {
-    this.isLoading = false;
     this.unitMeasurementForm.reset();
     this.units = null;
     this.unitType = '';

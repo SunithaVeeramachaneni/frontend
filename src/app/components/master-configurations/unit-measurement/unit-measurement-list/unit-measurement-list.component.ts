@@ -539,21 +539,16 @@ export class UnitMeasurementListComponent implements OnInit {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    this.unitMeasurementService.uploadExcel(formData).subscribe(
-      (response) => {
-        if (Object.keys(response).length) {
-          this.toast.show({
-            text: 'File uploaded successfully!',
-            type: 'success'
-          });
-          this.nextToken = '';
-          this.fetchUOM$.next({ data: 'load' });
-        }
-      },
-      (err) => {
-        this.unitMeasurementService.handleError(err);
+    this.unitMeasurementService.uploadExcel(formData).subscribe((response) => {
+      if (Object.keys(response).length) {
+        this.toast.show({
+          text: 'File uploaded successfully!',
+          type: 'success'
+        });
+        this.nextToken = '';
+        this.fetchUOM$.next({ data: 'load' });
       }
-    );
+    });
   }
 
   resetFile(event: Event) {
@@ -573,19 +568,14 @@ export class UnitMeasurementListComponent implements OnInit {
       if (res === 'delete') {
         this.unitMeasurementService
           .deleteUnitOfMeasurement$(data?.id)
-          .subscribe(
-            (response) => {
-              if (Object.keys(response).length) {
-                this.addEditCopyForm$.next({
-                  action: 'delete',
-                  form: response
-                });
-              }
-            },
-            (err) => {
-              this.unitMeasurementService.handleError(err);
+          .subscribe((response) => {
+            if (Object.keys(response).length) {
+              this.addEditCopyForm$.next({
+                action: 'delete',
+                form: response
+              });
             }
-          );
+          });
       }
     });
   }
@@ -598,21 +588,16 @@ export class UnitMeasurementListComponent implements OnInit {
       .setAsDefault$(unit?.id, {
         unitlistID: unit?.unitlistID
       })
-      .subscribe(
-        (response) => {
-          if (Object.keys(response).length) {
-            this.nextToken = '';
-            this.fetchUOM$.next({ data: 'load' });
-          }
-        },
-        (err) => {
-          this.unitMeasurementService.handleError(err);
+      .subscribe((response) => {
+        if (Object.keys(response).length) {
+          this.nextToken = '';
+          this.fetchUOM$.next({ data: 'load' });
         }
-      );
+      });
   }
 
   private onEditUnit(data: GetUnitMeasumentQuery): void {
-    this.unitMeasurementService.getUnitLists().subscribe((units) => {
+    this.unitMeasurementService.getUnitTypes().subscribe((units) => {
       const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
         data: { ...data, units }
       });
@@ -626,21 +611,16 @@ export class UnitMeasurementListComponent implements OnInit {
               unitType: res?.unitType,
               isActive: res?.isActive
             })
-            .subscribe(
-              (response) => {
-                if (Object.keys(response).length) {
-                  this.nextToken = '';
-                  this.fetchUOM$.next({ data: 'load' });
-                  this.toast.show({
-                    text: 'UOM edited successfully!',
-                    type: 'success'
-                  });
-                }
-              },
-              (err) => {
-                this.unitMeasurementService.handleError(err);
+            .subscribe((response) => {
+              if (Object.keys(response).length) {
+                this.nextToken = '';
+                this.fetchUOM$.next({ data: 'load' });
+                this.toast.show({
+                  text: 'UOM edited successfully!',
+                  type: 'success'
+                });
               }
-            );
+            });
         }
       });
     });
@@ -652,19 +632,14 @@ export class UnitMeasurementListComponent implements OnInit {
         isActive: unit?.isActive ? false : true,
         _version: unit?._version
       })
-      .subscribe(
-        (response) => {
-          if (Object.keys(response).length) {
-            this.nextToken = '';
-            this.addEditCopyForm$.next({
-              action: 'status',
-              form: response
-            });
-          }
-        },
-        (err) => {
-          this.unitMeasurementService.handleError(err);
+      .subscribe((response) => {
+        if (Object.keys(response).length) {
+          this.nextToken = '';
+          this.addEditCopyForm$.next({
+            action: 'status',
+            form: response
+          });
         }
-      );
+      });
   }
 }
