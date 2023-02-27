@@ -47,8 +47,10 @@
         <span class="filled-byz m-r-15">
           <span translate="filledBy"></span> {{ data.submittedBy }}
         </span>
-        <!-- <span class="slash m-r-15">/</span> -->
-        <!-- <span class="complete-status">90% Completed</span> -->
+        <span class="slash m-r-15">/</span>
+        <span class="complete-status">
+          {{ data.responses }}% <span translate="completed"> </span>
+        </span>
       </div>
 
       <div class="pages">

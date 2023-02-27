@@ -28,6 +28,12 @@ export class SubmissionViewComponent implements OnInit {
     this.submittedFormData = JSON.parse(
       this.data.formSubmissionListFormSubmissionDetail.items[0].formData
     );
+    const responsesPercentage = this.data.responses.split('/');
+    this.data.responses = Math.round(
+      (parseInt(responsesPercentage[0]) / parseInt(responsesPercentage[1])) *
+        100
+    );
+
     const tenantInfo = this.tenantService.getTenantInfo();
     this.submittedFormData.FORMS[0].PAGES.forEach((page) => {
       page.SECTIONS.forEach((sec) => {
