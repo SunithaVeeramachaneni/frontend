@@ -32,7 +32,6 @@ import {
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
-import { hierarchyMock } from '../round-plan-configuration/hierarchyMock';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -168,8 +167,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
-            ...this.headerDataForm.value,
-            hierarchy: hierarchyMock
+            ...this.headerDataForm.value
           },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
@@ -184,7 +182,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
-            hierarchy: JSON.stringify(hierarchyMock),
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }
