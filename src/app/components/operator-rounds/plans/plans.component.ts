@@ -86,7 +86,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'floc',
       displayName: 'F.Loc',
       type: 'number',
@@ -107,8 +107,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'assets',
       displayName: 'Assets',
       type: 'number',
@@ -129,8 +129,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'tasks',
       displayName: 'Tasks',
       type: 'number',
@@ -151,12 +151,12 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    }, */
     {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
-      controlType: 'string',
+      controlType: 'button',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -174,7 +174,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'roundsGenerated',
       displayName: 'Rounds Generated',
       type: 'number',
@@ -195,8 +195,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'operator',
       displayName: 'Operator',
       type: 'string',
@@ -217,7 +217,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    },*/
     {
       id: 'start',
       displayName: 'Start - Ends',
@@ -365,6 +365,11 @@ export class PlansComponent implements OnInit, OnDestroy {
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+        const newData = initial.data.map((element) => {
+          element = { schedule: 'Schedule', ...element };
+          return element;
+        });
+        initial.data = newData;
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
