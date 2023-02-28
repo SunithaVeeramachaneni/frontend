@@ -3,7 +3,7 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
   APIService,
   CreateLocationInput,
-  DeleteLocationListInput,
+  DeleteLocationInput,
   ListLocationsQuery
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
@@ -104,7 +104,7 @@ export class LocationService {
     );
   }
 
-  deleteLocation$(values: DeleteLocationListInput) {
+  deleteLocation$(values: DeleteLocationInput) {
     return from(this.awsApiService.DeleteLocation({ ...values }));
   }
 
