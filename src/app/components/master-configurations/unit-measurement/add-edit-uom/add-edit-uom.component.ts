@@ -19,7 +19,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ValidationError, GetUnitMeasumentQuery } from 'src/app/interfaces';
+import { ValidationError, UnitOfMeasurement } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UnitMeasurementService } from '../services';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
@@ -35,7 +35,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   @Output() createUnitData: EventEmitter<any> = new EventEmitter();
   @Input() unitEditData: {
     unitList: any;
-    rows: GetUnitMeasumentQuery[];
+    rows: UnitOfMeasurement[];
   } = {
     unitList: null,
     rows: []

@@ -1,23 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-export type ListUnitMeasumentsQuery = {
-  items: Array<{
-    id: string;
-    description?: string | null;
-    symbol?: string | null;
-    isDefault?: boolean | null;
-    isDeleted?: boolean | null;
-    unitlistID: string;
-    searchTerm?: string | null;
-    isActive?: boolean | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-  } | null>;
+export type UnitOfMeasurementList = {
+  items: Array<UnitOfMeasurement | null>;
   nextToken?: string | null;
   startedAt?: number | null;
 };
 
-export type GetUnitMeasumentQuery = {
+export type UnitOfMeasurement = {
   id: string;
   description?: string | null;
   symbol?: string | null;

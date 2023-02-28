@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { groupBy } from 'lodash-es';
 
-import { ErrorInfo, ListUnitMeasumentsQuery } from 'src/app/interfaces';
+import { ErrorInfo, UnitOfMeasurementList } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { ToastService } from 'src/app/shared/toast';
@@ -22,7 +22,7 @@ export class UnitMeasurementService {
 
   getUnitOfMeasurementList$(queryParams: {
     nextToken?: string;
-    limit: number;
+    limit: any;
     searchKey: string;
     fetchType: string;
   }) {
@@ -31,21 +31,17 @@ export class UnitMeasurementService {
       (['infiniteScroll'].includes(queryParams?.fetchType) &&
         queryParams?.nextToken !== null)
     ) {
-      const isSearch = queryParams?.fetchType === 'search';
-      const params = new URLSearchParams();
-      if (queryParams?.searchKey) {
-        params.set('searchTerm', queryParams.searchKey);
-      }
-      if (!isSearch) {
-        params.set('limit', queryParams.limit.toString());
-        params.set('nextToken', queryParams.nextToken);
-      }
+      const params: URLSearchParams = new URLSearchParams();
+      params.set('searchTerm', queryParams?.searchKey);
+      params.set('limit', queryParams?.limit);
+      params.set('nextToken', queryParams?.nextToken);
+      params.set('fetchType', queryParams?.fetchType);
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
           'unit-of-measurement?' + params.toString()
         )
-        .pipe(map((data) => this.formatGraphQAssetsResponse(data)));
+        .pipe(map((data) => this.formatUnitOfMeasurementResponse(data)));
     } else {
       return of({
         count: 0,
@@ -170,7 +166,7 @@ export class UnitMeasurementService {
     });
   }
 
-  private formatGraphQAssetsResponse(resp: ListUnitMeasumentsQuery) {
+  private formatUnitOfMeasurementResponse(resp: UnitOfMeasurementList) {
     const groupedData: any = groupBy(resp?.items, 'unitList.name');
     const rows = resp?.items
       ?.sort(
