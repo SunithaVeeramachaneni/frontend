@@ -117,7 +117,10 @@
               </button>
 
               <span
-                *ngIf="questionForm.get('fieldType').value !== 'LF'"
+                *ngIf="
+                  questionForm.get('fieldType').value !== 'LF' &&
+                  questionForm.get('fieldType').value !== 'HL'
+                "
                 class="action"
               >
                 <mat-checkbox
