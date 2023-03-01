@@ -21,3 +21,7 @@ export const deleteNodeFromSelectedHierarchy = createAction(
     id: string;
   }>()
 );
+
+export const resetSelectedHierarchyState = createAction(
+  '[Asset Hierarchy] resetHierarchyState'
+);

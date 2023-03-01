@@ -172,7 +172,11 @@
     >
       <div *ngIf="props.hierarchyMode === 'asset_hierarchy'">
         <div
-          *ngFor="let selectedNodeInstance of selectedNodeInstances"
+          *ngFor="
+            let selectedNodeInstance of selectedNodeInstances;
+            let i = index;
+            trackBy: trackBySelectedNodeInstances
+          "
           class="nodeInstance"
         >
           <div class="selectedNode">

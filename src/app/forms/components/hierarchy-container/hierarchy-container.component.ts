@@ -72,16 +72,19 @@ export class HierarchyContainerComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private fb: FormBuilder,
     private store: Store<State>
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
+        console.log(selectedHierarchy.length);
         if (selectedHierarchy.length) {
           this.totalAssetsCount =
-            assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
+            this.assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
 
           const { stitchedHierarchy, instanceIdMappings } =
-            assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
+            this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
           this.formService.setInstanceIdMappings(this.instanceIdMappings);
           this.filteredHierarchyList = JSON.parse(
@@ -92,9 +95,7 @@ export class HierarchyContainerComponent implements OnInit {
         }
       })
     );
-  }
 
-  ngOnInit(): void {
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
 
@@ -265,6 +266,7 @@ export class HierarchyContainerComponent implements OnInit {
       .open(HierarchyModalComponent, {})
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        if (!selectedHierarchyList) return;
         this.store.dispatch(
           HierarchyActions.updateSelectedHierarchyList({
             selectedHierarchy: selectedHierarchyList

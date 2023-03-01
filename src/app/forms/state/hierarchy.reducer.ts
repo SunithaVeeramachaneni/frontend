@@ -47,5 +47,12 @@ export const hierarchyReducer = createReducer<HierarchyState>(
         selectedHierarchy
       };
     }
+  ),
+  on(
+    HierarchyActions.resetSelectedHierarchyState,
+    (state, action): HierarchyState => ({
+      ...state,
+      selectedHierarchy: [] as HierarchyEntity[]
+    })
   )
 );

@@ -417,14 +417,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
-      tap((createOrEditForm) => {
-        this.createOrEditForm = createOrEditForm;
-        if (!createOrEditForm) {
-          this.router.navigate(['/operator-rounds']);
-        }
-      })
-    );
+    this.createOrEditForm$ = this.store.select(getCreateOrEditForm);
 
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
@@ -438,12 +431,16 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       );
 
     this.isDataResolved$ = combineLatest([
-      this.route.data,
-      this.createOrEditForm$
+      this.route.data.pipe(tap((data) => console.log(data))),
+      this.createOrEditForm$.pipe(tap((data) => console.log(data)))
     ]).pipe(
       tap(([data, createOrEditForm]) => {
+        if (!createOrEditForm) {
+          this.router.navigate(['/operator-rounds']);
+        }
         const { componentMode } = data;
         const { formConfigurationState, hierarchyState } = data.form || {};
+
         if (createOrEditForm && componentMode === 'create')
           this.openHierarchyModal();
 
@@ -878,6 +875,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.store.dispatch(HierarchyActions.resetSelectedHierarchyState());
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
@@ -932,6 +930,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       .open(HierarchyModalComponent, {})
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        if (!selectedHierarchyList) return;
         this.store.dispatch(
           HierarchyActions.updateSelectedHierarchyList({
             selectedHierarchy: selectedHierarchyList
@@ -940,4 +939,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         this.formService.setSelectedHierarchyList(selectedHierarchyList);
       });
   };
+
+  trackBySelectedNodeInstances(index: number, el: any): string {
+    return el.id;
+  }
 }

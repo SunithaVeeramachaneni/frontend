@@ -33,8 +33,7 @@ export class RoundPlanConfigurationEffects {
             return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
               formMetadata: {
                 id: response.id,
-                ...action.formMetadata,
-                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+                ...action.formMetadata
               },
               formSaveStatus: formConfigurationStatus.saved
             });
