@@ -24,7 +24,12 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  RoundPlan
+} from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { GetFormListQuery, GetRoundPlanListQuery } from 'src/app/API.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -34,7 +39,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
-  form: GetRoundPlanListQuery;
+  form: RoundPlan;
 }
 
 @Component({
@@ -152,7 +157,7 @@ export class ArchivedListComponent implements OnInit {
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetRoundPlanListQuery
+      form: {} as RoundPlan
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -302,7 +307,7 @@ export class ArchivedListComponent implements OnInit {
     }
   };
 
-  private onRestoreForm(form: GetFormListQuery): void {
+  private onRestoreForm(form: RoundPlan): void {
     this.operatorRoundsService
       .updateForm$({
         formMetadata: {
@@ -315,17 +320,17 @@ export class ArchivedListComponent implements OnInit {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      ?.subscribe((updatedForm) => {
+      ?.subscribe(() => {
         this.restoreDeleteForm$.next({
           action: 'restore',
-          form: updatedForm
+          form
         });
         this.archivedFormsListCount$ =
           this.operatorRoundsService.getFormsListCount$('All', true);
       });
   }
 
-  private onDeleteForm(form: GetFormListQuery): void {
+  private onDeleteForm(form: RoundPlan): void {
     const deleteReportRef = this.dialog.open(ArchivedDeleteModalComponent, {
       data: form
     });
@@ -343,10 +348,10 @@ export class ArchivedListComponent implements OnInit {
             // eslint-disable-next-line no-underscore-dangle
             formListDynamoDBVersion: form._version
           })
-          ?.subscribe((updatedForm) => {
+          ?.subscribe(() => {
             this.restoreDeleteForm$.next({
               action: 'delete',
-              form: updatedForm
+              form
             });
             this.archivedFormsListCount$ =
               this.operatorRoundsService.getFormsListCount$('All', true);

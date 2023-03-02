@@ -314,50 +314,49 @@ export class RaceDynamicFormService {
     limit?: number;
     responseType: string;
   }) {
-    if (queryParams.nextToken !== null) {
-      return from(
-        this.awsApiService.ListResponseSets(
-          {
-            type: { eq: queryParams.responseType }
-          },
-          queryParams.limit,
-          queryParams.nextToken
-        )
-      );
-    }
+    const params: URLSearchParams = new URLSearchParams();
+    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
+    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
+    params.set('type', queryParams?.responseType);
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      'round-plan/response-sets?' + params.toString()
+    );
   }
 
   createResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.CreateResponseSet({
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'round-plan/response-sets',
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet?.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values
-      })
+      }
     );
   }
 
   updateResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.UpdateResponseSet({
-        id: responseSet.id,
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plan/response-sets/${responseSet.id}`,
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values,
         _version: responseSet.version
-      })
+      }
     );
   }
 
   deleteResponseSet$(responseSetId: string) {
-    return from(
-      this.awsApiService.DeleteResponseSet({
-        id: responseSetId
-      })
+    return this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `round-plan/response-sets/${responseSetId}`
     );
   }
 
