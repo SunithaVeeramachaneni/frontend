@@ -181,7 +181,11 @@
         >
           <div class="selectedNode">
             <span class="selectedNodeTitle">
-              Tasks of {{ selectedNodeInstance.name }}
+              {{
+                'nodeInstance'
+                  | translate
+                    : { name: selectedNodeInstance.name, instanceIndex: i + 1 }
+              }}
             </span>
             <button
               mat-stroked-button

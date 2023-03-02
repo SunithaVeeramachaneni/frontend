@@ -125,6 +125,7 @@
   "lastEditedBy": "Last Edited by",
   "viewReport": "View Report",
   "hierarchy": "Hierarchy",
+  "nodeInstance": "Tasks of {name} ({ instanceIndex })",
   "selectHierarchyType": "Select {type}",
   "searchLocation": "Search Location",
   "selectedLocations": "{count} Location(s) selected",
