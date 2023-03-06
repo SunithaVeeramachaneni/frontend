@@ -42,6 +42,18 @@ export const permissions = Object.freeze({
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
 
+  viewLocations: 'VIEW_LOCATIONS',
+  createLocation: 'CREATE_LOCATION',
+  updateLocation: 'UPDATE_LOCATION',
+  deleteLocation: 'DELETE_LOCATION',
+  importLocations: 'IMPORT_LOCATIONS',
+
+  viewAssets: 'VIEW_ASSETS',
+  createAsset: 'CREATE_ASSET',
+  updateAsset: 'UPDATE_ASSET',
+  deleteAsset: 'DELETE_ASSET',
+  importAssets: 'IMPORT_ASSETS',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -56,11 +68,18 @@ export const permissions = Object.freeze({
   createORPlan: 'CREATE_OR_PLAN',
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
-  viewORPlanSubmissions: 'VIEW_OR_SUBMISSIONS',
-  downloadORPSubmission: 'DOWNLOAD_OR_SUBMISSION',
-  shareORPSubmission: 'SHARE_OR_SUBMISSION',
+  viewRounds: 'VIEW_ROUNDS',
+  downloadRounds: 'DOWNLOAD_ROUNDS',
+  shareRounds: 'SHARE_ROUNDS',
+  scheduleRounds: 'SCHEDULE_ROUNDS',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
-  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS'
+  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+
+  viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
+  createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
+  updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
+  deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
 });
 
 export const routingUrls = {
@@ -171,12 +190,36 @@ export const routingUrls = {
     permission: permissions.viewORPlans
   },
   roundPlanSubmissions: {
-    url: '/operator-rounds/submissions',
-    title: 'Submissions',
-    permission: permissions.viewORPlanSubmissions
+    url: '/operator-rounds/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewORPlans
+  },
+  roundPlanArchivedForms: {
+    url: '/operator-rounds/archived',
+    title: 'Archived',
+    permission: permissions.viewArchivedORP
+  },
+  masterConfiguration: {
+    url: '/master-configuration',
+    title: 'Master Configuration',
+    permission: permissions.viewLocations
+  },
+  locations: {
+    url: '/master-configuration',
+    title: 'Locations',
+    permission: permissions.viewLocations
+  },
+  assets: {
+    url: '/master-configuration/assets',
+    title: 'Assets',
+    permission: permissions.viewAssets
+  },
+  unitOfMeasurement: {
+    url: '/master-configuration/unit-measurement',
+    title: 'Unit of Measurement',
+    permission: permissions.viewUnitOfMeasurement
   }
 };
-
 export const formConfigurationStatus = Object.freeze({
   draft: 'Draft',
   published: 'Published',

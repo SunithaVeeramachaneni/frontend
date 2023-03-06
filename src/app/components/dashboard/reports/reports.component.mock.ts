@@ -274,6 +274,7 @@ export const configOptions: ConfigOptions = {
       id: 'name',
       displayName: 'Name',
       type: 'string',
+      controlType: 'string',
       visible: true,
       sticky: false,
       searchable: true,
@@ -289,12 +290,13 @@ export const configOptions: ConfigOptions = {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-       hasPostTextImage: false
+      hasPostTextImage: false
     },
     {
       id: 'description',
       displayName: 'Description',
       type: 'string',
+      controlType: 'string',
       visible: true,
       sticky: false,
       searchable: true,
@@ -310,12 +312,13 @@ export const configOptions: ConfigOptions = {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-       hasPostTextImage: false
+      hasPostTextImage: false
     },
     {
       id: 'createdBy',
       displayName: 'Created By',
       type: 'string',
+      controlType: 'string',
       visible: true,
       sticky: false,
       searchable: true,
@@ -331,12 +334,13 @@ export const configOptions: ConfigOptions = {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-       hasPostTextImage: false
+      hasPostTextImage: false
     },
     {
       id: 'createdTime',
       displayName: 'Created On',
       type: 'date',
+      controlType: 'string',
       visible: true,
       sticky: false,
       searchable: true,
@@ -352,7 +356,7 @@ export const configOptions: ConfigOptions = {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-       hasPostTextImage: false
+      hasPostTextImage: false
     }
   ],
   tableHeight: 'calc(100vh - 200px)',

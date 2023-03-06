@@ -37,7 +37,6 @@ const limit = 10000;
 })
 export class OperatorRoundsService {
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
@@ -105,6 +104,7 @@ export class OperatorRoundsService {
       searchKey: string;
       fetchType: string;
     },
+    formStatus: 'Published' | 'Draft' | 'All',
     isArchived: boolean = false
   ) {
     if (
@@ -121,6 +121,14 @@ export class OperatorRoundsService {
             }),
             isArchived: {
               eq: isArchived
+            },
+            ...(formStatus !== 'All' && {
+              formStatus: {
+                eq: formStatus
+              }
+            }),
+            isDeleted: {
+              eq: false
             }
           },
           !isSearch && queryParams.limit,
@@ -134,6 +142,19 @@ export class OperatorRoundsService {
         nextToken: null
       });
     }
+  }
+
+  getRoundsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    return of({
+      count: 0,
+      rows: [],
+      nextToken: null
+    });
   }
 
   getSubmissionFormsList$(queryParams: {
@@ -167,29 +188,30 @@ export class OperatorRoundsService {
     }
   }
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+  getFormsListCount$(
+    formStatus: 'Published' | 'Draft' | 'All',
+    isArchived: boolean = false
+  ): Observable<number> {
+    const statement = `query {
+      listRoundPlanLists(limit: ${limit}, filter: { isArchived: { eq: ${isArchived} } , isDeleted: { eq: false } ${
+      formStatus !== 'All' ? `, formStatus: { eq: "${formStatus}" }` : ''
+    }}) {
         items {
           id
         }
       }
     }`;
+
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listRoundPlanLists } }: any) =>
           listRoundPlanLists?.items?.length || 0
       )
     );
+  }
+
+  getRoundsListCount$(): Observable<number> {
+    return of(0);
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
@@ -225,7 +247,8 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        isArchived: false
+        isArchived: false,
+        isDeleted: false
       })
     );
   }
@@ -288,15 +311,21 @@ export class OperatorRoundsService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredRoundPlanDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredRoundPlanDetailInput)
+      this.awsApiService.UpdateAuthoredRoundPlanDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion
+        } as UpdateAuthoredRoundPlanDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -352,28 +381,18 @@ export class OperatorRoundsService {
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
+        return items[0];
       })
     );
   }
@@ -526,9 +545,26 @@ export class OperatorRoundsService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
+              }
+
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
               }
 
               return questionItem;
@@ -700,7 +736,7 @@ export class OperatorRoundsService {
               condition: true
             },
             responses,
-            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            createdAt: format(new Date(p?.createdAt), 'do MMM'),
             updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
               addSuffix: true
             })

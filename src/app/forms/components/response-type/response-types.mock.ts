@@ -21,16 +21,16 @@ export const fieldTypesMock = {
       description: 'Scan'
     },
     {
-      type: 'DF',
-      description: 'Date'
+      type: 'DT',
+      description: 'Date & Time'
+    },
+    {
+      type: 'HL',
+      description: 'Hyperlink'
     },
     {
       type: 'CB',
       description: 'Checkbox'
-    },
-    {
-      type: 'TIF',
-      description: 'Time Picker'
     },
     {
       type: 'SGF',
@@ -38,7 +38,7 @@ export const fieldTypesMock = {
     },
     {
       type: 'ATT',
-      description: 'Take Picture/Photo'
+      description: 'Attachments'
     },
     {
       type: 'VI',

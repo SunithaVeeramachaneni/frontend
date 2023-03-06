@@ -33,7 +33,6 @@ import { ResponseTypeButtonComponent } from './components/response-type-button/r
 import { TranslateModule } from '@ngx-translate/core';
 import { ArrayComponent } from './components/field-types/array/array.component';
 import { DateComponent } from './components/field-types/date/date.component';
-import { TimeComponent } from './components/field-types/time/time.component';
 import { ReadOnlyComponent } from './components/field-types/read-only/read-only.component';
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
@@ -47,6 +46,8 @@ import { ImportQuestionsSliderComponent } from './components/import-questions/im
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
+import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
+import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
 
 @NgModule({
   declarations: [
@@ -64,14 +65,15 @@ import { MatDividerModule } from '@angular/material/divider';
     IphoneComponent,
     ArrayComponent,
     DateComponent,
-    TimeComponent,
     ReadOnlyComponent,
     TextComponent,
     DropDownComponent,
     ImageComponent,
     GlobalResponseTypeSideDrawerComponent,
     ImportQuestionsSliderComponent,
-    AddPageOrSelectExistingPageModalComponent
+    AddPageOrSelectExistingPageModalComponent,
+    HyperlinkSideDrawerComponent,
+    HierarchyNodeComponent
   ],
   imports: [
     FormsModule,
@@ -108,6 +110,7 @@ import { MatDividerModule } from '@angular/material/divider';
     PreviewComponent,
     IphoneComponent,
     AddLogicComponent,
+    HierarchyNodeComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
     NgxShimmerLoadingModule

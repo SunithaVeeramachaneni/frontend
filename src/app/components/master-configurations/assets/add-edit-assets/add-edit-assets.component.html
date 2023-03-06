@@ -1,0 +1,142 @@
+<div id="add-edit-asset-slider">
+  <mat-card [formGroup]="assetForm">
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+      <h1 class="heading">{{ assetTitle }}</h1>
+    </div>
+    <div>
+      <p class="m-0" translate="image"></p>
+      <p class="image-container">
+        <img
+          src="assets/master-configurations/image-placeholder.svg"
+          alt="Image Placeholder"
+          class="image"
+          *ngIf="assetImage === ''"
+        />
+        <img
+          [src]="assetImage"
+          alt="Image"
+          class="image-contain"
+          *ngIf="assetImage !== ''"
+        />
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="name"></mat-label>
+          <input
+            matInput
+            [placeholder]="'name' | translate"
+            formControlName="name"
+          />
+
+          <mat-error
+            *ngIf="processValidationErrors('name')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.name.name
+                | translate
+                  : {
+                      name: 'name' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="assetsId"></mat-label>
+          <input
+            matInput
+            [placeholder]="'assetsId' | translate"
+            formControlName="assetsId"
+          />
+          <mat-error
+            *ngIf="processValidationErrors('assetsId')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.assetsId.name
+                | translate
+                  : {
+                      name: 'assetsId' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="model"></mat-label>
+          <input
+            matInput
+            [placeholder]="'model' | translate"
+            formControlName="model"
+          />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="description"></mat-label>
+          <textarea
+            matInput
+            [placeholder]="'description' | translate"
+            formControlName="description"
+          >
+          </textarea>
+        </mat-form-field>
+      </p>
+      <p class="parent-type">
+        <span class="m-r-20" translate="parentType"></span>
+        <mat-radio-group formControlName="parentType" class="parent-type-radio">
+          <mat-radio-button value="location" class="m-r-20">
+            <span translate="location"></span>
+          </mat-radio-button>
+          <mat-radio-button value="asset">
+            <span translate="asset"></span>
+          </mat-radio-button>
+        </mat-radio-group>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="parent"></mat-label>
+          <mat-select formControlName="parentId">
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKey($event)"
+            />
+            <mat-option
+              [value]="parent.id"
+              *ngFor="let parent of allParentsData"
+            >
+              {{ parent.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </p>
+
+      <button
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        [disabled]="assetForm.invalid"
+        (click)="create()"
+      >
+        {{ assetButton }}
+      </button>
+      <button
+        mat-stroked-button
+        class="cancel-btn"
+        type="button"
+        (click)="cancel()"
+        translate="cancelBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>

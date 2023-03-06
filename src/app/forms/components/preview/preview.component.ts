@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State, getPages } from 'src/app/forms/state';
 import { Observable } from 'rxjs';
@@ -31,6 +37,10 @@ export class PreviewComponent implements OnInit, OnChanges {
     if (changes.page && changes.page.currentValue) {
       this.pageIndex = changes.page.currentValue;
     }
+  }
+
+  formatLabel(value: number): string {
+    return `${value}`;
   }
 
   ngOnInit(): void {
@@ -66,5 +76,11 @@ export class PreviewComponent implements OnInit, OnChanges {
 
   toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
+  };
+
+  openURL = (question: any) => {
+    if (question.link.length) {
+      window.open(question.link);
+    }
   };
 }

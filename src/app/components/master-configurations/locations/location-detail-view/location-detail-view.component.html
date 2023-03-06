@@ -1,0 +1,38 @@
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div *ngIf="selectedLocation">
+      <p>
+        <img [src]="selectedLocation.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedLocation.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="id"></p>
+      <p class="m-0 sub-headings-value">{{ selectedLocation.locationId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="parent"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedLocation.parent ? selectedLocation.parent : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="description"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedLocation.description }}
+      </p>
+      <hr class="horizon-line" />
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>

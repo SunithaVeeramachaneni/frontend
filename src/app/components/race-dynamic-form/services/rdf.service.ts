@@ -291,15 +291,21 @@ export class RaceDynamicFormService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredFormDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredFormDetailInput)
+      this.awsApiService.UpdateAuthoredFormDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion
+        } as UpdateAuthoredFormDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -355,28 +361,18 @@ export class RaceDynamicFormService {
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
+        return items[0];
       })
     );
   }
@@ -529,9 +525,26 @@ export class RaceDynamicFormService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
-              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+              if (question.fieldType === 'DT') {
+                questionItem.UIFIELDTYPE =
+                  question.value.date && question.value.time
+                    ? 'DT'
+                    : question.value.date
+                    ? 'DF'
+                    : 'TIF';
                 questionItem.DEFAULTVALUE =
-                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+                  question.value.date && question.value.time
+                    ? 'CDT'
+                    : question.value.date
+                    ? 'CD'
+                    : 'CT';
+              }
+
+              if (question.fieldType === 'HL') {
+                questionItem.DEFAULTVALUE = question.value.title;
+                Object.assign(questionItem, {
+                  FIELDVALUE: question.value.link
+                });
               }
 
               return questionItem;
@@ -699,7 +712,7 @@ export class RaceDynamicFormService {
               condition: true
             },
             responses,
-            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            createdAt: format(new Date(p?.createdAt), 'do MMM'),
             updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
               addSuffix: true
             })

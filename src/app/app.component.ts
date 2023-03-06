@@ -56,7 +56,12 @@ const {
   archivedForms,
   operatorRoundPlans,
   myRoundPlans,
-  roundPlanSubmissions
+  roundPlanSubmissions,
+  masterConfiguration,
+  locations,
+  assets,
+  unitOfMeasurement,
+  roundPlanArchivedForms
 } = routingUrls;
 
 @Component({
@@ -172,6 +177,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: roundPlanSubmissions.title,
           url: roundPlanSubmissions.url,
           permission: roundPlanSubmissions.permission
+        },
+        {
+          title: roundPlanArchivedForms.title,
+          url: roundPlanArchivedForms.url,
+          permission: roundPlanArchivedForms.permission
         }
       ]
     },
@@ -209,6 +219,31 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       ],
       disable: false
+    },
+    {
+      title: masterConfiguration.title,
+      url: masterConfiguration.url,
+      imageName: 'master-configuration',
+      showSubMenu: false,
+      permission: masterConfiguration.permission,
+      disable: false,
+      subPages: [
+        {
+          title: locations.title,
+          url: locations.url,
+          permission: locations.permission
+        },
+        {
+          title: assets.title,
+          url: assets.url,
+          permission: assets.permission
+        },
+        {
+          title: unitOfMeasurement.title,
+          url: unitOfMeasurement.url,
+          permission: unitOfMeasurement.permission
+        }
+      ]
     }
   ];
   loggedIn = false;
@@ -225,6 +260,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
@@ -572,5 +608,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
+  }
+
+  openMenuOnMouseEnter() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = true;
+    }, 250);
+  }
+
+  closeMenuOnMouseLeave() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = false;
+    }, 250);
   }
 }

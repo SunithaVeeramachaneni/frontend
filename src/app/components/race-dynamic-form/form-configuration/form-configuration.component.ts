@@ -53,6 +53,7 @@ import {
 } from 'src/app/forms/state';
 import {
   FormConfigurationActions,
+  FormConfigurationApiActions,
   MCQResponseActions
 } from 'src/app/forms/state/actions';
 import {
@@ -267,6 +268,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   counter,
                   pages,
                   authoredFormDetailId,
+                  authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
                 })
               );

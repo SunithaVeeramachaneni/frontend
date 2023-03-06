@@ -1,10 +1,166 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
 
 
 
+
+type EagerUnitMeasument = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitMeasument, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly description?: string | null;
+  readonly symbol?: string | null;
+  readonly isDefault?: boolean | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList?: UnitList | null;
+  readonly isActive?: boolean | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUnitMeasument = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitMeasument, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly description?: string | null;
+  readonly symbol?: string | null;
+  readonly isDefault?: boolean | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitlistID: string;
+  readonly searchTerm?: string | null;
+  readonly unitList: AsyncItem<UnitList | undefined>;
+  readonly isActive?: boolean | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UnitMeasument = LazyLoading extends LazyLoadingDisabled ? EagerUnitMeasument : LazyUnitMeasument
+
+export declare const UnitMeasument: (new (init: ModelInit<UnitMeasument>) => UnitMeasument) & {
+  copyOf(source: UnitMeasument, mutator: (draft: MutableModel<UnitMeasument>) => MutableModel<UnitMeasument> | void): UnitMeasument;
+}
+
+type EagerUnitList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitMeasuments?: (UnitMeasument | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUnitList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<UnitList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly isDeleted?: boolean | null;
+  readonly unitMeasuments: AsyncCollection<UnitMeasument>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type UnitList = LazyLoading extends LazyLoadingDisabled ? EagerUnitList : LazyUnitList
+
+export declare const UnitList: (new (init: ModelInit<UnitList>) => UnitList) & {
+  copyOf(source: UnitList, mutator: (draft: MutableModel<UnitList>) => MutableModel<UnitList> | void): UnitList;
+}
+
+type EagerAssets = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Assets, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly parentType?: string | null;
+  readonly parentId?: string | null;
+  readonly assetsId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyAssets = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Assets, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly parentType?: string | null;
+  readonly parentId?: string | null;
+  readonly assetsId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Assets = LazyLoading extends LazyLoadingDisabled ? EagerAssets : LazyAssets
+
+export declare const Assets: (new (init: ModelInit<Assets>) => Assets) & {
+  copyOf(source: Assets, mutator: (draft: MutableModel<Assets>) => MutableModel<Assets> | void): Assets;
+}
+
+type EagerLocation = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Location, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly locationId?: string | null;
+  readonly parentId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyLocation = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Location, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly model?: string | null;
+  readonly locationId?: string | null;
+  readonly parentId?: string | null;
+  readonly image?: string | null;
+  readonly searchTerm?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Location = LazyLoading extends LazyLoadingDisabled ? EagerLocation : LazyLocation
+
+export declare const Location: (new (init: ModelInit<Location>) => Location) & {
+  copyOf(source: Location, mutator: (draft: MutableModel<Location>) => MutableModel<Location> | void): Location;
+}
 
 type EagerRoundPlanSubmissionDetails = {
   readonly [__modelMeta__]: {
@@ -102,6 +258,8 @@ type EagerAuthoredRoundPlanDetail = {
   readonly counter?: number | null;
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
+  readonly subForms?: string | null;
+  readonly hierarchy?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -118,6 +276,8 @@ type LazyAuthoredRoundPlanDetail = {
   readonly counter?: number | null;
   readonly formDetailPublishStatus?: string | null;
   readonly formlistID: string;
+  readonly subForms?: string | null;
+  readonly hierarchy?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -135,7 +295,9 @@ type EagerRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
+  readonly flatHierarchy?: string | null;
   readonly formlistID: string;
+  readonly scheduledAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -147,7 +309,9 @@ type LazyRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
+  readonly flatHierarchy?: string | null;
   readonly formlistID: string;
+  readonly scheduledAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -176,14 +340,14 @@ type EagerRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly formType?: string | null;
   readonly isArchived?: boolean | null;
-  readonly searchTerm?: string | null;
+  readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
   readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
   readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly isDeleted?: boolean | null;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -206,14 +370,14 @@ type LazyRoundPlanList = {
   readonly tags?: (string | null)[] | null;
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
-  readonly formType?: string | null;
   readonly isArchived?: boolean | null;
-  readonly searchTerm?: string | null;
+  readonly formType?: string | null;
   readonly isArchivedAt?: string | null;
   readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
   readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly isDeleted?: boolean | null;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

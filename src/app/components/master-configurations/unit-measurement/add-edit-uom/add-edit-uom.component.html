@@ -1,0 +1,199 @@
+<div id="add-edit-uom-slider">
+  <mat-card>
+    <div class="add-edit-header">
+      <h1 *ngIf="!unitEditData" class="heading" translate="createUnit"></h1>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div class="p-10 add-edit-content">
+      <p
+        class="m-l-5 m-t-5 m-b-0 custom-form-field-white-color"
+        *ngIf="!unitEditData && unitType !== 'addNew'"
+      >
+        <mat-form-field
+          appearance="outline"
+          class="unit-measurement"
+          *ngIf="unitType !== 'addNew'"
+        >
+          <mat-label translate="unitOfMeasurement"></mat-label>
+          <mat-select
+            [(ngModel)]="unitType"
+            name="unitType"
+            (selectionChange)="onMeasurementChange($event)"
+            [(value)]="unitType"
+          >
+            <mat-option value="addNew">
+              <span class="add-new-btn">
+                <mat-icon class="add-icon">add</mat-icon>
+                <label translate="addNew"></label>
+              </span>
+            </mat-option>
+            <mat-option
+              *ngFor="let unit of measurementList"
+              [value]="unit?.name"
+            >
+              {{ unit?.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            class="m-l-5 m-t-2 text-red"
+            *ngIf="!unitType && isSubmittedForm"
+          >
+            {{ 'selectmsg' | translate | uppercase }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <div
+        class="display-flex custom-form-field-white-color"
+        *ngIf="unitType === 'addNew'"
+      >
+        <mat-form-field appearance="outline" class="newUnitType">
+          <mat-label translate="unit_type"></mat-label>
+          <input matInput [(ngModel)]="newUnitType" required />
+          <mat-error
+            class="m-l-5 m-t-2 text-red"
+            *ngIf="unitType === 'addNew' && newUnitType === ''"
+          >
+            {{ 'unitTypeError' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div
+        class="m-l-5 m-t-5 display-flex custom-form-field-white-color"
+        *ngIf="unitEditData"
+      >
+        <div class="show-measurement">
+          <a class="width-90" *ngIf="!isEditMeasurement">
+            <input
+              #measurement
+              type="text"
+              [size]="
+                measurement?.value !== '' ? getSize(measurement?.value) : 20
+              "
+              class="form_title_input"
+              [(ngModel)]="unitType"
+              autofocus="true"
+              autocomplete="off"
+              (keyup.enter)="isEditMeasurement = true"
+              (blur)="isEditMeasurement = true"
+              required
+            />
+            <mat-error
+              class="m-l-5 m-t-2 text-red"
+              *ngIf="!isEditMeasurement && unitType === ''"
+            >
+              {{ 'unitTypeError' | translate }}
+            </mat-error>
+          </a>
+          <p *ngIf="isEditMeasurement" class="unit-type-name">
+            {{ unitType }}
+            <button class="edit-icon" (click)="editMeasurement()">
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                class="edit-icon-img"
+              />
+            </button>
+          </p>
+        </div>
+        <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            class="list-icons"
+            alt="delete-icon"
+          />
+        </span>
+      </div>
+
+      <div
+        [formGroup]="unitMeasurementForm"
+        class="custom-form-field-white-color"
+      >
+        <div
+          class="dis-flex m-t-10"
+          *ngIf="unitMeasurementForm?.get('units').value.length"
+        >
+          <p class="description-heading" translate="description"></p>
+          <p class="symbol-heading" translate="symbol"></p>
+        </div>
+        <div
+          class="input-container"
+          formArrayName="units"
+          *ngFor="
+            let item of unitMeasurementFormControl;
+            let i = index
+          "
+        >
+          <div [formGroupName]="i">
+            <mat-form-field appearance="outline" class="m-l-5 description">
+              <input
+                matInput
+                formControlName="description"
+                [placeholder]="'description' | translate"
+              />
+              <mat-error
+                *ngIf="processValidationErrors(i, 'description')"
+                class="m-t-5 error-fields"
+              >
+                {{
+                  errors?.description?.name
+                    | translate
+                      : {
+                          name: 'description' | translate,
+                          length: errors?.description?.length
+                        }
+                }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="m-l-5 symbol">
+              <input
+                matInput
+                formControlName="symbol"
+                [placeholder]="'symbol' | translate"
+              />
+              <mat-error
+                *ngIf="processValidationErrors(i, 'symbol')"
+                class="m-t-5 error-fields"
+              >
+                {{
+                  errors?.symbol?.name
+                    | translate
+                      : {
+                          name: 'symbol' | translate,
+                          length: errors?.symbol?.length
+                        }
+                }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <span *ngIf="unitType" (click)="addNewUmo()" class="add-more-btn">
+        <img
+          src="assets/img/add-new.svg"
+          alt="add-more-icon"
+          class="add-more-icon"
+        />
+        <label translate="addMore"></label>
+      </span>
+    </div>
+    <div class="footer-buttons">
+      <button
+        mat-raised-button
+        [disabled]="!unitType || unitMeasurementForm?.invalid"
+        (click)="onSave()"
+        class="save-btn"
+      >
+        {{ 'save' | translate }}
+      </button>
+      <button mat-button class="cancel-btn" (click)="cancel()">
+        {{ 'cancel' | translate }}
+      </button>
+    </div>
+  </mat-card>
+</div>

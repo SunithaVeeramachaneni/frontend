@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
@@ -40,30 +33,14 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class FormListComponent implements OnInit {
   public menuState = 'out';
@@ -74,6 +51,7 @@ export class FormListComponent implements OnInit {
       id: 'name',
       displayName: 'Name',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: false,
@@ -102,6 +80,7 @@ export class FormListComponent implements OnInit {
       id: 'author',
       displayName: 'Owner',
       type: 'number',
+      controlType: 'string',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -124,6 +103,7 @@ export class FormListComponent implements OnInit {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
+      controlType: 'string',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -160,6 +140,7 @@ export class FormListComponent implements OnInit {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -181,6 +162,7 @@ export class FormListComponent implements OnInit {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
+      controlType: 'string',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,

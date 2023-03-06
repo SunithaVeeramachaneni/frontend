@@ -1,0 +1,70 @@
+@import '../../../../scss/colors.scss';
+
+.app-customizer {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  width: 400px;
+  z-index: 999;
+  height: 100vh;
+  background-color: $white;
+  border-left: 1px solid $border-color;
+
+  ::ng-deep .mat-card {
+    box-shadow: none !important;
+  }
+
+  .hyperlink-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+  }
+
+  .margin {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-forms {
+    border: none;
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+
+  .delete-btn {
+    float: right;
+    padding: 0;
+    min-width: 40px;
+    margin-top: 3px;
+    color: $delete-response-icon-grey;
+
+    .delete-btn-icon {
+      width: 15px;
+    }
+  }
+
+  .submit-response-btn {
+    width: 48%;
+    margin-right: 10px;
+  }
+
+  .cancel-response-btn {
+    width: 48%;
+  }
+}
+
+.hyperlink-input {
+  border: none;
+  background: none;
+  font-size: 130%;
+  font-weight: 500;
+  color: $black;
+  margin-top: 5px;
+  margin-left: 15px;
+}

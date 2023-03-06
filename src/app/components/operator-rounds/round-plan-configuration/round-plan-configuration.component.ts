@@ -55,7 +55,8 @@ import {
 import {
   MCQResponseActions,
   FormConfigurationActions,
-  RoundPlanConfigurationActions
+  RoundPlanConfigurationActions,
+  RoundPlanConfigurationApiActions
 } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
@@ -269,11 +270,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   counter,
                   pages,
                   authoredFormDetailId,
+                  authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
                 })
               );
             }
-            this.formDetails = formDetails;
           } else {
             this.store.dispatch(
               RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
@@ -287,29 +288,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             );
           }
 
-          if (isFormDetailPublished && formDetailId) {
+          if (isFormDetailPublished) {
             this.store.dispatch(
-              RoundPlanConfigurationActions.updateRoundPlanDetail({
-                formMetadata,
-                formListId,
-                pages,
-                formDetailId,
-                formDetailDynamoDBVersion,
-                authoredFormDetail: {
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion,
-                  authoredFormDetailId
-                },
-                formListDynamoDBVersion
-              })
-            );
-          } else if (isFormDetailPublished && !formDetailId) {
-            this.store.dispatch(
-              RoundPlanConfigurationActions.createRoundPlanDetail({
+              RoundPlanConfigurationActions.publishRoundPlan({
                 formMetadata,
                 formListId,
                 pages,

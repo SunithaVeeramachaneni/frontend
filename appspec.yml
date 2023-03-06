@@ -1,0 +1,24 @@
+version: 0
+os: linux
+files:
+  - source: /dist/
+    destination: /usr/share/nginx/html
+    overwrite: true
+file_exists_behavior: OVERWRITE
+hooks:
+  BeforeInstall:
+    - location: scripts/cleanup_dir
+      timeout: 20
+      runas: root
+  AfterInstall:
+    - location: scripts/install_dependencies
+      timeout: 10
+      runas: root
+    - location: scripts/stop_server
+      timeout: 10
+      runas: root
+    - location: scripts/start_server
+      timeout: 10
+      runas: root
+  
+#### End of file ###

@@ -1,14 +1,14 @@
 @import '../../../../scss/colors.scss';
 
 :host {
-  background: #fff;
-  color: #fff;
+  background: $white;
+  color: $white;
   position: absolute;
   left: auto;
   top: 0;
   right: 0;
   bottom: 0;
-  width: 450;
+  width: 450px;
   min-width: 450px;
   overflow-y: scroll;
   z-index: 9999;
@@ -92,14 +92,14 @@
 
   .sub-headings {
     margin: 5px;
-    color: #757575;
+    color: $light-gray;
     font-size: 110%;
     font-weight: 500;
   }
 
   .sub-headings-value {
     margin: 5px;
-    color: #000000;
+    color: $black;
     font-size: 110%;
     font-weight: 500;
   }

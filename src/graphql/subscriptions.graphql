@@ -1,4 +1,244 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onCreateUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onUpdateUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteUnitMeasument(
+  $filter: ModelSubscriptionUnitMeasumentFilterInput
+) {
+  onDeleteUnitMeasument(filter: $filter) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onCreateUnitList(filter: $filter) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onUpdateUnitList(filter: $filter) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteUnitList($filter: ModelSubscriptionUnitListFilterInput) {
+  onDeleteUnitList(filter: $filter) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateAssets($filter: ModelSubscriptionAssetsFilterInput) {
+  onCreateAssets(filter: $filter) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateAssets($filter: ModelSubscriptionAssetsFilterInput) {
+  onUpdateAssets(filter: $filter) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteAssets($filter: ModelSubscriptionAssetsFilterInput) {
+  onDeleteAssets(filter: $filter) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
+  onCreateLocation(filter: $filter) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
+  onUpdateLocation(filter: $filter) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
+  onDeleteLocation(filter: $filter) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateRoundPlanSubmissionDetails(
   $filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
 ) {
@@ -139,6 +379,8 @@ subscription OnCreateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -157,6 +399,8 @@ subscription OnUpdateAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -175,6 +419,8 @@ subscription OnDeleteAuthoredRoundPlanDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -188,7 +434,9 @@ subscription OnCreateRoundPlanDetail(
   onCreateRoundPlanDetail(filter: $filter) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -202,7 +450,9 @@ subscription OnUpdateRoundPlanDetail(
   onUpdateRoundPlanDetail(filter: $filter) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -216,7 +466,9 @@ subscription OnDeleteRoundPlanDetail(
   onDeleteRoundPlanDetail(filter: $filter) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -241,9 +493,8 @@ subscription OnCreateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -258,6 +509,7 @@ subscription OnCreateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -282,9 +534,8 @@ subscription OnUpdateRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -299,6 +550,7 @@ subscription OnUpdateRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -323,9 +575,8 @@ subscription OnDeleteRoundPlanList(
     tags
     lastPublishedBy
     author
-    formType
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -340,6 +591,7 @@ subscription OnDeleteRoundPlanList(
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version

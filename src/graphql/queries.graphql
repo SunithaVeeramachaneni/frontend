@@ -1,4 +1,331 @@
 # this is an auto generated file. This will be overwritten
+query GetUnitMeasument($id: ID!) {
+  getUnitMeasument(id: $id) {
+    id
+    description
+    symbol
+    isDefault
+    isDeleted
+    unitlistID
+    searchTerm
+    unitList {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    isActive
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListUnitMeasuments(
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUnitMeasuments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      isActive
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncUnitMeasuments(
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncUnitMeasuments(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      isActive
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query UnitMeasumentsByUnitlistID(
+  $unitlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelUnitMeasumentFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  unitMeasumentsByUnitlistID(
+    unitlistID: $unitlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      description
+      symbol
+      isDefault
+      isDeleted
+      unitlistID
+      searchTerm
+      isActive
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetUnitList($id: ID!) {
+  getUnitList(id: $id) {
+    id
+    name
+    isDeleted
+    unitMeasuments {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListUnitLists(
+  $filter: ModelUnitListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUnitLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncUnitLists(
+  $filter: ModelUnitListFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncUnitLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      isDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetAssets($id: ID!) {
+  getAssets(id: $id) {
+    id
+    name
+    description
+    model
+    parentType
+    parentId
+    assetsId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListAssets(
+  $filter: ModelAssetsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      model
+      parentType
+      parentId
+      assetsId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncAssets(
+  $filter: ModelAssetsFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncAssets(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      model
+      parentType
+      parentId
+      assetsId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetLocation($id: ID!) {
+  getLocation(id: $id) {
+    id
+    name
+    description
+    model
+    locationId
+    parentId
+    image
+    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListLocations(
+  $filter: ModelLocationFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listLocations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      model
+      locationId
+      parentId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncLocations(
+  $filter: ModelLocationFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncLocations(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      model
+      locationId
+      parentId
+      image
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetRoundPlanSubmissionDetails($id: ID!) {
   getRoundPlanSubmissionDetails(id: $id) {
     id
@@ -227,6 +554,8 @@ query GetAuthoredRoundPlanDetail($id: ID!) {
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
     createdAt
     updatedAt
     _version
@@ -252,6 +581,8 @@ query ListAuthoredRoundPlanDetails(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -282,6 +613,8 @@ query SyncAuthoredRoundPlanDetails(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -314,6 +647,8 @@ query AuthoredRoundPlanDetailsByFormlistID(
       counter
       formDetailPublishStatus
       formlistID
+      subForms
+      hierarchy
       createdAt
       updatedAt
       _version
@@ -328,7 +663,9 @@ query GetRoundPlanDetail($id: ID!) {
   getRoundPlanDetail(id: $id) {
     id
     formData
+    flatHierarchy
     formlistID
+    scheduledAt
     createdAt
     updatedAt
     _version
@@ -345,7 +682,9 @@ query ListRoundPlanDetails(
     items {
       id
       formData
+      flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -371,7 +710,9 @@ query SyncRoundPlanDetails(
     items {
       id
       formData
+      flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -399,7 +740,9 @@ query RoundPlanDetailsByFormlistID(
     items {
       id
       formData
+      flatHierarchy
       formlistID
+      scheduledAt
       createdAt
       updatedAt
       _version
@@ -425,9 +768,8 @@ query GetRoundPlanList($id: ID!) {
     tags
     lastPublishedBy
     author
-    formType
     isArchived
-    searchTerm
+    formType
     isArchivedAt
     RoundPlanSubmissionDetails {
       nextToken
@@ -442,6 +784,7 @@ query GetRoundPlanList($id: ID!) {
       startedAt
     }
     isDeleted
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -469,11 +812,11 @@ query ListRoundPlanLists(
       tags
       lastPublishedBy
       author
-      formType
       isArchived
-      searchTerm
+      formType
       isArchivedAt
       isDeleted
+      searchTerm
       createdAt
       updatedAt
       _version
@@ -510,11 +853,11 @@ query SyncRoundPlanLists(
       tags
       lastPublishedBy
       author
-      formType
       isArchived
-      searchTerm
+      formType
       isArchivedAt
       isDeleted
+      searchTerm
       createdAt
       updatedAt
       _version

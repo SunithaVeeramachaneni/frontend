@@ -117,7 +117,10 @@
               </button>
 
               <span
-                *ngIf="questionForm.get('fieldType').value !== 'LF'"
+                *ngIf="
+                  questionForm.get('fieldType').value !== 'LF' &&
+                  questionForm.get('fieldType').value !== 'HL'
+                "
                 class="action"
               >
                 <mat-checkbox
@@ -133,7 +136,11 @@
                 class="action"
               >
                 <span translate="unitTxt"></span>
-                <span [matMenuTriggerFor]="menu" #unitMenuTrigger="matMenuTrigger" class="uomBtn">
+                <span
+                  [matMenuTriggerFor]="menu"
+                  #unitMenuTrigger="matMenuTrigger"
+                  class="uomBtn"
+                >
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
                 <mat-menu #menu="matMenu">
@@ -197,28 +204,40 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                *ngIf="questionForm.get('fieldType').value === 'DT'"
                 class="action"
               >
                 <app-date
-                  [question]="questionForm"
-                  (checkedToDefaultDate)="
+                  [question]="questionForm.get('value')"
+                  (checkedToDefaultDateAndTime)="
                     questionForm.get('value').setValue($event)
                   "
                 ></app-date>
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                *ngIf="questionForm.get('fieldType').value === 'HL'"
                 class="action"
               >
-                <app-time
-                  [question]="questionForm"
-                  (checkedToDefaultTime)="
-                    questionForm.get('value').setValue($event)
+                <button
+                  mat-button
+                  color="primary"
+                  class="addLogicBtn"
+                  (click)="toggleHyperLink()"
+                  [matTooltip]="
+                    questionForm.get('value').value &&
+                    questionForm.get('value').value?.link
+                      ? questionForm.get('value').value.link
+                      : 'Enter URL'
                   "
                 >
-                </app-time>
+                  <mat-icon class="icon">link</mat-icon>
+                  <span>{{
+                    questionForm.get('value').value.title
+                      ? questionForm.get('value').value.title
+                      : ('addLinkBtn' | translate)
+                  }}</span>
+                </button>
               </span>
 
               <span
@@ -305,4 +324,11 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="isHyperLinkOpen">
+  <app-hyperlink-side-drawer
+    [questionToBeHyperlinked]="question"
+    (hyperlinkHandler)="handlerHyperlink($event)"
+  ></app-hyperlink-side-drawer>
 </div>

@@ -1,0 +1,38 @@
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div *ngIf="selectedAsset">
+      <p>
+        <img [src]="selectedAsset.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedAsset.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="id"></p>
+      <p class="m-0 sub-headings-value">{{ selectedAsset.assetsId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="parent"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedAsset.parent ? selectedAsset.parent : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="description"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedAsset.description }}
+      </p>
+      <hr class="horizon-line" />
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>

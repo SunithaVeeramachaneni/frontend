@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
@@ -43,30 +36,14 @@ import {
   generateCopyRegex
 } from '../../race-dynamic-form/utils/utils';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-round-plan-list',
   templateUrl: './round-plan-list.component.html',
   styleUrls: ['./round-plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
@@ -77,6 +54,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'name',
       displayName: 'Plan Name',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: false,
@@ -105,6 +83,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
+      controlType: 'string',
       order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -141,6 +120,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
+      controlType: 'string',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -162,6 +142,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -183,6 +164,7 @@ export class RoundPlanListComponent implements OnInit {
       id: 'author',
       displayName: 'Owner',
       type: 'number',
+      controlType: 'string',
       isMultiValued: true,
       order: 5,
       hasSubtitle: false,
@@ -272,7 +254,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -358,7 +340,7 @@ export class RoundPlanListComponent implements OnInit {
                 } as any
               });
               this.formsListCount$ =
-                this.operatorRoundsService.getFormsListCount$();
+                this.operatorRoundsService.getFormsListCount$('All');
             });
         }
       });
@@ -436,12 +418,15 @@ export class RoundPlanListComponent implements OnInit {
 
   getForms() {
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        'All'
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -462,7 +447,10 @@ export class RoundPlanListComponent implements OnInit {
       .updateForm$({
         formMetadata: {
           id: form?.id,
-          isArchived: true
+          isArchived: true,
+          name: form?.name,
+          description: form?.description,
+          isArchivedAt: new Date().toISOString()
         },
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
@@ -472,7 +460,8 @@ export class RoundPlanListComponent implements OnInit {
           action: 'delete',
           form: updatedForm
         });
-        this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+        this.formsListCount$ =
+          this.operatorRoundsService.getFormsListCount$('All');
       });
   }
 
@@ -508,15 +497,15 @@ export class RoundPlanListComponent implements OnInit {
       {
         title: 'Copy',
         action: 'copy'
-      }
-      /* {
-        title: 'Archive',
-        action: 'archive'
       },
       {
-        title: 'Upload to Public Library',
-        action: 'upload'
-      } */
+        title: 'Archive',
+        action: 'archive'
+      }
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;

@@ -3,12 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
-import { SubmissionComponent } from '../race-dynamic-form/submission/submission.component';
-import { SubmissionViewComponent } from '../race-dynamic-form/submission-view/submission-view.component';
-import { ArchivedListComponent } from '../race-dynamic-form/archived-list/archived-list.component';
+import { SubmissionComponent } from './submission/submission.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
+import { SchedulerComponent } from './scheduler/scheduler.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,7 @@ const routes: Routes = [
     component: OperatorRoundsContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: 'Plans' },
+      breadcrumb: { label: 'Operator Rounds' },
       permissions: [permissions.viewForms]
     },
     children: [
@@ -40,12 +41,12 @@ const routes: Routes = [
         }
       },
       {
-        path: 'submissions',
-        component: SubmissionComponent,
+        path: 'scheduler/:tabIndex',
+        component: SchedulerComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Submissions', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          breadcrumb: { label: 'Scheduler' },
+          permissions: [permissions.viewORPlans]
         }
       },
       {
