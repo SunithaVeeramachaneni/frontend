@@ -180,13 +180,27 @@
           class="nodeInstance"
         >
           <div class="selectedNode">
-            <span class="selectedNodeTitle">
+            <span
+              class="selectedNodeTitle"
+              *ngIf="selectedNodeInstances?.length > 1; else singleInstance"
+            >
               {{
                 'nodeInstance'
                   | translate
                     : { name: selectedNodeInstance.name, instanceIndex: i + 1 }
               }}
             </span>
+            <ng-template #singleInstance>
+              <span class="selectedNodeTitle">
+                {{
+                  'singleInstance'
+                    | translate
+                      : {
+                          name: selectedNodeInstance.name
+                        }
+                }}
+              </span>
+            </ng-template>
             <button
               mat-stroked-button
               class="import-btn"

@@ -126,6 +126,7 @@
   "viewReport": "View Report",
   "hierarchy": "Hierarchy",
   "nodeInstance": "Tasks of {name} ({ instanceIndex })",
+  "singleInstance": "Tasks of {name}",
   "selectHierarchyType": "Select {type}",
   "searchLocation": "Search Location",
   "selectedLocations": "{count} Location(s) selected",

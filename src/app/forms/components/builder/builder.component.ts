@@ -350,7 +350,8 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    console.log('builder...');
+    // this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex, subFormId) {
