@@ -18,9 +18,26 @@
             </span>
           </div>
         </div>
+        <div
+          *ngIf="node.hasChildren && node.children && node.children.length"
+          class="childrenHead"
+          [ngClass]="{ white: selectedNode.id === node.id }"
+        >
+          <span
+            class="expandCollapseBtn"
+            (click)="node.isExpanded = !node.isExpanded"
+            ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
+              >expand_circle_down</mat-icon
+            ></span
+          >
+          <span
+            >{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets, &nbsp;
+            {{ getTotalTasksCountByNode(node) }} Tasks</span
+          >
+        </div>
       </div>
       <div class="right">
-        <!-- <span> {{ getTasksCountByNodeId(node.id) }} </span> -->
+        <span> {{ getTasksCountByNodeId(node.id) }} </span>
         <span
           [matMenuTriggerFor]="hierarchyMenu"
           class="more-icon"

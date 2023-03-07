@@ -172,9 +172,9 @@ export class HierarchyContainerComponent implements OnInit {
     deleteConfirmationDialogRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
       if (this.hierarchyMode === 'asset_hierarchy') {
-        // const node = event;
-        // // eslint-disable-next-line prefer-const
-        // let nodeChildrenUIDs = [];
+        // eslint-disable-next-line prefer-const
+        let nodeChildrenUIDs = this.getChildrenUIDs(event);
+
         // const hierarchyUpdated = this.pruneChildren(
         //   JSON.parse(JSON.stringify(this.hierarchy)),
         //   event
@@ -183,21 +183,21 @@ export class HierarchyContainerComponent implements OnInit {
         //   hierarchy: hierarchyUpdated,
         //   node: event
         // });
-        // const instanceIdMappings = this.formService.getInstanceIdMappings();
-        // let instances = [];
-        // nodeChildrenUIDs.forEach((uid) => {
-        //   const temp = instanceIdMappings[uid];
-        //   instances = [...instances, ...temp];
-        // });
-        // const instanceIds = instances.map((i) => i.id);
-        // this.store.dispatch(
-        //   BuilderConfigurationActions.removeSubFormInstances({
-        //     subFormIds: instanceIds
-        //   })
-        //        );
+        const instanceIdMappings = this.formService.getInstanceIdMappings();
+        let instances = [];
+        nodeChildrenUIDs.forEach((uid) => {
+          const temp = instanceIdMappings[uid];
+          instances = [...instances, ...temp];
+        });
+        const instanceIds = instances.map((i) => i.id);
+        this.store.dispatch(
+          BuilderConfigurationActions.removeSubFormInstances({
+            subFormIds: instanceIds
+          })
+        );
         this.store.dispatch(
           HierarchyActions.deleteNodeFromSelectedHierarchy({
-            id: event.id
+            instanceIds
           })
         );
       } else {
@@ -216,6 +216,18 @@ export class HierarchyContainerComponent implements OnInit {
         );
       }
     });
+  }
+
+  getChildrenUIDs(root) {
+    let uids = [];
+    uids.push(root.uid);
+    if (root.hasChildren && root.children && root.children.length) {
+      root.children.forEach((child) => {
+        const recursiveUIDs = this.getChildrenUIDs(child);
+        uids = [...uids, ...recursiveUIDs];
+      });
+    }
+    return uids;
   }
 
   pruneChildren(array, node) {

@@ -13,6 +13,7 @@ import {
 import { Store } from '@ngrx/store';
 import {
   getTasksCountByNodeId,
+  getTasksCountByNodeIds,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -64,6 +65,25 @@ export class RoutePlanComponent implements OnInit {
     if (this.selectedNode.id !== node.id) {
       this.operatorRoundsService.setSelectedNode(node);
     }
+  }
+
+  getTasksCountByNodeId(nodeId) {
+    let count = 0;
+    this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
+      count = c;
+    });
+    return count;
+  }
+  getTotalTasksCountByNode(node) {
+    let count = 0;
+    const allChildNodeIds =
+      this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
+    this.store
+      .select(getTasksCountByNodeIds(allChildNodeIds))
+      .subscribe((c) => {
+        count = c;
+      });
+    return count;
   }
 
   dragMoved(event) {
