@@ -154,6 +154,37 @@ export const getSectionsCount = (pageIndex: number, subFormId: string) =>
       .length;
   });
 
+export const getTaskCountBySection = (
+  pageIndex: number,
+  sectionId: string,
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const allQuestions = state[key].find(
+      (page, index) => index === pageIndex
+    )?.questions;
+    const sectionQuestions = allQuestions
+      ? allQuestions.filter((q) => q.sectionId === sectionId)
+      : [];
+    return sectionQuestions.length;
+  });
+
+export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    const allQuestions = state[key].find(
+      (page, index) => index === pageIndex
+    )?.questions;
+    return allQuestions.length;
+  });
+
 export const getSectionIndexes = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';

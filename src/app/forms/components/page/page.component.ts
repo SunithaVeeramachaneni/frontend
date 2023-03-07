@@ -14,6 +14,7 @@ import { tap } from 'rxjs/operators';
 import {
   getPage,
   getPagesCount,
+  getTaskCountByPage,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { PageEvent, Page } from 'src/app/interfaces';
@@ -44,6 +45,7 @@ export class PageComponent implements OnInit {
   });
   page$: Observable<Page>;
   pagesCount$: Observable<number>;
+  pageTasksCount$: Observable<number>;
   private _pageIndex: number;
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
@@ -60,6 +62,9 @@ export class PageComponent implements OnInit {
       );
 
     this.pagesCount$ = this.store.select(getPagesCount(this.selectedNodeId));
+    this.pageTasksCount$ = this.store.select(
+      getTaskCountByPage(this.pageIndex, this.selectedNodeId)
+    );
   }
 
   addPage() {
