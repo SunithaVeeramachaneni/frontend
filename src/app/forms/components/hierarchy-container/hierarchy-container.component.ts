@@ -77,7 +77,6 @@ export class HierarchyContainerComponent implements OnInit {
   ngOnInit(): void {
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
-        console.log(selectedHierarchy.length);
         if (selectedHierarchy.length) {
           this.totalAssetsCount =
             this.assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
