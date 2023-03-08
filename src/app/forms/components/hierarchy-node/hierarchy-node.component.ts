@@ -57,11 +57,13 @@ export class HierarchyNodeComponent implements OnInit {
   };
 
   handleChildEntityToggle = (event) => {
-    const { id, isSelected } = event;
+    const { uid, isSelected } = event;
     const childIdx = this.masterData.children.findIndex(
-      (child) => child.id === id
+      (child) => child.uid === uid
     );
+
     if (childIdx > -1) this.masterData.children[childIdx] = event;
+
     if (isSelected) {
       this.masterData.isSelected = isSelected;
       this.isParentCheckedData.masterToggle = false;

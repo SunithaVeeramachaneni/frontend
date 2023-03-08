@@ -431,8 +431,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       );
 
     this.isDataResolved$ = combineLatest([
-      this.route.data.pipe(tap((data) => console.log(data))),
-      this.createOrEditForm$.pipe(tap((data) => console.log(data)))
+      this.route.data,
+      this.createOrEditForm$
     ]).pipe(
       tap(([data, createOrEditForm]) => {
         if (!createOrEditForm) {

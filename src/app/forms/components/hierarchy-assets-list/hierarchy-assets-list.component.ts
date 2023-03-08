@@ -36,9 +36,9 @@ export class HierarchyAssetsListComponent implements OnInit {
   }
 
   handleHierarchyElementChange = (event) => {
-    const { id } = event;
+    const { uid } = event;
     const indexInHierarchy = this.hierarchyList.findIndex(
-      (element) => element.id === id
+      (element) => element.uid === uid
     );
     if (indexInHierarchy > -1) {
       this.hierarchyList[indexInHierarchy] = event;

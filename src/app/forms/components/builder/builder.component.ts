@@ -3,7 +3,6 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy,
   ChangeDetectorRef,
   Input,
   OnChanges,
@@ -55,7 +54,7 @@ import { isEqual } from 'lodash-es';
   styleUrls: ['./builder.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
+export class BuilderComponent implements OnInit, OnChanges {
   @Input() set selectedNode(node: any) {
     this._selectedNode = node ? node : ({} as any);
     if (Object.keys(node).length) {
@@ -347,12 +346,6 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
       formDetailPublishStatus: formConfigurationStatus.draft,
       formSaveStatus: formConfigurationStatus.saving
     };
-  }
-
-  ngOnDestroy(): void {
-    console.log('builder...');
-    console.log('Destroyed: ', this.selectedNode);
-    // this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex, subFormId) {
