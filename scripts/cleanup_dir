@@ -1,3 +1,3 @@
 #!/bin/bash
 ## this will delete existing web app
- rm -rf /usr/share/nginx/html/cwp
+ rm -rf /usr/share/nginx/html/*
