@@ -4,7 +4,8 @@ import {
   APIService,
   CreateAssetsInput,
   DeleteAssetsInput,
-  ListAssetsQuery
+  ListAssetsQuery,
+  ModelAssetsFilterInput
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
 import {
@@ -16,6 +17,7 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import { query } from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
@@ -28,16 +30,22 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  constructor(
-    private _appService: AppService,
-    private readonly awsApiService: APIService
-  ) {}
+  private MAX_FETCH_LIMIT: string = '1000000';
+
+  constructor(private _appService: AppService) {}
 
   setFormCreatedUpdated(data: any) {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 2000000, ''));
+  fetchAllAssets$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'asset/list?' + params.toString()
+    );
+  };
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -51,17 +59,28 @@ export class AssetsService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this.awsApiService.ListAssets(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
+      const params: URLSearchParams = new URLSearchParams();
+
+      if (!isSearch) {
+        params.set('limit', `${queryParams.limit}`);
+      }
+      if (!isSearch && queryParams.nextToken) {
+        params.set('nextToken', queryParams.nextToken);
+      }
+
+      if (queryParams.searchKey) {
+        const filter: ModelAssetsFilterInput = {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      return this._appService
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'asset/list?' + params.toString()
         )
-      ).pipe(map((res) => this.formatGraphQAssetsResponse(res)));
+        .pipe(map((res) => this.formatGraphQAssetsResponse(res)));
     } else {
       return of({
         count: 0,
@@ -69,10 +88,6 @@ export class AssetsService {
         nextToken: null
       });
     }
-  }
-
-  getAssetsById$(id: string) {
-    return from(this.awsApiService.GetAssets(id));
   }
 
   createAssets$(
@@ -87,31 +102,40 @@ export class AssetsService {
       | 'parentType'
     >
   ) {
-    return from(
-      this.awsApiService.CreateAssets({
-        name: formAssetsQuery.name,
-        image: formAssetsQuery.image,
-        description: formAssetsQuery.description,
-        model: formAssetsQuery.model,
-        assetsId: formAssetsQuery.assetsId,
-        parentType: formAssetsQuery.parentType,
-        parentId: formAssetsQuery.parentId,
-        searchTerm: formAssetsQuery.name.toLowerCase()
-      })
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'asset/create',
+      {
+        data: {
+          ...formAssetsQuery,
+          searchTerm: `${formAssetsQuery.name.toLowerCase()} ${
+            formAssetsQuery.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
-  updateAssets$(assetDetails) {
-    return from(
-      this.awsApiService.UpdateAssets({
-        ...assetDetails.data,
-        _version: assetDetails.version
-      })
+  updateAssets$(assetData) {
+    return this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `asset/${assetData.id}/update`,
+      {
+        data: {
+          ...assetData,
+          searchTerm: `${assetData.name.toLowerCase()} ${
+            assetData.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
   deleteAssets$(values: DeleteAssetsInput) {
-    return from(this.awsApiService.DeleteAssets({ ...values }));
+    return this._appService._removeData(
+      environment.masterConfigApiUrl,
+      `asset/${JSON.stringify(values)}/delete`
+    );
   }
 
   downloadSampleAssetTemplate(

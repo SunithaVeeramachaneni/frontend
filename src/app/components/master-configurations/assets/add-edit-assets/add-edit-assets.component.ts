@@ -86,7 +86,6 @@ export class AddEditAssetsComponent implements OnInit {
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
-      id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
       assetsId: new FormControl('', [Validators.required]),
@@ -121,19 +120,21 @@ export class AddEditAssetsComponent implements OnInit {
         this.slideInOut.emit('out');
       });
     } else if (this.assetStatus === 'edit') {
-      const updateData = {
-        data: this.assetForm.value,
-        version: this.assetEditData._version
-      };
-      this.assetService.updateAssets$(updateData).subscribe((res) => {
-        this.createdAssetsData.emit({
-          status: this.assetStatus,
-          data: res
+      this.assetService
+        .updateAssets$({
+          ...this.assetForm.value,
+          _version: this.assetEditData._version,
+          id: this.assetEditData?.id
+        })
+        .subscribe((res) => {
+          this.createdAssetsData.emit({
+            status: this.assetStatus,
+            data: res
+          });
+          this.assetForm.reset();
+          this.assetForm?.get('parentType').setValue('location');
+          this.slideInOut.emit('out');
         });
-        this.assetForm.reset();
-        this.assetForm?.get('parentType').setValue('location');
-        this.slideInOut.emit('out');
-      });
     }
   }
 
