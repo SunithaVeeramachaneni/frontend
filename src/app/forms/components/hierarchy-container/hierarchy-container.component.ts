@@ -90,7 +90,9 @@ export class HierarchyContainerComponent implements OnInit {
             JSON.stringify(stitchedHierarchy)
           );
           this.cdrf.detectChanges();
-          this.operatorRoundsService.setSelectedNode(selectedHierarchy[0]);
+          if (selectedHierarchy && selectedHierarchy[0]) {
+            this.operatorRoundsService.setSelectedNode(selectedHierarchy[0]);
+          }
         }
       })
     );

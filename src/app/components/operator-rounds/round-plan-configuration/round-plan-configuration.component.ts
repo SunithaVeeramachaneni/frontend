@@ -149,7 +149,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
-        if (Object.keys(data).length) {
+        if (data && Object.keys(data).length) {
           this.selectedNode = data;
           this.selectedNodeLoadStatus = true;
           this.selectedNodeInstances =
