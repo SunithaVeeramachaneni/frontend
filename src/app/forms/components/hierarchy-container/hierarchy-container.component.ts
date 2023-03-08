@@ -181,10 +181,6 @@ export class HierarchyContainerComponent implements OnInit {
         //   JSON.parse(JSON.stringify(this.hierarchy)),
         //   event
         // );
-        // this.hierarchyEvent.emit({
-        //   hierarchy: hierarchyUpdated,
-        //   node: event
-        // });
         const instanceIdMappings = this.formService.getInstanceIdMappings();
         let instances = [];
         nodeChildrenUIDs.forEach((uid) => {
@@ -202,6 +198,9 @@ export class HierarchyContainerComponent implements OnInit {
             instanceIds
           })
         );
+        this.hierarchyEvent.emit({
+          node: event
+        });
       } else {
         const hierarchyUpdated = this.promoteChildren(
           [...this.hierarchy],
@@ -284,7 +283,9 @@ export class HierarchyContainerComponent implements OnInit {
 
   openHierarchyModal = () => {
     const dialogRef = this.dialog
-      .open(HierarchyModalComponent, {})
+      .open(HierarchyModalComponent, {
+        disableClose: true
+      })
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
         if (!selectedHierarchyList) return;

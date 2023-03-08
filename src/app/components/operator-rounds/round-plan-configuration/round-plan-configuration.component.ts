@@ -160,6 +160,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               subFormId: this.selectedNode.id
             })
           );
+        } else {
+          this.selectedNode = undefined;
+          this.selectedNodeInstances = [];
+          this.cdrf.detectChanges();
         }
       })
     );
@@ -894,7 +898,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     const { hierarchy } = event;
     this.store.dispatch(
       HierarchyActions.updateSelectedHierarchyList({
-        selectedHierarchy: hierarchy
+        selectedHierarchy: hierarchy || []
       })
     );
     this.store.dispatch(
@@ -904,7 +908,12 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         formSaveStatus: 'Saving'
       })
     );
-    this.formService.setSelectedHierarchyList(hierarchy);
+    if (!hierarchy || !hierarchy.length) {
+      this.operatorRoundsService.setSelectedNode(undefined);
+      this.formService.setSelectedHierarchyList([]);
+    } else {
+      this.formService.setSelectedHierarchyList(hierarchy);
+    }
   }
 
   getPagesWithoutBlankQuestions(pages: Page[]) {
@@ -927,7 +936,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   openHierarchyModal = () => {
     const dialogRef = this.dialog
-      .open(HierarchyModalComponent, {})
+      .open(HierarchyModalComponent, {
+        disableClose: true
+      })
       .afterClosed()
       .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
         if (!selectedHierarchyList) return;
