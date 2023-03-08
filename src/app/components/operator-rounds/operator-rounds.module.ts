@@ -51,10 +51,17 @@ import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.
 import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
 import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';
 import { SubmissionComponent } from './submission/submission.component';
+import { SchedulerComponent } from './scheduler/scheduler.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { PlansComponent } from './plans/plans.component';
+import { RoundsComponent } from './rounds/rounds.component';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -75,11 +82,16 @@ export const customTranslateLoader = (http: HttpClient) =>
     HierarchyDeleteConfirmationDialogComponent,
     NodeComponent,
     RoutePlanComponent,
+    SchedulerComponent,
+    PlansComponent,
+    RoundsComponent,
     SubmissionComponent,
     SubmissionSliderComponent,
     SubmissionViewComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
+    AssetsModalComponent,
+    RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent
   ],
   imports: [
@@ -105,6 +117,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatTabsModule,
+    MatRadioModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

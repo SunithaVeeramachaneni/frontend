@@ -41,7 +41,6 @@ export class OperatorRoundsService {
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
 
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
@@ -119,6 +118,7 @@ export class OperatorRoundsService {
       searchKey: string;
       fetchType: string;
     },
+    formStatus: 'Published' | 'Draft' | 'All',
     isArchived: boolean = false
   ) {
     if (
@@ -136,6 +136,11 @@ export class OperatorRoundsService {
             isArchived: {
               eq: isArchived
             },
+            ...(formStatus !== 'All' && {
+              formStatus: {
+                eq: formStatus
+              }
+            }),
             isDeleted: {
               eq: false
             }
@@ -151,6 +156,19 @@ export class OperatorRoundsService {
         nextToken: null
       });
     }
+  }
+
+  getRoundsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    return of({
+      count: 0,
+      rows: [],
+      nextToken: null
+    });
   }
 
   getSubmissionFormsList$(queryParams: {
@@ -184,29 +202,30 @@ export class OperatorRoundsService {
     }
   }
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}, isDeleted: {eq: false}}) {
+  getFormsListCount$(
+    formStatus: 'Published' | 'Draft' | 'All',
+    isArchived: boolean = false
+  ): Observable<number> {
+    const statement = `query {
+      listRoundPlanLists(limit: ${limit}, filter: { isArchived: { eq: ${isArchived} } , isDeleted: { eq: false } ${
+      formStatus !== 'All' ? `, formStatus: { eq: "${formStatus}" }` : ''
+    }}) {
         items {
           id
         }
       }
     }`;
+
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listRoundPlanLists } }: any) =>
           listRoundPlanLists?.items?.length || 0
       )
     );
+  }
+
+  getRoundsListCount$(): Observable<number> {
+    return of(0);
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
@@ -314,17 +333,23 @@ export class OperatorRoundsService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredRoundPlanDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        subForms: JSON.stringify(formDetails.subForms),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion,
-        hierarchy: JSON.stringify(formDetails.hierarchy)
-      } as UpdateAuthoredRoundPlanDetailInput)
+      this.awsApiService.UpdateAuthoredRoundPlanDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          subForms: JSON.stringify(formDetails.subForms),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion,
+          hierarchy: JSON.stringify(formDetails.hierarchy)
+        } as UpdateAuthoredRoundPlanDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -380,21 +405,17 @@ export class OperatorRoundsService {
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        items.sort((a, b) => b._version - a._version);
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
         return items[0];
       })
     );

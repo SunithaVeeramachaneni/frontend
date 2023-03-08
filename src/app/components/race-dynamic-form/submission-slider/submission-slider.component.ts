@@ -1,14 +1,14 @@
 import {
   Component,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnInit,
   Output,
   SimpleChanges
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { SubmissionViewComponent } from '../submission-view/submission-view.component';
 
 @Component({
   selector: 'app-submission-slider',
@@ -18,17 +18,15 @@ import { Router } from '@angular/router';
 export class SubmissionSliderComponent implements OnInit, OnChanges {
   @Input()
   submission: any;
-
-  @HostListener('click', ['$event.target'])
   @Output()
   slideInOut: EventEmitter<any> = new EventEmitter();
 
-  constructor(private router: Router) {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {}
 
   cancelForm() {
-    this.slideInOut.emit('in');
+    this.slideInOut.emit('out');
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -38,7 +36,18 @@ export class SubmissionSliderComponent implements OnInit, OnChanges {
   }
 
   navigateView() {
-    this.cancelForm();
-    // this.router.navigate(['/forms/submissions/view/'+this.submission.id]);
+    this.slideInOut.emit('out');
+
+    const dialogRef = this.dialog.open(SubmissionViewComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: this.submission
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      this.slideInOut.emit('out');
+    });
   }
 }

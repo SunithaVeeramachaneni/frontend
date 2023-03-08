@@ -11,8 +11,8 @@ export const updateRoundPlan = createAction(
   props<{ formMetadata: FormMetadata; formListDynamoDBVersion: number }>()
 );
 
-export const createRoundPlanDetail = createAction(
-  '[RoundPlan Configuration] createRoundPlanDetail',
+export const publishRoundPlan = createAction(
+  '[RoundPlan Configuration] publishRoundPlan',
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
@@ -20,21 +20,6 @@ export const createRoundPlanDetail = createAction(
     subForms: any;
     formListId: string;
     authoredFormDetail: any;
-    formListDynamoDBVersion: number;
-  }>()
-);
-
-export const updateRoundPlanDetail = createAction(
-  '[RoundPlan Configuration] updateRoundPlanDetail',
-  props<{
-    formMetadata: FormMetadata;
-    pages: Page[];
-    hierarchy: any;
-    subForms: any;
-    formListId: string;
-    formDetailId: string;
-    authoredFormDetail: any;
-    formDetailDynamoDBVersion: number;
     formListDynamoDBVersion: number;
   }>()
 );
@@ -63,6 +48,7 @@ export const updateAuthoredRoundPlanDetail = createAction(
     subForms: any;
     formListId: string;
     authoredFormDetailId: string;
+    authoredFormDetailVersion: number;
     authoredFormDetailDynamoDBVersion: number;
     hierarchy: any;
   }>()
