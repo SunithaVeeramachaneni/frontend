@@ -77,7 +77,7 @@ export class HierarchyContainerComponent implements OnInit {
   ngOnInit(): void {
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
-        if (selectedHierarchy.length) {
+        if (selectedHierarchy) {
           this.totalAssetsCount =
             this.assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
@@ -215,6 +215,14 @@ export class HierarchyContainerComponent implements OnInit {
           })
         );
       }
+
+      this.store.dispatch(
+        BuilderConfigurationActions.updateFormStatuses({
+          formStatus: 'Draft',
+          formDetailPublishStatus: 'Draft',
+          formSaveStatus: 'Saving'
+        })
+      );
     });
   }
 

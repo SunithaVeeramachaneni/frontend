@@ -311,7 +311,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             if (
               formSaveStatus !== 'Saved' &&
               formStatus !== 'Published' &&
-              selectedHierarchyList.length &&
+              selectedHierarchyList &&
               (!isEqual(this.formDetails, formDetails) ||
                 !isEqual(this.selectedHierarchyList, selectedHierarchyList))
             ) {
