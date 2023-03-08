@@ -290,28 +290,17 @@ export const deleteNodeFromHierarchy = (
 ) => {
   let nodes = [] as HierarchyEntity[];
   for (const node of hierarchyList) {
-    nodes = [
-      ...hierarchyList.filter((item) => instanceIds.indexOf(item.id) < 0)
-    ];
-    if (node.hasChildren && node.children && node.children.length) {
-      const recursiveNodes = deleteNodeFromHierarchy(
-        node.children,
-        instanceIds
-      );
-      nodes = [...nodes, ...recursiveNodes];
+    if (instanceIds.indexOf(node.id) < 0) {
+      nodes.push({
+        ...node,
+        children: node.children.length
+          ? deleteNodeFromHierarchy(node.children, instanceIds)
+          : ([] as HierarchyEntity[])
+      });
+    } else if (node.hasChildren) {
+      const childNodes = deleteNodeFromHierarchy(node.children, instanceIds);
+      nodes = [...nodes, ...childNodes];
     }
-
-    // if (node.id === id) {
-    //   nodes = [...hierarchyList.filter((item) => item.id !== id)];
-    //   // break;
-    // } else {
-    //   nodes.push({
-    //     ...node,
-    //     children: node.children.length
-    //       ? deleteNodeFromHierarchy(node.children, id)
-    //       : ([] as HierarchyEntity[])
-    //   });
-    // }
   }
 
   return nodes;
