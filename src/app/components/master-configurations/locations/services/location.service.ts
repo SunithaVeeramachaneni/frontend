@@ -4,7 +4,8 @@ import {
   APIService,
   CreateLocationInput,
   DeleteLocationInput,
-  ListLocationsQuery
+  ListLocationsQuery,
+  ModelLocationFilterInput
 } from 'src/app/API.service';
 import { map } from 'rxjs/operators';
 import {
@@ -27,18 +28,22 @@ export class LocationService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
+  private MAX_FETCH_LIMIT: string = '1000000';
 
   constructor(
     private _appService: AppService,
-    private readonly awsApiService: APIService
-  ) {}
+  ) { }
 
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 2000000, ''));
+  fetchAllLocations$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(environment.masterConfigApiUrl,
+      'location/list?' + params.toString());
+  }
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -52,17 +57,24 @@ export class LocationService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this.awsApiService.ListLocations(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatGraphQLocationResponse(res)));
+      const params: URLSearchParams = new URLSearchParams();
+
+      if (!isSearch) {
+        params.set('limit', `${queryParams.limit}`);
+      }
+      if (!isSearch && queryParams.nextToken) {
+        params.set('nextToken', queryParams.nextToken);
+      }
+      if (queryParams.searchKey) {
+        const filter: ModelLocationFilterInput = {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      return this._appService._getResp(environment.masterConfigApiUrl,
+        'location/list?' + params.toString())
+        .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     } else {
       return of({
         count: 0,
@@ -72,40 +84,35 @@ export class LocationService {
     }
   }
 
-  getLocationById$(id: string) {
-    return from(this.awsApiService.GetLocation(id));
-  }
-
   createLocation$(
     formLocationQuery: Pick<
       CreateLocationInput,
       'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
     >
   ) {
-    return from(
-      this.awsApiService.CreateLocation({
-        name: formLocationQuery.name,
-        image: formLocationQuery.image,
-        description: formLocationQuery.description,
-        model: formLocationQuery.model,
-        locationId: formLocationQuery.locationId,
-        parentId: formLocationQuery.parentId,
-        searchTerm: formLocationQuery.name.toLowerCase()
-      })
-    );
+    return this._appService._postData(environment.masterConfigApiUrl, `location/create`, {
+      data: {
+        ...formLocationQuery,
+        searchTerm: `${formLocationQuery.name.toLowerCase()} ${formLocationQuery.description?.toLowerCase() || ''}`
+      }
+    });
+
   }
 
-  updateLocation$(locationDetails) {
-    return from(
-      this.awsApiService.UpdateLocation({
-        ...locationDetails.data,
-        _version: locationDetails.version
-      })
-    );
+  updateLocation$(locationData) {
+    return this._appService.patchData(environment.masterConfigApiUrl,
+      `location/${locationData.id}/update`, {
+      data:
+      {
+        ...locationData,
+        searchTerm: `${locationData.name.toLowerCase()} ${locationData.description?.toLowerCase() || ''}`
+      }
+    });
   }
 
   deleteLocation$(values: DeleteLocationInput) {
-    return from(this.awsApiService.DeleteLocation({ ...values }));
+    return this._appService._removeData(environment.masterConfigApiUrl,
+      `location/${JSON.stringify(values)}/delete`);
   }
 
   downloadSampleLocationTemplate(
@@ -140,8 +147,8 @@ export class LocationService {
           },
           archivedAt: p.createdAt
             ? formatDistance(new Date(p.createdAt), new Date(), {
-                addSuffix: true
-              })
+              addSuffix: true
+            })
             : ''
         })) || [];
     const count = resp?.items.length || 0;
