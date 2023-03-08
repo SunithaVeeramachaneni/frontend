@@ -18,7 +18,7 @@ export const updateSelectedHierarchyList = createAction(
 export const deleteNodeFromSelectedHierarchy = createAction(
   '[Asset Hierarchy] deleteNodeFromSelectedHierarchy',
   props<{
-    id: string;
+    instanceIds: string[];
   }>()
 );
 

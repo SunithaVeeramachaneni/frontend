@@ -6,7 +6,7 @@
   }"
 >
   <div class="dis-flex">
-    <div *ngIf="viewMode === false">
+    <div *ngIf="viewMode === false" class="dis-flex">
       <mat-checkbox
         [(ngModel)]="masterData.isSelected"
         (change)="nodeCheckboxToggled($event)"

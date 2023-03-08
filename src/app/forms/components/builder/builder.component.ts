@@ -351,6 +351,7 @@ export class BuilderComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     console.log('builder...');
+    console.log('Destroyed: ', this.selectedNode);
     // this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 

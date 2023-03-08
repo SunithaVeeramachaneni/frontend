@@ -19,6 +19,22 @@
 .drop-after {
   border-bottom: 1px solid #00f;
 }
+
+.children {
+  margin-left: 40px;
+}
+.childrenHead {
+  display: flex;
+  align-items: center;
+  margin-left: 45px;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
+  }
+}
+
 .node-children {
   position: relative;
   transition: height 0.2s;
@@ -53,6 +69,7 @@
   .left {
     display: flex;
     width: 90%;
+    flex-direction: column;
     img {
       max-width: 40px;
       max-height: 40px;
@@ -79,17 +96,23 @@
 }
 .children {
   margin-left: 40px;
-  .childrenHead {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    color: $blue-main;
-    .expandCollapseBtn {
-      cursor: pointer;
-    }
-    .rotate-270 {
-      transform: rotate(270deg);
-    }
+}
+.childrenHead {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  color: $blue-main;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
+  }
+}
+.white {
+  color: $white;
+  &:hover {
+    color: $black;
   }
 }
 .displayInlineBlock {

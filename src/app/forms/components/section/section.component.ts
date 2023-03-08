@@ -22,6 +22,7 @@ import {
 import {
   getSection,
   getSectionsCount,
+  getTaskCountBySection,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
@@ -69,6 +70,7 @@ export class SectionComponent implements OnInit {
   });
   section$: Observable<Section>;
   sectionsCount$: Observable<number>;
+  sectionTasksCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionIndex: number;
   private _sectionId: string;
@@ -110,6 +112,9 @@ export class SectionComponent implements OnInit {
 
     this.sectionsCount$ = this.store.select(
       getSectionsCount(this.pageIndex, this.selectedNodeId)
+    );
+    this.sectionTasksCount$ = this.store.select(
+      getTaskCountBySection(this.pageIndex, this.sectionId, this.selectedNodeId)
     );
   }
 

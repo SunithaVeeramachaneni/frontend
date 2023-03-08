@@ -36,12 +36,11 @@ export const hierarchyReducer = createReducer<HierarchyState>(
   on(
     HierarchyActions.deleteNodeFromSelectedHierarchy,
     (state, action): HierarchyState => {
-      const { id } = action;
+      const { instanceIds } = action;
       const selectedHierarchy = deleteNodeFromHierarchy(
         state.selectedHierarchy,
-        id
+        instanceIds
       );
-      console.log(selectedHierarchy);
       return {
         ...state,
         selectedHierarchy
