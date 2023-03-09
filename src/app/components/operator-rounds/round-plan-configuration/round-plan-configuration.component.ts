@@ -869,6 +869,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       this.operatorRoundsService.setSelectedNode(undefined);
       this.formService.setSelectedHierarchyList([]);
     } else {
+      this.operatorRoundsService.setSelectedNode(hierarchy[0]);
       this.formService.setSelectedHierarchyList(hierarchy);
     }
   }

@@ -198,8 +198,11 @@ export class HierarchyContainerComponent implements OnInit {
             instanceIds
           })
         );
-        this.hierarchyEvent.emit({
-          node: event
+        this.selectedHierarchy$.subscribe((data) => {
+          this.hierarchyEvent.emit({
+            node: event,
+            hierarchy: data
+          });
         });
       } else {
         const hierarchyUpdated = this.promoteChildren(
