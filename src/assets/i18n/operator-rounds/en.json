@@ -140,5 +140,10 @@
   "startDate": "Start Date",
   "endDate": "End Date",
   "selectDates": "Select Dates",
-  "selectedLocations": "Location(s) selected"
+  "selectedLocations": "Location(s) selected",
+
+  "openIssues": "Open Issues",
+  "openActions": "Open Action",
+  "issues": "Issues",
+  "actions": "Actions"
 }
