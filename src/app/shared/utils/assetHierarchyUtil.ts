@@ -290,22 +290,46 @@ export class AssetHierarchyUtil {
 
 export const deleteNodeFromHierarchy = (
   hierarchyList: HierarchyEntity[],
-  instanceIds: string[]
+  instanceIds: string[],
+  currentSelectedHierarchyState: HierarchyEntity[]
 ) => {
   let nodes = [] as HierarchyEntity[];
   for (const node of hierarchyList) {
     if (instanceIds.indexOf(node.id) < 0) {
       nodes.push({
         ...node,
+        iSDeletedInRoutePlan: !findIfAnotherNodeInstanceExists(
+          { id: node.id, uid: node.uid },
+          currentSelectedHierarchyState
+        ),
         children: node.children.length
-          ? deleteNodeFromHierarchy(node.children, instanceIds)
+          ? deleteNodeFromHierarchy(
+              node.children,
+              instanceIds,
+              currentSelectedHierarchyState
+            )
           : ([] as HierarchyEntity[])
       });
     } else if (node.hasChildren) {
-      const childNodes = deleteNodeFromHierarchy(node.children, instanceIds);
+      const childNodes = deleteNodeFromHierarchy(
+        node.children,
+        instanceIds,
+        currentSelectedHierarchyState
+      );
       nodes = [...nodes, ...childNodes];
     }
   }
 
   return nodes;
+};
+
+export const findIfAnotherNodeInstanceExists = (nodeIds, hierarchyList) => {
+  const { id, uid } = nodeIds;
+  for (const node of hierarchyList) {
+    if (node.uid === uid && node.id !== id) {
+      return true;
+    } else if (node.hasChildren) {
+      return findIfAnotherNodeInstanceExists({ id, uid }, node.children);
+    }
+  }
 };
