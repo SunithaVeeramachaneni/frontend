@@ -18,7 +18,11 @@
         <div class="description">
           <span class="title">{{ node.name }}</span>
           <span class="subTitle">
-            {{ node.type | titlecase }} Id: {{ node.nodeId }}
+            {{
+              'nodeSubTitle'
+                | translate
+                  : { nodeType: node.type | titlecase, nodeId: node.nodeId }
+            }}
           </span>
         </div>
       </div>
@@ -34,10 +38,16 @@
             >expand_circle_down</mat-icon
           ></span
         >
-        <span
-          >{{ assetHierarchyUtil.getAssetCountByNode(node) }} Assets, &nbsp;
-          {{ getTotalTasksCountByNode(node) }} Tasks</span
-        >
+        <span>
+          {{
+            'nodeChildrenHead'
+              | translate
+                : {
+                    assetsCount: assetHierarchyUtil.getAssetCountByNode(node),
+                    tasksCount: getTotalTasksCountByNode(node)
+                  }
+          }}
+        </span>
       </div>
     </div>
     <div class="right">
@@ -52,14 +62,17 @@
       </span>
       <mat-menu #hierarchyMenu="matMenu" xPosition="before">
         <button mat-menu-item>
-          <span (click)="openShowHierarchyPopup()">Show Hierarchy</span>
+          <span
+            (click)="openShowHierarchyPopup()"
+            translate="showHierarchy"
+          ></span>
         </button>
         <button
           mat-menu-item
           class="text-red"
           (click)="onRemoveNode($event, node)"
         >
-          <span>Delete</span>
+          <span translate="delete"></span>
         </button>
       </mat-menu>
     </div>

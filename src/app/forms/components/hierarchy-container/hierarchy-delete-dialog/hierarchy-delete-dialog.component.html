@@ -1,14 +1,27 @@
-<h1 mat-dialog-title class="dialogHead">Deleting "{{ data.node.name }}"?</h1>
+<h1 mat-dialog-title class="dialogHead">
+  {{ 'deleteNode' | translate : { nodeName: data.node.name } }}
+</h1>
 <div mat-dialog-content class="dialogContent">
   <span *ngIf="data.hierarchyMode === 'asset_hierarchy'">
-    Deleting the node "{{ data.node.name }}" would result in deletion of all of
-    it's instances. Please confirm.
+    {{ 'deleteNodeMessage' | translate : { nodeName: data.node.name } }}
   </span>
-  <span *ngIf="data.hierarchyMode !== 'asset_hierarchy'">
-    Please confirm.
+  <span
+    *ngIf="data.hierarchyMode !== 'asset_hierarchy'"
+    translate="deleteMessagePleaseConfirm"
+  >
   </span>
 </div>
 <div mat-dialog-actions class="dialogFooter">
-  <button mat-button class="noBtn" (click)="closeDialog()">No</button>
-  <button mat-button (click)="confirmDelete()" class="confirmBtn">Yes</button>
+  <button
+    mat-button
+    class="noBtn"
+    (click)="closeDialog()"
+    translate="no"
+  ></button>
+  <button
+    mat-button
+    (click)="confirmDelete()"
+    class="confirmBtn"
+    translate="yes"
+  ></button>
 </div>
