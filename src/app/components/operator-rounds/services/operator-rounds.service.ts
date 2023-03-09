@@ -106,7 +106,7 @@ export class OperatorRoundsService {
       fetchType: string;
     },
     isArchived: boolean = false,
-    filterParam: any = null,
+    filterParam: any = null
   ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -123,8 +123,8 @@ export class OperatorRoundsService {
         },
         isDeleted: {
           eq: false
-        },
-      }
+        }
+      };
       if (filterParam && filterParam.status) {
         filter['formStatus'] = {
           eq: filterParam.status
@@ -858,4 +858,8 @@ export class OperatorRoundsService {
 
   fetchAllOperatorRounds$ = () =>
     from(this.awsApiService.ListRoundPlanLists({}, 20000000, ''));
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal('', 'assets/json/operator-rounds-filter.json', info);
+  }
 }

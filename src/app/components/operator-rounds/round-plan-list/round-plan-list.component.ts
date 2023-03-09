@@ -73,6 +73,7 @@ export class RoundPlanListComponent implements OnInit {
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Published'];
+  filterJson: any[] = [];
   filter: any = {
     status: '',
     modifiedBy: '',
@@ -283,6 +284,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
     this.getDisplayedForms();
     this.getAllOperatorRounds();
@@ -448,12 +450,16 @@ export class RoundPlanListComponent implements OnInit {
   getForms() {
     console.log('this.fetchType=', this.fetchType);
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType,
-      }, false, this.filter)
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -598,14 +604,31 @@ export class RoundPlanListComponent implements OnInit {
               this.authoredBy.push(item);
             }
           }
+          for (const item of this.filterJson) {
+            if (item['column'] == 'status') {
+              item.items = this.status;
+            } else if (item['column'] == 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item['column'] == 'authoredBy') {
+              item.items = this.authoredBy;
+            }
+          }
         })
       )
       .subscribe();
   }
 
-  applyFilter() {
-    console.log(this.filter);
-    this.operatorRoundsService.fetchForms$.next({ data: 'search' });
+  getFilter() {
+    this.operatorRoundsService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      this.filter[item.column] = item.value;
+    }
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
   resetFilter() {

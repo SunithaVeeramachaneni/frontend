@@ -57,6 +57,7 @@ import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
 import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -82,7 +83,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
-
+    SharedModule,
     RaceDynamicFormModule,
     DragDropModule,
     CommonModule,

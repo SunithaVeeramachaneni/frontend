@@ -1,0 +1,30 @@
+[
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Modified By",
+    "items": [],
+    "column": "modifiedBy",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Last Modified On",
+    "items": [],
+    "column": "lastModifiedOn",
+    "type": "date",
+    "value": ""
+  },
+  {
+    "label": "Authored By",
+    "items": [],
+    "column": "authoredBy",
+    "type": "select",
+    "value": ""
+  }
+]

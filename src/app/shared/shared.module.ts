@@ -49,6 +49,7 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FilterComponent } from './components/filter/filter.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     AcceptCallComponent,
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
-    BackgroundComponent
+    BackgroundComponent,
+    FilterComponent
   ],
   imports: [
     FormsModule,
@@ -111,6 +113,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     DropDownFilterPipe,
     DateTimePipe,
     DateSegmentComponent,
+    FilterComponent,
     CommonFilterComponent,
     HeaderComponent,
     NumberToKMPipe,

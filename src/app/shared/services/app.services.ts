@@ -263,6 +263,21 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
+  _getLocal(
+    apiUrl: string,
+    urlStr: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = [] } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.get<any>(url, httpOptions);
+  }
+
+
   _getDataFromGatewayById(
     apiUrl: string,
     urlStr: string,
