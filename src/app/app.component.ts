@@ -260,6 +260,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
@@ -607,5 +608,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
+  }
+
+  openMenuOnMouseEnter() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = true;
+    }, 250);
+  }
+
+  closeMenuOnMouseLeave() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = false;
+    }, 250);
   }
 }

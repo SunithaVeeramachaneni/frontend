@@ -260,29 +260,18 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               formStatus !== 'Published' &&
               !isEqual(this.formDetails, formDetails)
             ) {
-              const pagesWithoutBlankQuestions = this.getPagesWithoutBlankQuestions(pages);
-              if((!this.formDetails && !isEqual(pages, pagesWithoutBlankQuestions)) ||
-                (this.formDetails && !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))) {
-                this.store.dispatch(
-                  FormConfigurationActions.updateAuthoredFormDetail({
-                    formStatus,
-                    formDetailPublishStatus,
-                    formListId,
-                    counter,
-                    pages: pagesWithoutBlankQuestions,
-                    authoredFormDetailId,
-                    authoredFormDetailDynamoDBVersion
-                  })
-                );
-              } else {
-                // dispatches the action to trigger the reducer directly, causing a state update
-                // without calling the effect that saves the form to DynamoDB.
-                this.store.dispatch(
-                  FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
-                    authoredFormDetail: null,
-                    formSaveStatus: formConfigurationStatus.saved,
-                }))
-              }
+              this.store.dispatch(
+                FormConfigurationActions.updateAuthoredFormDetail({
+                  formStatus,
+                  formDetailPublishStatus,
+                  formListId,
+                  counter,
+                  pages,
+                  authoredFormDetailId,
+                  authoredFormDetailVersion,
+                  authoredFormDetailDynamoDBVersion
+                })
+              );
             }
             this.formDetails = formDetails;
           } else {
@@ -682,18 +671,5 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       questionIndex,
       this.formConf.counter.value
     );
-  }
-
-  getPagesWithoutBlankQuestions(pages: Page[]) {
-    var pagesCopy = JSON.parse(JSON.stringify(pages));
-    return pagesCopy.map(page => {
-      // if all questions of a page are blank, leave the first question behind. Otherwise filter as normal.
-      if(page.questions.filter(question => question.name.trim().length !== 0).length === 0) {
-          page.questions = page.questions.slice(0, 1);
-      } else {
-          page.questions = page.questions.filter(question => question.name.trim().length !== 0)
-      }
-      return page;
-    })
   }
 }

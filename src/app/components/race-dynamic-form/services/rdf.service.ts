@@ -291,15 +291,21 @@ export class RaceDynamicFormService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredFormDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredFormDetailInput)
+      this.awsApiService.UpdateAuthoredFormDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion
+        } as UpdateAuthoredFormDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -355,28 +361,18 @@ export class RaceDynamicFormService {
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
+        return items[0];
       })
     );
   }

@@ -2,13 +2,6 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="submissions"></h2>
-      <div id="openviewtab">
-        <app-submission-slider
-          [@slideInOut]="menuState"
-          (slideInOut)="menuState = 'out'"
-          [submission]="submissionDetail"
-        ></app-submission-slider>
-      </div>
       <span class="custom-form-field-gray-color search">
         <span
           class="no-of-forms"
@@ -83,6 +76,14 @@
       ></cwp-dynamictable>
     </div>
   </div>
+
+  <ng-container *ngIf="menuState">
+    <app-submission-slider
+      [@slideInOut]="menuState"
+      (slideInOut)="menuState = 'out'"
+      [submission]="submissionDetail"
+    ></app-submission-slider>
+  </ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">

@@ -173,7 +173,7 @@ export class ArchivedListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.archivedFormsListCount$ =
-      this.operatorRoundsService.getFormsListCount$(true);
+      this.operatorRoundsService.getFormsListCount$('All', true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -253,6 +253,7 @@ export class ArchivedListComponent implements OnInit {
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
+        'All',
         true
       )
       .pipe(
@@ -320,7 +321,7 @@ export class ArchivedListComponent implements OnInit {
           form: updatedForm
         });
         this.archivedFormsListCount$ =
-          this.operatorRoundsService.getFormsListCount$(true);
+          this.operatorRoundsService.getFormsListCount$('All', true);
       });
   }
 
@@ -348,7 +349,7 @@ export class ArchivedListComponent implements OnInit {
               form: updatedForm
             });
             this.archivedFormsListCount$ =
-              this.operatorRoundsService.getFormsListCount$(true);
+              this.operatorRoundsService.getFormsListCount$('All', true);
           });
       }
     });

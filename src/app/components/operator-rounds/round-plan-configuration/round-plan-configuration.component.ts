@@ -328,31 +328,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   pages: null,
                   subForms: subFormsObj,
                   authoredFormDetailId,
+                  authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion,
                   hierarchy: selectedHierarchyList
                 })
               );
-              // const pagesWithoutBlankQuestions =
-              //   this.getPagesWithoutBlankQuestions(pages);
-              // if (
-              //   (!this.formDetails &&
-              //     !isEqual(pages, pagesWithoutBlankQuestions)) ||
-              //   (this.formDetails &&
-              //     !isEqual(this.formDetails.pages, pagesWithoutBlankQuestions))
-              // ) {
-
-              // } else {
-              //   // dispatches the action to trigger the reducer directly, causing a state update
-              //   // without calling the effect that saves the form to DynamoDB.
-              //   this.store.dispatch(
-              //     RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess(
-              //       {
-              //         authoredFormDetail: null,
-              //         formSaveStatus: formConfigurationStatus.saved
-              //       }
-              //     )
-              //   );
-              // }
               this.formDetails = formDetails;
               this.selectedHierarchyList = selectedHierarchyList;
             }
@@ -372,32 +352,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             );
           }
 
-          if (isFormDetailPublished && formDetailId) {
+          if (isFormDetailPublished) {
             this.store.dispatch(
-              RoundPlanConfigurationActions.updateRoundPlanDetail({
-                hierarchy: selectedHierarchyList,
-                formMetadata,
-                formListId,
-                pages,
-                subForms,
-                ...subFormsObj,
-                formDetailId,
-                formDetailDynamoDBVersion,
-                authoredFormDetail: {
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion,
-                  authoredFormDetailId
-                },
-                formListDynamoDBVersion
-              })
-            );
-          } else if (isFormDetailPublished && !formDetailId) {
-            this.store.dispatch(
-              RoundPlanConfigurationActions.createRoundPlanDetail({
+              RoundPlanConfigurationActions.publishRoundPlan({
                 hierarchy: selectedHierarchyList,
                 formMetadata,
                 formListId,
