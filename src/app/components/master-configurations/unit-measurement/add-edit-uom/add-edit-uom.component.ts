@@ -118,11 +118,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           unitType,
           units: this.unitMeasurementForm?.get('units')?.value
         })
-        .subscribe(() => {
-          this.resetFormState();
-          this.createUnitData.emit({
-            status: 'edit'
-          });
+        .subscribe((response) => {
+          if (Object.keys(response).length) {
+            this.resetFormState();
+            this.createUnitData.emit({
+              status: 'edit'
+            });
+          }
         });
     } else {
       this.unitOfMeasurementService
@@ -221,11 +223,13 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
       if (res === 'delete') {
         this.unitOfMeasurementService
           .deleteUnitType$(this.unitEditData?.unitList?.id)
-          .subscribe(() => {
-            this.resetFormState();
-            this.createUnitData.emit({
-              status: 'delete'
-            });
+          .subscribe((response) => {
+            if (Object.keys(response).length) {
+              this.resetFormState();
+              this.createUnitData.emit({
+                status: 'delete'
+              });
+            }
           });
       }
     });
