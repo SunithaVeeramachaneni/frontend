@@ -2,7 +2,8 @@
   class="node"
   [ngStyle]="{
     'background-color':
-      viewMode === true && !masterData.hasChildren ? '#FEFFDF' : '#ffffff'
+      viewMode === true && !masterData.hasChildren ? '#FEFFDF' : '#ffffff',
+    'margin-top': viewMode === false ? '5px' : '0'
   }"
 >
   <div class="dis-flex">
@@ -20,7 +21,10 @@
       {{ masterData.name }}
     </div>
   </div>
-  <hr class="borders" *ngIf="viewMode === false" />
+  <hr
+    class="borders"
+    [ngStyle]="{ margin: viewMode === true ? '0' : '5px 0' }"
+  />
   <div *ngIf="selectionMode === 'selectAssets' && masterData?.hasChildren">
     <div *ngIf="viewMode === false && masterData?.children.length">
       <a
@@ -47,7 +51,11 @@
               }
       }}</a>
     </div>
-    <div *ngFor="let data of masterData.children" class="child-node">
+    <div
+      *ngFor="let data of masterData.children"
+      class="child-node"
+      [ngStyle]="{ 'margin-top': viewMode === false ? '10px' : '0' }"
+    >
       <div *ngIf="masterData.isToggledView || viewMode === true">
         <app-hierarchy-node
           [nodeData]="data"

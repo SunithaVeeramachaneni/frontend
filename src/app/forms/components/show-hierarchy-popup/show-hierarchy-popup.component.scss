@@ -1,6 +1,7 @@
 .show-hierarchy-container {
-  height: 250px;
-  width: 400px;
+  min-height: 250px;
+  padding: 10px;
+  min-width: 400px;
   overflow: hidden;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
