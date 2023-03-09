@@ -139,7 +139,7 @@
             [src]="getImage('preview', isPreviewActive)"
             class="preview-btn-icon"
           />
-          <span>Preview</span>
+          <span translate="preview"></span>
         </span>
       </button>
 
@@ -218,7 +218,9 @@
       <div *ngIf="props.hierarchyMode === 'route_plan'">
         <div class="selectedNode">
           <span class="selectedNodeTitle">
-            Tasks of {{ selectedNode.name }}
+            {{
+              'tasksOfSelectedNode' | translate : { name: selectedNode.name }
+            }}
           </span>
           <button
             mat-stroked-button

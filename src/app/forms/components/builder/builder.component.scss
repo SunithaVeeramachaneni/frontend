@@ -12,7 +12,7 @@
   .form-header {
     justify-content: space-between;
     position: relative;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     padding: 10px 0px;
   }
 
@@ -84,7 +84,6 @@
     height: 36px;
     border: 1px solid $blue-primary;
     color: $blue-primary;
-    // margin: 12px 0 0 12px;
     border-radius: 8px;
   }
 
@@ -215,7 +214,7 @@
   .selectedNodeTitle {
     font-weight: 500;
     font-size: 20px;
-    color: #212121;
+    color: $text-color;
   }
 }
 
@@ -370,14 +369,14 @@
 
 .assetHierarchyContainer {
   width: 30%;
-  background: white;
+  background: $white;
   height: -webkit-fill-available;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid $border-color;
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #212121;
+    color: $text-color;
     letter-spacing: 0.15px;
     font-weight: 700;
     padding: 10px 15px;
@@ -403,11 +402,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
   padding: 10px;
-  // background: #37428B;
-  // color: white;
   .left {
     display: flex;
     img {

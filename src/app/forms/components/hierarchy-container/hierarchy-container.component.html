@@ -1,7 +1,9 @@
 <div *ngIf="selectedHierarchy$ | async as formMetadata">
   <div class="header">
     <div>
-      <span>Assets ({{ totalAssetsCount }})</span>
+      <span>{{
+        'totalAssetsCount' | translate : { count: totalAssetsCount }
+      }}</span>
       <button
         mat-icon-button
         class="addBtn"
@@ -42,7 +44,9 @@
         />
       </mat-button-toggle>
     </mat-button-toggle-group>
-    <span *ngIf="hierarchy.length">Tasks ({{ getTotalTasksCount() }})</span>
+    <span *ngIf="hierarchy.length">
+      {{ 'totalTasksCount' | translate : { count: getTotalTasksCount() } }}
+    </span>
   </div>
   <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
     <mat-form-field appearance="outline" class="searchField">
@@ -64,10 +68,12 @@
     [ngClass]="{ displayGrid: hierarchyMode !== 'asset_hierarchy' }"
   >
     <div *ngIf="!filteredHierarchyList.length" class="emptySearchResult">
-      <span
-        >No Assets/Locations found for:
-        <strong>{{ searchHierarchyKey.value }} </strong></span
-      >
+      <span>
+        {{
+          'noAssetsOrLocationsFound'
+            | translate : { searchKey: searchHierarchyKey.value }
+        }}
+      </span>
     </div>
     <div *ngIf="hierarchyMode !== 'asset_hierarchy'">
       <app-route-plan
@@ -85,9 +91,12 @@
     </div>
   </div>
   <div *ngIf="!hierarchy.length" class="emptyHierarchy">
-    <span>You have not added any assets yet</span>
-    <button mat-raised-button color="primary" (click)="openHierarchyModal()">
-      Add Assets
-    </button>
+    <span translate="noAssetsAdded"></span>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openHierarchyModal()"
+      translate="addAssetsBtn"
+    ></button>
   </div>
 </div>

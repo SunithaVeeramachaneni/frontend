@@ -50,7 +50,6 @@ export class HierarchyNodeComponent implements OnInit {
 
   ngOnInit(): void {
     // Use masterData.uid instead of id.
-    console.log('node ID', this.masterData.id);
     this.isAlreadySelected = Object.keys(
       this.assetHierarchyUtil.getHierarchyByNodeId(
         this.selectedHierarchyList,
