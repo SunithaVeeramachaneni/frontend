@@ -1,10 +1,10 @@
-export type UnitOfMeasurementList = {
+export interface UnitOfMeasurementList {
   items: Array<UnitOfMeasurement | null>;
   nextToken?: string | null;
   startedAt?: number | null;
-};
+}
 
-export type UnitOfMeasurement = {
+export interface UnitOfMeasurement {
   id: string;
   description?: string | null;
   symbol?: string | null;
@@ -24,4 +24,4 @@ export type UnitOfMeasurement = {
   createdAt: string;
   updatedAt: string;
   _version: number;
-};
+}

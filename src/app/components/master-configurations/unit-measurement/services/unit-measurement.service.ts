@@ -83,12 +83,14 @@ export class UnitMeasurementService {
     values,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    return this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/${unitMeasurementId}/status`,
-      { ...values },
-      info
-    );
+    return this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/${unitMeasurementId}/status`,
+        { ...values },
+        info
+      )
+      .pipe(map((response) => (response === null ? values : response)));
   }
 
   setAsDefault$(
@@ -96,12 +98,14 @@ export class UnitMeasurementService {
     values,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    return this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/${unitMeasurementId}/default`,
-      { ...values },
-      info
-    );
+    return this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/${unitMeasurementId}/default`,
+        { ...values },
+        info
+      )
+      .pipe(map((response) => (response === null ? values : response)));
   }
 
   createUnitType$(values, info: ErrorInfo = {} as ErrorInfo) {
@@ -119,12 +123,14 @@ export class UnitMeasurementService {
     values,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    return this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/types/${unitTypeId}`,
-      { ...values },
-      info
-    );
+    return this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/types/${unitTypeId}`,
+        { ...values },
+        info
+      )
+      .pipe(map((response) => (response === null ? values : response)));
   }
 
   editUnitOfMeasurement$(
@@ -132,28 +138,34 @@ export class UnitMeasurementService {
     values,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    return this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/${unitMeasurementId}`,
-      { ...values },
-      info
-    );
+    return this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/${unitMeasurementId}`,
+        { ...values },
+        info
+      )
+      .pipe(map((response) => (response === null ? values : response)));
   }
 
   deleteUnitType$(id: string, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._removeData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/types/${id}`,
-      info
-    );
+    return this._appService
+      ._removeData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/types/${id}`,
+        info
+      )
+      .pipe(map((response) => (response === null ? id : response)));
   }
 
   deleteUnitOfMeasurement$(id: string, info: ErrorInfo = {} as ErrorInfo) {
-    return this._appService._removeData(
-      environment.masterConfigApiUrl,
-      `unit-of-measurement/types/${id}`,
-      info
-    );
+    return this._appService
+      ._removeData(
+        environment.masterConfigApiUrl,
+        `unit-of-measurement/types/${id}`,
+        info
+      )
+      .pipe(map((response) => (response === null ? id : response)));
   }
 
   handleError(error: any) {
