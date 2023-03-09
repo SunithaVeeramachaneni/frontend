@@ -60,6 +60,7 @@ export class HierarchyNodeComponent implements OnInit {
     if (Object.keys(nodeRefInSelectedHierarchy).length) {
       this.isAlreadySelected = true;
       this.masterData.isSelected = true;
+      Object.assign(this.masterData, { id: nodeRefInSelectedHierarchy.id });
       this.checkboxToggleHandler.emit(this.masterData);
     }
   }
