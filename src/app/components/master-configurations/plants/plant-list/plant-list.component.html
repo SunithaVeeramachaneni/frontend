@@ -1,1 +1,87 @@
-<p>plant-list works!</p>
+<div class="locations-list-view">
+  <ng-container *ngIf="userInfo$ | async">
+    <div class="main-container">
+      <div class="locations-header">
+        <div>
+          <h2 class="heading" translate="plants"></h2>
+        </div>
+        <div>
+          <span class="custom-form-field-gray-color search">
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'search' | translate"
+                autocomplete="off"
+                [formControl]=""
+              />
+              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+            </mat-form-field>
+          </span>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="createMenu"
+            translate="createNew"
+            class="create-new-btn"
+            *appCheckUserHasPermission="[perms.createPlant, perms.importPlants]"
+          ></button>
+          <mat-menu #createMenu="matMenu">
+            <!-- <button mat-menu-item class="menu-buttons">
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="uploadExcel"></span>
+            </button> -->
+            <button
+              mat-menu-item
+              (click)="addManually()"
+              class="menu-buttons"
+              *appCheckUserHasPermission="[perms.createPlant]"
+            >
+              <img
+                src="assets/master-configurations/add-manually.svg"
+                alt="add manually"
+                class="add-manually-icon"
+              />
+              <span translate="addManually"></span>
+            </button>
+          </mat-menu>
+
+          <!-- <button
+            mat-raised-button
+            [matMenuTriggerFor]="moreMenu"
+            class="more-btn"
+            *appCheckUserHasPermission="[perms.importLocations]"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="downloadTemplate"></span>
+            </button>
+          </mat-menu> -->
+          <input id="upload" hidden type="file" />
+        </div>
+      </div>
+      <div>
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div>
+      <ng-container *ngIf="plantAddOrEditOpenState">
+        <app-add-edit-plant></app-add-edit-plant>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>
