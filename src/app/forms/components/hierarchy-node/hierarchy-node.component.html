@@ -11,6 +11,7 @@
         [(ngModel)]="masterData.isSelected"
         (change)="nodeCheckboxToggled($event)"
         class="checkbox"
+        [disabled]="isAlreadySelected"
       ></mat-checkbox>
 
       <img [src]="masterData?.image" class="master-data-image" />

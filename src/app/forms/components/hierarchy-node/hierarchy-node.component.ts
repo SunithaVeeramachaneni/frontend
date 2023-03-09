@@ -22,6 +22,10 @@ export class HierarchyNodeComponent implements OnInit {
     }
   }
 
+  @Input() set selectedList(data) {
+    this.selectedHierarchyList = data;
+  }
+
   @Input() set mode(modeType: string) {
     this.selectionMode = modeType;
   }
@@ -39,10 +43,24 @@ export class HierarchyNodeComponent implements OnInit {
   public isChecked = false;
   public isTreeViewToggled = false;
   public viewMode = false;
+  public isAlreadySelected = false;
+  private selectedHierarchyList: HierarchyEntity[];
 
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Use masterData.uid instead of id.
+    console.log('node ID', this.masterData.id);
+    this.isAlreadySelected = Object.keys(
+      this.assetHierarchyUtil.getHierarchyByNodeId(
+        this.selectedHierarchyList,
+        this.masterData.uid
+      )
+    ).length
+      ? true
+      : false;
+    // this.masterData.isSelected = this.isAlreadySelected;
+  }
 
   nodeCheckboxToggled = (event: MatCheckboxChange) => {
     const { checked } = event;

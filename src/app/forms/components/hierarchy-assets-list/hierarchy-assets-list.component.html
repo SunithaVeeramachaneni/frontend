@@ -16,6 +16,7 @@
       <div *ngFor="let node of hierarchyList">
         <app-hierarchy-node
           [nodeData]="node"
+          [selectedList]="selectedHierarchyList"
           (checkboxToggleHandler)="handleHierarchyElementChange($event)"
           [mode]="'selectAssets'"
         ></app-hierarchy-node>

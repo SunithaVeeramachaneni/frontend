@@ -36,6 +36,7 @@
         <div *ngFor="let location of searchFilterItems">
           <app-hierarchy-node
             [nodeData]="location"
+            [selectedList]="selectedHierarchyList"
             [isMasterChecked]="isMasterCheckedData"
             (checkboxToggleHandler)="handleNodeToggle($event)"
             [mode]="'selectLocations'"

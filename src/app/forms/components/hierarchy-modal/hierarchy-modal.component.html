@@ -2,10 +2,12 @@
   <app-hierarchy-locations-list
     *ngIf="mode === 'location'"
     [locationsData]="masterHierarchyList"
+    [selectedList]="selectedHierarchyList"
     (handleLocationHierarchy)="prepareHierarchyForSelectedLocations($event)"
   ></app-hierarchy-locations-list>
   <app-hierarchy-assets-list
     *ngIf="mode === 'assets'"
     [hierarchyData]="selectedLocationsHierarchy"
+    [selectedList]="selectedHierarchyList"
   ></app-hierarchy-assets-list>
 </div>

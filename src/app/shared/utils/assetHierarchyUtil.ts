@@ -233,6 +233,8 @@ export class AssetHierarchyUtil {
       if (node.isSelected && !node.hasChildren) {
         nodes.push({
           ...node,
+          isRootNode: !node.parentId ? true : false,
+          configuredParentId: node.parentId,
           id: uuidv4(),
           hierarchyPath: nodePath,
           isExpanded: true
@@ -247,6 +249,8 @@ export class AssetHierarchyUtil {
             ...node,
             id: uuidv4(),
             isExpanded: true,
+            isRootNode: !node.parentId ? true : false,
+            configuredParentId: node.parentId,
             children: childNodes,
             hierarchyPath: nodePath
           });

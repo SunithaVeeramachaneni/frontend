@@ -20,7 +20,11 @@ export class HierarchyLocationsListComponent implements OnInit {
       : ([] as HierarchyEntity[]);
     this.searchFilterItems = this.allItems;
   }
+  @Input() set selectedList(data) {
+    this.selectedHierarchyList = data;
+  }
   allLocations: HierarchyEntity[];
+  selectedHierarchyList: HierarchyEntity[];
   public isMasterChecked: boolean;
   public isMasterCheckedData: any = {
     checked: false,

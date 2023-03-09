@@ -19,8 +19,12 @@ export class HierarchyAssetsListComponent implements OnInit {
   @Input() set hierarchyData(data: HierarchyEntity[]) {
     this.hierarchyList = data ? data : ([] as HierarchyEntity[]);
   }
+  @Input() set selectedList(data) {
+    this.selectedHierarchyList = data;
+  }
 
   public hierarchyList: HierarchyEntity[];
+  selectedHierarchyList: HierarchyEntity[];
   public locationsCount: number;
   public assetsCount: number;
 

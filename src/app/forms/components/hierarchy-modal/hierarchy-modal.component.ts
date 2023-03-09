@@ -3,7 +3,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
-import { getMasterHierarchyList, State } from '../../state';
+import {
+  getMasterHierarchyList,
+  getSelectedHierarchyList,
+  State
+} from '../../state';
 
 import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
 import { AssetsService } from 'src/app/components/master-configurations/assets/services/assets.service';
@@ -20,6 +24,8 @@ export class HierarchyModalComponent implements OnInit {
   allAssets$: Observable<any>;
   masterHierarchyList$: Observable<any>;
   masterHierarchyList = [];
+  selectedHierarchyList$: Observable<any>;
+  selectedHierarchyList = [];
   mode = 'location';
   selectedLocationsHierarchy: HierarchyEntity[];
 
@@ -39,7 +45,16 @@ export class HierarchyModalComponent implements OnInit {
       })
     );
 
+    this.selectedHierarchyList$ = this.store
+      .select(getSelectedHierarchyList)
+      .pipe(
+        map((selectedHierarchy) => {
+          this.selectedHierarchyList = selectedHierarchy;
+        })
+      );
+
     this.masterHierarchyList$.subscribe();
+    this.selectedHierarchyList$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (

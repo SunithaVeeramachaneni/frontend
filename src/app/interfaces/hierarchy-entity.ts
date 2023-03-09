@@ -16,6 +16,8 @@ export interface HierarchyEntity {
   isExpanded?: boolean;
   parentId?: string;
   isRootNode?: boolean;
+  iSDeletedInRoutePlan?: boolean;
+  configuredParentId?: string;
 }
 
 export enum EntityType {
