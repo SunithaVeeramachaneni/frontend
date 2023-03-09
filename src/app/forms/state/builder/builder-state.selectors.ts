@@ -113,7 +113,7 @@ export const getPage = (pageIndex: number, subFormId: string) =>
       key = `${key}_${subFormId}`;
     }
 
-    return state[key].find((page, index) => index === pageIndex);
+    return state[key]?.find((page, index) => index === pageIndex);
   });
 
 export const getPageIndexes = (subFormId: string) =>
@@ -140,7 +140,7 @@ export const getSection = (
       key = `${key}_${subFormId}`;
     }
     return state[key]
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.sections.find((section, index) => index === sectionIndex);
   });
 
@@ -150,7 +150,7 @@ export const getSectionsCount = (pageIndex: number, subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].find((page, index) => index === pageIndex)?.sections
+    return state[key]?.find((page, index) => index === pageIndex)?.sections
       .length;
   });
 
@@ -164,7 +164,7 @@ export const getTaskCountBySection = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    const allQuestions = state[key].find(
+    const allQuestions = state[key]?.find(
       (page, index) => index === pageIndex
     )?.questions;
     const sectionQuestions = allQuestions
@@ -179,10 +179,10 @@ export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    const allQuestions = state[key].find(
+    const allQuestions = state[key]?.find(
       (page, index) => index === pageIndex
     )?.questions;
-    return allQuestions.length;
+    return allQuestions?.length;
   });
 
 export const getSectionIndexes = (subFormId: string) =>
@@ -191,7 +191,7 @@ export const getSectionIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].reduce((acc, curr, index) => {
+    return state[key]?.reduce((acc, curr, index) => {
       acc[index] = new Array(curr.sections.length).fill(0).map((v, i) => i);
       return acc;
     }, {});
@@ -203,7 +203,7 @@ export const getSectionIds = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].reduce((acc, curr, index) => {
+    return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.sections.map((section) => section.id);
       return acc;
     }, {});
@@ -215,7 +215,7 @@ export const getQuestionIds = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].reduce((acc, curr, index) => {
+    return state[key]?.reduce((acc, curr, index) => {
       acc[index] = {};
       curr.questions.forEach((question) => {
         if (acc[index][question.sectionId]) {
@@ -235,7 +235,7 @@ export const getQuestion = (
 ) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.questions.find(
         (question) =>
           question.sectionId === sectionId &&
@@ -255,7 +255,7 @@ export const getQuestionByID = (
       key = `${key}_${subFormId}`;
     }
     return state[key]
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.questions.find(
         (question) =>
           question.sectionId === sectionId && question.id === questionId
@@ -268,7 +268,7 @@ export const getQuestionByQuestionID = (
 ) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.questions.find((question) => question.id === questionId)
   );
 
@@ -283,7 +283,7 @@ export const getQuestionLogics = (
       key = `${key}_${subFormId}`;
     }
     return state[key]
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       .logics?.filter((logic) => logic.questionId === questionId);
   });
 
@@ -298,7 +298,7 @@ export const getSectionQuestions = (
       key = `${key}_${subFormId}`;
     }
     return state[key]
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.questions.filter((question) => question.sectionId === sectionId);
   });
 
@@ -313,7 +313,7 @@ export const getSectionQuestionsCount = (
       key = `${key}_${subFormId}`;
     }
     return state[key]
-      .find((page, index) => index === pageIndex)
+      ?.find((page, index) => index === pageIndex)
       ?.questions.filter((question) => question.sectionId === sectionId).length;
   });
 
@@ -323,7 +323,7 @@ export const getQuestionIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    return state[key].reduce((acc, curr, index) => {
+    return state[key]?.reduce((acc, curr, index) => {
       acc[index] = {};
       curr.sections.forEach((section, sectionIndex) => {
         acc[index][sectionIndex] = new Array(

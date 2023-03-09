@@ -1,4 +1,4 @@
-<div class="node-item">
+<div class="node-item" *ngIf="selectedNode">
   <div
     class="parentNode node"
     [ngClass]="{ active: selectedNode.id === node.id }"
