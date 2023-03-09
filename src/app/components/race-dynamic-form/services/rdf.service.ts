@@ -320,14 +320,14 @@ export class RaceDynamicFormService {
     params.set('type', queryParams?.responseType);
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      'round-plan/response-sets?' + params.toString()
+      'round-plans/response-sets?' + params.toString()
     );
   }
 
   createResponseSet$(responseSet) {
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
-      'round-plan/response-sets',
+      'round-plans/response-sets',
       {
         type: responseSet.responseType,
         name: responseSet.name,
@@ -341,7 +341,7 @@ export class RaceDynamicFormService {
   updateResponseSet$(responseSet) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/response-sets/${responseSet.id}`,
+      `round-plans/response-sets/${responseSet.id}`,
       {
         type: responseSet.responseType,
         name: responseSet.name,
@@ -356,7 +356,7 @@ export class RaceDynamicFormService {
   deleteResponseSet$(responseSetId: string) {
     return this.appService._removeData(
       environment.operatorRoundsApiUrl,
-      `round-plan/response-sets/${responseSetId}`
+      `round-plans/response-sets/${responseSetId}`
     );
   }
 

@@ -108,7 +108,7 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plan?' + params.toString()
+        'round-plans?' + params.toString()
       )
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
@@ -140,7 +140,7 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plan/submissions?' + params.toString()
+        'round-plans/submissions?' + params.toString()
       )
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
@@ -156,7 +156,7 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plan/count?' + params.toString()
+        'round-plans/count?' + params.toString()
       )
       .pipe(map(({ count }) => count || 0));
   }
@@ -169,7 +169,7 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plan/submissions/count'
+        'round-plans/submissions/count'
       )
       .pipe(map(({ count }) => count || 0));
   }
@@ -177,7 +177,7 @@ export class OperatorRoundsService {
   createForm$(formListQuery) {
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
-      'round-plan',
+      'round-plans',
       {
         name: formListQuery.name,
         formLogo: formListQuery.formLogo,
@@ -196,7 +196,7 @@ export class OperatorRoundsService {
   updateForm$(formMetaDataDetails) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/${formMetaDataDetails?.formMetadata?.id}`,
+      `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
       {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
@@ -207,14 +207,14 @@ export class OperatorRoundsService {
   getFormDetailsById$(id: string) {
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `round-plan/${id}`
+      `round-plans/${id}`
     );
   }
 
   createAuthoredFormDetail$(formDetails) {
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
-      'round-plan/authored',
+      'round-plans/authored',
       {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
@@ -229,7 +229,7 @@ export class OperatorRoundsService {
   publishRoundPlan$(values) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/publish/${values.form.id}`,
+      `round-plans/publish/${values.form.id}`,
       { ...values }
     );
   }
@@ -237,7 +237,7 @@ export class OperatorRoundsService {
   updateAuthoredFormDetail$(formDetails) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/authored/${formDetails.authoredFormDetailId}`,
+      `round-plans/authored/${formDetails.authoredFormDetailId}`,
       {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
@@ -261,14 +261,14 @@ export class OperatorRoundsService {
     params.set('type', queryParams?.responseType);
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      'round-plan/response-sets?' + params.toString()
+      'round-plans/response-sets?' + params.toString()
     );
   }
 
   createResponseSet$(responseSet) {
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
-      'round-plan/response-sets',
+      'round-plans/response-sets',
       {
         type: responseSet.responseType,
         name: responseSet.name,
@@ -282,7 +282,7 @@ export class OperatorRoundsService {
   updateResponseSet$(responseSet) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/response-sets/${responseSet.id}`,
+      `round-plans/response-sets/${responseSet.id}`,
       {
         type: responseSet.responseType,
         name: responseSet.name,
@@ -297,7 +297,7 @@ export class OperatorRoundsService {
   copyRoundPlan$(formId: string) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plan/copy`,
+      `round-plans/copy`,
       {
         formId
       }
@@ -307,7 +307,7 @@ export class OperatorRoundsService {
   deleteResponseSet$(responseSetId: string) {
     return this.appService._removeData(
       environment.operatorRoundsApiUrl,
-      `round-plan/response-sets/${responseSetId}`
+      `round-plans/response-sets/${responseSetId}`
     );
   }
 
@@ -319,7 +319,7 @@ export class OperatorRoundsService {
     params.set('formStatus', formStatus);
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `round-plan/authored/${formId}?` + params.toString()
+      `round-plans/authored/${formId}?` + params.toString()
     );
   }
 
