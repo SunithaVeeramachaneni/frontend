@@ -97,7 +97,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     BuilderConfigurationsApiActions.createFormDetailSuccess,
-    RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -117,7 +116,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     BuilderConfigurationsApiActions.updateFormDetailSuccess,
-    RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
