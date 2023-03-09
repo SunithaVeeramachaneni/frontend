@@ -51,6 +51,7 @@
       <div *ngIf="masterData.isToggledView || viewMode === true">
         <app-hierarchy-node
           [nodeData]="data"
+          [selectedList]="selectedHierarchyList"
           (checkboxToggleHandler)="handleChildEntityToggle($event)"
           [displayMode]="viewMode"
           [mode]="'selectAssets'"

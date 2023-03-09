@@ -1,7 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { HierarchyEntity } from 'src/app/interfaces';
-import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import {
+  AssetHierarchyUtil,
+  findNodeByUid
+} from 'src/app/shared/utils/assetHierarchyUtil';
 
 @Component({
   selector: 'app-hierarchy-node',
@@ -49,20 +52,19 @@ export class HierarchyNodeComponent implements OnInit {
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
 
   ngOnInit(): void {
-    // Use masterData.uid instead of id.
-    console.log('node ID', this.masterData.id);
-    this.isAlreadySelected = Object.keys(
-      this.assetHierarchyUtil.getHierarchyByNodeId(
-        this.selectedHierarchyList,
-        this.masterData.uid
-      )
-    ).length
-      ? true
-      : false;
-    // this.masterData.isSelected = this.isAlreadySelected;
+    const nodeRefInSelectedHierarchy = findNodeByUid(
+      this.masterData.uid,
+      this.selectedHierarchyList
+    );
+
+    if (Object.keys(nodeRefInSelectedHierarchy).length) {
+      this.isAlreadySelected = true;
+      this.masterData.isSelected = true;
+      this.checkboxToggleHandler.emit(this.masterData);
+    }
   }
 
-  nodeCheckboxToggled = (event: MatCheckboxChange) => {
+  nodeCheckboxToggled = (event: MatCheckboxChange | any) => {
     const { checked } = event;
     this.isParentCheckedData = {
       masterToggle: true,

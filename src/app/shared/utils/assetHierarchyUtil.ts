@@ -333,3 +333,18 @@ export const findIfAnotherNodeInstanceExists = (nodeIds, hierarchyList) => {
     }
   }
 };
+
+export const findNodeByUid = (nodeUid, hierarchyList) => {
+  let leafNode = {} as HierarchyEntity;
+  for (const node of hierarchyList) {
+    if (node.uid === nodeUid) {
+      leafNode = node;
+      break;
+    } else if (node.hasChildren) {
+      leafNode = findNodeByUid(nodeUid, node.children);
+      if (Object.keys(leafNode).length) break;
+    }
+  }
+
+  return leafNode;
+};
