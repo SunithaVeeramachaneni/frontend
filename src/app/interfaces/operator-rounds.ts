@@ -25,3 +25,58 @@ export interface ScheduleByDate {
 export interface MonthlyDaysOfWeek {
   [key: number]: number[];
 }
+
+export interface RoundPlan {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  formLogo?: string | null;
+  isPublic?: boolean | null;
+  publishedDate?: string | null;
+  location?: string | null;
+  roundType?: string | null;
+  formStatus?: string | null;
+  assignee?: string | null;
+  tags?: Array<string | null> | null;
+  lastPublishedBy?: string | null;
+  author?: string | null;
+  isArchived?: boolean | null;
+  formType?: string | null;
+  isArchivedAt?: string | null;
+  isDeleted?: boolean | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+}
+
+export type RoundPlanList = {
+  items: Array<RoundPlan | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export interface RoundPlanSubmission {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  formLogo?: string | null;
+  isPublic?: boolean | null;
+  location?: string | null;
+  roundType?: string | null;
+  status?: string | null;
+  assignee?: string | null;
+  dueDate?: string | null;
+  version?: string | null;
+  submittedBy?: string | null;
+  searchTerm?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+}
+
+export type RoundPlanSubmissionList = {
+  items: Array<RoundPlanSubmission | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
