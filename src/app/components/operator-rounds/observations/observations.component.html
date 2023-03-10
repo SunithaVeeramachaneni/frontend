@@ -1,0 +1,22 @@
+<div class="observations-container">
+  <div class="dis-flex charts">
+    <div class="width-50 chart m-r-10">
+      <h3 translate="openIssues"></h3>
+    </div>
+    <div class="width-50 chart m-l-10">
+      <h3 translate="openActions"></h3>
+    </div>
+  </div>
+  <div class="tabs-header">
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template mat-tab-label translate="issues"></ng-template>
+        <app-issues></app-issues>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label translate="actions"></ng-template>
+        <app-actions></app-actions>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

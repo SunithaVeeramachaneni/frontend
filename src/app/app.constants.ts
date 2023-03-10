@@ -205,6 +205,11 @@ export const routingUrls = {
     title: 'Archived',
     permission: permissions.viewArchivedORP
   },
+  roundPlanObservations: {
+    url: '/operator-rounds/observations',
+    title: 'Observations',
+    permission: permissions.viewORPlans
+  },
   masterConfiguration: {
     url: '/master-configuration',
     title: 'Master Configuration',

@@ -1,0 +1,11 @@
+.issues-list {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+
+  .issues-search {
+    position: fixed;
+    right: 14px;
+    top: 310px;
+  }
+}
