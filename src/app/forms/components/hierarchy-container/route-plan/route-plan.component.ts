@@ -131,16 +131,18 @@ export class RoutePlanComponent implements OnInit {
       'main'
     );
 
-    console.log(
-      '\nmoving\n[' + draggedItemId + '] from list [' + parentItemId + ']',
-      '\n[' +
-        this.dropActionTodo.action +
-        ']\n[' +
-        this.dropActionTodo.targetId +
-        '] from list [' +
-        targetListId +
-        ']'
-    );
+    // To Do @Shiva
+
+    // console.log(
+    //   '\nmoving\n[' + draggedItemId + '] from list [' + parentItemId + ']',
+    //   '\n[' +
+    //     this.dropActionTodo.action +
+    //     ']\n[' +
+    //     this.dropActionTodo.targetId +
+    //     '] from list [' +
+    //     targetListId +
+    //     ']'
+    // );
 
     const draggedItem = this.nodeLookup[draggedItemId];
 
