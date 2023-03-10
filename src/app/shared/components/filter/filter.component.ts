@@ -6,7 +6,6 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
   styleUrls: ['./filter.component.scss']
 })
 export class FilterComponent implements OnInit, OnChanges {
-
   @Input()
   json: any[] = [];
 
@@ -20,7 +19,7 @@ export class FilterComponent implements OnInit, OnChanges {
   reset: EventEmitter<any> = new EventEmitter();
 
   constructor() {}
-  ngOnChanges(changes: SimpleChanges): void { 
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.json && changes.json.currentValue) {
       this.json = changes.json.currentValue;
     }
@@ -40,5 +39,15 @@ export class FilterComponent implements OnInit, OnChanges {
       item.value = '';
     }
     this.reset.emit(this.json);
+  }
+
+  checkState() {
+    let status = true;
+    for (const item of this.json) {
+      if (item.value) {
+        status = false;
+      }
+    }
+    return status;
   }
 }
