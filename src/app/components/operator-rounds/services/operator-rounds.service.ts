@@ -227,51 +227,81 @@ export class OperatorRoundsService {
   }
 
   createAuthoredFormDetail$(formDetails) {
+    const {
+      hierarchy,
+      subForms,
+      counter,
+      pages,
+      formListId,
+      formDetailPublishStatus,
+      formStatus
+    } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      formDetails.hierarchy,
+      JSON.parse(JSON.stringify(hierarchy)),
       0
     );
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
       'round-plans/authored',
       {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        flatHierarchy: JSON.stringify(flatHierarchy), // Dont forget to add in CBOInnovapptiveDev,
-        subForms: JSON.stringify(formDetails.subForms),
+        formStatus,
+        formDetailPublishStatus,
+        formlistID: formListId,
+        pages: JSON.stringify(pages),
+        counter,
+        flatHierarchy,
+        subForms,
+        hierarchy,
         version: formDetails.authoredFormDetailVersion.toString()
       }
     );
   }
 
-  publishRoundPlan$(values) {
+  publishRoundPlan$(roundPlanDetails) {
+    const { hierarchy } = roundPlanDetails.authoredFormDetail;
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      JSON.parse(JSON.stringify(hierarchy)),
+      0
+    );
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plans/publish/${values.form.id}`,
-      { ...values }
+      `round-plans/publish/${roundPlanDetails.form.id}`,
+      {
+        ...roundPlanDetails,
+        authoredFormDetail: {
+          ...roundPlanDetails.authoredFormDetail,
+          flatHierarchy
+        }
+      }
     );
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    const {
+      hierarchy,
+      subForms,
+      counter,
+      pages,
+      formListId,
+      formDetailPublishStatus,
+      formStatus
+    } = formDetails;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      formDetails.hierarchy,
+      JSON.parse(JSON.stringify(hierarchy)),
       0
     );
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/authored/${formDetails.authoredFormDetailId}`,
       {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        subForms: JSON.stringify(formDetails.subForms),
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        hierarchy: JSON.stringify(formDetails.hierarchy),
-        flatHierarchy: JSON.stringify(flatHierarchy), // Added this in view of serverless and backend migration.
+        formStatus,
+        formDetailPublishStatus,
+        formlistID: formListId,
+        subForms,
+        pages: JSON.stringify(pages),
+        counter,
+        hierarchy,
+        flatHierarchy,
         _version: formDetails.authoredFormDetailDynamoDBVersion,
         version: formDetails.authoredFormDetailVersion.toString()
       }
