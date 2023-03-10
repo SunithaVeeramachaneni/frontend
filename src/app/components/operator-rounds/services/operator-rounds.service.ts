@@ -3,7 +3,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -679,8 +679,21 @@ export class OperatorRoundsService {
     return `${updatedResponse.count}/${updatedResponse.total}`;
   }
 
-  fetchAllOperatorRounds$ = () =>
-    from(this.awsApiService.ListRoundPlanLists({}, 20000000, ''));
+  fetchAllOperatorRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', "");
+    params.set('limit', "2000000");
+    params.set('nextToken', "");
+    params.set('fetchType', "");
+    params.set('formStatus', "");
+    params.set('isArchived', "false");
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+  };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(

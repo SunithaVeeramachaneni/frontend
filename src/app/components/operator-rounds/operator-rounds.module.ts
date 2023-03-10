@@ -56,8 +56,7 @@ import { SubmissionViewComponent } from './submission-view/submission-view.compo
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatRadioModule } from '@angular/material/radio'; 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
@@ -116,7 +115,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTooltipModule,
     MatTabsModule,
     MatRadioModule,
-    MatDatepickerModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
