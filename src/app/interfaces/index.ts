@@ -26,3 +26,4 @@ export * from './hyperlink';
 export * from './date-time';
 export * from './operator-rounds';
 export * from './hierarchy-entity';
+export * from './unit-of-measurement';

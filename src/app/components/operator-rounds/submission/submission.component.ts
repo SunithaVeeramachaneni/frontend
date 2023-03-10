@@ -28,10 +28,10 @@ import {
   TableEvent,
   LoadEvent,
   SearchEvent,
-  CellClickActionEvent
+  CellClickActionEvent,
+  RoundPlanSubmission
 } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
-import { GetRoundPlanListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
@@ -287,7 +287,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getSubmissionFormsList();
         } else {
-          return of([] as GetRoundPlanListQuery[]);
+          return of([] as RoundPlanSubmission[]);
         }
       })
     );

@@ -29,12 +29,7 @@ export class RoundPlanResolverService
     hierarchyState: HierarchyState;
   }> {
     const id = route.params.id;
-    return forkJoin({
-      form: this.operatorRoundsService.getFormById$(id),
-      authoredFormDetail:
-        this.operatorRoundsService.getAuthoredFormDetailByFormId$(id),
-      formDetail: this.operatorRoundsService.getFormDetailByFormId$(id)
-    }).pipe(
+    return this.operatorRoundsService.getFormDetailsById$(id).pipe(
       map(({ form, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
           BuilderConfigurationActions.updateCreateOrEditForm({

@@ -123,10 +123,7 @@
         <div
           class="input-container"
           formArrayName="units"
-          *ngFor="
-            let item of unitMeasurementFormControl;
-            let i = index
-          "
+          *ngFor="let item of unitMeasurementFormControl; let i = index"
         >
           <div [formGroupName]="i">
             <mat-form-field appearance="outline" class="m-l-5 description">
