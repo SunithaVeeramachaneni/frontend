@@ -40,7 +40,25 @@ import { PlantService } from '../services/plant.service';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
-  styleUrls: ['./plant-list.component.scss']
+  styleUrls: ['./plant-list.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      state(
+        'in',
+        style({
+          transform: 'translate3d(0,0,0)'
+        })
+      ),
+      state(
+        'out',
+        style({
+          transform: 'translate3d(100%, 0, 0)'
+        })
+      ),
+      transition('in => out', animate('400ms ease-in-out')),
+      transition('out => in', animate('400ms ease-in-out'))
+    ])
+  ]
 })
 export class PlantListComponent implements OnInit {
   readonly perms = perms;
@@ -198,8 +216,20 @@ export class PlantListComponent implements OnInit {
       }
     }
   };
+  searchPlant: FormControl;
+  addEditCopyDeletePlants = false;
 
-  constructor(private loginService: LoginService) {}
+  addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
+      action: null,
+      form: {} as any
+    });
+
+  constructor(
+    private loginService: LoginService,
+    private readonly toast: ToastService,
+    private plantService: PlantService
+  ) {}
 
   ngOnInit(): void {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
@@ -212,6 +242,9 @@ export class PlantListComponent implements OnInit {
     };
     this.configOptions.allColumns = this.columns;
     this.dataSource = new MatTableDataSource(initial.data);
+
+    this.plantService.fetchPlants$.next({ data: 'load' });
+    this.plantService.fetchPlants$.next({} as TableEvent);
   }
 
   prepareMenuActions(permissions: Permission[]) {
@@ -241,5 +274,42 @@ export class PlantListComponent implements OnInit {
   addManually() {
     this.plantAddOrEditOpenState = 'in';
     this.plantEditData = null;
+  }
+
+  onClosePlantAddOrEditOpenState(event) {
+    this.plantAddOrEditOpenState = event;
+  }
+
+  addOrUpdatePlant(plantData) {
+    if (plantData?.status === 'add') {
+      this.addEditCopyDeletePlants = true;
+      if (this.searchPlant.value) {
+        this.plantService.fetchPlants$.next({ data: 'search' });
+      } else {
+        this.addEditCopyDeletePlants$.next({
+          action: 'add',
+          form: plantData.data
+        });
+      }
+      this.toast.show({
+        text: 'Plant created successfully!',
+        type: 'success'
+      });
+    } else if (plantData?.status === 'edit') {
+      this.addEditCopyDeletePlants = true;
+      if (this.searchPlant.value) {
+        this.plantService.fetchPlants$.next({ data: 'search' });
+      } else {
+        this.addEditCopyDeletePlants$.next({
+          action: 'edit',
+          form: plantData.data
+        });
+        this.toast.show({
+          text: 'Plant updated successfully!',
+          type: 'success'
+        });
+      }
+    }
+    this.plantService.fetchPlants$.next({ data: 'load' });
   }
 }

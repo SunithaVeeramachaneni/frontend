@@ -80,7 +80,12 @@
         ></cwp-dynamictable>
       </div>
       <ng-container *ngIf="plantAddOrEditOpenState">
-        <app-add-edit-plant></app-add-edit-plant>
+        <app-add-edit-plant
+          [@slideInOut]="plantAddOrEditOpenState"
+          (slideInOut)="onClosePlantAddOrEditOpenState($event)"
+          [plantEditData]="plantEditData"
+          (createdPlantData)="addOrUpdatePlant($event)"
+        ></app-add-edit-plant>
       </ng-container>
     </div>
   </ng-container>

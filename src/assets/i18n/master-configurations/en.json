@@ -38,5 +38,6 @@
   "addMore": "Add More",
   "save": "Save",
   "unitTypeError": "Unit type is required",
-  "plants": "Plants"
+  "plants": "Plants",
+  "plantId": "Plant Id"
 }
