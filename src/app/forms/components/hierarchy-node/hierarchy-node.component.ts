@@ -47,7 +47,7 @@ export class HierarchyNodeComponent implements OnInit {
   public isTreeViewToggled = false;
   public viewMode = false;
   public isAlreadySelected = false;
-  private selectedHierarchyList: HierarchyEntity[];
+  public selectedHierarchyList: HierarchyEntity[];
 
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
 
@@ -60,6 +60,7 @@ export class HierarchyNodeComponent implements OnInit {
     if (Object.keys(nodeRefInSelectedHierarchy).length) {
       this.isAlreadySelected = true;
       this.masterData.isSelected = true;
+      Object.assign(this.masterData, { id: nodeRefInSelectedHierarchy.id });
       this.checkboxToggleHandler.emit(this.masterData);
     }
   }

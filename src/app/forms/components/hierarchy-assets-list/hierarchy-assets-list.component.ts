@@ -24,7 +24,7 @@ export class HierarchyAssetsListComponent implements OnInit {
   }
 
   public hierarchyList: HierarchyEntity[];
-  selectedHierarchyList: HierarchyEntity[];
+  public selectedHierarchyList: HierarchyEntity[];
   public locationsCount: number;
   public assetsCount: number;
 
@@ -54,6 +54,7 @@ export class HierarchyAssetsListComponent implements OnInit {
         this.hierarchyList,
         'asset'
       );
+
       this.cdrf.markForCheck();
     }
   };

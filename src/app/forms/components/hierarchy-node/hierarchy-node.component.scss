@@ -13,7 +13,7 @@
   width: 20px;
   height: 20px;
   margin-left: 10px;
-  background: #f0f0f0;
+  background: $timeago-bg;
   border-radius: 8px;
   padding: 7px;
 }
@@ -24,10 +24,6 @@
   font-size: 12px;
   font-weight: bold;
 }
-// .node-break {
-//   border-bottom: $border-color;
-//   border-top: none;
-// }
 
 .child-node {
   margin-left: 35px;
@@ -44,7 +40,6 @@
 
 .count-assets {
   font-size: 12px;
-  // font-weight: bold;
   position: relative;
   left: 10px;
   top: -4px;
