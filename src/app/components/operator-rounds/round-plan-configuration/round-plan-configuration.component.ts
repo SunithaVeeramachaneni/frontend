@@ -344,8 +344,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 counter,
                 pages,
-                subForms,
-                ...subFormsObj,
+                subForms: subFormsObj,
                 authoredFormDetailVersion,
                 hierarchy: selectedHierarchyList
               })
@@ -359,8 +358,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
-                subForms,
-                ...subFormsObj,
+                subForms: subFormsObj,
                 authoredFormDetail: {
                   formStatus,
                   formListId,

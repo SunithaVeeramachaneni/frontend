@@ -78,7 +78,7 @@ export class RoundPlanConfigurationEffects {
       ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        const { hierarchy } = formDetail.formMetadata;
+        const { hierarchy, subForms } = formDetail;
         return of(true).pipe(
           mergeMap(() =>
             this.operatorRoundsService
@@ -93,8 +93,8 @@ export class RoundPlanConfigurationEffects {
                 authoredFormDetail: {
                   ...authoredFormDetail,
                   pages: JSON.stringify(authoredFormDetail.pages),
-                  subForms: {}, // Handle subforms form round-plan config,
-                  hierarchy //Verify this.
+                  subForms, // Handle subforms form round-plan config,
+                  hierarchy
                 }
               })
               .pipe(
