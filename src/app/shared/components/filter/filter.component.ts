@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
 
 @Component({
   selector: 'app-filter',
@@ -6,6 +7,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
   styleUrls: ['./filter.component.scss']
 })
 export class FilterComponent implements OnInit, OnChanges {
+  readonly FilterSidePanelComponent = FilterSidePanelComponent;
   @Input()
   json: any[] = [];
 
@@ -49,5 +51,11 @@ export class FilterComponent implements OnInit, OnChanges {
       }
     }
     return status;
+  }
+
+  dateRangeSelect(item: any) {
+    const startDate = new Date(item.startDate).toISOString();
+    const endDate = new Date(item.endDate).toISOString();
+    item.value = [startDate, endDate];
   }
 }

@@ -12,7 +12,7 @@
       />
     </button>
   </div>
-  <div class="filter-form-fields" style="max-height: 300px">
+  <div class="filter-form-fields">
     <div class="filter-items" *ngFor="let item of json">
       <mat-form-field
         *ngIf="item.type === 'select'"
@@ -43,7 +43,23 @@
             >arrow_drop_down</mat-icon
           >
         </div>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-datepicker #picker ></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field 
+        *ngIf="item.type === 'daterange'" 
+        appearance="outline" 
+        class="mat-field date-picker">
+        <mat-label>{{ item.label }}</mat-label>
+        <div class="date-picker-wrap">
+          <mat-date-range-input [rangePicker]="picker1">
+            <input matStartDate [(ngModel)]="item.startDate" placeholder="Start date">
+            <input matEndDate [(ngModel)]="item.endDate" (dateInput)="dateRangeSelect(item)" placeholder="End date">
+          </mat-date-range-input>
+          <mat-icon matDatepickerToggleIcon (click)="picker1.open()"
+            >arrow_drop_down</mat-icon
+          >
+        </div>
+        <mat-date-range-picker #picker1 [calendarHeaderComponent]="FilterSidePanelComponent"></mat-date-range-picker>
       </mat-form-field>
     </div>
   </div>

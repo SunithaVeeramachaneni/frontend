@@ -54,6 +54,7 @@
     "font-awesome": "^4.7.0",
     "libphonenumber-js": "^1.10.7",
     "lodash-es": "^4.17.21",
+    "mat-daterangepicker": "^1.0.1",
     "messageformat": "^2.3.0",
     "ng2-search-filter": "^0.5.1",
     "ngp-sort-pipe": "0.0.4",

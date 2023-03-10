@@ -7,6 +7,15 @@
     "value": ""
   },
   {
+    "label": "Schedule",
+    "items": [],
+    "column": "",
+    "type": "daterange",
+    "startDate": "",
+    "endDate":"",
+    "value": ""
+  },
+  {
     "label": "Modified By",
     "items": [],
     "column": "modifiedBy",

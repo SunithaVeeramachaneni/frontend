@@ -97,6 +97,7 @@ export class OperatorRoundsService {
     },
     formStatus: 'Published' | 'Draft' | 'All',
     isArchived: boolean = false,
+    filterData: any = null
   ) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
@@ -105,12 +106,23 @@ export class OperatorRoundsService {
     params.set('fetchType', queryParams?.fetchType);
     params.set('formStatus', formStatus);
     params.set('isArchived', String(isArchived));
-    return this.appService
-      ._getResp(
-        environment.operatorRoundsApiUrl,
-        'round-plans?' + params.toString()
-      )
-      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+    if (filterData) {
+      params.set(
+        'formStatus',
+        filterData.status ? filterData.status : formStatus
+      );
+      params.set('modifiedBy', filterData.modifiedBy);
+      params.set('authoredBy', filterData.authoredBy);
+      params.set('lastModifiedOn', filterData.lastModifiedOn);
+      params.set('scheduleStartDate', filterData.scheduleStartDate ? filterData.scheduleStartDate : '');
+      params.set('scheduleEndDate', filterData.scheduleEndDate ?  filterData.scheduleEndDate: '');
+    }
+      return this.appService
+        ._getResp(
+          environment.operatorRoundsApiUrl,
+          'round-plans?' + params.toString()
+        )
+        .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
   getRoundsList$(queryParams: {
@@ -685,7 +697,7 @@ export class OperatorRoundsService {
     params.set('limit', "2000000");
     params.set('nextToken', "");
     params.set('fetchType', "");
-    params.set('formStatus', "");
+    params.set('formStatus', 'All');
     params.set('isArchived', "false");
     return this.appService
       ._getResp(

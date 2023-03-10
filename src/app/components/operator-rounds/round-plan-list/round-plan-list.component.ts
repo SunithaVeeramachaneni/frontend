@@ -50,7 +50,9 @@ export class RoundPlanListComponent implements OnInit {
     status: '',
     modifiedBy: '',
     authoredBy: '',
-    lastModifiedOn: ''
+    lastModifiedOn: '',
+    scheduleStartDate: '',
+    scheduleEndDate: ''
   };
   columns: Column[] = [
     {
@@ -256,6 +258,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
     this.getAllOperatorRounds();
@@ -387,7 +390,9 @@ export class RoundPlanListComponent implements OnInit {
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
-        'All'
+        'All',
+        false,
+        this.filter
       )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
@@ -495,50 +500,85 @@ export class RoundPlanListComponent implements OnInit {
   lastPublishedOn = [];
   authoredBy = [];
   getAllOperatorRounds() {
-    this.formsList$ = this.operatorRoundsService.fetchAllOperatorRounds$();
-    this.formsList$
-      .pipe(
-        tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.items
-            .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueLastPublishedBy) {
-            if (item) {
-              this.lastPublishedBy.push(item);
-            }
+    this.operatorRoundsService
+      .fetchAllOperatorRounds$()
+      .subscribe((formsList) => {
+        const uniqueLastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueLastPublishedBy) {
+          if (item) {
+            this.lastPublishedBy.push(item);
           }
-          const uniqueAuthoredBy = formsList.items
-            .map((item) => item.author)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueAuthoredBy) {
-            if (item) {
-              this.authoredBy.push(item);
-            }
+        }
+        const uniqueAuthoredBy = formsList.rows
+          .map((item) => item.author)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueAuthoredBy) {
+          if (item) {
+            this.authoredBy.push(item);
           }
-          for (const item of this.filterJson) {
-            if (item['column'] == 'status') {
-              item.items = this.status;
-            } else if (item['column'] == 'modifiedBy') {
-              item.items = this.lastPublishedBy;
-            } else if (item['column'] == 'authoredBy') {
-              item.items = this.authoredBy;
-            }
+        }
+        for (const item of this.filterJson) {
+          if (item['column'] == 'status') {
+            item.items = this.status;
+          } else if (item['column'] == 'modifiedBy') {
+            item.items = this.lastPublishedBy;
+          } else if (item['column'] == 'authoredBy') {
+            item.items = this.authoredBy;
           }
-        })
-      )
-      .subscribe();
+        }
+      });
+    // this.formsList$
+    //   .pipe(
+    //     tap((formsList) => {
+    //       const uniqueLastPublishedBy = formsList.items
+    //         .map((item) => item.lastPublishedBy)
+    //         .filter((value, index, self) => self.indexOf(value) === index);
+    //       for (const item of uniqueLastPublishedBy) {
+    //         if (item) {
+    //           this.lastPublishedBy.push(item);
+    //         }
+    //       }
+    //       const uniqueAuthoredBy = formsList.items
+    //         .map((item) => item.author)
+    //         .filter((value, index, self) => self.indexOf(value) === index);
+    //       for (const item of uniqueAuthoredBy) {
+    //         if (item) {
+    //           this.authoredBy.push(item);
+    //         }
+    //       }
+    //       for (const item of this.filterJson) {
+    //         if (item['column'] == 'status') {
+    //           item.items = this.status;
+    //         } else if (item['column'] == 'modifiedBy') {
+    //           item.items = this.lastPublishedBy;
+    //         } else if (item['column'] == 'authoredBy') {
+    //           item.items = this.authoredBy;
+    //         }
+    //       }
+    //     })
+    //   )
+    //   .subscribe();
   }
 
   getFilter() {
     this.operatorRoundsService.getFilter().subscribe((res) => {
       this.filterJson = res;
+      console.log(this.filterJson);
     });
   }
 
   applyFilter(data: any) {
     for (const item of data) {
-      this.filter[item.column] = item.value;
+      if (item.type == 'daterange') {
+        this.filter.scheduleStartDate = item.value[0];
+        this.filter.scheduleEndDate = item.value[1];
+      } else {
+        this.filter[item.column] = item.value;
+      }
     }
+    console.log(this.filter);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -547,7 +587,9 @@ export class RoundPlanListComponent implements OnInit {
       status: '',
       modifiedBy: '',
       authoredBy: '',
-      lastModifiedOn: ''
+      lastModifiedOn: '',
+      scheduleStartDate: '',
+      scheduleEndDate: ''
     };
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }

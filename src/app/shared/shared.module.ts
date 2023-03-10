@@ -50,6 +50,9 @@ import { VideoCallDialogComponent } from './components/collaboration/calls/video
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FilterComponent } from './components/filter/filter.component';
+import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
+import { MatCardModule } from '@angular/material/card';
+import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +78,9 @@ import { FilterComponent } from './components/filter/filter.component';
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent,
-    FilterComponent
+    FilterComponent,
+    CustomRangePanelComponent,
+    FilterSidePanelComponent
   ],
   imports: [
     FormsModule,
@@ -92,6 +97,7 @@ import { FilterComponent } from './components/filter/filter.component';
     MatInputModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatCardModule,
     MatMenuModule,
     MatSidenavModule,
     MatListModule,
@@ -112,6 +118,7 @@ import { FilterComponent } from './components/filter/filter.component';
     TimeAgoPipe,
     DropDownFilterPipe,
     DateTimePipe,
+    FilterSidePanelComponent,
     DateSegmentComponent,
     FilterComponent,
     CommonFilterComponent,
