@@ -47,18 +47,25 @@ import { RoundPlanConfigurationModalComponent } from './round-plan-configuration
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
-import { SubmissionComponent } from './submission/submission.component';
+import { SchedulerComponent } from './scheduler/scheduler.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { PlansComponent } from './plans/plans.component';
+import { RoundsComponent } from './rounds/rounds.component';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
 import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-
+import { SubmissionComponent } from './submission/submission.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -69,11 +76,15 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanConfigurationComponent,
     RoundPlanConfigurationModalComponent,
     ImportTaskModalComponent,
+    SchedulerComponent,
+    PlansComponent,
+    RoundsComponent,
     SubmissionComponent,
     SubmissionSliderComponent,
     SubmissionViewComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
+    RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
     HierarchyLocationsListComponent,
     HierarchyModalComponent,
@@ -103,6 +114,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatTabsModule,
+    MatRadioModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

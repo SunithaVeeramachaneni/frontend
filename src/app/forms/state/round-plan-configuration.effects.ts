@@ -13,7 +13,6 @@ import {
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
-import { CreateRoundPlanDetailMutation } from 'src/app/API.service';
 
 @Injectable()
 export class RoundPlanConfigurationEffects {
@@ -68,100 +67,41 @@ export class RoundPlanConfigurationEffects {
     )
   );
 
-  createRoundPlanDetail$ = createEffect(() =>
+  publishRoundPlan$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(RoundPlanConfigurationActions.createRoundPlanDetail),
+      ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        return this.operatorRoundsService.createFormDetail$(formDetail).pipe(
-          mergeMap((response: CreateRoundPlanDetailMutation) =>
-            forkJoin([
-              this.operatorRoundsService.updateForm$({
-                formMetadata: {
+        return of(true).pipe(
+          mergeMap(() =>
+            this.operatorRoundsService
+              .publishRoundPlan$({
+                form: {
                   ...formDetail.formMetadata,
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
                   publishedDate: new Date().toISOString(),
-                  formStatus: formConfigurationStatus.published
-                },
-                formListDynamoDBVersion: action.formListDynamoDBVersion
-              }),
-              this.operatorRoundsService.updateAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formStatus: formConfigurationStatus.published,
-                formDetailPublishStatus: formConfigurationStatus.published
-              }),
-              this.operatorRoundsService.createAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formDetailPublishStatus: formConfigurationStatus.published,
-                authoredFormDetailVersion:
-                  authoredFormDetail.authoredFormDetailVersion + 1
-              })
-            ]).pipe(
-              map(([, , createAuthoredFormDetail]) =>
-                RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess({
-                  formDetail: response,
-                  authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
-                  formDetailPublishStatus: formConfigurationStatus.published
-                })
+                  _version: action.formListDynamoDBVersion
+                },
+                authoredFormDetail: {
+                  ...authoredFormDetail,
+                  pages: JSON.stringify(authoredFormDetail.pages)
+                }
+              })
+              .pipe(
+                map((createAuthoredFormDetail) =>
+                  RoundPlanConfigurationApiActions.publishRoundPlanSuccess({
+                    authoredFormDetail: createAuthoredFormDetail,
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published
+                  })
+                )
               )
-            )
           ),
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
-              RoundPlanConfigurationApiActions.createRoundPlanDetailFailure({
-                error
-              })
-            );
-          })
-        );
-      })
-    )
-  );
-
-  updateRoundPlanDetail$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(RoundPlanConfigurationActions.updateRoundPlanDetail),
-      concatMap((action) => {
-        const { authoredFormDetail, ...formDetail } = action;
-        return this.operatorRoundsService.updateFormDetail$(formDetail).pipe(
-          mergeMap((response) =>
-            forkJoin([
-              this.operatorRoundsService.updateForm$({
-                formMetadata: {
-                  ...formDetail.formMetadata,
-                  lastPublishedBy: this.loginService.getLoggedInUserName(),
-                  publishedDate: new Date().toISOString()
-                },
-                formListDynamoDBVersion: action.formListDynamoDBVersion
-              }),
-              this.operatorRoundsService.updateAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formStatus: formConfigurationStatus.published,
-                formDetailPublishStatus: formConfigurationStatus.published
-              }),
-              this.operatorRoundsService.createAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formDetailPublishStatus: formConfigurationStatus.published,
-                authoredRoundPlanDetailVersion:
-                  authoredFormDetail.authoredFormDetailVersion + 1
-              })
-            ]).pipe(
-              map(([, , createAuthoredFormDetail]) =>
-                RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess({
-                  formDetail: response,
-                  authoredFormDetail: createAuthoredFormDetail,
-                  formStatus: formConfigurationStatus.published,
-                  formDetailPublishStatus: formConfigurationStatus.published
-                })
-              )
-            )
-          ),
-          catchError((error) => {
-            this.operatorRoundsService.handleError(error);
-            return of(
-              RoundPlanConfigurationApiActions.updateRoundPlanDetailFailure({
+              RoundPlanConfigurationApiActions.publishRoundPlanFailure({
                 error
               })
             );

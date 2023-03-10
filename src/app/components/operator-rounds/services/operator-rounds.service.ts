@@ -2,25 +2,16 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  APIService,
-  DeleteRoundPlanListInput,
-  GetRoundPlanListQuery,
-  ListRoundPlanListsQuery,
-  UpdateAuthoredRoundPlanDetailInput,
-  UpdateFormDetailInput,
-  ListRoundPlanSubmissionListsQuery,
-  ModelRoundPlanSubmissionListFilterInput
-} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
   LoadEvent,
+  RoundPlanList,
+  RoundPlanSubmissionList,
   SearchEvent,
   TableEvent
 } from '../../../interfaces';
@@ -37,14 +28,12 @@ const limit = 10000;
 })
 export class OperatorRoundsService {
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
-    private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService,
     private store: Store
@@ -87,6 +76,7 @@ export class OperatorRoundsService {
       `datasets/${datasetType}`,
       info
     );
+
   getDataSetsByFormId$ = (
     datasetType: string,
     formId: string,
@@ -101,148 +91,94 @@ export class OperatorRoundsService {
   getFormsList$(
     queryParams: {
       nextToken?: string;
-      limit: number;
+      limit: any;
       searchKey: string;
       fetchType: string;
     },
+    formStatus: 'Published' | 'Draft' | 'All',
     isArchived: boolean = false,
-    filterParam: any = null
   ) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      let filter = {
-        ...(queryParams.searchKey && {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        }),
-        isArchived: {
-          eq: isArchived
-        },
-        isDeleted: {
-          eq: false
-        }
-      };
-      if (filterParam && filterParam.status) {
-        filter['formStatus'] = {
-          eq: filterParam.status
-        };
-      }
-      if (filterParam && filterParam.modifiedBy) {
-        filter['lastPublishedBy'] = {
-          eq: filterParam.modifiedBy
-        };
-      }
-      if (filterParam && filterParam.authoredBy) {
-        filter['author'] = {
-          eq: filterParam.authoredBy
-        };
-      }
-      if (filterParam && filterParam.lastModifiedOn) {
-        filter['updatedAt'] = {
-          eq: new Date(filterParam.lastModifiedOn).toISOString()
-        };
-      }
-      console.log(filter);
-      return from(
-        this.awsApiService.ListRoundPlanLists(
-          filter,
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
-    } else {
-      return of({
-        count: 0,
-        rows: [],
-        nextToken: null
-      });
-    }
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    params.set('formStatus', formStatus);
+    params.set('isArchived', String(isArchived));
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
-  getSubmissionFormsList$(queryParams: {
+  getRoundsList$(queryParams: {
     nextToken?: string;
     limit: number;
     searchKey: string;
     fetchType: string;
   }) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this._ListFormSubmissionLists(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatSubmittedListResponse(res)));
-    } else {
-      return of({
-        rows: [],
-        nextToken: null
-      });
-    }
+    return of({
+      count: 0,
+      rows: [],
+      nextToken: null
+    });
   }
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}, isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listRoundPlanLists } }: any) =>
-          listRoundPlanLists?.items?.length || 0
+  getSubmissionFormsList$(queryParams: {
+    nextToken?: string;
+    limit: any;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans/submissions?' + params.toString()
       )
-    );
+      .pipe(map((res) => this.formatSubmittedListResponse(res)));
+  }
+
+  getFormsListCount$(
+    formStatus: 'Published' | 'Draft' | 'All',
+    isArchived: boolean = false
+  ): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formStatus', formStatus);
+    params.set('limit', String(limit));
+    params.set('isArchived', String(isArchived));
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans/count?' + params.toString()
+      )
+      .pipe(map(({ count }) => count || 0));
+  }
+
+  getRoundsListCount$(): Observable<number> {
+    return of(0);
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listRoundPlanSubmissionLists(limit: ${limit}) { items { id } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listRoundPlanSubmissionLists } }: any) =>
-          listRoundPlanSubmissionLists?.items?.length || 0
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans/submissions/count'
       )
-    );
+      .pipe(map(({ count }) => count || 0));
   }
 
-  createForm$(
-    formListQuery: Pick<
-      GetRoundPlanListQuery,
-      | 'name'
-      | 'formLogo'
-      | 'description'
-      | 'author'
-      | 'tags'
-      | 'formType'
-      | 'formStatus'
-      | 'isPublic'
-    >
-  ) {
-    return from(
-      this.awsApiService.CreateRoundPlanList({
+  createForm$(formListQuery) {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'round-plans',
+      {
         name: formListQuery.name,
         formLogo: formListQuery.formLogo,
         description: formListQuery.description,
@@ -253,77 +189,64 @@ export class OperatorRoundsService {
         isPublic: formListQuery.isPublic,
         isArchived: false,
         isDeleted: false
-      })
+      }
     );
   }
 
   updateForm$(formMetaDataDetails) {
-    return from(
-      this.awsApiService.UpdateRoundPlanList({
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
+      {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
-      })
+      }
     );
   }
 
-  deleteForm$(values: DeleteRoundPlanListInput) {
-    return from(this.awsApiService.DeleteRoundPlanList({ ...values }));
-  }
-
-  getFormById$(id: string) {
-    return from(this.awsApiService.GetRoundPlanList(id));
-  }
-
-  createFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.CreateRoundPlanDetail({
-        formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        )
-      })
-    );
-  }
-
-  updateFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.UpdateRoundPlanDetail({
-        id: formDetails.formDetailId,
-        formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
-        _version: formDetails.formDetailDynamoDBVersion
-      } as UpdateFormDetailInput)
+  getFormDetailsById$(id: string) {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `round-plans/${id}`
     );
   }
 
   createAuthoredFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.CreateAuthoredRoundPlanDetail({
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'round-plans/authored',
+      {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         version: formDetails.authoredFormDetailVersion.toString()
-      })
+      }
+    );
+  }
+
+  publishRoundPlan$(values) {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/publish/${values.form.id}`,
+      { ...values }
     );
   }
 
   updateAuthoredFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.UpdateAuthoredRoundPlanDetail({
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/authored/${formDetails.authoredFormDetailId}`,
+      {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredRoundPlanDetailInput)
+        _version: formDetails.authoredFormDetailDynamoDBVersion,
+        version: formDetails.authoredFormDetailVersion.toString()
+      }
     );
   }
 
@@ -332,88 +255,71 @@ export class OperatorRoundsService {
     limit?: number;
     responseType: string;
   }) {
-    if (queryParams.nextToken !== null) {
-      return from(
-        this.awsApiService.ListResponseSets(
-          {
-            type: { eq: queryParams.responseType }
-          },
-          queryParams.limit,
-          queryParams.nextToken
-        )
-      );
-    }
+    const params: URLSearchParams = new URLSearchParams();
+    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
+    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
+    params.set('type', queryParams?.responseType);
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      'round-plans/response-sets?' + params.toString()
+    );
   }
 
   createResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.CreateResponseSet({
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'round-plans/response-sets',
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet?.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values
-      })
+      }
     );
   }
 
   updateResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.UpdateResponseSet({
-        id: responseSet.id,
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/response-sets/${responseSet.id}`,
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values,
         _version: responseSet.version
-      })
+      }
+    );
+  }
+
+  copyRoundPlan$(formId: string) {
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/copy`,
+      {
+        formId
+      }
     );
   }
 
   deleteResponseSet$(responseSetId: string) {
-    return from(
-      this.awsApiService.DeleteResponseSet({
-        id: responseSetId
-      })
+    return this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/response-sets/${responseSetId}`
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
-    return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
-      })
-    ).pipe(
-      map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
-      })
-    );
-  }
-
-  getAuthoredFormDetailsByFormId$(formId: string) {
-    return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId)
-    ).pipe(map(({ items }) => items));
-  }
-
-  getFormDetailByFormId$(formId: string) {
-    return from(this.awsApiService.RoundPlanDetailsByFormlistID(formId)).pipe(
-      map(({ items }) => items)
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formStatus', formStatus);
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `round-plans/authored/${formId}?` + params.toString()
     );
   }
 
@@ -661,26 +567,7 @@ export class OperatorRoundsService {
     return expression;
   }
 
-  fetchAllFormListNames$() {
-    const statement = `query { listRoundPlanLists(limit: ${limit}) { items { name } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listRoundPlanLists } }: any) =>
-          listRoundPlanLists?.items as GetRoundPlanListQuery[]
-      )
-    );
-  }
-
-  getAuthoredFormDetail$(formlistID: string) {
-    return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formlistID)
-    ).pipe(map(({ items }) => items));
-  }
-
-  getInspectionDetailByInspectionId$ = (inspectionId: string) =>
-    from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
-
-  private formatGraphQLFormsResponse(resp: ListRoundPlanListsQuery) {
+  private formateGetRoundPlanResponse(resp: RoundPlanList) {
     const rows =
       resp.items
         .sort(
@@ -716,7 +603,7 @@ export class OperatorRoundsService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListRoundPlanSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: RoundPlanSubmissionList) {
     const rows =
       resp.items
         .sort(
@@ -765,70 +652,6 @@ export class OperatorRoundsService {
       description: item.title
     }));
 
-  private async _ListFormSubmissionLists(
-    filter?: ModelRoundPlanSubmissionListFilterInput,
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    limit?: number,
-    nextToken?: string
-  ): Promise<ListRoundPlanSubmissionListsQuery> {
-    const statement = `query ListRoundPlanSubmissionLists($filter: ModelRoundPlanSubmissionListFilterInput, $limit: Int, $nextToken: String) {
-      listRoundPlanSubmissionLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
-        __typename
-        items {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          location
-          roundType
-          status
-          assignee
-          dueDate
-          version
-          submittedBy
-          searchTerm
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-          RoundPlanSubmissionDetails {
-            items {
-              _version
-              createdAt
-              formData
-              formlistID
-              formsubmissionlistID
-              id
-              updatedAt
-              _lastChangedAt
-              _deleted
-            }
-          }
-        }
-        nextToken
-        startedAt
-      }
-    }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return response?.data
-      ?.listRoundPlanSubmissionLists as ListRoundPlanSubmissionListsQuery;
-  }
-
   private countFormSubmissionsResponses(rows = []): string {
     const updatedResponse = {
       total: 0,
@@ -860,6 +683,10 @@ export class OperatorRoundsService {
     from(this.awsApiService.ListRoundPlanLists({}, 20000000, ''));
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal('', 'assets/json/operator-rounds-filter.json', info);
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-filter.json',
+      info
+    );
   }
 }

@@ -10,7 +10,7 @@
   height: auto;
   box-shadow: none;
   overflow: hidden;
-  box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
+  box-shadow: 5px 0px 15px rgb(0 0 0 / 15%);
 }
 
 .main-app {
@@ -104,6 +104,7 @@ li.selected .sidebar-icons {
 }
 
 .menu-title {
+  white-space: nowrap;
   position: relative;
   left: 20px;
 }
@@ -163,7 +164,7 @@ mat-sidenav {
 }
 
 mat-sidenav {
-  width: 260px;
+  width: 280px;
   background-color: #ffffff;
   margin-top: 65px;
   -webkit-transform: translate3d(-100%, 0px, 0px);

@@ -61,7 +61,8 @@ const {
   locations,
   assets,
   unitOfMeasurement,
-  roundPlanArchivedForms
+  roundPlanArchivedForms,
+  roundPlanSubmissionForms
 } = routingUrls;
 
 @Component({
@@ -174,6 +175,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myRoundPlans.permission
         },
         {
+          title: roundPlanSubmissionForms.title,
+          url: roundPlanSubmissionForms.url,
+          permission: roundPlanSubmissionForms.permission
+        },
+        {
           title: roundPlanSubmissions.title,
           url: roundPlanSubmissions.url,
           permission: roundPlanSubmissions.permission
@@ -260,6 +266,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
@@ -607,5 +614,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
+  }
+
+  openMenuOnMouseEnter() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = true;
+    }, 250);
+  }
+
+  closeMenuOnMouseLeave() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = false;
+    }, 250);
   }
 }
