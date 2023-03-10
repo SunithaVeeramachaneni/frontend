@@ -60,7 +60,7 @@
         </div>
       </div>
     </ng-container>
-    <div>
+    <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
       <h4>{{ 'preview' | translate }}</h4>
       <div>
         <div class="name-heading">
@@ -81,34 +81,47 @@
         </div>
       </div>
     </div>
+    <div
+      (click)="onNavigateToDetailPage()"
+      *ngIf="moduleName === 'OPERATOR_ROUNDS'"
+    >
+      <button mat-raised-button class="w-full btn-push btn-primary-blue">
+        {{ 'editForm' | translate }}
+      </button>
+    </div>
   </mat-card>
 
-  <div
-    class="question-bg"
-    *ngIf="selectedFormDetail$ | async as selectedFormDetail"
-  >
-    <div>
-      <h3 class="question-heading headind-accordian pointer">
-        <ng-container>
-          {{ defaultFormName }}
-          <label [matMenuTriggerFor]="menu">
-            <img src="assets/rdf-forms-icons/arrow-down.svg" alt="arrow-down" />
-          </label>
-        </ng-container>
-      </h3>
-      <mat-menu #menu="matMenu">
-        <button
-          class="btn-range"
-          (click)="openMenu(page)"
-          mat-menu-item
-          *ngFor="let page of selectedFormDetail?.pages; let index = index"
-        >
-          {{ page?.name }} {{ page.position }}
-        </button>
-      </mat-menu>
-    </div>
-    <div>
-      <app-preview [subFormId]=""></app-preview>
+  <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
+    <div
+      class="question-bg"
+      *ngIf="selectedFormDetail$ | async as selectedFormDetail"
+    >
+      <div>
+        <h3 class="question-heading headind-accordian pointer">
+          <ng-container>
+            {{ defaultFormName }}
+            <label [matMenuTriggerFor]="menu">
+              <img
+                src="assets/rdf-forms-icons/arrow-down.svg"
+                alt="arrow-down"
+              />
+            </label>
+          </ng-container>
+        </h3>
+        <mat-menu #menu="matMenu">
+          <button
+            class="btn-range"
+            (click)="openMenu(page)"
+            mat-menu-item
+            *ngFor="let page of selectedFormDetail?.pages; let index = index"
+          >
+            {{ page?.name }} {{ page.position }}
+          </button>
+        </mat-menu>
+      </div>
+      <div>
+        <app-preview [subFormId]=""></app-preview>
+      </div>
     </div>
   </div>
 </div>
