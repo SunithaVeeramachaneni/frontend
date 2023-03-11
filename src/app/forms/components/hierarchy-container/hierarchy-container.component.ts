@@ -37,6 +37,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { HierarchyActions } from '../../state/actions';
+import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -251,9 +252,9 @@ export class HierarchyContainerComponent implements OnInit {
 
       this.store.dispatch(
         BuilderConfigurationActions.updateFormStatuses({
-          formStatus: 'Draft',
-          formDetailPublishStatus: 'Draft',
-          formSaveStatus: 'Saving'
+          formStatus: formConfigurationStatus.draft,
+          formDetailPublishStatus: formConfigurationStatus.draft,
+          formSaveStatus: formConfigurationStatus.saving
         })
       );
     });
@@ -331,9 +332,9 @@ export class HierarchyContainerComponent implements OnInit {
         );
         this.store.dispatch(
           BuilderConfigurationActions.updateFormStatuses({
-            formStatus: 'Draft',
-            formDetailPublishStatus: 'Draft',
-            formSaveStatus: 'Saving'
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
           })
         );
         this.formService.setSelectedHierarchyList(selectedHierarchyList);

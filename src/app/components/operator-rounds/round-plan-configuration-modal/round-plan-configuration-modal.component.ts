@@ -67,14 +67,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef
   ) {
-    // this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
-    //   if (tags && tags.length) {
-    //     this.allTags = tags[0].values;
-    //     this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
-    //     this.tagsCtrl.setValue('');
-    //     this.cdrf.detectChanges();
-    //   }
-    // });
+    this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
+      if (tags && tags.length) {
+        this.allTags = tags[0].values;
+        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.tagsCtrl.setValue('');
+        this.cdrf.detectChanges();
+      }
+    });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>

@@ -84,7 +84,6 @@
     height: 36px;
     border: 1px solid $blue-primary;
     color: $blue-primary;
-    // margin: 12px 0 0 12px;
     border-radius: 8px;
   }
 
@@ -214,7 +213,7 @@
   justify-content: space-between;
   .selectedNodeTitle {
     font-weight: 500;
-    font-size: 20px;
+    font-size: 125%;
     color: $text-color;
   }
 }

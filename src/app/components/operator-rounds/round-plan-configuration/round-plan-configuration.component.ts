@@ -161,7 +161,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
-          this.selectedNode = undefined;
+          this.selectedNode = null;
           this.selectedNodeInstances = [];
           this.cdrf.detectChanges();
         }
@@ -463,91 +463,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         }
       })
     );
-
-    // this.route.data.subscribe((data) => {
-    //   const { componentMode } = data;
-    //   const { formConfigurationState, hierarchyState } = data.form || {};
-    //   if (
-    //     formConfigurationState &&
-    //     Object.keys(formConfigurationState).length
-    //   ) {
-    //     this.formConf.counter.setValue(formConfigurationState.counter);
-    //     this.store.dispatch(
-    //       BuilderConfigurationActions.updateFormConfiguration({
-    //         formConfiguration: formConfigurationState
-    //       })
-    //     );
-
-    //     if (this.selectedNode && this.selectedNode.id) {
-    //       const subFormsObj = {};
-    //       let formKeys = Object.keys(formConfigurationState);
-    //       formKeys = formKeys.filter((k) => k.startsWith('pages_'));
-    //       formKeys.forEach((key) => {
-    //         subFormsObj[key] = formConfigurationState[key];
-    //       });
-
-    //       if (Object.keys(hierarchyState).length) {
-    //         const { selectedHierarchy } = hierarchyState;
-    //         this.store.dispatch(
-    //           HierarchyActions.updateSelectedHierarchyList({
-    //             selectedHierarchy
-    //           })
-    //         );
-    //       }
-
-    //       Object.keys(subFormsObj).forEach((subForm) => {
-    //         subFormsObj[subForm].forEach((page, index) => {
-    //           if (index === 0) {
-    //             this.store.dispatch(
-    //               BuilderConfigurationActions.updatePageState({
-    //                 pageIndex: index,
-    //                 isOpen: false,
-    //                 subFormId: this.selectedNode.id
-    //               })
-    //             );
-    //             this.store.dispatch(
-    //               BuilderConfigurationActions.updatePageState({
-    //                 pageIndex: index,
-    //                 isOpen: true,
-    //                 subFormId: this.selectedNode.id
-    //               })
-    //             );
-    //           } else {
-    //             this.store.dispatch(
-    //               BuilderConfigurationActions.updatePageState({
-    //                 pageIndex: index,
-    //                 isOpen: false,
-    //                 subFormId: this.selectedNode.id
-    //               })
-    //             );
-    //           }
-    //         });
-    //       });
-    //     }
-    //   }
-    // });
-
-    // this.route.params.subscribe((params) => {
-    //   if (!params.id) {
-    //     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-    //       tap((formMetadata) => {
-    //         if (Object.keys(formMetadata).length) {
-    //           const { hierarchy } = formMetadata;
-    //           this.selectedNode = hierarchy[0] || [];
-    //         }
-    //       })
-    //     );
-    //   } else {
-    //     // this.roundPlanConfigurationService.addPage(
-    //     //   0,
-    //     //   1,
-    //     //   1,
-    //     //   this.sectionIndexes,
-    //     //   this.formConf.counter.value,
-    //     //   this.selectedNode.id
-    //     // );
-    //   }
-    // });
   }
 
   getImage = (imageName: string, active: boolean) =>
@@ -770,22 +685,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getQuestionsOfSection(pageIndex, sectionIndex) {
-  //   let sectionQuestions;
-  //   this.store
-  //     .select(getSectionQuestions(pageIndex, sectionIndex))
-  //     .subscribe((v) => (sectionQuestions = v));
-  //   return sectionQuestions;
-  // }
-
-  // getSectionsOfPage(pageIndex) {
-  //   let pageSections;
-  //   this.store
-  //     .select(getPage(pageIndex))
-  //     .subscribe((v) => (pageSections = v?.sections));
-  //   return pageSections;
-  // }
-
   getFormConfigurationStatuses() {
     return {
       formStatus: formConfigurationStatus.draft,
@@ -858,36 +757,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     );
     this.store.dispatch(
       BuilderConfigurationActions.updateFormStatuses({
-        formStatus: 'Draft',
-        formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: formConfigurationStatus.draft,
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
       })
     );
     if (!hierarchy || !hierarchy.length) {
-      this.operatorRoundsService.setSelectedNode(undefined);
+      this.operatorRoundsService.setSelectedNode(null);
       this.formService.setSelectedHierarchyList([]);
     } else {
       this.operatorRoundsService.setSelectedNode(hierarchy[0]);
       this.formService.setSelectedHierarchyList(hierarchy);
     }
-  }
-
-  getPagesWithoutBlankQuestions(pages: Page[]) {
-    const pagesCopy = JSON.parse(JSON.stringify(pages));
-    return pagesCopy.map((page) => {
-      // if all questions of a page are blank, leave the first question behind. Otherwise filter as normal.
-      if (
-        page.questions.filter((question) => question.name.trim().length !== 0)
-          .length === 0
-      ) {
-        page.questions = page.questions.slice(0, 1);
-      } else {
-        page.questions = page.questions.filter(
-          (question) => question.name.trim().length !== 0
-        );
-      }
-      return page;
-    });
   }
 
   openHierarchyModal = () => {
