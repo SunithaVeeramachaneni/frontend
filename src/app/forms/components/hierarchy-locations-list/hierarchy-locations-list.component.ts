@@ -6,12 +6,12 @@ import {
   EventEmitter,
   ChangeDetectionStrategy
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { HierarchyEntity } from 'src/app/interfaces';
-import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-hierarchy-locations-list',

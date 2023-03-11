@@ -19,6 +19,16 @@
     }
   }
 
+  .search {
+    margin: 0 10px;
+    padding: 0 80px;
+
+    .icon {
+      position: relative;
+      top: 3px;
+    }
+  }
+
   .list-container {
     height: 375px;
     overflow-y: auto;

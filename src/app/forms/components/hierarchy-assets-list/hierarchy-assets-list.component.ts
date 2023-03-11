@@ -5,8 +5,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+
 import { HierarchyEntity } from 'src/app/interfaces';
 
 @Component({
@@ -25,6 +29,9 @@ export class HierarchyAssetsListComponent implements OnInit {
 
   public hierarchyList: HierarchyEntity[];
   public selectedHierarchyList: HierarchyEntity[];
+  public selectedHierarchyFlatList: HierarchyEntity[];
+  public searchedList: any = [];
+  public searchMasterData: FormControl;
   public locationsCount: number;
   public assetsCount: number;
 
@@ -37,6 +44,32 @@ export class HierarchyAssetsListComponent implements OnInit {
   ngOnInit(): void {
     this.locationsCount = this.hierarchyList.length;
     this.assetsCount = 0;
+    this.selectedHierarchyFlatList =
+      this.assetHierarchyUtil.convertHierarchyToFlatList(
+        this.selectedHierarchyList,
+        0
+      );
+
+    this.searchMasterData = new FormControl('');
+
+    this.searchMasterData.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        map((searchTerm: string) => {
+          const term = searchTerm.trim();
+          if (!term.length) this.searchedList = [];
+          else {
+            this.searchedList = this.selectedHierarchyFlatList.filter(
+              (item) =>
+                item.name.includes(term) || item.nodeDescription?.includes(term)
+            );
+          }
+
+          console.log(this.searchedList);
+        })
+      )
+      .subscribe();
   }
 
   handleHierarchyElementChange = (event) => {

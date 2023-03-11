@@ -44,38 +44,25 @@
         (change)="isAllSelectedToggled($event)"
         class="checkbox"
       ></mat-checkbox>
-      <a *ngIf="viewMode === false" class="count-assets">
+      <a *ngIf="viewMode === false && selectedCount === 0" class="count-assets">
         {{
-          'assetsCount'
+          'selectAllAssets'
             | translate
               : {
                   count: hierarchyCount()
                 }
         }}
       </a>
-      <!-- <div *ngIf="viewMode === false">
-        <a
-          *ngIf="!isParentCheckedData.checked; else multipleSelected"
-          class="count-assets"
-          >{{
-            'selectAllAssets'
-              | translate
-                : {
-                    count: hierarchyCount(masterData)
-                  }
-          }}</a
-        >
-        <ng-template #multipleSelected>
-          <a class="count-assets">{{
-            'selectedAssets'
-              | translate
-                : {
-                    selectedCount: hierarchyCount(masterData),
-                    count: hierarchyCount(masterData)
-                  }
-          }}</a>
-        </ng-template>
-      </div> -->
+      <a *ngIf="viewMode === false && selectedCount > 0" class="count-assets">
+        {{
+          'selectedAssets'
+            | translate
+              : {
+                  selectedCount: selectedCount,
+                  count: hierarchyCount()
+                }
+        }}
+      </a>
     </div>
     <div
       *ngFor="let data of masterData.children"

@@ -109,6 +109,9 @@ export class HierarchyNodeComponent implements OnInit {
       this.selectedCount++;
     } else this.selectedCount = this.selectedCount - 1;
 
+    console.log(this.selectedCount);
+    console.log('totalCount', this.hierarchyCount());
+
     if (this.selectedCount === this.hierarchyCount()) this.allSelected = true;
     else this.allSelected = false;
 
