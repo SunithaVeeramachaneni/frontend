@@ -13,6 +13,7 @@ import { tap } from 'rxjs/operators';
 
 interface ShowHierarchyPopupData {
   uid: string;
+  position: any;
 }
 
 @Component({
@@ -33,7 +34,10 @@ export class ShowHierarchyPopupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const { uid } = this.data;
+    const { uid, position } = this.data;
+
+    // this.dialogRef.updatePosition(position);
+
     this.hierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
       tap((masterHierarchyList) => {
         this.hierarchyList = masterHierarchyList;

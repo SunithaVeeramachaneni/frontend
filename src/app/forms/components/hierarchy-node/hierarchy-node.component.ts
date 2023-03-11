@@ -52,7 +52,7 @@ export class HierarchyNodeComponent implements OnInit {
   public isTreeViewToggled = false;
   public viewMode = false;
   public isAlreadySelected = false;
-  public selectedHierarchyList: HierarchyEntity[];
+  public selectedHierarchyList: HierarchyEntity[] = [];
   public allSelected = false;
   public selectedCount = 0;
   private nodeRefInSelectedHierarchy = {} as HierarchyEntity;

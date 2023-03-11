@@ -63,7 +63,7 @@
       <mat-menu #hierarchyMenu="matMenu" xPosition="before">
         <button mat-menu-item>
           <span
-            (click)="openShowHierarchyPopup()"
+            (click)="openShowHierarchyPopup($event.target)"
             translate="showHierarchy"
           ></span>
         </button>

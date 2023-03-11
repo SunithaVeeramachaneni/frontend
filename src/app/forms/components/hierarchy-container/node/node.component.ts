@@ -120,10 +120,17 @@ export class NodeComponent implements OnInit {
     this.nodeRemoved.emit(event);
   }
 
-  openShowHierarchyPopup = () => {
+  openShowHierarchyPopup = (element) => {
+    const coordinates = element.getBoundingClientRect();
     this.hierarchyMenuTrigger.closeMenu();
     const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
-      data: { uid: this.node.uid }
+      data: {
+        uid: this.node.uid,
+        position: {
+          top: coordinates.top,
+          left: coordinates.left
+        }
+      }
     });
   };
 }
