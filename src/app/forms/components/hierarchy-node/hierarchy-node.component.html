@@ -35,11 +35,21 @@
         </mat-icon>
       </a>
       <mat-checkbox
-        [(ngModel)]="isParentCheckedData.checked"
-        (change)="isParentToggled($event)"
+        [(ngModel)]="allSelected"
+        [indeterminate]="multipleSelected()"
+        (change)="isAllSelectedToggled($event)"
         class="checkbox"
       ></mat-checkbox>
-      <div *ngIf="viewMode === false">
+      <a *ngIf="viewMode === false" class="count-assets">
+        {{
+          'assetsCount'
+            | translate
+              : {
+                  count: hierarchyCount()
+                }
+        }}
+      </a>
+      <!-- <div *ngIf="viewMode === false">
         <a
           *ngIf="!isParentCheckedData.checked; else multipleSelected"
           class="count-assets"
@@ -61,7 +71,7 @@
                   }
           }}</a>
         </ng-template>
-      </div>
+      </div> -->
     </div>
     <div *ngFor="let data of masterData.children" class="child-node">
       <div *ngIf="masterData.isToggledView || viewMode === true">

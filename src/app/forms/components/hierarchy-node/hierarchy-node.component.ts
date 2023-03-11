@@ -27,6 +27,7 @@ export class HierarchyNodeComponent implements OnInit {
       this.masterData.isSelected = isMasterCheckedData.checked;
     }
     this.isParentCheckedData = isMasterCheckedData;
+    this.allSelected = isMasterCheckedData.checked;
   }
 
   @Input() set selectedList(data) {
@@ -52,6 +53,8 @@ export class HierarchyNodeComponent implements OnInit {
   public viewMode = false;
   public isAlreadySelected = false;
   public selectedHierarchyList: HierarchyEntity[];
+  public allSelected = false;
+  public selectedCount = 0;
   private nodeRefInSelectedHierarchy = {} as HierarchyEntity;
 
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
@@ -95,18 +98,36 @@ export class HierarchyNodeComponent implements OnInit {
     if (isSelected) {
       this.masterData.isSelected = isSelected;
       this.isParentCheckedData.masterToggle = false;
-    }
+      this.selectedCount++;
+    } else this.selectedCount = this.selectedCount - 1;
+
     this.checkboxToggleHandler.emit(this.masterData);
   };
 
-  hierarchyCount = (data) =>
-    this.assetHierarchyUtil.getHierarchyCount([data]) - 1;
+  hierarchyCount = () =>
+    this.assetHierarchyUtil.getHierarchyCount([this.masterData]) - 1;
 
-  isParentToggled = (event: MatCheckboxChange) => {
+  isAllSelectedToggled = (event: MatCheckboxChange) => {
     const { checked } = event;
+    this.allSelected = checked;
+    // this.masterData.children = this.assetHierarchyUtil.toggleAllSelection(
+    //   this.masterData.children,
+    //   checked
+    // );
+    if (checked) this.selectedCount = this.hierarchyCount();
+    else
+      this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
+        this.masterData.children
+      );
+
     this.isParentCheckedData = {
       checked,
       masterToggle: true
     };
+  };
+
+  multipleSelected = () => {
+    if (this.selectedCount > 0 && !this.allSelected) return true;
+    return false;
   };
 }
