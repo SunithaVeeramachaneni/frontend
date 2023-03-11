@@ -15,6 +15,13 @@ export const updateSelectedHierarchyList = createAction(
   }>()
 );
 
+export const copyNodeToRoutePlan = createAction(
+  '[Asset Hierarchy] copyNodeToRoutePlan',
+  props<{
+    node: HierarchyEntity;
+  }>()
+);
+
 export const deleteNodeFromSelectedHierarchy = createAction(
   '[Asset Hierarchy] deleteNodeFromSelectedHierarchy',
   props<{

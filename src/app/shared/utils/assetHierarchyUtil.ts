@@ -298,6 +298,30 @@ export class AssetHierarchyUtil {
 
 // Wrote the below function outside class as its used in hierarchy.reducer where dependency injection cannot be used.
 
+export const copyNodeToRoutePlan = (
+  nodeToBeCopied: HierarchyEntity,
+  hierarchyList: HierarchyEntity[]
+) => {
+  const nodes = [] as HierarchyEntity[];
+  for (const node of hierarchyList) {
+    if (nodeToBeCopied.id === node.id) {
+      nodes.push(node, {
+        ...nodeToBeCopied,
+        id: uuidv4(),
+        hasChildren: false,
+        children: [] as HierarchyEntity[]
+      });
+    } else
+      nodes.push({
+        ...node,
+        children: node.hasChildren
+          ? copyNodeToRoutePlan(nodeToBeCopied, node.children)
+          : []
+      });
+  }
+  return nodes;
+};
+
 export const deleteNodeFromHierarchy = (
   hierarchyList: HierarchyEntity[],
   instanceIds: string[],

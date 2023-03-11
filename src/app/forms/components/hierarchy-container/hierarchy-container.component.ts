@@ -203,6 +203,14 @@ export class HierarchyContainerComponent implements OnInit {
     return count;
   }
 
+  handleCopyNode = (event) => {
+    this.store.dispatch(
+      HierarchyActions.copyNodeToRoutePlan({
+        node: event
+      })
+    );
+  };
+
   removeNodeHandler(event) {
     const deleteConfirmationDialogRef = this.dialog.open(
       HierarchyDeleteConfirmationDialogComponent,
