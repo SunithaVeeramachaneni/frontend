@@ -101,6 +101,9 @@ export class HierarchyNodeComponent implements OnInit {
       this.selectedCount++;
     } else this.selectedCount = this.selectedCount - 1;
 
+    if (this.selectedCount === this.hierarchyCount()) this.allSelected = true;
+    else this.allSelected = false;
+
     this.checkboxToggleHandler.emit(this.masterData);
   };
 
@@ -110,15 +113,14 @@ export class HierarchyNodeComponent implements OnInit {
   isAllSelectedToggled = (event: MatCheckboxChange) => {
     const { checked } = event;
     this.allSelected = checked;
-    // this.masterData.children = this.assetHierarchyUtil.toggleAllSelection(
-    //   this.masterData.children,
-    //   checked
-    // );
+    this.masterData.isSelected = checked;
     if (checked) this.selectedCount = this.hierarchyCount();
     else
       this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
         this.masterData.children
       );
+
+    this.checkboxToggleHandler.emit(this.masterData);
 
     this.isParentCheckedData = {
       checked,

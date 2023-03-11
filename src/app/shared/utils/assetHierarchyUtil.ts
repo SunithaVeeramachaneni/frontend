@@ -263,23 +263,6 @@ export class AssetHierarchyUtil {
     return nodes;
   };
 
-  // toggleAllSelection = (
-  //   hierarchyList: HierarchyEntity[],
-  //   checked: boolean
-  // ): HierarchyEntity[] => {
-  //   hierarchyList.forEach((node) => {
-  //     node = {
-  //       ...node,
-  //       isSelected: checked,
-  //       children: node.hasChildren
-  //         ? this.toggleAllSelection(node.children, checked)
-  //         : ([] as HierarchyEntity[])
-  //     };
-  //   });
-
-  //   return hierarchyList;
-  // };
-
   getSelectedCount = (hierarchyList: HierarchyEntity[]): number => {
     let count = 0;
     hierarchyList.forEach((node) => {
