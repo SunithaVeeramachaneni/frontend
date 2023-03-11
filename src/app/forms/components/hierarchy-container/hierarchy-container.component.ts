@@ -169,6 +169,11 @@ export class HierarchyContainerComponent implements OnInit {
         option.name.toLowerCase().includes(filterValue) ||
         option.nodeDescription.toLowerCase().includes(filterValue)
     );
+    if (this.hierarchyMode !== 'asset_hierarchy') {
+      this.filteredList = this.filteredList.filter(
+        (option) => !option.isDeletedInRoutePlan
+      );
+    }
     return this.filteredList || [];
   }
   getSearchMatchesLabel() {
