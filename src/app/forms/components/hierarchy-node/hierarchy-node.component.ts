@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { HierarchyEntity } from 'src/app/interfaces';
 import {
@@ -9,7 +16,8 @@ import {
 @Component({
   selector: 'app-hierarchy-node',
   templateUrl: './hierarchy-node.component.html',
-  styleUrls: ['./hierarchy-node.component.scss']
+  styleUrls: ['./hierarchy-node.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyNodeComponent implements OnInit {
   @Output() checkboxToggleHandler: EventEmitter<any> = new EventEmitter<any>();

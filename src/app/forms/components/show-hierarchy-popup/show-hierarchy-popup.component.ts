@@ -1,4 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
@@ -19,7 +24,8 @@ interface ShowHierarchyPopupData {
 @Component({
   selector: 'app-show-hierarchy-popup',
   templateUrl: './show-hierarchy-popup.component.html',
-  styleUrls: ['./show-hierarchy-popup.component.scss']
+  styleUrls: ['./show-hierarchy-popup.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShowHierarchyPopupComponent implements OnInit {
   public hierarchyList$: Observable<HierarchyEntity[]>;

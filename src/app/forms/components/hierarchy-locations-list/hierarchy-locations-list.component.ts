@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
@@ -9,7 +16,8 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 @Component({
   selector: 'app-hierarchy-locations-list',
   templateUrl: './hierarchy-locations-list.component.html',
-  styleUrls: ['./hierarchy-locations-list.component.scss']
+  styleUrls: ['./hierarchy-locations-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyLocationsListComponent implements OnInit {
   @Output() handleLocationHierarchy: EventEmitter<any> =

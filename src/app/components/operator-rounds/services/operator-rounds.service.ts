@@ -220,9 +220,10 @@ export class OperatorRoundsService {
   }
 
   getFormDetailsById$(id: string) {
-    return this.appService._getResp(
+    return this.appService._getRespById(
       environment.operatorRoundsApiUrl,
-      `round-plans/${id}`
+      `round-plans/`,
+      id
     );
   }
 

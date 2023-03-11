@@ -30,7 +30,14 @@ export class RoundPlanResolverService
   }> {
     const id = route.params.id;
     return this.operatorRoundsService.getFormDetailsById$(id).pipe(
-      map(({ form, authoredFormDetail, formDetail }) => {
+      map((response) => {
+        if (!Object.keys(response).length) {
+          return {
+            formConfigurationState: {} as FormConfigurationState,
+            hierarchyState: {} as HierarchyState
+          };
+        }
+        const { form, authoredFormDetail, formDetail } = response;
         this.store.dispatch(
           BuilderConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
@@ -94,14 +101,14 @@ export class RoundPlanResolverService
             selectedHierarchy: hierarchy ? JSON.parse(hierarchy) : []
           } as HierarchyState
         };
-      }),
-      catchError((error) => {
-        this.operatorRoundsService.handleError(error);
-        return of({
-          formConfigurationState: {} as FormConfigurationState,
-          hierarchyState: {} as HierarchyState
-        });
       })
+      // catchError((error) => {
+      //   this.operatorRoundsService.handleError(error);
+      //   return of({
+      //     formConfigurationState: {} as FormConfigurationState,
+      //     hierarchyState: {} as HierarchyState
+      //   });
+      // })
     );
   }
 }

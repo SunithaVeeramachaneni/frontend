@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -16,7 +16,8 @@ import { HierarchyEntity } from 'src/app/interfaces';
 @Component({
   selector: 'app-hierarchy-modal',
   templateUrl: './hierarchy-modal.component.html',
-  styleUrls: ['./hierarchy-modal.component.scss']
+  styleUrls: ['./hierarchy-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyModalComponent implements OnInit {
   allLocations$: Observable<any>;
