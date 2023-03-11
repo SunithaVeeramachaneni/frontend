@@ -1,0 +1,9 @@
+.modal-container {
+  height: 500px;
+  width: 700px;
+  overflow: hidden;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+}

@@ -28,39 +28,16 @@ import {
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { LocationService } from '../services/location.service';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-locations-list',
   templateUrl: './locations-list.component.html',
   styleUrls: ['./locations-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class LocationsListComponent implements OnInit {
   readonly perms = perms;
@@ -299,7 +276,9 @@ export class LocationsListComponent implements OnInit {
     ]).pipe(
       map(([rows, form, scrollData, allLocations]) => {
         const { items: unfilteredParentLocations } = allLocations;
-        this.allParentsLocations = unfilteredParentLocations.filter((location) => location._deleted !== true);
+        this.allParentsLocations = unfilteredParentLocations.filter(
+          (location) => location._deleted !== true
+        );
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,

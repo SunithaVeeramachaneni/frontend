@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
@@ -6,7 +7,7 @@ import {
   DeleteLocationInput,
   ListLocationsQuery
 } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -38,7 +39,7 @@ export class LocationService {
   }
 
   fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 2000000, ''));
+    from(this.awsApiService.ListLocations({}, 20000, '')).pipe(shareReplay(1));
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -154,6 +155,7 @@ export class LocationService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   uploadExcel(
     form: FormData,
     info: ErrorInfo = {} as ErrorInfo

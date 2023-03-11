@@ -1,16 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
-  forkJoin,
   Observable,
   of,
   ReplaySubject
@@ -38,27 +30,22 @@ import {
   Count,
   Permission,
   TableEvent,
-  UserInfo
+  UserInfo,
+  UnitOfMeasurement
 } from 'src/app/interfaces';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import {
-  CreateUnitListMutation,
-  GetUnitMeasumentQuery,
-  UpdateUnitListMutation,
-  UpdateUnitMeasumentMutation
-} from 'src/app/API.service';
 import { UnitMeasurementService } from '../services';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
 import { UnitOfMeasurementDeleteModalComponent } from '../uom-delete-modal/uom-delete-modal.component';
 import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
-import { groupBy } from 'lodash-es';
 import { LoginService } from './../../../login/services/login.service';
+import { slideInOut } from 'src/app/animations';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
-  form: GetUnitMeasumentQuery;
+  form: UnitOfMeasurement;
 }
 
 @Component({
@@ -66,24 +53,7 @@ export interface FormTableUpdate {
   templateUrl: './unit-measurement-list.component.html',
   styleUrls: ['./unit-measurement-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class UnitMeasurementListComponent implements OnInit {
   readonly perms = perms;
@@ -256,14 +226,14 @@ export class UnitMeasurementListComponent implements OnInit {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   unitOfMeasurements$: Observable<{
     columns: Column[];
-    data: GetUnitMeasumentQuery[];
+    data: UnitOfMeasurement[];
   }>;
   fetchUOM$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   unitAddOrEditOpenState = 'out';
   unitEditData: any = null;
   userInfo$: Observable<UserInfo>;
-  private allUnitData: GetUnitMeasumentQuery[] = [];
+  private allUnitData: UnitOfMeasurement[] = [];
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
@@ -321,7 +291,7 @@ export class UnitMeasurementListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getUnitOfMeasurementList();
         } else {
-          return of([] as GetUnitMeasumentQuery[]);
+          return of([] as UnitOfMeasurement[]);
         }
       })
     );
@@ -420,8 +390,8 @@ export class UnitMeasurementListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-        this.skip = initial.data.length;
-        this.allUnitData = initial.data;
+        this.skip = initial?.data?.length;
+        this.allUnitData = initial?.data;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -471,30 +441,21 @@ export class UnitMeasurementListComponent implements OnInit {
   };
 
   prepareMenuActions(permissions: Permission[]) {
-    const menuActions = [];
-    if (
-      this.loginService.checkUserHasPermission(
+    const menuActions = [
+      ...(this.loginService.checkUserHasPermission(
         permissions,
         'UPDATE_UNIT_OF_MEASUREMENT'
-      )
-    ) {
-      menuActions.push({
-        title: 'Set as Default',
-        action: 'setAsDefault'
-      });
-    }
-
-    if (
-      this.loginService.checkUserHasPermission(
-        permissions,
-        'UPDATE_UNIT_OF_MEASUREMENT'
-      )
-    ) {
-      menuActions.push({
-        title: 'Edit',
-        action: 'edit'
-      });
-    }
+      ) && [
+        {
+          title: 'Set as Default',
+          action: 'setAsDefault'
+        },
+        {
+          title: 'Edit',
+          action: 'edit'
+        }
+      ])
+    ];
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -506,8 +467,8 @@ export class UnitMeasurementListComponent implements OnInit {
     this.unitAddOrEditOpenState = 'in';
   }
 
-  showUnitDetail(row: GetUnitMeasumentQuery): void {
-    const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
+  showUnitDetail(row: UnitOfMeasurement): void {
+    const result: UnitOfMeasurement[] = this.allUnitData?.filter(
       (d) => d?.unitlistID === row?.unitlistID
     );
     this.unitEditData = {
@@ -555,39 +516,14 @@ export class UnitMeasurementListComponent implements OnInit {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    this.unitMeasurementService.uploadExcel(formData).subscribe(
-      (resp: any) => {
-        if (resp?.data) {
-          for (const [key, value] of Object.entries(
-            groupBy(resp?.data, 'name')
-          )) {
-            this.unitMeasurementService.getSingleUnitListByName$(key).subscribe(
-              ({ items }) => {
-                if (items?.length > 0) {
-                  this.createUpdateUnitListItems(items[0], value as any);
-                } else {
-                  this.unitMeasurementService
-                    .CreateUnitList$({
-                      name: key
-                    })
-                    .subscribe((response: CreateUnitListMutation) => {
-                      if (response) {
-                        this.createUpdateUnitListItems(response, value as any);
-                      }
-                    });
-                }
-              },
-              (err) => {
-                this.unitMeasurementService.handleError(err);
-              }
-            );
-          }
-        }
-      },
-      (err) => {
-        this.unitMeasurementService.handleError(err);
-      }
-    );
+    this.unitMeasurementService.uploadExcel(formData).subscribe(() => {
+      this.toast.show({
+        text: 'File uploaded successfully!',
+        type: 'success'
+      });
+      this.nextToken = '';
+      this.fetchUOM$.next({ data: 'load' });
+    });
   }
 
   resetFile(event: Event) {
@@ -595,44 +531,7 @@ export class UnitMeasurementListComponent implements OnInit {
     file.value = '';
   }
 
-  private createUpdateUnitListItems(
-    response: CreateUnitListMutation | UpdateUnitListMutation,
-    units: any[]
-  ) {
-    const unitObservables = [];
-    units?.forEach(
-      (element: {
-        id: string | number;
-        description: string;
-        symbol: string;
-        version?: number | null;
-      }) => {
-        if (response && element?.description && element?.symbol) {
-          unitObservables.push(
-            this.unitMeasurementService.createUnitOfMeasurement$({
-              unitlistID: response?.id,
-              description: element?.description || '',
-              searchTerm: `${element?.description?.toLowerCase() || ''} ${
-                response?.name?.toLowerCase() || ''
-              }`,
-              symbol: element?.symbol || ''
-            })
-          );
-        }
-      }
-    );
-    forkJoin(unitObservables).subscribe(
-      () => {
-        this.nextToken = '';
-        this.fetchUOM$.next({ data: 'load' });
-      },
-      (err) => {
-        this.unitMeasurementService.handleError(err);
-      }
-    );
-  }
-
-  private onDeleteUnit(data: GetUnitMeasumentQuery): void {
+  private onDeleteUnit(data: UnitOfMeasurement): void {
     const deleteReportRef = this.dialog.open(
       UnitOfMeasurementDeleteModalComponent,
       {
@@ -643,181 +542,86 @@ export class UnitMeasurementListComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.unitMeasurementService
-          .updateUnitMeasurement$({
-            id: data.id,
-            isDeleted: true,
-            _version: data._version
-          })
-          .subscribe(
-            (result: UpdateUnitMeasumentMutation) => {
-              if (result) {
-                this.addEditCopyForm$.next({
-                  action: 'delete',
-                  form: result
-                });
-              }
-            },
-            (err) => {
-              this.unitMeasurementService.handleError(err);
+          .deleteUnitOfMeasurement$(data?.id)
+          .subscribe((response) => {
+            if (Object.keys(response)?.length) {
+              this.nextToken = '';
+              this.fetchUOM$.next({ data: 'load' });
+              this.toast.show({
+                text: 'UOM deleted successfully!',
+                type: 'success'
+              });
             }
-          );
+          });
       }
     });
   }
 
-  private onSetIsDefault(unit: GetUnitMeasumentQuery): void {
+  private onSetIsDefault(unit: UnitOfMeasurement): void {
     if (this.allUnitData?.length === 0) {
       return;
     }
     this.unitMeasurementService
-      .updateUnitMeasurement$({
-        id: unit?.id,
-        isDefault: true,
-        _version: unit._version
+      .setAsDefault$(unit?.id, {
+        unitlistID: unit?.unitlistID
       })
-      .subscribe(
-        (res: GetUnitMeasumentQuery) => {
-          if (res) {
-            this.updateListAfterIsDefault(res, unit);
-          }
-        },
-        (err) => {
-          this.unitMeasurementService.handleError(err);
+      .subscribe((response) => {
+        if (Object.keys(response)?.length) {
+          this.nextToken = '';
+          this.fetchUOM$.next({ data: 'load' });
+          this.toast.show({
+            text: 'UOM set as default successfully!',
+            type: 'success'
+          });
         }
-      );
+      });
   }
 
-  private onEditUnit(data: GetUnitMeasumentQuery): void {
-    this.unitMeasurementService.getUnitLists().subscribe((units) => {
+  private onEditUnit(data: UnitOfMeasurement): void {
+    this.unitMeasurementService.getUnitTypes().subscribe((units) => {
       const deleteReportRef = this.dialog.open(EditUnitPopupComponent, {
-        data: {
-          ...data,
-          units
-        }
+        data: { ...data, units }
       });
 
       deleteReportRef.afterClosed().subscribe((res) => {
         if (res?.action === 'save') {
-          const unit: any = { ...data };
-          if (res?.unitType !== unit?.unitType) {
-            const changedUnitType = res?.units?.find(
-              (u) => u?.name === res?.unitType
-            );
-
-            this.unitMeasurementService
-              .updateUnitMeasurement$({
-                id: res?.id,
-                symbol: res?.symbol,
-                description: res?.description,
-                isActive: res?.isActive === null ? true : res?.isActive,
-                searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
-                _version: res?._version,
-                unitlistID: changedUnitType
-                  ? changedUnitType?.id
-                  : res.unitlistID
-              })
-              .subscribe(
-                (result: UpdateUnitMeasumentMutation) => {
-                  if (result) {
-                    this.nextToken = '';
-                    this.fetchUOM$.next({ data: 'load' });
-                  }
-                },
-                (err) => {
-                  this.unitMeasurementService.handleError(err);
-                }
-              );
-          } else {
-            this.unitMeasurementService
-              .updateUnitList$({
-                id: res?.unitList?.id,
-                name: res?.unitType || res?.unitList?.name,
-                _version: res?.unitList?._version
-              })
-              .subscribe(() => {
-                this.unitMeasurementService
-                  .updateUnitMeasurement$({
-                    id: res?.id,
-                    symbol: res?.symbol,
-                    description: res?.description,
-                    isActive: res?.isActive === null ? true : res?.isActive,
-                    searchTerm: `${res?.description?.toLowerCase()} ${res?.name?.toLowerCase()}`,
-                    _version: res?._version
-                  })
-                  .subscribe(
-                    (result: UpdateUnitMeasumentMutation) => {
-                      if (result) {
-                        this.addEditCopyForm$.next({
-                          action: 'edit',
-                          form: result
-                        });
-                      }
-                    },
-                    (err) => {
-                      this.unitMeasurementService.handleError(err);
-                    }
-                  );
-              });
-          }
+          this.unitMeasurementService
+            .editUnitOfMeasurement$(res?.id, {
+              symbol: res?.symbol,
+              description: res?.description,
+              unitType: res?.unitType,
+              isActive: res?.isActive
+            })
+            .subscribe((response) => {
+              if (Object.keys(response)?.length) {
+                this.nextToken = '';
+                this.fetchUOM$.next({ data: 'load' });
+                this.toast.show({
+                  text: 'UOM edited successfully!',
+                  type: 'success'
+                });
+              }
+            });
         }
       });
     });
   }
 
-  private updateListAfterIsDefault(
-    res: GetUnitMeasumentQuery,
-    unit: GetUnitMeasumentQuery
-  ): void {
-    const result: GetUnitMeasumentQuery[] = this.allUnitData?.filter(
-      (d) => d?.unitlistID === unit?.unitlistID && d?.id !== unit?.id
-    );
-    if (result && Object.keys(result)?.length > 0) {
-      const unitObservables = [];
-      result?.forEach((element: GetUnitMeasumentQuery) => {
-        unitObservables.push(
-          this.unitMeasurementService.updateUnitMeasurement$({
-            id: element?.id,
-            isDefault: false,
-            _version: element?._version
-          })
-        );
-      });
-      if (unitObservables?.length > 0) {
-        forkJoin(unitObservables).subscribe(
-          () => {
-            this.addEditCopyForm$.next({
-              action: 'setAsDefault',
-              form: res
-            });
-          },
-          (err) => {
-            this.unitMeasurementService.handleError(err);
-          }
-        );
-      }
-    }
-  }
-
-  private onChangeStatus(unit: GetUnitMeasumentQuery): void {
+  private onChangeStatus(unit: UnitOfMeasurement): void {
     this.unitMeasurementService
-      .updateUnitMeasurement$({
-        id: unit?.id,
+      .onChangeUomStatus$(unit?.id, {
         isActive: unit?.isActive ? false : true,
         _version: unit?._version
       })
-      .subscribe(
-        (result: UpdateUnitMeasumentMutation) => {
-          if (result) {
-            this.nextToken = '';
-            this.addEditCopyForm$.next({
-              action: 'status',
-              form: result
-            });
-          }
-        },
-        (err) => {
-          this.unitMeasurementService.handleError(err);
+      .subscribe((response) => {
+        if (Object.keys(response)?.length) {
+          this.nextToken = '';
+          this.fetchUOM$.next({ data: 'load' });
+          this.toast.show({
+            text: 'UOM status changed successfully!',
+            type: 'success'
+          });
         }
-      );
+      });
   }
 }

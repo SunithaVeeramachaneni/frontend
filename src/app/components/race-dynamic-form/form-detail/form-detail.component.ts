@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import {
   Component,
   EventEmitter,
-  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -17,7 +16,6 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { State } from 'src/app/forms/state';
-import { isJson } from '../utils/utils';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { GetFormListQuery } from 'src/app/API.service';
@@ -28,13 +26,9 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
   styleUrls: ['./form-detail.component.scss']
 })
 export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
-  @HostListener('click', ['$event.target'])
-  @Output()
-  slideInOut: EventEmitter<any> = new EventEmitter();
-
+  @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
-
-  @Input() selectedForm: GetFormListQuery = null;
+  @Input() selectedForm: any = null;
   @Input() moduleName = 'RDF';
 
   selectedFormDetail$: Observable<any> = null;

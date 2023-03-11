@@ -14,7 +14,10 @@ import {
 } from 'rxjs/operators';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { defaultLimit } from 'src/app/app.constants';
-import { getFormMetadata, State } from 'src/app/forms/state';
+import {
+  getFormMetadata,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { FormMetadata } from 'src/app/interfaces/form-configuration';
 
 @Component({
@@ -111,12 +114,15 @@ export class ImportTaskModalComponent implements OnInit {
 
   getForms() {
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchRoundPlan.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchRoundPlan.value,
+          fetchType: this.fetchType
+        },
+        'All'
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.nextToken = nextToken;

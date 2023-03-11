@@ -76,6 +76,7 @@ export const updateAuthoredFormDetail = createAction(
     pages: Page[];
     formListId: string;
     authoredFormDetailId: string;
+    authoredFormDetailVersion: number;
     authoredFormDetailDynamoDBVersion: number;
   }>()
 );

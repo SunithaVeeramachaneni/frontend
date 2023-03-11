@@ -11,7 +11,10 @@
     </p>
   </div>
   <div class="iphone-preview">
-    <app-preview [pageIndex]="currentPage"></app-preview>
+    <app-preview
+      [pageIndex]="currentPage"
+      [subFormId]="subFormId"
+    ></app-preview>
   </div>
   <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
     <span class="page-count">{{ currentPage }} / {{ pagesCount }}</span>

@@ -291,15 +291,21 @@ export class RaceDynamicFormService {
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredFormDetail({
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredFormDetailInput)
+      this.awsApiService.UpdateAuthoredFormDetail(
+        {
+          formStatus: formDetails.formStatus,
+          formDetailPublishStatus: formDetails.formDetailPublishStatus,
+          formlistID: formDetails.formListId,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          id: formDetails.authoredFormDetailId,
+          _version: formDetails.authoredFormDetailDynamoDBVersion
+        } as UpdateAuthoredFormDetailInput,
+        {
+          formlistID: { eq: formDetails.formListId },
+          version: { eq: formDetails.authoredFormDetailVersion.toString() }
+        }
+      )
     );
   }
 
@@ -308,75 +314,64 @@ export class RaceDynamicFormService {
     limit?: number;
     responseType: string;
   }) {
-    if (queryParams.nextToken !== null) {
-      return from(
-        this.awsApiService.ListResponseSets(
-          {
-            type: { eq: queryParams.responseType }
-          },
-          queryParams.limit,
-          queryParams.nextToken
-        )
-      );
-    }
+    const params: URLSearchParams = new URLSearchParams();
+    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
+    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
+    params.set('type', queryParams?.responseType);
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      'round-plans/response-sets?' + params.toString()
+    );
   }
 
   createResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.CreateResponseSet({
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      'round-plans/response-sets',
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet?.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values
-      })
+      }
     );
   }
 
   updateResponseSet$(responseSet) {
-    return from(
-      this.awsApiService.UpdateResponseSet({
-        id: responseSet.id,
+    return this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/response-sets/${responseSet.id}`,
+      {
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet.description,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values,
         _version: responseSet.version
-      })
+      }
     );
   }
 
   deleteResponseSet$(responseSetId: string) {
-    return from(
-      this.awsApiService.DeleteResponseSet({
-        id: responseSetId
-      })
+    return this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/response-sets/${responseSetId}`
     );
   }
 
-  getAuthoredFormDetailByFormId$(formId: string) {
+  getAuthoredFormDetailByFormId$(
+    formId: string,
+    formStatus: string = formConfigurationStatus.draft
+  ) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formStatus }
       })
     ).pipe(
       map(({ items }) => {
-        let version = 0;
-        items.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = items.find(
-          (item) => item._version === version
-        );
-        return latestFormVersionData;
+        items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
+        return items[0];
       })
     );
   }

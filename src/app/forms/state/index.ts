@@ -2,17 +2,19 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
 import { FormConfigurationState } from './form-configuration.reducer';
 import { ResponseSetState } from './multiple-choice-response.reducer';
+import { HierarchyState } from './hierarchy.reducer';
 
-export interface FromModuleState {
+export interface FormModuleState {
   formConfiguration: FormConfigurationState;
   responseSet: ResponseSetState;
+  hierarchy: HierarchyState;
 }
 
 export interface State extends AppState.State {
-  feature: FromModuleState;
+  feature: FormModuleState;
 }
 
-const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
+const selectFeatureState = createFeatureSelector<FormModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(
   selectFeatureState,
@@ -22,6 +24,11 @@ const selectFormConfigurationState = createSelector(
 const selectResponseSetState = createSelector(
   selectFeatureState,
   (state) => state.responseSet
+);
+
+const selectHierarchyState = createSelector(
+  selectFeatureState,
+  (state) => state.hierarchy
 );
 
 export const getFormMetadata = createSelector(
@@ -140,7 +147,7 @@ export const getQuestionLogics = (pageIndex: number, questionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .logics?.filter((logic) => logic.questionId === questionId)
+      ?.logics.filter((logic) => logic.questionId === questionId)
   );
 
 export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
@@ -230,4 +237,16 @@ export const getQuestionCounter = createSelector(
 export const getResponseSets = createSelector(
   selectResponseSetState,
   (state) => state.globalResponses
+);
+
+// Hierarchy related selectors
+
+export const getMasterHierarchyList = createSelector(
+  selectHierarchyState,
+  (state) => state.masterHierarchy
+);
+
+export const getSelectedHierarchyList = createSelector(
+  selectHierarchyState,
+  (state) => state.selectedHierarchy
 );

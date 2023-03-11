@@ -1,14 +1,14 @@
 <div class="list-view">
   <div class="main-container">
     <div class="forms-header">
-      <h2 class="heading" translate="myForms"></h2>
+      <h2 class="heading" translate="myPlans"></h2>
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
           <span class="forms-count">
             {{ totalCount }}
           </span>
           <span class="forms-text">{{
-            'forms'
+            'plans'
               | translate
                 : {
                     count: totalCount || 0

@@ -1,10 +1,3 @@
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate
-} from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
@@ -28,45 +21,24 @@ import {
   CellClickActionEvent,
   Count,
   TableEvent,
-  FormTableUpdate
+  FormTableUpdate,
+  RoundPlan
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
-import { omit } from 'lodash-es';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import {
-  generateCopyNumber,
-  generateCopyRegex
-} from '../../race-dynamic-form/utils/utils';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-round-plan-list',
   templateUrl: './round-plan-list.component.html',
   styleUrls: ['./round-plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  animations: [slideInOut]
 })
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
@@ -253,7 +225,7 @@ export class RoundPlanListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: RoundPlan = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -277,7 +249,7 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -312,61 +284,20 @@ export class RoundPlanListComponent implements OnInit {
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
+  onCopyFormMetaData(form: RoundPlan): void {
     if (!form.id) {
       return;
     }
-    combineLatest([
-      this.operatorRoundsService.fetchAllFormListNames$(),
-      this.operatorRoundsService.getAuthoredFormDetailByFormId$(form.id)
-    ])
-      .pipe(
-        map(([formNames, authoredFormDetail]) => ({
-          formNames,
-          authoredFormDetail
-        }))
-      )
-      .subscribe(({ formNames, authoredFormDetail }) => {
-        const createdForm = this.generateCopyFormName(form, formNames);
-        if (createdForm?.newName) {
-          this.operatorRoundsService
-            .createForm$({
-              ...omit(form, ['id', 'preTextImage']),
-              name: createdForm.newName,
-              formStatus: formConfigurationStatus.draft,
-              isPublic: false
-            })
-            .subscribe((newRecord) => {
-              if (!newRecord) {
-                return;
-              }
-              if (
-                authoredFormDetail &&
-                Object.keys(authoredFormDetail).length
-              ) {
-                this.operatorRoundsService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
-              }
-              this.addEditCopyForm$.next({
-                action: 'copy',
-                form: {
-                  ...newRecord,
-                  name: createdForm.newName,
-                  preTextImage: (form as any)?.preTextImage,
-                  oldId: form.id
-                } as any
-              });
-              this.formsListCount$ =
-                this.operatorRoundsService.getFormsListCount$();
-            });
-        }
+    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
+      this.toast.show({
+        text: 'Form copied successfully!',
+        type: 'success'
       });
+      this.nextToken = '';
+      this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+      this.formsListCount$ =
+        this.operatorRoundsService.getFormsListCount$('All');
+    });
   }
 
   getDisplayedForms(): void {
@@ -386,7 +317,7 @@ export class RoundPlanListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as RoundPlan[]);
         }
       })
     );
@@ -441,12 +372,15 @@ export class RoundPlanListComponent implements OnInit {
 
   getForms() {
     return this.operatorRoundsService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        'All'
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -475,12 +409,13 @@ export class RoundPlanListComponent implements OnInit {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm: any) => {
+      .subscribe(() => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form
         });
-        this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
+        this.formsListCount$ =
+          this.operatorRoundsService.getFormsListCount$('All');
       });
   }
 
@@ -541,26 +476,7 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(form: GetFormListQuery, rows: any[]) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
-  }
-
-  private showFormDetail(row: GetFormListQuery): void {
+  private showFormDetail(row: RoundPlan): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
