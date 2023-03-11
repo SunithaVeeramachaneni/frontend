@@ -1,5 +1,5 @@
 <div id="add-edit-slider">
-  <mat-card>
+  <mat-card [formGroup]="plantForm">
     <div>
       <img
         (click)="cancel()"
@@ -7,7 +7,7 @@
         alt="close"
         class="cancel"
       />
-      <h1 class="heading">Create Plant</h1>
+      <h1 class="heading">{{ plantTitle }}</h1>
     </div>
     <div>
       <p class="m-0" translate="image"></p>
@@ -16,6 +16,13 @@
           src="assets/master-configurations/image-placeholder.svg"
           alt="Image Placeholder"
           class="image"
+          *ngIf="plantImage === ''"
+        />
+        <img
+          [src]="plantImage"
+          alt="Image"
+          class="image-contain"
+          *ngIf="plantImage !== ''"
         />
       </p>
       <p class="m-0">
@@ -27,18 +34,18 @@
             formControlName="name"
           />
         </mat-form-field>
-        <!-- <mat-error
-        *ngIf="processValidationErrors('name')"
-        class="m-t-5 error-fields"
-      >
-        {{
-          errors.name.name
-            | translate
-              : {
-                  name: 'name' | translate
-                }
-        }}
-      </mat-error> -->
+        <mat-error
+          *ngIf="processValidationErrors('name')"
+          class="m-t-5 error-fields"
+        >
+          {{
+            errors.name.name
+              | translate
+                : {
+                    name: 'name' | translate
+                  }
+          }}
+        </mat-error>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
@@ -48,28 +55,36 @@
             [placeholder]="'plantId' | translate"
             formControlName="plantId"
           />
-          <!-- <mat-error
-            *ngIf="processValidationErrors('locationId')"
+          <mat-error
+            *ngIf="processValidationErrors('plantId')"
             class="m-t-5 error-fields"
           >
             {{
-              errors.locationId.name
+              errors.plantId.name
                 | translate
                   : {
-                      name: 'locationId' | translate
+                      name: 'plantId' | translate
                     }
             }}
-          </mat-error> -->
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
-          <mat-label translate="model"></mat-label>
-          <input
-            matInput
-            [placeholder]="'model' | translate"
-            formControlName="model"
-          />
+          <mat-label translate="country"></mat-label>
+          <input matInput [placeholder]="'country' | translate" />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="zipcode"></mat-label>
+          <input matInput [placeholder]="'zipcode' | translate" />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="state"></mat-label>
+          <input matInput [placeholder]="'state' | translate" />
         </mat-form-field>
       </p>
       <p class="m-0">
@@ -87,10 +102,10 @@
         mat-raised-button
         class="create-btn"
         type="submit"
+        [disabled]="plantForm.invalid"
         (click)="create()"
-        [disabled]="true"
       >
-        Create
+        {{ plantButton }}
       </button>
       <button
         mat-stroked-button

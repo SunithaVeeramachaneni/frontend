@@ -65,6 +65,7 @@ export class PlantListComponent implements OnInit {
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   userInfo$: Observable<UserInfo>;
 
+  openPlantDetailedView = 'out';
   plantAddOrEditOpenState = 'out';
   plantEditData;
 
@@ -100,8 +101,8 @@ export class PlantListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'description',
-      displayName: 'Description',
+      id: 'plantId',
+      displayName: 'Plant Id',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -224,7 +225,10 @@ export class PlantListComponent implements OnInit {
       action: null,
       form: {} as any
     });
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
+  selectedPlant;
   constructor(
     private loginService: LoginService,
     private readonly toast: ToastService,
@@ -279,7 +283,13 @@ export class PlantListComponent implements OnInit {
   onClosePlantAddOrEditOpenState(event) {
     this.plantAddOrEditOpenState = event;
   }
-
+  onClosePlantDetailedView(event) {
+    this.openPlantDetailedView = event.status;
+    if (event.data !== '') {
+      this.plantEditData = event.data;
+      this.plantAddOrEditOpenState = 'in';
+    }
+  }
   addOrUpdatePlant(plantData) {
     if (plantData?.status === 'add') {
       this.addEditCopyDeletePlants = true;

@@ -39,5 +39,8 @@
   "save": "Save",
   "unitTypeError": "Unit type is required",
   "plants": "Plants",
-  "plantId": "Plant Id"
+  "plantId": "Plant Id",
+  "country": "Country",
+  "zipcode": "Zip code",
+  "state": "State"
 }

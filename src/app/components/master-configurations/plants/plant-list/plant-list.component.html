@@ -87,6 +87,21 @@
           (createdPlantData)="addOrUpdatePlant($event)"
         ></app-add-edit-plant>
       </ng-container>
+      <ng-container *ngIf="openPlantDetailedView">
+        <app-plant-detail-view
+          [@slideInOut]="openPlantDetailedView"
+          (slideInOut)="onClosePlantDetailedView($event)"
+          [selectedPlant]="selectedPlant"
+        ></app-plant-detail-view>
+      </ng-container>
+      <div *ngIf="isLoading$ | async">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
+        </div>
+      </div>
     </div>
   </ng-container>
 </div>

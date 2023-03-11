@@ -1,1 +1,38 @@
-<p>plant-detail-view works!</p>
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div *ngIf="selectedPlant">
+      <p>
+        <img [src]="selectedPlant.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedPlant.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="id"></p>
+      <p class="m-0 sub-headings-value">{{ selectedPlant.plantId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="parent"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.parent ? selectedPlant.parent : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="description"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.description }}
+      </p>
+      <hr class="horizon-line" />
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>

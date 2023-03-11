@@ -20,38 +20,42 @@ import { PlantService } from '../services/plant.service';
 @Component({
   selector: 'app-add-edit-plant',
   templateUrl: './add-edit-plant.component.html',
-  styleUrls: ['./add-edit-plant.component.scss']
+  styleUrls: ['./add-edit-plant.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditPlantComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
+  allPlants$: Observable<ListLocationsQuery>;
   @Input() set plantEditData(data) {
     this.plantsEditData = data;
     if (this.plantsEditData === null) {
       this.plantStatus = 'add';
-      this.plantTitle = 'Create Location';
+      this.plantTitle = 'Create Plant';
       this.plantButton = 'Create';
     } else {
       this.plantStatus = 'edit';
-      this.plantTitle = 'Edit Location';
+      this.plantTitle = 'Edit Plant';
       this.plantButton = 'Update';
       this.plantImage = this.plantsEditData.image;
-      const locdata = {
+      const plantdata = {
         id: this.plantsEditData.id,
         image: this.plantsEditData.image,
         name: this.plantsEditData.name,
-        locationId: this.plantsEditData.locationId,
-        model: this.plantsEditData.model,
+        plantId: this.plantsEditData.plantId,
         description: this.plantsEditData.description,
-        parentId: this.plantsEditData.parentId
+        country: this.plantsEditData.country,
+        state: this.plantsEditData.state,
+        zipcode: this.plantsEditData.zipcode
       };
-      this.plantForm.patchValue(locdata);
+      this.plantForm.patchValue(plantdata);
       this.getAllPlants();
     }
   }
   get plantEditData() {
     return this.plantsEditData;
   }
+  errors: ValidationError = {};
   plantStatus;
   plantTitle;
   plantButton;
@@ -60,9 +64,20 @@ export class AddEditPlantComponent implements OnInit {
   parentInformation;
   allParentsData;
   private plantsEditData;
-  constructor(private plantService: PlantService) {}
+  constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.plantForm = this.fb.group({
+      id: '',
+      image: '',
+      name: new FormControl('', [Validators.required]),
+      plantId: new FormControl('', [Validators.required]),
+      country: '',
+      zipcode: '',
+      state: ''
+    });
+    this.getAllPlants();
+  }
   getAllPlants() {
     this.plantService.fetchAllPlants$().subscribe((allLocations) => {
       this.parentInformation = allLocations.items.filter(
@@ -84,23 +99,37 @@ export class AddEditPlantComponent implements OnInit {
         this.plantForm.reset();
         this.slideInOut.emit('out');
       });
+    } else if (this.plantStatus === 'edit') {
+      const updateData = {
+        data: this.plantForm.value,
+        version: this.plantsEditData._version
+      };
+      this.plantService.updatePlant$(updateData).subscribe((res) => {
+        this.createdPlantData.emit({
+          status: this.plantStatus,
+          data: res
+        });
+        this.plantForm.reset();
+        this.slideInOut.emit('out');
+      });
     }
-    // else if (this.plantStatus === 'edit') {
-    //   const updateData = {
-    //     data: this.plantForm.value,
-    //     version: this.plantsEditData._version
-    //   };
-    //   this.plantService.updateLocation$(updateData).subscribe((res) => {
-    //     this.createdPlantData.emit({
-    //       status: this.plantStatus,
-    //       data: res
-    //     });
-    //     this.plantForm.reset();
-    //     this.slideInOut.emit('out');
-    //   });
-    // }
   }
   cancel() {
     this.slideInOut.emit('out');
+    this.plantForm.reset();
+  }
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.plantForm.get(controlName).touched;
+    const errors = this.plantForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

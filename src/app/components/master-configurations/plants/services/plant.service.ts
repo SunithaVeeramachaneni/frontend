@@ -41,11 +41,11 @@ export class PlantService {
     );
   }
 
-  updatePlant$(locationDetails) {
+  updatePlant$(plantDetails) {
     return from(
       this.awsApiService.UpdateLocation({
-        ...locationDetails.data,
-        _version: locationDetails.version
+        ...plantDetails.data,
+        _version: plantDetails.version
       })
     );
   }
