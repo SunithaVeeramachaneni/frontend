@@ -301,7 +301,7 @@ export class AssetHierarchyUtil {
 export const copyNodeToRoutePlan = (
   nodeToBeCopied: HierarchyEntity,
   hierarchyList: HierarchyEntity[]
-) => {
+): HierarchyEntity[] => {
   const nodes = [] as HierarchyEntity[];
   for (const node of hierarchyList) {
     if (nodeToBeCopied.id === node.id) {
