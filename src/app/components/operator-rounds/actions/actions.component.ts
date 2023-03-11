@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,7 +23,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
+
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -45,7 +46,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 export class ActionsComponent implements OnInit {
   columns: Column[] = [
     {
-      id: 'name',
+      id: 'title',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
@@ -74,14 +75,11 @@ export class ActionsComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'location/asset',
+      id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -89,16 +87,24 @@ export class ActionsComponent implements OnInit {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
+      groupable: false,
+      titleStyle: {
+        'font-size': '100%'
+      },
+      hasSubtitle: true,
+      showMenuOptions: false,
+      subtitleColumn: 'locationAssetDescription',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'priority',
-      displayName: 'Priority',
-      type: 'number',
+      id: 'plant',
+      displayName: 'Plan',
+      type: 'string',
       controlType: 'string',
       order: 3,
       hasSubtitle: false,
@@ -114,13 +120,13 @@ export class ActionsComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: false,
+      hasPreTextImage: true,
       hasPostTextImage: false
     },
     {
-      id: 'status',
-      displayName: 'Status',
-      type: 'string',
+      id: 'priority',
+      displayName: 'Priority',
+      type: 'number',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -134,17 +140,68 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        height: '24px',
+        color: '#ff4033',
+        borderRadius: '12px'
+      },
+      subtitleStyle: {},
+      hasPreTextImage: true,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
+      id: 'status',
+      displayName: 'Status',
+      type: 'string',
+      controlType: 'string',
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        right: '15px',
+        height: '24px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
       id: 'dueDate',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -166,7 +223,7 @@ export class ActionsComponent implements OnInit {
       displayName: 'Assignee',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -184,11 +241,11 @@ export class ActionsComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'raisedBy',
+      id: 'createdBy',
       displayName: 'Raised By',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -222,13 +279,22 @@ export class ActionsComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+      High: {
+        color: '#ff4033'
       },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+      Medium: {
+        color: '#ffab46'
+      },
+      Low: {
+        color: '#98989a'
+      },
+      'To-do': {
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      'In Progress': {
+        'background-color': '#c0d7fd',
+        color: '#3865b6'
       }
     }
   };
@@ -250,7 +316,7 @@ export class ActionsComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  actionsDetail: GetFormListQuery = null;
+  actionsDetail = null;
   zIndexDelay = 0;
   readonly perms = perms;
 
@@ -273,8 +339,6 @@ export class ActionsComponent implements OnInit {
         })
       )
       .subscribe();
-    this.actionsCount$ =
-      this.operatorRoundsService.getFormsListCount$('Published');
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -300,7 +364,7 @@ export class ActionsComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getActionsList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([]);
         }
       })
     );
@@ -335,10 +399,10 @@ export class ActionsComponent implements OnInit {
       nextToken: this.nextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
-      fetchType: this.fetchType
+      type: 'action'
     };
 
-    return this.operatorRoundsService.getFormsList$(obj, 'Published').pipe(
+    return this.operatorRoundsService.getObservations$(obj).pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
@@ -358,8 +422,8 @@ export class ActionsComponent implements OnInit {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
-      default:
-      //this.openRoundPlanHandler(event.row);
+      case 'title':
+        this.openActionDetailPopup(row);
     }
   };
 
@@ -376,22 +440,19 @@ export class ActionsComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  // openRoundPlanHandler(row: GetFormListQuery): void {
-  //   this.closeScheduleConfigHandler('out');
-  //   this.store.dispatch(FormConfigurationActions.resetPages());
-  //   this.roundPlanDetail = row;
-  //   this.menuState = 'in';
-  //   this.zIndexDelay = 400;
-  // }
+  openActionDetailPopup(row): void {
+    this.actionsDetail = row;
+    this.menuState = 'in';
+    this.zIndexDelay = 400;
+  }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        //this.openRoundPlanHandler(data);
+        this.openActionDetailPopup(data);
         break;
       default:
-      // do nothing
     }
   };
 }

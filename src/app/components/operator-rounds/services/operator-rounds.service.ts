@@ -113,6 +113,32 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
+  getObservations$(queryParams: {
+    nextToken?: string;
+    limit: any;
+    searchKey: string;
+    type: string;
+  }) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('type', queryParams?.type);
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plan-observations?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetObservationResponse(res)));
+  }
+
+  getObservationChartCounts$(): any {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      'round-plan-observations/open-count'
+    );
+  }
+
   getRoundsList$(queryParams: {
     nextToken?: string;
     limit: number;
@@ -677,5 +703,48 @@ export class OperatorRoundsService {
       });
     });
     return `${updatedResponse.count}/${updatedResponse.total}`;
+  }
+
+  private formateGetObservationResponse(resp: any) {
+    const rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+        )
+        ?.map((item: any) => ({
+          ...item,
+          preTextImage: {
+            image: item?.Photo,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          },
+          title: item?.Title || '',
+          description: item?.Description || '',
+          locationAsset: item?.Location || item?.Asset || '',
+          locationAssetDescription: item?.Location
+            ? `Location ID: ${item?.taskId || ''}`
+            : item?.Asset
+            ? `Asset ID: ${item?.taskId || ''}`
+            : '',
+          priority: item?.Priority || '',
+          status: item?.Status || '',
+          dueDate: item['Due Date and Time']
+            ? format(new Date(item['Due Date and Time']), 'do MMM, yyyy')
+            : '',
+          assignee: item['Assign to'] || '',
+          createdBy: item?.createdBy || '',
+          notificationNumber: item?.notificationNumber || '',
+          plant: item?.Plant || ''
+        })) || [];
+    const nextToken = resp?.nextToken;
+    return {
+      rows,
+      nextToken
+    };
   }
 }

@@ -1,12 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { State, Store } from '@ngrx/store';
 import {
   BehaviorSubject,
   combineLatest,
@@ -24,7 +23,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
+
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -46,7 +45,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 export class IssuesComponent implements OnInit {
   columns: Column[] = [
     {
-      id: 'name',
+      id: 'title',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
@@ -75,14 +74,11 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'location/asset',
+      id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -90,16 +86,24 @@ export class IssuesComponent implements OnInit {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
+      groupable: false,
+      titleStyle: {
+        'font-size': '100%'
+      },
+      hasSubtitle: true,
+      showMenuOptions: false,
+      subtitleColumn: 'locationAssetDescription',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'priority',
-      displayName: 'Priority',
-      type: 'number',
+      id: 'plant',
+      displayName: 'Plan',
+      type: 'string',
       controlType: 'string',
       order: 3,
       hasSubtitle: false,
@@ -115,13 +119,13 @@ export class IssuesComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: false,
+      hasPreTextImage: true,
       hasPostTextImage: false
     },
     {
-      id: 'status',
-      displayName: 'Status',
-      type: 'string',
+      id: 'priority',
+      displayName: 'Priority',
+      type: 'number',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -135,14 +139,27 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        height: '24px',
+        color: '#ff4033',
+        borderRadius: '12px'
+      },
       subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPreTextImage: true,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
-      displayName: 'Due Date',
+      id: 'status',
+      displayName: 'Status',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -157,13 +174,51 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        right: '15px',
+        height: '24px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
+      },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
+      id: 'dueDate',
+      displayName: 'Due Date',
+      type: 'string',
+      controlType: 'string',
+      order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'notificationNo',
+      id: 'notificationNumber',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
@@ -223,13 +278,22 @@ export class IssuesComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+      High: {
+        color: '#ff4033'
       },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+      Medium: {
+        color: '#ffab46'
+      },
+      Low: {
+        color: '#98989a'
+      },
+      Open: {
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      'In Progress': {
+        'background-color': '#c0d7fd',
+        color: '#3865b6'
       }
     }
   };
@@ -251,10 +315,9 @@ export class IssuesComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  issuesDetail: GetFormListQuery = null;
+  issuesDetail = null;
   zIndexDelay = 0;
   readonly perms = perms;
-
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService
@@ -301,7 +364,7 @@ export class IssuesComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getIssuesList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([]);
         }
       })
     );
@@ -333,10 +396,10 @@ export class IssuesComponent implements OnInit {
       nextToken: this.nextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
-      fetchType: this.fetchType
+      type: 'issue'
     };
 
-    return this.operatorRoundsService.getFormsList$(obj, 'Published').pipe(
+    return this.operatorRoundsService.getObservations$(obj).pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
@@ -356,8 +419,8 @@ export class IssuesComponent implements OnInit {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
-      default:
-      //this.openRoundPlanHandler(event.row);
+      case 'title':
+        this.openIssueDetailPopup(row);
     }
   };
 
@@ -386,22 +449,19 @@ export class IssuesComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  // openRoundPlanHandler(row: GetFormListQuery): void {
-  //   this.closeScheduleConfigHandler('out');
-  //   this.store.dispatch(FormConfigurationActions.resetPages());
-  //   this.roundPlanDetail = row;
-  //   this.menuState = 'in';
-  //   this.zIndexDelay = 400;
-  // }
+  openIssueDetailPopup(row): void {
+    this.issuesDetail = row;
+    this.menuState = 'in';
+    this.zIndexDelay = 400;
+  }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        //this.openRoundPlanHandler(data);
+        this.openIssueDetailPopup(data);
         break;
       default:
-      // do nothing
     }
   };
 }
