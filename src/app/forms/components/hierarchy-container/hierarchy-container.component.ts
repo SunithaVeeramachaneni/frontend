@@ -8,7 +8,13 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  tap
+} from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -26,7 +32,7 @@ import {
   State
 } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
@@ -41,6 +47,9 @@ import { HierarchyActions } from '../../state/actions';
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
 
+  options: string[] = ['One', 'Two', 'Three'];
+  filteredOptions$: Observable<any[]>;
+
   searchHierarchyKey: FormControl;
   selectedHierarchy$: Observable<any>;
   allLocations$: Observable<any>;
@@ -48,7 +57,7 @@ export class HierarchyContainerComponent implements OnInit {
   allAssets$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
 
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  closeIcon = 'assets/rdf-forms-icons/close.svg';
 
   masterHierarchyList = [];
 
@@ -61,6 +70,8 @@ export class HierarchyContainerComponent implements OnInit {
 
   hierarchyMode = 'asset_hierarchy';
   flatHierarchyList = [];
+
+  filteredList = [];
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
@@ -133,24 +144,50 @@ export class HierarchyContainerComponent implements OnInit {
     this.masterHierarchyList$.subscribe();
 
     this.searchHierarchyKey = new FormControl('');
-    this.searchHierarchyKey.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap((searchKey) => {
-          if (searchKey.length > 3) {
-            this.filteredHierarchyList = this.flatHierarchyList.filter((node) =>
-              node.name.toLowerCase().includes(searchKey.toLowerCase())
-            );
-          } else if (searchKey.length < 3) {
-            this.filteredHierarchyList = JSON.parse(
-              JSON.stringify(this.flatHierarchyList)
-            );
-          }
-          this.cdrf.detectChanges();
-        })
-      )
-      .subscribe();
+
+    this.filteredOptions$ = this.searchHierarchyKey.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      startWith(''),
+      map((value) => this.filter(value.trim() || ''))
+    );
+  }
+
+  filter(value: string): string[] {
+    value = value.trim();
+    if (!value.length) {
+      return [];
+    }
+    const filterValue = value.toLowerCase();
+    const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      hierarchyClone,
+      0
+    );
+    this.filteredList = flatHierarchy.filter(
+      (option) =>
+        option.name.toLowerCase().includes(filterValue) ||
+        option.nodeDescription.toLowerCase().includes(filterValue)
+    );
+    return this.filteredList || [];
+  }
+  getSearchMatchesLabel() {
+    return `${this.filteredList.length} Search matches`;
+  }
+
+  searchResultSelected(event) {
+    const node = event.option.value;
+    if (node) {
+      setTimeout(() => {
+        this.searchHierarchyKey.patchValue(node.name);
+      }, 0);
+      this.operatorRoundsService.setSelectedNode(node);
+    }
+  }
+  clearSearchResults() {
+    setTimeout(() => {
+      this.searchHierarchyKey.patchValue('');
+    }, 0);
   }
 
   getTotalTasksCount() {
