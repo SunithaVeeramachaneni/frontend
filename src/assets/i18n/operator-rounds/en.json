@@ -162,5 +162,7 @@
   "after": "After",
   "startDate": "Start Date",
   "endDate": "End Date",
-  "selectDates": "Select Dates"
+  "selectDates": "Select Dates",
+  "selectAllAssets": "Select All ({count})",
+  "selectedAssets": "Select All ({selectedCount}/{count})"
 }

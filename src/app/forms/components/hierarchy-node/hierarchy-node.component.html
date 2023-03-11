@@ -34,18 +34,34 @@
           keyboard_arrow_down
         </mat-icon>
       </a>
-      <!-- <mat-checkbox
+      <mat-checkbox
         [(ngModel)]="isParentCheckedData.checked"
         (change)="isParentToggled($event)"
         class="checkbox"
-      ></mat-checkbox> -->
-      <a *ngIf="viewMode === false" class="count-assets">{{
-        'assetsCount'
-          | translate
-            : {
-                count: hierarchyCount(masterData)
-              }
-      }}</a>
+      ></mat-checkbox>
+      <div *ngIf="viewMode === false">
+        <a
+          *ngIf="!isParentCheckedData.checked; else multipleSelected"
+          class="count-assets"
+          >{{
+            'selectAllAssets'
+              | translate
+                : {
+                    count: hierarchyCount(masterData)
+                  }
+          }}</a
+        >
+        <ng-template #multipleSelected>
+          <a class="count-assets">{{
+            'selectedAssets'
+              | translate
+                : {
+                    selectedCount: hierarchyCount(masterData),
+                    count: hierarchyCount(masterData)
+                  }
+          }}</a>
+        </ng-template>
+      </div>
     </div>
     <div *ngFor="let data of masterData.children" class="child-node">
       <div *ngIf="masterData.isToggledView || viewMode === true">

@@ -34,6 +34,7 @@ export class HierarchyLocationsListComponent implements OnInit {
   public selectedItems = [] as HierarchyEntity[];
   public allItems = [];
   public searchFilterItems = [];
+  public initialSelectedItems = [] as HierarchyEntity[];
   constructor(
     private dialogRef: MatDialogRef<HierarchyLocationsListComponent>
   ) {}
@@ -62,6 +63,9 @@ export class HierarchyLocationsListComponent implements OnInit {
         (item) => item.uid !== uid
       );
 
+    if (event.id)
+      this.initialSelectedItems = [...this.initialSelectedItems, event];
+
     this.isMasterChecked = this.selectedItems.length === this.allItems.length;
 
     this.isMasterCheckedData = {
@@ -77,7 +81,7 @@ export class HierarchyLocationsListComponent implements OnInit {
       masterToggle: true
     };
     if (checked) this.selectedItems = this.allItems;
-    else this.selectedItems = [] as HierarchyEntity[];
+    else this.selectedItems = this.initialSelectedItems as HierarchyEntity[];
   };
 
   cancel = () => {

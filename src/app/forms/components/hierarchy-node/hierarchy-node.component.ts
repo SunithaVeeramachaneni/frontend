@@ -20,9 +20,13 @@ export class HierarchyNodeComponent implements OnInit {
   }
 
   @Input() set isMasterChecked(isMasterCheckedData: any) {
-    if (isMasterCheckedData.masterToggle) {
+    if (
+      !Object.keys(this.nodeRefInSelectedHierarchy).length &&
+      isMasterCheckedData.masterToggle
+    ) {
       this.masterData.isSelected = isMasterCheckedData.checked;
     }
+    this.isParentCheckedData = isMasterCheckedData;
   }
 
   @Input() set selectedList(data) {
@@ -48,19 +52,22 @@ export class HierarchyNodeComponent implements OnInit {
   public viewMode = false;
   public isAlreadySelected = false;
   public selectedHierarchyList: HierarchyEntity[];
+  private nodeRefInSelectedHierarchy = {} as HierarchyEntity;
 
   constructor(private assetHierarchyUtil: AssetHierarchyUtil) {}
 
   ngOnInit(): void {
-    const nodeRefInSelectedHierarchy = findNodeByUid(
+    this.nodeRefInSelectedHierarchy = findNodeByUid(
       this.masterData.uid,
       this.selectedHierarchyList
     );
 
-    if (Object.keys(nodeRefInSelectedHierarchy).length) {
-      this.isAlreadySelected = true;
+    if (Object.keys(this.nodeRefInSelectedHierarchy).length) {
       this.masterData.isSelected = true;
-      Object.assign(this.masterData, { id: nodeRefInSelectedHierarchy.id });
+      this.isAlreadySelected = true;
+      Object.assign(this.masterData, {
+        id: this.nodeRefInSelectedHierarchy.id
+      });
       this.checkboxToggleHandler.emit(this.masterData);
     }
   }
@@ -97,9 +104,9 @@ export class HierarchyNodeComponent implements OnInit {
 
   isParentToggled = (event: MatCheckboxChange) => {
     const { checked } = event;
-    // this.isParentCheckedData = {
-    //   checked,
-    //   masterToggle: true
-    // };
+    this.isParentCheckedData = {
+      checked,
+      masterToggle: true
+    };
   };
 }
