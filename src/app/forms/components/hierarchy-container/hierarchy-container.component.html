@@ -64,7 +64,7 @@
         #auto="matAutocomplete"
         (optionSelected)="searchResultSelected($event)"
       >
-        <mat-optgroup [label]="'2 Search matches'">
+        <mat-optgroup [label]="getSearchMatchesLabel()">
           <mat-option
             *ngFor="let option of filteredOptions$ | async"
             [value]="option"

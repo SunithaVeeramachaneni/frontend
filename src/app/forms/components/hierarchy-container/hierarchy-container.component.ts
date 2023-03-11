@@ -71,6 +71,8 @@ export class HierarchyContainerComponent implements OnInit {
   hierarchyMode = 'asset_hierarchy';
   flatHierarchyList = [];
 
+  filteredList = [];
+
   constructor(
     private operatorRoundsService: OperatorRoundsService,
     private locationService: LocationService,
@@ -162,11 +164,15 @@ export class HierarchyContainerComponent implements OnInit {
       hierarchyClone,
       0
     );
-    return flatHierarchy.filter(
+    this.filteredList = flatHierarchy.filter(
       (option) =>
         option.name.toLowerCase().includes(filterValue) ||
         option.nodeDescription.toLowerCase().includes(filterValue)
     );
+    return this.filteredList || [];
+  }
+  getSearchMatchesLabel() {
+    return `${this.filteredList.length} Search matches`;
   }
 
   searchResultSelected(event) {
