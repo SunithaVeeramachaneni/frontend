@@ -235,6 +235,7 @@ export class AssetHierarchyUtil {
           ...node,
           isRootNode: !node.parentId ? true : false,
           configuredParentId: node.parentId,
+          iSDeletedInRoutePlan: false,
           id: node.id ? node.id : uuidv4(),
           hierarchyPath: nodePath,
           isExpanded: true
