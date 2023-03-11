@@ -1,4 +1,4 @@
-<div *ngIf="selectedHierarchy$ | async as formMetadata">
+<div *ngIf="selectedHierarchy$ | async">
   <div class="header">
     <div>
       <span>{{
@@ -116,6 +116,7 @@
       <app-route-plan
         [hierarchy]="hierarchy"
         [hierarchyMode]="hierarchyMode"
+        (nodeRemoved)="removeNodeHandler($event)"
       ></app-route-plan>
     </div>
     <div *ngIf="hierarchyMode === 'asset_hierarchy'">

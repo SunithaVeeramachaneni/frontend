@@ -47,7 +47,6 @@ import { HierarchyActions } from '../../state/actions';
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  options: string[] = ['One', 'Two', 'Three'];
   filteredOptions$: Observable<any[]>;
 
   searchHierarchyKey: FormControl;
@@ -211,13 +210,8 @@ export class HierarchyContainerComponent implements OnInit {
     deleteConfirmationDialogRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
       if (this.hierarchyMode === 'asset_hierarchy') {
-        // eslint-disable-next-line prefer-const
-        let nodeChildrenUIDs = this.getChildrenUIDs(event);
+        const nodeChildrenUIDs = this.getChildrenUIDs(event);
 
-        // const hierarchyUpdated = this.pruneChildren(
-        //   JSON.parse(JSON.stringify(this.hierarchy)),
-        //   event
-        // );
         const instanceIdMappings = this.formService.getInstanceIdMappings();
         let instances = [];
         nodeChildrenUIDs.forEach((uid) => {
@@ -242,17 +236,15 @@ export class HierarchyContainerComponent implements OnInit {
           });
         });
       } else {
-        const hierarchyUpdated = this.promoteChildren(
-          [...this.hierarchy],
-          event
-        );
+        const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
+        const hierarchyUpdated = this.promoteChildren(hierarchyClone, event);
         this.hierarchyEvent.emit({
           hierarchy: hierarchyUpdated,
           node: event
         });
         this.store.dispatch(
-          BuilderConfigurationActions.removeSubForm({
-            subFormId: event.id
+          BuilderConfigurationActions.removeSubFormInstances({
+            subFormIds: [event.id]
           })
         );
       }
@@ -304,6 +296,9 @@ export class HierarchyContainerComponent implements OnInit {
 
   promoteChildren(list, node) {
     list = list.map((l) => {
+      if (l.id === node.id) {
+        l.isDeletedInRoutePlan = true;
+      }
       if (l.children && l.children.length) {
         const index = l.children.findIndex((i) => i.id === node.id);
         if (index > -1) {

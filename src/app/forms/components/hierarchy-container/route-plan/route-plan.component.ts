@@ -8,7 +8,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  Inject
+  Inject,
+  ViewChild
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
@@ -19,6 +20,7 @@ import {
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-route-plan',
@@ -27,6 +29,10 @@ import { DOCUMENT } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoutePlanComponent implements OnInit {
+  @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
+
+  @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+
   @Input() set hierarchy(hierarchy: any) {
     this._hierarchy = hierarchy ? hierarchy : ({} as any);
     this.prepareDragDrop(hierarchy);
@@ -84,6 +90,12 @@ export class RoutePlanComponent implements OnInit {
         count = c;
       });
     return count;
+  }
+
+  onRemoveNode(event, node) {
+    this.hierarchyMenuTrigger.closeMenu();
+    event.stopPropagation();
+    this.nodeRemoved.emit(node);
   }
 
   dragMoved(event) {

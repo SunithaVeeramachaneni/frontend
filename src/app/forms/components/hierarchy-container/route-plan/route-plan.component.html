@@ -1,6 +1,7 @@
 <ng-template #tmplNode let-node="node">
   <div class="node-item" [attr.data-id]="node.id" [attr.id]="'node-' + node.id">
     <div
+      *ngIf="!node.isDeletedInRoutePlan"
       class="parentNode node"
       [ngClass]="{ active: selectedNode.id === node.id }"
     >
@@ -50,13 +51,18 @@
         <span> {{ getTasksCountByNodeId(node.id) }} </span>
         <span
           [matMenuTriggerFor]="hierarchyMenu"
+          #hierarchyMenuTrigger="matMenuTrigger"
           class="more-icon"
           aria-label="More Options"
         >
           <mat-icon>more_horiz</mat-icon>
         </span>
         <mat-menu #hierarchyMenu="matMenu" xPosition="before">
-          <button mat-menu-item class="text-red">
+          <button
+            mat-menu-item
+            class="text-red"
+            (click)="onRemoveNode($event, node)"
+          >
             <span translate="delete"></span>
           </button>
         </mat-menu>
@@ -66,6 +72,7 @@
     <div
       *ngIf="node.isExpanded && node.children.length"
       class="node-children"
+      [ngClass]="{ noMarginLeft: node.isDeletedInRoutePlan }"
       cdkDropList
       [cdkDropListData]="node.children"
       [id]="node.id"
