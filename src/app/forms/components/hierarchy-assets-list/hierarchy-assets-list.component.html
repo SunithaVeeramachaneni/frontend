@@ -14,36 +14,53 @@
     <mat-form-field appearance="outline" class="searchField">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
-      matInput
-      type="text"
-      [placeholder]="'search' | translate"
-      autocomplete="off"
-      [matAutocomplete]="auto"
-      [formControl]="searchMasterData"
-    />
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [matAutocomplete]="auto"
+        [formControl]="searchMasterData"
+      />
       <mat-autocomplete
-      autoActiveFirstOption
-      #auto="matAutocomplete"
-      (optionSelected)=>
-
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="searchResultSelected($event)"
+      >
+        <mat-optgroup [label]="getSearchMatchesLabel()">
+          <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+            class="searchResultOption"
+          >
+            <div class="nodeContent">
+              <img [src]="option.image" />
+              <div class="descripttion">
+                <span class="title">{{ option.name }}</span>
+                <span class="subTitle">
+                  {{
+                    'nodeSubTitle'
+                      | translate
+                        : {
+                            nodeType: option.type | titlecase,
+                            nodeId: option.nodeId
+                          }
+                  }}
+                </span>
+              </div>
+            </div>
+          </mat-option>
+        </mat-optgroup>
       </mat-autocomplete>
+      <img
+        [src]="closeIcon"
+        matSuffix
+        alt="close"
+        *ngIf="searchMasterData.value.length"
+        class="closeIcon"
+        (click)="clearSearchResults()"
+      />
     </mat-form-field>
   </span> -->
-
-  <!-- <div class="search">
-    <span>
-      <mat-form-field class="width-100" appearance="outline">
-        <mat-icon matPrefix class="icon">search</mat-icon>
-        <input
-          matInput
-          [placeholder]="'searchLocation' | translate"
-          class="width-100"
-          autocomplete="off"
-          [formControl]="searchMasterData"
-        />
-      </mat-form-field>
-    </span>
-  </div> -->
 
   <div class="list-container">
     <div class="node-container">

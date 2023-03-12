@@ -30,8 +30,8 @@ export class HierarchyAssetsListComponent implements OnInit {
 
   public hierarchyList: HierarchyEntity[];
   public selectedHierarchyList: HierarchyEntity[];
-  public selectedHierarchyFlatList: HierarchyEntity[];
-  public searchedList: any = [];
+  public selectedLocationHierarchyFlatList: HierarchyEntity[];
+  public filteredList: any[] = [];
   public searchMasterData: FormControl;
   public filteredOptions$: Observable<any>;
   public locationsCount: number;
@@ -46,11 +46,8 @@ export class HierarchyAssetsListComponent implements OnInit {
   ngOnInit(): void {
     this.locationsCount = this.hierarchyList.length;
     this.assetsCount = 0;
-    this.selectedHierarchyFlatList =
-      this.assetHierarchyUtil.convertHierarchyToFlatList(
-        this.selectedHierarchyList,
-        0
-      );
+    this.selectedLocationHierarchyFlatList =
+      this.assetHierarchyUtil.convertHierarchyToFlatList(this.hierarchyList, 0);
 
     this.searchMasterData = new FormControl('');
     this.filteredOptions$ = this.searchMasterData.valueChanges.pipe(
@@ -61,7 +58,7 @@ export class HierarchyAssetsListComponent implements OnInit {
         //   const term = searchTerm.trim();
         //   if (!term.length) this.searchedList = [];
         //   else {
-        //     this.searchedList = this.selectedHierarchyFlatList.filter(
+        //     this.searchedList = this.selectedLocationHierarchyFlatList.filter(
         //       (item) =>
         //         item.name.includes(term) || item.nodeDescription?.includes(term)
         //     );
@@ -92,9 +89,37 @@ export class HierarchyAssetsListComponent implements OnInit {
     }
   };
 
+  searchResultSelected(event) {
+    const node = event.option.value;
+    if (node) {
+      setTimeout(() => {
+        this.searchMasterData.patchValue(node.name);
+      }, 0);
+      // Put logic here
+    }
+  }
+
+  getSearchMatchesLabel() {
+    return `${this.filteredList.length} Search matches`;
+  }
+
   filterList = (searchInput: string): any[] => {
     if (!searchInput.length) return [];
+
+    this.filteredList = this.selectedLocationHierarchyFlatList.filter(
+      (node) =>
+        node.name.toLowerCase().includes(searchInput) ||
+        node?.nodeDescription.toLowerCase().includes(searchInput)
+    );
+
+    return this.filteredList || [];
   };
+
+  clearSearchResults() {
+    setTimeout(() => {
+      this.searchMasterData.patchValue('');
+    }, 0);
+  }
 
   cancel = () => {
     this.dialogRef.close();
