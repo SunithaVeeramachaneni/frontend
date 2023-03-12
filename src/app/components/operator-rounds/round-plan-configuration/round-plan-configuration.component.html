@@ -8,11 +8,13 @@
   *ngIf="{
     formMetadata: formMetadata$ | async,
     authoredFormDetail: authoredFormDetail$ | async,
-    createOrEditForm: createOrEditForm$ | async,
+    isDataResolved: isDataResolved$ | async,
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async,
-    questionCounter: questionCounter$ | async
+    questionCounter: questionCounter$ | async,
+    selectedNodeObj: selectedNode$ | async,
+    hierarchyMode: hierarchyMode$ | async
   } as props"
 >
   <div class="dis-flex form-header">
@@ -128,10 +130,18 @@
 
       <button
         mat-stroked-button
-        class="import-btn"
-        translate="importBtn"
-        (click)="importTasks()"
-      ></button>
+        class="preview-btn"
+        (click)="togglePreview()"
+        [ngClass]="{ 'preview-btn-active': isPreviewActive }"
+      >
+        <span>
+          <img
+            [src]="getImage('preview', isPreviewActive)"
+            class="preview-btn-icon"
+          />
+          <span translate="preview"></span>
+        </span>
+      </button>
 
       <button
         mat-raised-button
@@ -151,149 +161,81 @@
     </div>
   </div>
   <div class="dis-flex form">
-    <div class="questions-responses-width">
-      <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
-        <app-page
-          [pageIndex]="pageIndex"
-          (pageEvent)="pageEventHandler($event)"
-          cdkDropListGroup
-        >
-          <ng-container *ngIf="sectionIds$ | async as sectionIds">
-            <div
-              cdkDropList
-              (cdkDropListDropped)="dropSection($event, pageIndex)"
-              [cdkDropListData]="getSectionsOfPage(pageIndex)"
-            >
-              <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
-                <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
-                  <div class="dis-flex" cdkDrag>
-                    <div class="section-drag-handler">
-                      <img
-                        cdkDragHandle
-                        src="assets/rdf-forms-icons/six-dots-white.svg"
-                        alt="six-dots"
-                        class="section-six-dots"
-                      />
-                    </div>
-
-                    <app-section
-                      class="sectionContainer"
-                      [pageIndex]="pageIndex"
-                      [sectionIndex]="sectionIndex"
-                      [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                      (sectionEvent)="sectionEventHandler($event)"
-                    >
-                      <div
-                        class="sectionMinimumDragArea"
-                        cdkDropList
-                        id="{{ sectionIds[pageIndex][sectionIndex] }}"
-                        [cdkDropListConnectedTo]="sectionIds[pageIndex]"
-                        (cdkDropListDropped)="
-                          drop(
-                            $event,
-                            pageIndex,
-                            sectionIds[pageIndex][sectionIndex]
-                          )
-                        "
-                        [cdkDropListData]="
-                          getQuestionsOfSection(
-                            pageIndex,
-                            sectionIds[pageIndex][sectionIndex]
-                          )
-                        "
-                        [id]="sectionIds[pageIndex][sectionIndex]"
-                      >
-                        <ng-container
-                          *ngIf="questionIds$ | async as questionIds"
-                        >
-                          <div
-                            *ngIf="
-                              getQuestionsOfSection(
-                                pageIndex,
-                                sectionIds[pageIndex][sectionIndex]
-                              ).length === 0
-                            "
-                          >
-                            <span
-                              class="sectionEmpty"
-                              translate="sectionEmptyMessage"
-                            >
-                            </span>
-                            <div class="floating-btns empty-section">
-                              <button
-                                class="questions-btn"
-                                (click)="
-                                  addQuestion(
-                                    pageIndex,
-                                    sectionIds[pageIndex][sectionIndex],
-                                    0
-                                  )
-                                "
-                              >
-                                <img
-                                  src="assets/rdf-forms-icons/add-question.svg"
-                                  alt="add questions"
-                                />
-                                <p
-                                  class="questions-delete-btn-text"
-                                  translate="question"
-                                ></p>
-                              </button>
-                            </div>
-                          </div>
-                          <ng-container
-                            *ngFor="
-                              let questionId of questionIds[pageIndex][
-                                sectionIds[pageIndex][sectionIndex]
-                              ];
-                              let questionIndex = index
-                            "
-                          >
-                            <div
-                              cdkDrag
-                              class="questionContainer"
-                              [ngClass]="{
-                                'highlight-bg':
-                                  getQuestionsOfSection(
-                                    pageIndex,
-                                    sectionIds[pageIndex][sectionIndex]
-                                  )[questionIndex].isOpen === true
-                              }"
-                            >
-                              <div class="question-drag-handler">
-                                <img
-                                  cdkDragHandle
-                                  src="assets/rdf-forms-icons/six-dots.svg"
-                                  alt="six-dots"
-                                  class="question-six-dots"
-                                />
-                              </div>
-
-                              <app-question
-                                class="question"
-                                [pageIndex]="pageIndex"
-                                [sectionId]="
-                                  sectionIds[pageIndex][sectionIndex]
-                                "
-                                [questionId]="questionId"
-                                [questionIndex]="questionIndex"
-                                (questionEvent)="questionEventHandler($event)"
-                              ></app-question>
-                            </div>
-                          </ng-container>
-                        </ng-container>
-                      </div>
-                    </app-section>
-                  </div>
-                </div>
-              </ng-container>
-            </div>
-          </ng-container>
-        </app-page>
-      </ng-container>
+    <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
+      <app-hierarchy-container
+        (hierarchyEvent)="hierarchyEventHandler($event)"
+      ></app-hierarchy-container>
     </div>
-    <div class="iphone-width">
-      <app-iphone></app-iphone>
+    <div
+      class="questions-responses-width"
+      *ngIf="selectedNode; else loadingSelectedNode"
+    >
+      <div *ngIf="props.hierarchyMode === 'asset_hierarchy'">
+        <div
+          *ngFor="
+            let selectedNodeInstance of selectedNodeInstances;
+            let i = index;
+            trackBy: trackBySelectedNodeInstances
+          "
+          class="nodeInstance"
+        >
+          <div class="selectedNode">
+            <span
+              class="selectedNodeTitle"
+              *ngIf="selectedNodeInstances?.length > 1; else singleInstance"
+            >
+              {{
+                'nodeInstance' | translate : { name: selectedNodeInstance.name }
+              }}
+            </span>
+            <ng-template #singleInstance>
+              <span class="selectedNodeTitle">
+                {{
+                  'singleInstance'
+                    | translate
+                      : {
+                          name: selectedNodeInstance.name
+                        }
+                }}
+              </span>
+            </ng-template>
+            <button
+              mat-stroked-button
+              class="import-btn"
+              translate="importBtn"
+              (click)="importTasks()"
+            ></button>
+          </div>
+          <app-builder
+            *ngIf="selectedNodeLoadStatus"
+            [selectedNode]="selectedNodeInstance"
+            [counter]="formConfiguration.get('counter').value"
+          ></app-builder>
+        </div>
+      </div>
+      <div *ngIf="props.hierarchyMode === 'route_plan'">
+        <div class="selectedNode">
+          <span class="selectedNodeTitle">
+            {{
+              'tasksOfSelectedNode' | translate : { name: selectedNode.name }
+            }}
+          </span>
+          <button
+            mat-stroked-button
+            class="import-btn"
+            translate="importBtn"
+            (click)="importTasks()"
+          ></button>
+        </div>
+        <app-builder
+          *ngIf="selectedNodeLoadStatus"
+          [selectedNode]="selectedNode"
+          [counter]="formConfiguration.get('counter').value"
+        ></app-builder>
+      </div>
+    </div>
+    <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
+      <app-iphone [subFormId]="selectedNode?.id"></app-iphone>
     </div>
   </div>
 </div>
@@ -308,3 +250,14 @@
     ></app-import-questions-slider>
   </div>
 </div>
+
+<ng-template #loadingSelectedNode>
+  <div class="p-15">
+    <ngx-shimmer-loading
+      [width]="'100%'"
+      [height]="'20px'"
+      *ngFor="let row of [].constructor(10); let i = index"
+    >
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

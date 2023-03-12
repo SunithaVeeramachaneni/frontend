@@ -543,13 +543,15 @@ export class UnitMeasurementListComponent implements OnInit {
       if (res === 'delete') {
         this.unitMeasurementService
           .deleteUnitOfMeasurement$(data?.id)
-          .subscribe(() => {
-            this.nextToken = '';
-            this.fetchUOM$.next({ data: 'load' });
-            this.toast.show({
-              text: 'UOM deleted successfully!',
-              type: 'success'
-            });
+          .subscribe((response) => {
+            if (Object.keys(response)?.length) {
+              this.nextToken = '';
+              this.fetchUOM$.next({ data: 'load' });
+              this.toast.show({
+                text: 'UOM deleted successfully!',
+                type: 'success'
+              });
+            }
           });
       }
     });
@@ -563,13 +565,15 @@ export class UnitMeasurementListComponent implements OnInit {
       .setAsDefault$(unit?.id, {
         unitlistID: unit?.unitlistID
       })
-      .subscribe(() => {
-        this.nextToken = '';
-        this.fetchUOM$.next({ data: 'load' });
-        this.toast.show({
-          text: 'UOM set as default successfully!',
-          type: 'success'
-        });
+      .subscribe((response) => {
+        if (Object.keys(response)?.length) {
+          this.nextToken = '';
+          this.fetchUOM$.next({ data: 'load' });
+          this.toast.show({
+            text: 'UOM set as default successfully!',
+            type: 'success'
+          });
+        }
       });
   }
 
@@ -588,13 +592,15 @@ export class UnitMeasurementListComponent implements OnInit {
               unitType: res?.unitType,
               isActive: res?.isActive
             })
-            .subscribe(() => {
-              this.nextToken = '';
-              this.fetchUOM$.next({ data: 'load' });
-              this.toast.show({
-                text: 'UOM edited successfully!',
-                type: 'success'
-              });
+            .subscribe((response) => {
+              if (Object.keys(response)?.length) {
+                this.nextToken = '';
+                this.fetchUOM$.next({ data: 'load' });
+                this.toast.show({
+                  text: 'UOM edited successfully!',
+                  type: 'success'
+                });
+              }
             });
         }
       });
@@ -607,13 +613,15 @@ export class UnitMeasurementListComponent implements OnInit {
         isActive: unit?.isActive ? false : true,
         _version: unit?._version
       })
-      .subscribe(() => {
-        this.nextToken = '';
-        this.fetchUOM$.next({ data: 'load' });
-        this.toast.show({
-          text: 'UOM status changed successfully!',
-          type: 'success'
-        });
+      .subscribe((response) => {
+        if (Object.keys(response)?.length) {
+          this.nextToken = '';
+          this.fetchUOM$.next({ data: 'load' });
+          this.toast.show({
+            text: 'UOM status changed successfully!',
+            type: 'success'
+          });
+        }
       });
   }
 }

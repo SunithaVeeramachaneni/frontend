@@ -81,7 +81,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'assets',
       displayName: 'Assets',
       type: 'string',
@@ -102,7 +102,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    }, */
     {
       id: 'tasksCompleted',
       displayName: 'Tasks Completed',
@@ -190,8 +190,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }
+    /* {
       id: 'operator',
       displayName: 'Operator',
       type: 'string',
@@ -212,7 +212,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    }
+    } */
   ];
   configOptions: ConfigOptions = {
     tableID: 'plansTable',

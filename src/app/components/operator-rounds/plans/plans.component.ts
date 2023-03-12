@@ -36,10 +36,10 @@ import {
   CellClickActionEvent,
   Permission,
   UserInfo,
-  RowLevelActionEvent
+  RowLevelActionEvent,
+  RoundPlan
 } from 'src/app/interfaces';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
-import { GetFormListQuery } from 'src/app/API.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -86,7 +86,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'floc',
       displayName: 'F.Loc',
       type: 'number',
@@ -107,8 +107,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'assets',
       displayName: 'Assets',
       type: 'number',
@@ -129,8 +129,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'tasks',
       displayName: 'Tasks',
       type: 'number',
@@ -151,12 +151,12 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    }, */
     {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
-      controlType: 'string',
+      controlType: 'button',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -174,7 +174,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'roundsGenerated',
       displayName: 'Rounds Generated',
       type: 'number',
@@ -195,8 +195,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }, */
+    /* {
       id: 'operator',
       displayName: 'Operator',
       type: 'string',
@@ -217,7 +217,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    },*/
     {
       id: 'start',
       displayName: 'Start - Ends',
@@ -285,8 +285,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  roundPlanDetail: GetFormListQuery = null;
-  scheduleRoundPlanDetail: GetFormListQuery = null;
+  roundPlanDetail: RoundPlan = null;
+  scheduleRoundPlanDetail: RoundPlan = null;
   zIndexDelay = 0;
   zIndexScheduleDelay = 0;
   openScheduleConfig$: Observable<boolean>;
@@ -342,7 +342,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getRoundPlanList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as RoundPlan[]);
         }
       })
     );
@@ -365,6 +365,11 @@ export class PlansComponent implements OnInit, OnDestroy {
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+        const newData = initial.data.map((element) => {
+          element = { schedule: 'Schedule', ...element };
+          return element;
+        });
+        initial.data = newData;
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -457,7 +462,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  openRoundPlanHandler(row: GetFormListQuery): void {
+  openRoundPlanHandler(row: RoundPlan): void {
     this.closeScheduleConfigHandler('out');
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.roundPlanDetail = row;
@@ -470,7 +475,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: GetFormListQuery) {
+  openScheduleConfigHandler(row: RoundPlan) {
     this.closeRoundPlanHandler();
     this.scheduleRoundPlanDetail = row;
     this.scheduleConfigState = 'in';

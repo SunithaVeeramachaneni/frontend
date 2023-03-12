@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
@@ -7,7 +8,7 @@ import {
   ListLocationsQuery,
   ModelLocationFilterInput
 } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -30,9 +31,7 @@ export class LocationService {
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
   private MAX_FETCH_LIMIT: string = '1000000';
 
-  constructor(
-    private _appService: AppService,
-  ) { }
+  constructor(private _appService: AppService) {}
 
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
@@ -41,9 +40,11 @@ export class LocationService {
   fetchAllLocations$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
-    return this._appService._getResp(environment.masterConfigApiUrl,
-      'location/list?' + params.toString());
-  }
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'location/list?' + params.toString()
+    );
+  };
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -72,8 +73,11 @@ export class LocationService {
         params.set('filter', JSON.stringify(filter));
       }
 
-      return this._appService._getResp(environment.masterConfigApiUrl,
-        'location/list?' + params.toString())
+      return this._appService
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'location/list?' + params.toString()
+        )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     } else {
       return of({
@@ -90,29 +94,40 @@ export class LocationService {
       'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
     >
   ) {
-    return this._appService._postData(environment.masterConfigApiUrl, `location/create`, {
-      data: {
-        ...formLocationQuery,
-        searchTerm: `${formLocationQuery.name.toLowerCase()} ${formLocationQuery.description?.toLowerCase() || ''}`
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      `location/create`,
+      {
+        data: {
+          ...formLocationQuery,
+          searchTerm: `${formLocationQuery.name.toLowerCase()} ${
+            formLocationQuery.description?.toLowerCase() || ''
+          }`
+        }
       }
-    });
-
+    );
   }
 
   updateLocation$(locationData) {
-    return this._appService.patchData(environment.masterConfigApiUrl,
-      `location/${locationData.id}/update`, {
-      data:
+    return this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `location/${locationData.id}/update`,
       {
-        ...locationData,
-        searchTerm: `${locationData.name.toLowerCase()} ${locationData.description?.toLowerCase() || ''}`
+        data: {
+          ...locationData,
+          searchTerm: `${locationData.name.toLowerCase()} ${
+            locationData.description?.toLowerCase() || ''
+          }`
+        }
       }
-    });
+    );
   }
 
   deleteLocation$(values: DeleteLocationInput) {
-    return this._appService._removeData(environment.masterConfigApiUrl,
-      `location/${JSON.stringify(values)}/delete`);
+    return this._appService._removeData(
+      environment.masterConfigApiUrl,
+      `location/${JSON.stringify(values)}/delete`
+    );
   }
 
   downloadSampleLocationTemplate(
@@ -147,8 +162,8 @@ export class LocationService {
           },
           archivedAt: p.createdAt
             ? formatDistance(new Date(p.createdAt), new Date(), {
-              addSuffix: true
-            })
+                addSuffix: true
+              })
             : ''
         })) || [];
     const count = resp?.items.length || 0;
@@ -161,6 +176,7 @@ export class LocationService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   uploadExcel(
     form: FormData,
     info: ErrorInfo = {} as ErrorInfo

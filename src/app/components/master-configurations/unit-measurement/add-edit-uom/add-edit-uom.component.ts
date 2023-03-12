@@ -119,7 +119,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           units: this.unitMeasurementForm?.get('units')?.value
         })
         .subscribe((response) => {
-          if (Object.keys(response)?.length) {
+          if (Object.keys(response).length) {
             this.resetFormState();
             this.createUnitData.emit({
               status: 'edit'
@@ -132,13 +132,11 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
           unitType,
           units: this.unitMeasurementForm?.get('units')?.value
         })
-        .subscribe((response) => {
-          if (Object.keys(response)?.length) {
-            this.resetFormState();
-            this.createUnitData.emit({
-              status: 'create'
-            });
-          }
+        .subscribe(() => {
+          this.resetFormState();
+          this.createUnitData.emit({
+            status: 'create'
+          });
         });
     }
   }

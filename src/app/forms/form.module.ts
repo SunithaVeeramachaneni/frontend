@@ -37,8 +37,6 @@ import { ReadOnlyComponent } from './components/field-types/read-only/read-only.
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
-import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
@@ -47,7 +45,12 @@ import { AddPageOrSelectExistingPageModalComponent } from './components/import-q
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
+import { BuilderComponent } from './components/builder/builder.component';
 import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
+import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-modal.component';
+import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
+import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
+import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +76,12 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
-    HierarchyNodeComponent
+    BuilderComponent,
+    HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent
   ],
   imports: [
     FormsModule,
@@ -111,8 +119,13 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     IphoneComponent,
     AddLogicComponent,
     HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    BuilderComponent,
     NgxShimmerLoadingModule
   ]
 })

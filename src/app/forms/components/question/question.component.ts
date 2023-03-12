@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -37,15 +38,15 @@ import {
   getSectionQuestionsCount,
   State,
   getQuestionLogics
-} from 'src/app/forms/state';
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 import { isEqual } from 'lodash-es';
-import { FormConfigurationActions } from '../../state/actions';
+import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 
 @Component({
   selector: 'app-question',
@@ -60,6 +61,8 @@ export class QuestionComponent implements OnInit {
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+
+  @Input() selectedNodeId: any;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -153,7 +156,7 @@ export class QuestionComponent implements OnInit {
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
-    private rdfService: RaceDynamicFormService,
+    private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute
   ) {}
 
@@ -162,7 +165,7 @@ export class QuestionComponent implements OnInit {
       this.formId = params.id;
     });
 
-    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+    this.operatorRoundsService.formCreatedUpdated$.subscribe((data) => {
       if (data.id) {
         this.formId = data.id;
       }
@@ -208,7 +211,14 @@ export class QuestionComponent implements OnInit {
       .subscribe();
 
     this.question$ = this.store
-      .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
+      .select(
+        getQuestionByID(
+          this.pageIndex,
+          this.sectionId,
+          this.questionId,
+          this.selectedNodeId
+        )
+      )
       .pipe(
         tap((question) => {
           if (question) {
@@ -233,7 +243,11 @@ export class QuestionComponent implements OnInit {
       );
 
     this.sectionQuestionsCount$ = this.store.select(
-      getSectionQuestionsCount(this.pageIndex, this.sectionId)
+      getSectionQuestionsCount(
+        this.pageIndex,
+        this.sectionId,
+        this.selectedNodeId
+      )
     );
   }
 
@@ -388,12 +402,13 @@ export class QuestionComponent implements OnInit {
     if (this.questionForm.get('isOpen').value !== isOpen) {
       if (!this.ignoreUpdateIsOpen) {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionState({
+          BuilderConfigurationActions.updateQuestionState({
             questionId: this.questionId,
             isOpen,
             isResponseTypeModalOpen: this.questionForm.get(
               'isResponseTypeModalOpen'
-            ).value
+            ).value,
+            subFormId: this.selectedNodeId
           })
         );
       }
@@ -417,7 +432,9 @@ export class QuestionComponent implements OnInit {
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
-    return this.store.select(getQuestionLogics(pageIndex, questionId));
+    return this.store.select(
+      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
+    );
   }
 
   addLogicToQuestion(pageIndex: number, questionId: string) {
@@ -425,7 +442,8 @@ export class QuestionComponent implements OnInit {
       AddLogicActions.addLogicToQuestion({
         pageIndex,
         questionId,
-        logic: this.constructLogic(pageIndex, questionId)
+        logic: this.constructLogic(pageIndex, questionId),
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -434,7 +452,8 @@ export class QuestionComponent implements OnInit {
     this.store.dispatch(
       AddLogicActions.removeLogicsOfQuestion({
         pageIndex,
-        questionId
+        questionId,
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -464,7 +483,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.addLogicToQuestion({
             pageIndex,
             questionId,
-            logic: this.constructLogic(pageIndex, questionId)
+            logic: this.constructLogic(pageIndex, questionId),
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -473,7 +493,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.updateQuestionLogic({
             questionId,
             pageIndex,
-            logic: event.logic
+            logic: event.logic,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -482,7 +503,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.deleteQuestionLogic({
             questionId,
             pageIndex,
-            logicId: event.logicId
+            logicId: event.logicId,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -507,7 +529,8 @@ export class QuestionComponent implements OnInit {
             pageIndex: event.pageIndex,
             logicIndex: event.logicIndex,
             logicId: event.logic.id,
-            question: newQuestion
+            question: newQuestion,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -522,9 +545,11 @@ export class QuestionComponent implements OnInit {
           values: event.data.responses,
           name: 'quickResponses'
         };
-        this.rdfService.createDataSet$(createDataset).subscribe((response) => {
-          // do nothing
-        });
+        this.operatorRoundsService
+          .createDataSet$(createDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
         break;
 
       case 'quickResponseUpdate':
@@ -535,7 +560,7 @@ export class QuestionComponent implements OnInit {
           name: 'quickResponses',
           id: event.data.id
         };
-        this.rdfService
+        this.operatorRoundsService
           .updateDataSet$(event.data.id, updateDataset)
           .subscribe((response) => {
             // do nothing
