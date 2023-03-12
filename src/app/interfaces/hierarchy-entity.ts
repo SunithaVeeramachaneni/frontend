@@ -18,6 +18,7 @@ export interface HierarchyEntity {
   isRootNode?: boolean;
   iSDeletedInRoutePlan?: boolean;
   configuredParentId?: string;
+  numTimesCopied?: number;
 }
 
 export enum EntityType {
