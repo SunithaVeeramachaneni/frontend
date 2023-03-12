@@ -12,6 +12,7 @@
         [(ngModel)]="masterData.isSelected"
         (change)="nodeCheckboxToggled($event)"
         class="checkbox"
+        color="primary"
         [disabled]="isAlreadySelected"
       ></mat-checkbox>
 
@@ -44,6 +45,7 @@
       <mat-checkbox
         [(ngModel)]="allSelected"
         [indeterminate]="multipleSelected()"
+        color="primary"
         (change)="isAllSelectedToggled($event)"
         class="select-all-checkbox"
       ></mat-checkbox>

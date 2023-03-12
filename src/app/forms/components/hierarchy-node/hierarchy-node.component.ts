@@ -72,10 +72,30 @@ export class HierarchyNodeComponent implements OnInit {
       this.masterData.uid,
       this.selectedHierarchyList
     );
-
     if (Object.keys(this.nodeRefInSelectedHierarchy).length) {
       this.masterData.isSelected = true;
       this.isAlreadySelected = true;
+
+      if (this.selectionMode === 'selectAssets') {
+        const selectedChildrenFlatList =
+          this.assetHierarchyUtil.convertHierarchyToFlatList(
+            this.nodeRefInSelectedHierarchy.children,
+            0
+          );
+
+        if (selectedChildrenFlatList.length === this.hierarchyCount())
+          this.isAllSelectedToggled({ checked: true });
+        this.masterData.children =
+          this.assetHierarchyUtil.togglePreviouslySelectedChildren(
+            this.masterData.children,
+            selectedChildrenFlatList
+          );
+
+        this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
+          this.masterData.children
+        );
+      }
+
       Object.assign(this.masterData, {
         id: this.nodeRefInSelectedHierarchy.id
       });
@@ -106,11 +126,11 @@ export class HierarchyNodeComponent implements OnInit {
     if (isSelected) {
       this.masterData.isSelected = isSelected;
       this.isParentCheckedData.masterToggle = false;
-      this.selectedCount++;
-    } else this.selectedCount = this.selectedCount - 1;
+    }
 
-    console.log(this.selectedCount);
-    console.log('totalCount', this.hierarchyCount());
+    this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
+      this.masterData.children
+    );
 
     if (this.selectedCount === this.hierarchyCount()) this.allSelected = true;
     else this.allSelected = false;
@@ -121,15 +141,34 @@ export class HierarchyNodeComponent implements OnInit {
   hierarchyCount = () =>
     this.assetHierarchyUtil.getHierarchyCount([this.masterData]) - 1;
 
-  isAllSelectedToggled = (event: MatCheckboxChange) => {
+  isAllSelectedToggled = (event: MatCheckboxChange | any) => {
     const { checked } = event;
     this.allSelected = checked;
     this.masterData.isSelected = checked;
-    if (checked) this.selectedCount = this.hierarchyCount();
-    else
+
+    if (checked) {
+      this.masterData.children =
+        this.assetHierarchyUtil.toggleAllChildrenSelection(
+          checked,
+          this.masterData.children
+        );
+      this.selectedCount = this.hierarchyCount();
+    } else {
+      const selectedChildrenFlatList =
+        this.assetHierarchyUtil.convertHierarchyToFlatList(
+          this.nodeRefInSelectedHierarchy.children,
+          0
+        );
+
+      this.masterData.children =
+        this.assetHierarchyUtil.togglePreviouslySelectedChildren(
+          this.masterData.children,
+          selectedChildrenFlatList
+        );
       this.selectedCount = this.assetHierarchyUtil.getSelectedCount(
         this.masterData.children
       );
+    }
 
     this.checkboxToggleHandler.emit(this.masterData);
 

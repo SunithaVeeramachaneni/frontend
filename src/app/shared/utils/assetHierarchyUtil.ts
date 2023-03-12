@@ -265,6 +265,35 @@ export class AssetHierarchyUtil {
     return nodes;
   };
 
+  toggleAllChildrenSelection = (
+    checked: boolean,
+    children: HierarchyEntity[]
+  ): HierarchyEntity[] =>
+    children.map((child) => ({
+      ...child,
+      isSelected: checked,
+      children: child.hasChildren
+        ? this.toggleAllChildrenSelection(checked, child.children)
+        : ([] as HierarchyEntity[])
+    }));
+
+  togglePreviouslySelectedChildren = (
+    children: HierarchyEntity[],
+    selectedChildrenFlatList: HierarchyEntity[]
+  ): HierarchyEntity[] =>
+    children.map((child) => ({
+      ...child,
+      isSelected:
+        selectedChildrenFlatList.findIndex((item) => item.uid === child.uid) >
+        -1,
+      children: child.hasChildren
+        ? this.togglePreviouslySelectedChildren(
+            child.children,
+            selectedChildrenFlatList
+          )
+        : ([] as HierarchyEntity[])
+    }));
+
   getSelectedCount = (hierarchyList: HierarchyEntity[]): number => {
     let count = 0;
     hierarchyList.forEach((node) => {
