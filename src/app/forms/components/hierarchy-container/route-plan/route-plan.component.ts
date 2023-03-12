@@ -21,6 +21,7 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { HierarchyEntity } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-route-plan',
@@ -32,6 +33,7 @@ export class RoutePlanComponent implements OnInit {
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
 
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+  @Output() copyNode: EventEmitter<HierarchyEntity> = new EventEmitter();
 
   @Input() set hierarchy(hierarchy: any) {
     this._hierarchy = hierarchy ? hierarchy : ({} as any);
@@ -232,4 +234,6 @@ export class RoutePlanComponent implements OnInit {
       this.prepareDragDrop(node.children);
     });
   }
+
+  triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
 }

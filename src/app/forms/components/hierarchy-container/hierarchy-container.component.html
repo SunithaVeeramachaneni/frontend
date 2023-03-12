@@ -117,6 +117,7 @@
         [hierarchy]="hierarchy"
         [hierarchyMode]="hierarchyMode"
         (nodeRemoved)="removeNodeHandler($event)"
+        (copyNode)="handleCopyNode($event)"
       ></app-route-plan>
     </div>
     <div *ngIf="hierarchyMode === 'asset_hierarchy'">

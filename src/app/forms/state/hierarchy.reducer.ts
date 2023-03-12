@@ -2,7 +2,10 @@ import { createReducer, on } from '@ngrx/store';
 import { HierarchyEntity } from 'src/app/interfaces';
 import { HierarchyActions } from './actions';
 
-import { deleteNodeFromHierarchy } from 'src/app/shared/utils/assetHierarchyUtil';
+import {
+  copyNodeToRoutePlan,
+  deleteNodeFromHierarchy
+} from 'src/app/shared/utils/assetHierarchyUtil';
 
 export interface HierarchyState {
   masterHierarchy: HierarchyEntity[];
@@ -28,6 +31,16 @@ export const hierarchyReducer = createReducer<HierarchyState>(
     (state, action): HierarchyState => ({
       ...state,
       selectedHierarchy: action.selectedHierarchy
+    })
+  ),
+  on(
+    HierarchyActions.copyNodeToRoutePlan,
+    (state, action): HierarchyState => ({
+      ...state,
+      selectedHierarchy: copyNodeToRoutePlan(
+        action.node,
+        state.selectedHierarchy
+      )
     })
   ),
   on(

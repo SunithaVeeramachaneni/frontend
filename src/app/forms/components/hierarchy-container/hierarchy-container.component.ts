@@ -167,7 +167,7 @@ export class HierarchyContainerComponent implements OnInit {
     this.filteredList = flatHierarchy.filter(
       (option) =>
         option.name.toLowerCase().includes(filterValue) ||
-        option.nodeDescription.toLowerCase().includes(filterValue)
+        option.nodeDescription?.toLowerCase().includes(filterValue)
     );
     if (this.hierarchyMode !== 'asset_hierarchy') {
       this.filteredList = this.filteredList.filter(
@@ -202,6 +202,14 @@ export class HierarchyContainerComponent implements OnInit {
     });
     return count;
   }
+
+  handleCopyNode = (event) => {
+    this.store.dispatch(
+      HierarchyActions.copyNodeToRoutePlan({
+        node: event
+      })
+    );
+  };
 
   removeNodeHandler(event) {
     const deleteConfirmationDialogRef = this.dialog.open(
