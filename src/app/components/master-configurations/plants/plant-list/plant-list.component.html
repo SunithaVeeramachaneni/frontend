@@ -72,10 +72,14 @@
           <input id="upload" hidden type="file" />
         </div>
       </div>
-      <div>
+      <div *ngIf="(plants$ | async) && (isLoading$ | async) === false">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
           class="width-100"
         ></cwp-dynamictable>
       </div>

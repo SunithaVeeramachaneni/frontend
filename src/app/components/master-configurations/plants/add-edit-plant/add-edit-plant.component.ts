@@ -59,7 +59,7 @@ export class AddEditPlantComponent implements OnInit {
   plantStatus;
   plantTitle;
   plantButton;
-  plantImage;
+  plantImage = '';
   plantForm: FormGroup;
   parentInformation;
   allParentsData;
@@ -79,9 +79,9 @@ export class AddEditPlantComponent implements OnInit {
     this.getAllPlants();
   }
   getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((allLocations) => {
-      this.parentInformation = allLocations.items.filter(
-        (location) => location.id !== this.plantsEditData?.id
+    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
+      this.parentInformation = allPlants.items.filter(
+        (plant) => plant.id !== this.plantsEditData?.id
       );
       this.allParentsData = this.parentInformation;
     });
@@ -100,18 +100,20 @@ export class AddEditPlantComponent implements OnInit {
         this.slideInOut.emit('out');
       });
     } else if (this.plantStatus === 'edit') {
-      const updateData = {
-        data: this.plantForm.value,
-        version: this.plantsEditData._version
-      };
-      this.plantService.updatePlant$(updateData).subscribe((res) => {
-        this.createdPlantData.emit({
-          status: this.plantStatus,
-          data: res
+      this.plantService
+        .updatePlant$({
+          ...this.plantForm.value,
+          _version: this.plantsEditData._version,
+          id: this.plantsEditData?.id
+        })
+        .subscribe((res) => {
+          this.createdPlantData.emit({
+            status: this.plantStatus,
+            data: res
+          });
+          this.plantForm.reset();
+          this.slideInOut.emit('out');
         });
-        this.plantForm.reset();
-        this.slideInOut.emit('out');
-      });
     }
   }
   cancel() {

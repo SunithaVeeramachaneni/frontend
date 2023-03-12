@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { APIService, CreatePlantInput } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { groupBy, map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -16,37 +15,122 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class PlantService {
+  plantCreatedUpdatedSubject = new BehaviorSubject<any>({});
   fetchPlants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  constructor(private readonly awsApiService: APIService) {}
-  fetchAllPlants$ = () =>
-    from(this.awsApiService.ListLocations({}, 2000000, ''));
 
-  createPlant$(
-    formPlantQuery: Pick<
-      CreatePlantInput,
-      'name' | 'image' | 'description' | 'model' | 'plantId'
-    >
-  ) {
-    return from(
-      this.awsApiService.CreateLocation({
-        name: formPlantQuery.name,
-        image: formPlantQuery.image,
-        description: formPlantQuery.description,
-        model: formPlantQuery.model,
-        locationId: formPlantQuery.plantId,
-        // parentId: formPlantQuery.parentId,
-        searchTerm: formPlantQuery.name.toLowerCase()
-      })
+  plantCreatedUpdated$ = this.plantCreatedUpdatedSubject.asObservable();
+
+  private MAX_FETCH_LIMIT: string = '1000000';
+
+  constructor(private _appService: AppService) {}
+
+  setFormCreatedUpdated(data: any) {
+    this.plantCreatedUpdatedSubject.next(data);
+  }
+
+  fetchAllPlants$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'plant/list?' + params.toString()
+    );
+  };
+
+  getPlantsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = queryParams.fetchType === 'search';
+      const params: URLSearchParams = new URLSearchParams();
+
+      if (!isSearch) {
+        params.set('limit', `${queryParams.limit}`);
+      }
+      if (!isSearch && queryParams.nextToken) {
+        params.set('nextToken', queryParams.nextToken);
+      }
+      if (queryParams.searchKey) {
+        const filter: any = {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      return this._appService
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'location/list?' + params.toString()
+        )
+        .pipe(map((res) => this.formatPlantResponse(res)));
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        nextToken: null
+      });
+    }
+  }
+
+  createPlant$(values, info: ErrorInfo = {} as ErrorInfo) {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'plant/create',
+      { ...values },
+      info,
+      {}
     );
   }
 
-  updatePlant$(plantDetails) {
-    return from(
-      this.awsApiService.UpdateLocation({
-        ...plantDetails.data,
-        _version: plantDetails.version
-      })
+  updatePlant$(plantData) {
+    return this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `plant/${plantData.id}/update`,
+      {
+        data: {
+          ...plantData,
+          searchTerm: `${plantData.name.toLowerCase()} ${
+            plantData.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
+  }
+
+  deletePlant$(values: any) {
+    return this._appService._removeData(
+      environment.masterConfigApiUrl,
+      `plant/${JSON.stringify(values)}/delete`
+    );
+  }
+
+  private formatPlantResponse(resp: any) {
+    const groupedData: any = groupBy(resp?.items);
+    const rows = resp?.items
+      ?.sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      )
+      ?.map((item: any) => ({
+        ...item,
+        noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
+        unitType: item?.unitList?.name,
+        isDefaultText: item?.isDefault ? 'Default' : ''
+      }));
+    const count = rows?.length || 0;
+    const nextToken = resp?.nextToken;
+    return {
+      count,
+      rows,
+      nextToken
+    };
   }
 }

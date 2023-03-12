@@ -301,18 +301,6 @@ export type CreateLocationInput = {
   _version?: number | null;
 };
 
-export type CreatePlantInput = {
-  id?: string | null;
-  name?: string | null;
-  description?: string | null;
-  model?: string | null;
-  plantId?: string | null;
-  // parentId?: string | null;
-  image?: string | null;
-  searchTerm?: string | null;
-  _version?: number | null;
-};
-
 export type ModelLocationConditionInput = {
   name?: ModelStringInput | null;
   description?: ModelStringInput | null;

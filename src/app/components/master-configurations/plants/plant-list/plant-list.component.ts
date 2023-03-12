@@ -27,49 +27,22 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { PlantService } from '../services/plant.service';
+import { slideInOut } from 'src/app/animations';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
   styleUrls: ['./plant-list.component.scss'],
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOut]
 })
 export class PlantListComponent implements OnInit {
   readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   userInfo$: Observable<UserInfo>;
 
-  openPlantDetailedView = 'out';
-  plantAddOrEditOpenState = 'out';
-  plantEditData;
-
-  dataSource: MatTableDataSource<any>;
   columns: Column[] = [
     {
       id: 'name',
@@ -217,18 +190,35 @@ export class PlantListComponent implements OnInit {
       }
     }
   };
-  searchPlant: FormControl;
-  addEditCopyDeletePlants = false;
 
+  searchPlant: FormControl;
+  dataSource: MatTableDataSource<any>;
+  openPlantDetailedView = 'out';
+  plantAddOrEditOpenState = 'out';
+  plantEditData;
+
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
+
+  plants$: Observable<any>;
+  allPlants$: Observable<any>;
+  plantsCount$: Observable<Count>;
+  plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  locationsListCount$: Observable<number>;
+  addEditCopyDeletePlants = false;
   addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
       form: {} as any
     });
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  ghostLoading = new Array(12).fill(0).map((v, i) => i);
-
   selectedPlant;
+
+  skip = 0;
+  limit = defaultLimit;
+  fetchType = 'load';
+  nextToken = '';
+  parentInformation: any;
+
   constructor(
     private loginService: LoginService,
     private readonly toast: ToastService,
@@ -236,60 +226,123 @@ export class PlantListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.plantService.fetchPlants$.next({ data: 'load' });
+    this.plantService.fetchPlants$.next({} as TableEvent);
+    this.allPlants$ = this.plantService.fetchAllPlants$();
+    this.searchPlant = new FormControl('');
+
+    this.searchPlant.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.plantService.fetchPlants$.next({ data: 'search' });
+        })
+      )
+      .subscribe(() => this.isLoading$.next(true));
+    //this.plantsListCount$ = this.plantService.getFormsListCount$();
+    this.getDisplayedPlants();
+    this.plantsCount$ = combineLatest([
+      this.plantsCount$,
+      this.plantsCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addEditCopyDeletePlants) {
+          count.count += update;
+          this.addEditCopyDeletePlants = false;
+        }
+        return count;
+      })
+    );
+    this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+  }
+
+  getDisplayedPlants(): void {
+    const plantsOnLoadSearch$ = this.plantService.fetchPlants$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(({ data }) => {
+        this.skip = 0;
+        this.fetchType = data;
+        return this.getPlants();
+      })
+    );
+
+    const onScrollPlants$ = this.plantService.fetchPlants$.pipe(
+      filter(({ data }) => data !== 'load' && data !== 'search'),
+      switchMap(({ data }) => {
+        if (data === 'infiniteScroll') {
+          this.fetchType = 'infiniteScroll';
+          return this.getPlants();
+        } else {
+          return of([]);
+        }
+      })
     );
 
     const initial = {
       columns: this.columns,
       data: []
     };
-    this.configOptions.allColumns = this.columns;
-    this.dataSource = new MatTableDataSource(initial.data);
+    this.plants$ = combineLatest([
+      plantsOnLoadSearch$,
+      this.addEditCopyDeletePlants$,
+      onScrollPlants$,
+      this.allPlants$
+    ]).pipe(
+      map(([rows, form, scrollData, allPlants]) => {
+        const { items: unfilteredParentLocations } = allPlants;
+        if (this.skip === 0) {
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: 'calc(100vh - 140px)'
+          };
+          initial.data = rows;
+        } else {
+          if (form.action === 'delete') {
+            initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            this.toast.show({
+              text: 'Plant deleted successfully!',
+              type: 'success'
+            });
+            form.action = 'add';
+          } else {
+            initial.data = initial.data.concat(scrollData);
+          }
+        }
 
-    this.plantService.fetchPlants$.next({ data: 'load' });
-    this.plantService.fetchPlants$.next({} as TableEvent);
+        this.skip = initial.data.length;
+        this.dataSource = new MatTableDataSource(initial.data);
+        return initial;
+      })
+    );
   }
 
-  prepareMenuActions(permissions: Permission[]) {
-    const menuActions = [];
-
-    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_PLANT')) {
-      menuActions.push({
-        title: 'Edit',
-        action: 'edit'
-      });
-    }
-
-    // if (
-    //   this.loginService.checkUserHasPermission(permissions, 'DELETE_PLANT')
-    // ) {
-    //   menuActions.push({
-    //     title: 'Delete',
-    //     action: 'delete'
-    //   });
-    // } Implementation is done but required validations based on parent
-
-    this.configOptions.rowLevelActions.menuActions = menuActions;
-    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
-    this.configOptions = { ...this.configOptions };
+  getPlants() {
+    return this.plantService
+      .getPlantsList$({
+        nextToken: this.nextToken,
+        limit: this.limit,
+        searchKey: this.searchPlant.value,
+        fetchType: this.fetchType
+      })
+      .pipe(
+        mergeMap(({ count, rows, nextToken }) => {
+          this.plantsCount$ = of({ count });
+          this.nextToken = nextToken;
+          this.isLoading$.next(false);
+          return of(rows);
+        }),
+        catchError(() => {
+          this.plantsCount$ = of({ count: 0 });
+          this.isLoading$.next(false);
+          return of([]);
+        })
+      );
   }
 
-  addManually() {
-    this.plantAddOrEditOpenState = 'in';
-    this.plantEditData = null;
-  }
-
-  onClosePlantAddOrEditOpenState(event) {
-    this.plantAddOrEditOpenState = event;
-  }
-  onClosePlantDetailedView(event) {
-    this.openPlantDetailedView = event.status;
-    if (event.data !== '') {
-      this.plantEditData = event.data;
-      this.plantAddOrEditOpenState = 'in';
-    }
-  }
   addOrUpdatePlant(plantData) {
     if (plantData?.status === 'add') {
       this.addEditCopyDeletePlants = true;
@@ -321,5 +374,100 @@ export class PlantListComponent implements OnInit {
       }
     }
     this.plantService.fetchPlants$.next({ data: 'load' });
+  }
+
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_PLANT')) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    // if (
+    //   this.loginService.checkUserHasPermission(permissions, 'DELETE_PLANT')
+    // ) {
+    //   menuActions.push({
+    //     title: 'Delete',
+    //     action: 'delete'
+    //   });
+    // } Implementation is done but required validations based on parent
+
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
+  }
+
+  handleTableEvent = (event): void => {
+    this.plantService.fetchPlants$.next(event);
+  };
+
+  rowLevelActionHandler = ({ data, action }): void => {
+    switch (action) {
+      case 'edit':
+        this.plantEditData = { ...data };
+        this.plantAddOrEditOpenState = 'in';
+        break;
+      case 'delete':
+        this.deletePlant(data);
+        break;
+      default:
+    }
+  };
+
+  configOptionsChangeHandler = (event): void => {};
+
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    const { columnId, row } = event;
+    switch (columnId) {
+      case 'name':
+      case 'plantId':
+      case 'country':
+      case 'zipcode':
+        this.showPlantDetail(row);
+        break;
+      default:
+    }
+  };
+
+  deletePlant(plant: any): void {
+    const deleteData = {
+      id: plant.id,
+      _version: plant._version
+    };
+    this.plantService.deletePlant$(deleteData).subscribe((data: any) => {
+      this.addEditCopyDeletePlants$.next({
+        action: 'delete',
+        form: data
+      });
+    });
+  }
+
+  addManually() {
+    this.plantAddOrEditOpenState = 'in';
+    this.plantEditData = null;
+  }
+
+  showPlantDetail(row: GetFormListQuery): void {
+    this.selectedPlant = row;
+    this.openPlantDetailedView = 'in';
+  }
+
+  onClosePlantAddOrEditOpenState(event) {
+    this.plantAddOrEditOpenState = event;
+  }
+
+  onClosePlantDetailedView(event) {
+    this.openPlantDetailedView = event.status;
+    if (event.data !== '') {
+      this.plantEditData = event.data;
+      this.plantAddOrEditOpenState = 'in';
+    }
+  }
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }
