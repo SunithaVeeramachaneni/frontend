@@ -34,7 +34,7 @@ export class PlantService {
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'plant/list?' + params.toString()
+      'plants/list?' + params.toString()
     );
   };
 
@@ -68,7 +68,7 @@ export class PlantService {
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'location/list?' + params.toString()
+          'plants/list?' + params.toString()
         )
         .pipe(map((res) => this.formatPlantResponse(res)));
     } else {
@@ -83,7 +83,7 @@ export class PlantService {
   createPlant$(values, info: ErrorInfo = {} as ErrorInfo) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'plant/create',
+      'plants/create',
       { ...values },
       info,
       {}
@@ -93,7 +93,7 @@ export class PlantService {
   updatePlant$(plantData) {
     return this._appService.patchData(
       environment.masterConfigApiUrl,
-      `plant/${plantData.id}/update`,
+      `plants/${plantData.id}/update`,
       {
         data: {
           ...plantData,

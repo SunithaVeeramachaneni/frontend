@@ -141,7 +141,7 @@ export class PlantListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'zipcode',
+      id: 'zipCode',
       displayName: 'ZipCode',
       type: 'number',
       controlType: 'string',
