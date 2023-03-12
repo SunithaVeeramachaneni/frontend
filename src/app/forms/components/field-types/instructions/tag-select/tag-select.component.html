@@ -1,0 +1,12 @@
+<label translate="tag"></label>&nbsp;
+
+<select
+  [(ngModel)]="tagAnswer"
+  (ngModelChange)="dataChanged()"
+  class="tag-field-select"
+>
+  <option value="None" translate="noneTag" class="none-field"></option>
+  <option value="Warning" translate="warningTag" class="other-field"></option>
+  <option value="Caution" translate="cautionTag" class="other-field"></option>
+  <option value="Danger" translate="dangerTag" class="other-field"></option>
+</select>

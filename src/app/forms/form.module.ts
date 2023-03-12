@@ -48,6 +48,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
 import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
+import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
+import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
+import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
+import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +77,11 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
-    HierarchyNodeComponent
+    HierarchyNodeComponent,
+    QuillMaterialComponent,
+    TagSelectComponent,
+    InstructionImageComponent,
+    InstructionPdfComponent
   ],
   imports: [
     FormsModule,

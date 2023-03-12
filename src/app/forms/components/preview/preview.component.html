@@ -29,7 +29,12 @@
         <div id="preview" *ngFor="let question of section.questions">
           <div class="field-types">
             <div class="each-fieldtype">
-              <p class="question-name" *ngIf="question.fieldType !== 'ARD'">
+              <p
+                class="question-name"
+                *ngIf="
+                  question.fieldType !== 'ARD' && question.fieldType !== 'INST'
+                "
+              >
                 {{
                   (question.name ? question.name : 'typeQuestion') | translate
                 }}
@@ -39,6 +44,23 @@
               <h3 class="read-only-field" *ngIf="question.fieldType === 'LF'">
                 {{ question.value }}
               </h3>
+
+              <div
+                *ngIf="
+                  question.fieldType === 'INST' &&
+                  question.value.tag !== getNoneTag()
+                "
+              >
+                <p class="tag-text">
+                  {{ question.value.tag }}
+                </p>
+              </div>
+
+              <!-- instructions needs unescaped HTML -->
+              <div
+                [innerHTML]="question.name"
+                *ngIf="question.fieldType === 'INST'"
+              ></div>
 
               <!-- text answer  -->
               <input
@@ -194,6 +216,27 @@
                   alt="image"
                   class="image-field"
                 />
+              </div>
+
+              <!-- Instructions Images -->
+              <div *ngIf="question.fieldType === 'INST'">
+                <div *ngFor="let image of question.value.images; index as i">
+                  <img
+                    src="{{ image.objectURL }}"
+                    alt="image"
+                    *ngIf="image !== null"
+                    class="instruction-image-field"
+                  />
+                </div>
+
+                <div *ngIf="question.value.pdf !== null">
+                  <app-instruction-pdf
+                    [pdf]="question.value.pdf"
+                    [index]="'4'"
+                    (indexEmitter)="instructionsFileDeleteHandler($event)"
+                  >
+                  </app-instruction-pdf>
+                </div>
               </div>
 
               <!-- Dropdown -->

@@ -1,0 +1,28 @@
+.instruction-pdf-container {
+  position: relative;
+  display: inline-block;
+}
+
+.instruction-pdf-container .pdf-icon {
+  height: 60px;
+  width: 60px;
+}
+
+.instruction-pdf-container .pdf-text {
+  font-size: 90%;
+  margin-left: 10px;
+}
+
+.instruction-pdf-container .pdf-sub-text {
+  font-size: 80%;
+  margin-left: 10px;
+}
+
+.instruction-pdf-container .close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+  cursor: pointer;
+  border-radius: 50%;
+}

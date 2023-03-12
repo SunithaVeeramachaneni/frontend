@@ -9,8 +9,9 @@ import { Store } from '@ngrx/store';
 import { State, getPages } from 'src/app/forms/state';
 import { Observable } from 'rxjs';
 import { fieldTypesMock } from '../response-type/response-types.mock';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
@@ -32,7 +33,11 @@ export class PreviewComponent implements OnInit, OnChanges {
   previewFormData$: Observable<any>;
   previewFormData = [];
 
-  constructor(private store: Store<State>, private imageUtils: ImageUtils) {}
+  constructor(
+    private store: Store<State>,
+    private imageUtils: ImageUtils,
+    private translate: TranslateService
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.page && changes.page.currentValue) {
       this.pageIndex = changes.page.currentValue;
@@ -83,4 +88,8 @@ export class PreviewComponent implements OnInit, OnChanges {
       window.open(question.link);
     }
   };
+
+  getNoneTag() {
+    return this.translate.instant('noneTag');
+  }
 }
