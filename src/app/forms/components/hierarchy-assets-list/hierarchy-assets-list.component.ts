@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -32,6 +33,7 @@ export class HierarchyAssetsListComponent implements OnInit {
   public selectedHierarchyFlatList: HierarchyEntity[];
   public searchedList: any = [];
   public searchMasterData: FormControl;
+  public filteredOptions$: Observable<any>;
   public locationsCount: number;
   public assetsCount: number;
 
@@ -51,25 +53,23 @@ export class HierarchyAssetsListComponent implements OnInit {
       );
 
     this.searchMasterData = new FormControl('');
+    this.filteredOptions$ = this.searchMasterData.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      map((searchTerm: string) => {
+        this.filterList(searchTerm.trim() || '');
+        //   const term = searchTerm.trim();
+        //   if (!term.length) this.searchedList = [];
+        //   else {
+        //     this.searchedList = this.selectedHierarchyFlatList.filter(
+        //       (item) =>
+        //         item.name.includes(term) || item.nodeDescription?.includes(term)
+        //     );
+        //   }
 
-    this.searchMasterData.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        map((searchTerm: string) => {
-          const term = searchTerm.trim();
-          if (!term.length) this.searchedList = [];
-          else {
-            this.searchedList = this.selectedHierarchyFlatList.filter(
-              (item) =>
-                item.name.includes(term) || item.nodeDescription?.includes(term)
-            );
-          }
-
-          console.log(this.searchedList);
-        })
-      )
-      .subscribe();
+        //   console.log(this.searchedList);
+      })
+    );
   }
 
   handleHierarchyElementChange = (event) => {
@@ -90,6 +90,10 @@ export class HierarchyAssetsListComponent implements OnInit {
 
       this.cdrf.markForCheck();
     }
+  };
+
+  filterList = (searchInput: string): any[] => {
+    if (!searchInput.length) return [];
   };
 
   cancel = () => {
