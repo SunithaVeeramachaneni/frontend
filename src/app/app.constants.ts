@@ -75,6 +75,7 @@ export const permissions = Object.freeze({
   scheduleRounds: 'SCHEDULE_ROUNDS',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
@@ -208,7 +209,7 @@ export const routingUrls = {
   roundPlanObservations: {
     url: '/operator-rounds/observations',
     title: 'Observations',
-    permission: permissions.viewORPlans
+    permission: permissions.viewORObservations
   },
   masterConfiguration: {
     url: '/master-configuration',

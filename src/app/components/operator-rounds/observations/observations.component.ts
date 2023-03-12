@@ -1,6 +1,7 @@
-import { Observable } from 'zen-observable-ts';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { Observable } from 'rxjs';
+
+import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
 interface IPriority {
   high: number;
@@ -33,9 +34,12 @@ export class ObservationsComponent implements OnInit {
       };
     };
   }>;
-  constructor(private readonly operatorRoundsService: OperatorRoundsService) {}
+  constructor(
+    private readonly roundPlanObservationsService: RoundPlanObservationsService
+  ) {}
 
   ngOnInit(): void {
-    this.counts$ = this.operatorRoundsService.getObservationChartCounts$();
+    this.counts$ =
+      this.roundPlanObservationsService.getObservationChartCounts$();
   }
 }

@@ -23,6 +23,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
+import { slideInOut } from 'src/app/animations';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
@@ -35,13 +36,14 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
 @Component({
   selector: 'app-actions',
   templateUrl: './actions.component.html',
   styleUrls: ['./actions.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOut]
 })
 export class ActionsComponent implements OnInit {
   columns: Column[] = [
@@ -316,13 +318,13 @@ export class ActionsComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  actionsDetail = null;
+  selectedData = null;
   zIndexDelay = 0;
   readonly perms = perms;
 
   constructor(
-    private readonly operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService
+    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -339,6 +341,8 @@ export class ActionsComponent implements OnInit {
         })
       )
       .subscribe();
+    this.actionsCount$ =
+      this.roundPlanObservationsService.getObservationCount$('action');
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -402,7 +406,7 @@ export class ActionsComponent implements OnInit {
       type: 'action'
     };
 
-    return this.operatorRoundsService.getObservations$(obj).pipe(
+    return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
@@ -428,12 +432,18 @@ export class ActionsComponent implements OnInit {
   };
 
   prepareMenuActions(permissions: Permission[]): void {
-    const menuActions = [
-      {
+    const menuActions = [];
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.viewORObservations
+      )
+    ) {
+      menuActions.push({
         title: 'Show Details',
         action: 'showDetails'
-      }
-    ];
+      });
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -441,8 +451,14 @@ export class ActionsComponent implements OnInit {
   }
 
   openActionDetailPopup(row): void {
-    this.actionsDetail = row;
+    this.selectedData = row;
     this.menuState = 'in';
+    this.zIndexDelay = 400;
+  }
+
+  onCloseViewDetail(): void {
+    this.selectedData = null;
+    this.menuState = 'out';
     this.zIndexDelay = 400;
   }
 
