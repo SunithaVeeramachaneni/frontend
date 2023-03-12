@@ -546,6 +546,17 @@ export class RaceDynamicFormService {
                 });
               }
 
+              if (question.fieldType === 'INST') {
+                Object.assign(questionItem, {
+                  TAG: question.value.tag,
+                  FIELDVALUE: question.value.images
+                    .filter((image) => image !== null)
+                    .map((image) => image.objectURL)
+                    .join(';'),
+                  DOCFILE: question.value.pdf?.objectURL || ''
+                });
+              }
+
               return questionItem;
             })
           };
