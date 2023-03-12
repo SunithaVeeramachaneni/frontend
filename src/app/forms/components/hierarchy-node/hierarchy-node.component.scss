@@ -9,6 +9,11 @@
   margin-top: 10px;
 }
 
+.select-all-checkbox {
+  margin-top: -5px;
+  margin-left: 12px;
+}
+
 .master-data-image {
   width: 20px;
   height: 20px;
@@ -43,6 +48,7 @@
   position: relative;
   left: 10px;
   top: -4px;
+  margin-top: 5px;
 }
 
 .borders {
@@ -53,4 +59,10 @@
 .master-checkbox {
   padding-top: 0px;
   margin-left: 7px;
+}
+
+.hierarchy-head {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
 }
