@@ -39,7 +39,8 @@ import {
   getSectionQuestionsCount,
   State,
   getQuestionLogics,
-  getFormMetadata
+  getFormMetadata,
+  getModuleName
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -104,6 +105,7 @@ export class QuestionComponent implements OnInit {
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
+  moduleName: string;
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -183,6 +185,9 @@ export class QuestionComponent implements OnInit {
     this.store
       .select(getFormMetadata)
       .subscribe((event) => (this.formMetadata = event));
+    this.store
+      .select(getModuleName)
+      .subscribe((event) => (this.moduleName = event));
 
     this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
 
@@ -664,7 +669,7 @@ export class QuestionComponent implements OnInit {
             name: file.name,
             size: file.size
           };
-          this.setURLfromS3(this.formMetadata?.id, file, {
+          this.setURLfromS3(file, {
             value,
             originalValue,
             isImage: false
@@ -682,7 +687,7 @@ export class QuestionComponent implements OnInit {
             name: file.name,
             size: file.size
           };
-          this.setURLfromS3(this.formMetadata?.id, file, {
+          this.setURLfromS3(file, {
             value,
             originalValue,
             isImage: true,
@@ -698,10 +703,10 @@ export class QuestionComponent implements OnInit {
     });
   };
 
-  setURLfromS3(formMetadataId: string, file: Blob, params): void {
+  setURLfromS3(file: Blob, params): void {
     const { value, originalValue, isImage, index } = params;
     this.formService
-      .uploadToS3(`rdf/${formMetadataId}`, file)
+      .uploadToS3(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
         value.objectKey = event.message.objectKey;
         value.objectURL = event.message.objectURL;

@@ -59,6 +59,7 @@
               <!-- instructions needs unescaped HTML -->
               <div
                 [innerHTML]="question.name"
+                class="instruction"
                 *ngIf="question.fieldType === 'INST'"
               ></div>
 

@@ -1,28 +1,39 @@
 .instruction-pdf-container {
+  display: inline-flex;
+  background: #eef4f9;
+  padding: 13px;
   position: relative;
-  display: inline-block;
-}
+  top: -23px;
 
-.instruction-pdf-container .pdf-icon {
-  height: 60px;
-  width: 60px;
-}
+  .pdf-icon {
+    height: 25px;
+    width: 25px;
+    position: relative;
+    top: 5px;
+  }
 
-.instruction-pdf-container .pdf-text {
-  font-size: 90%;
-  margin-left: 10px;
-}
+  .pdf-text {
+    font-size: 95%;
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.24px;
+    color: #05366d;
+  }
 
-.instruction-pdf-container .pdf-sub-text {
-  font-size: 80%;
-  margin-left: 10px;
-}
+  .pdf-sub-text {
+    font-size: 85%;
+    margin-left: 10px;
+    font-weight: 400;
+    letter-spacing: 0.066px;
+    color: #05366d;
+  }
 
-.instruction-pdf-container .close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 100;
-  cursor: pointer;
-  border-radius: 50%;
+  .close {
+    position: relative;
+    top: -15px;
+    right: -15px;
+    z-index: 100;
+    cursor: pointer;
+  }
 }

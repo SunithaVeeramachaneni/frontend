@@ -573,9 +573,11 @@ export class RaceDynamicFormService {
                   TAG: question.value.tag,
                   FIELDVALUE: question.value.images
                     .filter((image) => image !== null)
-                    .map((image) => image.objectURL)
+                    .map((image) => image.objectKey.substring('public/'.length))
                     .join(';'),
-                  DOCFILE: question.value.pdf?.objectURL || ''
+                  DOCFILE:
+                    question.value.pdf?.objectKey.substring('public/'.length) ||
+                    ''
                 });
               }
 

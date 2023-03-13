@@ -1,15 +1,22 @@
 @import '../../../../../../scss/colors.scss';
 
-.tag-field-select {
-  border: none;
-  background: transparent;
-  width: 110px;
-}
+.tag {
+  .tag-field-select {
+    border: none;
+    background: transparent;
+    width: 110px;
+  }
 
-.none-field {
-  color: $blue-main;
-}
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
 
-.other-field {
-  color: red;
+  .none-field {
+    color: $blue-main;
+  }
+
+  .other-field {
+    color: $red-main;
+  }
 }

@@ -50,7 +50,6 @@
 
   .questions-div {
     border-bottom: 1px solid $border-color;
-    height: 40px;
 
     .question-input-box {
       margin-top: 7px;
@@ -59,6 +58,15 @@
 
     .rtf-input-box {
       height: auto !important;
+    }
+
+    ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
+    ::ng-deep .mat-form-field-outline {
+      opacity: 0;
+    }
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 0 !important;
     }
   }
 
@@ -105,6 +113,7 @@
           margin-top: -5px;
         }
       }
+
       .action {
         padding: 0px 15px;
         display: flex;

@@ -105,6 +105,10 @@
           }
         }
 
+        .instruction ol li {
+          list-style-type: auto;
+        }
+
         .number {
           width: 93%;
           border: 1px solid $gray3;

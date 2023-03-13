@@ -30,17 +30,24 @@
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
 
-          <quill-material
-            #name
-            formControlName="name"
-            [placeholder]="'typeQuestion' | translate"
-            [ngClass]="{
-              'display-toolbar': questionForm.get('isOpen').value
-            }"
+          <mat-form-field
             *ngIf="questionForm.get('fieldType').value === 'INST'"
-            (editorFocus)="handleEditorFocus($event)"
+            appearance="outline"
+            class="width-100"
+            placeholder="Type Question"
           >
-          </quill-material>
+            <quill-material
+              #name
+              formControlName="name"
+              [placeholder]="'typeQuestion' | translate"
+              [ngClass]="{
+                'display-toolbar': questionForm.get('isOpen').value
+              }"
+              *ngIf="questionForm.get('fieldType').value === 'INST'"
+              (editorFocus)="handleEditorFocus($event)"
+            >
+            </quill-material>
+          </mat-form-field>
 
           <div
             class="floating-btns"
@@ -133,6 +140,31 @@
               </button>
 
               <div *ngIf="questionForm.get('fieldType').value === 'INST'">
+                <span
+                  *ngFor="
+                    let image of questionForm.get('value').value.images;
+                    index as i
+                  "
+                  class="m-r-10"
+                >
+                  <app-instruction-image
+                    [image]="image"
+                    [index]="i"
+                    (indexEmitter)="instructionsFileDeleteHandler($event)"
+                    *ngIf="image !== null"
+                  ></app-instruction-image>
+                </span>
+
+                <span *ngIf="questionForm.get('value').value.pdf !== null">
+                  <app-instruction-pdf
+                    [pdf]="questionForm.get('value').value.pdf"
+                    [index]="'4'"
+                    (indexEmitter)="instructionsFileDeleteHandler($event)"
+                  >
+                  </app-instruction-pdf>
+                </span>
+
+                <br />
                 <input
                   type="file"
                   class="file-upload"
@@ -141,6 +173,7 @@
                   [hidden]="true"
                   #instructionsFileUpload
                 />
+
                 <button
                   mat-button
                   color="primary"
@@ -151,6 +184,11 @@
                   <mat-icon class="icon">link</mat-icon>
                   <span translate="addImagesAndPDFBtn"></span>
                 </button>
+
+                <app-tag-select
+                  [question]="questionForm"
+                  (inputTagAnswer)="updateInstructionTag($event)"
+                ></app-tag-select>
               </div>
 
               <span
@@ -239,16 +277,6 @@
                   [question]="questionForm"
                   (inputTextAnswer)="questionForm.get('value').setValue($event)"
                 ></app-text>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'INST'"
-                class="action"
-              >
-                <app-tag-select
-                  [question]="questionForm"
-                  (inputTagAnswer)="updateInstructionTag($event)"
-                ></app-tag-select>
               </span>
 
               <span
@@ -361,30 +389,6 @@
           </div>
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
             <app-image [question]="questionForm"></app-image>
-          </div>
-          <div *ngIf="questionForm.get('fieldType').value === 'INST'">
-            <div
-              *ngFor="
-                let image of questionForm.get('value').value.images;
-                index as i
-              "
-            >
-              <app-instruction-image
-                [image]="image"
-                [index]="i"
-                (indexEmitter)="instructionsFileDeleteHandler($event)"
-                *ngIf="image !== null"
-              ></app-instruction-image>
-            </div>
-
-            <div *ngIf="questionForm.get('value').value.pdf !== null">
-              <app-instruction-pdf
-                [pdf]="questionForm.get('value').value.pdf"
-                [index]="'4'"
-                (indexEmitter)="instructionsFileDeleteHandler($event)"
-              >
-              </app-instruction-pdf>
-            </div>
           </div>
           <input
             #insertImages

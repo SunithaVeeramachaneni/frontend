@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tag-select',
@@ -14,7 +15,7 @@ export class TagSelectComponent implements OnInit {
   tagAnswer: string;
   private questionForm: any;
 
-  constructor() {}
+  constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.tagAnswer = this.questionForm.get('value').value.tag;
@@ -22,5 +23,9 @@ export class TagSelectComponent implements OnInit {
 
   dataChanged() {
     this.inputTagAnswer.emit(this.tagAnswer);
+  }
+
+  getNoneTag() {
+    return this.translate.instant('noneTag');
   }
 }
