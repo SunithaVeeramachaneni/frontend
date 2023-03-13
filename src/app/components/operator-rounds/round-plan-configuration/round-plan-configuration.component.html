@@ -185,9 +185,7 @@
               *ngIf="selectedNodeInstances?.length > 1; else singleInstance"
             >
               {{
-                'nodeInstance'
-                  | translate
-                    : { name: selectedNodeInstance.name, instanceIndex: i + 1 }
+                'nodeInstance' | translate : { name: selectedNodeInstance.name }
               }}
             </span>
             <ng-template #singleInstance>

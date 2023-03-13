@@ -21,6 +21,12 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { HierarchyEntity } from 'src/app/interfaces';
+import {
+  BuilderConfigurationActions,
+  HierarchyActions
+} from 'src/app/forms/state/actions';
+import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-route-plan',
@@ -32,6 +38,7 @@ export class RoutePlanComponent implements OnInit {
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
 
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
+  @Output() copyNode: EventEmitter<HierarchyEntity> = new EventEmitter();
 
   @Input() set hierarchy(hierarchy: any) {
     this._hierarchy = hierarchy ? hierarchy : ({} as any);
@@ -41,8 +48,6 @@ export class RoutePlanComponent implements OnInit {
     return this._hierarchy;
   }
   @Input() hierarchyMode;
-
-  // this.prepareDragDrop(this.hierarchy);
 
   dropTargetIds = [];
   nodeLookup = {};
@@ -143,19 +148,6 @@ export class RoutePlanComponent implements OnInit {
       'main'
     );
 
-    // To Do @Shiva
-
-    // console.log(
-    //   '\nmoving\n[' + draggedItemId + '] from list [' + parentItemId + ']',
-    //   '\n[' +
-    //     this.dropActionTodo.action +
-    //     ']\n[' +
-    //     this.dropActionTodo.targetId +
-    //     '] from list [' +
-    //     targetListId +
-    //     ']'
-    // );
-
     const draggedItem = this.nodeLookup[draggedItemId];
 
     const oldItemContainer =
@@ -190,6 +182,19 @@ export class RoutePlanComponent implements OnInit {
         this.nodeLookup[this.dropActionTodo.targetId].isExpanded = true;
         break;
     }
+
+    this.store.dispatch(
+      HierarchyActions.updateSelectedHierarchyList({
+        selectedHierarchy: this.hierarchy
+      })
+    );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormStatuses({
+        formStatus: formConfigurationStatus.draft,
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
+      })
+    );
     this.clearDragInfo(true);
   }
 
@@ -232,4 +237,6 @@ export class RoutePlanComponent implements OnInit {
       this.prepareDragDrop(node.children);
     });
   }
+
+  triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
 }

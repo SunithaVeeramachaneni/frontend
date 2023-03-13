@@ -127,7 +127,7 @@ export class AssetHierarchyUtil {
         type,
         image,
         nodeId: type === 'location' ? node.locationId : node.assetsId,
-        nodeDescription: description,
+        nodeDescription: description || '',
         sequence: null,
         hasChildren: false,
         parentId,
@@ -238,7 +238,8 @@ export class AssetHierarchyUtil {
           iSDeletedInRoutePlan: false,
           id: node.id ? node.id : uuidv4(),
           hierarchyPath: nodePath,
-          isExpanded: true
+          isExpanded: true,
+          numTimesCopied: 0
         });
       } else {
         const childNodes = this.cleanSelectedHierarchyList(
@@ -253,7 +254,8 @@ export class AssetHierarchyUtil {
             isRootNode: !node.parentId ? true : false,
             configuredParentId: node.parentId,
             children: childNodes,
-            hierarchyPath: nodePath
+            hierarchyPath: nodePath,
+            numTimesCopied: 0
           });
         // If current node is selected, only selected child nodes get filtered into its children[].
         else nodes = [...nodes, ...childNodes]; // If current node is not selected but children are, children get promoted to previous node's level in the hierarchy.
@@ -297,6 +299,39 @@ export class AssetHierarchyUtil {
 }
 
 // Wrote the below function outside class as its used in hierarchy.reducer where dependency injection cannot be used.
+
+export const copyNodeToRoutePlan = (
+  nodeToBeCopied: HierarchyEntity,
+  hierarchyList: HierarchyEntity[]
+): HierarchyEntity[] => {
+  const nodes = [] as HierarchyEntity[];
+  for (const node of hierarchyList) {
+    if (nodeToBeCopied.id === node.id) {
+      const numTimesCopied = node.numTimesCopied + 1;
+      nodes.push(
+        {
+          ...node,
+          numTimesCopied
+        },
+        {
+          ...nodeToBeCopied,
+          id: uuidv4(),
+          name: `${nodeToBeCopied.name} (${numTimesCopied})`,
+          numTimesCopied: 0,
+          hasChildren: false,
+          children: [] as HierarchyEntity[]
+        }
+      );
+    } else
+      nodes.push({
+        ...node,
+        children: node.hasChildren
+          ? copyNodeToRoutePlan(nodeToBeCopied, node.children)
+          : []
+      });
+  }
+  return nodes;
+};
 
 export const deleteNodeFromHierarchy = (
   hierarchyList: HierarchyEntity[],
