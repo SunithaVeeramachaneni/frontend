@@ -18,6 +18,8 @@
     "items": [],
     "column": "inspectedOn",
     "type": "daterange",
+    "startDate": "",
+    "endDate": "",
     "value": ""
   }
 ]
