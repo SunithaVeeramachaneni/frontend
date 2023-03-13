@@ -7,14 +7,6 @@
     "value": ""
   },
   {
-    "label": "Schedule",
-    "items": ["Daily", "Weekly", "Monthly", "Custom dates"],
-    "column": "",
-    "type": "schedule",
-    "itemValue": "",
-    "value": ""
-  },
-  {
     "label": "Modified By",
     "items": [],
     "column": "modifiedBy",

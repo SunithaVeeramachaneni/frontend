@@ -27,8 +27,8 @@
         </mat-select>
       </mat-form-field>
       <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
-        <div class="width50">
-          <mat-form-field appearance="outline" class="mat-field">
+        <div [ngClass]="item.itemValue ? 'width50' : 'width100'">
+          <mat-form-field appearance="outline" class="mat-field"> 
             <mat-label>{{ item.label }}</mat-label>
             <mat-select [(ngModel)]="item.itemValue" name="showStatus">
               <mat-option
@@ -40,7 +40,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="width50 date-picker" *ngIf="item.itemValue === 'Custom dates'">
+        <div class="width50 date-picker" *ngIf="item.itemValue && item.itemValue === 'Custom dates'">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Select Date</mat-label>
             <div class="date-picker-wrap">
@@ -58,7 +58,7 @@
             </div>
           </mat-form-field>
         </div>
-        <div class="width50 " *ngIf="item.itemValue !== 'Custom dates'">
+        <div class="width50 " *ngIf="item.itemValue && item.itemValue !== 'Custom dates'">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Enter Schedule</mat-label>
             <input [(ngModel)]="item.value" type="number" matInput />
