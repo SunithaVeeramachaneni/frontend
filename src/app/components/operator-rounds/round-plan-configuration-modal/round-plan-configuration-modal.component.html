@@ -2,12 +2,10 @@
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
       <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
-      <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
-    <div class="width-5 bg-white"></div>
-    <div class="width-95">
+    <div class="width-100">
       <div class="form-detials">
         <h2 class="heading" translate="setFormDetailsHeading"></h2>
 
@@ -38,8 +36,11 @@
         <!-- <hr class="horizontal-line" /> -->
 
         <div class="form-name">
-          <p class="form-name-description" translate="addFormName"></p>
-          <mat-form-field appearance="outline" class="width-100">
+          <p
+            class="form-name-description m-t-0 m-b-0"
+            translate="addFormName"
+          ></p>
+          <mat-form-field appearance="outline" class="width-100 form-field">
             <input
               type="text"
               name="formName"
@@ -55,8 +56,11 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p class="form-name-description" translate="addFormDescription"></p>
-          <mat-form-field appearance="outline" class="width-100">
+          <p
+            class="form-name-description m-t-20 m-b-0"
+            translate="addFormDescription"
+          ></p>
+          <mat-form-field appearance="outline" class="width-100 form-field">
             <input
               type="text"
               matInput
@@ -67,8 +71,11 @@
           </mat-form-field>
         </div>
         <div class="tags">
-          <p class="form-name-description m-b-0" translate="tags"></p>
-          <mat-form-field class="chips-list width-100" appearance="outline">
+          <p class="form-name-description m-b-0 m-t-20" translate="tags"></p>
+          <mat-form-field
+            class="chips-list width-100 form-field"
+            appearance="outline"
+          >
             <mat-chip-list #chipList>
               <mat-chip
                 *ngFor="let tag of tags"
@@ -104,24 +111,26 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-        
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          class="next-btn"
-          (click)="next()"
-          [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-          translate="nextBtn"
-        ></button>
-        <button
-          mat-stroked-button
-          type="button"
-          color="primary"
-          class="skip-btn"
-          (click)="onCancel()"
-          translate="cancelBtn"
-        ></button>
+
+        <div mat-dialog-actions align="end" class="buttons">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            class="skip-btn"
+            (click)="onCancel()"
+            translate="cancelBtn"
+          ></button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            class="next-btn"
+            (click)="next()"
+            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+            translate="nextBtn"
+          ></button>
+        </div>
       </div>
     </div>
   </div>
