@@ -5,7 +5,8 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
-      (formDetailAction)="roundsDetailActionHandler($event)"
+      [hidden]="hideSubmissionDetail"
+      (formDetailAction)="roundsDetailActionHandler()"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">

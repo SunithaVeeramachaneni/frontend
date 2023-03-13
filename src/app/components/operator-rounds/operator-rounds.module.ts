@@ -65,6 +65,7 @@ import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hier
 import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
 import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
 import { SubmissionComponent } from './submission/submission.component';
+import { RoundPlanScheduleSuccessModalComponent } from './round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -88,7 +89,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AssetsModalComponent,
     HierarchyLocationsListComponent,
     HierarchyModalComponent,
-    HierarchyAssetsListComponent
+    HierarchyAssetsListComponent,
+    RoundPlanScheduleSuccessModalComponent
   ],
   imports: [
     FormsModule,

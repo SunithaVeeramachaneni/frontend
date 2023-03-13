@@ -5,29 +5,57 @@
       (slideInOut)="closeRoundPlanHandler()"
       [selectedForm]="roundPlanDetail"
       [moduleName]="'OPERATOR_ROUNDS'"
-      (formDetailAction)="roundPlanDetailActionHandler($event)"
+      [hidden]="hideRoundPlanDetail"
+      (formDetailAction)="roundPlanDetailActionHandler()"
+      (scheduleRoundPlan)="openScheduleConfigHandler($event)"
+      [formStatus]="formConfigurationStatus.published"
+      [scheduleConfiguration]="
+        roundPlanScheduleConfigurations[roundPlanDetail?.id]
+      "
     ></app-form-detail>
   </div>
   <app-round-plan-schedule-configuration
     [@slideInOut]="scheduleConfigState"
     [roundPlanDetail]="scheduleRoundPlanDetail"
+    [hidden]="hideScheduleConfig"
     (scheduleConfigState)="closeScheduleConfigHandler($event)"
+    (scheduleConfig)="scheduleConfigHandler($event)"
   ></app-round-plan-schedule-configuration>
-  <span class="custom-form-field-gray-color search">
-    <span class="no-of-forms" *ngIf="roundPlansCount$ | async as totalCount">
-      <span class="forms-count">
-        {{ totalCount }}
-      </span>
-      <span class="forms-text">{{
-        'plans'
+  <span class="custom-form-field-gray-color plan-categories">
+    <mat-button-toggle-group
+      name="plans"
+      aria-label="Plans"
+      [formControl]="planCategory"
+    >
+      <mat-button-toggle value="all"
+        >{{
+          'all'
+            | translate
+              : {
+                  count:
+                    this.roundPlanCounts.scheduled +
+                    this.roundPlanCounts.unscheduled
+                }
+        }}
+      </mat-button-toggle>
+      <mat-button-toggle value="scheduled"
+        >{{
+          'scheduled'
+            | translate
+              : {
+                  count: this.roundPlanCounts.scheduled
+                }
+        }}
+      </mat-button-toggle>
+      <mat-button-toggle value="unscheduled">{{
+        'unscheduled'
           | translate
             : {
-                count: totalCount || 0
+                count: this.roundPlanCounts.unscheduled
               }
-      }}</span>
-    </span>
-
-    <mat-form-field appearance="outline">
+      }}</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field appearance="outline" class="search">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
         matInput
@@ -74,7 +102,7 @@
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(roundPlans$ | async) && (isLoading$ | async) === false">
+  <div *ngIf="(filteredRoundPlans$ | async) && (isLoading$ | async) === false">
     <cwp-dynamictable
       [ngClass]="{
         'remove-zindex': zIndexDelay === 400 || zIndexScheduleDelay === 400

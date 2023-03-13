@@ -57,6 +57,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -100,6 +101,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
