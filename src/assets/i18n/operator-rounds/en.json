@@ -164,7 +164,6 @@
   "startDate": "Start Date",
   "endDate": "End Date",
   "selectDates": "Select Dates",
-  "selectedLocations": "Location(s) selected",
 
   "openIssues": "Open Issues",
   "openActions": "Open Action",
@@ -172,5 +171,14 @@
   "actions": "Actions",
   "selectAllAssets": "Select All ({count})",
   "selectedAssets": "Select All ({selectedCount}/{count})",
-  "priority": "Priority"
+  "priority": "Priority",
+  "category": "Category",
+  "round": "Round",
+  "asset": "Asset",
+  "task": "Task",
+  "dueDate": "Due Date",
+  "assignedTo": "Assigned To",
+  "erpnotification": "ERP Notification",
+  "raisedBy": "Raised By",
+  "attachment": "Attachments"
 }

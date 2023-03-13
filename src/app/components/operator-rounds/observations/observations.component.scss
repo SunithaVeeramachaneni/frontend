@@ -5,7 +5,8 @@
 
   .charts {
     padding: 15px 150px 10px 150px;
-    height: 285px;
+    height: 260px;
+    justify-content: center;
   }
 
   .chart {
@@ -46,5 +47,6 @@
   }
   .center {
     text-align: center;
+    margin: 0;
   }
 }

@@ -17,18 +17,18 @@ export class IssuesActionsDetailViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.issuesActionsDetailViewForm = this.fb.group({
-      name: this.data.name,
-      description: this.data.name,
-      category: this.data.category,
-      round: this.data.round,
-      location: this.data.location,
-      asset: this.data.asset,
-      task: this.data.task,
-      priority: this.data.priority,
-      status: this.data.status,
-      dueDate: this.data.dueDate,
-      assignedTo: this.data.assignedTo,
-      raisedBy: this.data.raisedBy
+      name: '',
+      description: '',
+      category: '',
+      round: '',
+      location: '',
+      asset: '',
+      task: '',
+      priority: 'High',
+      status: 'Open',
+      dueDate: '',
+      assignedTo: 'John',
+      raisedBy: ''
     });
   }
 

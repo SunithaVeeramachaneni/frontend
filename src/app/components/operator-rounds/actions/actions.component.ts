@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
@@ -24,6 +25,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
+import { GetFormListQuery } from 'src/app/API.service';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
@@ -36,6 +38,7 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
+import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
 @Component({
@@ -324,7 +327,8 @@ export class ActionsComponent implements OnInit {
 
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
-    private readonly loginService: LoginService
+    private readonly loginService: LoginService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -346,11 +350,11 @@ export class ActionsComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-    this.displayIssues();
+    this.displayActions();
     this.configOptions.allColumns = this.columns;
   }
 
-  displayIssues(): void {
+  displayActions(): void {
     const actionsOnLoadSearch$ = this.fetchActions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -426,8 +430,8 @@ export class ActionsComponent implements OnInit {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
-      case 'title':
-        this.openActionDetailPopup(row);
+      default:
+        this.openModal(row);
     }
   };
 
@@ -450,23 +454,22 @@ export class ActionsComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  openActionDetailPopup(row): void {
-    this.selectedData = row;
-    this.menuState = 'in';
-    this.zIndexDelay = 400;
-  }
-
-  onCloseViewDetail(): void {
-    this.selectedData = null;
-    this.menuState = 'out';
-    this.zIndexDelay = 400;
+  openModal(row: GetFormListQuery): void {
+    this.dialog.open(IssuesActionsDetailViewComponent, {
+      data: row,
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        this.openActionDetailPopup(data);
+        this.openModal(data);
         break;
       default:
     }
