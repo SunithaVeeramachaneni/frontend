@@ -231,6 +231,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
+  isDayOfWeekSelected(daysOfWeek, dayIndex) {
+    return daysOfWeek.includes(dayIndex);
+  }
+
   private toggleLoader(action: boolean): void {
     this.isLoading$.next(action);
   }

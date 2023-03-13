@@ -84,11 +84,10 @@
                       let i = index
                     "
                     [ngClass]="{
-                      active: frequencyDetail.data[i] === i
+                      active: isDayOfWeekSelected(frequencyDetail.data, i)
                     }"
                     [value]="i"
                     >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
-                    {{ frequencyDetail.data[i] }}
                   </mat-button-toggle>
                 </mat-button-toggle-group>
                 <div *ngIf="frequencyDetail.repeatEvery === 'month'">
@@ -101,7 +100,7 @@
                   >
                     <div
                       class="row-title"
-                      class="m-r-40"
+                      class="m-r-20"
                       [ngClass]="{ 'm-r-36': i === 1 }"
                     >
                       {{ scheduleConfigs.weeksOfMonth[filteredWeek.index] }}
@@ -114,7 +113,7 @@
                             let i = index
                           "
                           [ngClass]="{
-                            active: filteredWeek.week[i] === i
+                            active: isDayOfWeekSelected(filteredWeek.week, i)
                           }"
                           [value]="i"
                           >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
