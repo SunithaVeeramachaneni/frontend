@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const permissions = Object.freeze({
   viewDashboards: 'VIEW_DASHBOARDS',
   createDashboard: 'CREATE_DASHBOARD',
@@ -240,6 +241,13 @@ export const formConfigurationStatus = Object.freeze({
   saving: 'Saving',
   standalone: 'Standalone',
   embedded: 'Embedded'
+});
+
+export const HIERARCHY_MODES = Object.freeze({
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ASSET_HIERARCHY: 'asset_hierarchy',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ROUTE_PLAN: 'route_plan'
 });
 
 export const defaultCategoryId = '_UnassignedCategory_';

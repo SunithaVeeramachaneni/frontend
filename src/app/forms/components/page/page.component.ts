@@ -11,9 +11,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { getPage, getPagesCount, State } from 'src/app/forms/state';
+import {
+  getPage,
+  getPagesCount,
+  getTaskCountByPage,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { PageEvent, Page } from 'src/app/interfaces';
-import { FormConfigurationActions } from '../../state/actions';
+import { BuilderConfigurationActions } from '../../state/actions';
+// import { FormConfigurationActions } from '../../state/actions';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -21,6 +27,8 @@ import { FormConfigurationActions } from '../../state/actions';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageComponent implements OnInit {
+  @Input() selectedNodeId: any;
+
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -37,20 +45,26 @@ export class PageComponent implements OnInit {
   });
   page$: Observable<Page>;
   pagesCount$: Observable<number>;
+  pageTasksCount$: Observable<number>;
   private _pageIndex: number;
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit() {
-    this.page$ = this.store.select(getPage(this.pageIndex)).pipe(
-      tap((page) => {
-        this.pageForm.patchValue(page, {
-          emitEvent: false
-        });
-      })
-    );
+    this.page$ = this.store
+      .select(getPage(this.pageIndex, this.selectedNodeId))
+      .pipe(
+        tap((page) => {
+          this.pageForm.patchValue(page, {
+            emitEvent: false
+          });
+        })
+      );
 
-    this.pagesCount$ = this.store.select(getPagesCount);
+    this.pagesCount$ = this.store.select(getPagesCount(this.selectedNodeId));
+    this.pageTasksCount$ = this.store.select(
+      getTaskCountByPage(this.pageIndex, this.selectedNodeId)
+    );
   }
 
   addPage() {
@@ -60,9 +74,10 @@ export class PageComponent implements OnInit {
   toggleIsOpenState = () => {
     this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
     this.store.dispatch(
-      FormConfigurationActions.updatePageState({
+      BuilderConfigurationActions.updatePageState({
         pageIndex: this.pageIndex,
-        isOpen: this.pageForm.get('isOpen').value
+        isOpen: this.pageForm.get('isOpen').value,
+        subFormId: this.selectedNodeId
       })
     );
   };

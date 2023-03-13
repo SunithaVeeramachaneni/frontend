@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { HierarchyEntity } from 'src/app/interfaces';
 import {
   RangeSelectorState,
   ResponseTypeOpenState
@@ -21,6 +22,10 @@ export class FormService {
     rangeMetadata: {}
   });
 
+  private masterHierarchyData: HierarchyEntity[] = [];
+  private selectedHierarchyList: HierarchyEntity[] = [];
+  private instanceIdMappings: any;
+
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
   rangeSelectorOpenState$ = this.rangeSelectorOpenStateSubject.asObservable();
@@ -37,4 +42,25 @@ export class FormService {
   setRangeSelectorOpenState(rangeMetadata: RangeSelectorState) {
     this.rangeSelectorOpenStateSubject.next(rangeMetadata);
   }
+
+  setMasterHierarchyList = (hierarchyData: HierarchyEntity[]) => {
+    this.masterHierarchyData = hierarchyData;
+  };
+
+  getMasterHierarchyList = () => this.masterHierarchyData;
+
+  setInstanceIdMappings = (mapping: any) => {
+    this.instanceIdMappings = mapping;
+  };
+  getInstanceIdMappings = () => this.instanceIdMappings;
+  getInstanceIdMappingsByUid = (uid) => this.instanceIdMappings[uid];
+
+  setSelectedHierarchyList = (hierarchyData: HierarchyEntity[]) => {
+    this.selectedHierarchyList = [
+      ...this.selectedHierarchyList,
+      ...hierarchyData
+    ];
+  };
+
+  getSelectedHierarchyList = () => this.selectedHierarchyList;
 }

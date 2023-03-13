@@ -1,9 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FormMetadata } from 'src/app/interfaces';
-import { getFormMetadata, getPagesCount, State } from '../../state';
+import {
+  getFormMetadata,
+  getPagesCount,
+  State
+} from '../../state/builder/builder-state.selectors';
 
 @Component({
   selector: 'app-iphone',
@@ -12,6 +21,8 @@ import { getFormMetadata, getPagesCount, State } from '../../state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IphoneComponent implements OnInit {
+  @Input() subFormId: any;
+
   formMetadata$: Observable<FormMetadata>;
   pagesCount$: Observable<number>;
   formMetadata: FormMetadata;
@@ -27,10 +38,10 @@ export class IphoneComponent implements OnInit {
       })
     );
 
-    this.pagesCount$ = this.store.select(getPagesCount);
+    this.pagesCount$ = this.store.select(getPagesCount(this.subFormId));
     this.pagesCount$.subscribe((res) => {
       this.totalPages = res;
-    })
+    });
   }
 
   nextPage() {
