@@ -1,0 +1,130 @@
+<div class="form-header-modal">
+  <mat-toolbar class="form-toolbar">
+    <button (click)="onCancel()" class="back-btn">
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+    </button>
+  </mat-toolbar>
+  <div class="dis-flex form-content" [formGroup]="issuesActionsDetailViewForm">
+    <div class="width-60 chart-div"></div>
+    <div class="width-40 details-div">
+      <div class="right-div">
+        <div class="titles">Title</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('name').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Description</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('description').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Category</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('category').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Round</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('round').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Location</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('location').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Asset</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('asset').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Task</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('task').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Priority</div>
+        <div class="values">
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="priority">
+              <mat-option>High</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Status</div>
+        <div class="values">
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="status">
+              <mat-option>Open</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div">
+        <div class="titles">Due Date</div>
+        <div class="values">
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="dueDate">
+              <mat-option>Open</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <hr class="line" />
+
+      <div class="right-div">
+        <div class="titles">Assigned To</div>
+        <div class="values">
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="assignedTo">
+              <mat-option>Open</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <hr class="line" />
+
+      <div class="right-div">
+        <div class="titles">ERP Notification</div>
+        <div class="values">
+          <button mat-raised-button color="#3d5afe">Create</button>
+        </div>
+      </div>
+      <hr class="line" />
+
+      <div class="right-div">
+        <div class="titles">Raised By</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('raisedBy').value }}
+        </div>
+      </div>
+      <hr class="line" />
+
+      <div class="right-div">
+        <div class="titles">Attachments</div>
+        <div class="values">
+          <button mat-raised-button color="#3d5afe">3</button>
+        </div>
+      </div>
+      <hr class="line" />
+    </div>
+  </div>
+</div>

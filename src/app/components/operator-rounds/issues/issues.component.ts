@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import {
@@ -36,6 +37,7 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
+import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
@@ -257,7 +259,8 @@ export class IssuesComponent implements OnInit {
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -357,7 +360,7 @@ export class IssuesComponent implements OnInit {
     const { columnId, row } = event;
     switch (columnId) {
       default:
-      //this.openRoundPlanHandler(event.row);
+        this.openModal(row);
     }
   };
 
@@ -369,36 +372,27 @@ export class IssuesComponent implements OnInit {
       }
     ];
 
-    if (
-      this.loginService.checkUserHasPermission(
-        permissions,
-        perms.scheduleRounds
-      )
-    ) {
-      menuActions.push({
-        title: 'Schedule',
-        action: 'schedule'
-      });
-    }
-
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
 
-  // openRoundPlanHandler(row: GetFormListQuery): void {
-  //   this.closeScheduleConfigHandler('out');
-  //   this.store.dispatch(FormConfigurationActions.resetPages());
-  //   this.roundPlanDetail = row;
-  //   this.menuState = 'in';
-  //   this.zIndexDelay = 400;
-  // }
+  openModal(row: GetFormListQuery): void {
+    this.dialog.open(IssuesActionsDetailViewComponent, {
+      data: row,
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
+  }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        //this.openRoundPlanHandler(data);
+        this.openModal(data);
         break;
       default:
       // do nothing
