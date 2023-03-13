@@ -62,6 +62,8 @@ import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-d
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -71,6 +73,7 @@ import { ObservationsComponent } from './observations/observations.component';
 import { IssuesComponent } from './issues/issues.component';
 import { ActionsComponent } from './actions/actions.component';
 import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
+import { ChartComponent } from './observations/donut-chart/chart.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -100,7 +103,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ObservationsComponent,
     IssuesComponent,
     ActionsComponent,
-    IssuesActionsDetailViewComponent
+    IssuesActionsDetailViewComponent,
+    ChartComponent
   ],
   imports: [
     FormsModule,
@@ -155,7 +159,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     EffectsModule.forFeature([
       RoundPlanConfigurationEffects,
       ResponseSetEffects
-    ])
+    ]),
+    NgxEchartsModule.forRoot({
+      echarts
+    })
   ],
   exports: [OperatorRoundsContainerComponent]
 })
