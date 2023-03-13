@@ -6,21 +6,30 @@
       [ngClass]="{ active: selectedNode.id === node.id }"
     >
       <div class="left">
-        <div
-          class="nodeContent"
-          class="nodeContent"
-          (click)="setSelectedNode(node)"
-        >
-          <img [src]="node.image" />
-          <div class="description">
-            <span class="title">{{ node.name }}</span>
-            <span class="subTitle">
-              {{
-                'nodeSubTitle'
-                  | translate
-                    : { nodeType: node.type | titlecase, nodeId: node.nodeId }
-              }}
-            </span>
+        <div class="dis-flex">
+          <img
+            *ngIf="hierarchyMode !== 'asset_hierarchy'"
+            cdkDragHandle
+            src="assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+            class="question-six-dots"
+          />
+          <div
+            class="nodeContent"
+            class="nodeContent"
+            (click)="setSelectedNode(node)"
+          >
+            <img [src]="node.image" />
+            <div class="description">
+              <span class="title">{{ node.name }}</span>
+              <span class="subTitle">
+                {{
+                  'nodeSubTitle'
+                    | translate
+                      : { nodeType: node.type | titlecase, nodeId: node.nodeId }
+                }}
+              </span>
+            </div>
           </div>
         </div>
         <div

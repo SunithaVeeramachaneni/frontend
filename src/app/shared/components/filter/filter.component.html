@@ -1,0 +1,139 @@
+<div class="filter-report-modal custom-form-field-white-color">
+  <div class="m-b-10 filter-header">
+    <span class="filter-modal-heading">Filter</span>
+    <button
+      class="filter-modal-cancel"
+      (click)="closeFilter()"
+      aria-label="Close Filter"
+    >
+      <img
+        src="../../../../assets/img/svg/cancel-icon.svg"
+        alt="Close Filter"
+      />
+    </button>
+  </div>
+  <div class="filter-form-fields">
+    <div class="filter-items" *ngFor="let item of json">
+      <mat-form-field
+        *ngIf="item.type === 'select'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <mat-select [(ngModel)]="item.value" name="showStatus">
+          <mat-option *ngFor="let showdue of item.items" [value]="showdue">
+            {{ showdue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
+        <div [ngClass]="item.itemValue ? 'width50' : 'width100'">
+          <mat-form-field appearance="outline" class="mat-field"> 
+            <mat-label>{{ item.label }}</mat-label>
+            <mat-select [(ngModel)]="item.itemValue" name="showStatus">
+              <mat-option
+                *ngFor="let showdue of item.items"
+                [value]="showdue"
+              >
+                {{ showdue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="width50 date-picker" *ngIf="item.itemValue && item.itemValue === 'Custom dates'">
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Select Date</mat-label>
+            <div class="date-picker-wrap">
+              <input
+                [(ngModel)]="item.value"
+                readonly=""
+                matInput
+                [matDatepicker]="picker"
+                (click)="picker.open()"
+              />
+              <mat-icon matDatepickerToggleIcon (click)="picker.open()"
+                >arrow_drop_down</mat-icon
+              >
+              <mat-datepicker #picker></mat-datepicker>
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="width50 " *ngIf="item.itemValue && item.itemValue !== 'Custom dates'">
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Enter Schedule</mat-label>
+            <input [(ngModel)]="item.value" type="number" matInput />
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field
+        *ngIf="item.type === 'date'"
+        appearance="outline"
+        class="mat-field date-picker"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <div class="date-picker-wrap">
+          <input
+            [(ngModel)]="item.value"
+            readonly=""
+            matInput
+            [matDatepicker]="picker"
+            (click)="picker.open()"
+          />
+          <mat-icon matDatepickerToggleIcon (click)="picker.open()"
+            >arrow_drop_down</mat-icon
+          >
+        </div>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field
+        *ngIf="item.type === 'daterange'"
+        appearance="outline"
+        class="mat-field date-picker"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <div class="date-picker-wrap">
+          <mat-date-range-input [rangePicker]="picker1">
+            <input
+              matStartDate
+              [(ngModel)]="item.startDate"
+              placeholder="Start date"
+            />
+            <input
+              matEndDate
+              [(ngModel)]="item.endDate"
+              (dateInput)="dateRangeSelect(item)"
+              placeholder="End date"
+            />
+          </mat-date-range-input>
+          <mat-icon matDatepickerToggleIcon (click)="picker1.open()"
+            >arrow_drop_down</mat-icon
+          >
+        </div>
+        <mat-date-range-picker
+          #picker1
+          [calendarHeaderComponent]="FilterSidePanelComponent"
+        ></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+  </div>
+  <button
+    mat-raised-button
+    class="btn apply-filters-btn"
+    type="button"
+    [disabled]="checkState()"
+    (click)="applyFilter()"
+    aria-label="Apply Filter"
+  >
+    Apply
+  </button>
+  <button
+    mat-button
+    color="primary"
+    [disabled]="checkState()"
+    (click)="resetFilter()"
+    class="btn reset-filters-btn"
+    aria-label="Cancel Filter"
+  >
+    Reset
+  </button>
+</div>

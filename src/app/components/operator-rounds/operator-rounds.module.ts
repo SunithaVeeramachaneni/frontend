@@ -24,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -60,10 +60,9 @@ import { SubmissionViewComponent } from './submission-view/submission-view.compo
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { MatRadioModule } from '@angular/material/radio';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
@@ -106,6 +105,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
+    SharedModule,
     RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
@@ -116,6 +116,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatToolbarModule,
     MatChipsModule,
     MatFormFieldModule,
+    MatDatepickerModule,
     MatIconModule,
     MatAutocompleteModule,
     MatCardModule,
@@ -127,7 +128,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTooltipModule,
     MatTabsModule,
     MatRadioModule,
-    MatDatepickerModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
