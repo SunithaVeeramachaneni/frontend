@@ -20,8 +20,7 @@
   }
 
   .search {
-    margin: 0 10px;
-    padding: 0 80px;
+    margin: 0px 60px;
 
     .icon {
       position: relative;
@@ -29,8 +28,12 @@
     }
   }
 
+  .searchField {
+    width: 83%;
+  }
+
   .list-container {
-    height: 375px;
+    height: 319px;
     overflow-y: auto;
   }
 
@@ -89,17 +92,24 @@
     font-weight: 400;
   }
 }
+
 .searchResultOption {
   height: 65px;
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
 .nodeContent {
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
   width: inherit;
 }
+
+.closeIcon {
+  cursor: pointer;
+}
+
 img {
   max-width: 40px;
   max-height: 40px;

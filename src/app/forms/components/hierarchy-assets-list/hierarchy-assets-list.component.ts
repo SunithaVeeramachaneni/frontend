@@ -36,6 +36,7 @@ export class HierarchyAssetsListComponent implements OnInit {
   public filteredOptions$: Observable<any>;
   public locationsCount: number;
   public assetsCount: number;
+  public closeIcon = 'assets/img/svg/cancel-icon.svg';
 
   constructor(
     private assetHierarchyUtil: AssetHierarchyUtil,
@@ -53,19 +54,7 @@ export class HierarchyAssetsListComponent implements OnInit {
     this.filteredOptions$ = this.searchMasterData.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),
-      map((searchTerm: string) => {
-        this.filterList(searchTerm.trim() || '');
-        //   const term = searchTerm.trim();
-        //   if (!term.length) this.searchedList = [];
-        //   else {
-        //     this.searchedList = this.selectedLocationHierarchyFlatList.filter(
-        //       (item) =>
-        //         item.name.includes(term) || item.nodeDescription?.includes(term)
-        //     );
-        //   }
-
-        //   console.log(this.searchedList);
-      })
+      map((searchTerm: string) => this.filterList(searchTerm.trim() || ''))
     );
   }
 
@@ -112,6 +101,7 @@ export class HierarchyAssetsListComponent implements OnInit {
         node?.nodeDescription.toLowerCase().includes(searchInput)
     );
 
+    console.log(this.filteredList);
     return this.filteredList || [];
   };
 
