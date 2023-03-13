@@ -605,7 +605,6 @@ export class FormListComponent implements OnInit {
     for (const item of data) {
       this.filter[item.column] = item.value;
     }
-    console.log(this.filter);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
@@ -616,7 +615,6 @@ export class FormListComponent implements OnInit {
       authoredBy: '',
       lastModifiedOn: ''
     };
-    console.log(this.filter);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }

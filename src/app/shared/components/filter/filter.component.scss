@@ -1,8 +1,8 @@
-
+@import '../../../../scss/colors.scss';
 .filter-report-modal {
   margin: 10px 0px 15px 0px;
-  background: white;
-  border: 1px solid gray;
+  background: $white;
+  border: 1px solid $grey;
   border-radius: 4px;
   position: relative;
   top: 10px;
@@ -16,9 +16,9 @@
   width: 270px;
   height: auto;
   max-height: 300px;
-  border: 1px solid gray;
+  border: 1px solid $grey;
   border-radius: 8px;
-  background-color: white;
+  background-color: $white;
   padding: 20px;
   position: relative;
   left: 112px;
@@ -36,13 +36,13 @@
   line-height: 150%;
   align-items: center;
   letter-spacing: 0.15px;
-  color: #000000;
+  color: $black;
 }
 
 .filter-modal-cancel {
-  color: #757575;
+  color: $light-gray;
   float: right;
-  background-color: white;
+  background-color: $white;
   border: none;
   cursor: pointer;
 }
@@ -77,23 +77,9 @@
   margin-right: 30px;
   margin-bottom: 15px;
   border: none;
-  background-color: #3d5afe;
-  color: white;
+  background-color: $blue-main;
+  color: $white;
 }
-// .filter-report-modal:after {
-//      content: '';
-//     position: absolute;
-//     left: 18px;
-//     top: 50px;
-//     width: 0;
-//     height: 0;
-//     border-left: 20px solid transparent;
-//     border-right: 20px solid transparent;
-//     border-top: 20px solid #000;
-//     clear: both;
-// }
-
-
 .date-picker-wrap {
   display: flex;
 }
@@ -109,7 +95,6 @@
   line-height: 16px;
   }
 }
-
 mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
     width: 10px !important;
     height: 10px !important;
@@ -117,8 +102,8 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
 
 .filter-modal {
   margin: 10px 0px 15px 0px;
-  background: white;
-  border: 1px solid gray;
+  background: $white;
+  border: 1px solid $grey;
   border-radius: 4px;
   width: 350px;
   position: fixed;

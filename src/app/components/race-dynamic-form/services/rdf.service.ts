@@ -25,7 +25,7 @@ import {
   TableEvent
 } from './../../../interfaces';
 import { Store } from '@ngrx/store';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
@@ -145,7 +145,6 @@ export class RaceDynamicFormService {
           eq: new Date(filterParam.lastModifiedOn).toISOString()
         };
       }
-      console.log(filter);
       return from(
         this.awsApiService.ListFormLists(
           filter,
@@ -847,13 +846,9 @@ export class RaceDynamicFormService {
   }
 
   fetchAllForms$ = () =>
-    from(this.awsApiService.ListFormLists({}, 20000000, ''));
+    from(this.awsApiService.ListFormLists({}, LIST_LENGTH, ''));
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal(
-      '',
-      'assets/json/rdf-filter.json',
-      info
-    );
+    return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
   }
 }

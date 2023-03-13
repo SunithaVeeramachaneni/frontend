@@ -406,7 +406,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
-      console.log(this.filterJson);
     });
   }
 

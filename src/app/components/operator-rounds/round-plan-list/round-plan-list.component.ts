@@ -381,7 +381,6 @@ export class RoundPlanListComponent implements OnInit {
   }
 
   getForms() {
-    console.log('this.fetchType=', this.fetchType);
     return this.operatorRoundsService
       .getFormsList$(
         {
@@ -529,43 +528,11 @@ export class RoundPlanListComponent implements OnInit {
           }
         }
       });
-    // this.formsList$
-    //   .pipe(
-    //     tap((formsList) => {
-    //       const uniqueLastPublishedBy = formsList.items
-    //         .map((item) => item.lastPublishedBy)
-    //         .filter((value, index, self) => self.indexOf(value) === index);
-    //       for (const item of uniqueLastPublishedBy) {
-    //         if (item) {
-    //           this.lastPublishedBy.push(item);
-    //         }
-    //       }
-    //       const uniqueAuthoredBy = formsList.items
-    //         .map((item) => item.author)
-    //         .filter((value, index, self) => self.indexOf(value) === index);
-    //       for (const item of uniqueAuthoredBy) {
-    //         if (item) {
-    //           this.authoredBy.push(item);
-    //         }
-    //       }
-    //       for (const item of this.filterJson) {
-    //         if (item['column'] == 'status') {
-    //           item.items = this.status;
-    //         } else if (item['column'] == 'modifiedBy') {
-    //           item.items = this.lastPublishedBy;
-    //         } else if (item['column'] == 'authoredBy') {
-    //           item.items = this.authoredBy;
-    //         }
-    //       }
-    //     })
-    //   )
-    //   .subscribe();
   }
 
   getFilter() {
     this.operatorRoundsService.getFilter().subscribe((res) => {
       this.filterJson = res;
-      console.log(this.filterJson);
     });
   }
 
@@ -578,7 +545,6 @@ export class RoundPlanListComponent implements OnInit {
         this.filter[item.column] = item.value;
       }
     }
-    console.log(this.filter);
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
