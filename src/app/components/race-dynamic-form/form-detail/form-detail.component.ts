@@ -65,7 +65,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           if (formDetail) {
             const pages = JSON.parse(formDetail.pages);
             data = { ...formDetail, pages };
-            data.pages.forEach((page, pIdx) => {
+            data.pages?.forEach((page, pIdx) => {
               if (pIdx === 0) {
                 this.defaultFormName = `${page.name} ${page.position}`;
                 this.store.dispatch(
