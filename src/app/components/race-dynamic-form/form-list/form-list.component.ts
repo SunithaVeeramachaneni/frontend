@@ -45,7 +45,9 @@ import { slideInOut } from 'src/app/animations';
 export class FormListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
+  filterJson: any[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -208,6 +210,12 @@ export class FormListComponent implements OnInit {
       }
     }
   };
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: ''
+  };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
   formsCount$: Observable<Count>;
@@ -221,7 +229,6 @@ export class FormListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
@@ -251,9 +258,12 @@ export class FormListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+   
+    this.getAllForms();
     this.getDisplayedForms();
-
+    
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -415,12 +425,16 @@ export class FormListComponent implements OnInit {
 
   getForms() {
     return this.raceDynamicFormService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -541,5 +555,66 @@ export class FormListComponent implements OnInit {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllForms() {
+    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
+    this.formsList$
+      .pipe(
+        tap((formsList) => {
+          const uniqueLastPublishedBy = formsList.items
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueLastPublishedBy) {
+            if (item) {
+              this.lastPublishedBy.push(item);
+            }
+          }
+          const uniqueAuthoredBy = formsList.items
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueAuthoredBy) {
+            if (item) {
+              this.authoredBy.push(item);
+            }
+          }
+          for (const item of this.filterJson) {
+            if (item['column'] == 'status') {
+              item.items = this.status;
+            } else if (item['column'] == 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item['column'] == 'authoredBy') {
+              item.items = this.authoredBy;
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  getFilter() {
+    this.raceDynamicFormService.getFilter().subscribe((res) => { 
+      this.filterJson = res;
+    })
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      this.filter[item.column] = item.value;
+    }
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: ''
+    };
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }
