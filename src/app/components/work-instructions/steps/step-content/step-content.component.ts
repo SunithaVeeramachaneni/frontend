@@ -430,7 +430,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
           }
         },
         (error) => {
-          console.log(error);
+          // console.log(error);
         }
       );
   }

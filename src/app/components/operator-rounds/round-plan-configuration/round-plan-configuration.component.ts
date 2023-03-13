@@ -7,6 +7,8 @@ import {
   ElementRef,
   ChangeDetectorRef
 } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
+
 import {
   FormBuilder,
   FormControl,
@@ -14,7 +16,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -31,32 +33,25 @@ import {
   Page,
   Question,
   Section,
-  ValidationError
+  ValidationError,
+  HierarchyEntity
 } from 'src/app/interfaces';
 
 import {
-  getSectionQuestions,
   getFormMetadata,
-  getPageIndexes,
-  getQuestionIndexes,
-  getSectionIds,
-  getSectionIndexes,
   getFormDetails,
-  getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
   getIsFormCreated,
-  getQuestionIds,
   getQuestionCounter,
   State
-} from 'src/app/forms/state';
+} from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
-  MCQResponseActions,
-  FormConfigurationActions,
-  RoundPlanConfigurationActions,
-  RoundPlanConfigurationApiActions
+  BuilderConfigurationActions,
+  HierarchyActions,
+  RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
@@ -67,15 +62,28 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportTaskModalComponent } from '../import-task-modal/import-task-modal.component';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { FormService } from 'src/app/forms/services/form.service';
+import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
+import { getSelectedHierarchyList } from 'src/app/forms/state';
+import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
   templateUrl: './round-plan-configuration.component.html',
   styleUrls: ['./round-plan-configuration.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('previewSlide', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('100ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [animate('100ms ease-out', style({ opacity: 0 }))])
+    ])
+  ]
 })
 export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
@@ -92,6 +100,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
+  isDataResolved$: Observable<any>;
   formSaveStatus$: Observable<string>;
   formDetailPublishStatus$: Observable<string>;
   isFormCreated$: Observable<boolean>;
@@ -104,9 +113,23 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  selectedHierarchyList: any;
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
+
+  selectedNode: any;
+  hierarchyMode$: Observable<any>;
+  hierarchyMode: 'asset_hierarchy';
+  selectedNodeInstances: any[];
+
+  selectedNode$: Observable<any>;
+  selectedNodeLoadStatus = false;
+  isHierarchyLoaded = false;
+  createOrEditForm: boolean;
+
+  isPreviewActive = false;
+
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -116,12 +139,65 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
-    private formConfigurationService: FormConfigurationService,
+    private roundPlanConfigurationService: RoundPlanConfigurationService,
+    private formService: FormService,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
+      tap((data) => {
+        if (data && Object.keys(data).length) {
+          this.selectedNode = data;
+          this.selectedNodeLoadStatus = true;
+          this.selectedNodeInstances =
+            this.formService.getInstanceIdMappingsByUid(this.selectedNode.uid);
+          this.cdrf.detectChanges();
+          this.store.dispatch(
+            BuilderConfigurationActions.initPage({
+              subFormId: this.selectedNode.id
+            })
+          );
+        } else {
+          this.selectedNode = null;
+          this.selectedNodeInstances = [];
+          this.cdrf.detectChanges();
+        }
+      })
+    );
+    this.hierarchyMode$ = this.operatorRoundsService.hierarchyMode$.pipe(
+      tap((data) => {
+        this.hierarchyMode = data;
+      })
+    );
+
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        if (Object.keys(formMetadata).length) {
+          const { name, description, id, formLogo, formStatus } = formMetadata;
+          this.formMetadata = formMetadata;
+
+          this.formConfiguration.patchValue(
+            {
+              name,
+              description,
+              id,
+              formLogo,
+              formStatus
+            },
+            { emitEvent: false }
+          );
+          const formName = name ? name : 'Untitled Form';
+          this.headerService.setHeaderTitle(formName);
+          this.breadcrumbService.set('@formName', {
+            label: formName
+          });
+        }
+      })
+    );
+
     this.formConfiguration = this.fb.group({
       id: [''],
       formLogo: [''],
@@ -141,9 +217,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    this.store.dispatch(
-      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    );
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),
@@ -166,14 +239,14 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
             if (!isEqual(prev, curr)) {
               this.store.dispatch(
-                FormConfigurationActions.updateFormMetadata({
+                BuilderConfigurationActions.updateFormMetadata({
                   formMetadata: curr,
                   ...this.getFormConfigurationStatuses()
                 })
               );
 
               this.store.dispatch(
-                RoundPlanConfigurationActions.updateRoundPlan({
+                BuilderConfigurationActions.updateForm({
                   formMetadata: this.formMetadata,
                   formListDynamoDBVersion: this.formListVersion
                 })
@@ -184,27 +257,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
-        this.formMetadata = formMetadata;
-        this.formConfiguration.patchValue(
-          {
-            name,
-            description,
-            id,
-            formLogo,
-            formStatus
-          },
-          { emitEvent: false }
-        );
-        const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
-        this.breadcrumbService.set('@formName', {
-          label: formName
-        });
-      })
-    );
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
       tap((counter) => {
         this.formConfiguration.patchValue(
@@ -215,15 +267,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         );
       })
     );
-    this.pageIndexes$ = this.store.select(getPageIndexes);
-    this.sectionIndexes$ = this.store
-      .select(getSectionIndexes)
-      .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
-    this.sectionIds$ = this.store.select(getSectionIds);
-    this.questionIds$ = this.store.select(getQuestionIds);
-    this.questionIndexes$ = this.store
-      .select(getQuestionIndexes)
-      .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+
     this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
       tap((isFormCreated) => {
         if (isFormCreated) {
@@ -233,13 +277,17 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
-      tap((formDetails) => {
+    this.authoredFormDetail$ = combineLatest([
+      this.store.select(getFormDetails),
+      this.store.select(getSelectedHierarchyList)
+    ]).pipe(
+      tap(([formDetails, selectedHierarchyList]) => {
         const {
           formMetadata,
           formStatus,
           counter,
           pages,
+          subForms,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -250,17 +298,26 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           formDetailDynamoDBVersion,
           authoredFormDetailDynamoDBVersion
         } = formDetails;
+
+        const subFormsObj = {};
+        let formKeys = Object.keys(formDetails);
+        formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+        formKeys.forEach((key) => {
+          subFormsObj[key] = formDetails[key];
+        });
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
-        if (pages.length && formListId) {
+        if (formListId) {
           if (authoredFormDetailId) {
             if (
               formSaveStatus !== 'Saved' &&
               formStatus !== 'Published' &&
-              !isEqual(this.formDetails, formDetails)
+              selectedHierarchyList &&
+              (!isEqual(this.formDetails, formDetails) ||
+                !isEqual(this.selectedHierarchyList, selectedHierarchyList))
             ) {
               this.store.dispatch(
                 RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
@@ -268,12 +325,16 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   formDetailPublishStatus,
                   formListId,
                   counter,
-                  pages,
+                  pages: null,
+                  subForms: subFormsObj,
                   authoredFormDetailId,
                   authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion
+                  authoredFormDetailDynamoDBVersion,
+                  hierarchy: selectedHierarchyList
                 })
               );
+              this.formDetails = formDetails;
+              this.selectedHierarchyList = selectedHierarchyList;
             }
           } else {
             this.store.dispatch(
@@ -283,7 +344,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 counter,
                 pages,
-                authoredFormDetailVersion
+                subForms: subFormsObj,
+                authoredFormDetailVersion,
+                hierarchy: selectedHierarchyList
               })
             );
           }
@@ -291,9 +354,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           if (isFormDetailPublished) {
             this.store.dispatch(
               RoundPlanConfigurationActions.publishRoundPlan({
+                hierarchy: selectedHierarchyList,
                 formMetadata,
                 formListId,
                 pages,
+                subForms: subFormsObj,
                 authoredFormDetail: {
                   formStatus,
                   formListId,
@@ -311,13 +376,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
-      tap((createOrEditForm) => {
-        if (!createOrEditForm) {
-          this.router.navigate(['/operator-rounds']);
-        }
-      })
-    );
+    this.createOrEditForm$ = this.store.select(getCreateOrEditForm);
 
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
@@ -330,51 +389,89 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         )
       );
 
-    this.route.data.subscribe((data) => {
-      if (data.form && Object.keys(data.form).length) {
-        this.formConf.counter.setValue(data.form.counter);
-        this.store.dispatch(
-          FormConfigurationActions.updateFormConfiguration({
-            formConfiguration: data.form
-          })
-        );
-        data.form.pages.forEach((page, index) => {
-          if (index === 0) {
-            this.store.dispatch(
-              FormConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false
-              })
-            );
-            this.store.dispatch(
-              FormConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: true
-              })
-            );
-          } else {
-            this.store.dispatch(
-              FormConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false
-              })
-            );
-          }
-        });
-      }
-    });
+    this.isDataResolved$ = combineLatest([
+      this.route.data,
+      this.createOrEditForm$
+    ]).pipe(
+      tap(([data, createOrEditForm]) => {
+        if (!createOrEditForm) {
+          this.router.navigate(['/operator-rounds']);
+        }
+        const { componentMode } = data;
+        const { formConfigurationState, hierarchyState } = data.form || {};
 
-    this.route.params.subscribe((params) => {
-      if (!params.id) {
-        this.formConfigurationService.addPage(
-          0,
-          1,
-          1,
-          this.sectionIndexes,
-          this.formConf.counter.value
-        );
-      }
-    });
+        if (createOrEditForm && componentMode === 'create')
+          this.openHierarchyModal();
+
+        if (hierarchyState && Object.keys(hierarchyState).length) {
+          const { selectedHierarchy } = hierarchyState;
+          this.store.dispatch(
+            HierarchyActions.updateSelectedHierarchyList({
+              selectedHierarchy
+            })
+          );
+        }
+
+        if (
+          formConfigurationState &&
+          Object.keys(formConfigurationState).length
+        ) {
+          this.formConf.counter.setValue(formConfigurationState.counter);
+          this.store.dispatch(
+            BuilderConfigurationActions.updateFormConfiguration({
+              formConfiguration: formConfigurationState
+            })
+          );
+
+          if (this.selectedNode && this.selectedNode.id) {
+            const subFormsObj = {};
+            let formKeys = Object.keys(formConfigurationState);
+            formKeys = formKeys.filter((k) => k.startsWith('pages_'));
+            formKeys.forEach((key) => {
+              subFormsObj[key] = formConfigurationState[key];
+            });
+
+            Object.keys(subFormsObj).forEach((subForm) => {
+              subFormsObj[subForm].forEach((page, index) => {
+                if (index === 0) {
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: false,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: true,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                } else {
+                  this.store.dispatch(
+                    BuilderConfigurationActions.updatePageState({
+                      pageIndex: index,
+                      isOpen: false,
+                      subFormId: this.selectedNode.id
+                    })
+                  );
+                }
+              });
+            });
+          }
+        }
+      })
+    );
+  }
+
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/rdf-forms-icons/${imageName}-white.svg`
+      : `assets/rdf-forms-icons/${imageName}-blue.svg`;
+
+  togglePreview() {
+    this.isPreviewActive = !this.isPreviewActive;
   }
 
   editFormName() {
@@ -398,21 +495,23 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addPage(
+          this.roundPlanConfigurationService.addPage(
             pageIndex,
             1,
             1,
             this.sectionIndexes,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            this.selectedNode.id
           );
         }
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deletePage({
+          BuilderConfigurationActions.deletePage({
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -424,35 +523,38 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addSections(
+          this.roundPlanConfigurationService.addSections(
             pageIndex,
             1,
             1,
             sectionIndex,
             this.sectionIndexes,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            this.selectedNode.id
           );
         }
         break;
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateSection({
+          BuilderConfigurationActions.updateSection({
             section,
             sectionIndex,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteSection({
+          BuilderConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -464,35 +566,38 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addQuestions(
+          this.roundPlanConfigurationService.addQuestions(
             pageIndex,
             sectionId,
             1,
             questionIndex,
-            this.formConf.counter.value
+            this.formConf.counter.value,
+            this.selectedNode.id
           );
         }
         break;
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateQuestion({
+          BuilderConfigurationActions.updateQuestion({
             question,
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteQuestion({
+          BuilderConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
         break;
@@ -505,12 +610,12 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   publishFormDetail() {
     this.store.dispatch(
-      FormConfigurationActions.updateFormPublishStatus({
+      BuilderConfigurationActions.updateFormPublishStatus({
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateIsFormDetailPublished({
+      BuilderConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true
       })
     );
@@ -526,10 +631,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        FormConfigurationActions.updatePageSections({
+        BuilderConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: this.selectedNode.id
         })
       );
     }
@@ -544,14 +650,15 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionBySection({
+          BuilderConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
             }),
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
           })
         );
       });
@@ -564,33 +671,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
       this.store.dispatch(
-        FormConfigurationActions.transferQuestionFromSection({
+        BuilderConfigurationActions.transferQuestionFromSection({
           questionId,
           currentIndex: event.currentIndex,
           previousIndex: event.previousIndex,
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
           pageIndex,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: this.selectedNode.id
         })
       );
     }
-  }
-
-  getQuestionsOfSection(pageIndex, sectionIndex) {
-    let sectionQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionIndex))
-      .subscribe((v) => (sectionQuestions = v));
-    return sectionQuestions;
-  }
-
-  getSectionsOfPage(pageIndex) {
-    let pageSections;
-    this.store
-      .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v?.sections));
-    return pageSections;
   }
 
   getFormConfigurationStatuses() {
@@ -641,16 +733,62 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(HierarchyActions.resetSelectedHierarchyState());
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
+    this.roundPlanConfigurationService.addQuestions(
       pageIndex,
       sectionIndex,
       1,
       questionIndex,
-      this.formConf.counter.value
+      this.formConf.counter.value,
+      this.selectedNode.id
     );
+  }
+
+  hierarchyEventHandler(event: any) {
+    const { hierarchy } = event;
+    this.store.dispatch(
+      HierarchyActions.updateSelectedHierarchyList({
+        selectedHierarchy: hierarchy || []
+      })
+    );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormStatuses({
+        formStatus: formConfigurationStatus.draft,
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
+      })
+    );
+    if (!hierarchy || !hierarchy.length) {
+      this.operatorRoundsService.setSelectedNode(null);
+      this.formService.setSelectedHierarchyList([]);
+    } else {
+      this.operatorRoundsService.setSelectedNode(hierarchy[0]);
+      this.formService.setSelectedHierarchyList(hierarchy);
+    }
+  }
+
+  openHierarchyModal = () => {
+    const dialogRef = this.dialog
+      .open(HierarchyModalComponent, {
+        disableClose: true
+      })
+      .afterClosed()
+      .subscribe((selectedHierarchyList: HierarchyEntity[]) => {
+        if (!selectedHierarchyList) return;
+        this.store.dispatch(
+          HierarchyActions.updateSelectedHierarchyList({
+            selectedHierarchy: selectedHierarchyList
+          })
+        );
+        this.formService.setSelectedHierarchyList(selectedHierarchyList);
+      });
+  };
+
+  trackBySelectedNodeInstances(index: number, el: any): string {
+    return el.id;
   }
 }

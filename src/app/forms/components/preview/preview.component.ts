@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnChanges,
@@ -6,7 +7,10 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State, getPages } from 'src/app/forms/state';
+import {
+  State,
+  getSubFormPages
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { Observable } from 'rxjs';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { map } from 'rxjs/operators';
@@ -15,9 +19,12 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
-  styleUrls: ['./preview.component.scss']
+  styleUrls: ['./preview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreviewComponent implements OnInit, OnChanges {
+  @Input() subFormId: any;
+
   @Input()
   pageIndex = 1;
 
@@ -42,6 +49,34 @@ export class PreviewComponent implements OnInit, OnChanges {
     if (changes.page && changes.page.currentValue) {
       this.pageIndex = changes.page.currentValue;
     }
+    if (
+      changes.subFormId &&
+      changes.subFormId.currentValue !== changes.subFormId.previousValue
+    ) {
+      let pageData;
+      this.previewFormData$ = this.store
+        .select(getSubFormPages(this.subFormId))
+        .pipe(
+          map((previewFormData) => {
+            let sectionData;
+            if (previewFormData) {
+              pageData = previewFormData.map((page) => {
+                sectionData = page.sections.map((section) => {
+                  const questionsArray = [];
+                  page.questions.forEach((question) => {
+                    if (section.id === question.sectionId) {
+                      questionsArray.push(question);
+                    }
+                  });
+                  return { ...section, questions: questionsArray };
+                });
+                return { ...page, sections: sectionData };
+              });
+            }
+            return pageData;
+          })
+        );
+    }
   }
 
   formatLabel(value: number): string {
@@ -50,25 +85,6 @@ export class PreviewComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
-    let pageData;
-    this.previewFormData$ = this.store.select(getPages).pipe(
-      map((previewFormData) => {
-        let sectionData;
-        pageData = previewFormData.map((page) => {
-          sectionData = page.sections.map((section) => {
-            const questionsArray = [];
-            page.questions.forEach((question) => {
-              if (section.id === question.sectionId) {
-                questionsArray.push(question);
-              }
-            });
-            return { ...section, questions: questionsArray };
-          });
-          return { ...page, sections: sectionData };
-        });
-        return pageData;
-      })
-    );
   }
 
   getImageSrc(base64) {

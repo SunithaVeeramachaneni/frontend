@@ -8,7 +8,11 @@ import { Store } from '@ngrx/store';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { operatorSymbolMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getPage, getQuestionByQuestionID, State } from 'src/app/forms/state';
+import {
+  getPage,
+  getQuestionByQuestionID,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { Observable } from 'rxjs';
 import { Question } from 'src/app/interfaces';
 
@@ -40,18 +44,20 @@ export class SelectQuestionsDialogComponent implements OnInit {
       getQuestionByQuestionID(this.data.pageIndex, this.data.questionId)
     );
 
-    this.store.select(getPage(this.data.pageIndex)).subscribe((pageObj) => {
-      const page = Object.assign({}, pageObj);
-      page.sections.map((section) => {
-        const sectionQuestions = page.questions.filter(
-          (q) => q.sectionId === section.id
-        );
-        this.sections.push({
-          ...section,
-          questions: sectionQuestions || []
+    this.store
+      .select(getPage(this.data.pageIndex, this.data.subFormId))
+      .subscribe((pageObj) => {
+        const page = Object.assign({}, pageObj);
+        page.sections.map((section) => {
+          const sectionQuestions = page.questions.filter(
+            (q) => q.sectionId === section.id
+          );
+          this.sections.push({
+            ...section,
+            questions: sectionQuestions || []
+          });
         });
       });
-    });
 
     if (this.data.viewMode === 'MANDATE') {
       const mandatedQuestions = this.data.logic.mandateQuestions || [];
