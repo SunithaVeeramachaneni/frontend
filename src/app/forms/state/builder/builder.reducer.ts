@@ -415,6 +415,23 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    RoundPlanConfigurationApiActions.publishRoundPlanSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus,
+      formMetadata: {
+        ...state.formMetadata,
+        formStatus: 'Published'
+      },
+      authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
+      isFormDetailPublished: false,
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      authoredFormDetailDynamoDBVersion: 1,
+      authoredFormDetailId: action.authoredFormDetail.id
+    })
+  ),
+  on(
     BuilderConfigurationActions.deleteSection,
     (state, action): FormConfigurationState => {
       let key = 'pages';
