@@ -19,6 +19,7 @@ import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -87,6 +88,7 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    MatAutocompleteModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
