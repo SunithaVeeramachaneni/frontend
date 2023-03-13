@@ -36,6 +36,9 @@ export class HierarchyNodeComponent implements OnInit {
     }
     this.isParentCheckedData = isMasterCheckedData;
     this.allSelected = isMasterCheckedData.checked;
+    if (this.allSelected) {
+      this.isAllSelectedToggled({ checked: true });
+    }
   }
 
   @Input() set selectedList(data) {
@@ -138,6 +141,7 @@ export class HierarchyNodeComponent implements OnInit {
     const { checked } = event;
     this.allSelected = checked;
     this.masterData.isSelected = checked;
+    this.masterData.isToggledView = true;
 
     if (checked) {
       this.masterData.children =
