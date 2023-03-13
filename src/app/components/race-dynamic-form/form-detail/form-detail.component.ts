@@ -17,7 +17,6 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { GetFormListQuery } from 'src/app/API.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { RoundPlan, RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -40,7 +39,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
   @Output() scheduleRoundPlan: EventEmitter<RoundPlan> = new EventEmitter();
-  @Input() selectedForm: GetFormListQuery | RoundPlan = null;
+  @Input() selectedForm: any | RoundPlan = null;
   @Input() moduleName = 'RDF';
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() set scheduleConfiguration(
@@ -94,7 +93,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           if (formDetail) {
             const pages = JSON.parse(formDetail.pages);
             data = { ...formDetail, pages };
-            data.pages.forEach((page, pIdx) => {
+            data.pages?.forEach((page, pIdx) => {
               if (pIdx === 0) {
                 this.defaultFormName = `${page.name} ${page.position}`;
                 this.store.dispatch(

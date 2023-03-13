@@ -15,6 +15,7 @@ export interface FormMetadata {
   formStatus: 'Draft' | 'Published';
   tags: string[];
   searchTerm: string;
+  hierarchy?: any;
 }
 
 export interface Page {

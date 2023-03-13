@@ -24,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -32,6 +32,7 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
+import { hierarchyReducer } from 'src/app/forms/state/hierarchy.reducer';
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
@@ -45,8 +46,10 @@ import { RoundPlanListComponent } from './round-plan-list/round-plan-list.compon
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.reducer';
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
+import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
+import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PlansComponent } from './plans/plans.component';
@@ -56,16 +59,14 @@ import { SubmissionViewComponent } from './submission-view/submission-view.compo
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
-import { HierarchyLocationsListComponent } from './hierarchy-locations-list/hierarchy-locations-list.component';
-import { HierarchyModalComponent } from './hierarchy-modal/hierarchy-modal.component';
-import { HierarchyAssetsListComponent } from './hierarchy-assets-list/hierarchy-assets-list.component';
 import { SubmissionComponent } from './submission/submission.component';
 import { RoundPlanScheduleSuccessModalComponent } from './round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { MatRadioModule } from '@angular/material/radio';
+import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -77,6 +78,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanConfigurationComponent,
     RoundPlanConfigurationModalComponent,
     ImportTaskModalComponent,
+    HierarchyContainerComponent,
+    HierarchyDeleteConfirmationDialogComponent,
+    NodeComponent,
+    RoutePlanComponent,
     SchedulerComponent,
     PlansComponent,
     RoundsComponent,
@@ -85,26 +90,27 @@ export const customTranslateLoader = (http: HttpClient) =>
     SubmissionViewComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
-    RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
-    HierarchyLocationsListComponent,
-    HierarchyModalComponent,
-    HierarchyAssetsListComponent,
-    RoundPlanScheduleSuccessModalComponent
+    RoundPlanScheduleSuccessModalComponent,
+    RoundPlanScheduleConfigurationComponent,
+    AssetsModalComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     OperatorRoundsRoutingModule,
+    SharedModule,
     RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
     FormModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatDialogModule,
     MatToolbarModule,
     MatChipsModule,
     MatFormFieldModule,
+    MatDatepickerModule,
     MatIconModule,
     MatAutocompleteModule,
     MatCardModule,
@@ -116,7 +122,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTooltipModule,
     MatTabsModule,
     MatRadioModule,
-    MatDatepickerModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
@@ -138,7 +143,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
-      responseSet: responseSetReducer
+      responseSet: responseSetReducer,
+      hierarchy: hierarchyReducer
     }),
     EffectsModule.forFeature([
       RoundPlanConfigurationEffects,

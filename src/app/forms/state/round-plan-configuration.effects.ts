@@ -13,7 +13,6 @@ import {
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
-import { CreateRoundPlanDetailMutation } from 'src/app/API.service';
 
 @Injectable()
 export class RoundPlanConfigurationEffects {
@@ -31,7 +30,10 @@ export class RoundPlanConfigurationEffects {
           map((response) => {
             this.operatorRoundsService.setFormCreatedUpdated(response);
             return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata },
+              formMetadata: {
+                id: response.id,
+                ...action.formMetadata
+              },
               formSaveStatus: formConfigurationStatus.saved
             });
           }),
@@ -53,7 +55,10 @@ export class RoundPlanConfigurationEffects {
         this.operatorRoundsService.updateForm$(action).pipe(
           map(() =>
             RoundPlanConfigurationApiActions.updateRoundPlanSuccess({
-              formMetadata: action.formMetadata,
+              formMetadata: {
+                ...action.formMetadata,
+                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+              },
               formSaveStatus: formConfigurationStatus.saved
             })
           ),
@@ -73,38 +78,34 @@ export class RoundPlanConfigurationEffects {
       ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
+        const { hierarchy, subForms } = formDetail;
         return of(true).pipe(
           mergeMap(() =>
-            forkJoin([
-              this.operatorRoundsService.updateForm$({
-                formMetadata: {
+            this.operatorRoundsService
+              .publishRoundPlan$({
+                form: {
                   ...formDetail.formMetadata,
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
                   publishedDate: new Date().toISOString(),
-                  formStatus: formConfigurationStatus.published
-                },
-                formListDynamoDBVersion: action.formListDynamoDBVersion
-              }),
-              this.operatorRoundsService.updateAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formStatus: formConfigurationStatus.published,
-                formDetailPublishStatus: formConfigurationStatus.published
-              }),
-              this.operatorRoundsService.createAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formDetailPublishStatus: formConfigurationStatus.published,
-                authoredFormDetailVersion:
-                  authoredFormDetail.authoredFormDetailVersion + 1
-              })
-            ]).pipe(
-              map(([, , createAuthoredFormDetail]) =>
-                RoundPlanConfigurationApiActions.publishRoundPlanSuccess({
-                  authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
-                  formDetailPublishStatus: formConfigurationStatus.published
-                })
+                  _version: action.formListDynamoDBVersion
+                },
+                authoredFormDetail: {
+                  ...authoredFormDetail,
+                  pages: JSON.stringify(authoredFormDetail.pages),
+                  subForms, // Handle subforms form round-plan config,
+                  hierarchy
+                }
+              })
+              .pipe(
+                map((createAuthoredFormDetail) =>
+                  RoundPlanConfigurationApiActions.publishRoundPlanSuccess({
+                    authoredFormDetail: createAuthoredFormDetail,
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published
+                  })
+                )
               )
-            )
           ),
           catchError((error) => {
             this.operatorRoundsService.handleError(error);

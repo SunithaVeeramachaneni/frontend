@@ -117,7 +117,10 @@
               </button>
 
               <span
-                *ngIf="questionForm.get('fieldType').value !== 'LF'"
+                *ngIf="
+                  questionForm.get('fieldType').value !== 'LF' &&
+                  questionForm.get('fieldType').value !== 'HL'
+                "
                 class="action"
               >
                 <mat-checkbox
@@ -304,6 +307,7 @@
                 [pageIndex]="pageIndex"
                 [sectionId]="sectionId"
                 (logicEvent)="logicEventHandler($event)"
+                [selectedNodeId]="selectedNodeId"
               ></app-add-logic>
             </div>
           </div>

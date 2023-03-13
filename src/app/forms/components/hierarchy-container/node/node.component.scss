@@ -1,0 +1,86 @@
+@import '../../../../../scss/colors.scss';
+
+.node {
+  &:hover {
+    background: $hover-bg;
+    color: $black;
+  }
+}
+
+.parentNode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  padding: 10px;
+  // width: 100%;
+  min-width: max-content;
+  .left {
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    img {
+      max-width: 40px;
+      max-height: 40px;
+    }
+    .description {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+      justify-content: center;
+      line-height: 1.5;
+      .title {
+        font-weight: 500;
+      }
+      .subTitle {
+        font-weight: 400;
+      }
+    }
+  }
+
+  .right {
+    display: flex;
+    width: 10%;
+    align-items: center;
+    .more-icon {
+      cursor: pointer;
+    }
+  }
+}
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: inherit;
+}
+.children {
+  margin-left: 40px;
+}
+.childrenHead {
+  display: flex;
+  align-items: center;
+  margin-left: 45px;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
+  }
+}
+.displayInlineBlock {
+  display: inline-block;
+}
+.inactive {
+  color: $blue-main;
+}
+.active {
+  background: $active-blue;
+  color: $white;
+}
+.question-six-dots {
+  position: relative;
+  width: 10px;
+  cursor: move;
+  margin-right: 10px;
+}

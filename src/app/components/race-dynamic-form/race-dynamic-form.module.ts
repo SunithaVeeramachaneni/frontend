@@ -58,6 +58,8 @@ import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -86,6 +88,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RaceDynamicFormRoutingModule,
     DragDropModule,
     CommonModule,
+    SharedModule,
     FormModule,
     MatButtonModule,
     MatDialogModule,
@@ -119,6 +122,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     OverlayModule,
     MatSelectModule,
+    MatDatepickerModule,
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,

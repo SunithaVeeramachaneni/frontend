@@ -21,20 +21,15 @@ import {
   CellClickActionEvent,
   Count,
   TableEvent,
-  FormTableUpdate
+  FormTableUpdate,
+  RoundPlan
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
-import { omit } from 'lodash-es';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import {
-  generateCopyNumber,
-  generateCopyRegex
-} from '../../race-dynamic-form/utils/utils';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
 
@@ -48,7 +43,17 @@ import { slideInOut } from 'src/app/animations';
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
+  filterJson: any[] = [];
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: '',
+    scheduleStartDate: '',
+    scheduleEndDate: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -224,13 +229,12 @@ export class RoundPlanListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: RoundPlan = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -254,9 +258,10 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
-
+    this.getAllOperatorRounds();
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -289,61 +294,20 @@ export class RoundPlanListComponent implements OnInit {
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
+  onCopyFormMetaData(form: RoundPlan): void {
     if (!form.id) {
       return;
     }
-    combineLatest([
-      this.operatorRoundsService.fetchAllFormListNames$(),
-      this.operatorRoundsService.getAuthoredFormDetailByFormId$(form.id)
-    ])
-      .pipe(
-        map(([formNames, authoredFormDetail]) => ({
-          formNames,
-          authoredFormDetail
-        }))
-      )
-      .subscribe(({ formNames, authoredFormDetail }) => {
-        const createdForm = this.generateCopyFormName(form, formNames);
-        if (createdForm?.newName) {
-          this.operatorRoundsService
-            .createForm$({
-              ...omit(form, ['id', 'preTextImage']),
-              name: createdForm.newName,
-              formStatus: formConfigurationStatus.draft,
-              isPublic: false
-            })
-            .subscribe((newRecord) => {
-              if (!newRecord) {
-                return;
-              }
-              if (
-                authoredFormDetail &&
-                Object.keys(authoredFormDetail).length
-              ) {
-                this.operatorRoundsService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
-              }
-              this.addEditCopyForm$.next({
-                action: 'copy',
-                form: {
-                  ...newRecord,
-                  name: createdForm.newName,
-                  preTextImage: (form as any)?.preTextImage,
-                  oldId: form.id
-                } as any
-              });
-              this.formsListCount$ =
-                this.operatorRoundsService.getFormsListCount$('All');
-            });
-        }
+    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
+      this.toast.show({
+        text: 'Form copied successfully!',
+        type: 'success'
       });
+      this.nextToken = '';
+      this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+      this.formsListCount$ =
+        this.operatorRoundsService.getFormsListCount$('All');
+    });
   }
 
   getDisplayedForms(): void {
@@ -363,7 +327,7 @@ export class RoundPlanListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as RoundPlan[]);
         }
       })
     );
@@ -425,7 +389,9 @@ export class RoundPlanListComponent implements OnInit {
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
-        'All'
+        'All',
+        false,
+        this.filter
       )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
@@ -455,10 +421,10 @@ export class RoundPlanListComponent implements OnInit {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm: any) => {
+      .subscribe(() => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form
         });
         this.formsListCount$ =
           this.operatorRoundsService.getFormsListCount$('All');
@@ -522,28 +488,75 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(form: GetFormListQuery, rows: any[]) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
-  }
-
-  private showFormDetail(row: GetFormListQuery): void {
+  private showFormDetail(row: RoundPlan): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllOperatorRounds() {
+    this.operatorRoundsService
+      .fetchAllOperatorRounds$()
+      .subscribe((formsList) => {
+        const uniqueLastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueLastPublishedBy) {
+          if (item) {
+            this.lastPublishedBy.push(item);
+          }
+        }
+        const uniqueAuthoredBy = formsList.rows
+          .map((item) => item.author)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueAuthoredBy) {
+          if (item) {
+            this.authoredBy.push(item);
+          }
+        }
+        for (const item of this.filterJson) {
+          if (item['column'] == 'status') {
+            item.items = this.status;
+          } else if (item['column'] == 'modifiedBy') {
+            item.items = this.lastPublishedBy;
+          } else if (item['column'] == 'authoredBy') {
+            item.items = this.authoredBy;
+          }
+        }
+      });
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      if (item.type == 'daterange') {
+        this.filter.scheduleStartDate = item.value[0];
+        this.filter.scheduleEndDate = item.value[1];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: '',
+      scheduleStartDate: '',
+      scheduleEndDate: ''
+    };
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }

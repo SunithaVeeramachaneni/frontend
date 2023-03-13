@@ -2,8 +2,8 @@
 
 .search-container {
   position: fixed;
-  top: 72px;
-  right: 0;
+  top: 80px;
+  right: 10px;
   z-index: 100;
 
   .search {
@@ -52,6 +52,12 @@
 
 ::ng-deep .remove-zindex th {
   z-index: 0 !important;
+}
+
+.plans-list {
+  ::ng-deep .table-column {
+    width: 40%;
+  }
 }
 
 .padding-lr-20 {

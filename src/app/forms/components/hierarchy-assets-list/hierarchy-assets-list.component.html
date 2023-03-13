@@ -1,0 +1,106 @@
+<div class="assets-modal">
+  <div class="dis-flex heading-container">
+    <h2 class="heading">
+      {{
+        'selectHierarchyType'
+          | translate
+            : {
+                type: 'Assets'
+              }
+      }}
+    </h2>
+  </div>
+  <span class="custom-form-field-gray-color search">
+    <mat-form-field appearance="outline" class="searchField" disabled>
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [matAutocomplete]="auto"
+        [formControl]="searchMasterData"
+      />
+      <mat-autocomplete
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="searchResultSelected($event)"
+      >
+        <mat-optgroup [label]="getSearchMatchesLabel()">
+          <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+            class="searchResultOption"
+          >
+            <div class="nodeContent">
+              <img [src]="option.image" />
+              <div class="description">
+                <span class="title">{{ option.name }}</span>
+                <span class="subTitle">
+                  {{
+                    'nodeSubTitle'
+                      | translate
+                        : {
+                            nodeType: option.type | titlecase,
+                            nodeId: option.nodeId
+                          }
+                  }}
+                </span>
+              </div>
+            </div>
+          </mat-option>
+        </mat-optgroup>
+      </mat-autocomplete>
+      <img
+        [src]="closeIcon"
+        matSuffix
+        alt="close"
+        *ngIf="searchMasterData.value.length"
+        class="closeIcon"
+        (click)="clearSearchResults()"
+      />
+    </mat-form-field>
+  </span>
+
+  <div class="list-container">
+    <div class="node-container">
+      <div *ngFor="let node of hierarchyList">
+        <app-hierarchy-node
+          [nodeData]="node"
+          [selectedList]="selectedHierarchyList"
+          (checkboxToggleHandler)="handleHierarchyElementChange($event)"
+          [mode]="'selectAssets'"
+        ></app-hierarchy-node>
+      </div>
+    </div>
+  </div>
+
+  <div class="assets-footer">
+    <div class="selected-items">
+      {{
+        'selectedLocationsAndAssets'
+          | translate
+            : {
+                locationsCount: locationsCount,
+                assetsCount: assetsCount
+              }
+      }}
+    </div>
+
+    <div mat-dialog-actions class="actions">
+      <button
+        mat-stroked-button
+        class="cancel-btn"
+        mat-dialog-close="true"
+        translate="Cancel"
+        (click)="cancel()"
+      ></button>
+      <button
+        mat-raised-button
+        class="next-btn"
+        translate="Add"
+        (click)="submitSelectedElementsInHierarchy()"
+      ></button>
+    </div>
+  </div>
+</div>

@@ -51,6 +51,7 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  filterJson = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -81,7 +82,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
+    /* {
       id: 'assets',
       displayName: 'Assets',
       type: 'string',
@@ -102,7 +103,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
+    }, */
     {
       id: 'tasksCompleted',
       displayName: 'Tasks Completed',
@@ -190,8 +191,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
+    }
+    /* {
       id: 'operator',
       displayName: 'Operator',
       type: 'string',
@@ -212,7 +213,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    }
+    } */
   ];
   configOptions: ConfigOptions = {
     tableID: 'plansTable',
@@ -275,6 +276,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next({ data: 'load' });
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
+    this.getFilter();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -366,14 +368,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next(event);
   };
 
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -413,5 +407,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
   }
 }
