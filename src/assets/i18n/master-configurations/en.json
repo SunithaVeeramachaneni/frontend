@@ -41,6 +41,11 @@
   "plants": "Plants",
   "plantId": "Plant Id",
   "country": "Country",
-  "zipcode": "Zip code",
-  "state": "State"
+  "zipCode": "Zip Code",
+  "state": "State",
+  "additionalDetails": "Additional Details",
+  "label": "Label",
+  "field": "Field",
+  "minlength": "{name} must be atleast {length} characters",
+  "maxlength": "{name} must not exceed {length} characters"
 }

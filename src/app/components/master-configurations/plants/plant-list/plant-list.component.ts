@@ -63,7 +63,7 @@ export class PlantListComponent implements OnInit {
         'font-size': '100%',
         color: '#000000'
       },
-      hasSubtitle: true,
+      hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: 'plantId',
       subtitleStyle: {
@@ -142,7 +142,7 @@ export class PlantListComponent implements OnInit {
     },
     {
       id: 'zipCode',
-      displayName: 'ZipCode',
+      displayName: 'Zip Code',
       type: 'number',
       controlType: 'string',
       order: 4,
@@ -201,10 +201,10 @@ export class PlantListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   plants$: Observable<any>;
-  allPlants$: Observable<any>;
   plantsCount$: Observable<Count>;
   plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  locationsListCount$: Observable<number>;
+  plantsListCount$: Observable<number>;
+
   addEditCopyDeletePlants = false;
   addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
@@ -228,7 +228,7 @@ export class PlantListComponent implements OnInit {
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
     this.plantService.fetchPlants$.next({} as TableEvent);
-    this.allPlants$ = this.plantService.fetchAllPlants$();
+    // this.allPlants$ = this.plantService.fetchAllPlants$();
     this.searchPlant = new FormControl('');
 
     this.searchPlant.valueChanges
@@ -289,11 +289,10 @@ export class PlantListComponent implements OnInit {
     this.plants$ = combineLatest([
       plantsOnLoadSearch$,
       this.addEditCopyDeletePlants$,
-      onScrollPlants$,
-      this.allPlants$
+      onScrollPlants$
+      // this.allPlants$
     ]).pipe(
-      map(([rows, form, scrollData, allPlants]) => {
-        const { items: unfilteredParentLocations } = allPlants;
+      map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -344,7 +343,7 @@ export class PlantListComponent implements OnInit {
   }
 
   addOrUpdatePlant(plantData) {
-    if (plantData?.status === 'add') {
+    if (plantData.status === 'add') {
       this.addEditCopyDeletePlants = true;
       if (this.searchPlant.value) {
         this.plantService.fetchPlants$.next({ data: 'search' });
@@ -358,7 +357,7 @@ export class PlantListComponent implements OnInit {
         text: 'Plant created successfully!',
         type: 'success'
       });
-    } else if (plantData?.status === 'edit') {
+    } else if (plantData.status === 'edit') {
       this.addEditCopyDeletePlants = true;
       if (this.searchPlant.value) {
         this.plantService.fetchPlants$.next({ data: 'search' });
@@ -425,7 +424,8 @@ export class PlantListComponent implements OnInit {
       case 'name':
       case 'plantId':
       case 'country':
-      case 'zipcode':
+      case 'zipCode':
+      case 'state':
         this.showPlantDetail(row);
         break;
       default:
@@ -451,6 +451,7 @@ export class PlantListComponent implements OnInit {
   }
 
   showPlantDetail(row: GetFormListQuery): void {
+    console.log(row);
     this.selectedPlant = row;
     this.openPlantDetailedView = 'in';
   }

@@ -81,6 +81,7 @@ export class PlantService {
   }
 
   createPlant$(values, info: ErrorInfo = {} as ErrorInfo) {
+    console.log(values);
     return this._appService._postData(
       environment.masterConfigApiUrl,
       'plants/create',
@@ -108,7 +109,7 @@ export class PlantService {
   deletePlant$(values: any) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
-      `plant/${JSON.stringify(values)}/delete`
+      `plants/${JSON.stringify(values)}/delete`
     );
   }
 
@@ -121,6 +122,15 @@ export class PlantService {
       )
       ?.map((item: any) => ({
         ...item,
+        preTextImage: {
+          image: item?.image,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
         noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
         unitType: item?.unitList?.name,
         isDefaultText: item?.isDefault ? 'Default' : ''

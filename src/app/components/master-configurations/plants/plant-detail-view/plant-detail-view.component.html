@@ -17,14 +17,26 @@
       <p class="m-0 sub-headings" translate="id"></p>
       <p class="m-0 sub-headings-value">{{ selectedPlant.plantId }}</p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="parent"></p>
+      <p class="m-0 sub-headings" translate="country"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.parent ? selectedPlant.parent : '--' }}
+        {{ selectedPlant.country ? selectedPlant.country : '--' }}
       </p>
       <hr class="horizon-line" />
-      <p class="m-0 sub-headings" translate="description"></p>
+      <p class="m-0 sub-headings" translate="zipcode"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.description }}
+        {{ selectedPlant.zipCode ? selectedPlant.zipCode : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="state"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.state ? selectedPlant.state : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="additionalDetails"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.label ? selectedPlant.label : '--' }}
+        :
+        {{ selectedPlant.field ? selectedPlant.field : '--' }}
       </p>
       <hr class="horizon-line" />
       <button

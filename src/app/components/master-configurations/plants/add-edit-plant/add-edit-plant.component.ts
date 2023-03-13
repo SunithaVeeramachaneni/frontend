@@ -43,12 +43,14 @@ export class AddEditPlantComponent implements OnInit {
         image: this.plantsEditData.image,
         name: this.plantsEditData.name,
         plantId: this.plantsEditData.plantId,
-        description: this.plantsEditData.description,
         country: this.plantsEditData.country,
         state: this.plantsEditData.state,
-        zipcode: this.plantsEditData.zipcode
+        zipCode: this.plantsEditData.zipCode,
+        label: this.plantEditData.label,
+        field: this.plantEditData.field
       };
       this.plantForm.patchValue(plantdata);
+      this.plantForm.get('plantId').disable();
       this.getAllPlants();
     }
   }
@@ -72,9 +74,15 @@ export class AddEditPlantComponent implements OnInit {
       image: '',
       name: new FormControl('', [Validators.required]),
       plantId: new FormControl('', [Validators.required]),
-      country: '',
-      zipcode: '',
-      state: ''
+      country: new FormControl('', [Validators.required]),
+      zipCode: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(6)
+      ]),
+      state: '',
+      label: '',
+      field: ''
     });
     this.getAllPlants();
   }
@@ -90,8 +98,9 @@ export class AddEditPlantComponent implements OnInit {
     if (this.plantStatus === 'add') {
       this.plantForm
         .get('image')
-        .setValue('assets/master-configurations/default-location.png');
-      this.plantService.createPlant$(this.plantForm.value).subscribe((res) => {
+        .setValue('assets/master-configurations/default-plant.svg');
+      const { id, ...payload } = this.plantForm.value;
+      this.plantService.createPlant$(payload).subscribe((res) => {
         this.createdPlantData.emit({
           status: this.plantStatus,
           data: res
@@ -102,7 +111,7 @@ export class AddEditPlantComponent implements OnInit {
     } else if (this.plantStatus === 'edit') {
       this.plantService
         .updatePlant$({
-          ...this.plantForm.value,
+          ...this.plantForm.getRawValue(),
           _version: this.plantsEditData._version,
           id: this.plantsEditData?.id
         })
