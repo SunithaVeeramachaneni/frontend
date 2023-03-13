@@ -2,9 +2,12 @@ import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angula
 import { DateAdapter } from '@angular/material/core';
 import { MatDateRangePicker } from '@angular/material/datepicker';
 const customPresets = [
-  'Daily',
-  'Weekly',
-  'Monthly'
+  'Today',
+  'Last 7 days',
+  'Last week',
+  'Last month',
+  'This month',
+  'Last 3 months'
 ] as const;
 
 type CustomPreset = typeof customPresets[number];
@@ -39,15 +42,27 @@ export class CustomRangePanelComponent<D> {
     const year = this.dateAdapter.getYear(today);
 
     switch (rangeName) {
-      case 'Daily':
+      case 'Today':
         return [today, today];
-      case 'Weekly': {
+      case 'Last 7 days': {
         const start = this.dateAdapter.addCalendarDays(today, -6);
         return [start, today];
       }
-      case 'Monthly': {
+      case 'Last week': {
+        const thisDayLastWeek = this.dateAdapter.addCalendarDays(today, -7);
+        return this.calculateWeek(thisDayLastWeek);
+      }
+      case 'Last month': {
+        const thisDayLastMonth = this.dateAdapter.addCalendarMonths(today, -1);
+        return this.calculateMonth(thisDayLastMonth);
+      }
+      case 'This month': {
         return this.calculateMonth(today);
-      } 
+      }
+      case 'Last 3 months': {
+        const thisDayLastMonth = this.dateAdapter.addCalendarMonths(today, -3);
+        return this.calculateMonth(thisDayLastMonth);
+      }
       default:
         return rangeName;
     }
@@ -63,7 +78,16 @@ export class CustomRangePanelComponent<D> {
     );
     return [start, end];
   }
- 
+
+  private calculateWeek(forDay: D): [start: D, end: D] {
+    const deltaStart =
+      this.dateAdapter.getFirstDayOfWeek() -
+      this.dateAdapter.getDayOfWeek(forDay);
+    const start = this.dateAdapter.addCalendarDays(forDay, deltaStart);
+    const end = this.dateAdapter.addCalendarDays(start, 6);
+    return [start, end];
+  }
+
   private get today(): D {
     const today = this.dateAdapter.getValidDateOrNull(new Date());
     if (today === null) {

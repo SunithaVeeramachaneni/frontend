@@ -128,15 +128,21 @@ export class OperatorRoundsService {
       params.set('modifiedBy', filterData.modifiedBy);
       params.set('authoredBy', filterData.authoredBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
-      params.set('scheduleStartDate', filterData.scheduleStartDate ? filterData.scheduleStartDate : '');
-      params.set('scheduleEndDate', filterData.scheduleEndDate ?  filterData.scheduleEndDate: '');
+      params.set(
+        'scheduleStartDate',
+        filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
+      );
+      params.set(
+        'scheduleEndDate',
+        filterData.scheduleEndDate ? filterData.scheduleEndDate : ''
+      );
     }
-      return this.appService
-        ._getResp(
-          environment.operatorRoundsApiUrl,
-          'round-plans?' + params.toString()
-        )
-        .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
   getRoundsList$(queryParams: {
@@ -589,12 +595,12 @@ export class OperatorRoundsService {
 
   fetchAllOperatorRounds$ = () => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', "");
-    params.set('limit', "2000000");
-    params.set('nextToken', "");
-    params.set('fetchType', "");
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('fetchType', '');
     params.set('formStatus', 'All');
-    params.set('isArchived', "false");
+    params.set('isArchived', 'false');
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
@@ -607,6 +613,20 @@ export class OperatorRoundsService {
     return this.appService._getLocal(
       '',
       'assets/json/operator-rounds-filter.json',
+      info
+    );
+  }
+  getPlanFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-plan-filter.json',
+      info
+    );
+  }
+  getRoundFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-round-filter.json',
       info
     );
   }
