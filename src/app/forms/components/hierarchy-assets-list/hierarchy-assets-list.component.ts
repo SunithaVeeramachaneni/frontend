@@ -23,11 +23,13 @@ import { HierarchyEntity } from 'src/app/interfaces';
 export class HierarchyAssetsListComponent implements OnInit {
   @Input() set hierarchyData(data: HierarchyEntity[]) {
     this.hierarchyList = data ? data : ([] as HierarchyEntity[]);
+    this.unsearchedHierarchyList = this.hierarchyList;
   }
   @Input() set selectedList(data) {
     this.selectedHierarchyList = data;
   }
 
+  public unsearchedHierarchyList: HierarchyEntity[];
   public hierarchyList: HierarchyEntity[];
   public selectedHierarchyList: HierarchyEntity[];
   public selectedLocationHierarchyFlatList: HierarchyEntity[];
@@ -84,7 +86,12 @@ export class HierarchyAssetsListComponent implements OnInit {
       setTimeout(() => {
         this.searchMasterData.patchValue(node.name);
       }, 0);
-      // Put logic here
+
+      const tempHierarchyList = JSON.parse(JSON.stringify(this.hierarchyList));
+      this.hierarchyList = this.assetHierarchyUtil.toggleSearchSelectedNode(
+        node.uid,
+        tempHierarchyList
+      );
     }
   }
 
@@ -93,7 +100,9 @@ export class HierarchyAssetsListComponent implements OnInit {
   }
 
   filterList = (searchInput: string): any[] => {
-    if (!searchInput.length) return [];
+    if (!searchInput.length) {
+      return [];
+    }
 
     this.filteredList = this.selectedLocationHierarchyFlatList.filter(
       (node) =>
@@ -101,7 +110,6 @@ export class HierarchyAssetsListComponent implements OnInit {
         node?.nodeDescription.toLowerCase().includes(searchInput)
     );
 
-    console.log(this.filteredList);
     return this.filteredList || [];
   };
 

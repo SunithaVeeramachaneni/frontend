@@ -294,6 +294,27 @@ export class AssetHierarchyUtil {
         : ([] as HierarchyEntity[])
     }));
 
+  toggleSearchSelectedNode = (
+    nodeUid: string,
+    hierarchyList: HierarchyEntity[]
+  ): HierarchyEntity[] => {
+    const nodes = [] as HierarchyEntity[];
+    hierarchyList.forEach((node) => {
+      const children = node.hasChildren
+        ? this.toggleSearchSelectedNode(nodeUid, node.children)
+        : ([] as HierarchyEntity[]);
+      nodes.push({
+        ...node,
+        isToggledView:
+          children.findIndex((item) => item.isParentToBeToggled) > -1,
+        isParentToBeToggled: node.uid === nodeUid,
+        children
+      });
+    });
+
+    return nodes;
+  };
+
   getSelectedCount = (hierarchyList: HierarchyEntity[]): number => {
     let count = 0;
     hierarchyList.forEach((node) => {

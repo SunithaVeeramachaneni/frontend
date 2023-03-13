@@ -35,9 +35,11 @@ export class HierarchyNodeComponent implements OnInit {
       this.masterData.isSelected = isMasterCheckedData.checked;
     }
     this.isParentCheckedData = isMasterCheckedData;
-    this.allSelected = isMasterCheckedData.checked;
-    if (this.allSelected) {
-      this.isAllSelectedToggled({ checked: true });
+    if (this.selectionMode === 'selectAssets') {
+      this.allSelected = isMasterCheckedData.checked;
+      if (this.allSelected) {
+        this.isAllSelectedToggled({ checked: true });
+      }
     }
   }
 
@@ -140,8 +142,7 @@ export class HierarchyNodeComponent implements OnInit {
   isAllSelectedToggled = (event: MatCheckboxChange | any) => {
     const { checked } = event;
     this.allSelected = checked;
-    this.masterData.isSelected = checked;
-    this.masterData.isToggledView = true;
+    if (this.masterData.parentId) this.masterData.isSelected = checked;
 
     if (checked) {
       this.masterData.children =

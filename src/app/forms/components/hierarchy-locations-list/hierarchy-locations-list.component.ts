@@ -24,7 +24,9 @@ export class HierarchyLocationsListComponent implements OnInit {
     new EventEmitter<any>();
   @Input() set locationsData(data: HierarchyEntity[]) {
     this.allItems = data
-      ? JSON.parse(JSON.stringify(data))
+      ? JSON.parse(
+          JSON.stringify(data.filter((item) => item.type === 'location'))
+        )
       : ([] as HierarchyEntity[]);
     this.searchFilterItems = this.allItems;
   }
