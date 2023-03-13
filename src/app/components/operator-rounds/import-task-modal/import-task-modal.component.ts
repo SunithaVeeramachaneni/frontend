@@ -14,7 +14,10 @@ import {
 } from 'rxjs/operators';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { defaultLimit } from 'src/app/app.constants';
-import { getFormMetadata, State } from 'src/app/forms/state';
+import {
+  getFormMetadata,
+  State
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { FormMetadata } from 'src/app/interfaces/form-configuration';
 
 @Component({

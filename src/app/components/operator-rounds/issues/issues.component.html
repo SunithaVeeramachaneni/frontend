@@ -1,5 +1,17 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
   <span class="custom-form-field-gray-color">
+    <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
+      <span class="issues-count">
+        {{ totalCount }}
+      </span>
+      <span class="issues-text">{{
+        'plans'
+          | translate
+            : {
+                count: totalCount || 0
+              }
+      }}</span>
+    </span>
     <mat-form-field appearance="outline" class="issues-search">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
@@ -17,6 +29,14 @@
       />
     </mat-form-field>
   </span>
+
+  <ng-container *ngIf="menuState === 'in'">
+    <app-observation-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedData]="selectedData"
+    ></app-observation-detail>
+  </ng-container>
 
   <div
     *ngIf="(issues$ | async) && (isLoading$ | async) === false"

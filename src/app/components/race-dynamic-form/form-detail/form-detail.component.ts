@@ -28,7 +28,7 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
-  @Input() selectedForm: GetFormListQuery = null;
+  @Input() selectedForm: any = null;
   @Input() moduleName = 'RDF';
 
   selectedFormDetail$: Observable<any> = null;

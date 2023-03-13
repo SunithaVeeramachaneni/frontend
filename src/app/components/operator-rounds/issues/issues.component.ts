@@ -1,13 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { State, Store } from '@ngrx/store';
 import {
   BehaviorSubject,
   combineLatest,
@@ -25,7 +24,9 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
+import { slideInOut } from 'src/app/animations';
 import { GetFormListQuery } from 'src/app/API.service';
+
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -38,17 +39,19 @@ import {
 } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
-  styleUrls: ['./issues.component.scss']
+  styleUrls: ['./issues.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOut]
 })
 export class IssuesComponent implements OnInit {
   columns: Column[] = [
     {
-      id: 'name',
+      id: 'title',
       displayName: 'Name',
       type: 'string',
       controlType: 'string',
@@ -77,14 +80,11 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'location/asset',
+      id: 'locationAsset',
       displayName: 'Location/Asset',
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -92,16 +92,24 @@ export class IssuesComponent implements OnInit {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
+      groupable: false,
+      titleStyle: {
+        'font-size': '100%'
+      },
+      hasSubtitle: true,
+      showMenuOptions: false,
+      subtitleColumn: 'locationAssetDescription',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'priority',
-      displayName: 'Priority',
-      type: 'number',
+      id: 'plant',
+      displayName: 'Plan',
+      type: 'string',
       controlType: 'string',
       order: 3,
       hasSubtitle: false,
@@ -117,13 +125,13 @@ export class IssuesComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: false,
+      hasPreTextImage: true,
       hasPostTextImage: false
     },
     {
-      id: 'status',
-      displayName: 'Status',
-      type: 'string',
+      id: 'priority',
+      displayName: 'Priority',
+      type: 'number',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -137,14 +145,27 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        height: '24px',
+        color: '#ff4033',
+        borderRadius: '12px'
+      },
       subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPreTextImage: true,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
-      displayName: 'Due Date',
+      id: 'status',
+      displayName: 'Status',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -159,13 +180,51 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        right: '15px',
+        height: '24px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
+      },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
+      id: 'dueDate',
+      displayName: 'Due Date',
+      type: 'string',
+      controlType: 'string',
+      order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'notificationNo',
+      id: 'notificationNumber',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
@@ -225,13 +284,22 @@ export class IssuesComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+      High: {
+        color: '#ff4033'
       },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+      Medium: {
+        color: '#ffab46'
+      },
+      Low: {
+        color: '#98989a'
+      },
+      Open: {
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      'In Progress': {
+        'background-color': '#c0d7fd',
+        color: '#3865b6'
       }
     }
   };
@@ -246,20 +314,19 @@ export class IssuesComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchIssue: FormControl;
-  issuesCount$: Observable<number>;
   nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  issuesDetail: GetFormListQuery = null;
+  selectedData = null;
   zIndexDelay = 0;
+  issuesCount$: Observable<number>;
   readonly perms = perms;
-
   constructor(
-    private readonly operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService,
+    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly loginService: LoginService,
     private dialog: MatDialog
   ) {}
 
@@ -278,7 +345,7 @@ export class IssuesComponent implements OnInit {
       )
       .subscribe();
     this.issuesCount$ =
-      this.operatorRoundsService.getFormsListCount$('Published');
+      this.roundPlanObservationsService.getObservationCount$('issue');
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -304,7 +371,7 @@ export class IssuesComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getIssuesList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([]);
         }
       })
     );
@@ -336,10 +403,10 @@ export class IssuesComponent implements OnInit {
       nextToken: this.nextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
-      fetchType: this.fetchType
+      type: 'issue'
     };
 
-    return this.operatorRoundsService.getFormsList$(obj, 'Published').pipe(
+    return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
@@ -365,12 +432,19 @@ export class IssuesComponent implements OnInit {
   };
 
   prepareMenuActions(permissions: Permission[]): void {
-    const menuActions = [
-      {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        perms.viewORObservations
+      )
+    ) {
+      menuActions.push({
         title: 'Show Details',
         action: 'showDetails'
-      }
-    ];
+      });
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -395,7 +469,6 @@ export class IssuesComponent implements OnInit {
         this.openModal(data);
         break;
       default:
-      // do nothing
     }
   };
 }

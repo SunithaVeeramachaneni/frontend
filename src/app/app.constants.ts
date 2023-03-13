@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const permissions = Object.freeze({
   viewDashboards: 'VIEW_DASHBOARDS',
   createDashboard: 'CREATE_DASHBOARD',
@@ -69,11 +70,13 @@ export const permissions = Object.freeze({
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
   viewRounds: 'VIEW_ROUNDS',
+  viewORPSubmissions: 'VIEW_OP_SUBMISSIONS',
   downloadRounds: 'DOWNLOAD_ROUNDS',
   shareRounds: 'SHARE_ROUNDS',
   scheduleRounds: 'SCHEDULE_ROUNDS',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
@@ -194,6 +197,11 @@ export const routingUrls = {
     title: 'Scheduler',
     permission: permissions.viewORPlans
   },
+  roundPlanSubmissionForms: {
+    url: '/operator-rounds/submissions',
+    title: 'Submissions',
+    permission: permissions.viewORPSubmissions
+  },
   roundPlanArchivedForms: {
     url: '/operator-rounds/archived',
     title: 'Archived',
@@ -202,7 +210,7 @@ export const routingUrls = {
   roundPlanObservations: {
     url: '/operator-rounds/observations',
     title: 'Observations',
-    permission: permissions.viewORPlans
+    permission: permissions.viewORObservations
   },
   masterConfiguration: {
     url: '/master-configuration',
@@ -233,6 +241,13 @@ export const formConfigurationStatus = Object.freeze({
   saving: 'Saving',
   standalone: 'Standalone',
   embedded: 'Embedded'
+});
+
+export const HIERARCHY_MODES = Object.freeze({
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ASSET_HIERARCHY: 'asset_hierarchy',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ROUTE_PLAN: 'route_plan'
 });
 
 export const defaultCategoryId = '_UnassignedCategory_';

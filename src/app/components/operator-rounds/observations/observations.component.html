@@ -1,20 +1,38 @@
-<div class="observations-container">
+<div class="observations-container" *ngIf="counts$ | async as counts">
   <div class="dis-flex charts">
     <div class="width-50 chart m-r-10">
       <h3 translate="openIssues"></h3>
+      <h2>Priority</h2>
+      <div>High: {{ counts?.openIssues?.priority?.high || 0 }}</div>
+      <div>Medium: {{ counts?.openIssues?.priority?.low || 0 }}</div>
+      <div>Low: {{ counts?.openIssues?.priority?.medium || 0 }}</div>
+      <div>Total: {{ counts?.openIssues?.priority?.total || 0 }}</div>
+      <h2>Status</h2>
+      <div>Open: {{ counts?.openIssues?.status.open || 0 }}</div>
+      <div>In-Progress: {{ counts?.openIssues?.status?.inProgress || 0 }}</div>
+      <div>Total: {{ counts?.openIssues?.status?.total || 0 }}</div>
     </div>
     <div class="width-50 chart m-l-10">
       <h3 translate="openActions"></h3>
+      <h2>Priority</h2>
+      <div>High: {{ counts?.openActions?.priority?.high || 0 }}</div>
+      <div>Medium: {{ counts?.openActions?.priority?.high || 0 }}</div>
+      <div>Low: {{ counts?.openActions?.priority?.high || 0 }}</div>
+      <div>Total: {{ counts?.openActions?.priority?.high || 0 }}</div>
+      <h2>Status</h2>
+      <div>Todo: {{ counts?.openActions?.status?.toDo || 0 }}</div>
+      <div>In-Progress: {{ counts?.openActions?.status?.inProgress || 0 }}</div>
+      <div>Total: {{ counts?.openActions?.status?.total || 0 }}</div>
     </div>
   </div>
   <div class="tabs-header">
     <mat-tab-group>
       <mat-tab>
-        <ng-template mat-tab-label translate="issues"></ng-template>
+        <ng-template mat-tab-label>{{ 'issues' | translate }}</ng-template>
         <app-issues></app-issues>
       </mat-tab>
       <mat-tab>
-        <ng-template mat-tab-label translate="actions"></ng-template>
+        <ng-template mat-tab-label>{{ 'actions' | translate }}</ng-template>
         <app-actions></app-actions>
       </mat-tab>
     </mat-tab-group>

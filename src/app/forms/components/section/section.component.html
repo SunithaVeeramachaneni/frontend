@@ -3,7 +3,8 @@
   [formGroup]="sectionForm"
   *ngIf="{
     section: section$ | async,
-    sectionsCount: sectionsCount$ | async
+    sectionsCount: sectionsCount$ | async,
+    sectionTasksCount: sectionTasksCount$ | async
   } as props"
 >
   <div class="width-95 section-margin">
@@ -51,24 +52,29 @@
             />
           </button>
         </a>
+        <div class="sectionHeadRight">
+          <span class="sectionTaskCount">
+            {{ props.sectionTasksCount }}
+          </span>
 
-        <button
-          [matMenuTriggerFor]="sectionMenu"
-          class="more-icon"
-          aria-label="More Options"
-        >
-          <mat-icon>more_horiz</mat-icon>
-        </button>
-        <mat-menu #sectionMenu="matMenu">
           <button
-            mat-menu-item
-            (click)="deleteSection()"
-            class="text-red"
-            [disabled]="props.sectionsCount === 1"
+            [matMenuTriggerFor]="sectionMenu"
+            class="more-icon"
+            aria-label="More Options"
           >
-            <span translate="deleteSection"></span>
+            <mat-icon>more_horiz</mat-icon>
           </button>
-        </mat-menu>
+          <mat-menu #sectionMenu="matMenu">
+            <button
+              mat-menu-item
+              (click)="deleteSection()"
+              class="text-red"
+              [disabled]="props.sectionsCount === 1"
+            >
+              <span translate="deleteSection"></span>
+            </button>
+          </mat-menu>
+        </div>
       </div>
       <div
         *ngIf="sectionForm.get('isOpen').value === true"
