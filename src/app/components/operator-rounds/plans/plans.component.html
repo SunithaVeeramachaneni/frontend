@@ -48,7 +48,6 @@
     </mat-form-field>
   </span>
   <ng-template
-    *ngIf="false"
     cdkConnectedOverlay
     cdkConnectedOverlayPanelClass="custom-popover"
     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
@@ -58,19 +57,7 @@
     cdkConnectedOverlayWidth="400px"
     (backdropClick)="isPopoverOpen = false"
   >
-    <div class="filter-modal custom-form-field-white-color">
-      <div class="m-b-10 filter-header">
-        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-        <button
-          class="filter-modal-cancel"
-          (click)="isPopoverOpen = false"
-          aria-label="Close Filter"
-        >
-          <img src="assets/img/svg/cancel-icon.svg" alt="Close Filter" />
-        </button>
-      </div>
-      <div>{{ 'filters' | translate }}</div>
-    </div>
+    <app-filter [json]="filterJson" (close)="isPopoverOpen = false" (apply)="applyFilters($event)" (reset)="resetFilter()"></app-filter>
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
