@@ -48,7 +48,10 @@ export class ShowHierarchyPopupComponent implements OnInit {
       tap((masterHierarchyList) => {
         this.hierarchyList = masterHierarchyList;
         this.hierarchyToBeDisplayed =
-          this.assetHierarchyUtil.getHierarchyByNodeId(this.hierarchyList, uid);
+          this.assetHierarchyUtil.getHierarchyByNodeUid(
+            this.hierarchyList,
+            uid
+          );
       })
     );
   }
