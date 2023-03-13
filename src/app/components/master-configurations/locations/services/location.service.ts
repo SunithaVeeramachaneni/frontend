@@ -90,7 +90,9 @@ export class LocationService {
         description: formLocationQuery.description,
         model: formLocationQuery.model,
         locationId: formLocationQuery.locationId,
-        parentId: formLocationQuery.parentId,
+        parentId: formLocationQuery?.parentId?.length
+          ? formLocationQuery.parentId
+          : null,
         searchTerm: formLocationQuery.name.toLowerCase()
       })
     );
@@ -100,6 +102,9 @@ export class LocationService {
     return from(
       this.awsApiService.UpdateLocation({
         ...locationDetails.data,
+        parentId: locationDetails.data?.parentId?.length
+          ? locationDetails.data.parentId
+          : null,
         _version: locationDetails.version
       })
     );

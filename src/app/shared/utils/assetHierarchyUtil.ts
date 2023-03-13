@@ -137,7 +137,7 @@ export class AssetHierarchyUtil {
       } as HierarchyEntity;
 
       if (!node.parentId || (parentId && node.parentId === parentId)) {
-        if (!flatList.findIndex((item) => item.parentId === node.id))
+        if (flatList.findIndex((item) => item.parentId === node.id) < 0)
           nodes.push(leafNode); // Node without children
         // Nodes with children
         else
