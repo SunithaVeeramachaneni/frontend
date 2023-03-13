@@ -132,3 +132,10 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
 .mat-field {
     width: 100%;
 }
+.schedule-wrap{
+  display: flex;
+  justify-content: space-between;
+  .width50 {
+      width: 47%;
+  }
+}

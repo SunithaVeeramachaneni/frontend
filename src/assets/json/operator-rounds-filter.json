@@ -8,11 +8,10 @@
   },
   {
     "label": "Schedule",
-    "items": [],
+    "items": ["Daily", "Weekly", "Monthly", "Custom dates"],
     "column": "",
-    "type": "daterange",
-    "startDate": "",
-    "endDate":"",
+    "type": "schedule",
+    "itemValue": "",
     "value": ""
   },
   {
