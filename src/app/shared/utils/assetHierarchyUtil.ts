@@ -196,27 +196,29 @@ export class AssetHierarchyUtil {
     return parent;
   };
 
-  getHierarchyByNodeId = (
+  getHierarchyByNodeUid = (
     hierarchyList: HierarchyEntity[],
-    nodeId: string
-  ): HierarchyEntity => {
+    nodeUid: string
+  ) => {
     let leafNode = {} as HierarchyEntity;
     for (const node of hierarchyList) {
-      if (node.uid === nodeId) {
+      if (node.uid === nodeUid) {
         leafNode = {
           ...node,
           hasChildren: false,
           children: [] as HierarchyEntity[]
         };
         break;
-      } else if (node.uid !== nodeId && node.children.length) {
-        leafNode = {
-          ...node,
-          children: [
-            this.getHierarchyByNodeId(node.children, nodeId)
-          ] as HierarchyEntity[]
-        };
-        break;
+      } else if (node.hasChildren) {
+        const childNode = this.getHierarchyByNodeUid(node.children, nodeUid);
+        if (Object.keys(childNode).length) {
+          leafNode = {
+            ...node,
+            hasChildren: true,
+            children: [childNode]
+          };
+          break;
+        }
       }
     }
     return leafNode;
