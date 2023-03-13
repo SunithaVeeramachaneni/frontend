@@ -3,7 +3,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -110,7 +110,8 @@ export class OperatorRoundsService {
       fetchType: string;
     },
     formStatus: 'Published' | 'Draft' | 'All',
-    isArchived: boolean = false
+    isArchived: boolean = false,
+    filterData: any = null
   ) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
@@ -119,6 +120,23 @@ export class OperatorRoundsService {
     params.set('fetchType', queryParams?.fetchType);
     params.set('formStatus', formStatus);
     params.set('isArchived', String(isArchived));
+    if (filterData) {
+      params.set(
+        'formStatus',
+        filterData.status ? filterData.status : formStatus
+      );
+      params.set('modifiedBy', filterData.modifiedBy);
+      params.set('authoredBy', filterData.authoredBy);
+      params.set('lastModifiedOn', filterData.lastModifiedOn);
+      params.set(
+        'scheduleStartDate',
+        filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
+      );
+      params.set(
+        'scheduleEndDate',
+        filterData.scheduleEndDate ? filterData.scheduleEndDate : ''
+      );
+    }
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
@@ -573,5 +591,43 @@ export class OperatorRoundsService {
       });
     });
     return `${updatedResponse.count}/${updatedResponse.total}`;
+  }
+
+  fetchAllOperatorRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('fetchType', '');
+    params.set('formStatus', 'All');
+    params.set('isArchived', 'false');
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+  };
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-filter.json',
+      info
+    );
+  }
+  getPlanFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-plan-filter.json',
+      info
+    );
+  }
+  getRoundFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-round-filter.json',
+      info
+    );
   }
 }
