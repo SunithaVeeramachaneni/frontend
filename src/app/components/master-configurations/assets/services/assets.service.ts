@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
@@ -6,7 +8,7 @@ import {
   DeleteAssetsInput,
   ListAssetsQuery
 } from 'src/app/API.service';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -37,7 +39,8 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => from(this.awsApiService.ListAssets({}, 2000000, ''));
+  fetchAllAssets$ = () =>
+    from(this.awsApiService.ListAssets({}, 20000, '')).pipe(shareReplay(1));
 
   getAssetsList$(queryParams: {
     nextToken?: string;

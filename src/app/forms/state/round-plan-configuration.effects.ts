@@ -30,7 +30,10 @@ export class RoundPlanConfigurationEffects {
           map((response) => {
             this.operatorRoundsService.setFormCreatedUpdated(response);
             return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata },
+              formMetadata: {
+                id: response.id,
+                ...action.formMetadata
+              },
               formSaveStatus: formConfigurationStatus.saved
             });
           }),
@@ -52,7 +55,10 @@ export class RoundPlanConfigurationEffects {
         this.operatorRoundsService.updateForm$(action).pipe(
           map(() =>
             RoundPlanConfigurationApiActions.updateRoundPlanSuccess({
-              formMetadata: action.formMetadata,
+              formMetadata: {
+                ...action.formMetadata,
+                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+              },
               formSaveStatus: formConfigurationStatus.saved
             })
           ),
@@ -72,6 +78,7 @@ export class RoundPlanConfigurationEffects {
       ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
+        const { hierarchy, subForms } = formDetail;
         return of(true).pipe(
           mergeMap(() =>
             this.operatorRoundsService
@@ -85,7 +92,9 @@ export class RoundPlanConfigurationEffects {
                 },
                 authoredFormDetail: {
                   ...authoredFormDetail,
-                  pages: JSON.stringify(authoredFormDetail.pages)
+                  pages: JSON.stringify(authoredFormDetail.pages),
+                  subForms, // Handle subforms form round-plan config,
+                  hierarchy
                 }
               })
               .pipe(

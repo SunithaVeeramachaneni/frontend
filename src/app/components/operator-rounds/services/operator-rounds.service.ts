@@ -21,23 +21,37 @@ import { ToastService } from 'src/app/shared/toast';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getResponseSets } from 'src/app/forms/state';
 import { isJson } from '../../race-dynamic-form/utils/utils';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
 const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
 export class OperatorRoundsService {
+  private selectedNodeSubject = new BehaviorSubject<any>({});
+  private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
+
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+  selectedNode$ = this.selectedNodeSubject.asObservable();
+  hierarchyMode$ = this.hierarchyModeSubject.asObservable();
 
   constructor(
+    public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
     private appService: AppService,
     private store: Store
   ) {}
+
+  setSelectedNode(node: any) {
+    this.selectedNodeSubject.next(node);
+  }
+  setHierarchyMode(mode: string) {
+    this.hierarchyModeSubject.next(mode);
+  }
 
   setFormCreatedUpdated(data: any) {
     this.formCreatedUpdatedSubject.next(data);
@@ -206,56 +220,101 @@ export class OperatorRoundsService {
   }
 
   updateForm$(formMetaDataDetails) {
+    const { hierarchy, ...formMetadata } = formMetaDataDetails.formMetadata;
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
       {
-        ...formMetaDataDetails.formMetadata,
+        ...formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       }
     );
   }
 
   getFormDetailsById$(id: string) {
-    return this.appService._getResp(
+    return this.appService._getRespById(
       environment.operatorRoundsApiUrl,
-      `round-plans/${id}`
+      `round-plans/`,
+      id
     );
   }
 
   createAuthoredFormDetail$(formDetails) {
+    const {
+      hierarchy,
+      subForms,
+      counter,
+      pages,
+      formListId,
+      formDetailPublishStatus,
+      formStatus
+    } = formDetails;
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      JSON.parse(JSON.stringify(hierarchy)),
+      0
+    );
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
       'round-plans/authored',
       {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
+        formStatus,
+        formDetailPublishStatus,
+        formlistID: formListId,
+        pages: JSON.stringify(pages),
+        counter,
+        flatHierarchy,
+        subForms,
+        hierarchy,
         version: formDetails.authoredFormDetailVersion.toString()
       }
     );
   }
 
-  publishRoundPlan$(values) {
+  publishRoundPlan$(roundPlanDetails) {
+    const { hierarchy } = roundPlanDetails.authoredFormDetail;
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      JSON.parse(JSON.stringify(hierarchy)),
+      0
+    );
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plans/publish/${values.form.id}`,
-      { ...values }
+      `round-plans/publish/${roundPlanDetails.form.id}`,
+      {
+        ...roundPlanDetails,
+        authoredFormDetail: {
+          ...roundPlanDetails.authoredFormDetail,
+          flatHierarchy
+        }
+      }
     );
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    const {
+      hierarchy,
+      subForms,
+      counter,
+      pages,
+      formListId,
+      formDetailPublishStatus,
+      formStatus
+    } = formDetails;
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      JSON.parse(JSON.stringify(hierarchy)),
+      0
+    );
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/authored/${formDetails.authoredFormDetailId}`,
       {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
+        formStatus,
+        formDetailPublishStatus,
+        formlistID: formListId,
+        subForms,
+        pages: JSON.stringify(pages),
+        counter,
+        hierarchy,
+        flatHierarchy,
         _version: formDetails.authoredFormDetailDynamoDBVersion,
         version: formDetails.authoredFormDetailVersion.toString()
       }
@@ -344,169 +403,6 @@ export class OperatorRoundsService {
       text: message
     });
   }
-
-  formatFormData = (form, pages): string => {
-    const forms = [];
-    const arrayFieldTypeQuestions = [];
-    const formData = {
-      FORMNAME: form.name,
-      PAGES: []
-    };
-    formData.PAGES = pages.map((page) => {
-      // eslint-disable-next-line prefer-const
-      let { sections, questions, logics } = page;
-
-      const pageItem = {
-        SECTIONS: sections.map((section) => {
-          let questionsBySection = questions.filter(
-            (item) => item.sectionId === section.id
-          );
-          const logicQuestions = [];
-
-          questionsBySection.forEach((question) => {
-            const questionLogics = logics.filter(
-              (l) => l.questionId === question.id
-            );
-
-            if (questionLogics && questionLogics.length) {
-              questionLogics.forEach((logic) => {
-                questions.forEach((q) => {
-                  if (q.sectionId === `AQ_${logic.id}`) {
-                    logicQuestions.push(q);
-                  }
-                });
-              });
-            }
-          });
-
-          questionsBySection = [...questionsBySection, ...logicQuestions];
-          const sectionItem = {
-            SECTIONNAME: section.name,
-            FIELDS: questionsBySection.map((question) => {
-              if (question.fieldType === 'TF') {
-                question.fieldType = question.value;
-              }
-              const questionItem = {
-                UNIQUEKEY: question.id,
-                FIELDLABEL: question.name,
-                UIFIELDTYPE: question.fieldType,
-                UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '' as any,
-                UIVALIDATION: this.getValidationExpression(
-                  question.id,
-                  question,
-                  questions,
-                  logics
-                ),
-                MANDATORY: question.required === true ? 'X' : ''
-              };
-
-              if (question.fieldType === 'ARD') {
-                Object.assign(questionItem, { SUBFORMNAME: question.name }); // Might be name or id.
-                arrayFieldTypeQuestions.push(question);
-              }
-
-              if (
-                question.fieldType === 'VI' ||
-                question.value?.type === 'quickResponse'
-              ) {
-                const viVALUE = this.prepareDDValue(question.value?.value);
-                Object.assign(questionItem, {
-                  DDVALUE: viVALUE
-                });
-              }
-
-              if (question.fieldType === 'NF') {
-                Object.assign(questionItem, {
-                  MEASUREMENT:
-                    question.unitOfMeasurement !== 'None'
-                      ? question.unitOfMeasurement
-                      : ''
-                });
-                if (question.rangeMetadata.min && question.rangeMetadata.max) {
-                  Object.assign(questionItem, {
-                    DEFAULTVALUE: JSON.stringify({
-                      min: question.rangeMetadata.min + '',
-                      max: question.rangeMetadata.max + '',
-                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
-                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
-                      value: ''
-                    })
-                  });
-                }
-              }
-
-              if (
-                question.fieldType === 'DD' &&
-                question.value?.type === 'globalResponse'
-              ) {
-                let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.store
-                  .select(getResponseSets)
-                  .pipe(
-                    tap((responses) => {
-                      currentGlobalResponseValues = JSON.parse(
-                        responses.find((item) => item.id === question.value.id)
-                          ?.values
-                      );
-                    })
-                  );
-                currenGlobalResponse$.subscribe();
-                questionItem.UIFIELDTYPE = question.multi
-                  ? 'DDM'
-                  : question.fieldType;
-                Object.assign(questionItem, {
-                  DDVALUE: currentGlobalResponseValues
-                    ? this.prepareDDValue(currentGlobalResponseValues)
-                    : []
-                });
-              }
-
-              if (question.fieldType === 'RT') {
-                const { min, max, increment } = question.value;
-                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
-              }
-
-              if (question.fieldType === 'LF') {
-                questionItem.DEFAULTVALUE = question.value;
-              }
-
-              if (question.fieldType === 'DT') {
-                questionItem.UIFIELDTYPE =
-                  question.value.date && question.value.time
-                    ? 'DT'
-                    : question.value.date
-                    ? 'DF'
-                    : 'TIF';
-                questionItem.DEFAULTVALUE =
-                  question.value.date && question.value.time
-                    ? 'CDT'
-                    : question.value.date
-                    ? 'CD'
-                    : 'CT';
-              }
-
-              if (question.fieldType === 'HL') {
-                questionItem.DEFAULTVALUE = question.value.title;
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.link
-                });
-              }
-
-              return questionItem;
-            })
-          };
-
-          return sectionItem;
-        })
-      };
-
-      return pageItem;
-    });
-
-    forms.push(formData);
-    return JSON.stringify({ FORMS: forms });
-  };
 
   getValidationExpression(questionId, question, questions, logics) {
     let expression = '';

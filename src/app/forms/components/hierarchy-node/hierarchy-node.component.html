@@ -1,15 +1,100 @@
-<div class="node">
-  <mat-checkbox
-    [(ngModel)]="isChecked"
-    (change)="clicked($event)"
-    class="checkbox"
-  ></mat-checkbox>
+<div
+  class="node"
+  [ngStyle]="{
+    'background-color':
+      viewMode === true && !masterData.hasChildren ? '#FEFFDF' : '#ffffff',
+    'margin-top': viewMode === false ? '5px' : '0'
+  }"
+>
+  <div class="dis-flex">
+    <div *ngIf="viewMode === false" class="dis-flex">
+      <mat-checkbox
+        [(ngModel)]="masterData.isSelected"
+        (change)="nodeCheckboxToggled($event)"
+        class="checkbox"
+        [disabled]="isAlreadySelected"
+      ></mat-checkbox>
 
-  <img [src]="masterData?.image" class="master-data-image" />
-  <div class="master-data-title">{{ masterData.name }}</div>
-  <div *ngIf="masterData?.hasChildren">
-    <app-hierarchy-node
-      [nodeData]="masterData.children[0]"
-    ></app-hierarchy-node>
+      <img [src]="masterData?.image" class="master-data-image" />
+    </div>
+    <div class="master-data-title">
+      {{ masterData.name }}
+    </div>
+  </div>
+  <hr
+    class="borders"
+    [ngStyle]="{ margin: viewMode === true ? '0' : '5px 0' }"
+  />
+  <div *ngIf="selectionMode === 'selectAssets' && masterData?.hasChildren">
+    <div
+      *ngIf="viewMode === false && masterData?.children.length"
+      class="hierarchy-head"
+    >
+      <a
+        *ngIf="viewMode === false"
+        (click)="masterData.isToggledView = !masterData.isToggledView"
+      >
+        <mat-icon *ngIf="masterData.isToggledView === false" class="arrows">
+          keyboard_arrow_right
+        </mat-icon>
+        <mat-icon *ngIf="masterData.isToggledView === true" class="arrows">
+          keyboard_arrow_down
+        </mat-icon>
+      </a>
+      <mat-checkbox
+        [(ngModel)]="allSelected"
+        [indeterminate]="multipleSelected()"
+        (change)="isAllSelectedToggled($event)"
+        class="select-all-checkbox"
+      ></mat-checkbox>
+      <a *ngIf="viewMode === false" class="count-assets">
+        {{
+          'assetsCount'
+            | translate
+              : {
+                  count: hierarchyCount()
+                }
+        }}
+      </a>
+      <!-- <div *ngIf="viewMode === false">
+        <a
+          *ngIf="!isParentCheckedData.checked; else multipleSelected"
+          class="count-assets"
+          >{{
+            'selectAllAssets'
+              | translate
+                : {
+                    count: hierarchyCount(masterData)
+                  }
+          }}</a
+        >
+        <ng-template #multipleSelected>
+          <a class="count-assets">{{
+            'selectedAssets'
+              | translate
+                : {
+                    selectedCount: hierarchyCount(masterData),
+                    count: hierarchyCount(masterData)
+                  }
+          }}</a>
+        </ng-template>
+      </div> -->
+    </div>
+    <div
+      *ngFor="let data of masterData.children"
+      class="child-node"
+      [ngStyle]="{ 'margin-top': viewMode === false ? '10px' : '0' }"
+    >
+      <div *ngIf="masterData.isToggledView || viewMode === true">
+        <app-hierarchy-node
+          [nodeData]="data"
+          [selectedList]="selectedHierarchyList"
+          (checkboxToggleHandler)="handleChildEntityToggle($event)"
+          [displayMode]="viewMode"
+          [mode]="'selectAssets'"
+          [isMasterChecked]="isParentCheckedData"
+        ></app-hierarchy-node>
+      </div>
+    </div>
   </div>
 </div>
