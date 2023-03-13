@@ -379,13 +379,6 @@ export class AssetsListComponent implements OnInit {
         action: 'edit'
       });
     }
-    // if (this.loginService.checkUserHasPermission(permissions, 'DELETE_ASSET')) {
-    //   menuActions.push({
-    //     title: 'Delete',
-    //     action: 'delete'
-    //   });
-    // }
-    // Implementation is done but required validations based on parent
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;

@@ -3,13 +3,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import {
-  APIService,
   CreateAssetsInput,
   DeleteAssetsInput,
   ListAssetsQuery,
   ModelAssetsFilterInput
 } from 'src/app/API.service';
-import { map, shareReplay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -19,7 +18,6 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-import { query } from '@angular/animations';
 
 @Injectable({
   providedIn: 'root'
