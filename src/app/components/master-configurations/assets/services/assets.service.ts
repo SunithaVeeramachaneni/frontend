@@ -98,7 +98,9 @@ export class AssetsService {
         model: formAssetsQuery.model,
         assetsId: formAssetsQuery.assetsId,
         parentType: formAssetsQuery.parentType,
-        parentId: formAssetsQuery.parentId,
+        parentId: formAssetsQuery.parentId.length
+          ? formAssetsQuery.parentId
+          : null,
         searchTerm: formAssetsQuery.name.toLowerCase()
       })
     );
@@ -108,6 +110,9 @@ export class AssetsService {
     return from(
       this.awsApiService.UpdateAssets({
         ...assetDetails.data,
+        parentId: assetDetails.data?.parentId?.length
+          ? assetDetails.data.parentId
+          : null,
         _version: assetDetails.version
       })
     );

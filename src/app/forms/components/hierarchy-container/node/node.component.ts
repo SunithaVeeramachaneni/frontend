@@ -127,8 +127,8 @@ export class NodeComponent implements OnInit {
       data: {
         uid: this.node.uid,
         position: {
-          top: coordinates.top,
-          left: coordinates.left
+          top: `${coordinates.top}px`,
+          left: `${coordinates.right}px`
         }
       }
     });

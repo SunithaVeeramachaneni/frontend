@@ -43,7 +43,17 @@ import { slideInOut } from 'src/app/animations';
 export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
+  filterJson: any[] = [];
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: '',
+    scheduleStartDate: '',
+    scheduleEndDate: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -219,7 +229,6 @@ export class RoundPlanListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
@@ -249,9 +258,10 @@ export class RoundPlanListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
-
+    this.getAllOperatorRounds();
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -379,7 +389,9 @@ export class RoundPlanListComponent implements OnInit {
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
-        'All'
+        'All',
+        false,
+        this.filter
       )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
@@ -480,5 +492,71 @@ export class RoundPlanListComponent implements OnInit {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllOperatorRounds() {
+    this.operatorRoundsService
+      .fetchAllOperatorRounds$()
+      .subscribe((formsList) => {
+        const uniqueLastPublishedBy = formsList.rows
+          .map((item) => item.lastPublishedBy)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueLastPublishedBy) {
+          if (item) {
+            this.lastPublishedBy.push(item);
+          }
+        }
+        const uniqueAuthoredBy = formsList.rows
+          .map((item) => item.author)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueAuthoredBy) {
+          if (item) {
+            this.authoredBy.push(item);
+          }
+        }
+        for (const item of this.filterJson) {
+          if (item['column'] == 'status') {
+            item.items = this.status;
+          } else if (item['column'] == 'modifiedBy') {
+            item.items = this.lastPublishedBy;
+          } else if (item['column'] == 'authoredBy') {
+            item.items = this.authoredBy;
+          }
+        }
+      });
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      if (item.type == 'daterange') {
+        this.filter.scheduleStartDate = item.value[0];
+        this.filter.scheduleEndDate = item.value[1];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: '',
+      scheduleStartDate: '',
+      scheduleEndDate: ''
+    };
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }
