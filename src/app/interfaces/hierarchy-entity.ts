@@ -12,7 +12,7 @@ export interface HierarchyEntity {
   isSelected: boolean;
   isToggledView: boolean;
   children: HierarchyEntity[];
-  hierarchyPath: string[];
+  hierarchyPath?: string[];
   isExpanded?: boolean;
   parentId?: string;
   isRootNode?: boolean;
