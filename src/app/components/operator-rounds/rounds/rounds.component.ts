@@ -40,7 +40,7 @@ import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 
 @Component({
@@ -261,13 +261,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   selectedForm: GetFormListQuery = null;
   zIndexDelay = 0;
+  hideSubmissionDetail: boolean;
   readonly perms = perms;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -289,11 +291,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-    this.displayRounds();
-    this.configOptions.allColumns = this.columns;
-  }
 
-  displayRounds(): void {
     const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -336,7 +334,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
         return initial;
       })
     );
+
+    this.activatedRoute.params.subscribe(() => {
+      this.hideSubmissionDetail = true;
+    });
+
+    this.configOptions.allColumns = this.columns;
   }
+
+  displayRounds(): void {}
 
   getRoundPlanList() {
     const obj = {
@@ -347,14 +353,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
     };
 
     return this.operatorRoundsService.getRoundsList$(obj).pipe(
-      mergeMap(({ rows, nextToken }) => {
-        this.nextToken = nextToken;
+      map(({ rows, nextToken }) => {
         this.isLoading$.next(false);
-        return of(rows as any);
-      }),
-      catchError(() => {
-        this.isLoading$.next(false);
-        return of([]);
+        if (rows) {
+          this.nextToken = nextToken;
+          return rows;
+        }
+        return [];
       })
     );
   }
@@ -366,6 +371,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
+    this.hideSubmissionDetail = false;
     this.showFormDetail(event.row);
   };
 
@@ -398,7 +404,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler(event) {
+  roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
