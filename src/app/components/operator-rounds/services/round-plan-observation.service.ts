@@ -51,41 +51,45 @@ export class RoundPlanObservationsService {
   }
 
   private formateGetObservationResponse(resp) {
-    const rows =
-      resp?.items
-        .sort(
-          (a, b) =>
-            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-        )
-        ?.map((item: any) => ({
-          ...item,
-          preTextImage: {
-            image: item?.Photo,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
-            },
-            condition: true
+    const items = resp?.items?.sort(
+      (a, b) =>
+        new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+    );
+    const rows = items?.map((item: any) => {
+      const obj = { ...item };
+      obj.dueDate =
+        obj['Due Date and Time'] &&
+        obj['Due Date and Time'] instanceof Date &&
+        !isNaN(obj['Due Date and Time'] as any)
+          ? format(new Date(obj['Due Date and Time']), 'do MMM, yyyy')
+          : obj['Due Date and Time'];
+      return {
+        ...obj,
+        preTextImage: {
+          image: obj?.Photo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
           },
-          title: item?.Title || '',
-          description: item?.Description || '',
-          locationAsset: item?.Location || item?.Asset || '',
-          locationAssetDescription: item?.Location
-            ? `Location ID: ${item?.taskId || ''}`
-            : item?.Asset
-            ? `Asset ID: ${item?.taskId || ''}`
-            : '',
-          priority: item?.Priority || '',
-          status: item?.Status || '',
-          dueDate: item['Due Date and Time']
-            ? format(new Date(item['Due Date and Time']), 'do MMM, yyyy')
-            : '',
-          assignee: item['Assign to'] || '',
-          createdBy: item?.createdBy || '',
-          notificationNumber: item?.notificationNumber || '',
-          plant: item?.Plant || ''
-        })) || [];
+          condition: true
+        },
+        title: obj?.Title || '',
+        description: obj?.Description || '',
+        locationAsset: obj?.taskDesciption || '',
+        locationAssetDescription: obj?.Location
+          ? `Location ID: ${obj?.Location || ''}`
+          : obj?.Asset
+          ? `Asset ID: ${obj?.Asset || ''}`
+          : '',
+        priority: obj?.Priority || '',
+        status: obj?.Status || '',
+        assignee: obj['Assign to'] || '',
+        createdBy: obj?.createdBy || '',
+        notificationNumber: obj?.notificationNumber || '',
+        plant: obj?.Plant || ''
+      };
+    });
     const nextToken = resp?.nextToken;
     return {
       rows,
