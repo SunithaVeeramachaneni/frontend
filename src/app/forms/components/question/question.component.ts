@@ -32,7 +32,8 @@ import {
   QuestionEvent,
   Question,
   NumberRangeMetadata,
-  FormMetadata
+  FormMetadata,
+  InstructionsFile
 } from 'src/app/interfaces';
 import {
   getQuestionByID,
@@ -356,7 +357,7 @@ export class QuestionComponent implements OnInit {
       this.questionForm.get('id').value
     );
 
-    // removing HTML tags that Quill material component puts in name field.
+    // removing HTML tags that Quill material component puts in name field for non INST types.
     if (this.questionForm.get('fieldType').value === 'INST') {
       const originalName = this.questionForm.get('name').value;
       this.questionForm.get('name').setValue(this.stripHTMLTags(originalName));
@@ -665,12 +666,7 @@ export class QuestionComponent implements OnInit {
 
       if (file.type === 'application/pdf') {
         if (originalValue.pdf === null) {
-          const value = {
-            name: file.name,
-            size: file.size
-          };
-          this.setURLfromS3(file, {
-            value,
+          this.sendFileToS3(file, {
             originalValue,
             isImage: false
           });
@@ -683,12 +679,7 @@ export class QuestionComponent implements OnInit {
       } else {
         const index = originalValue.images.findIndex((image) => image === null);
         if (index !== -1) {
-          const value = {
-            name: file.name,
-            size: file.size
-          };
-          this.setURLfromS3(file, {
-            value,
+          this.sendFileToS3(file, {
             originalValue,
             isImage: true,
             index
@@ -703,31 +694,35 @@ export class QuestionComponent implements OnInit {
     });
   };
 
-  setURLfromS3(file: Blob, params): void {
-    const { value, originalValue, isImage, index } = params;
+  sendFileToS3(file, params): void {
+    const { originalValue, isImage, index } = params;
     this.formService
       .uploadToS3(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
-        value.objectKey = event.message.objectKey;
-        value.objectURL = event.message.objectURL;
+        const value: InstructionsFile = {
+          name: file.name,
+          size: file.size,
+          objectKey: event.message.objectKey,
+          objectURL: event.message.objectURL
+        };
         if (isImage) {
           originalValue.images[index] = value;
         } else {
           originalValue.pdf = value;
         }
-        this.instructionsSetValueWithUpdate();
+        this.instructionsUpdateValue();
         this.questionForm.get('value').setValue(originalValue);
       });
   }
 
   handleEditorFocus(focus: boolean) {
     if (!focus && this.isINSTFieldChanged) {
-      this.instructionsSetValueWithUpdate();
+      this.instructionsUpdateValue();
       this.isINSTFieldChanged = false;
     }
   }
 
-  instructionsSetValueWithUpdate() {
+  instructionsUpdateValue() {
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
@@ -741,7 +736,7 @@ export class QuestionComponent implements OnInit {
     const originalValue = this.questionForm.get('value').value;
     originalValue.tag = event;
     this.questionForm.get('value').setValue(originalValue);
-    this.instructionsSetValueWithUpdate();
+    this.instructionsUpdateValue();
   }
 
   stripHTMLTags(html) {
@@ -762,7 +757,7 @@ export class QuestionComponent implements OnInit {
       originalValue.pdf = null;
     }
     this.questionForm.get('value').setValue(originalValue);
-    this.instructionsSetValueWithUpdate();
+    this.instructionsUpdateValue();
   }
 
   imagesArrayRemoveNullGaps(images) {

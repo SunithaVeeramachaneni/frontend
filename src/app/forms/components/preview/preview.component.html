@@ -45,23 +45,44 @@
                 {{ question.value }}
               </h3>
 
-              <div
-                *ngIf="
-                  question.fieldType === 'INST' &&
-                  question.value.tag !== getNoneTag()
-                "
-              >
-                <p class="tag-text">
-                  {{ question.value.tag }}
-                </p>
-              </div>
+              <!-- Instruction-->
 
-              <!-- instructions needs unescaped HTML -->
               <div
-                [innerHTML]="question.name"
-                class="instruction"
                 *ngIf="question.fieldType === 'INST'"
-              ></div>
+                class="instruction-field"
+              >
+                <div *ngIf="question.value.tag !== getNoneTag()">
+                  <p class="tag-text">
+                    {{ question.value.tag }}
+                  </p>
+                </div>
+
+                <!-- instructions needs unescaped HTML -->
+
+                <div [innerHTML]="question.name" class="instruction"></div>
+
+                <!-- Instructions Images -->
+                <div>
+                  <ng-container
+                    *ngFor="let image of question.value.images; index as i"
+                  >
+                    <img
+                      src="{{ image.objectURL }}"
+                      alt="image"
+                      class="instruction-image-field"
+                      *ngIf="image !== null"
+                    />
+                  </ng-container>
+                </div>
+
+                <ng-container *ngIf="question.value.pdf !== null">
+                  <app-instruction-pdf-preview
+                    [pdf]="question.value.pdf"
+                    (indexEmitter)="instructionsFileDeleteHandler($event)"
+                  >
+                  </app-instruction-pdf-preview>
+                </ng-container>
+              </div>
 
               <!-- text answer  -->
               <input
@@ -217,27 +238,6 @@
                   alt="image"
                   class="image-field"
                 />
-              </div>
-
-              <!-- Instructions Images -->
-              <div *ngIf="question.fieldType === 'INST'">
-                <div *ngFor="let image of question.value.images; index as i">
-                  <img
-                    src="{{ image.objectURL }}"
-                    alt="image"
-                    *ngIf="image !== null"
-                    class="instruction-image-field"
-                  />
-                </div>
-
-                <div *ngIf="question.value.pdf !== null">
-                  <app-instruction-pdf
-                    [pdf]="question.value.pdf"
-                    [index]="'4'"
-                    (indexEmitter)="instructionsFileDeleteHandler($event)"
-                  >
-                  </app-instruction-pdf>
-                </div>
               </div>
 
               <!-- Dropdown -->

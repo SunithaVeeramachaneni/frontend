@@ -105,6 +105,10 @@
           }
         }
 
+        .instruction {
+          word-wrap: break-word;
+        }
+
         .instruction ol li {
           list-style-type: auto;
         }
@@ -186,12 +190,14 @@
         }
 
         .instruction-image-field {
-          float: left;
-          width: 30%;
-          margin-top: 7px;
+          width: 56px;
+          margin: 3px;
+          height: 56px;
+          border-radius: 8px;
         }
 
         .tag-text {
+          margin-left: 8px;
           color: red;
         }
 

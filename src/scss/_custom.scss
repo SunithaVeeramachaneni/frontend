@@ -348,6 +348,19 @@ li {
   list-style-type: none;
 }
 
+.instruction ol li {
+  list-style-type: auto !important;
+}
+
+.instruction ul li {
+  list-style-type: disc !important;
+}
+
+.instruction ol,
+ul {
+  padding: 0 20px;
+}
+
 a {
   text-decoration: none;
 }

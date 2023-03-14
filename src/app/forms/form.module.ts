@@ -56,6 +56,7 @@ import { QuillMaterialComponent } from './components/field-types/instructions/qu
 import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
 import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { InstructionPdfComponent } from './components/field-types/instructions/i
     QuillMaterialComponent,
     TagSelectComponent,
     InstructionImageComponent,
-    InstructionPdfComponent
+    InstructionPdfComponent,
+    InstructionPdfPreviewComponent
   ],
   imports: [
     FormsModule,
