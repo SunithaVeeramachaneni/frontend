@@ -28,7 +28,6 @@ import {
   HierarchyActions
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { ShowHierarchyPopupComponent } from '../../show-hierarchy-popup/show-hierarchy-popup.component';
 
 @Component({
   selector: 'app-route-plan',

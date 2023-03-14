@@ -76,6 +76,7 @@
             cdkConnectedOverlay
             [cdkConnectedOverlayOrigin]="trigger"
             [cdkConnectedOverlayOpen]="togglePopover"
+            *ngIf="node.id === nodeSelectedForShowHierarchy.id"
           >
             <app-show-hierarchy-popup
               #showHierarchy
