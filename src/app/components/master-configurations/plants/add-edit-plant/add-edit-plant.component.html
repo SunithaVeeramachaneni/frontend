@@ -1,0 +1,154 @@
+<div id="add-edit-slider">
+  <mat-card [formGroup]="plantForm">
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+      <h1 class="heading">{{ plantTitle }}</h1>
+    </div>
+    <div>
+      <p class="m-0" translate="image"></p>
+      <p>
+        <img
+          src="assets/master-configurations/image-placeholder.svg"
+          alt="Image Placeholder"
+          class="image"
+          *ngIf="!plantImage?.length"
+        />
+        <img
+          [src]="plantImage"
+          alt="Image"
+          class="image-contain"
+          *ngIf="plantImage?.length"
+        />
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="name"></mat-label>
+          <input
+            matInput
+            [placeholder]="'name' | translate"
+            formControlName="name"
+          />
+          <mat-error
+            *ngIf="processValidationErrors('name')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.name.name
+                | translate
+                  : {
+                      name: 'name' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="plantId"></mat-label>
+          <input
+            matInput
+            [placeholder]="'plantId' | translate"
+            formControlName="plantId"
+          />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="country"></mat-label>
+          <input
+            matInput
+            [placeholder]="'country' | translate"
+            formControlName="country"
+          />
+          <mat-error
+            *ngIf="processValidationErrors('country')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.country.name
+                | translate
+                  : {
+                      name: 'country' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="zipCode"></mat-label>
+          <input
+            matInput
+            [placeholder]="'zipCode' | translate"
+            formControlName="zipCode"
+          />
+          <mat-error
+            *ngIf="processValidationErrors('zipCode')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.zipCode.name
+                | translate
+                  : {
+                      name: 'zipCode' | translate,
+                      length: errors.zipCode.length
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="state"></mat-label>
+          <input
+            matInput
+            [placeholder]="'state' | translate"
+            formControlName="state"
+          />
+        </mat-form-field>
+      </p>
+      <p class="m-1">
+        <mat-label translate="additionalDetails"></mat-label>
+      </p>
+      <span class="m-2">
+        <mat-form-field appearance="outline" class="width-100" class="m-5">
+          <mat-label translate="label"></mat-label>
+          <input
+            matInput
+            [placeholder]="'label' | translate"
+            formControlName="label"
+          />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="width-100" class="m-5">
+          <mat-label translate="field"></mat-label>
+          <input
+            matInput
+            [placeholder]="'field' | translate"
+            formControlName="field"
+          />
+        </mat-form-field>
+      </span>
+      <button
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        [disabled]="plantForm.invalid"
+        (click)="create()"
+      >
+        {{ plantButton }}
+      </button>
+      <button
+        mat-stroked-button
+        class="cancel-btn"
+        type="button"
+        (click)="cancel()"
+        translate="cancelBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>
