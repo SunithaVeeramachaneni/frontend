@@ -1,7 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AppChartConfig } from 'src/app/interfaces';
-import { EChartsOption } from 'echarts';
 
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
@@ -18,7 +15,7 @@ interface IPriority {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ObservationsComponent implements OnInit {
-  counts$: Observable<{
+  counts: {
     openActions: {
       priority: IPriority;
       status: {
@@ -35,7 +32,7 @@ export class ObservationsComponent implements OnInit {
         total: number;
       };
     };
-  }>;
+  };
   options = {
     avoidLabelOverlap: true,
     label: {
@@ -46,7 +43,7 @@ export class ObservationsComponent implements OnInit {
       }
     },
     title: {
-      text: '10',
+      text: '',
       subtext: '',
       left: 'center',
       top: 'center'
@@ -63,46 +60,115 @@ export class ObservationsComponent implements OnInit {
         name: '',
         type: 'pie',
         radius: ['50%', '70%'],
-        color: ['#b76262', '#f4a915', '#cfcfcf'],
-        data: [
-          { value: 7, name: 'High' },
-          { value: 2, name: 'Medium' },
-          { value: 1, name: 'Low' }
-        ],
+        color: [],
+        data: [],
         labelLine: {
           show: true
         }
       }
     ]
   };
-  priorityData: any = {};
-  statusData: any = {};
+  priorityData: any = {
+    issues: {},
+    actions: {}
+  };
+  statusData: any = {
+    issues: {},
+    actions: {}
+  };
+  private priorityColors = ['#b76262', '#f4a915', '#cfcfcf'];
+  private statusColors = ['#B76262', '#C0D7FD'];
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService
-  ) {
-    this.priorityData = { ...this.options };
-    this.statusData = {
-      ...this.options,
-      series: [
-        {
-          name: '',
-          type: 'pie',
-          radius: ['50%', '70%'],
-          color: ['#B76262', '#C0D7FD'],
-          data: [
-            { value: 7, name: 'To do' },
-            { value: 3, name: 'In Progress' }
-          ],
-          labelLine: {
-            show: true
-          }
-        }
-      ]
-    };
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.counts$ =
-      this.roundPlanObservationsService.getObservationChartCounts$();
+    this.roundPlanObservationsService
+      .getObservationChartCounts$()
+      .subscribe((result) => {
+        if (result) {
+          this.priorityData = {
+            issues: {
+              ...this.options,
+              title: {
+                ...this.options.title,
+                text: result?.openIssues?.priorityTotal
+              },
+              series: [
+                {
+                  ...this.options.series[0],
+                  color: this.priorityColors,
+                  data: Object.entries(result?.openIssues?.priority).map(
+                    ([key, value]) => ({
+                      name: key,
+                      value
+                    })
+                  )
+                }
+              ]
+            },
+            actions: {
+              ...this.options,
+              title: {
+                ...this.options.title,
+                text: result?.openActions?.priorityTotal
+              },
+              series: [
+                {
+                  ...this.options.series[0],
+                  color: this.priorityColors,
+                  data: Object.entries(result?.openActions?.priority).map(
+                    ([key, value]) => ({
+                      name: key,
+                      value
+                    })
+                  )
+                }
+              ]
+            }
+          };
+
+          this.statusData = {
+            issues: {
+              ...this.options,
+              title: {
+                ...this.options.title,
+                text: result?.openIssues?.statusTotal
+              },
+              series: [
+                {
+                  ...this.options.series[0],
+                  color: this.statusColors,
+                  data: Object.entries(result?.openIssues?.status).map(
+                    ([key, value]) => ({
+                      name: key,
+                      value
+                    })
+                  )
+                }
+              ]
+            },
+            actions: {
+              ...this.options,
+              title: {
+                ...this.options.title,
+                text: result?.openActions?.statusTotal
+              },
+              series: [
+                {
+                  ...this.options.series[0],
+                  color: this.statusColors,
+                  data: Object.entries(result?.openIssues?.status).map(
+                    ([key, value]) => ({
+                      name: key,
+                      value
+                    })
+                  )
+                }
+              ]
+            }
+          };
+        }
+      });
   }
 }

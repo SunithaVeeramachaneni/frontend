@@ -1,28 +1,40 @@
-<div class="observations-container" *ngIf="counts$ | async as counts">
+<div class="observations-container">
   <div class="dis-flex charts">
-    <div class="width-50 chart m-r-10">
+    <div class="width-50 chart m-r-10" *ngIf="priorityData && statusData">
       <h3 translate="openIssues"></h3>
       <div class="dis-flex">
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
-          <app-chart class="issue-chart" [options]="priorityData"></app-chart>
+          <app-chart
+            class="issue-chart"
+            [options]="priorityData?.issues"
+          ></app-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
-          <app-chart class="issue-chart" [options]="statusData"></app-chart>
+          <app-chart
+            class="issue-chart"
+            [options]="statusData?.issues"
+          ></app-chart>
         </div>
       </div>
     </div>
-    <div class="width-50 chart m-l-10">
+    <div class="width-50 chart m-l-10" *ngIf="priorityData && statusData">
       <h3 translate="openActions"></h3>
       <div class="dis-flex">
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
-          <app-chart class="issue-chart" [options]="priorityData"></app-chart>
+          <app-chart
+            class="issue-chart"
+            [options]="priorityData?.actions"
+          ></app-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
-          <app-chart class="issue-chart" [options]="statusData"></app-chart>
+          <app-chart
+            class="issue-chart"
+            [options]="statusData?.actions"
+          ></app-chart>
         </div>
       </div>
     </div>
