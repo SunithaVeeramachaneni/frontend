@@ -56,6 +56,7 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class PlansComponent implements OnInit, OnDestroy {
+  filterJson = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -305,6 +306,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
+    this.getFilter();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -401,14 +403,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   handleTableEvent = (event): void => {
     this.fetchForms$.next(event);
   };
-
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
-  }
 
   ngOnDestroy(): void {}
 
@@ -508,4 +502,18 @@ export class PlansComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
+
+  getFilter() {
+    this.operatorRoundsService.getPlanFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+  }
+
+  resetFilter(): void {
+    this.isPopoverOpen = false;
+  }
 }

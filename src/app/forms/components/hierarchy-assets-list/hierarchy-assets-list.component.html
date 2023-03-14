@@ -10,6 +10,57 @@
       }}
     </h2>
   </div>
+  <span class="custom-form-field-gray-color search">
+    <mat-form-field appearance="outline" class="searchField" disabled>
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [matAutocomplete]="auto"
+        [formControl]="searchMasterData"
+      />
+      <mat-autocomplete
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="searchResultSelected($event)"
+      >
+        <mat-optgroup [label]="getSearchMatchesLabel()">
+          <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+            class="searchResultOption"
+          >
+            <div class="nodeContent">
+              <img [src]="option.image" />
+              <div class="description">
+                <span class="title">{{ option.name }}</span>
+                <span class="subTitle">
+                  {{
+                    'nodeSubTitle'
+                      | translate
+                        : {
+                            nodeType: option.type | titlecase,
+                            nodeId: option.nodeId
+                          }
+                  }}
+                </span>
+              </div>
+            </div>
+          </mat-option>
+        </mat-optgroup>
+      </mat-autocomplete>
+      <img
+        [src]="closeIcon"
+        matSuffix
+        alt="close"
+        *ngIf="searchMasterData.value.length"
+        class="closeIcon"
+        (click)="clearSearchResults()"
+      />
+    </mat-form-field>
+  </span>
 
   <div class="list-container">
     <div class="node-container">

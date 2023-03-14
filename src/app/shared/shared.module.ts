@@ -49,6 +49,10 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FilterComponent } from './components/filter/filter.component';
+import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
+import { MatCardModule } from '@angular/material/card';
+import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +77,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     AcceptCallComponent,
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
-    BackgroundComponent
+    BackgroundComponent,
+    FilterComponent,
+    CustomRangePanelComponent,
+    FilterSidePanelComponent
   ],
   imports: [
     FormsModule,
@@ -90,6 +97,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatInputModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatCardModule,
     MatMenuModule,
     MatSidenavModule,
     MatListModule,
@@ -110,7 +118,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     TimeAgoPipe,
     DropDownFilterPipe,
     DateTimePipe,
+    FilterSidePanelComponent,
     DateSegmentComponent,
+    FilterComponent,
     CommonFilterComponent,
     HeaderComponent,
     NumberToKMPipe,
