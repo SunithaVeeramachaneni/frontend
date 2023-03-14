@@ -26,7 +26,6 @@ import { PlantService } from '../services/plant.service';
 export class AddEditPlantComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
-  allPlants$: Observable<ListLocationsQuery>;
   @Input() set plantEditData(data) {
     this.plantsEditData = data;
     if (this.plantsEditData === null) {
@@ -51,7 +50,6 @@ export class AddEditPlantComponent implements OnInit {
       };
       this.plantForm.patchValue(plantdata);
       this.plantForm.get('plantId').disable();
-      this.getAllPlants();
     }
   }
   get plantEditData() {
@@ -84,16 +82,8 @@ export class AddEditPlantComponent implements OnInit {
       label: '',
       field: ''
     });
-    this.getAllPlants();
   }
-  getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
-      this.parentInformation = allPlants.items.filter(
-        (plant) => plant.id !== this.plantsEditData?.id
-      );
-      this.allParentsData = this.parentInformation;
-    });
-  }
+
   create() {
     if (this.plantStatus === 'add') {
       this.plantForm

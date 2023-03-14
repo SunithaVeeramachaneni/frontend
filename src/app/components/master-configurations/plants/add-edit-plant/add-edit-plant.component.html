@@ -16,13 +16,13 @@
           src="assets/master-configurations/image-placeholder.svg"
           alt="Image Placeholder"
           class="image"
-          *ngIf="plantImage === ''"
+          *ngIf="!plantImage?.length"
         />
         <img
           [src]="plantImage"
           alt="Image"
           class="image-contain"
-          *ngIf="plantImage !== ''"
+          *ngIf="plantImage?.length"
         />
       </p>
       <p class="m-0">

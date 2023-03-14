@@ -203,7 +203,6 @@ export class PlantListComponent implements OnInit {
   plants$: Observable<any>;
   plantsCount$: Observable<Count>;
   plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  plantsListCount$: Observable<number>;
 
   addEditCopyDeletePlants = false;
   addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
@@ -228,7 +227,6 @@ export class PlantListComponent implements OnInit {
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
     this.plantService.fetchPlants$.next({} as TableEvent);
-    // this.allPlants$ = this.plantService.fetchAllPlants$();
     this.searchPlant = new FormControl('');
 
     this.searchPlant.valueChanges
@@ -240,7 +238,6 @@ export class PlantListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    //this.plantsListCount$ = this.plantService.getFormsListCount$();
     this.getDisplayedPlants();
     this.plantsCount$ = combineLatest([
       this.plantsCount$,
@@ -290,7 +287,6 @@ export class PlantListComponent implements OnInit {
       plantsOnLoadSearch$,
       this.addEditCopyDeletePlants$,
       onScrollPlants$
-      // this.allPlants$
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
