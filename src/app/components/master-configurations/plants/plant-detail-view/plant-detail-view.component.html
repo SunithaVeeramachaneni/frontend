@@ -1,0 +1,50 @@
+<div id="view-location-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+    </div>
+    <div *ngIf="selectedPlant">
+      <p>
+        <img [src]="selectedPlant?.image" alt="Image" class="image" />
+      </p>
+      <h1 class="heading">{{ selectedPlant.name }}</h1>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="plantId"></p>
+      <p class="m-0 sub-headings-value">{{ selectedPlant.plantId }}</p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="country"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.country ? selectedPlant.country : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="zipCode"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.zipCode ? selectedPlant.zipCode : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="state"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.state ? selectedPlant.state : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="additionalDetails"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.label ? selectedPlant.label : '--' }}
+        :
+        {{ selectedPlant.field ? selectedPlant.field : '--' }}
+      </p>
+      <hr class="horizon-line" />
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>
