@@ -17,19 +17,25 @@ export class IssuesActionsDetailViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.issuesActionsDetailViewForm = this.fb.group({
-      name: '',
-      description: '',
-      category: '',
-      round: '',
-      location: '',
+      name: 'Issue in the Boiler',
+      description: 'Issue in the Boiler Description',
+      category: 'Environmental Safety',
+      round: 'Weekly Oil & Water Inspection',
+      location: 'Water Treatment Plant',
       asset: '',
-      task: '',
+      task: 'Check the wind Pressure at the entrance',
       priority: 'High',
       status: 'Open',
-      dueDate: '',
+      dueDate: '3/16/2023',
       assignedTo: 'John',
-      raisedBy: ''
+      raisedBy: 'John',
+      createdBy: 'John'
     });
+  }
+
+  onKey(event) {
+    const value = event.target.value || '';
+    // this.allParentsData = this.search(value);
   }
 
   onCancel(): void {

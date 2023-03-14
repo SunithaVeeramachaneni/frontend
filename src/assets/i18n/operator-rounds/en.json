@@ -180,5 +180,6 @@
   "assignedTo": "Assigned To",
   "erpnotification": "ERP Notification",
   "raisedBy": "Raised By",
-  "attachment": "Attachments"
+  "attachment": "Attachments",
+  "createdBy": "Created By"
 }

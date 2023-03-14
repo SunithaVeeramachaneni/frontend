@@ -9,6 +9,18 @@
     background-color: $white;
     border-bottom: 1px solid $border-color;
 
+    .heading {
+      margin: 0 auto;
+      font-size: 90%;
+    }
+
+    .arrows {
+      color: $blue-main;
+      position: relative;
+      top: 7px;
+      font-size: 140%;
+    }
+
     .back-btn {
       border: none;
       background-color: transparent;
@@ -63,7 +75,7 @@
 
       .chat-panel {
         height: calc(100vh - 148px);
-        overflow-y: scroll;
+        overflow-y: auto;
       }
 
       .footer {
@@ -97,6 +109,10 @@
         justify-content: space-between;
       }
 
+      .p-5-0 {
+        padding: 5px 0;
+      }
+
       .titles {
         font-weight: 400;
         font-size: 100%;
@@ -123,4 +139,12 @@
       }
     }
   }
+}
+
+.searchable-input {
+  width: 85%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 5px 12px;
 }
