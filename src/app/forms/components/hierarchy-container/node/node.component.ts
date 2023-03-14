@@ -17,7 +17,6 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { ShowHierarchyPopupComponent } from '../../show-hierarchy-popup/show-hierarchy-popup.component';
 import { FormService } from 'src/app/forms/services/form.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 
@@ -37,6 +36,8 @@ export class NodeComponent implements OnInit {
 
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   selectedNode: any;
+  public nodeSelectedForShowHierarchy = {} as any;
+  public togglePopover = false;
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -120,17 +121,11 @@ export class NodeComponent implements OnInit {
     this.nodeRemoved.emit(event);
   }
 
-  openShowHierarchyPopup = (element) => {
-    const coordinates = element.getBoundingClientRect();
-    this.hierarchyMenuTrigger.closeMenu();
-    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
-      data: {
-        uid: this.node.uid,
-        position: {
-          top: coordinates.top,
-          left: coordinates.left
-        }
-      }
-    });
+  toggleShowHierarchyPopover = (node) => {
+    const nodeCoordinates = document
+      .getElementById(`node-${node.id}`)
+      .getBoundingClientRect();
+    this.nodeSelectedForShowHierarchy = node;
+    this.togglePopover = !this.togglePopover;
   };
 }

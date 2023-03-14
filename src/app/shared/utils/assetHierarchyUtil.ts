@@ -137,7 +137,7 @@ export class AssetHierarchyUtil {
       } as HierarchyEntity;
 
       if (!node.parentId || (parentId && node.parentId === parentId)) {
-        if (!flatList.findIndex((item) => item.parentId === node.id))
+        if (flatList.findIndex((item) => item.parentId === node.id) < 0)
           nodes.push(leafNode); // Node without children
         // Nodes with children
         else
@@ -196,27 +196,29 @@ export class AssetHierarchyUtil {
     return parent;
   };
 
-  getHierarchyByNodeId = (
+  getHierarchyByNodeUid = (
     hierarchyList: HierarchyEntity[],
-    nodeId: string
-  ): HierarchyEntity => {
+    nodeUid: string
+  ) => {
     let leafNode = {} as HierarchyEntity;
     for (const node of hierarchyList) {
-      if (node.uid === nodeId) {
+      if (node.uid === nodeUid) {
         leafNode = {
           ...node,
           hasChildren: false,
           children: [] as HierarchyEntity[]
         };
         break;
-      } else if (node.uid !== nodeId && node.children.length) {
-        leafNode = {
-          ...node,
-          children: [
-            this.getHierarchyByNodeId(node.children, nodeId)
-          ] as HierarchyEntity[]
-        };
-        break;
+      } else if (node.hasChildren) {
+        const childNode = this.getHierarchyByNodeUid(node.children, nodeUid);
+        if (Object.keys(childNode).length) {
+          leafNode = {
+            ...node,
+            hasChildren: true,
+            children: [childNode]
+          };
+          break;
+        }
       }
     }
     return leafNode;
@@ -260,6 +262,56 @@ export class AssetHierarchyUtil {
         // If current node is selected, only selected child nodes get filtered into its children[].
         else nodes = [...nodes, ...childNodes]; // If current node is not selected but children are, children get promoted to previous node's level in the hierarchy.
       }
+    });
+
+    return nodes;
+  };
+
+  toggleAllChildrenSelection = (
+    checked: boolean,
+    children: HierarchyEntity[]
+  ): HierarchyEntity[] =>
+    children.map((child) => ({
+      ...child,
+      isSelected: checked,
+      children: child.hasChildren
+        ? this.toggleAllChildrenSelection(checked, child.children)
+        : ([] as HierarchyEntity[])
+    }));
+
+  togglePreviouslySelectedChildren = (
+    children: HierarchyEntity[],
+    selectedChildrenFlatList: HierarchyEntity[]
+  ): HierarchyEntity[] =>
+    children.map((child) => ({
+      ...child,
+      isSelected:
+        selectedChildrenFlatList.findIndex((item) => item.uid === child.uid) >
+        -1,
+      children: child.hasChildren
+        ? this.togglePreviouslySelectedChildren(
+            child.children,
+            selectedChildrenFlatList
+          )
+        : ([] as HierarchyEntity[])
+    }));
+
+  toggleSearchSelectedNode = (
+    nodeUid: string,
+    hierarchyList: HierarchyEntity[]
+  ): HierarchyEntity[] => {
+    const nodes = [] as HierarchyEntity[];
+    hierarchyList.forEach((node) => {
+      const children = node.hasChildren
+        ? this.toggleSearchSelectedNode(nodeUid, node.children)
+        : ([] as HierarchyEntity[]);
+      nodes.push({
+        ...node,
+        isToggledView:
+          children.findIndex((item) => item.isParentToBeToggled) > -1,
+        isParentToBeToggled: node.uid === nodeUid,
+        children
+      });
     });
 
     return nodes;

@@ -42,6 +42,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
+import { AddEditPlantComponent } from './plants/add-edit-plant/add-edit-plant.component';
+import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detail-view.component';
+import { PlantListComponent } from './plants/plant-list/plant-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -62,7 +65,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     EditUnitPopupComponent,
     UnitOfMeasurementDeleteModalComponent,
     AddEditAssetsComponent,
-    AssetsDetailViewComponent
+    AssetsDetailViewComponent,
+    AddEditPlantComponent,
+    PlantDetailViewComponent,
+    PlantListComponent
   ],
   imports: [
     FormsModule,
