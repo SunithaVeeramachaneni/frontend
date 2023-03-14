@@ -56,6 +56,8 @@ export class RoutePlanComponent implements OnInit {
   dropActionTodo: any = null;
 
   selectedNode: any;
+  public nodeSelectedForShowHierarchy = {} as any;
+  public togglePopover = false;
 
   private _hierarchy: any;
 
@@ -241,18 +243,9 @@ export class RoutePlanComponent implements OnInit {
     });
   }
 
-  openShowHierarchyPopup = (element, node = null) => {
-    const coordinates = element.getBoundingClientRect();
-    this.hierarchyMenuTrigger.closeMenu();
-    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
-      data: {
-        uid: node.uid,
-        position: {
-          top: `${coordinates.top}px`,
-          left: `${coordinates.right}px`
-        }
-      }
-    });
+  toggleShowHierarchyPopover = (node) => {
+    this.nodeSelectedForShowHierarchy = node;
+    this.togglePopover = !this.togglePopover;
   };
 
   triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
