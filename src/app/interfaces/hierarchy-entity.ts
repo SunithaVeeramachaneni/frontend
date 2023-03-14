@@ -12,13 +12,14 @@ export interface HierarchyEntity {
   isSelected: boolean;
   isToggledView: boolean;
   children: HierarchyEntity[];
-  hierarchyPath: string[];
+  hierarchyPath?: string[];
   isExpanded?: boolean;
   parentId?: string;
   isRootNode?: boolean;
   iSDeletedInRoutePlan?: boolean;
   configuredParentId?: string;
   numTimesCopied?: number;
+  isParentToBeToggled?: boolean;
 }
 
 export enum EntityType {

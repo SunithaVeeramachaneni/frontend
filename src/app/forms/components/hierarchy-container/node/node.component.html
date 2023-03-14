@@ -61,11 +61,8 @@
         <mat-icon>more_horiz</mat-icon>
       </span>
       <mat-menu #hierarchyMenu="matMenu" xPosition="before">
-        <button mat-menu-item>
-          <span
-            (click)="openShowHierarchyPopup($event.target)"
-            translate="showHierarchy"
-          ></span>
+        <button mat-menu-item (click)="openShowHierarchyPopup($event.target)">
+          <span translate="showHierarchy"></span>
         </button>
         <button
           mat-menu-item

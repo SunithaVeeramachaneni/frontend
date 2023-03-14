@@ -4,12 +4,14 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
   LoadEvent,
+  RoundPlan,
+  RoundPlanResponse,
   RoundPlanList,
   RoundPlanSubmissionList,
   SearchEvent,
@@ -42,8 +44,7 @@ export class OperatorRoundsService {
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
-    private appService: AppService,
-    private store: Store
+    private appService: AppService
   ) {}
 
   setSelectedNode(node: any) {
@@ -110,7 +111,8 @@ export class OperatorRoundsService {
       fetchType: string;
     },
     formStatus: 'Published' | 'Draft' | 'All',
-    isArchived: boolean = false
+    isArchived: boolean = false,
+    filterData: any = null
   ) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
@@ -119,6 +121,23 @@ export class OperatorRoundsService {
     params.set('fetchType', queryParams?.fetchType);
     params.set('formStatus', formStatus);
     params.set('isArchived', String(isArchived));
+    if (filterData) {
+      params.set(
+        'formStatus',
+        filterData.status ? filterData.status : formStatus
+      );
+      params.set('modifiedBy', filterData.modifiedBy);
+      params.set('authoredBy', filterData.authoredBy);
+      params.set('lastModifiedOn', filterData.lastModifiedOn);
+      params.set(
+        'scheduleStartDate',
+        filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
+      );
+      params.set(
+        'scheduleEndDate',
+        filterData.scheduleEndDate ? filterData.scheduleEndDate : ''
+      );
+    }
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
@@ -127,17 +146,73 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
-  getRoundsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
-    return of({
-      count: 0,
-      rows: [],
-      nextToken: null
-    });
+  getRoundsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        queryParams.nextToken = null;
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService._getResp(
+        environment.operatorRoundsApiUrl,
+        'rounds/',
+        { displayToast, failureResponse },
+        rest
+      );
+    } else {
+      return of({
+        rows: [],
+        nextToken: null
+      });
+    }
+  }
+
+  getPlansList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchTerm: string;
+      fetchType: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<RoundPlanResponse> {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        queryParams.nextToken = null;
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.operatorRoundsApiUrl,
+          'round-plans/tasks-rounds',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(
+          map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
+        );
+    } else {
+      return of({ rows: [] } as RoundPlanResponse);
+    }
   }
 
   getSubmissionFormsList$(queryParams: {
@@ -573,5 +648,72 @@ export class OperatorRoundsService {
       });
     });
     return `${updatedResponse.count}/${updatedResponse.total}`;
+  }
+
+  private formatRoundPlans(roundPlans: RoundPlan[] = []): RoundPlan[] {
+    const rows = roundPlans
+      .sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p?.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        lastPublishedBy: p?.lastPublishedBy,
+        author: p?.author,
+        publishedDate: p.publishedDate ? p.publishedDate : '',
+        archivedAt: p?.createdAt
+          ? formatDistance(new Date(p.createdAt), new Date(), {
+              addSuffix: true
+            })
+          : ''
+      }));
+    return rows;
+  }
+
+  fetchAllOperatorRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('fetchType', '');
+    params.set('formStatus', 'All');
+    params.set('isArchived', 'false');
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+  };
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-filter.json',
+      info
+    );
+  }
+  getPlanFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-plan-filter.json',
+      info
+    );
+  }
+  getRoundFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-round-filter.json',
+      info
+    );
   }
 }

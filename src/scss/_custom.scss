@@ -1,3 +1,5 @@
+@import 'colors.scss';
+
 .p-0 {
   padding: 0;
 }
@@ -190,6 +192,10 @@
   margin-bottom: 5px;
 }
 
+.m-t-0 {
+  margin-top: 0px;
+}
+
 .m-t-2 {
   margin-top: 2px;
 }
@@ -208,6 +214,10 @@
 
 .m-t-15 {
   margin-top: 15px;
+}
+
+.m-t-20 {
+  margin-top: 20px;
 }
 
 .m-b-10 {
@@ -618,6 +628,11 @@ body {
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
   opacity: 0.7;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing .success-modal {
+  background-color: $black;
+  opacity: 0.6;
 }
 
 @-webkit-keyframes fadein {

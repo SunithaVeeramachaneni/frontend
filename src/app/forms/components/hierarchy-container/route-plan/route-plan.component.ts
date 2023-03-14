@@ -20,6 +20,7 @@ import {
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { HierarchyEntity } from 'src/app/interfaces';
 import {
@@ -27,6 +28,7 @@ import {
   HierarchyActions
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { ShowHierarchyPopupComponent } from '../../show-hierarchy-popup/show-hierarchy-popup.component';
 
 @Component({
   selector: 'app-route-plan',
@@ -60,6 +62,7 @@ export class RoutePlanComponent implements OnInit {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     public assetHierarchyUtil: AssetHierarchyUtil,
+    public dialog: MatDialog,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef,
     private store: Store<State>
@@ -237,6 +240,20 @@ export class RoutePlanComponent implements OnInit {
       this.prepareDragDrop(node.children);
     });
   }
+
+  openShowHierarchyPopup = (element, node = null) => {
+    const coordinates = element.getBoundingClientRect();
+    this.hierarchyMenuTrigger.closeMenu();
+    const dialogRef = this.dialog.open(ShowHierarchyPopupComponent, {
+      data: {
+        uid: node.uid,
+        position: {
+          top: `${coordinates.top}px`,
+          left: `${coordinates.right}px`
+        }
+      }
+    });
+  };
 
   triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
 }
