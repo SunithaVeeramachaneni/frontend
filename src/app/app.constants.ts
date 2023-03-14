@@ -55,6 +55,12 @@ export const permissions = Object.freeze({
   deleteAsset: 'DELETE_ASSET',
   importAssets: 'IMPORT_ASSETS',
 
+  viewPlants: 'VIEW_PLANTS',
+  createPlant: 'CREATE_PLANT',
+  updatePlant: 'UPDATE_PLANT',
+  deletePlant: 'DELETE_PLANT',
+  importPlants: 'IMPORT_PLANTS',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -225,6 +231,11 @@ export const routingUrls = {
     url: '/master-configuration/unit-measurement',
     title: 'Unit of Measurement',
     permission: permissions.viewUnitOfMeasurement
+  },
+  plants: {
+    url: '/master-configuration/plants',
+    title: 'Plants',
+    permission: permissions.viewPlants
   }
 };
 export const formConfigurationStatus = Object.freeze({
