@@ -14,6 +14,7 @@
   z-index: 9999;
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+  overflow-x: hidden;
 }
 
 #add-edit-slider {
@@ -46,11 +47,13 @@
     background-color: $blue-main;
     color: $white;
     float: right;
+    margin-top: 15px;
   }
 
   .create-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
+    margin-top: 15px;
   }
 
   .cancel-btn {
@@ -58,6 +61,7 @@
     border-color: $blue-main;
     float: right;
     margin-right: 15px;
+    margin-top: 15px;
   }
 }
 

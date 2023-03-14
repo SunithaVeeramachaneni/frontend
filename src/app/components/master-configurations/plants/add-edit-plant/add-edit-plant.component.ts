@@ -73,7 +73,7 @@ export class AddEditPlantComponent implements OnInit {
       id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
-      plantId: new FormControl('', [Validators.required]),
+      plantId: new FormControl(''),
       country: new FormControl('', [Validators.required]),
       zipCode: new FormControl('', [
         Validators.required,
