@@ -697,7 +697,7 @@ export class QuestionComponent implements OnInit {
   sendFileToS3(file, params): void {
     const { originalValue, isImage, index } = params;
     this.formService
-      .uploadToS3(`${this.moduleName}/${this.formMetadata?.id}`, file)
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
       .subscribe((event) => {
         const value: InstructionsFile = {
           name: file.name,

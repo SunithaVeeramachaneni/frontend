@@ -67,7 +67,7 @@ export class FormService {
 
   getSelectedHierarchyList = () => this.selectedHierarchyList;
 
-  uploadToS3(mediaSubfolder: string, file: Blob): Observable<any> {
+  uploadToS3$(mediaSubfolder: string, file: Blob): Observable<any> {
     const formData = new FormData();
     formData.append('mediaSubfolder', mediaSubfolder);
     formData.append('file', file);
