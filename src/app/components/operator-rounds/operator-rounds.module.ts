@@ -50,7 +50,6 @@ import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.re
 import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
 import { HierarchyContainerComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-container.component';
 import { NodeComponent } from 'src/app/forms/components/hierarchy-container/node/node.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PlansComponent } from './plans/plans.component';
@@ -61,6 +60,8 @@ import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
+import { SubmissionComponent } from './submission/submission.component';
+import { RoundPlanScheduleSuccessModalComponent } from './round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatRadioModule } from '@angular/material/radio';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -90,6 +91,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
     AssetsModalComponent,
+    RoundPlanScheduleSuccessModalComponent,
     RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent
   ],

@@ -67,6 +67,12 @@
           <mat-icon>more_horiz</mat-icon>
         </span>
         <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+          <button
+            mat-menu-item
+            (click)="openShowHierarchyPopup($event.target, node)"
+          >
+            <span translate="showHierarchy"></span>
+          </button>
           <button mat-menu-item (click)="triggerCopyNode(node)">
             <span translate="copy"></span>
           </button>

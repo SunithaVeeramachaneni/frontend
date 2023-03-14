@@ -67,7 +67,7 @@
                 <mat-button-toggle
                   *ngFor="let dayOfWeek of daysOfWeek; let i = index"
                   [value]="i"
-                  >{{ dayOfWeek.slice(0, 1) }}</mat-button-toggle
+                  >{{ dayOfWeek.slice(0, 1).toUpperCase() }}</mat-button-toggle
                 >
               </mat-button-toggle-group>
             </ng-container>
@@ -101,7 +101,9 @@
                       <mat-button-toggle
                         *ngFor="let dayOfWeek of daysOfWeek; let i = index"
                         [value]="i"
-                        >{{ dayOfWeek.slice(0, 1) }}</mat-button-toggle
+                        >{{
+                          dayOfWeek.slice(0, 1).toUpperCase()
+                        }}</mat-button-toggle
                       >
                     </mat-button-toggle-group>
                   </div>
@@ -241,7 +243,10 @@
           <button
             [disabled]="
               roundPlanSchedulerConfigForm.pristine ||
-              roundPlanSchedulerConfigForm.invalid
+              roundPlanSchedulerConfigForm.invalid ||
+              (roundPlanSchedulerConfigForm.get('scheduleType').value ===
+                'byDate' &&
+                scheduleByDates.length === 0)
             "
             mat-raised-button
             color="primary"

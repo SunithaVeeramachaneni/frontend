@@ -1,3 +1,5 @@
+@import 'colors.scss';
+
 .p-0 {
   padding: 0;
 }
@@ -639,6 +641,11 @@ body {
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
   opacity: 0.7;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing .success-modal {
+  background-color: $black;
+  opacity: 0.6;
 }
 
 @-webkit-keyframes fadein {
