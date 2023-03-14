@@ -1,5 +1,6 @@
 export interface RoundPlanScheduleConfiguration {
   id?: string;
+  roundPlanId: string;
   scheduleType: string;
   repeatDuration: number;
   repeatEvery: string;
@@ -26,7 +27,51 @@ export interface MonthlyDaysOfWeek {
   [key: number]: number[];
 }
 
+export interface RoundPlanScheduleConfigurationObj {
+  [key: string]: RoundPlanScheduleConfiguration;
+}
+
+export interface RoundPlanSuccessModalData {
+  roundPlanName: string;
+  mode: 'update' | 'create';
+}
+
 export interface RoundPlan {
+  id: string;
+  name: string;
+  description: string;
+  formLogo: string;
+  isPublic?: boolean;
+  lastPublishedBy?: string;
+  publishedDate: string;
+  author?: string;
+  isArchived?: boolean;
+  formType?: string;
+  isArchivedAt?: string;
+  isDeleted?: boolean;
+  location?: string;
+  roundType?: string;
+  formStatus?: string;
+  assignee?: string;
+  tags?: string[];
+  searchTerm?: string;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  schedule?: string;
+  scheduleDates?: string;
+  tasks?: number;
+  rounds?: number;
+  operator?: string;
+}
+
+export interface RoundPlanResponse {
+  rows: RoundPlan[];
+  scheduledCount: number;
+  unscheduledCount: number;
+  nextToken: string | null;
+}
+export interface RoundPlan1 {
   id: string;
   name?: string | null;
   description?: string | null;
