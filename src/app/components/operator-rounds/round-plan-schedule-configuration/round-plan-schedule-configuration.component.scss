@@ -180,6 +180,10 @@
           color: $white;
         }
 
+        ::ng-deep .mat-button-toggle .mat-button-toggle-ripple {
+          border-radius: 50%;
+        }
+
         ::ng-deep .mat-checkbox-layout {
           white-space: pre-wrap;
         }

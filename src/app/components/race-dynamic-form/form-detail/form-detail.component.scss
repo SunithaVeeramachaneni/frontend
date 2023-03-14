@@ -161,6 +161,10 @@
   border-left: 0;
 }
 
+::ng-deep .cdk-overlay-pane .mat-button-toggle .mat-button-toggle-ripple {
+  border-radius: 30px;
+}
+
 ::ng-deep .cdk-overlay-pane .weeks-of-month {
   display: flex;
   margin: 7px 0 0 7px;

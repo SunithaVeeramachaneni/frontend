@@ -48,6 +48,10 @@
     .mat-button-toggle-label-content {
     color: $white;
   }
+
+  ::ng-deep .plan-categories .mat-button-toggle .mat-button-toggle-ripple {
+    border-radius: 30px;
+  }
 }
 
 ::ng-deep .remove-zindex th {
