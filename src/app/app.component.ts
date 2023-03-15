@@ -61,8 +61,10 @@ const {
   locations,
   assets,
   unitOfMeasurement,
+  plants,
   roundPlanArchivedForms,
-  roundPlanSubmissionForms
+  roundPlanSubmissionForms,
+  roundPlanObservations
 } = routingUrls;
 
 @Component({
@@ -188,6 +190,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: roundPlanArchivedForms.title,
           url: roundPlanArchivedForms.url,
           permission: roundPlanArchivedForms.permission
+        },
+        {
+          title: roundPlanObservations.title,
+          url: roundPlanObservations.url,
+          permission: roundPlanObservations.permission
         }
       ]
     },
@@ -248,6 +255,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: unitOfMeasurement.title,
           url: unitOfMeasurement.url,
           permission: unitOfMeasurement.permission
+        },
+        {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
         }
       ]
     }

@@ -2,7 +2,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ErrorInfo } from 'src/app/interfaces';
+import {
+  ErrorInfo,
+  RoundPlanScheduleConfigurationObj
+} from 'src/app/interfaces';
 import { RoundPlanScheduleConfiguration } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -40,15 +43,33 @@ export class RoundPlanScheduleConfigurationService {
         map((resp) => (resp === null ? roundPlansScheduleConfiguration : resp))
       );
 
+  fetchRoundPlanScheduleConfigurations$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<RoundPlanScheduleConfigurationObj> =>
+    this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        `round-plan-schedule-configuration/`,
+        info
+      )
+      .pipe(
+        map((configs: RoundPlanScheduleConfiguration[]) =>
+          configs.reduce((acc: RoundPlanScheduleConfigurationObj, val) => {
+            acc[val.roundPlanId] = val;
+            return acc;
+          }, {})
+        )
+      );
+
   fetchRoundPlanScheduleConfigurationByRoundPlanId$ = (
     roundPlanId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanScheduleConfiguration[]> =>
+  ): Observable<RoundPlanScheduleConfiguration> =>
     this.appService._getRespById(
       environment.operatorRoundsApiUrl,
       `round-plan-schedule-configuration/`,
       roundPlanId,
-      { displayToast: true, failureResponse: [] }
+      info
     );
 
   deleteRoundPlanScheduleConfigurationByRoundPlanId$ = (

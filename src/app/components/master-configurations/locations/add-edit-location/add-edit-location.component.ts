@@ -69,11 +69,10 @@ export class AddEditLocationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.locationForm = this.fb.group({
-      id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
       locationId: new FormControl('', [Validators.required]),
@@ -109,11 +108,11 @@ export class AddEditLocationComponent implements OnInit {
           this.slideInOut.emit('out');
         });
     } else if (this.locationStatus === 'edit') {
-      const updateData = {
-        data: this.locationForm.value,
-        version: this.locEditData._version
-      };
-      this.locationService.updateLocation$(updateData).subscribe((res) => {
+      this.locationService.updateLocation$({
+        ...this.locationForm.value,
+        _version: this.locEditData._version,
+        id: this.locEditData?.id
+      }).subscribe((res) => {
         this.createdLocationData.emit({
           status: this.locationStatus,
           data: res
@@ -125,7 +124,7 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   onKey(event) {
-    const value = event.target.value || "";
+    const value = event.target.value || '';
     this.allParentsData = this.search(value);
   }
 

@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import {
-  APIService,
-  CreateAssetsInput,
-  DeleteAssetsInput,
-  ListAssetsQuery
-} from 'src/app/API.service';
-import { map, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -18,6 +12,12 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import {
+  AssetsResponse,
+  CreateAssets,
+  DeleteAssets,
+  GetAssets
+} from 'src/app/interfaces/master-data-management/assets';
 
 @Injectable({
   providedIn: 'root'
@@ -30,17 +30,22 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  constructor(
-    private _appService: AppService,
-    private readonly awsApiService: APIService
-  ) {}
+  private MAX_FETCH_LIMIT: string = '1000000';
+
+  constructor(private _appService: AppService) {}
 
   setFormCreatedUpdated(data: any) {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () =>
-    from(this.awsApiService.ListAssets({}, 20000, '')).pipe(shareReplay(1));
+  fetchAllAssets$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'asset/list?' + params.toString()
+    );
+  };
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -54,17 +59,28 @@ export class AssetsService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this.awsApiService.ListAssets(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
+      const params: URLSearchParams = new URLSearchParams();
+
+      if (!isSearch) {
+        params.set('limit', `${queryParams.limit}`);
+      }
+      if (!isSearch && queryParams.nextToken) {
+        params.set('nextToken', queryParams.nextToken);
+      }
+
+      if (queryParams.searchKey) {
+        const filter: GetAssets = {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      return this._appService
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'asset/list?' + params.toString()
         )
-      ).pipe(map((res) => this.formatGraphQAssetsResponse(res)));
+        .pipe(map((res) => this.formatGraphQAssetsResponse(res)));
     } else {
       return of({
         count: 0,
@@ -74,13 +90,9 @@ export class AssetsService {
     }
   }
 
-  getAssetsById$(id: string) {
-    return from(this.awsApiService.GetAssets(id));
-  }
-
   createAssets$(
     formAssetsQuery: Pick<
-      CreateAssetsInput,
+      CreateAssets,
       | 'name'
       | 'image'
       | 'description'
@@ -90,36 +102,40 @@ export class AssetsService {
       | 'parentType'
     >
   ) {
-    return from(
-      this.awsApiService.CreateAssets({
-        name: formAssetsQuery.name,
-        image: formAssetsQuery.image,
-        description: formAssetsQuery.description,
-        model: formAssetsQuery.model,
-        assetsId: formAssetsQuery.assetsId,
-        parentType: formAssetsQuery.parentType,
-        parentId: formAssetsQuery.parentId.length
-          ? formAssetsQuery.parentId
-          : null,
-        searchTerm: formAssetsQuery.name.toLowerCase()
-      })
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'asset/create',
+      {
+        data: {
+          ...formAssetsQuery,
+          searchTerm: `${formAssetsQuery.name.toLowerCase()} ${
+            formAssetsQuery.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
-  updateAssets$(assetDetails) {
-    return from(
-      this.awsApiService.UpdateAssets({
-        ...assetDetails.data,
-        parentId: assetDetails.data?.parentId?.length
-          ? assetDetails.data.parentId
-          : null,
-        _version: assetDetails.version
-      })
+  updateAssets$(assetData) {
+    return this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `asset/${assetData.id}/update`,
+      {
+        data: {
+          ...assetData,
+          searchTerm: `${assetData.name.toLowerCase()} ${
+            assetData.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
-  deleteAssets$(values: DeleteAssetsInput) {
-    return from(this.awsApiService.DeleteAssets({ ...values }));
+  deleteAssets$(values: DeleteAssets) {
+    return this._appService._removeData(
+      environment.masterConfigApiUrl,
+      `asset/${JSON.stringify(values)}/delete`
+    );
   }
 
   downloadSampleAssetTemplate(
@@ -134,7 +150,7 @@ export class AssetsService {
     );
   }
 
-  private formatGraphQAssetsResponse(resp: ListAssetsQuery) {
+  private formatGraphQAssetsResponse(resp: AssetsResponse) {
     let rows =
       resp.items
         .sort(
