@@ -1,10 +1,11 @@
 [
   {
-    "label": "Status",
-    "items": [],
-    "column": "status",
-    "type": "select",
-    "value": ""
+    "label": "Schedule",
+    "items": ["Daily", "Weekly", "Monthly", "Custom dates"],
+    "column": "schedule",
+    "type": "schedule",
+    "value": "",
+    "itemValue":""
   },
   {
     "label": "Inspected By",
