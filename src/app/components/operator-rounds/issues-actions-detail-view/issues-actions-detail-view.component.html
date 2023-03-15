@@ -1,10 +1,15 @@
-<div class="form-header-modal">
+<div class="form-header-modal" [formGroup]="issuesActionsDetailViewForm">
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
       <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
     </button>
+    <h4 class="heading">
+      <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
+      {{ this.issuesActionsDetailViewForm.get('name').value }}
+      &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
+    </h4>
   </mat-toolbar>
-  <div class="dis-flex form-content" [formGroup]="issuesActionsDetailViewForm">
+  <div class="dis-flex form-content">
     <div class="width-60 chart-div">
       <div class="chat-panel"></div>
       <div class="custom-form-field-white-color footer">
@@ -25,7 +30,7 @@
       </div>
     </div>
     <div class="width-40 details-div form-fields">
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="title"></div>
         <div class="values">
           {{
@@ -36,7 +41,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="des"></div>
         <div class="values">
           {{
@@ -47,7 +52,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="category"></div>
         <div class="values">
           {{
@@ -58,7 +63,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="round"></div>
         <div class="values">
           {{
@@ -69,7 +74,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
           {{
@@ -80,7 +85,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="asset"></div>
         <div class="values">
           {{
@@ -91,7 +96,7 @@
         </div>
       </div>
       <hr class="line" />
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="task"></div>
         <div class="values">
           {{
@@ -132,7 +137,11 @@
         <div class="titles m-t-15" translate="dueDate"></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
-            <input matInput [matDatepicker]="picker1" />
+            <input
+              matInput
+              [matDatepicker]="picker1"
+              formControlName="dueDate"
+            />
             <mat-datepicker-toggle
               matIconSuffix
               [for]="picker1"
@@ -148,22 +157,39 @@
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
             <mat-select formControlName="assignedTo">
-              <mat-option value="John">John</mat-option>
+              <input
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKey($event)"
+              />
+              <mat-option value="John"> John </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
       </div>
       <hr class="line" />
 
-      <div class="right-div">
-        <div class="titles" translate="erpnotification"></div>
+      <div class="right-div p-5-0">
+        <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
           <button mat-raised-button color="primary">Create</button>
         </div>
       </div>
       <hr class="line" />
 
-      <div class="right-div">
+      <div class="right-div p-5-0">
+        <div class="titles" translate="createdBy"></div>
+        <div class="values">
+          {{
+            this.issuesActionsDetailViewForm.get('createdBy').value
+              ? this.issuesActionsDetailViewForm.get('createdBy').value
+              : '--'
+          }}
+        </div>
+      </div>
+      <hr class="line" />
+
+      <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
           {{
@@ -175,7 +201,7 @@
       </div>
       <hr class="line" />
 
-      <div class="right-div">
+      <div class="right-div p-5-0">
         <div class="titles" translate="attachment"></div>
         <div class="values">3</div>
       </div>

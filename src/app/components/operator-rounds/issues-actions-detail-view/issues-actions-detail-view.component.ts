@@ -36,6 +36,11 @@ export class IssuesActionsDetailViewComponent implements OnInit {
     });
   }
 
+  onKey(event) {
+    const value = event.target.value || '';
+    // this.allParentsData = this.search(value);
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
