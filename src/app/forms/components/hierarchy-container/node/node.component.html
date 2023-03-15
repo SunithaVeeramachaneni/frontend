@@ -34,10 +34,13 @@
         <span
           class="expandCollapseBtn"
           (click)="node.isExpanded = !node.isExpanded"
-          ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
-            >expand_circle_down</mat-icon
-          ></span
         >
+          <mat-icon
+            [ngClass]="{ 'rotate-270': !node.isExpanded }"
+            class="material-icons-outlined"
+            >expand_circle_down</mat-icon
+          >
+        </span>
         <span>
           {{
             'nodeChildrenHead'

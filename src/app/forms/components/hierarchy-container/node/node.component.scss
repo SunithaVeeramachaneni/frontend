@@ -40,7 +40,6 @@
 
   .right {
     display: flex;
-    width: 15%;
     align-items: center;
     .more-icon {
       cursor: pointer;
@@ -51,6 +50,7 @@
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
+  width: 100%;
 }
 .children {
   margin-left: 40px;
@@ -89,7 +89,7 @@
 }
 .nodeCount {
   background: $active-blue;
-  width: 30px;
+  min-width: 30px;
   height: 30px;
   border-radius: 15px;
   display: flex;
