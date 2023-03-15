@@ -52,6 +52,11 @@ import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-
 import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
 import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
+import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
+import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
+import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
+import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +87,12 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
-    ShowHierarchyPopupComponent
+    ShowHierarchyPopupComponent,
+    QuillMaterialComponent,
+    TagSelectComponent,
+    InstructionImageComponent,
+    InstructionPdfComponent,
+    InstructionPdfPreviewComponent
   ],
   imports: [
     FormsModule,

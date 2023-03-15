@@ -167,7 +167,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
-            ...this.headerDataForm.value
+            ...this.headerDataForm.value,
+            moduleName: 'rdf'
           },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving

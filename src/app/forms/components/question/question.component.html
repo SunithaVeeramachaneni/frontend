@@ -10,10 +10,13 @@
     <div (click)="!isAskQuestion && updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
-          class="width-70 question-input-box"
+          class="width-70"
           [ngClass]="{
             'width-60': isAskQuestion,
-            'width-70': !isAskQuestion
+            'width-70': !isAskQuestion,
+            'question-input-box':
+              questionForm.get('fieldType').value !== 'INST',
+            'rtf-input-box': questionForm.get('fieldType').value === 'INST'
           }"
         >
           <input
@@ -24,7 +27,27 @@
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
+            *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
+
+          <mat-form-field
+            *ngIf="questionForm.get('fieldType').value === 'INST'"
+            appearance="outline"
+            class="width-100"
+            placeholder="Type Question"
+          >
+            <quill-material
+              #name
+              formControlName="name"
+              [placeholder]="'typeQuestion' | translate"
+              [ngClass]="{
+                'display-toolbar': questionForm.get('isOpen').value
+              }"
+              *ngIf="questionForm.get('fieldType').value === 'INST'"
+              (editorFocus)="handleEditorFocus($event)"
+            >
+            </quill-material>
+          </mat-form-field>
 
           <div
             class="floating-btns"
@@ -116,10 +139,64 @@
                 <span translate="addLogicBtn"></span>
               </button>
 
+              <div *ngIf="questionForm.get('fieldType').value === 'INST'">
+                <div class="dis-flex">
+                  <span
+                    *ngFor="
+                      let image of questionForm.get('value').value.images;
+                      index as i
+                    "
+                    class="m-r-10"
+                  >
+                    <app-instruction-image
+                      [image]="image"
+                      [index]="i"
+                      (indexEmitter)="instructionsFileDeleteHandler($event)"
+                      *ngIf="image !== null"
+                    ></app-instruction-image>
+                  </span>
+
+                  <span *ngIf="questionForm.get('value').value.pdf !== null">
+                    <app-instruction-pdf
+                      [pdf]="questionForm.get('value').value.pdf"
+                      [index]="'4'"
+                      (indexEmitter)="instructionsFileDeleteHandler($event)"
+                    >
+                    </app-instruction-pdf>
+                  </span>
+                </div>
+                <br />
+                <input
+                  type="file"
+                  class="file-upload"
+                  accept="image/jpeg,image/jpg,image/png,application/pdf"
+                  (change)="instructionsFileUploadHandler($event)"
+                  [hidden]="true"
+                  #instructionsFileUpload
+                />
+
+                <button
+                  mat-button
+                  color="primary"
+                  class="addLogicBtn"
+                  *ngIf="questionForm.get('fieldType').value === 'INST'"
+                  (click)="instructionsFileUpload.click()"
+                >
+                  <mat-icon class="icon">link</mat-icon>
+                  <span translate="addImagesAndPDFBtn"></span>
+                </button>
+
+                <app-tag-select
+                  [question]="questionForm"
+                  (inputTagAnswer)="updateInstructionTag($event)"
+                ></app-tag-select>
+              </div>
+
               <span
                 *ngIf="
                   questionForm.get('fieldType').value !== 'LF' &&
-                  questionForm.get('fieldType').value !== 'HL'
+                  questionForm.get('fieldType').value !== 'HL' &&
+                  questionForm.get('fieldType').value !== 'INST'
                 "
                 class="action"
               >
@@ -314,22 +391,22 @@
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
             <app-image [question]="questionForm"></app-image>
           </div>
+          <input
+            #insertImages
+            [hidden]="true"
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            (change)="insertImageHandler($event)"
+          />
         </div>
-        <input
-          #insertImages
-          [hidden]="true"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png"
-          (change)="insertImageHandler($event)"
-        />
       </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="isHyperLinkOpen">
-  <app-hyperlink-side-drawer
-    [questionToBeHyperlinked]="question"
-    (hyperlinkHandler)="handlerHyperlink($event)"
-  ></app-hyperlink-side-drawer>
+  <div *ngIf="isHyperLinkOpen">
+    <app-hyperlink-side-drawer
+      [questionToBeHyperlinked]="question"
+      (hyperlinkHandler)="handlerHyperlink($event)"
+    ></app-hyperlink-side-drawer>
+  </div>
 </div>

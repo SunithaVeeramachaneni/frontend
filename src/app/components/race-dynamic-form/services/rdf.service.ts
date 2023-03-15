@@ -568,6 +568,19 @@ export class RaceDynamicFormService {
                 });
               }
 
+              if (question.fieldType === 'INST') {
+                Object.assign(questionItem, {
+                  TAG: question.value.tag,
+                  FIELDVALUE: question.value.images
+                    .filter((image) => image !== null)
+                    .map((image) => image.objectKey.substring('public/'.length))
+                    .join(';'),
+                  DOCFILE:
+                    question.value.pdf?.objectKey.substring('public/'.length) ||
+                    ''
+                });
+              }
+
               return questionItem;
             })
           };
