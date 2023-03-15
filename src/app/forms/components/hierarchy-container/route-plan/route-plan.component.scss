@@ -7,7 +7,7 @@
   box-sizing: border-box;
   box-shadow: 0 3px 3px -2px $drag-preview-shadow,
     0 8px 10px 1px $drag-preview-shadow1, 0 3px 14px 2px $drag-preview-shadow2;
-  background: $red-main;
+  background: $hover-bg;
   opacity: 0.3;
 }
 .drop-inside {
@@ -94,7 +94,6 @@
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
-  width: inherit;
 }
 .children {
   margin-left: 40px;

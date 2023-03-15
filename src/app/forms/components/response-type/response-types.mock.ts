@@ -5,6 +5,10 @@ export const fieldTypesMock = {
       description: 'Read Only Field'
     },
     {
+      type: 'INST',
+      description: 'Instructions'
+    },
+    {
       type: 'TF',
       description: 'Text Answer'
     },
