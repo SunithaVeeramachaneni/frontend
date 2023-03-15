@@ -105,6 +105,14 @@
           }
         }
 
+        .instruction {
+          word-wrap: break-word;
+        }
+
+        .instruction ol li {
+          list-style-type: auto;
+        }
+
         .number {
           width: 93%;
           border: 1px solid $gray3;
@@ -179,6 +187,18 @@
         .image-field {
           width: 100%;
           margin-top: 7px;
+        }
+
+        .instruction-image-field {
+          width: 56px;
+          margin: 3px;
+          height: 56px;
+          border-radius: 8px;
+        }
+
+        .tag-text {
+          margin-left: 8px;
+          color: red;
         }
 
         .dropdown {

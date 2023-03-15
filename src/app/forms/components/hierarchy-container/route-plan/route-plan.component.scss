@@ -1,0 +1,143 @@
+@import '../../../../../scss/colors.scss';
+
+.cdk-drag-placeholder {
+  display: none;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  box-shadow: 0 3px 3px -2px $drag-preview-shadow,
+    0 8px 10px 1px $drag-preview-shadow1, 0 3px 14px 2px $drag-preview-shadow2;
+  background: $hover-bg;
+  opacity: 0.3;
+}
+.drop-inside {
+  border: 3px solid $blue6;
+}
+.drop-before {
+  border-top: 5px solid $blue6;
+}
+.drop-after {
+  border-bottom: 5px solid $blue6;
+}
+
+.children {
+  margin-left: 40px;
+}
+.childrenHead {
+  display: flex;
+  align-items: center;
+  margin-left: 45px;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
+  }
+}
+
+.node-children {
+  position: relative;
+  transition: height 0.2s;
+  margin-left: 40px;
+}
+
+.node-title {
+  padding: 15px;
+  margin: 5px;
+  background: $gray;
+  cursor: grab;
+}
+
+// NODE CSS
+
+.node {
+  &:hover {
+    background: $hover-bg;
+    color: $black;
+  }
+}
+
+.parentNode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  padding: 10px;
+  min-width: max-content;
+  .left {
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    img {
+      max-width: 40px;
+      max-height: 40px;
+    }
+    .description {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+      justify-content: center;
+    }
+  }
+
+  .right {
+    display: flex;
+    width: 10%;
+    align-items: center;
+    .more-icon {
+      cursor: pointer;
+    }
+  }
+}
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+}
+.children {
+  margin-left: 40px;
+}
+.childrenHead {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  color: $blue-main;
+  .expandCollapseBtn {
+    cursor: pointer;
+  }
+  .rotate-270 {
+    transform: rotate(270deg);
+  }
+}
+.white {
+  color: $white;
+  &:hover {
+    color: $black;
+  }
+}
+.displayInlineBlock {
+  display: inline-block;
+}
+.inactive {
+  color: $light-gray !important;
+}
+.active {
+  background: $active-blue;
+  color: $white;
+}
+.question-six-dots {
+  position: relative;
+  width: 10px;
+  cursor: move;
+  margin-right: 10px;
+}
+
+.noMarginLeft {
+  margin-left: 0px !important;
+}
+.showHierarchy {
+  background-color: $white;
+  box-shadow: $show-hierarchy-shadow 0px 5px 15px;
+  border-radius: 5px;
+}

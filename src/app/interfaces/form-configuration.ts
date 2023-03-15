@@ -15,6 +15,7 @@ export interface FormMetadata {
   formStatus: 'Draft' | 'Published';
   tags: string[];
   searchTerm: string;
+  hierarchy?: any;
 }
 
 export interface Page {
@@ -85,4 +86,11 @@ export interface QuestionEvent {
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
   isAskQuestion?: boolean;
+}
+
+export interface InstructionsFile {
+  name: string;
+  size: number;
+  objectKey: string;
+  objectURL: string;
 }

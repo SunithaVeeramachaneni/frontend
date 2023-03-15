@@ -19,6 +19,7 @@ import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,8 +38,6 @@ import { ReadOnlyComponent } from './components/field-types/read-only/read-only.
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
-import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
@@ -47,7 +46,17 @@ import { AddPageOrSelectExistingPageModalComponent } from './components/import-q
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { HyperlinkSideDrawerComponent } from './components/hyperlink-side-drawer/hyperlink-side-drawer.component';
+import { BuilderComponent } from './components/builder/builder.component';
 import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-node.component';
+import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-modal.component';
+import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
+import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
+import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
+import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
+import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
+import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
+import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -73,12 +82,23 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     ImportQuestionsSliderComponent,
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
-    HierarchyNodeComponent
+    BuilderComponent,
+    HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent,
+    QuillMaterialComponent,
+    TagSelectComponent,
+    InstructionImageComponent,
+    InstructionPdfComponent,
+    InstructionPdfPreviewComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    MatAutocompleteModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
@@ -111,8 +131,13 @@ import { HierarchyNodeComponent } from './components/hierarchy-node/hierarchy-no
     IphoneComponent,
     AddLogicComponent,
     HierarchyNodeComponent,
+    HierarchyModalComponent,
+    HierarchyLocationsListComponent,
+    HierarchyAssetsListComponent,
+    ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    BuilderComponent,
     NgxShimmerLoadingModule
   ]
 })

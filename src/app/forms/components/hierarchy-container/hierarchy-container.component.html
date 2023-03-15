@@ -1,0 +1,141 @@
+<div *ngIf="selectedHierarchy$ | async">
+  <div class="header">
+    <div>
+      <span>{{
+        'totalAssetsCount' | translate : { count: totalAssetsLocationsCount }
+      }}</span>
+      <button
+        mat-icon-button
+        class="addBtn"
+        *ngIf="hierarchy.length"
+        (click)="openHierarchyModal()"
+      >
+        <mat-icon class="addIcon">add</mat-icon>
+      </button>
+    </div>
+    <mat-button-toggle-group
+      class="toggle-btn-group"
+      (change)="toggleHierarchyMode($event)"
+    >
+      <mat-button-toggle
+        value="asset_hierarchy"
+        class="toggle-btn"
+        [ngClass]="{
+          activeBtn: hierarchyMode === 'asset_hierarchy'
+        }"
+      >
+        <img
+          [src]="
+            getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')
+          "
+          class="toggle-btn-icon"
+        />
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="route_plan"
+        class="toggle-btn"
+        [ngClass]="{
+          activeBtn: hierarchyMode === 'route_plan'
+        }"
+      >
+        <img
+          [src]="getImage('round-plan', hierarchyMode === 'route_plan')"
+          class="toggle-btn-icon"
+        />
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    <span *ngIf="hierarchy.length">
+      {{ 'totalTasksCount' | translate : { count: getTotalTasksCount() } }}
+    </span>
+  </div>
+  <span class="custom-form-field-gray-color search" *ngIf="hierarchy.length">
+    <mat-form-field appearance="outline" class="searchField">
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [matAutocomplete]="auto"
+        [formControl]="searchHierarchyKey"
+      />
+      <mat-autocomplete
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="searchResultSelected($event)"
+      >
+        <mat-optgroup [label]="getSearchMatchesLabel()">
+          <mat-option
+            *ngFor="let option of filteredOptions$ | async"
+            [value]="option"
+            class="searchResultOption"
+          >
+            <div class="nodeContent">
+              <img [src]="option.image" />
+              <div class="description">
+                <span class="title">{{ option.name }}</span>
+                <span class="subTitle">
+                  {{
+                    'nodeSubTitle'
+                      | translate
+                        : {
+                            nodeType: option.type | titlecase,
+                            nodeId: option.nodeId
+                          }
+                  }}
+                </span>
+              </div>
+            </div>
+          </mat-option>
+        </mat-optgroup>
+      </mat-autocomplete>
+      <img
+        [src]="closeIcon"
+        matSuffix
+        alt="close"
+        *ngIf="searchHierarchyKey.value.length"
+        class="closeIcon"
+        (click)="clearSearchResults()"
+      />
+    </mat-form-field>
+  </span>
+  <div
+    class="hierarchy"
+    *ngIf="hierarchy.length"
+    [ngClass]="{ displayGrid: hierarchyMode !== 'asset_hierarchy' }"
+  >
+    <div *ngIf="!filteredHierarchyList.length" class="emptySearchResult">
+      <span>
+        {{
+          'noAssetsOrLocationsFound'
+            | translate : { searchKey: searchHierarchyKey.value }
+        }}
+      </span>
+    </div>
+    <div *ngIf="hierarchyMode !== 'asset_hierarchy'">
+      <app-route-plan
+        [hierarchy]="hierarchy"
+        [hierarchyMode]="hierarchyMode"
+        (nodeRemoved)="removeNodeHandler($event)"
+        (copyNode)="handleCopyNode($event)"
+      ></app-route-plan>
+    </div>
+    <div *ngIf="hierarchyMode === 'asset_hierarchy'">
+      <app-node
+        [node]="node"
+        [hierarchyMode]="hierarchyMode"
+        (nodeRemoved)="removeNodeHandler($event)"
+        *ngFor="let node of filteredHierarchyList"
+      ></app-node>
+    </div>
+  </div>
+  <div *ngIf="!hierarchy.length" class="emptyHierarchy">
+    <span translate="noAssetsAdded"></span>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openHierarchyModal()"
+      translate="addAssetsBtn"
+    ></button>
+  </div>
+</div>

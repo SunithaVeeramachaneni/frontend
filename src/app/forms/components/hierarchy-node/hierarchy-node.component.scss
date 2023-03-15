@@ -1,7 +1,7 @@
+@import '../../../../scss/colors.scss';
+
 .node {
-  display: flex;
   margin-left: 25px;
-  margin-top: 5px;
   margin-bottom: 5px;
 }
 
@@ -9,18 +9,60 @@
   margin-top: 10px;
 }
 
+.select-all-checkbox {
+  margin-top: -5px;
+  margin-left: 12px;
+}
+
 .master-data-image {
   width: 20px;
   height: 20px;
   margin-left: 10px;
-  background: #f0f0f0;
+  background: $timeago-bg;
   border-radius: 8px;
   padding: 7px;
 }
 
 .master-data-title {
-  margin-top: 10px;
-  margin-left: 20px;
+  padding: 10px 0;
+  margin-left: 10px;
   font-size: 12px;
   font-weight: bold;
+}
+
+.child-node {
+  margin-left: 35px;
+}
+
+.arrows {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  background: $note-bg;
+  border-radius: 4px;
+  color: $light-gray;
+}
+
+.count-assets {
+  font-size: 12px;
+  position: relative;
+  left: 10px;
+  top: -4px;
+  margin-top: 5px;
+}
+
+.borders {
+  border-bottom: 1px solid $border-color;
+  border-top: none;
+}
+
+.master-checkbox {
+  padding-top: 0px;
+  margin-left: 7px;
+}
+
+.hierarchy-head {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
 }
