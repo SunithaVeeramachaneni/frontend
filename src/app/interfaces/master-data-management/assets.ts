@@ -3,7 +3,6 @@ export interface GetAssets {
 }
 
 export interface CreateAssets {
-  id?: string;
   name: string;
   description?: string;
   model?: string;
