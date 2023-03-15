@@ -16,7 +16,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery, ListLocationsQuery } from 'src/app/API.service';
+import { GetFormListQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -27,24 +27,22 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import { AssetsService } from '../services/assets.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { LocationService } from '../../locations/services/location.service';
+import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
 @Component({
-  selector: 'app-assets-list',
-  templateUrl: './assets-list.component.html',
-  styleUrls: ['./assets-list.component.scss'],
+  selector: 'app-plant-list',
+  templateUrl: './plant-list.component.html',
+  styleUrls: ['./plant-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class AssetsListComponent implements OnInit {
+export class PlantListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<ListLocationsQuery>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  parentInformation;
-  allParentsData;
+  userInfo$: Observable<UserInfo>;
+
   columns: Column[] = [
     {
       id: 'name',
@@ -65,9 +63,9 @@ export class AssetsListComponent implements OnInit {
         'font-size': '100%',
         color: '#000000'
       },
-      hasSubtitle: true,
+      hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: 'assetsId',
+      subtitleColumn: 'plantId',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -76,8 +74,8 @@ export class AssetsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'description',
-      displayName: 'Description',
+      id: 'plantId',
+      displayName: 'Plant Id',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -99,9 +97,9 @@ export class AssetsListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'model',
-      displayName: 'Model',
-      type: 'number',
+      id: 'country',
+      displayName: 'Country',
+      type: 'string',
       controlType: 'string',
       order: 3,
       hasSubtitle: false,
@@ -121,9 +119,31 @@ export class AssetsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'parent',
-      displayName: 'Parent',
+      id: 'state',
+      displayName: 'State',
       type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'zipCode',
+      displayName: 'Zip Code',
+      type: 'number',
       controlType: 'string',
       order: 4,
       hasSubtitle: false,
@@ -145,7 +165,7 @@ export class AssetsListComponent implements OnInit {
   ];
 
   configOptions: ConfigOptions = {
-    tableID: 'assetsTable',
+    tableID: 'plantsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -159,72 +179,74 @@ export class AssetsListComponent implements OnInit {
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
-    conditionalStyles: {}
+    conditionalStyles: {
+      draft: {
+        'background-color': '#FEF3C7',
+        color: '#92400E'
+      },
+      published: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
+      }
+    }
   };
 
+  searchPlant: FormControl;
   dataSource: MatTableDataSource<any>;
-  searchAssets: FormControl;
-  openAssetsDetailedView = 'out';
-  assetsAddOrEditOpenState = 'out';
-  assetsEditData;
+  openPlantDetailedView = 'out';
+  plantAddOrEditOpenState = 'out';
+  plantEditData;
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
-  assets$: Observable<any>;
-  assetsCount$: Observable<Count>;
-  assetsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  assetsListCount$: Observable<number>;
+  plants$: Observable<any>;
+  plantsCount$: Observable<Count>;
+  plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  addEditCopyDeleteAssets = false;
-  addEditCopyDeleteAssets$: BehaviorSubject<FormTableUpdate> =
+  addEditCopyDeletePlants = false;
+  addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
       form: {} as any
     });
-  selectedAsset;
+  selectedPlant;
 
   skip = 0;
   limit = defaultLimit;
   fetchType = 'load';
   nextToken = '';
-  userInfo$: Observable<UserInfo>;
-  allParentsAssets: any[] = [];
-  allParentsLocations: any[] = [];
+  parentInformation: any;
 
   constructor(
-    private assetService: AssetsService,
+    private loginService: LoginService,
     private readonly toast: ToastService,
-    private locationService: LocationService,
-    private loginService: LoginService
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
-    this.assetService.fetchAssets$.next({ data: 'load' });
-    this.assetService.fetchAssets$.next({} as TableEvent);
-    this.searchAssets = new FormControl('');
+    this.plantService.fetchPlants$.next({ data: 'load' });
+    this.plantService.fetchPlants$.next({} as TableEvent);
+    this.searchPlant = new FormControl('');
 
-    this.searchAssets.valueChanges
+    this.searchPlant.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.assetService.fetchAssets$.next({ data: 'search' });
+          this.plantService.fetchPlants$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.getAllLocations();
-    this.getAllAssets();
-    this.getDisplayedAssets();
-
-    this.assetsCount$ = combineLatest([
-      this.assetsCount$,
-      this.assetsCountUpdate$
+    this.getDisplayedPlants();
+    this.plantsCount$ = combineLatest([
+      this.plantsCount$,
+      this.plantsCountUpdate$
     ]).pipe(
       map(([count, update]) => {
-        if (this.addEditCopyDeleteAssets) {
+        if (this.addEditCopyDeletePlants) {
           count.count += update;
-          this.addEditCopyDeleteAssets = false;
+          this.addEditCopyDeletePlants = false;
         }
         return count;
       })
@@ -235,22 +257,22 @@ export class AssetsListComponent implements OnInit {
     );
   }
 
-  getDisplayedAssets(): void {
-    const assetsOnLoadSearch$ = this.assetService.fetchAssets$.pipe(
+  getDisplayedPlants(): void {
+    const plantsOnLoadSearch$ = this.plantService.fetchPlants$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
-        return this.getAssets();
+        return this.getPlants();
       })
     );
 
-    const onScrollAssets$ = this.assetService.fetchAssets$.pipe(
+    const onScrollPlants$ = this.plantService.fetchPlants$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getAssets();
+          return this.getPlants();
         } else {
           return of([]);
         }
@@ -261,10 +283,10 @@ export class AssetsListComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.assets$ = combineLatest([
-      assetsOnLoadSearch$,
-      this.addEditCopyDeleteAssets$,
-      onScrollAssets$
+    this.plants$ = combineLatest([
+      plantsOnLoadSearch$,
+      this.addEditCopyDeletePlants$,
+      onScrollPlants$
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
@@ -277,7 +299,7 @@ export class AssetsListComponent implements OnInit {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
-              text: 'Assets deleted successfully!',
+              text: 'Plant deleted successfully!',
               type: 'success'
             });
             form.action = 'add';
@@ -285,27 +307,7 @@ export class AssetsListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-        for (const item of initial.data) {
-          if (item.parentType.toLowerCase() === 'location') {
-            const parent = this.allParentsLocations.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-            } else {
-              item.parent = '';
-            }
-          } else {
-            const parent = this.allParentsAssets.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-            } else {
-              item.parent = '';
-            }
-          }
-        }
+
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -313,71 +315,80 @@ export class AssetsListComponent implements OnInit {
     );
   }
 
-  getAssets() {
-    return this.assetService
-      .getAssetsList$({
+  getPlants() {
+    return this.plantService
+      .getPlantsList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchAssets.value,
+        searchKey: this.searchPlant.value,
         fetchType: this.fetchType
       })
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
-          this.assetsCount$ = of({ count });
+          this.plantsCount$ = of({ count });
           this.nextToken = nextToken;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.assetsCount$ = of({ count: 0 });
+          this.plantsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })
       );
   }
 
-  addOrUpdateAssets(assetData) {
-    if (assetData.status === 'add') {
-      this.addEditCopyDeleteAssets = true;
-      if (this.searchAssets.value) {
-        this.assetService.fetchAssets$.next({ data: 'search' });
+  addOrUpdatePlant(plantData) {
+    if (plantData.status === 'add') {
+      this.addEditCopyDeletePlants = true;
+      if (this.searchPlant.value) {
+        this.plantService.fetchPlants$.next({ data: 'search' });
       } else {
-        this.addEditCopyDeleteAssets$.next({
+        this.addEditCopyDeletePlants$.next({
           action: 'add',
-          form: assetData.data
+          form: plantData.data
         });
       }
       this.toast.show({
-        text: 'Asset created successfully!',
+        text: 'Plant created successfully!',
         type: 'success'
       });
-    } else if (assetData.status === 'edit') {
-      this.addEditCopyDeleteAssets = true;
-      if (this.searchAssets.value) {
-        this.assetService.fetchAssets$.next({ data: 'search' });
+    } else if (plantData.status === 'edit') {
+      this.addEditCopyDeletePlants = true;
+      if (this.searchPlant.value) {
+        this.plantService.fetchPlants$.next({ data: 'search' });
       } else {
-        this.addEditCopyDeleteAssets$.next({
+        this.addEditCopyDeletePlants$.next({
           action: 'edit',
-          form: assetData.data
+          form: plantData.data
         });
         this.toast.show({
-          text: 'Asset updated successfully!',
+          text: 'Plant updated successfully!',
           type: 'success'
         });
       }
     }
-    this.assetService.fetchAssets$.next({ data: 'load' });
+    this.plantService.fetchPlants$.next({ data: 'load' });
   }
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
 
-    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_ASSET')) {
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_PLANT')) {
       menuActions.push({
         title: 'Edit',
         action: 'edit'
       });
     }
+
+    // if (
+    //   this.loginService.checkUserHasPermission(permissions, 'DELETE_PLANT')
+    // ) {
+    //   menuActions.push({
+    //     title: 'Delete',
+    //     action: 'delete'
+    //   });
+    // } Implementation is done but required validations based on parent
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -385,17 +396,17 @@ export class AssetsListComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.assetService.fetchAssets$.next(event);
+    this.plantService.fetchPlants$.next(event);
   };
 
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.assetsEditData = { ...data };
-        this.assetsAddOrEditOpenState = 'in';
+        this.plantEditData = { ...data };
+        this.plantAddOrEditOpenState = 'in';
         break;
       case 'delete':
-        this.deleteAsset(data);
+        this.deletePlant(data);
         break;
       default:
     }
@@ -407,22 +418,23 @@ export class AssetsListComponent implements OnInit {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
-      case 'description':
-      case 'model':
-      case 'parentId':
-        this.showAssetDetail(row);
+      case 'plantId':
+      case 'country':
+      case 'zipCode':
+      case 'state':
+        this.showPlantDetail(row);
         break;
       default:
     }
   };
 
-  deleteAsset(asset: any): void {
+  deletePlant(plant: any): void {
     const deleteData = {
-      id: asset.id,
-      _version: asset._version
+      id: plant.id,
+      _version: plant._version
     };
-    this.assetService.deleteAssets$(deleteData).subscribe((data: any) => {
-      this.addEditCopyDeleteAssets$.next({
+    this.plantService.deletePlant$(deleteData).subscribe((data: any) => {
+      this.addEditCopyDeletePlants$.next({
         action: 'delete',
         form: data
       });
@@ -430,100 +442,29 @@ export class AssetsListComponent implements OnInit {
   }
 
   addManually() {
-    this.assetsAddOrEditOpenState = 'in';
-    this.assetsEditData = null;
+    this.plantAddOrEditOpenState = 'in';
+    this.plantEditData = null;
   }
 
-  showAssetDetail(row: GetFormListQuery): void {
-    this.selectedAsset = row;
-    this.openAssetsDetailedView = 'in';
+  showPlantDetail(row: GetFormListQuery): void {
+    console.log(row);
+    this.selectedPlant = row;
+    this.openPlantDetailedView = 'in';
   }
 
-  onCloseAssetsAddOrEditOpenState(event) {
-    this.assetsAddOrEditOpenState = event;
+  onClosePlantAddOrEditOpenState(event) {
+    this.plantAddOrEditOpenState = event;
   }
 
-  exportAsXLSX(): void {
-    this.assetService
-      .downloadSampleAssetTemplate()
-      .pipe(
-        tap((data) => {
-          downloadFile(data, 'Asset_Sample_Template');
-        })
-      )
-      .subscribe();
-  }
-
-  onCloseAssetsDetailedView(event) {
-    this.openAssetsDetailedView = event.status;
+  onClosePlantDetailedView(event) {
+    this.openPlantDetailedView = event.status;
     if (event.data !== '') {
-      this.assetsEditData = event.data;
-      this.assetsAddOrEditOpenState = 'in';
+      this.plantEditData = event.data;
+      this.plantAddOrEditOpenState = 'in';
     }
   }
-
-  uploadFile(event) {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    this.assetService.uploadExcel(formData).subscribe((resp) => {
-      if (resp.status === 200) {
-        for (const item of resp.data) {
-          if (item.parentType.toLowerCase() === 'location') {
-            const parent = this.allParentsLocations.find(
-              (d) => d.locationId === item.parentId
-            );
-            if (parent) {
-              item.parentStatus = true;
-              item.parentId = parent.id;
-            } else {
-              item.parentId = '';
-            }
-          } else {
-            const parent = this.allParentsAssets.find(
-              (d) => d.assetsId === item.parentId
-            );
-            if (parent) {
-              item.parentId = parent.id;
-            } else {
-              item.parentId = '';
-            }
-          }
-          this.assetService.createAssets$(item).subscribe((res) => {
-            this.addOrUpdateAssets({
-              status: 'add',
-              data: res
-            });
-          });
-        }
-      }
-    });
-  }
-
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-  }
-
-  getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc._deleted !== true
-          );
-          this.allParentsLocations = this.parentInformation;
-        })
-      )
-      .subscribe();
-  }
-
-  getAllAssets() {
-    this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allParentsAssets = allAssets.items.filter(
-        (asset) => !asset._deleted
-      );
-    });
   }
 }

@@ -1,10 +1,11 @@
 import {
   Component,
   OnInit,
-  Inject,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 import { Store } from '@ngrx/store';
@@ -16,11 +17,6 @@ import { State } from '../../state';
 import { getMasterHierarchyList } from '../../state';
 import { tap } from 'rxjs/operators';
 
-interface ShowHierarchyPopupData {
-  uid: string;
-  position: any;
-}
-
 @Component({
   selector: 'app-show-hierarchy-popup',
   templateUrl: './show-hierarchy-popup.component.html',
@@ -28,33 +24,34 @@ interface ShowHierarchyPopupData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShowHierarchyPopupComponent implements OnInit {
+  @Input() set nodeUid(id) {
+    this.uid = id;
+  }
+
+  @Output() closeHierarchyOverlay: EventEmitter<boolean> = new EventEmitter();
+
   public hierarchyList$: Observable<HierarchyEntity[]>;
   public hierarchyList: any[];
   public hierarchyToBeDisplayed = {} as HierarchyEntity;
+  public uid: string;
 
   constructor(
     private store: Store<State>,
-    private assetHierarchyUtil: AssetHierarchyUtil,
-    private dialogRef: MatDialogRef<ShowHierarchyPopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ShowHierarchyPopupData
+    private assetHierarchyUtil: AssetHierarchyUtil
   ) {}
 
   ngOnInit(): void {
-    const { uid, position } = this.data;
-
-    // this.dialogRef.updatePosition(position);
-
     this.hierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
       tap((masterHierarchyList) => {
         this.hierarchyList = masterHierarchyList;
         this.hierarchyToBeDisplayed =
           this.assetHierarchyUtil.getHierarchyByNodeUid(
             this.hierarchyList,
-            uid
+            this.uid
           );
       })
     );
   }
 
-  closeShowHierarchy = () => this.dialogRef.close();
+  closeShowHierarchy = () => this.closeHierarchyOverlay.emit(false);
 }
