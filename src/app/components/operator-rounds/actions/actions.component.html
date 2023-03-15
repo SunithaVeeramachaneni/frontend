@@ -30,14 +30,6 @@
     </mat-form-field>
   </span>
 
-  <ng-container *ngIf="menuState === 'in'">
-    <app-observation-detail
-      [@slideInOut]="menuState"
-      (slideInOut)="onCloseViewDetail()"
-      [selectedData]="selectedData"
-    ></app-observation-detail>
-  </ng-container>
-
   <div *ngIf="(actions$ | async) && (isLoading$ | async) === false">
     <cwp-dynamictable
       [ngClass]="{
