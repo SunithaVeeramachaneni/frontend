@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AppService } from 'src/app/shared/services/app.services';
@@ -11,7 +10,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class RoundPlanObservationsService {
-  constructor(private appService: AppService) {}
+  constructor(private readonly appService: AppService) {}
 
   getObservations$(queryParams: {
     nextToken?: string;
@@ -27,7 +26,7 @@ export class RoundPlanObservationsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plan-observations?' + params.toString()
+        'round-observations?' + params.toString()
       )
       .pipe(map((res) => this.formateGetObservationResponse(res)));
   }
@@ -35,19 +34,8 @@ export class RoundPlanObservationsService {
   getObservationChartCounts$(): any {
     return this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      'round-plan-observations/open-count'
+      'round-observations/chart-data'
     );
-  }
-
-  getObservationCount$(type: 'issue' | 'action'): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('type', type);
-    return this.appService
-      ._getResp(
-        environment.operatorRoundsApiUrl,
-        'round-plan-observations/count?' + params.toString()
-      )
-      .pipe(map(({ count }) => count || 0));
   }
 
   private formateGetObservationResponse(resp) {
@@ -66,7 +54,7 @@ export class RoundPlanObservationsService {
       return {
         ...obj,
         preTextImage: {
-          image: obj?.Photo,
+          // image: obj?.Photo,
           style: {
             width: '40px',
             height: '40px',
@@ -90,10 +78,10 @@ export class RoundPlanObservationsService {
         plant: obj?.Plant || ''
       };
     });
-    const nextToken = resp?.nextToken;
     return {
       rows,
-      nextToken
+      nextToken: resp?.nextToken,
+      count: resp?.count
     };
   }
 }

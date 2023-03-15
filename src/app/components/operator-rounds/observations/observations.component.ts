@@ -158,7 +158,7 @@ export class ObservationsComponent implements OnInit {
                 {
                   ...this.options.series[0],
                   color: this.statusColors,
-                  data: Object.entries(result?.openIssues?.status).map(
+                  data: Object.entries(result?.openActions?.status).map(
                     ([key, value]) => ({
                       name: key,
                       value
