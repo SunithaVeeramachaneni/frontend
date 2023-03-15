@@ -1,11 +1,10 @@
 [
   {
-    "label": "Schedule",
-    "items": ["Daily", "Weekly", "Monthly", "Custom dates"],
-    "column": "schedule",
-    "type": "schedule",
-    "value": "",
-    "itemValue":""
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
   },
   {
     "label": "Inspected By",
@@ -19,8 +18,8 @@
     "items": [],
     "column": "inspectedOn",
     "type": "daterange",
-    "startDate":"",
-    "endDate":"",
+    "startDate": "",
+    "endDate": "",
     "value": ""
   }
 ]

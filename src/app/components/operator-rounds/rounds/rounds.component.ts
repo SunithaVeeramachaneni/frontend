@@ -52,6 +52,15 @@ import { slideInOut } from 'src/app/animations';
 })
 export class RoundsComponent implements OnInit, OnDestroy {
   filterJson = [];
+  status = ["Pending assignment","In-progress","Completed"];
+  filter = {
+    status: '',
+    // schedule: '',
+    // scheduleValue: '',
+    inspectedBy: '',
+    inspectedOnStartDate: '',
+    inspectedOnEndDate: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -352,16 +361,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType
     };
 
-    return this.operatorRoundsService.getRoundsList$(obj).pipe(
-      map(({ rows, nextToken }) => {
-        this.isLoading$.next(false);
-        if (rows) {
-          this.nextToken = nextToken;
-          return rows;
-        }
-        return [];
-      })
-    );
+    return this.operatorRoundsService
+      .getRoundsList$({ ...obj, ...this.filter })
+      .pipe(
+        map(({ rows, nextToken }) => {
+          this.isLoading$.next(false);
+          if (rows) {
+            this.nextToken = nextToken;
+            return rows;
+          }
+          return [];
+        })
+      );
   }
 
   handleTableEvent = (event): void => {
@@ -412,11 +423,29 @@ export class RoundsComponent implements OnInit, OnDestroy {
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item['column'] == 'status') {
+          item.items = this.status;
+        }
+      }
     });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type == 'daterange') {
+        this.filter.inspectedOnStartDate = item.value[0];
+        this.filter.inspectedOnEndDate = item.value[1];
+      }
+      // else if (item.type == 'schedule') {
+      //   this.filter.schedule = item.itemValue;
+      //   this.filter.scheduleValue = item.value;
+      // }
+      else {
+        this.filter[item.column] = item.value;
+      }
+    }
   }
 
   clearFilters(): void {
