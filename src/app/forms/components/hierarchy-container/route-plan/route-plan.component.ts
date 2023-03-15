@@ -20,6 +20,7 @@ import {
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { HierarchyEntity } from 'src/app/interfaces';
 import {
@@ -54,12 +55,15 @@ export class RoutePlanComponent implements OnInit {
   dropActionTodo: any = null;
 
   selectedNode: any;
+  public nodeSelectedForShowHierarchy = {} as any;
+  public togglePopover = false;
 
   private _hierarchy: any;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     public assetHierarchyUtil: AssetHierarchyUtil,
+    public dialog: MatDialog,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef,
     private store: Store<State>
@@ -237,6 +241,11 @@ export class RoutePlanComponent implements OnInit {
       this.prepareDragDrop(node.children);
     });
   }
+
+  toggleShowHierarchyPopover = (node) => {
+    this.nodeSelectedForShowHierarchy = node;
+    this.togglePopover = !this.togglePopover;
+  };
 
   triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
 }

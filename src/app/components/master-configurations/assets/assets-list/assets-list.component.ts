@@ -213,7 +213,6 @@ export class AssetsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    //this.assetsListCount$ = this.assetService.getFormsListCount$();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
