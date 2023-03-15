@@ -409,7 +409,7 @@ export class IssuesComponent implements OnInit {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
         this.issuesCount$ = of(count);
-        return of(rows);
+        return of(rows as any[]);
       }),
       catchError(() => {
         this.isLoading$.next(false);
