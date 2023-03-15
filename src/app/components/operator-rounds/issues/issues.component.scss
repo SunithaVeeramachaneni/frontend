@@ -1,0 +1,30 @@
+@import '../../../../scss/colors.scss';
+
+.issues-list {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+
+  .issues-search {
+    position: fixed;
+    right: 14px;
+    top: 370px;
+  }
+  .no-of-issues {
+    margin-right: 10px;
+  }
+  .issues-count {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray-bg;
+  }
+  .issues-text {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray1;
+    margin-left: 5px;
+    .ghost-loading {
+      padding: 0 20px;
+    }
+  }
+}
