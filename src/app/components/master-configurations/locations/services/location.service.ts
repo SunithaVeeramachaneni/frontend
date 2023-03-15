@@ -1,14 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import {
-  APIService,
-  CreateLocationInput,
-  DeleteLocationInput,
-  ListLocationsQuery,
-  ModelLocationFilterInput
-} from 'src/app/API.service';
-import { map, shareReplay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -18,6 +11,12 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import {
+  GetLocations,
+  CreateLocation,
+  DeleteLocation,
+  LocationsResponse
+} from 'src/app/interfaces/master-data-management/locations';
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +66,7 @@ export class LocationService {
         params.set('nextToken', queryParams.nextToken);
       }
       if (queryParams.searchKey) {
-        const filter: ModelLocationFilterInput = {
+        const filter: GetLocations = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
         params.set('filter', JSON.stringify(filter));
@@ -90,7 +89,7 @@ export class LocationService {
 
   createLocation$(
     formLocationQuery: Pick<
-      CreateLocationInput,
+      CreateLocation,
       'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
     >
   ) {
@@ -123,7 +122,7 @@ export class LocationService {
     );
   }
 
-  deleteLocation$(values: DeleteLocationInput) {
+  deleteLocation$(values: DeleteLocation) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `location/${JSON.stringify(values)}/delete`
@@ -142,7 +141,7 @@ export class LocationService {
     );
   }
 
-  private formatGraphQLocationResponse(resp: ListLocationsQuery) {
+  private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items
         .sort(

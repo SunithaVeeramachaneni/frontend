@@ -2,12 +2,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import {
-  CreateAssetsInput,
-  DeleteAssetsInput,
-  ListAssetsQuery,
-  ModelAssetsFilterInput
-} from 'src/app/API.service';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -18,6 +12,12 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import {
+  AssetsResponse,
+  CreateAssets,
+  DeleteAssets,
+  GetAssets
+} from 'src/app/interfaces/master-data-management/assets';
 
 @Injectable({
   providedIn: 'root'
@@ -69,7 +69,7 @@ export class AssetsService {
       }
 
       if (queryParams.searchKey) {
-        const filter: ModelAssetsFilterInput = {
+        const filter: GetAssets = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
         params.set('filter', JSON.stringify(filter));
@@ -92,7 +92,7 @@ export class AssetsService {
 
   createAssets$(
     formAssetsQuery: Pick<
-      CreateAssetsInput,
+      CreateAssets,
       | 'name'
       | 'image'
       | 'description'
@@ -131,7 +131,7 @@ export class AssetsService {
     );
   }
 
-  deleteAssets$(values: DeleteAssetsInput) {
+  deleteAssets$(values: DeleteAssets) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `asset/${JSON.stringify(values)}/delete`
@@ -150,7 +150,7 @@ export class AssetsService {
     );
   }
 
-  private formatGraphQAssetsResponse(resp: ListAssetsQuery) {
+  private formatGraphQAssetsResponse(resp: AssetsResponse) {
     let rows =
       resp.items
         .sort(
