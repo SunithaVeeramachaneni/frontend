@@ -1,13 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import {
-  APIService,
-  CreateLocationInput,
-  DeleteLocationInput,
-  ListLocationsQuery
-} from 'src/app/API.service';
-import { map, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   LoadEvent,
@@ -17,6 +11,12 @@ import {
 import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import {
+  GetLocations,
+  CreateLocation,
+  DeleteLocation,
+  LocationsResponse
+} from 'src/app/interfaces/master-data-management/locations';
 
 @Injectable({
   providedIn: 'root'
@@ -28,18 +28,22 @@ export class LocationService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
+  private MAX_FETCH_LIMIT: string = '1000000';
 
-  constructor(
-    private _appService: AppService,
-    private readonly awsApiService: APIService
-  ) {}
+  constructor(private _appService: AppService) {}
 
   setFormCreatedUpdated(data: any) {
     this.locationCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllLocations$ = () =>
-    from(this.awsApiService.ListLocations({}, 20000, '')).pipe(shareReplay(1));
+  fetchAllLocations$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'location/list?' + params.toString()
+    );
+  };
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -53,17 +57,27 @@ export class LocationService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this.awsApiService.ListLocations(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
+      const params: URLSearchParams = new URLSearchParams();
+
+      if (!isSearch) {
+        params.set('limit', `${queryParams.limit}`);
+      }
+      if (!isSearch && queryParams.nextToken) {
+        params.set('nextToken', queryParams.nextToken);
+      }
+      if (queryParams.searchKey) {
+        const filter: GetLocations = {
+          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
+        };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      return this._appService
+        ._getResp(
+          environment.masterConfigApiUrl,
+          'location/list?' + params.toString()
         )
-      ).pipe(map((res) => this.formatGraphQLocationResponse(res)));
+        .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     } else {
       return of({
         count: 0,
@@ -73,45 +87,46 @@ export class LocationService {
     }
   }
 
-  getLocationById$(id: string) {
-    return from(this.awsApiService.GetLocation(id));
-  }
-
   createLocation$(
     formLocationQuery: Pick<
-      CreateLocationInput,
+      CreateLocation,
       'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
     >
   ) {
-    return from(
-      this.awsApiService.CreateLocation({
-        name: formLocationQuery.name,
-        image: formLocationQuery.image,
-        description: formLocationQuery.description,
-        model: formLocationQuery.model,
-        locationId: formLocationQuery.locationId,
-        parentId: formLocationQuery?.parentId?.length
-          ? formLocationQuery.parentId
-          : null,
-        searchTerm: formLocationQuery.name.toLowerCase()
-      })
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      `location/create`,
+      {
+        data: {
+          ...formLocationQuery,
+          searchTerm: `${formLocationQuery.name.toLowerCase()} ${
+            formLocationQuery.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
-  updateLocation$(locationDetails) {
-    return from(
-      this.awsApiService.UpdateLocation({
-        ...locationDetails.data,
-        parentId: locationDetails.data?.parentId?.length
-          ? locationDetails.data.parentId
-          : null,
-        _version: locationDetails.version
-      })
+  updateLocation$(locationData) {
+    return this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `location/${locationData.id}/update`,
+      {
+        data: {
+          ...locationData,
+          searchTerm: `${locationData.name.toLowerCase()} ${
+            locationData.description?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
-  deleteLocation$(values: DeleteLocationInput) {
-    return from(this.awsApiService.DeleteLocation({ ...values }));
+  deleteLocation$(values: DeleteLocation) {
+    return this._appService._removeData(
+      environment.masterConfigApiUrl,
+      `location/${JSON.stringify(values)}/delete`
+    );
   }
 
   downloadSampleLocationTemplate(
@@ -126,7 +141,7 @@ export class LocationService {
     );
   }
 
-  private formatGraphQLocationResponse(resp: ListLocationsQuery) {
+  private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items
         .sort(
