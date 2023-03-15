@@ -1,8 +1,12 @@
+@import '../../../../scss/colors.scss';
+
 .show-hierarchy-container {
   min-height: 250px;
   padding: 10px;
   min-width: 400px;
   overflow: hidden;
+  position: relative;
+  top: -28px;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
@@ -29,4 +33,15 @@
     border: none;
     cursor: pointer;
   }
+}
+
+.arrow-left {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid $white;
+  position: relative;
+  left: -10px;
+  top: 50%;
 }
