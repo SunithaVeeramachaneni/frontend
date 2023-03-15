@@ -76,10 +76,7 @@
                 </div>
 
                 <ng-container *ngIf="question.value.pdf !== null">
-                  <app-instruction-pdf-preview
-                    [pdf]="question.value.pdf"
-                    (indexEmitter)="instructionsFileDeleteHandler($event)"
-                  >
+                  <app-instruction-pdf-preview [pdf]="question.value.pdf">
                   </app-instruction-pdf-preview>
                 </ng-container>
               </div>
