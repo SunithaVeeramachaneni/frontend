@@ -6,7 +6,8 @@ import {
   OnDestroy,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  DoCheck
 } from '@angular/core';
 import { MatOption } from '@angular/material/core';
 import { SparepartsService } from './spare-parts.service';
@@ -45,7 +46,7 @@ import { isEqual } from 'lodash-es';
   styleUrls: ['./spare-parts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SparePartsComponent implements OnInit, OnDestroy {
+export class SparePartsComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChild('allSelectedPlants') public allSelectedPlants: MatOption;
   @ViewChild('allSelectedWorkCenters')
   public allSelectedWorkCenters: MatOption;
@@ -64,8 +65,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
   public putWorkOrder$: BehaviorSubject<WorkOrders> = new BehaviorSubject(
     this.emptyWorkOrders
   );
-  private allPlants: Plant[];
-  private currentWorkCenters: WorkCenter[];
+
   public allPlants$: Observable<Plant[]>;
   public allWorkCenters$: Observable<WorkCenter[]>;
   public currentWorkCenters$: Observable<WorkCenter[]>;
@@ -86,6 +86,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
 
   public selectedUser = '';
   headerTitle = 'Spare Parts Control Center';
+  dateSegmentPosition;
   hideList = true;
 
   public isDataLoading;
@@ -115,6 +116,9 @@ export class SparePartsComponent implements OnInit, OnDestroy {
 
   showFilters = false;
   public imageUrl;
+
+  private allPlants: Plant[];
+  private currentWorkCenters: WorkCenter[];
 
   constructor(
     private sparepartsSvc: SparepartsService,
@@ -222,6 +226,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.sparepartsSvc.stopSeamlessUpdate();
+  }
+
+  ngDoCheck(): void {
+    const rect = document.getElementById('dateSegment').getBoundingClientRect();
+    this.dateSegmentPosition = `${rect.right - 75}px`;
   }
 
   compareFn(option1: any, option2: any) {
