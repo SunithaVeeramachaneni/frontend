@@ -1,5 +1,7 @@
+@import '../../../../../../scss/colors.scss';
+
 .instruction-pdf-container {
-  background: #eef4f9;
+  background: $blue8;
   padding: 13px;
 
   .pdf-icon {
@@ -13,9 +15,8 @@
     font-size: 95%;
     margin-left: 10px;
     font-weight: 500;
-    font-size: 15px;
     letter-spacing: -0.24px;
-    color: #05366d;
+    color: $active-blue;
   }
 
   .pdf-sub-text {
@@ -23,7 +24,7 @@
     margin-left: 10px;
     font-weight: 400;
     letter-spacing: 0.066px;
-    color: #05366d;
+    color: $active-blue;
   }
 
   .close {

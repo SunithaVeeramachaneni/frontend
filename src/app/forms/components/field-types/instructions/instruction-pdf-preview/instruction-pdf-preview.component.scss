@@ -1,6 +1,8 @@
+@import '../../../../../../scss/colors.scss';
+
 .instruction-pdf-container {
   display: inline-flex;
-  background: #eef4f9;
+  background: $blue8;
   padding: 1px;
   position: relative;
   top: -3px;
@@ -13,22 +15,20 @@
   }
 
   .pdf-text {
-    font-size: 95%;
-    margin-left: 14px;
-    word-wrap: break-word;
-    font-weight: 500;
-    font-size: 12px;
-    letter-spacing: -0.24px;
-    color: #05366d;
-  }
-
-  .pdf-sub-text {
     font-size: 85%;
     margin-left: 14px;
     word-wrap: break-word;
+    font-weight: 500;
+    letter-spacing: -0.24px;
+    color: $active-blue;
+  }
+
+  .pdf-sub-text {
+    font-size: 75%;
+    margin-left: 14px;
+    word-wrap: break-word;
     font-weight: 400;
-    font-size: 10px;
     letter-spacing: 0.066px;
-    color: #05366d;
+    color: $active-blue;
   }
 }
