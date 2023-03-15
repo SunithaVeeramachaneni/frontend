@@ -95,7 +95,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               formDetail && formDetail.pages
                 ? JSON.parse(formDetail?.pages)
                 : [];
-            if (!pages.length) return;
             data = { ...formDetail, pages };
             data.pages?.forEach((page, pIdx) => {
               if (pIdx === 0) {
