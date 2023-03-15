@@ -470,12 +470,4 @@ export class IssuesComponent implements OnInit {
       default:
     }
   };
-
-  onCloseViewDetail() {
-    const deleteReportRef = this.dialog.open(
-      IssuesActionsDetailViewComponent,
-      {}
-    );
-    deleteReportRef.close();
-  }
 }
