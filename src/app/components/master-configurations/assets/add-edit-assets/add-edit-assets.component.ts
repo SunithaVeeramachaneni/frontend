@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/member-ordering */
 import {
   Component,
   EventEmitter,
@@ -65,6 +67,7 @@ export class AddEditAssetsComponent implements OnInit {
   get assetsEditData() {
     return this.assetEditData;
   }
+  assetIcon = 'assets/rdf-forms-icons/asset-icon.svg';
   errors: ValidationError = {};
   assetForm: FormGroup;
 
@@ -110,7 +113,7 @@ export class AddEditAssetsComponent implements OnInit {
     if (this.assetStatus === 'add') {
       this.assetForm
         .get('image')
-        .setValue('assets/master-configurations/default-asset.png');
+        .setValue('assets/master-configurations/asset-icon.svg');
       this.assetService.createAssets$(this.assetForm.value).subscribe((res) => {
         this.createdAssetsData.emit({
           status: this.assetStatus,

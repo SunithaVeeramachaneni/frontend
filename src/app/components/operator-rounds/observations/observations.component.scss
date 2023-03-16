@@ -22,8 +22,8 @@
   }
 
   ::ng-deep .mat-tab-header {
-    width: 17%;
     margin-bottom: 10px !important;
+    width: fit-content;
   }
 
   ::ng-deep .mat-tab-label {
