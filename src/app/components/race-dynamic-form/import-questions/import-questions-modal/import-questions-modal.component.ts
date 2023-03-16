@@ -104,12 +104,13 @@ export class ImportQuestionsModalComponent implements OnInit {
         if (this.skip === 0) {
           initial.data = rows.filter((row) => row.id !== this.formMetadata.id);
         } else {
-          scrollData && scrollData.filter(
-            (data) => data.id !== this.formMetadata.id
-          );
-          initial.data = initial.data.concat(
-            
-          );
+          // scrollData = scrollData && scrollData.filter(
+          //   (data) => data.id !== this.formMetadata.id
+          // );
+          // initial.data = initial.data.concat(
+          // scrollData;
+          // );
+          initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data.length;
