@@ -25,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -42,7 +43,8 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'operator-rounds'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(

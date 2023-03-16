@@ -63,7 +63,8 @@ const {
   unitOfMeasurement,
   plants,
   roundPlanArchivedForms,
-  roundPlanSubmissionForms
+  roundPlanSubmissionForms,
+  roundPlanObservations
 } = routingUrls;
 
 @Component({
@@ -189,6 +190,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: roundPlanArchivedForms.title,
           url: roundPlanArchivedForms.url,
           permission: roundPlanArchivedForms.permission
+        },
+        {
+          title: roundPlanObservations.title,
+          url: roundPlanObservations.url,
+          permission: roundPlanObservations.permission
         }
       ]
     },
@@ -447,18 +453,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   registerServerSentEvents(userInfo, ref) {
+    const { tenantId, collaborationType } = this.tenantService.getTenantInfo();
     let userID;
-    if (userInfo.collaborationType === 'slack') {
+    if (collaborationType === 'slack') {
       if (userInfo.slackDetail && userInfo.slackDetail.slackID) {
         userID = userInfo.slackDetail.slackID;
       }
-    } else if (userInfo.collaborationType === 'msteams') {
+    } else if (collaborationType === 'msteams') {
       userID = userInfo.email;
     }
 
     // COLLABORATION CHAT SSE
     if (userID) {
-      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
+      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
         collaborationSSEUrl,
         null

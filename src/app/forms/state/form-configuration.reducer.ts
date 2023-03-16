@@ -25,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -42,14 +43,14 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'rdf'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
   initialState,
   on(
     FormConfigurationActions.addFormMetadata,
-    BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...action.formMetadata },
