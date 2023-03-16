@@ -428,7 +428,7 @@ export const deleteNodeFromHierarchy = (
           { id: node.id, uid: node.uid },
           currentSelectedHierarchyState
         ),
-        children: node.children.length
+        children: node?.children?.length
           ? deleteNodeFromHierarchy(
               node.children,
               instanceIds,
