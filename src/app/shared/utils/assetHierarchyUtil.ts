@@ -27,6 +27,19 @@ export class AssetHierarchyUtil {
     return count;
   }
 
+  getAssetsLocationsCountByNode(node) {
+    let count = 0;
+    if (node.hasChildren && node.children && node.children.length) {
+      node.children.forEach((child) => {
+        count++;
+        if (child.hasChildren && child.children && child.children.length) {
+          count += this.getAssetsLocationsCountByNode(child);
+        }
+      });
+    }
+    return count;
+  }
+
   getTotalAssetCount(rootNode) {
     let count = 0;
     rootNode.forEach((node) => {
@@ -44,6 +57,22 @@ export class AssetHierarchyUtil {
             child.children.length
           ) {
             count += this.getAssetCountByNode(child);
+          }
+        });
+      }
+    });
+    return count;
+  }
+
+  getTotalAssetsLocationsCount(rootNode) {
+    let count = 0;
+    rootNode.forEach((node) => {
+      count++;
+      if (node.hasChildren && node.children && node.children.length) {
+        node.children.forEach((child) => {
+          count++;
+          if (child.hasChildren && child.children && child.children.length) {
+            count += this.getAssetsLocationsCountByNode(child);
           }
         });
       }
@@ -399,7 +428,7 @@ export const deleteNodeFromHierarchy = (
           { id: node.id, uid: node.uid },
           currentSelectedHierarchyState
         ),
-        children: node.children.length
+        children: node?.children?.length
           ? deleteNodeFromHierarchy(
               node.children,
               instanceIds,

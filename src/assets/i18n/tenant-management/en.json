@@ -32,6 +32,7 @@
   "msTeamsPublicPrivateKeys": "RSA Public-Private Keys",
   "msTeamsRSAPrivateKey": "Private Key",
   "msTeamsRSAPublicKey": "Public Key",
+  "none": "None",
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
   "sapsamlDetails": "SAP SAML Details",

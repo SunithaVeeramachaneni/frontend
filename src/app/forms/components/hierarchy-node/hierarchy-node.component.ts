@@ -142,9 +142,9 @@ export class HierarchyNodeComponent implements OnInit {
   isAllSelectedToggled = (event: MatCheckboxChange | any) => {
     const { checked } = event;
     this.allSelected = checked;
-    if (this.masterData.parentId) this.masterData.isSelected = checked;
 
     if (checked) {
+      this.masterData.isSelected = checked;
       this.masterData.children =
         this.assetHierarchyUtil.toggleAllChildrenSelection(
           checked,
