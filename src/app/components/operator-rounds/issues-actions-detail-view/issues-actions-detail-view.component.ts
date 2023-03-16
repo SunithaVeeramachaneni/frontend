@@ -9,6 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class IssuesActionsDetailViewComponent implements OnInit {
   issuesActionsDetailViewForm: FormGroup;
+  priority: ['High', 'Medium', 'Low'];
+  status: ['Open', 'In-Progress'];
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsDetailViewComponent>,
@@ -17,19 +19,20 @@ export class IssuesActionsDetailViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.issuesActionsDetailViewForm = this.fb.group({
-      name: 'Issue in the Boiler',
-      description: 'Issue in the Boiler Description',
-      category: 'Environmental Safety',
-      round: 'Weekly Oil & Water Inspection',
-      location: 'Water Treatment Plant',
-      asset: '',
-      task: 'Check the wind Pressure at the entrance',
-      priority: 'High',
-      status: 'Open',
-      dueDate: '3/16/2023',
-      assignedTo: 'John',
-      raisedBy: 'John',
-      createdBy: 'John'
+      name: this.data?.Title || '',
+      description: this.data?.Description || '',
+      category: this.data?.Category || '',
+      round: this.data?.Round || '',
+      location: this.data?.Location || '',
+      asset: this.data?.Asset || '',
+      task: this.data?.taskDesciption || '',
+      priority: this.data?.Priority || '',
+      status: this.data?.Status || '',
+      dueDate: this.data?.dueDate
+        ? new Date(this.data['Due Date and Time'])
+        : '',
+      assignedTo: this.data?.assignee || '',
+      raisedBy: this.data?.createdBy || ''
     });
   }
 

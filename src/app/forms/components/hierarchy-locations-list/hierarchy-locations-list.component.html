@@ -30,6 +30,7 @@
         class="master-checkbox"
         [(ngModel)]="isMasterChecked"
         (change)="handleMasterToggle($event)"
+        color="primary"
       ></mat-checkbox>
       <hr class="borders" />
       <div *ngIf="searchFilterItems.length; else noResults">

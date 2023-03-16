@@ -20,6 +20,7 @@ import {
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { HierarchyEntity } from 'src/app/interfaces';
 import {
@@ -54,12 +55,15 @@ export class RoutePlanComponent implements OnInit {
   dropActionTodo: any = null;
 
   selectedNode: any;
+  public nodeSelectedForShowHierarchy = {} as any;
+  public togglePopover = false;
 
   private _hierarchy: any;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     public assetHierarchyUtil: AssetHierarchyUtil,
+    public dialog: MatDialog,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef,
     private store: Store<State>
@@ -161,6 +165,24 @@ export class RoutePlanComponent implements OnInit {
 
     const i = oldItemContainer.findIndex((c) => c.id === draggedItemId);
     oldItemContainer.splice(i, 1);
+    if (
+      draggedItem.hasChildren &&
+      draggedItem.children &&
+      draggedItem.children.length
+    ) {
+      const parentItem = this.nodeLookup[parentItemId];
+      draggedItem.children.forEach((c) => {
+        if (!parentItem.children) {
+          parentItem.children = [];
+        }
+        parentItem.children.push(c);
+      });
+      draggedItem.children = [];
+      const parentIdx = oldItemContainer.findIndex(
+        (c) => c.id === parentItemId
+      );
+      oldItemContainer[parentIdx] = parentItem;
+    }
 
     switch (this.dropActionTodo.action) {
       case 'before':
@@ -237,6 +259,11 @@ export class RoutePlanComponent implements OnInit {
       this.prepareDragDrop(node.children);
     });
   }
+
+  toggleShowHierarchyPopover = (node) => {
+    this.nodeSelectedForShowHierarchy = node;
+    this.togglePopover = !this.togglePopover;
+  };
 
   triggerCopyNode = (node: HierarchyEntity) => this.copyNode.emit(node);
 }

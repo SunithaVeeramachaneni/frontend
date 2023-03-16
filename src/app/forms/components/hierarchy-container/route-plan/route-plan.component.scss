@@ -7,7 +7,7 @@
   box-sizing: border-box;
   box-shadow: 0 3px 3px -2px $drag-preview-shadow,
     0 8px 10px 1px $drag-preview-shadow1, 0 3px 14px 2px $drag-preview-shadow2;
-  background: $red-main;
+  background: $hover-bg;
   opacity: 0.3;
 }
 .drop-inside {
@@ -67,7 +67,7 @@
   min-width: max-content;
   .left {
     display: flex;
-    width: 90%;
+    width: 85%;
     flex-direction: column;
     img {
       max-width: 40px;
@@ -83,7 +83,6 @@
 
   .right {
     display: flex;
-    width: 10%;
     align-items: center;
     .more-icon {
       cursor: pointer;
@@ -94,7 +93,7 @@
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
-  width: inherit;
+  width: 100%;
 }
 .children {
   margin-left: 40px;
@@ -136,4 +135,25 @@
 
 .noMarginLeft {
   margin-left: 0px !important;
+}
+.showHierarchy {
+  background-color: $white;
+  box-shadow: $show-hierarchy-shadow 0px 5px 15px;
+  border-radius: 5px;
+}
+.nodeCount {
+  background: $active-blue;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  margin-right: 10px;
+}
+
+.nodeCountInvert {
+  background: $white;
+  color: $active-blue;
 }

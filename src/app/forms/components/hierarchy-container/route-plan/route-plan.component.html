@@ -4,6 +4,7 @@
       *ngIf="!node.isDeletedInRoutePlan"
       class="parentNode node"
       [ngClass]="{ active: selectedNode.id === node.id }"
+      (click)="setSelectedNode(node)"
     >
       <div class="left">
         <div class="dis-flex">
@@ -14,11 +15,7 @@
             alt="six-dots"
             class="question-six-dots"
           />
-          <div
-            class="nodeContent"
-            class="nodeContent"
-            (click)="setSelectedNode(node)"
-          >
+          <div class="nodeContent" class="nodeContent">
             <img [src]="node.image" />
             <div class="description">
               <span class="title">{{ node.name }}</span>
@@ -57,7 +54,12 @@
         </div>
       </div>
       <div class="right">
-        <span> {{ getTasksCountByNodeId(node.id) }} </span>
+        <span
+          class="nodeCount"
+          [ngClass]="{ nodeCountInvert: selectedNode.id === node.id }"
+        >
+          {{ getTasksCountByNodeId(node.id) }}
+        </span>
         <span
           [matMenuTriggerFor]="hierarchyMenu"
           #hierarchyMenuTrigger="matMenuTrigger"
@@ -67,6 +69,27 @@
           <mat-icon>more_horiz</mat-icon>
         </span>
         <mat-menu #hierarchyMenu="matMenu" xPosition="before">
+          <button
+            mat-menu-item
+            cdkOverlayOrigin
+            #trigger="cdkOverlayOrigin"
+            (click)="toggleShowHierarchyPopover(node)"
+          >
+            <span translate="showHierarchy"></span>
+          </button>
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="trigger"
+            [cdkConnectedOverlayOpen]="togglePopover"
+            *ngIf="node.id === nodeSelectedForShowHierarchy.id"
+          >
+            <app-show-hierarchy-popup
+              #showHierarchy
+              class="showHierarchy"
+              [nodeUid]="nodeSelectedForShowHierarchy.uid"
+              (closeHierarchyOverlay)="togglePopover = $event"
+            ></app-show-hierarchy-popup>
+          </ng-template>
           <button mat-menu-item (click)="triggerCopyNode(node)">
             <span translate="copy"></span>
           </button>

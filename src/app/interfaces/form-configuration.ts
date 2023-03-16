@@ -87,3 +87,10 @@ export interface QuestionEvent {
   type: 'add' | 'update' | 'delete';
   isAskQuestion?: boolean;
 }
+
+export interface InstructionsFile {
+  name: string;
+  size: number;
+  objectKey: string;
+  objectURL: string;
+}

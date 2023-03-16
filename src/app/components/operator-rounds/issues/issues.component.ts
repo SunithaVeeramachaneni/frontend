@@ -189,7 +189,7 @@ export class IssuesComponent implements OnInit {
         alignItems: 'center',
         position: 'relative',
         top: '10px',
-        width: '80px',
+        width: '90px',
         right: '15px',
         height: '24px',
         background: '#FEF3C7',
@@ -344,8 +344,6 @@ export class IssuesComponent implements OnInit {
         })
       )
       .subscribe();
-    this.issuesCount$ =
-      this.roundPlanObservationsService.getObservationCount$('issue');
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -407,10 +405,11 @@ export class IssuesComponent implements OnInit {
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken }) => {
+      mergeMap(({ rows, nextToken, count }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
-        return of(rows as any);
+        this.issuesCount$ = of(count);
+        return of(rows as any[]);
       }),
       catchError(() => {
         this.isLoading$.next(false);

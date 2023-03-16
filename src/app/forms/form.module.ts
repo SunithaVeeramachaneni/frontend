@@ -19,6 +19,7 @@ import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
 import { IphoneComponent } from './components/iphone/iphone.component';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -51,6 +52,11 @@ import { HierarchyModalComponent } from './components/hierarchy-modal/hierarchy-
 import { HierarchyLocationsListComponent } from './components/hierarchy-locations-list/hierarchy-locations-list.component';
 import { HierarchyAssetsListComponent } from './components/hierarchy-assets-list/hierarchy-assets-list.component';
 import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/show-hierarchy-popup.component';
+import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
+import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
+import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
+import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -81,12 +87,18 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
     HierarchyAssetsListComponent,
-    ShowHierarchyPopupComponent
+    ShowHierarchyPopupComponent,
+    QuillMaterialComponent,
+    TagSelectComponent,
+    InstructionImageComponent,
+    InstructionPdfComponent,
+    InstructionPdfPreviewComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    MatAutocompleteModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,

@@ -25,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -42,7 +43,8 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'operator-rounds'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -413,6 +415,23 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         [key]: pages
       };
     }
+  ),
+  on(
+    RoundPlanConfigurationApiActions.publishRoundPlanSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: action.formStatus,
+      formMetadata: {
+        ...state.formMetadata,
+        formStatus: 'Published'
+      },
+      authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
+      isFormDetailPublished: false,
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      authoredFormDetailDynamoDBVersion: 1,
+      authoredFormDetailId: action.authoredFormDetail.id
+    })
   ),
   on(
     BuilderConfigurationActions.deleteSection,

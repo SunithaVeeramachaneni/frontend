@@ -1,0 +1,29 @@
+<div id="round-plan-success-container">
+  <mat-icon
+    ><img
+      src="assets/rdf-forms-icons/schedule-success.svg"
+      alt="schedule"
+      class="schedule-icon"
+  /></mat-icon>
+  <p *ngIf="data.mode === 'create'" class="color">
+    {{ 'scheduleCreatedSuccess' | translate }}
+  </p>
+  <p *ngIf="data.mode === 'update'" class="color">
+    {{ 'scheduleUpdatedSuccess' | translate }}
+  </p>
+  <div class="message">
+    <p>
+      {{ data.roundPlanName }}
+    </p>
+    <p
+      *ngIf="data.mode === 'create'"
+      [innerHTML]="'scheduleCreatedSuccessMessage' | translate"
+    ></p>
+    <p
+      *ngIf="data.mode === 'update'"
+      [innerHTML]="'scheduleUpdatedSuccessMessage' | translate"
+    ></p>
+  </div>
+  <button mat-button translate="viewRounds" (click)="viewRounds()"></button>
+  <button mat-button translate="close" (click)="close()"></button>
+</div>

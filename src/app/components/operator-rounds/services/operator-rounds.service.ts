@@ -3,13 +3,15 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
   LoadEvent,
+  RoundPlan,
+  RoundPlanResponse,
   RoundPlanList,
   RoundPlanSubmissionList,
   SearchEvent,
@@ -42,8 +44,7 @@ export class OperatorRoundsService {
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
-    private appService: AppService,
-    private store: Store
+    private appService: AppService
   ) {}
 
   setSelectedNode(node: any) {
@@ -145,17 +146,73 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   }
 
-  getRoundsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
-    return of({
-      count: 0,
-      rows: [],
-      nextToken: null
-    });
+  getRoundsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        queryParams.nextToken = null;
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService._getResp(
+        environment.operatorRoundsApiUrl,
+        'rounds/',
+        { displayToast, failureResponse },
+        rest
+      );
+    } else {
+      return of({
+        rows: [],
+        nextToken: null
+      });
+    }
+  }
+
+  getPlansList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchTerm: string;
+      fetchType: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<RoundPlanResponse> {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        queryParams.nextToken = null;
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.operatorRoundsApiUrl,
+          'round-plans/tasks-rounds',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(
+          map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
+        );
+    } else {
+      return of({ rows: [] } as RoundPlanResponse);
+    }
   }
 
   getSubmissionFormsList$(queryParams: {
@@ -591,6 +648,35 @@ export class OperatorRoundsService {
       });
     });
     return `${updatedResponse.count}/${updatedResponse.total}`;
+  }
+
+  private formatRoundPlans(roundPlans: RoundPlan[] = []): RoundPlan[] {
+    const rows = roundPlans
+      .sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p?.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        lastPublishedBy: p?.lastPublishedBy,
+        author: p?.author,
+        publishedDate: p.publishedDate ? p.publishedDate : '',
+        archivedAt: p?.createdAt
+          ? formatDistance(new Date(p.createdAt), new Date(), {
+              addSuffix: true
+            })
+          : ''
+      }));
+    return rows;
   }
 
   fetchAllOperatorRounds$ = () => {

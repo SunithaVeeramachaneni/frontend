@@ -189,7 +189,7 @@ export class ActionsComponent implements OnInit {
         alignItems: 'center',
         position: 'relative',
         top: '10px',
-        width: '80px',
+        width: '90px',
         right: '15px',
         height: '24px',
         background: '#FEF3C7',
@@ -345,8 +345,6 @@ export class ActionsComponent implements OnInit {
         })
       )
       .subscribe();
-    this.actionsCount$ =
-      this.roundPlanObservationsService.getObservationCount$('action');
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
@@ -411,10 +409,11 @@ export class ActionsComponent implements OnInit {
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken }) => {
+      mergeMap(({ rows, nextToken, count }) => {
         this.nextToken = nextToken;
         this.isLoading$.next(false);
-        return of(rows as any);
+        this.actionsCount$ = of(count);
+        return of(rows as any[]);
       }),
       catchError(() => {
         this.isLoading$.next(false);

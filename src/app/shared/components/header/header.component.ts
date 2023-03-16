@@ -52,6 +52,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   audio: any;
   eventSource: any;
   tenantLogo: any;
+  collaborationType = 'none';
   isOpen = false;
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
@@ -161,7 +162,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
 
     this.tenantService.tenantInfo$.subscribe(
-      ({ tenantLogo }) => (this.tenantLogo = tenantLogo)
+      ({ tenantLogo, collaborationType }) => {
+        this.collaborationType = collaborationType;
+        this.tenantLogo = tenantLogo;
+      }
     );
   }
 
