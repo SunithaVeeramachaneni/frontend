@@ -70,7 +70,8 @@ export class AddEditAssetsComponent implements OnInit {
 
   assetStatus;
   assetTitle;
-  assetImage = '';
+  assetImage = 'assets/rdf-forms-icons/asset-icon.svg';
+
   assetButton;
 
   locations$;
