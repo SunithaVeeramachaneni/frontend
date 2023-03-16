@@ -106,59 +106,27 @@ export class RaceDynamicFormService {
       fetchType: string;
     },
     isArchived: boolean = false,
-    filterParam: any = null
+    filterData: any = null
   ) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      let filter = {
-        ...(queryParams.searchKey && {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        }),
-        isArchived: {
-          eq: isArchived
-        },
-        isDeleted: {
-          eq: false
-        }
-      };
-      if (filterParam && filterParam.status) {
-        filter['formStatus'] = {
-          eq: filterParam.status
-        };
-      }
-      if (filterParam && filterParam.modifiedBy) {
-        filter['lastPublishedBy'] = {
-          eq: filterParam.modifiedBy
-        };
-      }
-      if (filterParam && filterParam.authoredBy) {
-        filter['author'] = {
-          eq: filterParam.authoredBy
-        };
-      }
-      if (filterParam && filterParam.lastModifiedOn) {
-        filter['updatedAt'] = {
-          eq: new Date(filterParam.lastModifiedOn).toISOString()
-        };
-      }
-      return from(
-        this.awsApiService.ListFormLists(
-          filter,
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
-    } else {
-      return of({
-        count: 0,
-        rows: [],
-        nextToken: null
-      });
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    params.set('isArchived', String(isArchived));
+    if (filterData) {
+      params.set(
+        'formStatus',
+        filterData.status ? filterData.status : ''
+      );
+      params.set('modifiedBy', filterData.modifiedBy);
+      params.set('authoredBy', filterData.authoredBy);
+      params.set('lastModifiedOn', filterData.lastModifiedOn);
     }
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+    
   }
 
   getSubmissionFormsList$(queryParams: {
@@ -686,7 +654,7 @@ export class RaceDynamicFormService {
   getInspectionDetailByInspectionId$ = (inspectionId: string) =>
     from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
 
-  private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
     const rows =
       resp.items
         .sort(

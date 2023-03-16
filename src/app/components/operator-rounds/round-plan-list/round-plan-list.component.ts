@@ -545,6 +545,7 @@ export class RoundPlanListComponent implements OnInit {
         this.filter[item.column] = item.value;
       }
     }
+    this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -557,6 +558,7 @@ export class RoundPlanListComponent implements OnInit {
       scheduleStartDate: '',
       scheduleEndDate: ''
     };
+     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }

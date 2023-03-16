@@ -93,6 +93,7 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
       })
     );
+ 
 
     const initial = {
       columns: [],
@@ -103,8 +104,11 @@ export class ImportQuestionsModalComponent implements OnInit {
         if (this.skip === 0) {
           initial.data = rows.filter((row) => row.id !== this.formMetadata.id);
         } else {
+          scrollData && scrollData.filter(
+            (data) => data.id !== this.formMetadata.id
+          );
           initial.data = initial.data.concat(
-            scrollData.filter((data) => data.id !== this.formMetadata.id)
+            
           );
         }
 
