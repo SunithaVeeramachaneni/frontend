@@ -565,7 +565,8 @@ export class FormListComponent implements OnInit {
     this.formsList$
       .pipe(
         tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.items
+          console.log(formsList);
+          const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
             .filter((value, index, self) => self.indexOf(value) === index);
           for (const item of uniqueLastPublishedBy) {
@@ -573,7 +574,7 @@ export class FormListComponent implements OnInit {
               this.lastPublishedBy.push(item);
             }
           }
-          const uniqueAuthoredBy = formsList.items
+          const uniqueAuthoredBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
           for (const item of uniqueAuthoredBy) {

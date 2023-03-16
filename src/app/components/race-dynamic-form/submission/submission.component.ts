@@ -44,6 +44,11 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class SubmissionComponent implements OnInit, OnDestroy {
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    lastModifiedOn: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -332,9 +337,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       searchKey: this.searchForm.value,
       fetchType: this.fetchType
     };
-    const observable = this.isOperatorRounds
-      ? this.operatorRoundsService.getSubmissionFormsList$(obj)
-      : this.raceDynamicFormService.getSubmissionFormsList$(obj);
+    const observable = this.raceDynamicFormService.getSubmissionFormsList$(
+      obj,
+      this.filter
+    );
     return observable.pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;

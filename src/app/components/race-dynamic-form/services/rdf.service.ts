@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, retry, tap } from 'rxjs/operators';
 import {
   APIService,
   DeleteFormListInput,
@@ -114,84 +114,62 @@ export class RaceDynamicFormService {
     params.set('nextToken', queryParams?.nextToken);
     params.set('fetchType', queryParams?.fetchType);
     params.set('isArchived', String(isArchived));
-    if (filterData) {
-      params.set(
-        'formStatus',
-        filterData.status ? filterData.status : ''
-      );
-      params.set('modifiedBy', filterData.modifiedBy);
-      params.set('authoredBy', filterData.authoredBy);
-      params.set('lastModifiedOn', filterData.lastModifiedOn);
-    }
+    params.set(
+      'formStatus',
+      filterData && filterData.status ? filterData.status : ''
+    );
+    params.set(
+      'modifiedBy',
+      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+    );
+    params.set(
+      'authoredBy',
+      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+    );
+    params.set(
+      'lastModifiedOn',
+      filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
+    );
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
       .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
-    
   }
 
-  getSubmissionFormsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this._ListFormSubmissionLists(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatSubmittedListResponse(res)));
-    } else {
-      return of({
-        rows: [],
-        nextToken: null
-      });
-    }
+  getSubmissionFormsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType); 
+    params.set(
+      'formStatus',
+      filterData && filterData.status ? filterData.status : ''
+    );
+    params.set('modifiedBy', filterData && filterData.modifiedBy ? filterData.modifiedBy : '');
+    params.set('lastModifiedOn', filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/submission/list?' + params.toString())
+      .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
 
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false},isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/count?isArchived=' + isArchived)
+      .pipe(map((res) => res.items.length || 0));
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormSubmissionLists } }: any) =>
-          listFormSubmissionLists?.items?.length || 0
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/submission/count')
+      .pipe(map((res) => res.items.length || 0));
   }
 
   createForm$(
@@ -636,13 +614,9 @@ export class RaceDynamicFormService {
   }
 
   fetchAllFormListNames$() {
-    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormLists } }: any) =>
-          listFormLists?.items as GetFormListQuery[]
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/name')
+      .pipe(map((res) => res.items));
   }
 
   getAuthoredFormDetail$(formlistID: string) {
@@ -826,8 +800,21 @@ export class RaceDynamicFormService {
     return `${updatedResponse.count}/${updatedResponse.total}`;
   }
 
-  fetchAllForms$ = () =>
-    from(this.awsApiService.ListFormLists({}, LIST_LENGTH, ''));
+  fetchAllForms$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', LIST_LENGTH.toString());
+    params.set('nextToken', '');
+    params.set('fetchType', 'load');
+    params.set('isArchived', 'false');
+    params.set('modifiedBy', '');
+    params.set('formStatus', '');
+    params.set('authoredBy', '');
+    params.set('lastModifiedOn', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+  }
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
