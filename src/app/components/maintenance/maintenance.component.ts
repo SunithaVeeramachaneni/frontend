@@ -87,7 +87,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy, DoCheck {
   public techniciansDisplayList$;
   public selectedUser;
   headerTitle = 'Maintenance Control Center';
-  dateSegmentPosition;
+  dateSegmentPosition: string;
 
   public showOverdue = '';
   public showOverdueList: string[] = ['Yes', 'No'];

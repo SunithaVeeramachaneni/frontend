@@ -86,7 +86,7 @@ export class SparePartsComponent implements OnInit, OnDestroy, DoCheck {
 
   public selectedUser = '';
   headerTitle = 'Spare Parts Control Center';
-  dateSegmentPosition;
+  dateSegmentPosition: string;
   hideList = true;
 
   public isDataLoading;
