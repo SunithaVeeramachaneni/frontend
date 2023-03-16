@@ -76,7 +76,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
-  collaborationTypes = ['slack', 'msteams'];
+  collaborationTypes = ['slack', 'msteams', 'none'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   errors: ValidationError = {};
   tenantHeader = 'Adding Tenant...';

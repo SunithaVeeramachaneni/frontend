@@ -1,7 +1,27 @@
 <div class="maintenance-body">
   <div class="header-filters">
-    <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
+    <app-date-segment
+      (dateRangeEvent)="dateRangeEventHandler($event)"
+      id="dateSegment"
+    >
     </app-date-segment>
+
+    <div class="mcc-filters">
+      <app-common-filter
+        [title]="headerTitle"
+        [showOverdueList]="showOverdueList"
+        [priorityList]="priorityList"
+        [kitStatusList]="kitStatusList"
+        [technicians]="technicians"
+      >
+      </app-common-filter>
+    </div>
+  </div>
+
+  <div
+    class="plants-workcenters dis-flex"
+    [ngStyle]="{ 'padding-left': dateSegmentPosition }"
+  >
     <div class="custom-form-field-white-color">
       <mat-form-field
         appearance="outline"
@@ -112,16 +132,6 @@
           </mat-select>
         </mat-form-field>
       </ng-container>
-    </div>
-    <div style="position: absolute; right: 20px">
-      <app-common-filter
-        [title]="headerTitle"
-        [showOverdueList]="showOverdueList"
-        [priorityList]="priorityList"
-        [kitStatusList]="kitStatusList"
-        [technicians]="technicians"
-      >
-      </app-common-filter>
     </div>
   </div>
 
