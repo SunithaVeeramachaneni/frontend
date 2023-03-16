@@ -208,5 +208,6 @@
   "erpnotification": "ERP Notification",
   "raisedBy": "Raised By",
   "attachment": "Attachments",
-  "createdBy": "Created By"
+  "createdBy": "Created By",
+  "selectAll": "Select All"
 }

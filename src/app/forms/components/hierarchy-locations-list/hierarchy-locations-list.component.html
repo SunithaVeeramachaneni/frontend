@@ -31,6 +31,7 @@
         [(ngModel)]="isMasterChecked"
         (change)="handleMasterToggle($event)"
         color="primary"
+        translate="selectAll"
       ></mat-checkbox>
       <hr class="borders" />
       <div *ngIf="searchFilterItems.length; else noResults">
