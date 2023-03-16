@@ -54,7 +54,12 @@
         </div>
       </div>
       <div class="right">
-        <span> {{ getTasksCountByNodeId(node.id) }} </span>
+        <span
+          class="nodeCount"
+          [ngClass]="{ nodeCountInvert: selectedNode.id === node.id }"
+        >
+          {{ getTasksCountByNodeId(node.id) }}
+        </span>
         <span
           [matMenuTriggerFor]="hierarchyMenu"
           #hierarchyMenuTrigger="matMenuTrigger"
