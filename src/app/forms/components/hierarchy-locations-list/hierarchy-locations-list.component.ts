@@ -4,7 +4,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -29,6 +30,7 @@ export class HierarchyLocationsListComponent implements OnInit {
         )
       : ([] as HierarchyEntity[]);
     this.searchFilterItems = this.allItems;
+    this.cdrf.markForCheck();
   }
   @Input() set selectedList(data) {
     this.selectedHierarchyList = data;
@@ -46,7 +48,8 @@ export class HierarchyLocationsListComponent implements OnInit {
   public searchFilterItems = [];
   public initialSelectedItems = [] as HierarchyEntity[];
   constructor(
-    private dialogRef: MatDialogRef<HierarchyLocationsListComponent>
+    private dialogRef: MatDialogRef<HierarchyLocationsListComponent>,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {

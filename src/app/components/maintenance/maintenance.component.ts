@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   OnDestroy,
-  ViewChild
+  ViewChild,
+  DoCheck
 } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
@@ -35,7 +36,7 @@ import { format } from 'date-fns';
   styleUrls: ['./maintenance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MaintenanceComponent implements OnInit, OnDestroy {
+export class MaintenanceComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChild('allSelectedPlants') public allSelectedPlants: MatOption;
   @ViewChild('allSelectedWorkCenters')
   public allSelectedWorkCenters: MatOption;
@@ -86,6 +87,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   public techniciansDisplayList$;
   public selectedUser;
   headerTitle = 'Maintenance Control Center';
+  dateSegmentPosition: string;
 
   public showOverdue = '';
   public showOverdueList: string[] = ['Yes', 'No'];
@@ -101,14 +103,15 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   ];
 
   public assign: string[] = [];
+  hideList = true;
+  showFilters = false;
 
   public showOperationsList = {};
   public base64Code: any;
   private allPlants: Plant[];
   private currentWorkCenters: WorkCenter[];
   private technicianSubscription: Subscription;
-  hideList = true;
-  showFilters = false;
+
   constructor(
     private maintenanceSvc: MaintenanceService,
     private sanitizer: DomSanitizer,
@@ -227,6 +230,11 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     this.technicianSubscription.unsubscribe();
     this.maintenanceSvc.destroy();
     this.maintenanceSvc.closeEventSource();
+  }
+
+  ngDoCheck(): void {
+    const rect = document.getElementById('dateSegment').getBoundingClientRect();
+    this.dateSegmentPosition = `${rect.right - 75}px`;
   }
 
   getImageSrc = (source: string) => {
