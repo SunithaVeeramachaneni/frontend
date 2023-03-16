@@ -80,11 +80,12 @@ export const getTasksCountByNodeIds = (subFormIds) =>
     return count;
   });
 
-export const getTotalTasksCount = () =>
+export const getTotalTasksCount = (hierarchyIDs) =>
   createSelector(selectFormConfigurationState, (state) => {
     let count = 0;
-    const subFormKeys = Object.keys(state).filter((sf) =>
-      sf.startsWith('pages')
+    hierarchyIDs = hierarchyIDs.map((h) => `pages_${h}`);
+    const subFormKeys = Object.keys(state).filter(
+      (sf) => hierarchyIDs.indexOf(sf) > -1
     );
     const allSubForms = [];
     subFormKeys.forEach((key) => {
