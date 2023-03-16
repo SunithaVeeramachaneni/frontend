@@ -248,6 +248,7 @@ export class RoundPlanConfigurationService {
       fieldType: question ? question.fieldType : 'TF',
       position: questionIndex + 1,
       required: question ? question.required : false,
+      enableHistory: question ? question.enableHistory : false,
       multi: question ? question.multi : false,
       value: question ? question.value : 'TF',
       isPublished: false,

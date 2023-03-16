@@ -161,6 +161,8 @@ export class AddLogicComponent implements OnInit {
             operand1: logic.operand1 || '',
             operand2: logic.operand2 || '',
             action: logic.action || '',
+            mandateAttachment: logic.mandateAttachment || false,
+            raiseIssue: logic.raiseIssue || false,
             logicTitle: logic.logicTitle || '',
             expression: logic.expression || '',
             questions: this.fb.array(askQuestionsFormArray),
@@ -246,6 +248,7 @@ export class AddLogicComponent implements OnInit {
           fieldType: 'TF',
           position: 0,
           required: false,
+          enableHistory: false,
           multi: false,
           value: '',
           isPublished: false,
@@ -367,6 +370,26 @@ export class AddLogicComponent implements OnInit {
       pageIndex: this.pageIndex,
       logicIndex: index,
       type: 'ask_question_create',
+      logic
+    });
+  }
+  mandateAttachment(action, index, logic) {
+    logic.mandateAttachment = true;
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update',
+      logic
+    });
+  }
+  raiseIssue(action, index, logic) {
+    logic.raiseIssue = true;
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update',
       logic
     });
   }
