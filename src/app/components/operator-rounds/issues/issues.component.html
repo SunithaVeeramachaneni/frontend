@@ -1,17 +1,19 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
-  <span class="custom-form-field-gray-color">
-    <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
-      <span class="issues-count">
-        {{ totalCount }}
-      </span>
-      <span class="issues-text">{{
-        'plans'
+  <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
+    <span class="issues-count">
+      {{ totalCount }}
+    </span>
+    <span class="issues-text">
+      {{
+        'issues'
           | translate
             : {
                 count: totalCount || 0
               }
-      }}</span>
+      }}
     </span>
+  </span>
+  <span class="custom-form-field-gray-color">
     <mat-form-field appearance="outline" class="issues-search">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
