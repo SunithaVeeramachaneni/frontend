@@ -48,11 +48,11 @@
   }
 
   ::ng-deep .mat-progress-bar-fill::after {
-    background-color: #4caf50;
+    background-color: $green3;
   }
 
   ::ng-deep .mat-progress-bar-buffer {
-    background-color: #edf7ed;
+    background-color: $in-progress-light;
   }
 
   .review-text {
@@ -75,11 +75,11 @@
       width: 50%;
 
       &:first-child {
-        background-color: #edf7ed;
+        background-color: $submitted-bg-light;
       }
 
       &:last-child {
-        background-color: #feeceb;
+        background-color: $light-orange;
       }
 
       img {
