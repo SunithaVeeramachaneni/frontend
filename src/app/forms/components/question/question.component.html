@@ -260,6 +260,15 @@
                 </span>
               </span>
 
+              <span class="action">
+                <mat-checkbox
+                  formControlName="enableHistory"
+                  class="enableHistory-checkbox"
+                >
+                </mat-checkbox>
+                <label class="required-label" translate="historyTxt"></label>
+              </span>
+
               <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="action"

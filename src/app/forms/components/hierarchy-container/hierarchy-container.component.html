@@ -14,6 +14,7 @@
       </button>
     </div>
     <mat-button-toggle-group
+      *ngIf="filteredHierarchyList.length"
       class="toggle-btn-group"
       (change)="toggleHierarchyMode($event)"
     >

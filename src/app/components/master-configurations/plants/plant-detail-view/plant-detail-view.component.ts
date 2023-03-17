@@ -18,9 +18,7 @@ export class PlantDetailViewComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.selectedPlant);
-  }
+  ngOnInit(): void {}
 
   edit() {
     this.slideInOut.emit({ status: 'out', data: this.selectedPlant });
