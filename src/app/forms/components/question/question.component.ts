@@ -648,14 +648,6 @@ export class QuestionComponent implements OnInit {
 
     Array.from(target.files).forEach((file) => {
       const originalValue = this.questionForm.get('value').value;
-      // just for safety
-      if (encodeURIComponent(file.name) !== file.name) {
-        this.toast.show({
-          text: 'File name must not contain special characters.',
-          type: 'warning'
-        });
-        return;
-      }
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
