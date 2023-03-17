@@ -81,6 +81,7 @@ export class CategoriesComponent
   public workInstructionsDetailObject = null;
   public imageHeight = '';
   public isCategoriesLoading: boolean;
+  selectedCategoryIndex: number;
   readonly permissions = permissions;
   private image: ElementRef;
   private fetchCategoriesSubscription: Subscription;
@@ -182,6 +183,14 @@ export class CategoriesComponent
         this.categoriesList = [];
         this.getAllCategories();
       });
+  }
+
+  menuOpened(index) {
+    this.selectedCategoryIndex = index;
+  }
+
+  menuClosed() {
+    this.selectedCategoryIndex = -1;
   }
 
   ngAfterViewInit(): void {
