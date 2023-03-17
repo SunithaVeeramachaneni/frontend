@@ -66,6 +66,11 @@ export class HierarchyLocationsListComponent implements OnInit {
         })
       )
       .subscribe();
+
+    setTimeout(() => {
+      const div = document.getElementById('hidden-click');
+      div.click();
+    }, 1000);
   }
 
   handleNodeToggle = (event: any) => {
@@ -103,5 +108,9 @@ export class HierarchyLocationsListComponent implements OnInit {
 
   submitSelectedLocations = () => {
     this.handleLocationHierarchy.emit(this.selectedItems);
+  };
+
+  checkClick = () => {
+    this.cdrf.markForCheck();
   };
 }
