@@ -197,14 +197,14 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   getTotalTasksCount() {
-    let count = 0;
-    const hierarchy = JSON.parse(JSON.stringify(this.filteredHierarchyList));
+    const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       hierarchy,
       0
     );
-    const flatHierarchyIds = flatHierarchy?.map((h) => h.id);
-    this.store.select(getTotalTasksCount(flatHierarchyIds)).subscribe((c) => {
+    const nodeIds = flatHierarchy.map((h) => h.id);
+    let count = 0;
+    this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
       count = c;
     });
     return count;
