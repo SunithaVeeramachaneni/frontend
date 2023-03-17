@@ -94,7 +94,6 @@ export class HierarchyContainerComponent implements OnInit {
               selectedHierarchy
             );
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
-
           const { stitchedHierarchy, instanceIdMappings } =
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
