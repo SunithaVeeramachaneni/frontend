@@ -38,8 +38,8 @@ import {
   RowLevelActionEvent,
   RoundPlanScheduleConfigurationObj,
   RoundPlanScheduleConfiguration,
-  RoundPlanResponse,
-  RoundPlan
+  RoundPlanDetailResponse,
+  RoundPlanDetail
 } from 'src/app/interfaces';
 import {
   graphQLDefaultLimit,
@@ -97,7 +97,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'floc',
+      id: 'locations',
       displayName: 'F.Loc',
       type: 'number',
       controlType: 'string',
@@ -299,8 +299,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  roundPlanDetail: RoundPlan;
-  scheduleRoundPlanDetail: RoundPlan;
+  roundPlanDetail: RoundPlanDetail;
+  scheduleRoundPlanDetail: RoundPlanDetail;
   zIndexDelay = 0;
   zIndexScheduleDelay = 0;
   scheduleConfigState = 'out';
@@ -367,7 +367,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getRoundPlanList();
         } else {
-          return of({} as RoundPlanResponse);
+          return of({} as RoundPlanDetailResponse);
         }
       })
     );
@@ -412,11 +412,11 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlan) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) => roundPlan.schedule
           );
         } else if (planCategory === 'unscheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlan) => !roundPlan.schedule
+            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
           );
         } else {
           filteredRoundPlans = roundPlans.data;
@@ -526,7 +526,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  openRoundPlanHandler(row: RoundPlan): void {
+  openRoundPlanHandler(row: RoundPlanDetail): void {
     this.hideRoundPlanDetail = false;
     this.closeScheduleConfigHandler('out');
     this.store.dispatch(FormConfigurationActions.resetPages());
@@ -540,7 +540,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: RoundPlan) {
+  openScheduleConfigHandler(row: RoundPlanDetail) {
     this.hideScheduleConfig = false;
     this.closeRoundPlanHandler();
     this.scheduleRoundPlanDetail = { ...row };
@@ -610,7 +610,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   formatRoundPlans(
-    roundPlans: RoundPlan[],
+    roundPlans: RoundPlanDetail[],
     roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj
   ) {
     return roundPlans.map((roundPlan) => {
