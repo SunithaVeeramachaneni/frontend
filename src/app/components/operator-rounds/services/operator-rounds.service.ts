@@ -11,17 +11,15 @@ import {
   ErrorInfo,
   LoadEvent,
   RoundPlan,
-  RoundPlanResponse,
   RoundPlanList,
   RoundPlanSubmissionList,
   SearchEvent,
-  TableEvent
+  TableEvent,
+  RoundPlanDetailResponse
 } from '../../../interfaces';
-import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getResponseSets } from 'src/app/forms/state';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
@@ -188,7 +186,7 @@ export class OperatorRoundsService {
       fetchType: string;
     },
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanResponse> {
+  ): Observable<RoundPlanDetailResponse> {
     const { fetchType, ...rest } = queryParams;
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -211,7 +209,7 @@ export class OperatorRoundsService {
           map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
         );
     } else {
-      return of({ rows: [] } as RoundPlanResponse);
+      return of({ rows: [] } as RoundPlanDetailResponse);
     }
   }
 
