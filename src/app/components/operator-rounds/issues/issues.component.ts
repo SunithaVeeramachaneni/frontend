@@ -108,7 +108,7 @@ export class IssuesComponent implements OnInit {
     },
     {
       id: 'plant',
-      displayName: 'Plan',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 3,

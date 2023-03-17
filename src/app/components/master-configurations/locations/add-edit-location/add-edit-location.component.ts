@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   EventEmitter,
@@ -54,12 +55,15 @@ export class AddEditLocationComponent implements OnInit {
   get locationEditData() {
     return this.locEditData;
   }
+
+  locationIcon = 'assets/rdf-forms-icons/locationIcon.svg';
+
   errors: ValidationError = {};
   locationForm: FormGroup;
   locations$: Observable<any>;
   locationStatus;
   locationTitle;
-  locationImage = '';
+  locationImage = this.locationIcon;
   locationButton;
 
   parentInformation;
@@ -69,7 +73,7 @@ export class AddEditLocationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private locationService: LocationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.locationForm = this.fb.group({
@@ -96,7 +100,7 @@ export class AddEditLocationComponent implements OnInit {
     if (this.locationStatus === 'add') {
       this.locationForm
         .get('image')
-        .setValue('assets/master-configurations/default-location.png');
+        .setValue('assets/master-configurations/locationIcon.svg');
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
@@ -108,18 +112,20 @@ export class AddEditLocationComponent implements OnInit {
           this.slideInOut.emit('out');
         });
     } else if (this.locationStatus === 'edit') {
-      this.locationService.updateLocation$({
-        ...this.locationForm.value,
-        _version: this.locEditData._version,
-        id: this.locEditData?.id
-      }).subscribe((res) => {
-        this.createdLocationData.emit({
-          status: this.locationStatus,
-          data: res
+      this.locationService
+        .updateLocation$({
+          ...this.locationForm.value,
+          _version: this.locEditData._version,
+          id: this.locEditData?.id
+        })
+        .subscribe((res) => {
+          this.createdLocationData.emit({
+            status: this.locationStatus,
+            data: res
+          });
+          this.locationForm.reset();
+          this.slideInOut.emit('out');
         });
-        this.locationForm.reset();
-        this.slideInOut.emit('out');
-      });
     }
   }
 
