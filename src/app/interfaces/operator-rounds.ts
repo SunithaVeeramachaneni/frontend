@@ -58,6 +58,9 @@ export interface RoundPlan {
   createdAt: string;
   updatedAt: string;
   _version: number;
+}
+
+export interface RoundPlanDetail extends RoundPlan {
   schedule?: string;
   scheduleDates?: string;
   tasks?: number;
@@ -65,34 +68,26 @@ export interface RoundPlan {
   operator?: string;
 }
 
-export interface RoundPlanResponse {
-  rows: RoundPlan[];
+export interface RoundDetail extends RoundPlan {
+  schedule?: string;
+  scheduleDates?: string;
+  tasks?: number;
+  rounds?: number;
+  operator?: string;
+}
+
+export interface RoundPlanDetailResponse {
+  rows: RoundPlanDetail[];
   scheduledCount: number;
   unscheduledCount: number;
   nextToken: string | null;
 }
-export interface RoundPlan1 {
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  publishedDate?: string | null;
-  location?: string | null;
-  roundType?: string | null;
-  formStatus?: string | null;
-  assignee?: string | null;
-  tags?: Array<string | null> | null;
-  lastPublishedBy?: string | null;
-  author?: string | null;
-  isArchived?: boolean | null;
-  formType?: string | null;
-  isArchivedAt?: string | null;
-  isDeleted?: boolean | null;
-  searchTerm?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
+
+export interface RoundDetailResponse {
+  rows: RoundDetail[];
+  scheduledCount: number;
+  unscheduledCount: number;
+  nextToken: string | null;
 }
 
 export type RoundPlanList = {

@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { groupBy, map, shareReplay } from 'rxjs/operators';
-import {
-  ErrorInfo,
-  LoadEvent,
-  SearchEvent,
-  TableEvent
-} from './../../../../interfaces';
-import { formatDistance } from 'date-fns';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../../interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
+import {
+  GetPlants,
+  CreatePlants,
+  DeletePlants,
+  PlantsResponse
+} from 'src/app/interfaces/master-data-management/plants';
+import { formatDistance } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -59,7 +60,7 @@ export class PlantService {
         params.set('nextToken', queryParams.nextToken);
       }
       if (queryParams.searchKey) {
-        const filter: any = {
+        const filter: GetPlants = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
         params.set('filter', JSON.stringify(filter));
@@ -80,14 +81,23 @@ export class PlantService {
     }
   }
 
-  createPlant$(values, info: ErrorInfo = {} as ErrorInfo) {
-    console.log(values);
+  createPlant$(
+    formPlantQuery: Pick<
+      CreatePlants,
+      'name' | 'image' | 'country' | 'zipCode' | 'plantId' | 'state'
+    >
+  ) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'plants/create',
-      { ...values },
-      info,
-      {}
+      `plants/create`,
+      {
+        data: {
+          ...formPlantQuery,
+          searchTerm: `${formPlantQuery.name.toLowerCase()} ${formPlantQuery.country?.toLowerCase()} ${
+            formPlantQuery.plantId?.toLowerCase() || ''
+          }`
+        }
+      }
     );
   }
 
@@ -98,45 +108,49 @@ export class PlantService {
       {
         data: {
           ...plantData,
-          searchTerm: `${plantData.name.toLowerCase()} ${
-            plantData.description?.toLowerCase() || ''
-          }`
+          searchTerm: `${plantData.name.toLowerCase()} ${plantData.plantId?.toLowerCase()} ${
+            plantData.country?.toLowerCase() || ''
+          }
+          `
         }
       }
     );
   }
 
-  deletePlant$(values: any) {
+  deletePlant$(values: DeletePlants) {
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `plants/${JSON.stringify(values)}/delete`
     );
   }
 
-  private formatPlantResponse(resp: any) {
-    const groupedData: any = groupBy(resp?.items);
-    const rows = resp?.items
-      ?.sort(
-        (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-      )
-      ?.map((item: any) => ({
-        ...item,
-        preTextImage: {
-          image: item?.image,
-          style: {
-            width: '40px',
-            height: '40px',
-            marginRight: '10px'
+  private formatPlantResponse(resp: PlantsResponse) {
+    let rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        ?.map((p) => ({
+          ...p,
+          preTextImage: {
+            image: p?.image,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
           },
-          condition: true
-        },
-        noOfUnits: groupedData[item?.unitList?.name]?.length ?? 0,
-        unitType: item?.unitList?.name,
-        isDefaultText: item?.isDefault ? 'Default' : ''
-      }));
-    const count = rows?.length || 0;
+          archivedAt: p.createdAt
+            ? formatDistance(new Date(p.createdAt), new Date(), {
+                addSuffix: true
+              })
+            : ''
+        })) || [];
+    const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;
+    rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,

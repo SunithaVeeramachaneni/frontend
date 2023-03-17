@@ -41,6 +41,7 @@ export interface Question {
   fieldType: string;
   position: number;
   required: boolean;
+  enableHistory: boolean;
   multi: boolean;
   value: any;
   isPublished: boolean;
