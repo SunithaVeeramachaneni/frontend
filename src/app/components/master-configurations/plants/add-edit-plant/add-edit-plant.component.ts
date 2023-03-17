@@ -32,6 +32,7 @@ export class AddEditPlantComponent implements OnInit {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';
       this.plantButton = 'Create';
+      this.plantForm.get('plantId').enable();
     } else {
       this.plantStatus = 'edit';
       this.plantTitle = 'Edit Plant';
@@ -71,7 +72,7 @@ export class AddEditPlantComponent implements OnInit {
       id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
-      plantId: new FormControl(''),
+      plantId: new FormControl('', [Validators.required]),
       country: new FormControl('', [Validators.required]),
       zipCode: new FormControl('', [
         Validators.required,
