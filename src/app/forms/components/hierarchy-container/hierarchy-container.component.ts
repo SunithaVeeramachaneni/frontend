@@ -138,7 +138,7 @@ export class HierarchyContainerComponent implements OnInit {
             masterHierarchy: this.masterHierarchyList
           })
         );
-        this.formService.setMasterHierarchyList(this.masterHierarchyList);
+
         return this.masterHierarchyList;
       })
     );
