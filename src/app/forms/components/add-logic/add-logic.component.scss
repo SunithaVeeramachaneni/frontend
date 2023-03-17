@@ -114,10 +114,10 @@
   width: 20px;
 }
 .logicActionMenuItem {
-  line-height: 0.5;
-  height: 35px;
+  line-height: 0.5 !important;
+  height: 35px !important;
   &:hover {
-    background: $blue3-hover;
+    background: $blue3-hover !important;
   }
 }
 
