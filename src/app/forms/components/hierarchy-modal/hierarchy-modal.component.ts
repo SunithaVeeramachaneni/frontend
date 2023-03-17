@@ -43,6 +43,7 @@ export class HierarchyModalComponent implements OnInit {
     this.masterHierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
       map((masterHierarchyList) => {
         this.masterHierarchyList = masterHierarchyList;
+        return masterHierarchyList;
       })
     );
 
@@ -51,6 +52,7 @@ export class HierarchyModalComponent implements OnInit {
       .pipe(
         map((selectedHierarchy) => {
           this.selectedHierarchyList = selectedHierarchy;
+          return this.selectedHierarchyList;
         })
       );
 

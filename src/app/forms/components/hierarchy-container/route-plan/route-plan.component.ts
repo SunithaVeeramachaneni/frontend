@@ -93,6 +93,10 @@ export class RoutePlanComponent implements OnInit {
     let count = 0;
     const allChildNodeIds =
       this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
+    const index = allChildNodeIds.indexOf(node.id);
+    if (index > -1) {
+      allChildNodeIds.splice(index, 1);
+    }
     this.store
       .select(getTasksCountByNodeIds(allChildNodeIds))
       .subscribe((c) => {
