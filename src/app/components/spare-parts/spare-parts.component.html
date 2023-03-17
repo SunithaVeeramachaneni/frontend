@@ -1,7 +1,23 @@
 <div class="spare-parts-body">
   <div class="header-filters">
-    <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
+    <app-date-segment
+      (dateRangeEvent)="dateRangeEventHandler($event)"
+      id="dateSegment"
+    >
     </app-date-segment>
+    <div class="spcc-filters">
+      <app-common-filter
+        [title]="headerTitle"
+        [showOverdueList]="showOverdueList"
+        [priorityList]="priorityList"
+      >
+      </app-common-filter>
+    </div>
+  </div>
+  <div
+    class="plants-workcenters dis-flex"
+    [ngStyle]="{ 'padding-left': dateSegmentPosition }"
+  >
     <div class="custom-form-field-white-color">
       <ng-container
         *ngIf="allPlants$ | async as plantsList; else loadingPlants"
@@ -50,6 +66,8 @@
           </mat-select>
         </mat-form-field>
       </ng-container>
+    </div>
+    <div class="custom-form-field-white-color">
       <ng-container
         *ngIf="
           currentWorkCenters$ | async as workCenters;
@@ -111,15 +129,8 @@
         </mat-form-field>
       </ng-container>
     </div>
-    <div style="position: absolute; right: 20px">
-      <app-common-filter
-        [title]="headerTitle"
-        [showOverdueList]="showOverdueList"
-        [priorityList]="priorityList"
-      >
-      </app-common-filter>
-    </div>
   </div>
+
   <mat-grid-list
     cols="5"
     *ngIf="
@@ -244,7 +255,7 @@
   </span>
 </ng-template>
 <ng-template #loadingRecords>
-  <div class="ghost-loading-mcc-spcc-container">
+  <div class="ghost-loading-mcc-spcc-container m-t-15">
     <div class="width-20 columns">
       <div class="column-header">
         <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">

@@ -27,6 +27,9 @@
             <input type="hidden" formControlName="expression" />
 
             <input type="hidden" formControlName="action" />
+            <input type="hidden" formControlName="mandateAttachment" />
+            <input type="hidden" formControlName="raiseIssue" />
+
             <span translate="ifAnswer"></span>
             <select
               class="logicCondition"
@@ -106,6 +109,18 @@
 
             <span translate="then"></span>
             <span
+              *ngIf="logic.value.mandateAttachment"
+              class="mandateAction"
+              translate="mandateAttachment"
+            >
+            </span>
+            <span
+              *ngIf="logic.value.raiseIssue"
+              class="mandateAction"
+              translate="raiseIssue"
+            >
+            </span>
+            <span
               *ngIf="logic.value.mandateQuestions.length"
               class="mandateAction"
               (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
@@ -153,6 +168,20 @@
                 mat-menu-item
                 (click)="triggerMenuAction('ask_questions', i, logic.value)"
                 translate="askQuestions"
+              ></button>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="
+                  mandateAttachment('mandate_attachment', i, logic.value)
+                "
+                translate="mandateAttachment"
+              ></button>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="raiseIssue('raise_issue', i, logic.value)"
+                translate="raiseIssue"
               ></button>
             </mat-menu>
           </div>

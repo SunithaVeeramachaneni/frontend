@@ -94,7 +94,6 @@ export class HierarchyContainerComponent implements OnInit {
               selectedHierarchy
             );
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
-
           const { stitchedHierarchy, instanceIdMappings } =
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
@@ -199,7 +198,13 @@ export class HierarchyContainerComponent implements OnInit {
 
   getTotalTasksCount() {
     let count = 0;
-    this.store.select(getTotalTasksCount()).subscribe((c) => {
+    const hierarchy = JSON.parse(JSON.stringify(this.filteredHierarchyList));
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      hierarchy,
+      0
+    );
+    const flatHierarchyIds = flatHierarchy?.map((h) => h.id);
+    this.store.select(getTotalTasksCount(flatHierarchyIds)).subscribe((c) => {
       count = c;
     });
     return count;

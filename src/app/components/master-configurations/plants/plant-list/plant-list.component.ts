@@ -447,7 +447,6 @@ export class PlantListComponent implements OnInit {
   }
 
   showPlantDetail(row: GetFormListQuery): void {
-    console.log(row);
     this.selectedPlant = row;
     this.openPlantDetailedView = 'in';
   }
