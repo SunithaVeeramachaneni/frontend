@@ -69,7 +69,8 @@ export interface NumberRangeMetadata {
 
 export interface PageEvent {
   pageIndex: number;
-  type: 'add' | 'delete';
+  page?: Page;
+  type: 'add' | 'update' | 'delete';
 }
 
 export interface SectionEvent {

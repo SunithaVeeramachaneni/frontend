@@ -5,12 +5,21 @@ import {
   OnInit,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { isEqual } from 'lodash-es';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  tap
+} from 'rxjs/operators';
 import {
   getPage,
   getPagesCount,
@@ -27,6 +36,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageComponent implements OnInit {
+  @ViewChild('pageName') pageName: ElementRef;
   @Input() selectedNodeId: any;
 
   @Input() set pageIndex(pageIndex: number) {
@@ -47,10 +57,32 @@ export class PageComponent implements OnInit {
   pagesCount$: Observable<number>;
   pageTasksCount$: Observable<number>;
   private _pageIndex: number;
-
-  constructor(private fb: FormBuilder, private store: Store<State>) {}
+  constructor(
+    private fb: FormBuilder,
+    private store: Store<State>,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
+    this.pageForm
+      .get('name')
+      .valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        pairwise(),
+        tap(([previous, current]) => {
+          if (previous !== current) {
+            this.pageEvent.emit({
+              page: this.pageForm.getRawValue(),
+              pageIndex: this.pageIndex,
+              type: 'update'
+            });
+            this.cdrf.markForCheck();
+          }
+        })
+      )
+      .subscribe();
+
     this.page$ = this.store
       .select(getPage(this.pageIndex, this.selectedNodeId))
       .pipe(
@@ -81,8 +113,17 @@ export class PageComponent implements OnInit {
       })
     );
   };
-
+  editPage() {
+    this.pageForm.get('name').enable();
+    this.pageName.nativeElement.focus();
+  }
   deletePage() {
     this.pageEvent.emit({ pageIndex: this.pageIndex, type: 'delete' });
+  }
+  getSize(value) {
+    if (value && value === value.toUpperCase()) {
+      return value.length;
+    }
+    return value.length - 1;
   }
 }
