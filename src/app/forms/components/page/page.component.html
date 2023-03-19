@@ -38,7 +38,7 @@
         mat-icon-button
         (click)="editPage()"
         class="edit-icon"
-        *ngIf="pageForm.get('name').disabled === true"
+        *ngIf="pageForm.get('isOpen').value === true"
       >
         <img
           src="assets/rdf-forms-icons/edit-icon.svg"

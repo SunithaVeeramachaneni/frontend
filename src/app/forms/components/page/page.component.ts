@@ -6,13 +6,11 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   ViewChild,
   ElementRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { isEqual } from 'lodash-es';
 import { Observable } from 'rxjs';
 import {
   debounceTime,
@@ -57,11 +55,7 @@ export class PageComponent implements OnInit {
   pagesCount$: Observable<number>;
   pageTasksCount$: Observable<number>;
   private _pageIndex: number;
-  constructor(
-    private fb: FormBuilder,
-    private store: Store<State>,
-    private cdrf: ChangeDetectorRef
-  ) {}
+  constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit() {
     this.pageForm
@@ -77,7 +71,6 @@ export class PageComponent implements OnInit {
               pageIndex: this.pageIndex,
               type: 'update'
             });
-            this.cdrf.markForCheck();
           }
         })
       )
