@@ -119,6 +119,16 @@ export const updatePageState = createAction(
     isOpen: boolean;
   }>()
 );
+export const updatePage = createAction(
+  '[Form Configuration] updatePage',
+  props<{
+    page: Page;
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
+);
 
 export const deletePage = createAction(
   '[Form Configuration] deletePage',
