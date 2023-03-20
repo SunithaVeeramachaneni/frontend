@@ -249,7 +249,6 @@ export class RaceDynamicFormService {
   }
 
   updateAuthoredFormDetail$(formDetails) {
-    console.log(formDetails);
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/${formDetails.authoredFormDetailId}`,
