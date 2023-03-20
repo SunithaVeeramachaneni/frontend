@@ -18,7 +18,12 @@ import { State } from 'src/app/forms/state';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
-import { RoundPlan, RoundPlanScheduleConfiguration } from 'src/app/interfaces';
+import {
+  RoundPlan,
+  RoundPlanScheduleConfiguration,
+  RoundPlanDetail,
+  RoundDetail
+} from 'src/app/interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
 
@@ -38,10 +43,12 @@ interface FrequencyDetail {
 export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
-  @Output() scheduleRoundPlan: EventEmitter<RoundPlan> = new EventEmitter();
-  @Input() selectedForm: any | RoundPlan = null;
+  @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
+    new EventEmitter();
+  @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
   @Input() formStatus = formConfigurationStatus.draft;
+  @Input() formDetailType = 'Authored';
   @Input() set scheduleConfiguration(
     scheduleConfiguration: RoundPlanScheduleConfiguration
   ) {
@@ -95,7 +102,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               formDetail && formDetail.pages
                 ? JSON.parse(formDetail?.pages)
                 : [];
-            if (!pages.length) return;
             data = { ...formDetail, pages };
             data.pages?.forEach((page, pIdx) => {
               if (pIdx === 0) {
@@ -165,7 +171,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   scheduleRoundPlanEvent() {
-    this.scheduleRoundPlan.emit(this.selectedForm as RoundPlan);
+    this.scheduleRoundPlan.emit(this.selectedForm as RoundPlanDetail);
   }
 
   setFrequencyInfo() {

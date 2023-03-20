@@ -11,17 +11,18 @@ import {
   ErrorInfo,
   LoadEvent,
   RoundPlan,
-  RoundPlanResponse,
   RoundPlanList,
   RoundPlanSubmissionList,
   SearchEvent,
-  TableEvent
+  TableEvent,
+  RoundPlanDetailResponse,
+  RoundDetailResponse,
+  RoundDetail,
+  RoundPlanQueryParam
 } from '../../../interfaces';
-import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getResponseSets } from 'src/app/forms/state';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
@@ -147,14 +148,9 @@ export class OperatorRoundsService {
   }
 
   getRoundsList$(
-    queryParams: {
-      nextToken?: string;
-      limit: number;
-      searchKey: string;
-      fetchType: string;
-    },
+    queryParams: RoundPlanQueryParam,
     info: ErrorInfo = {} as ErrorInfo
-  ) {
+  ): Observable<RoundDetailResponse> {
     const { fetchType, ...rest } = queryParams;
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -163,32 +159,28 @@ export class OperatorRoundsService {
     ) {
       const isSearch = fetchType === 'search';
       if (isSearch) {
-        queryParams.nextToken = null;
+        rest.nextToken = '';
       }
       const { displayToast, failureResponse = {} } = info;
-      return this.appService._getResp(
-        environment.operatorRoundsApiUrl,
-        'rounds/',
-        { displayToast, failureResponse },
-        rest
-      );
+      return this.appService
+        ._getResp(
+          environment.operatorRoundsApiUrl,
+          'rounds/',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(map((data) => ({ ...data, rows: this.formatRounds(data.rows) })));
     } else {
       return of({
-        rows: [],
-        nextToken: null
-      });
+        rows: []
+      } as RoundDetailResponse);
     }
   }
 
   getPlansList$(
-    queryParams: {
-      nextToken?: string;
-      limit: number;
-      searchTerm: string;
-      fetchType: string;
-    },
+    queryParams: RoundPlanQueryParam,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<RoundPlanResponse> {
+  ): Observable<RoundPlanDetailResponse> {
     const { fetchType, ...rest } = queryParams;
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -197,7 +189,7 @@ export class OperatorRoundsService {
     ) {
       const isSearch = fetchType === 'search';
       if (isSearch) {
-        queryParams.nextToken = null;
+        rest.nextToken = '';
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -211,7 +203,7 @@ export class OperatorRoundsService {
           map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
         );
     } else {
-      return of({ rows: [] } as RoundPlanResponse);
+      return of({ rows: [] } as RoundPlanDetailResponse);
     }
   }
 
@@ -654,12 +646,12 @@ export class OperatorRoundsService {
     const rows = roundPlans
       .sort(
         (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )
       .map((p) => ({
         ...p,
         preTextImage: {
-          image: p?.formLogo,
+          image: p.formLogo,
           style: {
             width: '40px',
             height: '40px',
@@ -667,14 +659,44 @@ export class OperatorRoundsService {
           },
           condition: true
         },
-        lastPublishedBy: p?.lastPublishedBy,
-        author: p?.author,
-        publishedDate: p.publishedDate ? p.publishedDate : '',
-        archivedAt: p?.createdAt
-          ? formatDistance(new Date(p.createdAt), new Date(), {
-              addSuffix: true
-            })
-          : ''
+        lastPublishedBy: p.lastPublishedBy,
+        author: p.author,
+        publishedDate: p.publishedDate ? p.publishedDate : ''
+      }));
+    return rows;
+  }
+
+  private formatRounds(rounds: RoundDetail[] = []): RoundDetail[] {
+    const rows = rounds
+      .sort(
+        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
+        tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
+          p.locationAndAssetTasks
+        },${
+          p.locationAndAssetTasks > 0
+            ? Math.round(
+                (Math.abs(
+                  p.locationAndAssetTasksCompleted / p.locationAndAssetTasks
+                ) +
+                  Number.EPSILON) *
+                  100
+              )
+            : 0
+        }%`
       }));
     return rows;
   }

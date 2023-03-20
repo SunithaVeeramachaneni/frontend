@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SelectTab } from 'src/app/interfaces';
 import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
@@ -16,6 +17,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 })
 export class SchedulerComponent implements OnInit, OnDestroy {
   tabIndex: number;
+  roundPlanId: string;
 
   constructor(
     private router: Router,
@@ -34,9 +36,28 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     return this.tabIndex;
   }
 
+  selectTabHandler(event: SelectTab) {
+    const {
+      index,
+      queryParams: { id }
+    } = event;
+    this.tabIndex = index;
+    this.roundPlanId = id;
+  }
+
   onTabChange(event: MatTabChangeEvent) {
     this.tabIndex = event.index;
-    this.router.navigate(['/operator-rounds/scheduler', this.tabIndex]);
+    if (this.roundPlanId) {
+      this.router.navigate(['/operator-rounds/scheduler', this.tabIndex], {
+        queryParams: { roundPlanId: this.roundPlanId }
+      });
+    } else {
+      this.router.navigate(['/operator-rounds/scheduler', this.tabIndex], {
+        queryParams: { roundPlanId: null },
+        queryParamsHandling: 'merge'
+      });
+    }
+    this.roundPlanId = '';
   }
 
   ngOnDestroy(): void {}

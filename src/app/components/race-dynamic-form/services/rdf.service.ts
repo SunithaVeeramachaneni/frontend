@@ -568,6 +568,19 @@ export class RaceDynamicFormService {
                 });
               }
 
+              if (question.fieldType === 'INST') {
+                Object.assign(questionItem, {
+                  TAG: question.value.tag,
+                  FIELDVALUE: question.value.images
+                    .filter((image) => image !== null)
+                    .map((image) => image.objectKey.substring('public/'.length))
+                    .join(';'),
+                  DOCFILE:
+                    question.value.pdf?.objectKey.substring('public/'.length) ||
+                    ''
+                });
+              }
+
               return questionItem;
             })
           };
@@ -724,7 +737,9 @@ export class RaceDynamicFormService {
           return {
             ...p,
             preTextImage: {
-              image: p?.formLogo,
+              image: p.formLogo
+                ? p.formLogo
+                : 'assets/rdf-forms-icons/formlogo.svg',
               style: {
                 width: '40px',
                 height: '40px',

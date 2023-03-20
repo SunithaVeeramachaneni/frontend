@@ -23,10 +23,29 @@
       chevron_right
     </mat-icon>
 
-    <a>
-      <span class="form_page_name_input">
-        {{ 'page' | translate }} {{ pageForm.get('position').value }}
-      </span>
+    <a class="width-60">
+      <input
+        #pageName
+        type="text"
+        formControlName="name"
+        class="form_page_name_input"
+        placeholder="Untitled Page"
+        autocomplete="off"
+        (keyup.enter)="pageForm.get('name').disable()"
+      />
+
+      <button
+        mat-icon-button
+        (click)="editPage()"
+        class="edit-icon"
+        *ngIf="pageForm.get('isOpen').value === true"
+      >
+        <img
+          src="assets/rdf-forms-icons/edit-icon.svg"
+          alt="edit-icon"
+          class="page-edit-icon"
+        />
+      </button>
     </a>
 
     <div class="pageHeadRight">

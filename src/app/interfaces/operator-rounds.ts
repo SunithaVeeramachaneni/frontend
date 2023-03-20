@@ -58,41 +58,38 @@ export interface RoundPlan {
   createdAt: string;
   updatedAt: string;
   _version: number;
-  schedule?: string;
-  scheduleDates?: string;
-  tasks?: number;
-  rounds?: number;
-  operator?: string;
 }
 
-export interface RoundPlanResponse {
-  rows: RoundPlan[];
+export interface RoundPlanDetail extends RoundPlan {
+  schedule: string;
+  scheduleDates: string;
+  tasks: number;
+  locations: number;
+  assets: number;
+  rounds: number;
+  operator: string;
+}
+
+export interface RoundDetail extends RoundPlan {
+  scheduledType: string;
+  dueDate: string;
+  locationAndAssets: number;
+  locationAndAssetsCompleted: number;
+  locationAndAssetTasks: number;
+  locationAndAssetTasksCompleted: number;
+}
+
+export interface RoundPlanDetailResponse {
+  rows: RoundPlanDetail[];
   scheduledCount: number;
   unscheduledCount: number;
   nextToken: string | null;
 }
-export interface RoundPlan1 {
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  publishedDate?: string | null;
-  location?: string | null;
-  roundType?: string | null;
-  formStatus?: string | null;
-  assignee?: string | null;
-  tags?: Array<string | null> | null;
-  lastPublishedBy?: string | null;
-  author?: string | null;
-  isArchived?: boolean | null;
-  formType?: string | null;
-  isArchivedAt?: string | null;
-  isDeleted?: boolean | null;
-  searchTerm?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
+
+export interface RoundDetailResponse {
+  rows: RoundDetail[];
+  count: number;
+  nextToken: string | null;
 }
 
 export type RoundPlanList = {
@@ -125,3 +122,18 @@ export type RoundPlanSubmissionList = {
   nextToken?: string | null;
   startedAt?: number | null;
 };
+
+export interface RoundPlanQueryParam {
+  nextToken?: string;
+  limit: number;
+  searchTerm: string;
+  fetchType: string;
+  roundPlanId: string;
+}
+
+export interface SelectTab {
+  index: number;
+  queryParams: {
+    id: string;
+  };
+}

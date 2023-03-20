@@ -66,7 +66,7 @@ export class HierarchyContainerComponent implements OnInit {
   instanceIdMappings = {};
 
   hierarchy = [];
-  totalAssetsCount = 0;
+  totalAssetsLocationsCount = 0;
 
   hierarchyMode = 'asset_hierarchy';
   flatHierarchyList = [];
@@ -89,10 +89,11 @@ export class HierarchyContainerComponent implements OnInit {
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
         if (selectedHierarchy) {
-          this.totalAssetsCount =
-            this.assetHierarchyUtil.getTotalAssetCount(selectedHierarchy);
+          this.totalAssetsLocationsCount =
+            this.assetHierarchyUtil.getTotalAssetsLocationsCount(
+              selectedHierarchy
+            );
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
-
           const { stitchedHierarchy, instanceIdMappings } =
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
@@ -136,7 +137,7 @@ export class HierarchyContainerComponent implements OnInit {
             masterHierarchy: this.masterHierarchyList
           })
         );
-        this.formService.setMasterHierarchyList(this.masterHierarchyList);
+
         return this.masterHierarchyList;
       })
     );
@@ -196,8 +197,14 @@ export class HierarchyContainerComponent implements OnInit {
   }
 
   getTotalTasksCount() {
+    const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      hierarchy,
+      0
+    );
+    const nodeIds = flatHierarchy.map((h) => h.id);
     let count = 0;
-    this.store.select(getTotalTasksCount()).subscribe((c) => {
+    this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
       count = c;
     });
     return count;

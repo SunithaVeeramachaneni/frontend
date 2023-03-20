@@ -2,7 +2,7 @@
   <div class="header">
     <div>
       <span>{{
-        'totalAssetsCount' | translate : { count: totalAssetsCount }
+        'totalAssetsCount' | translate : { count: totalAssetsLocationsCount }
       }}</span>
       <button
         mat-icon-button
@@ -10,10 +10,11 @@
         *ngIf="hierarchy.length"
         (click)="openHierarchyModal()"
       >
-        <mat-icon>add</mat-icon>
+        <mat-icon class="addIcon">add</mat-icon>
       </button>
     </div>
     <mat-button-toggle-group
+      *ngIf="filteredHierarchyList.length"
       class="toggle-btn-group"
       (change)="toggleHierarchyMode($event)"
     >

@@ -75,13 +75,13 @@ export const permissions = Object.freeze({
   createORPlan: 'CREATE_OR_PLAN',
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
-  viewRounds: 'VIEW_ROUNDS',
-  viewORPSubmissions: 'VIEW_OP_SUBMISSIONS',
   downloadRounds: 'DOWNLOAD_ROUNDS',
   shareRounds: 'SHARE_ROUNDS',
-  scheduleRounds: 'SCHEDULE_ROUNDS',
+  viewScheduler: 'VIEW_SCHEDULER',
+  scheduleRoundPlan: 'SCHEDULE_ROUND_PLAN',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
@@ -197,20 +197,20 @@ export const routingUrls = {
     title: 'My Plans',
     permission: permissions.viewORPlans
   },
-  roundPlanSubmissions: {
+  roundPlanScheduler: {
     url: '/operator-rounds/scheduler/0',
     title: 'Scheduler',
-    permission: permissions.viewORPlans
-  },
-  roundPlanSubmissionForms: {
-    url: '/operator-rounds/submissions',
-    title: 'Submissions',
-    permission: permissions.viewORPSubmissions
+    permission: permissions.viewScheduler
   },
   roundPlanArchivedForms: {
     url: '/operator-rounds/archived',
     title: 'Archived',
     permission: permissions.viewArchivedORP
+  },
+  roundPlanObservations: {
+    url: '/operator-rounds/observations',
+    title: 'Observations',
+    permission: permissions.viewORObservations
   },
   masterConfiguration: {
     url: '/master-configuration',

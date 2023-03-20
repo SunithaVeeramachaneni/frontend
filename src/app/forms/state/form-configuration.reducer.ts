@@ -25,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -42,14 +43,14 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'rdf'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
   initialState,
   on(
     FormConfigurationActions.addFormMetadata,
-    BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...action.formMetadata },
@@ -212,6 +213,26 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
     })
+  ),
+  on(
+    FormConfigurationActions.updatePage,
+    (state, action): FormConfigurationState => {
+      const updatedPageIdx = state.pages.findIndex(
+        (page) => page.position === action.pageIndex + 1
+      );
+      let newPages = state.pages;
+      newPages[updatedPageIdx] = {
+        ...newPages[updatedPageIdx],
+        ...action.page
+      };
+      return {
+        ...state,
+        pages: newPages,
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
+      };
+    }
   ),
   on(
     FormConfigurationActions.updatePageState,

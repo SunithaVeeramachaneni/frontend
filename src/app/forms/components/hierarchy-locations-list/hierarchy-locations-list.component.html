@@ -25,13 +25,16 @@
     </span>
   </div>
   <div class="list-container">
+    <div [hidden]="true" id="hidden-click" (click)="checkClick()"></div>
     <div *ngIf="allItems.length; else loadingLocations" class="node-container">
       <mat-checkbox
         class="master-checkbox"
         [(ngModel)]="isMasterChecked"
         (change)="handleMasterToggle($event)"
         color="primary"
-      ></mat-checkbox>
+        >{{ 'selectAll' | translate }}</mat-checkbox
+      >
+
       <hr class="borders" />
       <div *ngIf="searchFilterItems.length; else noResults">
         <div *ngFor="let location of searchFilterItems">

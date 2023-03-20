@@ -34,16 +34,20 @@
         <span
           class="expandCollapseBtn"
           (click)="node.isExpanded = !node.isExpanded"
-          ><mat-icon [ngClass]="{ 'rotate-270': !node.isExpanded }"
-            >expand_circle_down</mat-icon
-          ></span
         >
+          <mat-icon
+            [ngClass]="{ 'rotate-270': !node.isExpanded }"
+            class="material-icons-outlined"
+            >expand_circle_down</mat-icon
+          >
+        </span>
         <span>
           {{
             'nodeChildrenHead'
               | translate
                 : {
-                    assetsCount: assetHierarchyUtil.getAssetCountByNode(node),
+                    assetsCount:
+                      assetHierarchyUtil.getAssetsLocationsCountByNode(node),
                     tasksCount: getTotalTasksCountByNode(node)
                   }
           }}
@@ -51,7 +55,12 @@
       </div>
     </div>
     <div class="right">
-      <span> {{ getTasksCountByNode(node) }} </span>
+      <span
+        class="nodeCount"
+        [ngClass]="{ nodeCountInvert: selectedNode.id === node.id }"
+      >
+        {{ getTasksCountByNode(node) }}
+      </span>
       <span
         [matMenuTriggerFor]="hierarchyMenu"
         #hierarchyMenuTrigger="matMenuTrigger"
@@ -85,7 +94,7 @@
           class="text-red"
           (click)="onRemoveNode($event, node)"
         >
-          <span translate="delete"></span>
+          <span translate="removeBtn"></span>
         </button>
       </mat-menu>
     </div>

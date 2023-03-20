@@ -34,6 +34,11 @@ export const getPages = createSelector(
   (state) => state.pages
 );
 
+export const getModuleName = createSelector(
+  selectFormConfigurationState,
+  (state) => state.moduleName
+);
+
 export const getPagesCount = (subFormId) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
@@ -75,11 +80,12 @@ export const getTasksCountByNodeIds = (subFormIds) =>
     return count;
   });
 
-export const getTotalTasksCount = () =>
+export const getTotalTasksCount = (nodeIds) =>
   createSelector(selectFormConfigurationState, (state) => {
     let count = 0;
-    const subFormKeys = Object.keys(state).filter((sf) =>
-      sf.startsWith('pages')
+    const pageIds = nodeIds.map((id) => `pages_${id}`);
+    const subFormKeys = Object.keys(state).filter(
+      (sf) => pageIds.indexOf(sf) > -1
     );
     const allSubForms = [];
     subFormKeys.forEach((key) => {

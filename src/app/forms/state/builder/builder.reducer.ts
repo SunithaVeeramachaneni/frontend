@@ -25,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -42,7 +43,8 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'operator-rounds'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -244,6 +246,27 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         //     .slice(action.pageIndex)
         //     .map((page) => ({ ...page, position: page.position + 1 }))
         // ],
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
+      };
+    }
+  ),
+  on(
+    BuilderConfigurationActions.updatePage,
+    (state, action): FormConfigurationState => {
+      const key = `pages_${action.subFormId}`;
+      const pageToBeUpdated = state[key];
+      const idx = pageToBeUpdated.findIndex(
+        (page) => page.position === action.pageIndex + 1
+      );
+      pageToBeUpdated[idx] = {
+        ...pageToBeUpdated[idx],
+        ...action.page
+      };
+      return {
+        ...state,
+        [key]: pageToBeUpdated,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus

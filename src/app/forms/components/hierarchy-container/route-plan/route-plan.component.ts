@@ -93,6 +93,10 @@ export class RoutePlanComponent implements OnInit {
     let count = 0;
     const allChildNodeIds =
       this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
+    const index = allChildNodeIds.indexOf(node.id);
+    if (index > -1) {
+      allChildNodeIds.splice(index, 1);
+    }
     this.store
       .select(getTasksCountByNodeIds(allChildNodeIds))
       .subscribe((c) => {
@@ -165,6 +169,24 @@ export class RoutePlanComponent implements OnInit {
 
     const i = oldItemContainer.findIndex((c) => c.id === draggedItemId);
     oldItemContainer.splice(i, 1);
+    if (
+      draggedItem.hasChildren &&
+      draggedItem.children &&
+      draggedItem.children.length
+    ) {
+      const parentItem = this.nodeLookup[parentItemId];
+      draggedItem.children.forEach((c) => {
+        if (!parentItem.children) {
+          parentItem.children = [];
+        }
+        parentItem.children.push(c);
+      });
+      draggedItem.children = [];
+      const parentIdx = oldItemContainer.findIndex(
+        (c) => c.id === parentItemId
+      );
+      oldItemContainer[parentIdx] = parentItem;
+    }
 
     switch (this.dropActionTodo.action) {
       case 'before':

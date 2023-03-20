@@ -27,23 +27,51 @@ export class AssetHierarchyUtil {
     return count;
   }
 
+  getAssetsLocationsCountByNode(node) {
+    let count = 0;
+    if (node.hasChildren || (node.children && node.children.length)) {
+      node.children.forEach((child) => {
+        count++;
+        if (child.hasChildren || (child.children && child.children.length)) {
+          count += this.getAssetsLocationsCountByNode(child);
+        }
+      });
+    }
+    return count;
+  }
+
   getTotalAssetCount(rootNode) {
     let count = 0;
     rootNode.forEach((node) => {
       if (node.type === 'asset') {
         count++;
       }
-      if (node.hasChildren && node.children && node.children.length) {
+      if (node.hasChildren || (node.children && node.children.length)) {
         node.children.forEach((child) => {
           if (child.type === 'asset') {
             count++;
             count += this.getAssetCountByNode(child);
           } else if (
-            child.hasChildren &&
-            child.children &&
-            child.children.length
+            child.hasChildren ||
+            (child.children && child.children.length)
           ) {
             count += this.getAssetCountByNode(child);
+          }
+        });
+      }
+    });
+    return count;
+  }
+
+  getTotalAssetsLocationsCount(rootNode) {
+    let count = 0;
+    rootNode.forEach((node) => {
+      count++;
+      if (node.hasChildren || (node.children && node.children.length)) {
+        node.children.forEach((child) => {
+          count++;
+          if (child.hasChildren || (child.children && child.children.length)) {
+            count += this.getAssetsLocationsCountByNode(child);
           }
         });
       }
@@ -54,7 +82,7 @@ export class AssetHierarchyUtil {
   getAllChildrenIDsByNode(node) {
     let childrenIds = [];
     childrenIds.push(node.id);
-    if (node.hasChildren && node.children && node.children.length) {
+    if (node.hasChildren || (node.children && node.children.length)) {
       node.children.forEach((child) => {
         const recursiveChildIds = this.getAllChildrenIDsByNode(child);
         childrenIds = [...childrenIds, ...recursiveChildIds];
@@ -65,7 +93,7 @@ export class AssetHierarchyUtil {
 
   getAllChildrenUIDsByNode(node) {
     let childrenIds = [];
-    if (node.hasChildren && node.children && node.children.length) {
+    if (node.hasChildren || (node.children && node.children.length)) {
       node.children.forEach((child) => {
         childrenIds.push(child.uid);
         const recursiveChildIds = this.getAllChildrenIDsByNode(child);
@@ -81,9 +109,8 @@ export class AssetHierarchyUtil {
       node.sequence = sequenceNum++;
       const tempNode = JSON.parse(JSON.stringify(node));
       tempNode.children = [];
-      // tempNode = JSON.parse(JSON.stringify(this.cleanedHierarchyEntity(node)));
       flatHierarchy.push(tempNode);
-      if (node.hasChildren && node.children.length) {
+      if (node.hasChildren || node.children.length) {
         const childFlatHierarchy = this.convertHierarchyToFlatList(
           node.children,
           sequenceNum++
@@ -399,7 +426,7 @@ export const deleteNodeFromHierarchy = (
           { id: node.id, uid: node.uid },
           currentSelectedHierarchyState
         ),
-        children: node.children.length
+        children: node?.children?.length
           ? deleteNodeFromHierarchy(
               node.children,
               instanceIds,
