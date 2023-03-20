@@ -17,9 +17,22 @@
         [disabled]="isAlreadySelected"
       ></mat-checkbox>
 
-      <img [src]="masterData?.image" class="master-data-image" />
+      <img
+        [src]="masterData?.image"
+        class="master-data-image"
+        [ngClass]="{
+          'selection-mode': viewMode === false,
+          'hierarchy-tail': !masterData.children.length,
+          'hierarchy-no-tail': masterData.children.length
+        }"
+      />
     </div>
-    <div class="master-data-title">
+    <div
+      [ngClass]="{
+        'master-data-title': !viewMode,
+        'view-mode': viewMode === true
+      }"
+    >
       {{ masterData.name }}
     </div>
   </div>
