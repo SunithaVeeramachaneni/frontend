@@ -66,8 +66,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   status = ["Pending assignment","In-progress","Completed"];
   filter = {
     status: '',
-    // schedule: '',
-    // scheduleValue: '',
     inspectedBy: '',
     inspectedOnStartDate: '',
     inspectedOnEndDate: ''
@@ -477,17 +475,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.type == 'daterange') {
-        this.filter.inspectedOnStartDate = item.value[0];
-        this.filter.inspectedOnEndDate = item.value[1];
-      }
-      // else if (item.type == 'schedule') {
-      //   this.filter.schedule = item.itemValue;
-      //   this.filter.scheduleValue = item.value;
-      // }
-      else {
+        if (item.value && item.value.length > 0) {
+          this.filter.inspectedOnStartDate = item.value[0];
+          this.filter.inspectedOnEndDate = item.value[1];
+        }
+      } else {
         this.filter[item.column] = item.value;
       }
     }
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   clearFilters(): void {
