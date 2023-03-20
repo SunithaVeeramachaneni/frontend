@@ -337,10 +337,9 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       searchKey: this.searchForm.value,
       fetchType: this.fetchType
     };
-    const observable = this.raceDynamicFormService.getSubmissionFormsList$(
-      obj,
-      this.filter
-    );
+    const observable = this.isOperatorRounds
+      ? this.operatorRoundsService.getSubmissionFormsList$(obj)
+      : this.raceDynamicFormService.getSubmissionFormsList$(obj, this.filter);
     return observable.pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;
