@@ -277,7 +277,6 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
-
   _getDataFromGatewayById(
     apiUrl: string,
     urlStr: string,
