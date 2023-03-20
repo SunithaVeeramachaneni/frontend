@@ -1,5 +1,5 @@
 <div class="main-tenant-container" *ngIf="userInfo$ | async">
-  <form class="tenant-header" [formGroup]="searchForm">
+  <div class="tenant-header" [formGroup]="searchForm">
     <span class="custom-form-field-white-color select-products">
       <mat-form-field appearance="outline">
         <mat-label translate>product</mat-label>
@@ -71,7 +71,7 @@
               }
       }}</span>
     </span>
-  </form>
+  </div>
   <div
     *ngIf="tenantsData$ | async; else loadingTenants"
     class="dis-flex tenant-content"
