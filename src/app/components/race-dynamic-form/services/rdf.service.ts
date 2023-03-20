@@ -206,7 +206,7 @@ export class RaceDynamicFormService {
   getFormById$(id: string) {
      return this.appService._getRespById(
        environment.rdfApiUrl,
-       `forms/`,
+       `forms/list/`,
        id
      );
   }
@@ -249,6 +249,7 @@ export class RaceDynamicFormService {
   }
 
   updateAuthoredFormDetail$(formDetails) {
+    console.log(formDetails);
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/authored/${formDetails.authoredFormDetailId}`,
@@ -259,7 +260,7 @@ export class RaceDynamicFormService {
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
-        _version: formDetails.authoredFormDetailDynamoDBVersion,
+        version: formDetails.authoredFormDetailDynamoDBVersion,
         condition: {
           formlistID: { eq: formDetails.formListId },
           version: { eq: formDetails.authoredFormDetailVersion.toString() }

@@ -466,7 +466,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form: form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
