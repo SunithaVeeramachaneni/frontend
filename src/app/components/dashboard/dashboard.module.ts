@@ -52,17 +52,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NgxEchartsModule } from 'ngx-echarts';
-import * as echarts from 'echarts';
-
-import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
-import { ColumnChartComponent } from './charts/column-chart/column-chart.component';
-import { HorizontalStackedChartComponent } from './charts/horizontal-stacked-chart/horizontal-stacked-chart.component';
-import { VerticalStackedChartComponent } from './charts/vertical-stacked-chart/vertical-stacked-chart.component';
-import { LineChartComponent } from './charts/line-chart/line-chart.component';
-import { PieChartComponent } from './charts/pie-chart/pie-chart.component';
-import { DonutChartComponent } from './charts/donut-chart/donut-chart.component';
-import { AreaChartComponent } from './charts/area-chart/area-chart.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -91,9 +80,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
-    NgxEchartsModule.forRoot({
-      echarts
-    }),
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -129,15 +115,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     AlertDialog,
     WidgetDeleteModalComponent,
     ReportSaveAsModalComponent,
-    DynamicFiltersComponent,
-    BarChartComponent,
-    ColumnChartComponent,
-    HorizontalStackedChartComponent,
-    VerticalStackedChartComponent,
-    LineChartComponent,
-    PieChartComponent,
-    DonutChartComponent,
-    AreaChartComponent
+    DynamicFiltersComponent
   ],
   exports: [],
   entryComponents: []

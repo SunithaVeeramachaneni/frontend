@@ -13,6 +13,8 @@ import { DateTimePipe } from './pipes/date-time.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 import { CollabDialogComponent } from './components/collaboration/CollabDialog';
 import { UploadDialogComponent } from './components/collaboration/chats/upload-dialog/upload-dialog.component';
@@ -54,6 +56,15 @@ import { CustomRangePanelComponent } from './components/custom-range-panel/custo
 import { MatCardModule } from '@angular/material/card';
 import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 
+import { BarChartComponent } from './components/charts/bar-chart/bar-chart.component';
+import { ColumnChartComponent } from './components/charts/column-chart/column-chart.component';
+import { HorizontalStackedChartComponent } from './components/charts/horizontal-stacked-chart/horizontal-stacked-chart.component';
+import { VerticalStackedChartComponent } from './components/charts/vertical-stacked-chart/vertical-stacked-chart.component';
+import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
+import { PieChartComponent } from './components/charts/pie-chart/pie-chart.component';
+import { DonutChartComponent } from './components/charts/donut-chart/donut-chart.component';
+import { AreaChartComponent } from './components/charts/area-chart/area-chart.component';
+
 @NgModule({
   declarations: [
     CustomPaginationControlsComponent,
@@ -80,7 +91,15 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     BackgroundComponent,
     FilterComponent,
     CustomRangePanelComponent,
-    FilterSidePanelComponent
+    FilterSidePanelComponent,
+    BarChartComponent,
+    ColumnChartComponent,
+    HorizontalStackedChartComponent,
+    VerticalStackedChartComponent,
+    LineChartComponent,
+    PieChartComponent,
+    DonutChartComponent,
+    AreaChartComponent
   ],
   imports: [
     FormsModule,
@@ -110,7 +129,10 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     BreadcrumbModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule,
-    TranslateModule.forChild({})
+    TranslateModule.forChild({}),
+    NgxEchartsModule.forRoot({
+      echarts
+    })
   ],
   exports: [
     CustomPaginationControlsComponent,
@@ -125,7 +147,15 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     HeaderComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
-    BackgroundComponent
+    BackgroundComponent,
+    BarChartComponent,
+    ColumnChartComponent,
+    HorizontalStackedChartComponent,
+    VerticalStackedChartComponent,
+    LineChartComponent,
+    PieChartComponent,
+    DonutChartComponent,
+    AreaChartComponent
   ],
   providers: [DatePipe]
 })
