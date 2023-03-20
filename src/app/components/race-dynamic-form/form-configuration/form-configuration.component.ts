@@ -413,7 +413,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   pageEventHandler(event: PageEvent) {
-    const { pageIndex, type } = event;
+    const { pageIndex, type, page } = event;
     switch (type) {
       case 'add':
         {
@@ -425,6 +425,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             this.formConf.counter.value
           );
         }
+        break;
+      case 'update':
+        this.store.dispatch(
+          FormConfigurationActions.updatePage({
+            page,
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
+          })
+        );
         break;
 
       case 'delete':

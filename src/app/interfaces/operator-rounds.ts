@@ -61,19 +61,22 @@ export interface RoundPlan {
 }
 
 export interface RoundPlanDetail extends RoundPlan {
-  schedule?: string;
-  scheduleDates?: string;
-  tasks?: number;
-  rounds?: number;
-  operator?: string;
+  schedule: string;
+  scheduleDates: string;
+  tasks: number;
+  locations: number;
+  assets: number;
+  rounds: number;
+  operator: string;
 }
 
 export interface RoundDetail extends RoundPlan {
-  schedule?: string;
-  scheduleDates?: string;
-  tasks?: number;
-  rounds?: number;
-  operator?: string;
+  scheduledType: string;
+  dueDate: string;
+  locationAndAssets: number;
+  locationAndAssetsCompleted: number;
+  locationAndAssetTasks: number;
+  locationAndAssetTasksCompleted: number;
 }
 
 export interface RoundPlanDetailResponse {
@@ -85,8 +88,7 @@ export interface RoundPlanDetailResponse {
 
 export interface RoundDetailResponse {
   rows: RoundDetail[];
-  scheduledCount: number;
-  unscheduledCount: number;
+  count: number;
   nextToken: string | null;
 }
 
@@ -120,3 +122,18 @@ export type RoundPlanSubmissionList = {
   nextToken?: string | null;
   startedAt?: number | null;
 };
+
+export interface RoundPlanQueryParam {
+  nextToken?: string;
+  limit: number;
+  searchTerm: string;
+  fetchType: string;
+  roundPlanId: string;
+}
+
+export interface SelectTab {
+  index: number;
+  queryParams: {
+    id: string;
+  };
+}

@@ -43,10 +43,12 @@ interface FrequencyDetail {
 export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
-  @Output() scheduleRoundPlan: EventEmitter<RoundPlan> = new EventEmitter();
+  @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
+    new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
   @Input() formStatus = formConfigurationStatus.draft;
+  @Input() formDetailType = 'Authored';
   @Input() set scheduleConfiguration(
     scheduleConfiguration: RoundPlanScheduleConfiguration
   ) {
@@ -169,7 +171,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   scheduleRoundPlanEvent() {
-    this.scheduleRoundPlan.emit(this.selectedForm as RoundPlan);
+    this.scheduleRoundPlan.emit(this.selectedForm as RoundPlanDetail);
   }
 
   setFrequencyInfo() {
