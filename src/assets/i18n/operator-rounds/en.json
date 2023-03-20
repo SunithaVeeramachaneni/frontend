@@ -178,10 +178,8 @@
   "openActions": "Open Actions",
   "issues": "Issues",
   "actions": "Actions",
-  "scheduleCreatedSuccess": "Schedule created successfully",
-  "scheduleUpdatedSuccess": "Schedule updated successfully",
-  "scheduleCreatedSuccessMessage": " has been created successfully",
-  "scheduleUpdatedSuccessMessage": " has been updated successfully",
+  "scheduleSuccess": "Success",
+  "scheduleSuccessMessage": " has been scheduled successfully",
   "viewRounds": "View Rounds",
   "close": "Close",
   "all": "All ({count})",
@@ -212,5 +210,7 @@
   "raisedBy": "Raised By",
   "attachment": "Attachments",
   "createdBy": "Created By",
-  "selectAll": "Select All"
+  "selectAll": "Select All",
+  "tasksCompleted": "Tasks Completed",
+  "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}"
 }

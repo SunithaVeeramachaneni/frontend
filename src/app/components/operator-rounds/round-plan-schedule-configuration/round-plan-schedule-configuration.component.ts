@@ -15,7 +15,6 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import {
   addDays,
   addMonths,
@@ -61,6 +60,8 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   @Output()
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
+  @Output()
+  viewRounds: EventEmitter<string> = new EventEmitter<string>();
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -68,12 +69,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   weeksOfMonth = scheduleConfigs.weeksOfMonth;
   roundPlanSchedulerConfigForm: FormGroup;
   currentDate: Date;
-  scheduleByDates: ScheduleByDate[] = [
-    {
-      date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
-      scheduled: false
-    }
-  ];
+  scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   private _roundPlanDetail: any;
@@ -82,8 +78,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
-    private dialog: MatDialog,
-    private router: Router
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -151,6 +146,29 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('scheduleEndOccurrencesText')
               .disable();
+        }
+      });
+
+    this.roundPlanSchedulerConfigForm
+      .get('scheduleType')
+      .valueChanges.subscribe((scheduleType) => {
+        switch (scheduleType) {
+          case 'byFrequency':
+            this.roundPlanSchedulerConfigForm
+              .get('repeatEvery')
+              .patchValue('day');
+            this.scheduleByDates = [];
+            break;
+          case 'byDate':
+            if (!this.scheduleByDates.length) {
+              this.scheduleByDates = [
+                {
+                  date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
+                  scheduled: false
+                }
+              ];
+            }
+            break;
         }
       });
 
@@ -298,7 +316,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   scheduleConfiguration() {
     if (
       this.roundPlanSchedulerConfigForm.valid &&
-      this.roundPlanSchedulerConfigForm.valid
+      this.roundPlanSchedulerConfigForm.dirty
     ) {
       this.disableSchedule = true;
       const roundPlanSchedulerConfig =
@@ -436,12 +454,6 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
 
   setDefaultRoundPlanSchedulerConfig(roundPlanId: string) {
-    this.scheduleByDates = [
-      {
-        date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
-        scheduled: false
-      }
-    ];
     this.roundPlanSchedulerConfigForm.patchValue({
       id: '',
       roundPlanId,
@@ -500,7 +512,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       if (data) {
         if (data.redirectToRounds) {
           this.scheduleConfigState.emit('out');
-          this.router.navigate(['/operator-rounds/scheduler/1']);
+          this.viewRounds.emit(this.roundPlanDetail.id);
         } else {
           this.scheduleConfigState.emit('out');
         }
