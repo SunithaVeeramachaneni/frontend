@@ -1,0 +1,37 @@
+<div class="responses-list-view">
+  <ng-container>
+    <div class="main-container">
+      <div class="responses-header">
+        <div>
+          <h2 class="heading" translate="globalResponse"></h2>
+        </div>
+        <div>
+          <span class="custom-form-field-gray-color search">
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'search' | translate"
+                autocomplete="off"
+              />
+            </mat-form-field>
+            <img [src]="filterIcon" matSuffix alt="Open Filter" />
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+  </ng-container>
+</div>
