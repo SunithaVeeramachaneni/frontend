@@ -30,7 +30,7 @@
           </div>
         </div>
         <div
-          *ngIf="node.hasChildren && node.children && node.children.length"
+          *ngIf="node.hasChildren || (node.children && node.children.length)"
           class="childrenHead"
           [ngClass]="{ white: selectedNode.id === node.id }"
         >
@@ -46,7 +46,8 @@
               'nodeChildrenHead'
                 | translate
                   : {
-                      assetsCount: assetHierarchyUtil.getAssetCountByNode(node),
+                      assetsCount:
+                        assetHierarchyUtil.getAssetsLocationsCountByNode(node),
                       tasksCount: getTotalTasksCountByNode(node)
                     }
             }}

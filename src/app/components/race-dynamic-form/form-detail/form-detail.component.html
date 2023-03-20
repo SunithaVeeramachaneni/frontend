@@ -210,10 +210,7 @@
               {{ questionsCount }} {{ 'questions' | translate }}
             </p>
           </div>
-          <div
-            (click)="onNavigateToDetailPage()"
-            *ngIf="formStatus !== formConfigurationStatus.published"
-          >
+          <div (click)="onNavigateToDetailPage()">
             <button mat-raised-button class="w-full btn-push btn-primary-blue">
               {{ 'editForm' | translate }}
             </button>
@@ -223,7 +220,10 @@
     </div>
     <div
       (click)="onNavigateToDetailPage()"
-      *ngIf="moduleName === 'OPERATOR_ROUNDS'"
+      *ngIf="
+        moduleName === 'OPERATOR_ROUNDS' &&
+        formStatus !== formConfigurationStatus.published
+      "
     >
       <button mat-raised-button class="w-full btn-primary-blue m-t-20">
         {{ 'editForm' | translate }}

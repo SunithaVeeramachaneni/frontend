@@ -145,7 +145,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
 
   pageEventHandler(event: PageEvent) {
-    const { pageIndex, type } = event;
+    const { pageIndex, type, page } = event;
     switch (type) {
       case 'add':
         {
@@ -159,7 +159,16 @@ export class BuilderComponent implements OnInit, OnChanges {
           );
         }
         break;
-
+      case 'update':
+        this.store.dispatch(
+          BuilderConfigurationActions.updatePage({
+            page,
+            pageIndex,
+            ...this.getFormConfigurationStatuses(),
+            subFormId: this.selectedNode.id
+          })
+        );
+        break;
       case 'delete':
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({

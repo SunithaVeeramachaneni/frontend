@@ -41,6 +41,7 @@ export interface Question {
   fieldType: string;
   position: number;
   required: boolean;
+  enableHistory: boolean;
   multi: boolean;
   value: any;
   isPublished: boolean;
@@ -68,7 +69,8 @@ export interface NumberRangeMetadata {
 
 export interface PageEvent {
   pageIndex: number;
-  type: 'add' | 'delete';
+  page?: Page;
+  type: 'add' | 'update' | 'delete';
 }
 
 export interface SectionEvent {

@@ -11,8 +11,31 @@
 .header-filters {
   display: flex;
   background-color: #ffffff;
+  padding-top: 10px;
   height: 50px;
-  padding-top: 3px;
+}
+
+.mcc-filters {
+  position: absolute;
+  right: 25px;
+  margin-top: -3px;
+}
+
+.plants-workcenters {
+  background: #ffffff;
+  margin-top: -52px;
+}
+
+@media (max-width: 1365px) {
+  .plants-workcenters {
+    padding-left: 0 !important;
+    margin-top: 0;
+    padding-top: 10px;
+  }
+
+  .header-filters {
+    height: auto;
+  }
 }
 
 .unassigned-workorder-list {

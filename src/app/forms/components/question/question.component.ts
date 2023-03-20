@@ -137,6 +137,7 @@ export class QuestionComponent implements OnInit {
     fieldType: 'TF',
     position: '',
     required: false,
+    enableHistory: false,
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -519,6 +520,8 @@ export class QuestionComponent implements OnInit {
       operand1: '',
       operand2: '',
       action: '',
+      mandateAttachment: false,
+      raiseIssue: false,
       logicTitle: '',
       expression: '',
       questions: [],
@@ -568,6 +571,7 @@ export class QuestionComponent implements OnInit {
           fieldType: 'TF',
           position: 0,
           required: false,
+          enableHistory: false,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -648,14 +652,6 @@ export class QuestionComponent implements OnInit {
 
     Array.from(target.files).forEach((file) => {
       const originalValue = this.questionForm.get('value').value;
-      // just for safety
-      if (encodeURIComponent(file.name) !== file.name) {
-        this.toast.show({
-          text: 'File name must not contain special characters.',
-          type: 'warning'
-        });
-        return;
-      }
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',

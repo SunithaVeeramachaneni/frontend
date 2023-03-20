@@ -71,13 +71,15 @@ export class QuillMaterialComponent
   focused = false;
 
   private writingValue = false;
+  private defaultFormats = ['bold', 'italic', 'underline', 'list', 'bullet'];
   private defaultOptions = {
     modules: {
       toolbar: [
         ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }]
       ]
-    }
+    },
+    formats: this.defaultFormats
   };
 
   _value: any;

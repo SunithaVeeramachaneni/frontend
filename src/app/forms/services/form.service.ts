@@ -80,10 +80,13 @@ export class FormService {
   }
 
   deleteFromS3(objectKey: string): void {
+    const params = new URLSearchParams();
+    params.append('objectKey', encodeURIComponent(objectKey));
+
     this._appService
       ._removeData(
         environment.rdfApiUrl,
-        `forms/instructions_delete/${encodeURIComponent(objectKey)}`
+        `forms/instructions_delete?${params.toString()}`
       )
       .subscribe();
   }

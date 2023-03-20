@@ -55,6 +55,18 @@
             [placeholder]="'plantId' | translate"
             formControlName="plantId"
           />
+          <mat-error
+            *ngIf="processValidationErrors('plantId')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.plantId.name
+                | translate
+                  : {
+                      name: 'plantId' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">

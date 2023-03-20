@@ -300,7 +300,7 @@ export class RoundPlanListComponent implements OnInit {
     }
     this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
       this.toast.show({
-        text: 'Form copied successfully!',
+        text: 'Round Plan copied successfully!',
         type: 'success'
       });
       this.nextToken = '';
@@ -358,7 +358,7 @@ export class RoundPlanListComponent implements OnInit {
             initial.data.splice(newIdx, 0, obj);
             form.action = 'add';
             this.toast.show({
-              text: 'Form copied successfully!',
+              text: 'Round Plan copied successfully!',
               type: 'success'
             });
           }

@@ -686,7 +686,9 @@ export class RaceDynamicFormService {
           return {
             ...p,
             preTextImage: {
-              image: p?.formLogo,
+              image: p.formLogo
+                ? p.formLogo
+                : 'assets/rdf-forms-icons/formlogo.svg',
               style: {
                 width: '40px',
                 height: '40px',
