@@ -565,7 +565,6 @@ export class FormListComponent implements OnInit {
     this.formsList$
       .pipe(
         tap((formsList) => {
-          console.log(formsList);
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
             .filter((value, index, self) => self.indexOf(value) === index);
