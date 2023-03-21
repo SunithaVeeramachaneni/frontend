@@ -1,4 +1,340 @@
 # this is an auto generated file. This will be overwritten
+mutation CreatePlants(
+  $input: CreatePlantsInput!
+  $condition: ModelPlantsConditionInput
+) {
+  createPlants(input: $input, condition: $condition) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdatePlants(
+  $input: UpdatePlantsInput!
+  $condition: ModelPlantsConditionInput
+) {
+  updatePlants(input: $input, condition: $condition) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeletePlants(
+  $input: DeletePlantsInput!
+  $condition: ModelPlantsConditionInput
+) {
+  deletePlants(input: $input, condition: $condition) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateActionsLogHistory(
+  $input: CreateActionsLogHistoryInput!
+  $condition: ModelActionsLogHistoryConditionInput
+) {
+  createActionsLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateActionsLogHistory(
+  $input: UpdateActionsLogHistoryInput!
+  $condition: ModelActionsLogHistoryConditionInput
+) {
+  updateActionsLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteActionsLogHistory(
+  $input: DeleteActionsLogHistoryInput!
+  $condition: ModelActionsLogHistoryConditionInput
+) {
+  deleteActionsLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateActionsList(
+  $input: CreateActionsListInput!
+  $condition: ModelActionsListConditionInput
+) {
+  createActionsList(input: $input, condition: $condition) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateActionsList(
+  $input: UpdateActionsListInput!
+  $condition: ModelActionsListConditionInput
+) {
+  updateActionsList(input: $input, condition: $condition) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteActionsList(
+  $input: DeleteActionsListInput!
+  $condition: ModelActionsListConditionInput
+) {
+  deleteActionsList(input: $input, condition: $condition) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateIssuesLogHistory(
+  $input: CreateIssuesLogHistoryInput!
+  $condition: ModelIssuesLogHistoryConditionInput
+) {
+  createIssuesLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateIssuesLogHistory(
+  $input: UpdateIssuesLogHistoryInput!
+  $condition: ModelIssuesLogHistoryConditionInput
+) {
+  updateIssuesLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteIssuesLogHistory(
+  $input: DeleteIssuesLogHistoryInput!
+  $condition: ModelIssuesLogHistoryConditionInput
+) {
+  deleteIssuesLogHistory(input: $input, condition: $condition) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateIssuesList(
+  $input: CreateIssuesListInput!
+  $condition: ModelIssuesListConditionInput
+) {
+  createIssuesList(input: $input, condition: $condition) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateIssuesList(
+  $input: UpdateIssuesListInput!
+  $condition: ModelIssuesListConditionInput
+) {
+  updateIssuesList(input: $input, condition: $condition) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteIssuesList(
+  $input: DeleteIssuesListInput!
+  $condition: ModelIssuesListConditionInput
+) {
+  deleteIssuesList(input: $input, condition: $condition) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateUnitMeasument(
   $input: CreateUnitMeasumentInput!
   $condition: ModelUnitMeasumentConditionInput
@@ -276,8 +612,12 @@ mutation CreateRoundPlanSubmissionDetails(
   createRoundPlanSubmissionDetails(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -292,8 +632,12 @@ mutation UpdateRoundPlanSubmissionDetails(
   updateRoundPlanSubmissionDetails(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -308,8 +652,12 @@ mutation DeleteRoundPlanSubmissionDetails(
   deleteRoundPlanSubmissionDetails(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -335,10 +683,12 @@ mutation CreateRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -364,10 +714,12 @@ mutation UpdateRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -393,10 +745,12 @@ mutation DeleteRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -418,6 +772,7 @@ mutation CreateAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -439,6 +794,7 @@ mutation UpdateAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -460,6 +816,7 @@ mutation DeleteAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -477,6 +834,15 @@ mutation CreateRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -494,6 +860,15 @@ mutation UpdateRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -511,6 +886,15 @@ mutation DeleteRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -539,20 +923,17 @@ mutation CreateRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -581,20 +962,17 @@ mutation UpdateRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -623,20 +1001,17 @@ mutation DeleteRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -655,6 +1030,7 @@ mutation CreateResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -673,6 +1049,7 @@ mutation UpdateResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -691,6 +1068,7 @@ mutation DeleteResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -705,8 +1083,12 @@ mutation CreateFormSubmissionDetail(
   createFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -721,8 +1103,12 @@ mutation UpdateFormSubmissionDetail(
   updateFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -737,8 +1123,12 @@ mutation DeleteFormSubmissionDetail(
   deleteFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -758,6 +1148,9 @@ mutation CreateAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -777,6 +1170,9 @@ mutation UpdateAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -796,6 +1192,9 @@ mutation DeleteAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -825,6 +1224,8 @@ mutation CreateFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -854,6 +1255,8 @@ mutation UpdateFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -883,6 +1286,8 @@ mutation DeleteFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -912,10 +1317,6 @@ mutation CreateFormList(
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -925,6 +1326,7 @@ mutation CreateFormList(
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -954,10 +1356,6 @@ mutation UpdateFormList(
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -967,6 +1365,7 @@ mutation UpdateFormList(
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -996,10 +1395,6 @@ mutation DeleteFormList(
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -1009,6 +1404,7 @@ mutation DeleteFormList(
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -1024,6 +1420,17 @@ mutation CreateFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -1039,6 +1446,17 @@ mutation UpdateFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -1054,6 +1472,17 @@ mutation DeleteFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
