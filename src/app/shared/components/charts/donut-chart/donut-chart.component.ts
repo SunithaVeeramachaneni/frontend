@@ -112,11 +112,10 @@ export class DonutChartComponent implements OnInit, OnChanges {
       this.datasetField = datasetFields?.find(
         (datasetField) => datasetField?.visible
       );
+      this.chartOptions.title.text = this.chartTitle;
 
       if (typeof title === 'object') {
         newOptions.title = this.chartTitle;
-      } else {
-        newOptions.title.text = this.chartTitle;
       }
       if (this.chartConfig?.label) {
         newOptions.label = this.chartConfig.label;
