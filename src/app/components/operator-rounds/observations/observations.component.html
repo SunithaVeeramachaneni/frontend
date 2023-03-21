@@ -1,40 +1,44 @@
 <div class="observations-container">
   <div class="dis-flex charts">
-    <div class="width-50 chart m-r-10" *ngIf="priorityData && statusData">
+    <div class="width-50 inner-chart m-r-10" *ngIf="priorityData && statusData">
       <h3 translate="openIssues"></h3>
       <div class="dis-flex">
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
-          <app-chart
+          <app-donut-chart
+            [chartConfig]="priorityData?.issues.config"
+            [chartData]="priorityData?.issues.data"
             class="issue-chart"
-            [options]="priorityData?.issues"
-          ></app-chart>
+          ></app-donut-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
-          <app-chart
+          <app-donut-chart
+            [chartConfig]="statusData?.issues.config"
+            [chartData]="statusData?.issues.data"
             class="issue-chart"
-            [options]="statusData?.issues"
-          ></app-chart>
+          ></app-donut-chart>
         </div>
       </div>
     </div>
-    <div class="width-50 chart m-l-10" *ngIf="priorityData && statusData">
+    <div class="width-50 inner-chart m-l-10" *ngIf="priorityData && statusData">
       <h3 translate="openActions"></h3>
       <div class="dis-flex">
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
-          <app-chart
+          <app-donut-chart
+            [chartConfig]="priorityData?.actions.config"
+            [chartData]="priorityData?.actions.data"
             class="issue-chart"
-            [options]="priorityData?.actions"
-          ></app-chart>
+          ></app-donut-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
-          <app-chart
+          <app-donut-chart
+            [chartConfig]="statusData?.actions.config"
+            [chartData]="statusData?.actions.data"
             class="issue-chart"
-            [options]="statusData?.actions"
-          ></app-chart>
+          ></app-donut-chart>
         </div>
       </div>
     </div>

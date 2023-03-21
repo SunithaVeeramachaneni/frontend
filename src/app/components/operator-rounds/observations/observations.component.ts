@@ -55,18 +55,31 @@ export class ObservationsComponent implements OnInit {
       orient: 'horizontal',
       top: '90%'
     },
-    series: [
-      {
-        name: '',
-        type: 'pie',
-        radius: ['50%', '70%'],
-        color: [],
-        data: [],
-        labelLine: {
-          show: true
-        }
+    series: {
+      name: '',
+      type: 'pie',
+      radius: ['50%', '70%'],
+      color: [],
+      data: [],
+      labelLine: {
+        show: true
       }
-    ]
+    },
+    indexAxis: 'y',
+    isStacked: false,
+    showValues: true,
+    showLegends: true,
+    datasetFieldName: 'name',
+    id: '6218ae346589975d09cda19',
+    datasetFields: [
+      {
+        name: 'name',
+        displayName: 'Name',
+        type: 'string',
+        visible: true
+      }
+    ],
+    renderChart: false
   };
   priorityData: any = {
     issues: {},
@@ -89,86 +102,61 @@ export class ObservationsComponent implements OnInit {
         if (result) {
           this.priorityData = {
             issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openIssues?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+              config: this.prepareGraphConfig(
+                result?.openIssues?.priorityTotal,
+                this.priorityColors
+              ),
+              data: this.transformChartPayload(result?.openIssues?.priority)
             },
             actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openActions?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+              config: this.prepareGraphConfig(
+                result?.openActions?.priorityTotal,
+                this.priorityColors
+              ),
+              data: this.transformChartPayload(result?.openActions?.priority)
             }
           };
-
           this.statusData = {
             issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openIssues?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+              config: this.prepareGraphConfig(
+                result?.openIssues?.statusTotal,
+                this.statusColors
+              ),
+              data: this.transformChartPayload(result?.openIssues?.status)
             },
             actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openActions?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+              config: this.prepareGraphConfig(
+                result?.openActions?.statusTotal,
+                this.statusColors
+              ),
+              data: this.transformChartPayload(result?.openActions?.status)
             }
           };
         }
       });
+  }
+
+  private transformChartPayload(object) {
+    // eslint-disable-next-line no-debugger
+    debugger;
+    return Object.entries(object).map(([key, value]) => ({
+      name: key,
+      count: value
+    }));
+  }
+
+  private prepareGraphConfig(total: number, color: string[]) {
+    return {
+      ...this.options,
+      renderChart: true,
+      title: {
+        ...this.options.title,
+        text: total
+      },
+      series: {
+        ...this.options.series,
+        color
+      }
+    };
   }
 }

@@ -17,7 +17,7 @@ import { EChartsOption } from 'echarts';
 export class DonutChartComponent implements OnInit, OnChanges {
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
-    if (chartConfig.renderChart) {
+    if (chartConfig?.renderChart) {
       this.prepareChartDetails();
     }
   }
@@ -108,11 +108,23 @@ export class DonutChartComponent implements OnInit, OnChanges {
       newOptions.series.label.show = showValues;
       newOptions.legend.show = showLegends;
       //this.chartOptions.indexAxis = indexAxis;
-      this.countField = countFields.find((countField) => countField.visible);
-      this.datasetField = datasetFields.find(
-        (datasetField) => datasetField.visible
+      this.countField = countFields?.find((countField) => countField?.visible);
+      this.datasetField = datasetFields?.find(
+        (datasetField) => datasetField?.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
+
+      if (typeof title === 'object') {
+        newOptions.title = this.chartTitle;
+      } else {
+        newOptions.title.text = this.chartTitle;
+      }
+      if (this.chartConfig?.label) {
+        newOptions.label = this.chartConfig.label;
+        delete newOptions.series.label;
+      }
+      if (this.chartConfig?.series?.color) {
+        newOptions.series.color = this.chartConfig?.series?.color;
+      }
       // this.chartOptions.plugins.datalabels.display = showValues
       //   ? 'auto'
       //   : false;
@@ -121,26 +133,34 @@ export class DonutChartComponent implements OnInit, OnChanges {
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
       this.chartOptions = newOptions;
+      console.log(
+        '🚀 ~ file: donut-chart.component.ts:136 ~ DonutChartComponent ~ newOptions:',
+        newOptions
+      );
     }
   };
 
   prepareChartData = () => {
     const reducedObject: { [key: string]: number } = this.chartData.reduce(
       (acc, data) => {
-        acc[data[this.datasetField.name]] = acc[data[this.datasetField.name]]
-          ? acc[data[this.datasetField.name]]
+        acc[data[this.datasetField?.name]] = acc[data[this.datasetField?.name]]
+          ? acc[data[this.datasetField?.name]]
           : 0;
-        acc[data[this.datasetField.name]] += data.count;
+        acc[data[this.datasetField?.name]] += data.count;
         return acc;
       },
       {}
+    );
+    console.log(
+      '🚀 ~ file: donut-chart.component.ts:154 ~ DonutChartComponent ~ chartData:',
+      this.chartData
     );
 
     const sortedObject = Object.keys(reducedObject)
       .sort()
       .reduce((acc, val) => {
         const value =
-          this.datasetField.type === 'date'
+          this.datasetField?.type === 'date'
             ? this.datePipe.transform(val, 'short')
             : val;
         acc[value] = +reducedObject[val].toFixed(2);
