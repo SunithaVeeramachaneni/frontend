@@ -5,6 +5,10 @@
     width: 20%;
   }
 
+  ::ng-deep .mat-column-status {
+    width: 5%;
+  }
+
   .issues-search {
     position: fixed;
     right: 14px;

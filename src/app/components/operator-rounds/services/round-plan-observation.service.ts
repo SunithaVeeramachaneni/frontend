@@ -54,13 +54,13 @@ export class RoundPlanObservationsService {
       return {
         ...obj,
         preTextImage: {
-          // image: obj?.Photo,
+          image: obj?.Photo,
           style: {
             width: '40px',
             height: '40px',
             marginRight: '10px'
           },
-          condition: true
+          condition: false
         },
         title: obj?.Title || '',
         description: obj?.Description || '',

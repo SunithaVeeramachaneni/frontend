@@ -6,16 +6,16 @@
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
           <app-donut-chart
-            [chartConfig]="priorityData?.issues.config"
-            [chartData]="priorityData?.issues.data"
+            [chartConfig]="priorityData?.issues?.config"
+            [chartData]="priorityData?.issues?.data"
             class="issue-chart"
           ></app-donut-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
           <app-donut-chart
-            [chartConfig]="statusData?.issues.config"
-            [chartData]="statusData?.issues.data"
+            [chartConfig]="statusData?.issues?.config"
+            [chartData]="statusData?.issues?.data"
             class="issue-chart"
           ></app-donut-chart>
         </div>
@@ -27,16 +27,16 @@
         <div class="width-50">
           <p class="center">{{ 'priority' | translate }}</p>
           <app-donut-chart
-            [chartConfig]="priorityData?.actions.config"
-            [chartData]="priorityData?.actions.data"
+            [chartConfig]="priorityData?.actions?.config"
+            [chartData]="priorityData?.actions?.data"
             class="issue-chart"
           ></app-donut-chart>
         </div>
         <div class="width-50">
           <p class="center">{{ 'status' | translate }}</p>
           <app-donut-chart
-            [chartConfig]="statusData?.actions.config"
-            [chartData]="statusData?.actions.data"
+            [chartConfig]="statusData?.actions?.config"
+            [chartData]="statusData?.actions?.data"
             class="issue-chart"
           ></app-donut-chart>
         </div>

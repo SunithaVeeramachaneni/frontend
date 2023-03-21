@@ -76,7 +76,7 @@ export class IssuesComponent implements OnInit {
         'font-size': '80%',
         color: 'darkgray'
       },
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -125,7 +125,7 @@ export class IssuesComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -155,7 +155,7 @@ export class IssuesComponent implements OnInit {
         position: 'relative',
         top: '10px',
         height: '24px',
-        color: '#ff4033',
+        color: '#000',
         borderRadius: '12px'
       },
       subtitleStyle: {},
@@ -193,7 +193,7 @@ export class IssuesComponent implements OnInit {
         right: '15px',
         height: '24px',
         background: '#FEF3C7',
-        color: '#92400E',
+        color: '#000',
         borderRadius: '12px'
       },
       subtitleStyle: {},
@@ -284,22 +284,22 @@ export class IssuesComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      High: {
-        color: '#ff4033'
+      high: {
+        color: '#fe6c64'
       },
-      Medium: {
-        color: '#ffab46'
+      medium: {
+        color: '#ff9502'
       },
-      Low: {
-        color: '#98989a'
+      low: {
+        color: '#8a8a8c'
       },
-      Open: {
-        'background-color': '#fde2e1',
-        color: '#b76262'
+      open: {
+        'background-color': '#fee2e1',
+        color: '#c98282'
       },
-      'In Progress': {
-        'background-color': '#c0d7fd',
-        color: '#3865b6'
+      'in-progress': {
+        'background-color': '#ffebce',
+        color: '#ffb040'
       }
     }
   };

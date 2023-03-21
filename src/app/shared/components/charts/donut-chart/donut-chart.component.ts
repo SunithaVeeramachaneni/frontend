@@ -147,10 +147,6 @@ export class DonutChartComponent implements OnInit, OnChanges {
       },
       {}
     );
-    console.log(
-      '🚀 ~ file: donut-chart.component.ts:154 ~ DonutChartComponent ~ chartData:',
-      this.chartData
-    );
 
     const sortedObject = Object.keys(reducedObject)
       .sort()

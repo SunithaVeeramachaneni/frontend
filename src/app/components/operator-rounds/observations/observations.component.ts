@@ -90,7 +90,7 @@ export class ObservationsComponent implements OnInit {
     actions: {}
   };
   private priorityColors = ['#b76262', '#f4a915', '#cfcfcf'];
-  private statusColors = ['#B76262', '#C0D7FD'];
+  private statusColors = ['#b76262', '#C0D7FD'];
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService
   ) {}
