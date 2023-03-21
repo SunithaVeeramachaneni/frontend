@@ -63,7 +63,7 @@ import { slideInOut } from 'src/app/animations';
 export class RoundsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
-  status = ["Pending assignment","In-progress","Completed"];
+  status = ['Open', 'In-progress', 'Completed'];
   filter = {
     status: '',
     inspectedBy: '',
@@ -303,6 +303,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  inspectedBy: any = [];
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -316,6 +317,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
+    this.getAllOperatorRounds();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -458,6 +460,25 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+  }
+
+  getAllOperatorRounds() {
+    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
+      const uniqueLastPublishedBy = formsList.map((item) => item.createdBy)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueLastPublishedBy) {
+        if (item) {
+          this.inspectedBy.push(item);
+        }
+      } 
+      for (const item of this.filterJson) {
+        if (item['column'] == 'status') {
+          item.items = this.status;
+        } else if (item['column'] == 'inspectedBy') {
+          item.items = this.inspectedBy;
+        } 
+      }
+    });
   }
 
   getFilter() {
