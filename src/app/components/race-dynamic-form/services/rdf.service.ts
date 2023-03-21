@@ -571,7 +571,6 @@ export class RaceDynamicFormService {
               }
 
               if (question.fieldType === 'INST') {
-                console.log(this.translate.instant('noneTag'));
                 if (
                   question.value.tag.title !== this.translate.instant('noneTag')
                 ) {
