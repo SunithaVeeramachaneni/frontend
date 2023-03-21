@@ -1,4 +1,319 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreatePlants($filter: ModelSubscriptionPlantsFilterInput) {
+  onCreatePlants(filter: $filter) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdatePlants($filter: ModelSubscriptionPlantsFilterInput) {
+  onUpdatePlants(filter: $filter) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeletePlants($filter: ModelSubscriptionPlantsFilterInput) {
+  onDeletePlants(filter: $filter) {
+    id
+    name
+    description
+    plantId
+    country
+    state
+    image
+    label
+    field
+    searchTerm
+    zipCode
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateActionsLogHistory(
+  $filter: ModelSubscriptionActionsLogHistoryFilterInput
+) {
+  onCreateActionsLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateActionsLogHistory(
+  $filter: ModelSubscriptionActionsLogHistoryFilterInput
+) {
+  onUpdateActionsLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteActionsLogHistory(
+  $filter: ModelSubscriptionActionsLogHistoryFilterInput
+) {
+  onDeleteActionsLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    actionslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateActionsList(
+  $filter: ModelSubscriptionActionsListFilterInput
+) {
+  onCreateActionsList(filter: $filter) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateActionsList(
+  $filter: ModelSubscriptionActionsListFilterInput
+) {
+  onUpdateActionsList(filter: $filter) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteActionsList(
+  $filter: ModelSubscriptionActionsListFilterInput
+) {
+  onDeleteActionsList(filter: $filter) {
+    id
+    actionsLogHistories {
+      nextToken
+      startedAt
+    }
+    actionId
+    actionData
+    taskId
+    taskDesciption
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateIssuesLogHistory(
+  $filter: ModelSubscriptionIssuesLogHistoryFilterInput
+) {
+  onCreateIssuesLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateIssuesLogHistory(
+  $filter: ModelSubscriptionIssuesLogHistoryFilterInput
+) {
+  onUpdateIssuesLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteIssuesLogHistory(
+  $filter: ModelSubscriptionIssuesLogHistoryFilterInput
+) {
+  onDeleteIssuesLogHistory(filter: $filter) {
+    id
+    message
+    type
+    username
+    issueslistID
+    createdBy
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateIssuesList(
+  $filter: ModelSubscriptionIssuesListFilterInput
+) {
+  onCreateIssuesList(filter: $filter) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateIssuesList(
+  $filter: ModelSubscriptionIssuesListFilterInput
+) {
+  onUpdateIssuesList(filter: $filter) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteIssuesList(
+  $filter: ModelSubscriptionIssuesListFilterInput
+) {
+  onDeleteIssuesList(filter: $filter) {
+    id
+    issuesLogHistories {
+      nextToken
+      startedAt
+    }
+    issueId
+    issueData
+    taskId
+    taskDesciption
+    notificationNumber
+    searchTerm
+    createdBy
+    roundId
+    assignedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateUnitMeasument(
   $filter: ModelSubscriptionUnitMeasumentFilterInput
 ) {
@@ -245,8 +560,12 @@ subscription OnCreateRoundPlanSubmissionDetails(
   onCreateRoundPlanSubmissionDetails(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -260,8 +579,12 @@ subscription OnUpdateRoundPlanSubmissionDetails(
   onUpdateRoundPlanSubmissionDetails(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -275,8 +598,12 @@ subscription OnDeleteRoundPlanSubmissionDetails(
   onDeleteRoundPlanSubmissionDetails(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    flatHierarchy
+    createdBy
+    assignedBy
+    status
+    formdetailID
     createdAt
     updatedAt
     _version
@@ -301,10 +628,12 @@ subscription OnCreateRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -329,10 +658,12 @@ subscription OnUpdateRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -357,10 +688,12 @@ subscription OnDeleteRoundPlanSubmissionList(
     version
     submittedBy
     searchTerm
-    RoundPlanSubmissionDetails {
+    roundPlanSubmissionDetails {
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -381,6 +714,7 @@ subscription OnCreateAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -401,6 +735,7 @@ subscription OnUpdateAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -421,6 +756,7 @@ subscription OnDeleteAuthoredRoundPlanDetail(
     formlistID
     subForms
     hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -437,6 +773,15 @@ subscription OnCreateRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -453,6 +798,15 @@ subscription OnUpdateRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -469,6 +823,15 @@ subscription OnDeleteRoundPlanDetail(
     flatHierarchy
     formlistID
     scheduledAt
+    scheduledType
+    dueDate
+    createdBy
+    assignedBy
+    assignedTo
+    roundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -496,20 +859,17 @@ subscription OnCreateRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -537,20 +897,17 @@ subscription OnUpdateRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -578,20 +935,17 @@ subscription OnDeleteRoundPlanList(
     isArchived
     formType
     isArchivedAt
-    RoundPlanSubmissionDetails {
+    authoredRoundPlanDetails {
       nextToken
       startedAt
     }
-    AuthoredRoundPlanDetails {
-      nextToken
-      startedAt
-    }
-    RoundPlanDetails {
+    roundPlanDetails {
       nextToken
       startedAt
     }
     isDeleted
     searchTerm
+    createdBy
     createdAt
     updatedAt
     _version
@@ -609,6 +963,7 @@ subscription OnCreateResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -626,6 +981,7 @@ subscription OnUpdateResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -643,6 +999,7 @@ subscription OnDeleteResponseSet(
     description
     isMultiColumn
     values
+    createdBy
     createdAt
     updatedAt
     _version
@@ -656,8 +1013,12 @@ subscription OnCreateFormSubmissionDetail(
   onCreateFormSubmissionDetail(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -671,8 +1032,12 @@ subscription OnUpdateFormSubmissionDetail(
   onUpdateFormSubmissionDetail(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -686,8 +1051,12 @@ subscription OnDeleteFormSubmissionDetail(
   onDeleteFormSubmissionDetail(filter: $filter) {
     id
     formData
-    formlistID
     formsubmissionlistID
+    createdBy
+    assignedBy
+    formdetailID
+    status
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -706,6 +1075,9 @@ subscription OnCreateAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -724,6 +1096,9 @@ subscription OnUpdateAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -742,6 +1117,9 @@ subscription OnDeleteAuthoredFormDetail(
     counter
     formDetailPublishStatus
     formlistID
+    subForms
+    hierarchy
+    flatHierarchy
     createdAt
     updatedAt
     _version
@@ -770,6 +1148,8 @@ subscription OnCreateFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -798,6 +1178,8 @@ subscription OnUpdateFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -826,6 +1208,8 @@ subscription OnDeleteFormSubmissionList(
       nextToken
       startedAt
     }
+    createdBy
+    assignedBy
     createdAt
     updatedAt
     _version
@@ -852,10 +1236,6 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -865,6 +1245,7 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -891,10 +1272,6 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -904,6 +1281,7 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -930,10 +1308,6 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
     isArchived
     searchTerm
     isArchivedAt
-    formListFormSubmissionDetail {
-      nextToken
-      startedAt
-    }
     formListAuthoredFormDetail {
       nextToken
       startedAt
@@ -943,6 +1317,7 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isDeleted
+    createdBy
     createdAt
     updatedAt
     _version
@@ -957,6 +1332,17 @@ subscription OnCreateFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -971,6 +1357,17 @@ subscription OnUpdateFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -985,6 +1382,17 @@ subscription OnDeleteFormDetail(
     id
     formData
     formlistID
+    createdBy
+    assignedBy
+    flatHierarchy
+    scheduledAt
+    scheduledType
+    dueDate
+    assignedTo
+    formSubmissionDetail {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
