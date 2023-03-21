@@ -57,8 +57,8 @@ export class RoundPlanObservationsService {
         preTextImage: {
           image: this.prepareStatusUrl(obj?.Priority),
           style: {
-            width: '30px',
-            height: '30px',
+            width: '25px',
+            height: '25px',
             marginRight: '5px',
             marginBottom: '-5px'
           },
