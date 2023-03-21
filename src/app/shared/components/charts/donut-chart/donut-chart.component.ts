@@ -133,10 +133,6 @@ export class DonutChartComponent implements OnInit, OnChanges {
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
       this.chartOptions = newOptions;
-      console.log(
-        '🚀 ~ file: donut-chart.component.ts:136 ~ DonutChartComponent ~ newOptions:',
-        newOptions
-      );
     }
   };
 
