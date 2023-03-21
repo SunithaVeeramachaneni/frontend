@@ -7,13 +7,12 @@ import { Buffer } from 'buffer';
 import { Base64HelperService } from '../../work-instructions/services/base64-helper.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { UserInfo } from 'src/app/interfaces';
+import { UserInfo, UserProfile } from 'src/app/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { LoginService } from '../../login/services/login.service';
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -28,7 +27,7 @@ export class ProfileComponent implements OnInit {
   profileEditMode = false;
   disableRemoveProfile = false;
   userInfo: UserInfo;
-
+  userProfile: UserProfile;
   constructor(
     private fb: FormBuilder,
     private base64Service: Base64HelperService,
@@ -62,6 +61,7 @@ export class ProfileComponent implements OnInit {
           email,
           roles,
           profileImage,
+          profileImageFileName,
           contact
         } = userInfo;
 
@@ -69,6 +69,7 @@ export class ProfileComponent implements OnInit {
         this.profileImage = this.imageUtils.getImageSrc(
           Buffer.from(profileImage).toString()
         );
+        this.profileImageFileName = profileImageFileName;
         this.profileForm.setValue({
           firstName,
           lastName,
@@ -85,7 +86,9 @@ export class ProfileComponent implements OnInit {
   editProfile() {
     this.profileEditMode = true;
     this.profileForm.controls.contact.enable();
-    this.disableRemoveProfile = false;
+    this.disableRemoveProfile =
+      this.profileImageFileName === null ||
+      this.profileImageFileName === 'default.png';
     this.profileForm.reset(this.profileForm.getRawValue());
   }
 

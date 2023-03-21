@@ -140,7 +140,17 @@ export const updatePageState = createAction(
     subFormId: string;
   }>()
 );
-
+export const updatePage = createAction(
+  '[Builder Configuration] updatePage',
+  props<{
+    page: Page;
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+    subFormId: string;
+  }>()
+);
 export const deletePage = createAction(
   '[Builder Configuration] deletePage',
   props<{
