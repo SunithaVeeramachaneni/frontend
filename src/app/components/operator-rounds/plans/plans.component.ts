@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  OnDestroy
+  EventEmitter,
+  OnDestroy,
+  Output
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -39,7 +40,8 @@ import {
   RoundPlanScheduleConfigurationObj,
   RoundPlanScheduleConfiguration,
   RoundPlanDetailResponse,
-  RoundPlanDetail
+  RoundPlanDetail,
+  SelectTab
 } from 'src/app/interfaces';
 import {
   graphQLDefaultLimit,
@@ -65,6 +67,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class PlansComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   columns: Column[] = [
     {
@@ -112,7 +115,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -134,7 +137,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -156,7 +159,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -179,7 +182,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -201,7 +204,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: { color: '#3d5afe' },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -223,7 +226,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -245,7 +248,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -283,7 +286,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     columns: Column[];
     data: any[];
   }>;
-  fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchPlans$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
@@ -311,6 +314,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   hideScheduleConfig: boolean;
   placeHolder = '_ _';
   planCategory: FormControl;
+  roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -319,7 +323,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
-    private cdrf: ChangeDetectorRef,
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute
@@ -327,8 +330,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.planCategory = new FormControl('all');
-    this.fetchForms$.next({ data: 'load' });
-    this.fetchForms$.next({} as TableEvent);
+    this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
     this.searchForm.valueChanges
@@ -336,7 +338,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchForms$.next({ data: 'search' });
+          this.fetchPlans$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
       )
@@ -350,7 +352,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .fetchRoundPlanScheduleConfigurations$()
       .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
 
-    const roundPlansOnLoadSearch$ = this.fetchForms$.pipe(
+    const roundPlansOnLoadSearch$ = this.fetchPlans$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -360,7 +362,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       })
     );
 
-    const onScrollRoundPlans$ = this.fetchForms$.pipe(
+    const onScrollRoundPlans$ = this.fetchPlans$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -429,7 +431,12 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.subscribe((params) => {
       this.hideRoundPlanDetail = true;
       this.hideScheduleConfig = true;
-      this.cdrf.detectChanges();
+    });
+
+    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
+      this.roundPlanId = roundPlanId;
+      this.fetchPlans$.next({ data: 'load' });
+      this.isLoading$.next(true);
     });
 
     this.configOptions.allColumns = this.columns;
@@ -440,7 +447,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       nextToken: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
-      fetchType: this.fetchType
+      fetchType: this.fetchType,
+      roundPlanId: this.roundPlanId
     };
 
     return this.operatorRoundsService.getPlansList$(obj).pipe(
@@ -459,7 +467,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchForms$.next(event);
+    this.fetchPlans$.next(event);
   };
 
   ngOnDestroy(): void {}
@@ -476,7 +484,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
-          this.router.navigate(['/operator-rounds/scheduler/1']);
+          this.selectTab.emit({ index: 1, queryParams: { id: row.id } });
         } else {
           this.openRoundPlanHandler(row);
         }
@@ -491,19 +499,46 @@ export class PlansComponent implements OnInit, OnDestroy {
       {
         title: 'Show Details',
         action: 'showDetails'
+      },
+      {
+        title: 'Show Rounds',
+        action: 'showRounds',
+        condition: {
+          operand: this.placeHolder,
+          operation: 'notContains',
+          fieldName: 'rounds'
+        }
       }
-    ];
+    ] as any;
 
     if (
       this.loginService.checkUserHasPermission(
         permissions,
-        perms.scheduleRounds
+        perms.scheduleRoundPlan
       )
     ) {
       menuActions.push({
         title: 'Schedule',
-        action: 'schedule'
+        action: 'schedule',
+        condition: {
+          operand: this.placeHolder,
+          operation: 'isFalsy',
+          fieldName: 'schedule'
+        }
       });
+      menuActions.push({
+        title: 'Modify Schedule',
+        action: 'schedule',
+        condition: {
+          operand: this.placeHolder,
+          operation: 'isTruthy',
+          fieldName: 'schedule'
+        }
+      });
+    } else {
+      this.configOptions.allColumns = this.configOptions.allColumns.filter(
+        (column: Column) => column.id !== 'schedule'
+      );
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -520,7 +555,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         tap(() => {
           this.zIndexDelay = 0;
           this.hideRoundPlanDetail = true;
-          this.cdrf.detectChanges();
         })
       )
       .subscribe();
@@ -556,7 +590,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         tap(() => {
           this.zIndexScheduleDelay = 0;
           this.hideScheduleConfig = true;
-          this.cdrf.detectChanges();
         })
       )
       .subscribe();
@@ -595,6 +628,10 @@ export class PlansComponent implements OnInit, OnDestroy {
     }
   }
 
+  viewRoundsHandler(roundPlandId: string) {
+    this.selectTab.emit({ index: 1, queryParams: { id: roundPlandId } });
+  }
+
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
@@ -603,6 +640,9 @@ export class PlansComponent implements OnInit, OnDestroy {
         break;
       case 'showDetails':
         this.openRoundPlanHandler(data);
+        break;
+      case 'showRounds':
+        this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
         break;
       default:
       // do nothing

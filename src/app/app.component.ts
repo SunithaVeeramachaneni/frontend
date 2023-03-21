@@ -56,14 +56,13 @@ const {
   archivedForms,
   operatorRoundPlans,
   myRoundPlans,
-  roundPlanSubmissions,
+  roundPlanScheduler,
   masterConfiguration,
   locations,
   assets,
   unitOfMeasurement,
   plants,
   roundPlanArchivedForms,
-  roundPlanSubmissionForms,
   roundPlanObservations
 } = routingUrls;
 
@@ -177,14 +176,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myRoundPlans.permission
         },
         {
-          title: roundPlanSubmissionForms.title,
-          url: roundPlanSubmissionForms.url,
-          permission: roundPlanSubmissionForms.permission
-        },
-        {
-          title: roundPlanSubmissions.title,
-          url: roundPlanSubmissions.url,
-          permission: roundPlanSubmissions.permission
+          title: roundPlanScheduler.title,
+          url: roundPlanScheduler.url,
+          permission: roundPlanScheduler.permission
         },
         {
           title: roundPlanArchivedForms.title,

@@ -218,17 +218,14 @@ export class RoundPlanListComponent implements OnInit {
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
-  formsCount$: Observable<Count>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
       form: {} as any
     });
-  formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
-  addCopyFormCount = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
@@ -237,6 +234,7 @@ export class RoundPlanListComponent implements OnInit {
   selectedForm: RoundPlan = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  infiniteScrollEnabled = true;
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -262,18 +260,6 @@ export class RoundPlanListComponent implements OnInit {
     this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
     this.getAllOperatorRounds();
-    this.formsCount$ = combineLatest([
-      this.formsCount$,
-      this.formCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addCopyFormCount) {
-          count.count += update;
-          this.addCopyFormCount = false;
-        }
-        return count;
-      })
-    );
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
   }
@@ -323,7 +309,7 @@ export class RoundPlanListComponent implements OnInit {
     const onScrollForms$ = this.operatorRoundsService.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
+        if (data === 'infiniteScroll' && this.infiniteScrollEnabled) {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
@@ -394,14 +380,16 @@ export class RoundPlanListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          this.formsCount$ = of({ count });
+        mergeMap(({ rows, nextToken }) => {
+          // if next token turns null from not null, that means all records have been fetched with the given limit.
+          if (nextToken === null && this.nextToken !== null) {
+            this.infiniteScrollEnabled = false;
+          }
           this.nextToken = nextToken;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })

@@ -5,24 +5,14 @@
       alt="schedule"
       class="schedule-icon"
   /></mat-icon>
-  <p *ngIf="data.mode === 'create'" class="color">
-    {{ 'scheduleCreatedSuccess' | translate }}
-  </p>
-  <p *ngIf="data.mode === 'update'" class="color">
-    {{ 'scheduleUpdatedSuccess' | translate }}
+  <p class="color">
+    {{ 'scheduleSuccess' | translate }}
   </p>
   <div class="message">
     <p>
       {{ data.roundPlanName }}
     </p>
-    <p
-      *ngIf="data.mode === 'create'"
-      [innerHTML]="'scheduleCreatedSuccessMessage' | translate"
-    ></p>
-    <p
-      *ngIf="data.mode === 'update'"
-      [innerHTML]="'scheduleUpdatedSuccessMessage' | translate"
-    ></p>
+    <p [innerHTML]="'scheduleSuccessMessage' | translate"></p>
   </div>
   <button mat-button translate="viewRounds" (click)="viewRounds()"></button>
   <button mat-button translate="close" (click)="close()"></button>
