@@ -1,0 +1,400 @@
+<div class="pdfBuilder-dialog">
+  <div class="dialogHead">
+    <button (click)="onCancel()" class="back-btn">
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <span class="back-btn-text" translate="backBtn"></span>
+    </button>
+  </div>
+  <div class="dialogContainer">
+    <div class="left">
+      <h2 class="configHead" translate="configuration"></h2>
+      <div class="configOptions" [formGroup]="pdfBuilderConfigurationsForm">
+        <div class="group">
+          <span class="groupHead" translate="header"></span>
+          <span class="option">
+            <mat-checkbox formControlName="roundId" class="checkbox">
+              <span translate="roundId"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="roundTitle" class="checkbox">
+              <span translate="roundTitle"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="subject"></span>
+          <span class="option">
+            <mat-checkbox formControlName="logo" class="checkbox">
+              <span translate="logo"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="taskCompleted" class="checkbox">
+              <span translate="taskCompleted"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="submittedOn" class="checkbox">
+              <span translate="submittedOn"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="submittedBy" class="checkbox">
+              <span translate="submittedBy"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="footer"></span>
+          <span class="option">
+            <mat-checkbox formControlName="pdfGeneratedDate" class="checkbox">
+              <span translate="pdfGeneratedDate"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="customText" class="checkbox">
+              <span translate="customText"></span>
+            </mat-checkbox>
+            <div class="customText">
+              <mat-form-field class="field" appearance="outline">
+                <mat-label translate="label"></mat-label>
+                <input matInput formControlName="customTextLabel" />
+              </mat-form-field>
+              <mat-form-field class="field" appearance="outline">
+                <mat-label translate="field"></mat-label>
+                <input matInput formControlName="customTextField" />
+              </mat-form-field>
+            </div>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="bodyContent"></span>
+          <span class="option">
+            <mat-checkbox formControlName="actions" class="checkbox">
+              <span translate="actions"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="issues" class="checkbox">
+              <span translate="issues"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="tasks" class="checkbox">
+              <span translate="tasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-40">
+            <mat-checkbox formControlName="incompleteTasks" class="checkbox">
+              <span translate="incompleteTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-40">
+            <mat-checkbox formControlName="completedTasks" class="checkbox">
+              <span translate="completedTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-80">
+            <mat-checkbox formControlName="capturedTasks" class="checkbox">
+              <span translate="capturedTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-80">
+            <mat-checkbox formControlName="photos" class="checkbox">
+              <span translate="photos"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-80">
+            <mat-checkbox formControlName="skippedTasks" class="checkbox">
+              <span translate="skippedTasks"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="view">
+        <h4 class="pdf-head">PDF view</h4>
+        <button mat-raised-button class="publish-btn">
+          <span>
+            <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
+            <span class="publish" translate="publishBtn"></span>
+          </span>
+        </button>
+        <button mat-raised-button class="publish-btn" (click)="printPDF()">
+          <span>
+            <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
+            <span class="publish">Print PDF</span>
+          </span>
+        </button>
+      </div>
+      <div class="pdf-container" id="myPDF" #myPDF>
+        <div id="content" #content class="pdfPage">
+          <table class="table" id="table" #table>
+            <thead>
+              <tr>
+                <td colspan="3">
+                  <div class="tableHeader">
+                    <span class="roundId">Round ID goes here</span>
+                    <span class="formName">Form Name goes
+                      here.</span>
+                  </div>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3"></td>
+              </tr>
+              <tr>
+                <td class="tableHead-logo">
+                  <img [src]="innovapptiveLogo" class="tablelogo" />
+                </td>
+                <td colspan="2">
+                  <div class="tableHeading-text">
+                    <span class="name">Form Name goes here</span>
+                    <span class="discribe">Description of the
+                      form</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="w-33 f-s-8">
+                  Submitted On: 18-03-2023 10:00PM
+                </td>
+                <td class="w-33 f-s-8">
+                  Submitted By: Shiva Kumar K
+                </td>
+                <td class="w-33 f-s-8">
+                  Task Completed: 35/35 (100%)
+                </td>
+              </tr>
+              <!-- ISSUES -->
+              <tr>
+                <td colspan="3">
+                  <div class="issuesHead">
+                    <span>Issues</span>
+                    <span>Raised:3</span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let cell of [1, 2]">
+                <td colspan="3" class="issueCell">
+                  <div class="issue">
+                    <div class="issueHead">
+                      <span class="label">Issue:
+                      </span>
+                      Slippery Surface
+                    </div>
+                    <div class="issueBody">
+                      <div class="issueRow">
+                        <span class="label">
+                          Description:
+                        </span>
+                        <span class="description">
+                          Horem ipsum dolor sit amet, consectetur adipiscing
+                          elit. Nunc vulputate libero et velit interdum, ac
+                          aliquet odio mattis. Class aptent taciti sociosqu ad
+                          litora torqu
+                        </span>
+                      </div>
+                      <div class="issueRow">
+                        <span class="label">
+                          Asset:
+                        </span>
+                        <span class="description">
+                          170442 - Water Pump Water Pump Water Pump Water
+                        </span>
+                      </div>
+                      <div class="issueRow">
+                        <span class="label">
+                          Task:
+                        </span>
+                        <span class="description"> Check water pressure. </span>
+                      </div>
+                      <div class="issueRow">
+                        <span class="label">
+                          Value:
+                        </span>
+                        <span class="description"> 90 </span>
+                      </div>
+                      <div class="issueRow">
+                        <span class="label">
+                          Assigned to:
+                        </span>
+                        <span class="description">
+                          John, Krista, Marry, Alexander
+                        </span>
+                      </div>
+                      <div class="issueRow">
+                        <table class="w-100">
+                          <tr>
+                            <td>
+                              <span class="label">
+                                Priority:
+                              </span>
+                              <span class="description"> High </span>
+                            </td>
+                            <td>
+                              <span class="label">
+                                Category:
+                              </span>
+                              <span class="description"> Safety </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <span class="label">
+                                Due Date:
+                              </span>
+                              <span class="description"> 25 Feb, 2023 </span>
+                            </td>
+                            <td>
+                              <span class="label">
+                                Raised By:
+                              </span>
+                              <span class="description"> Aron </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <span class="label">
+                                Status:
+                              </span>
+                              <span class="description"> Open </span>
+                            </td>
+                            <td>
+                              <span class="label">
+                                Notification No:
+                              </span>
+                              <span class="description"> 123456 </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="3">
+                              <div class="imagesContainer">
+                                <img [src]="image" *ngFor="let image of dummyImages" class="image" />
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- ACTIONS -->
+              <tr>
+                <td colspan="3">
+                  <div class="actionsHead">
+                    <span>Actions</span>
+                    <span>Raised:3</span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngFor="let cell of [1, 2]">
+                <td colspan="3" class="actionCell">
+                  <div class="action">
+                    <div class="actionHead">
+                      <span class="label">Action:
+                      </span>
+                      Lorem ipsum
+                    </div>
+                    <div class="actionBody">
+                      <div class="actionRow">
+                        <span class="label">
+                          Description:
+                        </span>
+                        <span class="description">
+                          Horem ipsum dolor sit amet, consectetur adipiscing
+                          elit. Nunc vulputate libero et velit interdum, ac
+                          aliquet odio mattis. Class aptent taciti sociosqu ad
+                          litora torqu
+                        </span>
+                      </div>
+                      <div class="actionRow">
+                        <span class="label">
+                          Asset:
+                        </span>
+                        <span class="description">
+                          170442 - Water Pump Water Pump Water Pump Water
+                        </span>
+                      </div>
+                      <div class="actionRow">
+                        <span class="label">
+                          Task:
+                        </span>
+                        <span class="description"> Check water pressure. </span>
+                      </div>
+                      <div class="actionRow">
+                        <span class="label">
+                          Value:
+                        </span>
+                        <span class="description"> 90 </span>
+                      </div>
+                      <div class="actionRow">
+                        <span class="label">
+                          Assigned to:
+                        </span>
+                        <span class="description">
+                          John, Krista, Marry, Alexander
+                        </span>
+                      </div>
+                      <div class="actionRow">
+                        <table class="w-100">
+                          <tr>
+                            <td>
+                              <span class="label">
+                                Priority:
+                              </span>
+                              <span class="description"> High </span>
+                            </td>
+                            <td>
+                              <span class="label">
+                                Raised by:
+                              </span>
+                              <span class="description"> Aron </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <span class="label">
+                                Due Date:
+                              </span>
+                              <span class="description"> 25 Feb, 2023 </span>
+                            </td>
+                            <td>
+                              <span class="label">
+                                Status:
+                              </span>
+                              <span class="description"> Open </span>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">
+                  <div class="tableFooter">
+                    <span class="generatedDate">21/03/2023</span>
+                    <span class="poweredBy">Powered By
+                      <img [src]="innovapptiveLogo" class="footerLogo" /></span>
+                    <span class="customText">Inspection:Safety</span>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

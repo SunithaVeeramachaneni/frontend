@@ -57,6 +57,8 @@ import { TagSelectComponent } from './components/field-types/instructions/tag-se
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
 import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
+import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
+import { CdkScrollableModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -83,6 +85,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
+    PDFBuilderComponent,
     HierarchyNodeComponent,
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
@@ -98,6 +101,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    CdkScrollableModule,
     MatAutocompleteModule,
     MatIconModule,
     MatMenuModule,
@@ -138,6 +142,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     AddFilterComponent,
     ImportQuestionsSliderComponent,
     BuilderComponent,
+    PDFBuilderComponent,
     NgxShimmerLoadingModule
   ]
 })

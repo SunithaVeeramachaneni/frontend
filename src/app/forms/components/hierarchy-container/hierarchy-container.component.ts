@@ -5,7 +5,8 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Inject
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import {
@@ -38,6 +39,7 @@ import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-d
 import { BuilderConfigurationActions } from '../../state/actions';
 import { HierarchyActions } from '../../state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -74,6 +76,7 @@ export class HierarchyContainerComponent implements OnInit {
   filteredList = [];
 
   constructor(
+    @Inject(DOCUMENT) document: Document,
     private operatorRoundsService: OperatorRoundsService,
     private locationService: LocationService,
     private assetService: AssetsService,
@@ -183,6 +186,12 @@ export class HierarchyContainerComponent implements OnInit {
 
   searchResultSelected(event) {
     const node = event.option.value;
+    const el = document.getElementById(`node-${node.id}`);
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
     if (node) {
       setTimeout(() => {
         this.searchHierarchyKey.patchValue(node.name);
