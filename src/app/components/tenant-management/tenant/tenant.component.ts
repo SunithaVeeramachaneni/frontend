@@ -830,6 +830,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
         tenant.amplifyConfig = JSON.parse(tenant.amplifyConfig);
       }
       tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
+      let { slackTeamID = '' } = tenant.slackConfiguration || {};
+      if (/dev$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -3);
+      } else if (/qa$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -2);
+      } else if (/demo$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -4);
+      }
+      tenant.slackTeamID = slackTeamID;
       this.spinner.show();
 
       if (id) {
@@ -851,15 +860,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
             }
           });
       } else {
-        let { slackTeamID } = tenant;
-        if (/dev/i.test(slackTeamID)) {
-          slackTeamID = slackTeamID.slice(0, -3);
-        } else if (/qa/i.test(slackTeamID)) {
-          slackTeamID = slackTeamID.slice(0, -2);
-        } else if (/demo/i.test(slackTeamID)) {
-          slackTeamID = slackTeamID.slice(0, -4);
-        }
-        tenant.slackTeamID = slackTeamID;
         this.tenantService.createTenant$(tenant).subscribe((response) => {
           this.spinner.hide();
           if (Object.keys(response).length) {
