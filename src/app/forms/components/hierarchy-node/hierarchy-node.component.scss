@@ -15,19 +15,37 @@
 }
 
 .master-data-image {
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-  background: $timeago-bg;
+  width: 15px;
+  height: 15px;
   border-radius: 8px;
   padding: 7px;
+  margin-top: 2px;
+
+  .selection-mode {
+    background: '#f0f0f0';
+    margin-left: 2px;
+  }
+
+  .hierarchy-tail {
+    background: #feffdf;
+  }
+
+  .hierarchy-not-tail {
+    background: $white;
+  }
 }
 
 .master-data-title {
   padding: 10px 0;
-  margin-left: 10px;
   font-size: 12px;
   font-weight: bold;
+}
+
+.view-mode {
+  padding: 10px 0;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
 }
 
 .child-node {

@@ -69,6 +69,9 @@
         cursor: pointer;
       }
     }
+    .create-name.text-transform {
+      text-transform: capitalize;
+    }
     .date-name {
       white-space: nowrap;
       font-size: 85%;

@@ -21,6 +21,7 @@ export interface UserDetails {
   title: string;
   email: string;
   profileImage?: any;
+  profileImageFileName?: string;
   preTextImage?: any;
   postTextImage?: any;
   contact?: string;
