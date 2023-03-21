@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
@@ -54,13 +55,14 @@ export class RoundPlanObservationsService {
       return {
         ...obj,
         preTextImage: {
-          image: obj?.Photo,
+          image: this.prepareStatusUrl(obj?.Priority),
           style: {
-            width: '40px',
-            height: '40px',
-            marginRight: '10px'
+            width: '30px',
+            height: '30px',
+            marginRight: '5px',
+            marginBottom: '-5px'
           },
-          condition: false
+          condition: true
         },
         title: obj?.Title || '',
         description: obj?.Description || '',
@@ -83,5 +85,25 @@ export class RoundPlanObservationsService {
       nextToken: resp?.nextToken,
       count: resp?.count
     };
+  }
+
+  private prepareStatusUrl(priority: string): string {
+    const PRIORITY = {
+      HIGH: 'high',
+      MEDIUM: 'medium',
+      LOW: 'low'
+    };
+
+    let url = '';
+    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.HIGH) {
+      url = 'assets/operator-rounds/high.svg';
+    }
+    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.LOW) {
+      url = 'assets/operator-rounds/low.svg';
+    }
+    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.MEDIUM) {
+      url = 'assets/operator-rounds/medium.svg';
+    }
+    return url;
   }
 }
