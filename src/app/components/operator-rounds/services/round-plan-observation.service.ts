@@ -95,13 +95,13 @@ export class RoundPlanObservationsService {
     };
 
     let url = '';
-    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.HIGH) {
+    if (priority?.toLowerCase()?.trim() === PRIORITY.HIGH) {
       url = 'assets/operator-rounds/high.svg';
     }
-    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.LOW) {
+    if (priority?.toLowerCase()?.trim() === PRIORITY.LOW) {
       url = 'assets/operator-rounds/low.svg';
     }
-    if (priority?.toLocaleLowerCase()?.trim() === PRIORITY.MEDIUM) {
+    if (priority?.toLowerCase()?.trim() === PRIORITY.MEDIUM) {
       url = 'assets/operator-rounds/medium.svg';
     }
     return url;
