@@ -137,8 +137,6 @@ export class ObservationsComponent implements OnInit {
   }
 
   private transformChartPayload(object) {
-    // eslint-disable-next-line no-debugger
-    debugger;
     return Object.entries(object).map(([key, value]) => ({
       name: key,
       count: value
