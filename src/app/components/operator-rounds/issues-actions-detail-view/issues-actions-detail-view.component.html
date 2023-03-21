@@ -5,7 +5,7 @@
     </button>
     <h4 class="heading">
       <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
-      {{ this.issuesActionsDetailViewForm.get('name').value }}
+      {{ this.issuesActionsDetailViewForm?.get('name')?.value }}
       &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
     </h4>
   </mat-toolbar>
@@ -34,8 +34,8 @@
         <div class="titles" translate="title"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('name').value
-              ? this.issuesActionsDetailViewForm.get('name').value
+            this.issuesActionsDetailViewForm?.get('name')?.value
+              ? this.issuesActionsDetailViewForm?.get('name')?.value
               : '--'
           }}
         </div>
@@ -45,8 +45,8 @@
         <div class="titles" translate="des"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('description').value
-              ? this.issuesActionsDetailViewForm.get('description').value
+            this.issuesActionsDetailViewForm?.get('description')?.value
+              ? this.issuesActionsDetailViewForm?.get('description')?.value
               : '--'
           }}
         </div>
@@ -56,8 +56,8 @@
         <div class="titles" translate="category"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('category').value
-              ? this.issuesActionsDetailViewForm.get('category').value
+            this.issuesActionsDetailViewForm?.get('category')?.value
+              ? this.issuesActionsDetailViewForm?.get('category')?.value
               : '--'
           }}
         </div>
@@ -67,8 +67,8 @@
         <div class="titles" translate="round"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('round').value
-              ? this.issuesActionsDetailViewForm.get('round').value
+            this.issuesActionsDetailViewForm?.get('round')?.value
+              ? this.issuesActionsDetailViewForm?.get('round')?.value
               : '--'
           }}
         </div>
@@ -78,8 +78,8 @@
         <div class="titles" translate="location"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('location').value
-              ? this.issuesActionsDetailViewForm.get('location').value
+            this.issuesActionsDetailViewForm?.get('location')?.value
+              ? this.issuesActionsDetailViewForm?.get('location')?.value
               : '--'
           }}
         </div>
@@ -89,8 +89,8 @@
         <div class="titles" translate="asset"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('asset').value
-              ? this.issuesActionsDetailViewForm.get('asset').value
+            this.issuesActionsDetailViewForm?.get('asset')?.value
+              ? this.issuesActionsDetailViewForm?.get('asset')?.value
               : '--'
           }}
         </div>
@@ -100,8 +100,8 @@
         <div class="titles" translate="task"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('task').value
-              ? this.issuesActionsDetailViewForm.get('task').value
+            this.issuesActionsDetailViewForm?.get('task')?.value
+              ? this.issuesActionsDetailViewForm?.get('task')?.value
               : '--'
           }}
         </div>
@@ -181,8 +181,8 @@
         <div class="titles" translate="createdBy"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('createdBy').value
-              ? this.issuesActionsDetailViewForm.get('createdBy').value
+            this.issuesActionsDetailViewForm?.get('createdBy')?.value
+              ? this.issuesActionsDetailViewForm?.get('createdBy')?.value
               : '--'
           }}
         </div>
@@ -193,8 +193,8 @@
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm.get('raisedBy').value
-              ? this.issuesActionsDetailViewForm.get('raisedBy').value
+            this.issuesActionsDetailViewForm?.get('raisedBy')?.value
+              ? this.issuesActionsDetailViewForm?.get('raisedBy')?.value
               : '--'
           }}
         </div>
