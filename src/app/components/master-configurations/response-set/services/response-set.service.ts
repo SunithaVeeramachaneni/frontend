@@ -91,6 +91,7 @@ export class ResponseSetService {
       environment.masterConfigApiUrl,
       `response-set/update/${responseSet.id}`,
       {
+        id: responseSet.id,
         type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet.description,

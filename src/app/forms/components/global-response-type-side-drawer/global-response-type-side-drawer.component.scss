@@ -38,6 +38,11 @@
     height: 45px;
   }
 
+  .response-drop-list {
+    height: 460px;
+    overflow-y: auto;
+  }
+
   .input-forms {
     border: none;
 
@@ -67,14 +72,20 @@
       width: 15px;
     }
   }
+  .actions-footer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    bottom: 15px;
+  }
 
   .submit-response-btn {
-    width: 48%;
+    width: 45%;
     margin-right: 10px;
   }
 
   .cancel-response-btn {
-    width: 48%;
+    width: 45%;
   }
 }
 

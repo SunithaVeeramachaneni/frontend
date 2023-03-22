@@ -6,7 +6,16 @@ import {
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { combineLatest, Observable, BehaviorSubject, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap } from 'rxjs/operators';
+import {
+  catchError,
+  filter,
+  tap,
+  map,
+  mergeMap,
+  switchMap,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import { State, getResponseSets } from 'src/app/forms/state';
@@ -16,9 +25,17 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 
+import { LoginService } from 'src/app/components/login/services/login.service';
 import { ResponseSetService } from '../services/response-set.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
-import { CellClickActionEvent, TableEvent } from 'src/app/interfaces';
+import {
+  CellClickActionEvent,
+  FormTableUpdate,
+  Permission,
+  TableEvent,
+  UserInfo
+} from 'src/app/interfaces';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-responses-list',
@@ -29,10 +46,17 @@ import { CellClickActionEvent, TableEvent } from 'src/app/interfaces';
 export class ResponsesListComponent implements OnInit {
   readonly perms = perms;
   public filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  public userInfo$: Observable<UserInfo>;
+
   public allResponseSets: any[] = [];
   public allResponseSets$: Observable<any>;
   public responseSets$: Observable<any>;
   public dataSource: MatTableDataSource<any>;
+
+  public selectedResponseSet: any;
+  public globalResponseEditData: any;
+  public openResponseSetDetailedView = 'out';
+  public globaResponseAddOrEditOpenState = 'out';
 
   public responseSetCount$: Observable<number>;
   public responseSetCountUpdate$: BehaviorSubject<number> = new BehaviorSubject(
@@ -159,6 +183,13 @@ export class ResponsesListComponent implements OnInit {
     }
   };
 
+  public searchResponseSet: FormControl;
+  private addEditDeleteResponseSet: boolean;
+  private addEditDeleteResponseSet$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
+      action: null,
+      form: {} as any
+    });
   private skip = 0;
   private limit = defaultLimit;
   private fetchType = 'load';
@@ -166,11 +197,13 @@ export class ResponsesListComponent implements OnInit {
 
   constructor(
     private responseSetService: ResponseSetService,
+    private loginService: LoginService,
     private store: Store<State>,
-    private cdrf: ChangeDetectionStrategy
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.searchResponseSet = new FormControl('');
     this.responseSetService.fetchResponses$.next({ data: 'load' });
     this.responseSetService.fetchResponses$.next({} as TableEvent);
     this.allResponseSets$ = this.responseSetService.fetchAllGlobalResponses$();
@@ -180,7 +213,19 @@ export class ResponsesListComponent implements OnInit {
     ]).pipe(map(([count, countUpdate]) => count + countUpdate));
 
     this.configOptions.allColumns = this.columns;
-    // Implement login service
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+
+    this.searchResponseSet.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.responseSetService.fetchResponses$.next({ data: 'search' });
+        })
+      )
+      .subscribe(() => this.isLoading$.next(true));
   }
 
   getDisplayedResponseSets = () => {
@@ -241,7 +286,7 @@ export class ResponsesListComponent implements OnInit {
       .fetchResponseSetList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        //searchKey: this.searchLocation.value,
+        searchKey: this.searchResponseSet.value,
         fetchType: this.fetchType
       })
       .pipe(
@@ -259,22 +304,86 @@ export class ResponsesListComponent implements OnInit {
       );
   }
 
+  addOrEditGlobalResponse = (responseData) => {
+    if (responseData?.status === 'add' || responseData?.status === 'edit') {
+      this.addEditDeleteResponseSet = true;
+      if (this.searchResponseSet.value) {
+        this.responseSetService.fetchResponses$.next({ data: 'search' });
+      } else {
+        this.addEditDeleteResponseSet$.next({
+          action: responseData.status,
+          form: responseData.data
+        });
+      }
+    }
+  };
+
   handleTableEvent = (event): void => {
     this.responseSetService.fetchResponses$.next(event);
   };
 
   configOptionsChangeHandler = (event): void => {};
 
+  rowLevelActionHandler = ({ data, action }) => {
+    switch (action) {
+      case 'edit':
+        this.globalResponseEditData = data;
+        this.globaResponseAddOrEditOpenState = 'in';
+        break;
+      default:
+    }
+  };
+
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
-      case 'description':
-      case 'model':
-      case 'parentId':
-        //this.showLocationDetail(row);
+      case 'responseCount':
+      case 'createdBy':
+      case 'updatedAt':
+        this.showRepsonseSetDetail(row);
         break;
       default:
     }
+  };
+
+  showRepsonseSetDetail = (row) => {
+    this.selectedResponseSet = row;
+    this.openResponseSetDetailedView = 'in';
+  };
+
+  onCloseResponseSetDetailedView = (event) => {
+    this.openResponseSetDetailedView = event.status;
+    if (event.data !== '') {
+      this.globalResponseEditData = event.data;
+      this.globaResponseAddOrEditOpenState = 'in';
+    }
+  };
+
+  onCloseGlobalResponseAddOrEditState = (event) =>
+    (this.globaResponseAddOrEditOpenState = event);
+
+  prepareMenuActions = (permissions: Permission[]) => {
+    const menuActions = [];
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'UPDATE_GLOBAL_RESPONSES'
+      )
+    ) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    this.configOptions = {
+      ...this.configOptions,
+      rowLevelActions: {
+        ...this.configOptions.rowLevelActions,
+        menuActions
+      },
+      displayActionsColumn: menuActions.length > 0
+    };
   };
 }

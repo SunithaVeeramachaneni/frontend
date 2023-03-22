@@ -14,6 +14,7 @@ import {
   FormArray,
   Validators
 } from '@angular/forms';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Store } from '@ngrx/store';
 import {
   pairwise,
@@ -21,11 +22,14 @@ import {
   distinctUntilChanged,
   tap
 } from 'rxjs/operators';
+
 import { isEqual } from 'lodash-es';
-import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 import { MCQResponseActions } from '../../state/actions';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { LoginService } from 'src/app/components/login/services/login.service';
+
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+
 @Component({
   selector: 'app-global-response-type-side-drawer',
   templateUrl: './global-response-type-side-drawer.component.html',
@@ -44,6 +48,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private loginService: LoginService,
     private cdrf: ChangeDetectorRef,
     private store: Store
   ) {}
@@ -92,7 +97,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           })
         );
       });
-    }
+    } else this.addResponse();
   }
 
   addResponse() {
@@ -151,7 +156,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           isMultiColumn: false,
           values: JSON.stringify(this.responses.value),
           description: this.description.value,
-          version: this.globalResponse._version
+          version: this.globalResponse._version,
+          createdBy: this.loginService.getLoggedInUserName()
         })
       );
     } else
@@ -161,7 +167,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           responseType: 'globalResponse',
           isMultiColumn: false,
           values: JSON.stringify(this.responses.value),
-          description: ''
+          description: this.description.value,
+          createdBy: this.loginService.getLoggedInUserName()
         })
       );
 

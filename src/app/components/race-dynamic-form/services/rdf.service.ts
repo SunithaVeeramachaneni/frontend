@@ -331,57 +331,6 @@ export class RaceDynamicFormService {
     );
   }
 
-  getResponseSet$(queryParams: {
-    nextToken?: string;
-    limit?: number;
-    responseType: string;
-  }) {
-    const params: URLSearchParams = new URLSearchParams();
-    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
-    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
-    params.set('type', queryParams?.responseType);
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets?' + params.toString()
-    );
-  }
-
-  createResponseSet$(responseSet) {
-    return this.appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets',
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet?.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
-      }
-    );
-  }
-
-  updateResponseSet$(responseSet) {
-    return this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSet.id}`,
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        _version: responseSet.version
-      }
-    );
-  }
-
-  deleteResponseSet$(responseSetId: string) {
-    return this.appService._removeData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSetId}`
-    );
-  }
-
   getAuthoredFormDetailByFormId$(
     formId: string,
     formStatus: string = formConfigurationStatus.draft

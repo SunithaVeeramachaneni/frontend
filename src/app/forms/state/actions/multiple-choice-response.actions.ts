@@ -15,6 +15,7 @@ export const createGlobalResponseSet = createAction(
     description: string;
     isMultiColumn: boolean;
     values: string;
+    createdBy: string;
   }>()
 );
 
@@ -28,6 +29,7 @@ export const updateGlobalResponseSet = createAction(
     isMultiColumn: boolean;
     values: string;
     version: number;
+    createdBy: string;
   }>()
 );
 
