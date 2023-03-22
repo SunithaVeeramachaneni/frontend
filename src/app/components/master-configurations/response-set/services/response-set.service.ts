@@ -4,10 +4,11 @@ import { ReplaySubject } from 'rxjs';
 import { formatDistance } from 'date-fns';
 
 import { environment } from 'src/environments/environment';
+
 import { AppService } from 'src/app/shared/services/app.services';
+import { ToastService } from 'src/app/shared/toast';
 
 import {
-  ErrorInfo,
   LoadEvent,
   SearchEvent,
   TableEvent,
@@ -15,7 +16,7 @@ import {
   UpdateResponseSet,
   DeleteResponseSet
 } from '../../../../interfaces';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,7 @@ export class ResponseSetService {
 
   private maxLimit = '1000000';
 
-  constructor(private _appService: AppService) {}
+  constructor(private _appService: AppService, private toast: ToastService) {}
 
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
@@ -67,39 +68,61 @@ export class ResponseSetService {
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'location/list?' + params.toString()
+          'response-set/list?' + params.toString()
         )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     }
   };
 
   createResponseSet$ = (responseSet: CreateResponseSet) =>
-    this._appService._postData(
-      environment.masterConfigApiUrl,
-      'response-set/create',
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet?.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
-      }
-    );
+    this._appService
+      ._postData(
+        environment.operatorRoundsApiUrl,
+        '/round-plans/response-sets',
+        {
+          type: responseSet.responseType,
+          name: responseSet.name,
+          description: responseSet?.description,
+          isMultiColumn: responseSet.isMultiColumn,
+          values: responseSet.values
+        }
+      )
+      .pipe(
+        tap((response) => {
+          if (response && Object.keys(response).length) {
+            this.toast.show({
+              text: 'Global Response created successfully!',
+              type: 'success'
+            });
+          }
+        })
+      );
 
   updateResponseSet$ = (responseSet: UpdateResponseSet) =>
-    this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `response-set/update/${responseSet.id}`,
-      {
-        id: responseSet.id,
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        _version: responseSet.version
-      }
-    );
+    this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `response-set/update/${responseSet.id}`,
+        {
+          id: responseSet.id,
+          type: responseSet.responseType,
+          name: responseSet.name,
+          description: responseSet.description,
+          isMultiColumn: responseSet.isMultiColumn,
+          values: responseSet.values,
+          _version: responseSet.version
+        }
+      )
+      .pipe(
+        tap((response) => {
+          if (response && Object.keys(response).length) {
+            this.toast.show({
+              text: 'Global Response updated successfully!',
+              type: 'success'
+            });
+          }
+        })
+      );
 
   deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
     this._appService._removeData(

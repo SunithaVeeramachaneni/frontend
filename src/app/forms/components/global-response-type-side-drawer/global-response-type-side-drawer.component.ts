@@ -147,29 +147,25 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   };
 
   submitResponseSet = () => {
+    const responseSetPayload = {
+      name: this.name.value ? this.name.value : 'Untitled Response Set',
+      responseType: 'globalResponse',
+      isMultiColumn: false,
+      values: JSON.stringify(this.responses.value),
+      description: this.description.value,
+      createdBy: this.loginService.getLoggedInUserName()
+    };
     if (this.globalResponse !== null) {
       this.store.dispatch(
         MCQResponseActions.updateGlobalResponseSet({
           id: this.globalResponse.id,
-          name: this.name.value ? this.name.value : 'Untitled Response Set',
-          responseType: 'globalResponse',
-          isMultiColumn: false,
-          values: JSON.stringify(this.responses.value),
-          description: this.description.value,
           version: this.globalResponse._version,
-          createdBy: this.loginService.getLoggedInUserName()
+          ...responseSetPayload
         })
       );
     } else
       this.store.dispatch(
-        MCQResponseActions.createGlobalResponseSet({
-          name: this.name.value ? this.name.value : 'Untitled Response Set',
-          responseType: 'globalResponse',
-          isMultiColumn: false,
-          values: JSON.stringify(this.responses.value),
-          description: this.description.value,
-          createdBy: this.loginService.getLoggedInUserName()
-        })
+        MCQResponseActions.createGlobalResponseSet(responseSetPayload)
       );
 
     this.closeGlobalResponse();
