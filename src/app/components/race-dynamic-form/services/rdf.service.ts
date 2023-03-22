@@ -6,9 +6,7 @@ import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
-  GetFormListQuery,
-  ListFormListsQuery,
-  ListFormSubmissionListsQuery} from 'src/app/API.service';
+  GetFormListQuery} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -648,7 +646,7 @@ export class RaceDynamicFormService {
     )
   };
 
-  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -680,7 +678,7 @@ export class RaceDynamicFormService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: any) {
     const rows =
       resp.items
         .sort(
