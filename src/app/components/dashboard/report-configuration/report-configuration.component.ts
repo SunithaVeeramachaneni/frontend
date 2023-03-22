@@ -145,6 +145,7 @@ export class ReportConfigurationComponent implements OnInit {
   readonly permissions = permissions;
 
   reportTitleUpdate = new Subject();
+  disabledSaveButton = false;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -317,6 +318,8 @@ export class ReportConfigurationComponent implements OnInit {
       });
       this.headerService.setHeaderTitle(title);
     }
+    if (title.length > 48) this.disabledSaveButton = true;
+    else this.disabledSaveButton = false;
   };
 
   processValidationErrors(controlName: string): boolean {

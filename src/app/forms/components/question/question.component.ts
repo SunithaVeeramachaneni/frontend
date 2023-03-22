@@ -155,6 +155,7 @@ export class QuestionComponent implements OnInit {
   isHyperLinkOpen = false;
   formId: string;
   isINSTFieldChanged = false;
+  instructionTagColours = {};
 
   private _pageIndex: number;
   private _id: string;
@@ -289,6 +290,12 @@ export class QuestionComponent implements OnInit {
         this.selectedNodeId
       )
     );
+
+    this.instructionTagColours[this.translate.instant('cautionTag')] =
+      '#FEF3C7';
+    this.instructionTagColours[this.translate.instant('warningTag')] =
+      '#FF5C00';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#991B1B';
   }
 
   getRangeMetadata() {
@@ -394,7 +401,10 @@ export class QuestionComponent implements OnInit {
         break;
       case 'INST':
         const instructionsValue = {
-          tag: this.translate.instant('noneTag'),
+          tag: {
+            title: this.translate.instant('noneTag'),
+            colour: null
+          },
           images: [null, null, null],
           pdf: null
         };
@@ -730,7 +740,10 @@ export class QuestionComponent implements OnInit {
 
   updateInstructionTag(event: string) {
     const originalValue = this.questionForm.get('value').value;
-    originalValue.tag = event;
+    originalValue.tag = {
+      title: event,
+      colour: this.instructionTagColours[event]
+    };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();
   }

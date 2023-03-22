@@ -18,7 +18,7 @@ export class TagSelectComponent implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit(): void {
-    this.tagAnswer = this.questionForm.get('value').value.tag;
+    this.tagAnswer = this.questionForm.get('value').value.tag.title;
   }
 
   dataChanged() {
