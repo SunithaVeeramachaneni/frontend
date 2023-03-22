@@ -37,6 +37,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalResponseTypeSideDrawerComponent implements OnInit {
+  @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;

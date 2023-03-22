@@ -304,6 +304,8 @@ export class ResponsesListComponent implements OnInit {
       );
   }
 
+  addManually = () => {};
+
   addOrEditGlobalResponse = (responseData) => {
     if (responseData?.status === 'add' || responseData?.status === 'edit') {
       this.addEditDeleteResponseSet = true;

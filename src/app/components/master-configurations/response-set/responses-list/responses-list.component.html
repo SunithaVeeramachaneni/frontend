@@ -14,10 +14,28 @@
                 type="text"
                 [placeholder]="'search' | translate"
                 autocomplete="off"
+                [formControl]="searchResponseSet"
               />
             </mat-form-field>
             <img [src]="filterIcon" matSuffix alt="Open Filter" />
           </span>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="createMenu"
+            translate="createNew"
+            class="create-new-btn"
+          ></button>
+          <mat-menu #createMenu="matMenu">
+            <button mat-menu-item class="menu-buttons" (click)="addManually()">
+              <img
+                src="assets/master-configurations/add-manually.svg"
+                alt="add manually"
+                class="add-manually-icon"
+              />
+              <span translate="addManually"></span>
+            </button>
+          </mat-menu>
         </div>
       </div>
 
