@@ -12,7 +12,6 @@ import {
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
-  ModelFormSubmissionListFilterInput,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
@@ -784,8 +783,7 @@ export class RaceDynamicFormService {
     }));
 
   private async _ListFormSubmissionLists(
-    filter?: ModelFormSubmissionListFilterInput,
-    // eslint-disable-next-line @typescript-eslint/no-shadow
+    filter?: any,
     limit?: number,
     nextToken?: string
   ): Promise<ListFormSubmissionListsQuery> {
