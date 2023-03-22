@@ -9,28 +9,24 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { UserOptions } from 'jspdf-autotable';
-import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface jsPDFCustom extends jsPDF {
-  autoTable: (options: UserOptions) => void;
-}
-
-interface Option {
-  id: string;
-  description: string;
-  type: string;
-  metadata?: any;
-  children?: Option[];
-}
-
-interface PDFConfigOption {
-  title: string;
-  options: Option[];
-}
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { FormMetadata } from 'src/app/interfaces';
+import { getSelectedHierarchyList } from '../../state';
+import { BuilderConfigurationActions } from '../../state/actions';
+import {
+  getFormMetadata,
+  getFormDetails,
+  getCreateOrEditForm,
+  getFormSaveStatus,
+  getFormPublishStatus,
+  getIsFormCreated,
+  getQuestionCounter,
+  State
+} from '../../state/builder/builder-state.selectors';
 
 @Component({
   selector: 'app-pdf-builder',
@@ -42,26 +38,30 @@ export class PDFBuilderComponent implements OnInit {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
 
+  formMetadata$: Observable<FormMetadata>;
+  selectedHierarchy$: Observable<any>;
+  selectedFlatHierarchy: any = [];
+
   pdfBuilderConfigurationsForm: FormGroup = this.fb.group({
-    roundId: false,
-    roundTitle: false,
-    subject: false,
-    logo: false,
-    taskCompleted: false,
-    submittedOn: false,
-    submittedBy: false,
-    pdfGeneratedDate: false,
-    customText: false,
+    roundId: true,
+    roundTitle: true,
+    subject: true,
+    logo: true,
+    taskCompleted: true,
+    submittedOn: true,
+    submittedBy: true,
+    pdfGeneratedDate: true,
+    customText: true,
     customTextLabel: '',
     customTextField: '',
-    actions: false,
-    issues: false,
-    tasks: false,
-    incompleteTasks: false,
-    completedTasks: false,
-    capturedTasks: false,
-    photos: false,
-    skippedTasks: false
+    actions: true,
+    issues: true,
+    tasks: true,
+    incompleteTasks: true,
+    completedTasks: true,
+    capturedTasks: true,
+    photos: true,
+    skippedTasks: true
   });
 
   innovapptiveLogo =
@@ -73,55 +73,222 @@ export class PDFBuilderComponent implements OnInit {
     'assets/img/user.png'
   ];
 
-  allQuestions = [
-    {
-      name: 'Site1',
-      nodeId: 1234,
-      children: [
-        {
-          name: 'Section1'
-        },
-        {
-          name: 'Section2'
-        },
-        {
-          name: 'Section3'
-        },
-        {
-          name: 'Section4'
-        }
-      ]
-    }
-  ];
-
-  allComplete = false;
-
-  task: any = {
-    name: 'Completed Tasks',
-    completed: false,
-    color: 'primary',
-    subtasks: [
-      { name: 'Captured Tasks', completed: false, color: 'primary' },
-      { name: 'Photos', completed: false, color: 'primary' },
-      { name: 'Skipped Tasks', completed: false, color: 'primary' }
-    ]
-  };
-
-  names: any;
-
   constructor(
     private fb: FormBuilder,
-    private operatorRoundsService: OperatorRoundsService,
+    private store: Store<State>,
+    public assetHierarchyUtil: AssetHierarchyUtil,
     public dialogRef: MatDialogRef<PDFBuilderComponent>,
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.formMetadata$ = this.store.select(getFormMetadata);
+    this.store.select(getSelectedHierarchyList).subscribe((data) => {
+      this.selectedFlatHierarchy =
+        this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
+    });
+
+    this.pdfBuilderConfigurationsForm.valueChanges.subscribe((data) => {
+      this.store.dispatch(
+        BuilderConfigurationActions.updatePDFBuilderConfiguration({
+          pdfBuilderConfguration: data
+        })
+      );
+      this.store.dispatch(
+        BuilderConfigurationActions.updateFormStatuses({
+          ...this.getFormConfigurationStatuses()
+        })
+      );
+    });
+  }
+  getFormConfigurationStatuses() {
+    return {
+      formStatus: formConfigurationStatus.draft,
+      formDetailPublishStatus: formConfigurationStatus.draft,
+      formSaveStatus: formConfigurationStatus.saving
+    };
+  }
+
+  publish() {
+    this.dialogRef.close({ publishRoundPlan: true });
+  }
+
+  toggleSelectAll(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        roundId: true,
+        roundTitle: true,
+        subject: true,
+        logo: true,
+        taskCompleted: true,
+        submittedOn: true,
+        submittedBy: true,
+        pdfGeneratedDate: true,
+        customText: true,
+        customTextLabel: '',
+        customTextField: '',
+        actions: true,
+        issues: true,
+        tasks: true,
+        incompleteTasks: true,
+        completedTasks: true,
+        capturedTasks: true,
+        photos: true,
+        skippedTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        roundId: false,
+        roundTitle: false,
+        subject: false,
+        logo: false,
+        taskCompleted: false,
+        submittedOn: false,
+        submittedBy: false,
+        pdfGeneratedDate: false,
+        customText: false,
+        customTextLabel: '',
+        customTextField: '',
+        actions: false,
+        issues: false,
+        tasks: false,
+        incompleteTasks: false,
+        completedTasks: false,
+        capturedTasks: false,
+        photos: false,
+        skippedTasks: false
+      });
+    }
+  }
+  toggleAllTasks(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        incompleteTasks: true,
+        completedTasks: true,
+        capturedTasks: true,
+        photos: true,
+        skippedTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: false,
+        incompleteTasks: false,
+        completedTasks: false,
+        capturedTasks: false,
+        photos: false,
+        skippedTasks: false
+      });
+    }
+  }
+  toggleIncompleteTasks(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        incompleteTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        incompleteTasks: false
+      });
+    }
+  }
+  toggleCompletedTasks(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        completedTasks: true,
+        capturedTasks: true,
+        photos: true,
+        skippedTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        completedTasks: false,
+        capturedTasks: false,
+        photos: false,
+        skippedTasks: false
+      });
+    }
+  }
+  togglecapturedTasks(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        completedTasks: true,
+        capturedTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        capturedTasks: false
+      });
+    }
+  }
+  toggleTaskPhotos(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        completedTasks: true,
+        photos: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        photos: false
+      });
+    }
+  }
+  toggleSkippedTasks(event) {
+    if (event.checked) {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        tasks: true,
+        completedTasks: true,
+        skippedTasks: true
+      });
+    } else {
+      this.pdfBuilderConfigurationsForm.patchValue({
+        skippedTasks: false
+      });
+    }
+  }
+  areTasksIndeterminate() {
+    const config = this.pdfBuilderConfigurationsForm.getRawValue();
+    return (
+      config.incompleteTasks ||
+      config.completedTasks ||
+      config.capturedTasks ||
+      config.photos ||
+      config.skippedTasks
+    );
+  }
+  areCompletedTasksIndeterminate() {
+    const config = this.pdfBuilderConfigurationsForm.getRawValue();
+    return config.capturedTasks || config.photos || config.skippedTasks;
+  }
+  isSelectAllIndeterminate() {
+    const config = this.pdfBuilderConfigurationsForm.getRawValue();
+    return (
+      config.roundId ||
+      config.roundTitle ||
+      config.subject ||
+      config.logo ||
+      config.taskCompleted ||
+      config.submittedOn ||
+      config.submittedBy ||
+      config.pdfGeneratedDate ||
+      config.customText ||
+      config.actions ||
+      config.issues ||
+      config.tasks ||
+      config.incompleteTasks ||
+      config.completedTasks ||
+      config.capturedTasks ||
+      config.photos ||
+      config.skippedTasks
+    );
+  }
 
   printPDF() {
-    const htmlContent = this.myPDF.nativeElement.innerHTML;
-    // const htmlContent1 = `<h1>{{roundPlanID}}</h1>`;
-    // console.log(htmlContent);
+    const htmlContent = `<h1>PDF BUILDER HTML CONTENT!</h1>`;
     fetch('http://localhost:8007/slack/pdfbuilder/htmltopdf', {
       method: 'post',
       body: JSON.stringify({ htmlContent }),
@@ -143,81 +310,6 @@ export class PDFBuilderComponent implements OnInit {
         aElement.click();
         URL.revokeObjectURL(href);
       });
-
-    // this.operatorRoundsService
-    //   .convertHTMLToPDF$(htmlContent.toString())
-    //   .subscribe((res) => {
-    //     console.log(typeof res);
-    //     console.log(res);
-    //     const url = window.URL.createObjectURL(new Blob([res]));
-    //     const link = document.createElement('a');
-    //     link.href = url;
-    //     link.setAttribute('download', 'output.pdf');
-    //     document.body.appendChild(link);
-    //     link.click();
-    //   });
-    // WITH AUTO TABLE
-    // const doc = new jsPDF() as jsPDFCustom;
-    // doc.autoTable({ html: '#table' });
-    // doc.save('test.pdf');
-    //
-    //
-    // WITHOUT AUTO TABLE
-    // const doc = new jsPDF('p', 'pt');
-    // doc.setFontSize(8);
-    // const content = this.content.nativeElement;
-    // const ref = this;
-    // doc.html(content, {
-    //   // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-shadow
-    //   callback(doc) {
-    //     ref.addFooters(doc);
-    //     doc.save('mytest.pdf');
-    //   },
-    //   x: 10,
-    //   y: 10
-    // });
-  }
-
-  addFooters = (doc) => {
-    const pageCount = doc.internal.getNumberOfPages();
-
-    doc.setFont('helvetica', 'italic');
-    doc.setFontSize(8);
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.text(
-        'Page ' + String(i) + ' of ' + String(pageCount),
-        doc.internal.pageSize.width / 2,
-        287,
-        {
-          align: 'center'
-        }
-      );
-    }
-  };
-
-  updateAllComplete() {
-    this.allComplete =
-      this.task.subtasks != null &&
-      this.task.subtasks.every((t) => t.completed);
-  }
-
-  someComplete(): boolean {
-    if (this.task.subtasks == null) {
-      return false;
-    }
-    return (
-      this.task.subtasks.filter((t) => t.completed).length > 0 &&
-      !this.allComplete
-    );
-  }
-
-  setAll(completed: boolean) {
-    this.allComplete = completed;
-    if (this.task.subtasks == null) {
-      return;
-    }
-    this.task.subtasks.forEach((t) => (t.completed = completed));
   }
 
   onCancel(): void {

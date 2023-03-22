@@ -51,5 +51,6 @@ export const updateAuthoredRoundPlanDetail = createAction(
     authoredFormDetailVersion: number;
     authoredFormDetailDynamoDBVersion: number;
     hierarchy: any;
+    pdfBuilderConfguration: any;
   }>()
 );

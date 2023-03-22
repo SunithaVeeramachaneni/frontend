@@ -219,8 +219,8 @@
   "subject": "Subject",
   "logo": "Logo",
   "taskCompleted": "Task Completed",
-  "submittedOn": "SubmittedOn",
-  "submittedBy": "submittedBy",
+  "submittedOn": "Submitted On",
+  "submittedBy": "Submitted By",
   "footer": "Footer",
   "pdfGeneratedDate": "PDF Generated Date",
   "customText": "Custom Text",
@@ -234,5 +234,6 @@
   "photos": "Photos",
   "skippedTasks": "Skipped Tasks",
   "tasksCompleted": "Tasks Completed",
+  "pdfPreviewTxt": "PDF View",
   "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}"
 }

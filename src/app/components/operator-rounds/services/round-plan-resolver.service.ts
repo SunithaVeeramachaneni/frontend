@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { State } from 'src/app/forms/state';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -58,6 +58,7 @@ export class RoundPlanResolverService
 
         const {
           id: authoredFormDetailId,
+          pdfBuilderConfguration,
           counter,
           pages,
           subForms,
@@ -83,6 +84,7 @@ export class RoundPlanResolverService
         return {
           formConfigurationState: {
             formMetadata,
+            pdfBuilderConfguration,
             counter,
             pages: JSON.parse(pages),
             ...subFormsMap,

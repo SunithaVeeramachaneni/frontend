@@ -185,13 +185,12 @@ ul {
   height: 10px;
 }
 
-// .container {
-
-// }
-
 .view {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  width: 85%;
+  padding: 15px 0px;
 }
 
 .publish-btn {
@@ -200,7 +199,7 @@ ul {
   background-color: $blue-primary;
   border-color: $blue-primary;
   border-radius: 8px;
-  margin: 12px 12px 0px 12px;
+  // margin: 12px 12px 0px 12px;
 }
 
 .logo {
@@ -247,13 +246,16 @@ ul {
 .pdf-container {
   width: 75%;
   letter-spacing: 0;
-  height: 75vh;
+  height: 82vh;
   overflow-y: scroll;
-  box-shadow: 0px 0px 23px #00000026;
-  border-radius: 7px;
+  padding: 10px;
 }
 .pdfPage {
   padding: 16px 40px;
+}
+.pdfPage-container {
+  margin: 10px 0px;
+  box-shadow: 0px 0px 16.253px #00000026;
 }
 
 ::-webkit-scrollbar {
@@ -731,6 +733,14 @@ ul {
   display: flex;
   flex-direction: column;
 }
+.selectAll {
+  display: flex;
+  padding: 15px 0px;
+  margin-left: 10px;
+}
+.issue {
+  margin: 0px 5px;
+}
 .issuesHead {
   background: #aa2e25;
   color: white;
@@ -738,7 +748,7 @@ ul {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  margin-top: 15px;
+  // margin-top: 15px;
   // max-width: 95%;
 }
 .w-33 {
@@ -750,21 +760,36 @@ ul {
 .f-s-8 {
   font-size: 8pt;
 }
-.tableHeader {
+.pageHeader {
   display: flex;
   align-items: center;
   padding: 15px 0px;
 }
+.pageTitleRow {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 10px 0px;
+}
+.subjectRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.issuesRow {
+  border: 1px solid #23282f26;
+  min-height: 800px;
+}
 .roundId {
   color: #757575;
-  width: 195px;
+  width: 45%;
 }
 .formName {
   color: #757575;
   font-weight: 500;
   font-size: 10pt;
 }
-.tableFooter {
+.pageFooter {
   padding: 15px 0px;
   display: flex;
   align-items: center;
@@ -804,14 +829,29 @@ ul {
   padding: 10px;
 }
 .issueRow {
-  padding: 10px 0px;
+  padding: 5px 0px;
 }
 .label {
   font-weight: 600;
 }
 
+.tasksHead {
+  background: #000000;
+  padding: 10px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
 .actionsHead {
   background: #b28704;
+  padding: 10px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
 }
 .actionCell {
@@ -825,7 +865,7 @@ ul {
   padding: 10px;
 }
 .actionRow {
-  padding: 10px 0px;
+  padding: 5px 0px;
 }
 
 // table {

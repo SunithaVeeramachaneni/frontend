@@ -285,6 +285,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       tap(([formDetails, selectedHierarchyList]) => {
         const {
           formMetadata,
+          pdfBuilderConfguration,
           formStatus,
           counter,
           pages,
@@ -331,7 +332,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion,
-                  hierarchy: selectedHierarchyList
+                  hierarchy: selectedHierarchyList,
+                  pdfBuilderConfguration
                 })
               );
               this.formDetails = formDetails;
@@ -794,13 +796,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PDFBuilderComponent, {
+    const dialogRef = this.dialog.open(PDFBuilderComponent, {
       data: '',
       hasBackdrop: false,
       disableClose: true,
       width: '100vw',
       minWidth: '100vw',
       height: '100vh'
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result.publishRoundPlan) {
+        this.publishFormDetail();
+      }
     });
   };
 }
