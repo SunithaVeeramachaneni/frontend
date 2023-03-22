@@ -9,7 +9,7 @@
   width: 330px;
   right: -80px;
   max-height: 340px;
-  min-height: 340px;
+  min-height: 280px;
 }
 
 .filter-input-modal {
@@ -83,21 +83,21 @@
 .date-picker-wrap {
   display: flex;
 }
-.arrow-toggle .mat-icon-button{
-   width: 20px;
-  height: 20px;
-  line-height: 16px;
-}
-.date-picker{
-  .mat-icon{
+.arrow-toggle .mat-icon-button {
   width: 20px;
   height: 20px;
   line-height: 16px;
+}
+.date-picker {
+  .mat-icon {
+    width: 20px;
+    height: 20px;
+    line-height: 16px;
   }
 }
 mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
-    width: 10px !important;
-    height: 10px !important;
+  width: 10px !important;
+  height: 10px !important;
 }
 
 .filter-modal {
@@ -116,15 +116,15 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   padding: 0px 20px;
 }
 .mat-field {
-    width: 100%;
+  width: 100%;
 }
-.schedule-wrap{
+.schedule-wrap {
   display: flex;
   justify-content: space-between;
   .width50 {
-      width: 47%;
+    width: 47%;
   }
-  .width100{
+  .width100 {
     width: 100%;
   }
 }

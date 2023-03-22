@@ -24,6 +24,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getResponseSets } from 'src/app/forms/state';
+import { TranslateService } from '@ngx-translate/core';
 
 const limit = 10000;
 @Injectable({
@@ -40,7 +41,8 @@ export class RaceDynamicFormService {
   constructor(
     private toastService: ToastService,
     private appService: AppService,
-    private store: Store
+    private store: Store,
+    private translate: TranslateService
   ) {}
 
   setFormCreatedUpdated(data: any) {
@@ -515,8 +517,21 @@ export class RaceDynamicFormService {
               }
 
               if (question.fieldType === 'INST') {
+                if (
+                  question.value.tag.title !== this.translate.instant('noneTag')
+                ) {
+                  Object.assign(questionItem, {
+                    TAG: {
+                      TITLE: question.value.tag.title,
+                      COLOUR: question.value.tag.colour
+                    }
+                  });
+                } else {
+                  Object.assign(questionItem, {
+                    TAG: null
+                  });
+                }
                 Object.assign(questionItem, {
-                  TAG: question.value.tag,
                   FIELDVALUE: question.value.images
                     .filter((image) => image !== null)
                     .map((image) => image.objectKey.substring('public/'.length))
@@ -526,7 +541,6 @@ export class RaceDynamicFormService {
                     ''
                 });
               }
-
               return questionItem;
             })
           };
