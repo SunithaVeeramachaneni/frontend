@@ -1,5 +1,12 @@
 [
   {
+    "label": "Plant",
+    "items": [],
+    "column": "plant",
+    "type": "select",
+    "value": ""
+  },
+  {
     "label": "Status",
     "items": [],
     "column": "status",
