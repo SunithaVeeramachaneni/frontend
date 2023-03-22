@@ -187,6 +187,12 @@ export const routingUrls = {
     permission: permissions.viewArchivedForms
   },
 
+  schedularForms: {
+    url: '/forms/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewArchivedForms
+  },
+
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',

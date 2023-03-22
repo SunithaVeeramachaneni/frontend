@@ -8,6 +8,7 @@ import { FormConfigurationComponent } from './form-configuration/form-configurat
 import { FormContainerComponent } from './form-container/form-container.component';
 import { SubmissionComponent } from './submission/submission.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
+import { SchedulerComponent } from './scheduler/scheduler.component';
 
 const routes: Routes = [
   {
@@ -54,6 +55,24 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Archived', alias: 'formName' },
           permissions: [permissions.viewForms]
+        }
+      },
+      // {
+      //   path: 'scheduler',
+      //   component: SchedulerComponent,
+      //   canActivate: [AuthGuard],
+      //   data: {
+      //     breadcrumb: { label: 'Scheduler', alias: 'formName' },
+      //     permissions: [permissions.viewForms]
+      //   }
+      // },
+      {
+        path: 'scheduler/:tabIndex',
+        component: SchedulerComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Scheduler' },
+          permissions: [permissions.viewORPlans]
         }
       }
     ]

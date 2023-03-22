@@ -54,6 +54,7 @@ const {
   submissionForms,
   myForms,
   archivedForms,
+  schedularForms,
   operatorRoundPlans,
   myRoundPlans,
   roundPlanScheduler,
@@ -159,6 +160,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
+        },
+        {
+          title: schedularForms.title,
+          url: schedularForms.url,
+          permission: schedularForms.permission
         }
       ]
     },
