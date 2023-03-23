@@ -36,6 +36,25 @@
               <span translate="addManually"></span>
             </button>
           </mat-menu>
+
+          <!-- <button
+            mat-raised-button
+            [matMenuTriggerFor]="moreMenu"
+            class="more-btn"
+            *appCheckUserHasPermission="[perms.importGlobalResponses]"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu" mat-menu-item class="menu-buttons">
+            <button disabled>
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="downloadTemplate"></span>
+            </button>
+          </mat-menu> -->
         </div>
       </div>
 

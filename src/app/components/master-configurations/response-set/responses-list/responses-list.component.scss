@@ -31,6 +31,28 @@
     margin-top: 5px;
     margin-right: 15px;
   }
+
+  .create-new-btn {
+    background: $blue-main;
+    color: $white;
+    margin-right: 15px;
+  }
+
+  .more-btn {
+    background: $blue-main;
+    color: $white;
+    margin-left: 10px;
+    min-width: 50px;
+    margin-right: 15px;
+  }
+}
+
+.menu-icons {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 5px;
+  margin-right: 12px;
 }
 
 .add-manually-icon {
