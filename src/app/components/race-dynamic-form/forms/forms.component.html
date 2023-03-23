@@ -12,6 +12,15 @@
       [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"
     ></app-form-detail>
   </div>
+  <app-schedule-configuration
+    [@slideInOut]="scheduleConfigState"
+    [formDetail]="scheduleFormDetail"
+    [hidden]="hideScheduleConfig"
+    [moduleName]="'RDF'"
+    (scheduleConfigState)="closeScheduleConfigHandler($event)"
+    (scheduleConfig)="scheduleConfigHandler($event)"
+    (viewForms)="viewFormsHandler($event)"
+  ></app-schedule-configuration>
   <span class="custom-form-field-gray-color form-categories">
     <mat-button-toggle-group
       name="plans"

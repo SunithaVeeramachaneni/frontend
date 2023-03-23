@@ -316,6 +316,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   formId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  roundPlanDetail: any;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -357,7 +358,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getRoundPlanList();
+        return this.getFormsList();
       })
     );
 
@@ -366,7 +367,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundPlanList();
+          return this.getFormsList();
         } else {
           return of({} as FormsDetailResponse);
         }
@@ -438,7 +439,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
-  getRoundPlanList() {
+  getFormsList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
@@ -480,7 +481,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
-          this.selectTab.emit({ index: 1, queryParams: { id: row.id } });
+          this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
           this.openRoundPlanHandler(row);
         }
@@ -505,7 +506,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           fieldName: 'rounds'
         }
       }
-    ] as any;
+    ];
 
     if (
       this.loginService.checkUserHasPermission(
@@ -533,7 +534,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       });
     } else {
       this.configOptions.allColumns = this.configOptions.allColumns.filter(
-        (column: Column) => column.id !== 'schedule'
+        (column: Column) => column?.id !== 'schedule'
       );
     }
 
@@ -591,17 +592,17 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  scheduleConfigHandler(scheduleConfig: any) {
+  scheduleConfigHandler(scheduleConfig) {
     const { formScheduleConfiguration, mode } = scheduleConfig;
-    this.formScheduleConfigurations[formScheduleConfiguration.formId] =
+    this.formScheduleConfigurations[formScheduleConfiguration?.formId] =
       formScheduleConfiguration;
     if (
       formScheduleConfiguration &&
-      Object.keys(formScheduleConfiguration).length &&
+      Object.keys(formScheduleConfiguration)?.length &&
       formScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource.data.map((data) => {
-        if (data.id === this.scheduleFormDetail.id) {
+      this.initial.data = this.dataSource?.data?.map((data) => {
+        if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
             schedule: this.getFormattedSchedule(formScheduleConfiguration),
@@ -612,7 +613,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
         return data;
       });
-      this.dataSource = new MatTableDataSource(this.initial.data);
+      this.dataSource = new MatTableDataSource(this.initial?.data);
       if (mode === 'create') {
         this.formsCount = {
           ...this.formsCount,
@@ -623,8 +624,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   }
 
-  viewRoundsHandler(roundPlandId: string) {
-    this.selectTab.emit({ index: 1, queryParams: { id: roundPlandId } });
+  viewFormsHandler(id: any) {
+    this.selectTab.emit({ index: 1, queryParams: { id } });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
@@ -640,7 +641,6 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
         break;
       default:
-      // do nothing
     }
   };
 
