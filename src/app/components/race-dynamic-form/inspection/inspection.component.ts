@@ -64,6 +64,14 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted'];
+  filter = {
+    status: '',
+    inspectedBy: '',
+    inspectedOnStartDate: '',
+    inspectedOnEndDate: ''
+  };
+  inspectedBy: any = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -288,6 +296,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
+    this.getAllInspections();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -367,14 +376,33 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
+      formId: ''
     };
-    return this.raceDynamicFormService.getInspectionsList$(obj).pipe(
+    return this.raceDynamicFormService.getInspectionsList$({ ...obj, ...this.filter }).pipe(
       tap(({ count, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         this.roundsCount = count !== undefined ? count : this.roundsCount;
         this.isLoading$.next(false);
       })
     );
+  }
+  getAllInspections() {
+    this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
+      const uniqueLastPublishedBy = formsList.map((item) => item.createdBy)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueLastPublishedBy) {
+        if (item) {
+          this.inspectedBy.push(item);
+        }
+      } 
+      for (const item of this.filterJson) {
+        if (item['column'] == 'status') {
+          item.items = this.status;
+        } else if (item['column'] == 'inspectedBy') {
+          item.items = this.inspectedBy;
+        } 
+      }
+    });
   }
 
   handleTableEvent = (event): void => {
@@ -437,8 +465,20 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type == 'daterange') {
+        if (item.value && item.value.length > 0) {
+          this.filter.inspectedOnStartDate = item.value[0];
+          this.filter.inspectedOnEndDate = item.value[1];
+        }
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   clearFilters(): void {

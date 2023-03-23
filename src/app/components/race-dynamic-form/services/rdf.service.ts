@@ -890,6 +890,20 @@ export class RaceDynamicFormService {
       info
     );
   }
+fetchAllRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('formId', '');
+    params.set('status', '');
+    params.set('inspectedBy', '');
+    params.set('inspectedOnStartDate', '');
+    params.set('inspectedOnEndDate', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString())
+      .pipe(map((res) => this.formatInspections(res.rows)));
+  };
 
   getInspectionsList$(
     queryParams: InspectionQueryParam,
