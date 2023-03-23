@@ -20,6 +20,7 @@
     [hidden]="hideScheduleConfig"
     (scheduleConfigState)="closeScheduleConfigHandler($event)"
     (scheduleConfig)="scheduleConfigHandler($event)"
+    (viewRounds)="viewRoundsHandler($event)"
   ></app-round-plan-schedule-configuration>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group

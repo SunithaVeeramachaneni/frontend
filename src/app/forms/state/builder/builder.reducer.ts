@@ -253,6 +253,27 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    BuilderConfigurationActions.updatePage,
+    (state, action): FormConfigurationState => {
+      const key = `pages_${action.subFormId}`;
+      const pageToBeUpdated = state[key];
+      const idx = pageToBeUpdated.findIndex(
+        (page) => page.position === action.pageIndex + 1
+      );
+      pageToBeUpdated[idx] = {
+        ...pageToBeUpdated[idx],
+        ...action.page
+      };
+      return {
+        ...state,
+        [key]: pageToBeUpdated,
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
+      };
+    }
+  ),
+  on(
     BuilderConfigurationActions.updatePageState,
     (state, action): FormConfigurationState => {
       let key = 'pages';

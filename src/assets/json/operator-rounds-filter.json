@@ -14,13 +14,6 @@
     "value": ""
   },
   {
-    "label": "Last Modified On",
-    "items": [],
-    "column": "lastModifiedOn",
-    "type": "date",
-    "value": ""
-  },
-  {
     "label": "Authored By",
     "items": [],
     "column": "authoredBy",
