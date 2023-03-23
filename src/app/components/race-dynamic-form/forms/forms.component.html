@@ -2,11 +2,11 @@
   <div id="openviewtab">
     <app-form-detail
       [@slideInOut]="menuState"
-      (slideInOut)="closeRoundPlanHandler()"
+      (slideInOut)="closeFormHandler()"
       [selectedForm]="formDetail"
       [moduleName]="'RDF'"
       [hidden]="hideFormDetail"
-      (formDetailAction)="roundPlanDetailActionHandler()"
+      (formDetailAction)="formDetailActionHandler()"
       (scheduleRoundPlan)="openScheduleConfigHandler($event)"
       [formStatus]="formConfigurationStatus.published"
       [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"

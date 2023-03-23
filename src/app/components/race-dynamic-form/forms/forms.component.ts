@@ -476,18 +476,18 @@ export class FormsComponent implements OnInit, OnDestroy {
         if (!row.schedule) {
           this.openScheduleConfigHandler(row);
         } else {
-          this.openRoundPlanHandler(row);
+          this.openFormHandler(row);
         }
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openFormHandler(row);
         }
         break;
       default:
-        this.openRoundPlanHandler(row);
+        this.openFormHandler(row);
     }
   };
 
@@ -543,7 +543,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions = { ...this.configOptions };
   }
 
-  closeRoundPlanHandler() {
+  closeFormHandler() {
     this.formDetail = null;
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
@@ -557,7 +557,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  openRoundPlanHandler(row: ScheduleFormDetail): void {
+  openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.closeScheduleConfigHandler('out');
     this.store.dispatch(FormConfigurationActions.resetPages());
@@ -566,14 +566,14 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  roundPlanDetailActionHandler() {
+  formDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.formDetail.id}`]);
   }
 
   openScheduleConfigHandler(row: ScheduleFormDetail) {
     this.hideScheduleConfig = false;
-    this.closeRoundPlanHandler();
+    this.closeFormHandler();
     this.scheduleFormDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
@@ -635,7 +635,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.openScheduleConfigHandler(data);
         break;
       case 'showDetails':
-        this.openRoundPlanHandler(data);
+        this.openFormHandler(data);
         break;
       case 'showRounds':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
@@ -648,15 +648,15 @@ export class FormsComponent implements OnInit, OnDestroy {
     forms: ScheduleFormDetail[],
     formScheduleConfigurations: FormScheduleConfigurationObj
   ) {
-    return forms.map((form) => {
-      if (formScheduleConfigurations[form.id]) {
+    return forms?.map((form) => {
+      if (formScheduleConfigurations[form?.id]) {
         return {
           ...form,
           schedule: this.getFormattedSchedule(
-            formScheduleConfigurations[form.id]
+            formScheduleConfigurations[form?.id]
           ),
           scheduleDates: this.getFormattedScheduleDates(
-            formScheduleConfigurations[form.id]
+            formScheduleConfigurations[form?.id]
           ),
           rounds: form.rounds || this.placeHolder,
           operator: form.operator || this.placeHolder
