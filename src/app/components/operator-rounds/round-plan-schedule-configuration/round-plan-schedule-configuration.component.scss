@@ -278,3 +278,9 @@
     }
   }
 }
+
+::ng-deep .assign-menu + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  right: 370px;
+}
