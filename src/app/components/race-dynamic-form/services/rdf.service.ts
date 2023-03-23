@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
@@ -20,6 +21,8 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
+  Form,
+  FormQueryParam,
   LoadEvent,
   SearchEvent,
   TableEvent
@@ -100,6 +103,49 @@ export class RaceDynamicFormService {
       info
     );
 
+  getFormTaskFormsList$(
+    queryParams: FormQueryParam,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        rest.nextToken = '';
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.rdfApiUrl,
+          'forms/tasks-forms',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
+    } else {
+      return of({ rows: [] });
+    }
+  }
+
+  getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/rdf-inspection-filter.json',
+      info
+    );
+  }
+  getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/rdf-form-filter.json',
+      info
+    );
+  }
+
   getFormsList$(
     queryParams: {
       nextToken?: string;
@@ -116,7 +162,7 @@ export class RaceDynamicFormService {
         queryParams.nextToken !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
-      let filter = {
+      const filter = {
         ...(queryParams.searchKey && {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         }),
@@ -879,5 +925,29 @@ export class RaceDynamicFormService {
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
+  }
+
+  private formatForms(forms: Form[] = []): Form[] {
+    const rows = forms
+      .sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p?.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        lastPublishedBy: p?.lastPublishedBy,
+        author: p?.author,
+        publishedDate: p?.publishedDate ? p.publishedDate : ''
+      }));
+    return rows;
   }
 }

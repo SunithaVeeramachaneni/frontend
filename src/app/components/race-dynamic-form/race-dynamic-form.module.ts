@@ -65,8 +65,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
-import { FormsScheduleConfigurationComponent } from './forms-schedule-configuration/forms-schedule-configuration.component';
-import { FormsScheduleSuccessModalComponent } from './forms-schedule-success-modal/forms-schedule-success-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -90,9 +88,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,
-    InspectionComponent,
-    FormsScheduleConfigurationComponent,
-    FormsScheduleSuccessModalComponent
+    InspectionComponent
   ],
   imports: [
     FormsModule,

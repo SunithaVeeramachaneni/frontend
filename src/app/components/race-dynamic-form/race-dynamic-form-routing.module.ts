@@ -57,15 +57,6 @@ const routes: Routes = [
           permissions: [permissions.viewForms]
         }
       },
-      // {
-      //   path: 'scheduler',
-      //   component: SchedulerComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: { label: 'Scheduler', alias: 'formName' },
-      //     permissions: [permissions.viewForms]
-      //   }
-      // },
       {
         path: 'scheduler/:tabIndex',
         component: SchedulerComponent,
