@@ -1,28 +1,5 @@
 <div class="search-container">
-  <!-- <div id="openviewtab">
-    <app-form-detail
-      [@slideInOut]="menuState"
-      (slideInOut)="closeRoundPlanHandler()"
-      [selectedForm]="formDetail"
-      [moduleName]="'OPERATOR_ROUNDS'"
-      [hidden]="hideFormDetail"
-      (formDetailAction)="roundPlanDetailActionHandler()"
-      (scheduleRoundPlan)="openScheduleConfigHandler($event)"
-      [formStatus]="formConfigurationStatus.published"
-      [scheduleConfiguration]="
-      formScheduleConfigurations[formDetail?.id]
-      "
-    ></app-form-detail>
-  </div> -->
-  <!-- <app-forms-schedule-configuration
-    [@slideInOut]="scheduleConfigState"
-    [roundPlanDetail]="scheduleFormDetail"
-    [hidden]="hideScheduleConfig"
-    (scheduleConfigState)="closeScheduleConfigHandler($event)"
-    (scheduleConfig)="scheduleConfigHandler($event)"
-    (viewRounds)="viewRoundsHandler($event)"
-  ></app-forms-schedule-configuration> -->
-  <span class="custom-form-field-gray-color plan-categories">
+  <span class="custom-form-field-gray-color form-categories">
     <mat-button-toggle-group
       name="plans"
       aria-label="Plans"

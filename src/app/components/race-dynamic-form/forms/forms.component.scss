@@ -11,7 +11,7 @@
     margin-right: 14px;
   }
 
-  ::ng-deep .plan-categories .mat-button-toggle {
+  ::ng-deep .form-categories .mat-button-toggle {
     margin-right: 10px;
     border-radius: 30px;
     align-items: center;
@@ -21,12 +21,12 @@
     border: none;
   }
 
-  ::ng-deep .plan-categories .mat-button-toggle-group-appearance-standard {
+  ::ng-deep .form-categories .mat-button-toggle-group-appearance-standard {
     border: none;
   }
 
   ::ng-deep
-    .plan-categories
+    .form-categories
     .mat-button-toggle-group-appearance-standard
     .mat-button-toggle-label-content {
     line-height: 24px;
@@ -37,19 +37,19 @@
   }
 
   ::ng-deep
-    .plan-categories
+    .form-categories
     .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
     background: $blue-main;
   }
 
   ::ng-deep
-    .plan-categories
+    .form-categories
     .mat-button-toggle-checked.mat-button-toggle-appearance-standard
     .mat-button-toggle-label-content {
     color: $white;
   }
 
-  ::ng-deep .plan-categories .mat-button-toggle .mat-button-toggle-ripple {
+  ::ng-deep .form-categories .mat-button-toggle .mat-button-toggle-ripple {
     border-radius: 30px;
   }
 }

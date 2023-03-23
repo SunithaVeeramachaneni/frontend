@@ -188,8 +188,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'rounds',
-      displayName: 'Rounds Generated',
+      id: 'forms',
+      displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
       order: 6,
@@ -351,7 +351,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       .fetchFormScheduleConfigurations$()
       .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
 
-    const roundPlansOnLoadSearch$ = this.fetchForms$.pipe(
+    const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -361,7 +361,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
 
-    const onScrollRoundPlans$ = this.fetchForms$.pipe(
+    const onScrollForms$ = this.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -378,19 +378,19 @@ export class FormsComponent implements OnInit, OnDestroy {
       data: []
     };
     const forms$ = combineLatest([
-      roundPlansOnLoadSearch$,
-      onScrollRoundPlans$,
+      formsOnLoadSearch$,
+      onScrollForms$,
       formScheduleConfigurations$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations]) => {
         if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
+          this.initial.data = this.formatForms(
             forms.rows,
             formScheduleConfigurations
           );
         } else {
           this.initial.data = this.initial.data.concat(
-            this.formatRoundPlans(scrollData.rows, formScheduleConfigurations)
+            this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
         this.skip = this.initial.data.length;
@@ -592,21 +592,21 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   scheduleConfigHandler(scheduleConfig: any) {
-    const { roundPlanScheduleConfiguration, mode } = scheduleConfig;
-    this.formScheduleConfigurations[roundPlanScheduleConfiguration.formId] =
-      roundPlanScheduleConfiguration;
+    const { formScheduleConfiguration, mode } = scheduleConfig;
+    this.formScheduleConfigurations[formScheduleConfiguration.formId] =
+      formScheduleConfiguration;
     if (
-      roundPlanScheduleConfiguration &&
-      Object.keys(roundPlanScheduleConfiguration).length &&
-      roundPlanScheduleConfiguration.id !== ''
+      formScheduleConfiguration &&
+      Object.keys(formScheduleConfiguration).length &&
+      formScheduleConfiguration.id !== ''
     ) {
       this.initial.data = this.dataSource.data.map((data) => {
         if (data.id === this.scheduleFormDetail.id) {
           return {
             ...data,
-            schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
-            scheduleDates: this.getFormatedScheduleDates(
-              roundPlanScheduleConfiguration
+            schedule: this.getFormattedSchedule(formScheduleConfiguration),
+            scheduleDates: this.getFormattedScheduleDates(
+              formScheduleConfiguration
             )
           };
         }
@@ -644,7 +644,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   };
 
-  formatRoundPlans(
+  formatForms(
     forms: ScheduleFormDetail[],
     formScheduleConfigurations: FormScheduleConfigurationObj
   ) {
@@ -652,10 +652,10 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (formScheduleConfigurations[form.id]) {
         return {
           ...form,
-          schedule: this.getFormatedSchedule(
+          schedule: this.getFormattedSchedule(
             formScheduleConfigurations[form.id]
           ),
-          scheduleDates: this.getFormatedScheduleDates(
+          scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form.id]
           ),
           rounds: form.rounds || this.placeHolder,
@@ -671,15 +671,15 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFormatedScheduleDates(
-    roundPlanScheduleConfiguration: FormScheduleConfiguration
+  getFormattedScheduleDates(
+    formScheduleConfiguration: FormScheduleConfiguration
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
-      roundPlanScheduleConfiguration;
+      formScheduleConfiguration;
     const formatedStartDate =
       scheduleType === 'byFrequency'
         ? this.datePipe.transform(
-            roundPlanScheduleConfiguration.startDate,
+            formScheduleConfiguration.startDate,
             'MMM dd, yy'
           )
         : '';
@@ -697,11 +697,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       : this.placeHolder;
   }
 
-  getFormatedSchedule(
-    roundPlanScheduleConfiguration: FormScheduleConfiguration
-  ) {
+  getFormattedSchedule(formScheduleConfiguration: FormScheduleConfiguration) {
     const { repeatEvery, scheduleType, repeatDuration } =
-      roundPlanScheduleConfiguration;
+      formScheduleConfiguration;
     return scheduleType === 'byFrequency'
       ? repeatEvery === 'day'
         ? repeatDuration === 1
