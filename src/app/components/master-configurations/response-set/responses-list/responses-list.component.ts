@@ -53,10 +53,10 @@ export class ResponsesListComponent implements OnInit {
   public responseSets$: Observable<any>;
   public dataSource: MatTableDataSource<any>;
 
-  public selectedResponseSet: any;
-  public globalResponseEditData: any;
-  public openResponseSetDetailedView = 'out';
+  public isControlModeView: boolean;
   public globaResponseAddOrEditOpenState = 'out';
+  public isGlobalResponseOpen = false;
+  public responseToBeEdited = null;
 
   public responseSetCount$: Observable<number>;
   public responseSetCountUpdate$: BehaviorSubject<number> = new BehaviorSubject(
@@ -81,7 +81,11 @@ export class ResponsesListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '100%',
+        color: '#000000'
+      },
       hasSubtitle: true,
       subtitleColumn: '',
       subtitleStyle: {},
@@ -103,7 +107,11 @@ export class ResponsesListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '100%',
+        color: '#000000'
+      },
       hasSubtitle: true,
       subtitleColumn: '',
       subtitleStyle: {},
@@ -217,6 +225,8 @@ export class ResponsesListComponent implements OnInit {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
+    this.getDisplayedResponseSets();
+
     this.searchResponseSet.valueChanges
       .pipe(
         debounceTime(500),
@@ -270,9 +280,20 @@ export class ResponsesListComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-          initial.data = rows;
+
+          initial.data = rows.map((item) => ({
+            ...item,
+            responseCount: JSON.parse(item?.values)?.length,
+            createdBy: item.createdBy || ''
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(
+            scrollData.map((item) => ({
+              ...item,
+              responseCount: JSON.parse(item?.values)?.length,
+              createdBy: item.createdBy || ''
+            }))
+          );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
@@ -304,7 +325,17 @@ export class ResponsesListComponent implements OnInit {
       );
   }
 
-  addManually = () => {};
+  addManually = () => {
+    this.globaResponseAddOrEditOpenState = 'in';
+    this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
+    this.responseToBeEdited = null;
+  };
+
+  handleGlobalResponseCancel = (event) => {
+    this.isGlobalResponseOpen = false;
+    this.responseToBeEdited = null;
+    this.globaResponseAddOrEditOpenState = 'out';
+  };
 
   addOrEditGlobalResponse = (responseData) => {
     if (responseData?.status === 'add' || responseData?.status === 'edit') {
@@ -329,8 +360,10 @@ export class ResponsesListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }) => {
     switch (action) {
       case 'edit':
-        this.globalResponseEditData = data;
+        this.responseToBeEdited = data;
         this.globaResponseAddOrEditOpenState = 'in';
+        this.isGlobalResponseOpen = true;
+        this.isControlModeView = false;
         break;
       default:
     }
@@ -350,14 +383,16 @@ export class ResponsesListComponent implements OnInit {
   };
 
   showRepsonseSetDetail = (row) => {
-    this.selectedResponseSet = row;
-    this.openResponseSetDetailedView = 'in';
+    this.isControlModeView = true;
+    this.isGlobalResponseOpen = true;
+    this.globaResponseAddOrEditOpenState = 'in';
+    this.responseToBeEdited = row;
   };
 
   onCloseResponseSetDetailedView = (event) => {
-    this.openResponseSetDetailedView = event.status;
+    this.globaResponseAddOrEditOpenState = event.status;
     if (event.data !== '') {
-      this.globalResponseEditData = event.data;
+      this.responseToBeEdited = event.data;
       this.globaResponseAddOrEditOpenState = 'in';
     }
   };

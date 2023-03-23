@@ -39,12 +39,17 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
+  public isViewMode: boolean;
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
   private globalResponse: any;
 
   @Input() set globalResponseToBeEdited(response: any) {
     this.globalResponse = response ? response : null;
+  }
+
+  @Input() set isControlInViewMode(mode) {
+    this.isViewMode = mode;
   }
 
   constructor(
@@ -91,6 +96,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       this.name.patchValue(this.globalResponse.name);
       this.description.patchValue(this.globalResponse.description);
       JSON.parse(this.globalResponse.values).forEach((item) => {
+        console.log(item);
         this.responses.push(
           this.fb.group({
             title: [item.title, [Validators.required]],
@@ -98,8 +104,12 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           })
         );
       });
-    } else this.addResponse();
+    } else if (!this.globalResponse && !this.isViewMode) this.addResponse();
   }
+
+  toggleViewMode = () => {
+    this.isViewMode = !this.isViewMode;
+  };
 
   addResponse() {
     this.responses.push(
@@ -147,6 +157,12 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     this.responseForm.markAsDirty();
   };
 
+  getDescription = () => {
+    if (this.globalResponse) {
+      return this.globalResponse?.description || 'Untitled Description';
+    }
+  };
+
   submitResponseSet = () => {
     const responseSetPayload = {
       name: this.name.value ? this.name.value : 'Untitled Response Set',
@@ -177,6 +193,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       isGlobalResponseOpen: false,
       responseToBeEdited: null
     });
+    this.slideInOut.next('out');
     this.cdrf.markForCheck();
   };
 }

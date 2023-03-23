@@ -39,6 +39,7 @@
   "question": "Task",
   "copy": "Copy",
   "delete": "Delete",
+  "edit": "Edit",
   "requiredtext": "Required",
   "dateLabel": "Date",
   "timeLabel": "Time",

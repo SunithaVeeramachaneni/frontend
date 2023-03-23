@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 
 import { formatDistance } from 'date-fns';
 
@@ -25,6 +25,11 @@ export class ResponseSetService {
   fetchResponses$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
+  addOrEditResponseSet$: BehaviorSubject<any> = new BehaviorSubject<any>({
+    data: {} as UpdateResponseSet,
+    actionType: '' as string
+  });
+
   private maxLimit = '1000000';
 
   constructor(private _appService: AppService, private toast: ToastService) {}
@@ -34,7 +39,7 @@ export class ResponseSetService {
     params.set('limit', this.maxLimit);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'response-set/list' + params.toString()
+      'response-set/list?' + params.toString()
     );
   };
 
@@ -76,20 +81,20 @@ export class ResponseSetService {
 
   createResponseSet$ = (responseSet: CreateResponseSet) =>
     this._appService
-      ._postData(
-        environment.operatorRoundsApiUrl,
-        '/round-plans/response-sets',
-        {
-          type: responseSet.responseType,
-          name: responseSet.name,
-          description: responseSet?.description,
-          isMultiColumn: responseSet.isMultiColumn,
-          values: responseSet.values
-        }
-      )
+      ._postData(environment.masterConfigApiUrl, 'response-set/create', {
+        type: responseSet.responseType,
+        name: responseSet.name,
+        description: responseSet?.description,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values
+      })
       .pipe(
         tap((response) => {
           if (response && Object.keys(response).length) {
+            this.addOrEditResponseSet$.next({
+              data: response,
+              actionType: 'add'
+            });
             this.toast.show({
               text: 'Global Response created successfully!',
               type: 'success'
@@ -116,6 +121,10 @@ export class ResponseSetService {
       .pipe(
         tap((response) => {
           if (response && Object.keys(response).length) {
+            this.addOrEditResponseSet$.next({
+              data: response,
+              actionType: 'edit'
+            });
             this.toast.show({
               text: 'Global Response updated successfully!',
               type: 'success'

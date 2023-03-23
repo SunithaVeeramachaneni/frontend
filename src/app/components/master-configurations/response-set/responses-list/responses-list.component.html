@@ -1,9 +1,9 @@
 <div class="responses-list-view">
-  <ng-container>
+  <ng-container *ngIf="userInfo$ | async">
     <div class="main-container">
       <div class="responses-header">
         <div>
-          <h2 class="heading" translate="globalResponse"></h2>
+          <h2 class="heading" translate="globalMcqHeading"></h2>
         </div>
         <div>
           <span class="custom-form-field-gray-color search">
@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <div>
+      <div *ngIf="(responseSets$ | async) && (isLoading$ | async) === false">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"
@@ -52,4 +52,13 @@
       </div>
     </div>
   </ng-container>
+</div>
+<div *ngIf="isGlobalResponseOpen">
+  <app-global-response-type-side-drawer
+    [@slideInOut]="globaResponseAddOrEditOpenState"
+    (slideInOut)="handleSlideState($event)"
+    [globalResponseToBeEdited]="responseToBeEdited"
+    [isControlInViewMode]="isControlModeView"
+    (globalResponseHandler)="handleGlobalResponseCancel($event)"
+  ></app-global-response-type-side-drawer>
 </div>

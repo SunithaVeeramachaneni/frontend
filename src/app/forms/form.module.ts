@@ -137,6 +137,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     NgxShimmerLoadingModule
   ]

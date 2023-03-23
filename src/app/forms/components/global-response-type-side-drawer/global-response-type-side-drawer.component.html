@@ -11,6 +11,14 @@
           placeholder="Untitled Response Set"
           autocomplete="off"
           class="global_response_name_input"
+          [hidden]="isViewMode"
+        />
+        <input
+          *ngIf="isViewMode"
+          matInput
+          disabled
+          [value]="globalResponse?.name"
+          class="global_response_name_input"
         />
       </div>
       <div>
@@ -19,6 +27,14 @@
           formControlName="description"
           placeholder="Untitled description"
           autocomplete="off"
+          class="global_response_description_input"
+          [hidden]="isViewMode"
+        />
+        <input
+          *ngIf="isViewMode"
+          matInput
+          disabled
+          [value]="getDescription()"
           class="global_response_description_input"
         />
       </div>
@@ -30,6 +46,7 @@
           cdkScrollable
         >
           <div
+            *ngIf="!isViewMode"
             cdkDrop
             cdkDropList
             (cdkDropListDropped)="dropResponse($event)"
@@ -60,8 +77,20 @@
               </div>
             </div>
           </div>
+          <div *ngIf="isViewMode">
+            <div *ngFor="let response of getResponseList(); let i = index">
+              <div [formGroupName]="i" class="dis-flex response-list">
+                <input
+                  formControlName="title"
+                  matInput
+                  class="input-forms-view"
+                />
+              </div>
+            </div>
+          </div>
         </div>
         <button
+          *ngIf="!isViewMode"
           mat-flat-button
           (click)="addResponse()"
           class="add-response"
@@ -70,7 +99,7 @@
       </mat-card-content>
     </div>
   </mat-card>
-  <div class="actions-footer">
+  <div class="actions-footer" *ngIf="!isViewMode; else viewBlock">
     <button
       mat-raised-button
       color="primary"
@@ -86,4 +115,15 @@
       translate="cancel"
     ></button>
   </div>
+  <ng-template #viewBlock>
+    <div class="actions-footer-view">
+      <button
+        mat-raised-button
+        color="primary"
+        class="edit-button"
+        (click)="toggleViewMode()"
+        translate="edit"
+      ></button>
+    </div>
+  </ng-template>
 </div>
