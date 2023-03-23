@@ -1,3 +1,5 @@
+import { UserDetails } from './user';
+
 export interface RoundPlanScheduleConfiguration {
   id?: string;
   roundPlanId: string;
@@ -13,9 +15,17 @@ export interface RoundPlanScheduleConfiguration {
   endDate: string;
   scheduleByDates: ScheduleByDate[];
   scheduledTill?: string;
+  assignmentDetails: AssignmentDetail;
+  advanceRoundsCount: number;
   startDatePicker?: Date;
   endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+}
+
+export interface AssignmentDetail {
+  type: string;
+  value: string;
+  displayValue: string;
 }
 
 export interface ScheduleByDate {
@@ -136,4 +146,8 @@ export interface SelectTab {
   queryParams: {
     id: string;
   };
+}
+
+export interface AssigneeDetails {
+  users: UserDetails[];
 }

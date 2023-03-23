@@ -15,6 +15,7 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
   addMonths,
@@ -26,11 +27,15 @@ import {
 } from 'date-fns';
 import { tap } from 'rxjs/operators';
 import {
+  AssigneeDetails,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
-  ScheduleByDate
+  ScheduleByDate,
+  UserDetails,
+  ValidationError
 } from 'src/app/interfaces';
 import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
 
@@ -46,6 +51,7 @@ export interface ScheduleConfig {
 })
 export class RoundPlanScheduleConfigurationComponent implements OnInit {
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
     if (roundPlanDetail) {
@@ -55,6 +61,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   get roundPlanDetail(): any {
     return this._roundPlanDetail;
   }
+  @Input() assigneeDetails: AssigneeDetails;
   @Output()
   scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
   @Output()
@@ -72,13 +79,20 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
+  assignTypes = scheduleConfigs.assignTypes;
+  errors: ValidationError = {};
+  roundsGeneration = {
+    min: 0,
+    max: 30
+  };
   private _roundPlanDetail: any;
 
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private operatorRoundsService: OperatorRoundsService
   ) {}
 
   ngOnInit(): void {
@@ -114,7 +128,20 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
         }
       ],
       endDatePicker: new Date(addDays(new Date(), 30)),
-      scheduledTill: null
+      scheduledTill: null,
+      assignmentDetails: this.fb.group({
+        type: ['user'],
+        value: '',
+        displayValue: ''
+      }),
+      advanceRoundsCount: [
+        0,
+        [
+          Validators.required,
+          Validators.min(this.roundsGeneration.min),
+          Validators.max(this.roundsGeneration.max)
+        ]
+      ]
     });
     this.roundPlanSchedulerConfigForm
       .get('scheduleEndType')
@@ -186,6 +213,17 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
+            this.roundsGeneration.max = 30;
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .setValidators([
+                Validators.required,
+                Validators.min(this.roundsGeneration.min),
+                Validators.max(this.roundsGeneration.max)
+              ]);
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .updateValueAndValidity();
             break;
           case 'week':
             this.roundPlanSchedulerConfigForm
@@ -200,6 +238,17 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
+            this.roundsGeneration.max = daysToWeeks(91);
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .setValidators([
+                Validators.required,
+                Validators.min(this.roundsGeneration.min),
+                Validators.max(this.roundsGeneration.max)
+              ]);
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .updateValueAndValidity();
             break;
           case 'month':
             this.roundPlanSchedulerConfigForm
@@ -212,6 +261,17 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
+            this.roundsGeneration.max = 12;
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .setValidators([
+                Validators.required,
+                Validators.min(this.roundsGeneration.min),
+                Validators.max(this.roundsGeneration.max)
+              ]);
+            this.roundPlanSchedulerConfigForm
+              .get('advanceRoundsCount')
+              .updateValueAndValidity();
             break;
         }
       });
@@ -324,8 +384,13 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       const { id, startDate, endDate, scheduleEndOn } =
         roundPlanSchedulerConfig;
       const time = format(new Date(), 'HH:00:00');
-      const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
-        roundPlanSchedulerConfig;
+      const {
+        startDatePicker,
+        endDatePicker,
+        scheduleEndOnPicker,
+        assignmentDetails: { displayValue, ...restAssignmentDetails },
+        ...rest
+      } = roundPlanSchedulerConfig;
       const scheduleByDates =
         roundPlanSchedulerConfig.scheduleType === 'byDate'
           ? this.prepareScheduleByDates()
@@ -335,6 +400,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
         this.rpscService
           .updateRoundPlanScheduleConfiguration$(id, {
             ...rest,
+            assignmentDetails: restAssignmentDetails,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
             scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
@@ -359,6 +425,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
         this.rpscService
           .createRoundPlanScheduleConfiguration$({
             ...rest,
+            assignmentDetails: restAssignmentDetails,
             startDate: new Date(`${startDate} ${time}`).toISOString(),
             endDate: new Date(`${endDate} ${time}`).toISOString(),
             scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
@@ -424,10 +491,17 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
               endDate,
               scheduleEndOn,
               scheduledTill,
-              scheduleByDates
+              scheduleByDates,
+              assignmentDetails
             } = config;
             config = {
               ...config,
+              assignmentDetails: {
+                ...assignmentDetails,
+                displayValue: this.operatorRoundsService.getUserFullName(
+                  assignmentDetails.value
+                )
+              },
               startDate: format(new Date(startDate), 'd MMMM yyyy'),
               endDate: format(new Date(endDate), 'd MMMM yyyy'),
               scheduleEndOn: format(new Date(scheduleEndOn), 'MMM d, yyyy'),
@@ -471,7 +545,13 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       startDatePicker: new Date(),
       endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
       endDatePicker: new Date(addDays(new Date(), 30)),
-      scheduledTill: null
+      scheduledTill: null,
+      assignmentDetails: {
+        type: this.assignTypes[0],
+        value: '',
+        displayValue: ''
+      },
+      advanceRoundsCount: 0
     });
     this.roundPlanSchedulerConfigForm.markAsDirty();
   }
@@ -518,5 +598,29 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
         }
       }
     });
+  }
+
+  selectedAssigneeHandler(event: UserDetails) {
+    const { email: value, firstName, lastName } = event;
+    this.roundPlanSchedulerConfigForm
+      .get('assignmentDetails')
+      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    this.roundPlanSchedulerConfigForm.markAsDirty();
+    this.menuTrigger.closeMenu();
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.roundPlanSchedulerConfigForm.get(controlName).touched;
+    const errors = this.roundPlanSchedulerConfigForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

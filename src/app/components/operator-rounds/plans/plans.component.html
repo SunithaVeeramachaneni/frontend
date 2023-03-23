@@ -14,14 +14,17 @@
       "
     ></app-form-detail>
   </div>
-  <app-round-plan-schedule-configuration
-    [@slideInOut]="scheduleConfigState"
-    [roundPlanDetail]="scheduleRoundPlanDetail"
-    [hidden]="hideScheduleConfig"
-    (scheduleConfigState)="closeScheduleConfigHandler($event)"
-    (scheduleConfig)="scheduleConfigHandler($event)"
-    (viewRounds)="viewRoundsHandler($event)"
-  ></app-round-plan-schedule-configuration>
+  <ng-container *ngIf="users$ | async">
+    <app-round-plan-schedule-configuration
+      [@slideInOut]="scheduleConfigState"
+      [roundPlanDetail]="scheduleRoundPlanDetail"
+      [hidden]="hideScheduleConfig"
+      [assigneeDetails]="assigneeDetails"
+      (scheduleConfigState)="closeScheduleConfigHandler($event)"
+      (scheduleConfig)="scheduleConfigHandler($event)"
+      (viewRounds)="viewRoundsHandler($event)"
+    ></app-round-plan-schedule-configuration>
+  </ng-container>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group
       name="plans"
@@ -94,7 +97,7 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="userInfo$ | async">
+<ng-container *ngIf="{ userInfo: userInfo$ | async, users: users$ | async }">
   <div *ngIf="(filteredRoundPlans$ | async) && (isLoading$ | async) === false">
     <cwp-dynamictable
       [ngClass]="{

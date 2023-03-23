@@ -212,5 +212,16 @@
   "createdBy": "Created By",
   "selectAll": "Select All",
   "tasksCompleted": "Tasks Completed",
-  "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}"
+  "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}",
+  "user": "User",
+  "userGroup": "User Group",
+  "plant": "Plant",
+  "assignToInfo": "The assignee will be auto assigned to all the rounds generated, However you can still change from the rounds",
+  "advanceRoundsCountInfo": "How many rounds would you like to generate for the first time in advance?",
+  "select": "Select",
+  "roundsGeneration": "Rounds Generation",
+  "advanceRoundsCount": "Rounds Count",
+  "selectAnOperator": "Select an Operator",
+  "min": "{name} must be at least {count}",
+  "max": "{name} must be at the max of {count}"
 }

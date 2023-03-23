@@ -143,13 +143,15 @@
           <div class="name-heading">
             <div>
               <p class="color-gray">
-                {{ 'operator' | translate }}
+                {{ 'assignedTo' | translate }}
               </p>
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
                 {{
-                  selectedForm?.operator ? selectedForm?.operator : placeHolder
+                  selectedForm?.assignedTo
+                    ? selectedForm?.assignedTo
+                    : placeHolder
                 }}
               </h4>
             </div>
@@ -238,11 +240,11 @@
         <div class="name-heading">
           <div>
             <p class="color-gray">
-              {{ 'operator' | translate }}
+              {{ 'assignedTo' | translate }}
             </p>
           </div>
           <div class="flex-custom">
-            <h4 class="create-name">{{ selectedForm?.operator }}</h4>
+            <h4 class="create-name">{{ selectedForm?.assignedTo }}</h4>
           </div>
         </div>
       </ng-template>
