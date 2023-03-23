@@ -20,6 +20,8 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
+  InspectionDetailResponse,
+  InspectionQueryParam,
   LoadEvent,
   SearchEvent,
   TableEvent
@@ -879,5 +881,43 @@ export class RaceDynamicFormService {
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
+  }
+
+  getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/forms-inspection-filter.json',
+      info
+    );
+  }
+
+  getInspectionsList$(
+    queryParams: InspectionQueryParam,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<InspectionDetailResponse> {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        rest.nextToken = '';
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.operatorRoundsApiUrl,
+          'inspections/',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(map((data) => ({ ...data, rows: data.rows })));
+    } else {
+      return of({
+        rows: []
+      } as InspectionDetailResponse);
+    }
   }
 }

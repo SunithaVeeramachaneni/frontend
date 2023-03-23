@@ -52,6 +52,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-inspection',
@@ -277,7 +278,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: Column[];
     data: any[];
   }>;
-  fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
@@ -298,7 +299,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
-    private readonly operatorRoundsService: OperatorRoundsService,
+    private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
@@ -306,7 +307,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.fetchRounds$.next({} as TableEvent);
+    this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
     this.searchForm.valueChanges
@@ -314,7 +315,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchRounds$.next({ data: 'search' });
+          this.fetchInspection$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
       )
@@ -323,22 +324,22 @@ export class InspectionComponent implements OnInit, OnDestroy {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
+    const roundsOnLoadSearch$ = this.fetchInspection$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getRoundsList();
+        return this.getInspectionsList();
       })
     );
 
-    const onScrollRounds$ = this.fetchRounds$.pipe(
+    const onScrollInspections$ = this.fetchInspection$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundsList();
+          return this.getInspectionsList();
         } else {
           return of({} as RoundDetailResponse);
         }
@@ -349,7 +350,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.rounds$ = combineLatest([roundsOnLoadSearch$, onScrollRounds$]).pipe(
+    this.rounds$ = combineLatest([
+      roundsOnLoadSearch$,
+      onScrollInspections$
+    ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -372,23 +376,21 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
     this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
       this.roundPlanId = roundPlanId;
-      this.fetchRounds$.next({ data: 'load' });
+      this.fetchInspection$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
 
     this.configOptions.allColumns = this.columns;
   }
 
-  getRoundsList() {
+  getInspectionsList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
     };
-
-    return this.operatorRoundsService.getRoundsList$(obj).pipe(
+    return this.raceDynamicFormService.getInspectionsList$(obj).pipe(
       tap(({ count, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         this.roundsCount = count !== undefined ? count : this.roundsCount;
@@ -398,7 +400,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchRounds$.next(event);
+    this.fetchInspection$.next(event);
   };
 
   ngOnDestroy(): void {}
@@ -452,7 +454,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   getFilter() {
-    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
+    this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
       this.filterJson = res;
     });
   }
