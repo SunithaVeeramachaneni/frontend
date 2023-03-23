@@ -908,16 +908,40 @@ export class RaceDynamicFormService {
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
-          environment.operatorRoundsApiUrl,
-          'inspections/',
+          environment.rdfApiUrl,
+          'inspections',
           { displayToast, failureResponse },
           rest
         )
-        .pipe(map((data) => ({ ...data, rows: data.rows })));
+        .pipe(map((data) => ({ ...data, rows: this.formatInspections(data.rows) })));
     } else {
       return of({
         rows: []
       } as InspectionDetailResponse);
     }
   }
+
+
+  private formatInspections(rounds: any[] = []): any[] {
+    const rows = rounds
+      .sort(
+        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        responseCompleted: `0/0,0%`
+      }));
+    return rows;
+  }
+
 }
