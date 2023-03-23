@@ -290,7 +290,7 @@
               }}
             </mat-error>
           </div>
-          <mat-menu #menu="matMenu">
+          <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assign-round
               [assigneeDetails]="assigneeDetails"
               (selectedAssignee)="selectedAssigneeHandler($event)"
