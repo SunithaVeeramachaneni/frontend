@@ -77,7 +77,6 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
-  operator: string;
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -87,6 +86,7 @@ export interface RoundDetail extends RoundPlan {
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
   locationAndAssetTasksCompleted: number;
+  assignedTo: string;
 }
 
 export interface RoundPlanDetailResponse {

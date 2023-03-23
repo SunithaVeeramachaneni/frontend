@@ -223,8 +223,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,

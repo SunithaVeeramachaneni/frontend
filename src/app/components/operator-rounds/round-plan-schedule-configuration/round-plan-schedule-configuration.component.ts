@@ -195,6 +195,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
                 }
               ];
             }
+            this.updateAdvanceRoundsCountValidation(12);
             break;
         }
       });
@@ -213,17 +214,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
-            this.roundsGeneration.max = 30;
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .setValidators([
-                Validators.required,
-                Validators.min(this.roundsGeneration.min),
-                Validators.max(this.roundsGeneration.max)
-              ]);
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .updateValueAndValidity();
+            this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'week':
             this.roundPlanSchedulerConfigForm
@@ -238,17 +229,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
-            this.roundsGeneration.max = daysToWeeks(91);
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .setValidators([
-                Validators.required,
-                Validators.min(this.roundsGeneration.min),
-                Validators.max(this.roundsGeneration.max)
-              ]);
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .updateValueAndValidity();
+            this.updateAdvanceRoundsCountValidation(daysToWeeks(91));
             break;
           case 'month':
             this.roundPlanSchedulerConfigForm
@@ -261,17 +242,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
-            this.roundsGeneration.max = 12;
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .setValidators([
-                Validators.required,
-                Validators.min(this.roundsGeneration.min),
-                Validators.max(this.roundsGeneration.max)
-              ]);
-            this.roundPlanSchedulerConfigForm
-              .get('advanceRoundsCount')
-              .updateValueAndValidity();
+            this.updateAdvanceRoundsCountValidation(12);
             break;
         }
       });
@@ -622,5 +593,19 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  updateAdvanceRoundsCountValidation(roundsCount: number) {
+    this.roundsGeneration.max = roundsCount;
+    this.roundPlanSchedulerConfigForm
+      .get('advanceRoundsCount')
+      .setValidators([
+        Validators.required,
+        Validators.min(this.roundsGeneration.min),
+        Validators.max(this.roundsGeneration.max)
+      ]);
+    this.roundPlanSchedulerConfigForm
+      .get('advanceRoundsCount')
+      .updateValueAndValidity();
   }
 }
