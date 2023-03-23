@@ -70,6 +70,7 @@ export const permissions = Object.freeze({
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewFormScheduler: 'VIEW_FORM_SCHEDULER',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
@@ -190,7 +191,7 @@ export const routingUrls = {
   schedularForms: {
     url: '/forms/scheduler/0',
     title: 'Scheduler',
-    permission: permissions.viewArchivedForms
+    permission: permissions.viewFormScheduler
   },
 
   operatorRoundPlans: {
