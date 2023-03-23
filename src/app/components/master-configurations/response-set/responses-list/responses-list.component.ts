@@ -355,6 +355,8 @@ export class ResponsesListComponent implements OnInit {
     this.responseSetService.fetchResponses$.next(event);
   };
 
+  handleSlideState = () => {};
+
   configOptionsChangeHandler = (event): void => {};
 
   rowLevelActionHandler = ({ data, action }) => {
