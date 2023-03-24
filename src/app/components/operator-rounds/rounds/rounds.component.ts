@@ -66,9 +66,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   status = ['Open', 'In-progress', 'Completed'];
   filter = {
     status: '',
-    inspectedBy: '',
-    inspectedOnStartDate: '',
-    inspectedOnEndDate: ''
+    inspectedBy: '' 
   };
   columns: Column[] = [
     {
@@ -464,9 +462,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueLastPublishedBy = formsList.map((item) => item.createdBy)
+      const uniqueInspectedBy = formsList.map((item) => item.createdBy)
         .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueLastPublishedBy) {
+      for (const item of uniqueInspectedBy) {
         if (item) {
           this.inspectedBy.push(item);
         }
@@ -495,12 +493,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type == 'daterange') {
-        if (item.value && item.value.length > 0) {
-          this.filter.inspectedOnStartDate = item.value[0];
-          this.filter.inspectedOnEndDate = item.value[1];
-        }
-      } else {
+      if (item.type != 'daterange') {
         this.filter[item.column] = item.value;
       }
     }
