@@ -17,12 +17,12 @@
         <div class="group">
           <span class="groupHead" translate="header"></span>
           <span class="option">
-            <mat-checkbox formControlName="roundId" class="checkbox">
+            <mat-checkbox formControlName="formId" class="checkbox">
               <span translate="roundId"></span>
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox formControlName="roundTitle" class="checkbox">
+            <mat-checkbox formControlName="formTitle" class="checkbox">
               <span translate="roundTitle"></span>
             </mat-checkbox>
           </span>
@@ -35,7 +35,7 @@
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox formControlName="taskCompleted" class="checkbox">
+            <mat-checkbox formControlName="questionCompleted" class="checkbox">
               <span translate="taskCompleted"></span>
             </mat-checkbox>
           </span>
@@ -86,34 +86,36 @@
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox formControlName="tasks" class="checkbox" [indeterminate]="areTasksIndeterminate()"
-              (change)="toggleAllTasks($event)">
+            <mat-checkbox formControlName="questions" class="checkbox" [indeterminate]="areQuestionsIndeterminate()"
+              (change)="toggleAllQuestions($event)">
               <span translate="tasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-40">
-            <mat-checkbox formControlName="incompleteTasks" class="checkbox" (change)="toggleIncompleteTasks($event)">
+            <mat-checkbox formControlName="incompleteQuestions" class="checkbox"
+              (change)="toggleIncompleteQuestions($event)">
               <span translate="incompleteTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-40">
-            <mat-checkbox formControlName="completedTasks" class="checkbox"
-              [indeterminate]="areCompletedTasksIndeterminate()" (change)="toggleCompletedTasks($event)">
+            <mat-checkbox formControlName="completedQuestions" class="checkbox"
+              [indeterminate]="areCompletedQuestionsIndeterminate()" (change)="toggleCompletedQuestions($event)">
               <span translate="completedTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">
-            <mat-checkbox formControlName="capturedTasks" class="checkbox" (change)="togglecapturedTasks($event)">
+            <mat-checkbox formControlName="capturedQuestions" class="checkbox"
+              (change)="togglecapturedQuestions($event)">
               <span translate="capturedTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">
-            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleTaskPhotos($event)">
+            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleQuestionPhotos($event)">
               <span translate="photos"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">
-            <mat-checkbox formControlName="skippedTasks" class="checkbox" (change)="toggleSkippedTasks($event)">
+            <mat-checkbox formControlName="skippedQuestions" class="checkbox" (change)="toggleSkippedQuestions($event)">
               <span translate="skippedTasks"></span>
             </mat-checkbox>
           </span>
@@ -142,9 +144,9 @@
         <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
-              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('roundId').value">{{formMetadata.id}}</span>
+              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
               <span class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('roundTitle').value">{{formMetadata.name}}</span>
+                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
             </div>
             <div class="pageTitleRow">
               <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
@@ -156,14 +158,14 @@
               </div>
             </div>
             <div class="subjectRow"
-              *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('taskCompleted').value">
+              *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('questionCompleted').value">
               <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
                 Submitted On: 18-03-2023 10:00PM
               </div>
               <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
                 Submitted By: Shiva Kumar K
               </div>
-              <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('taskCompleted').value">
+              <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
                 Task Completed: 35/35 (100%)
               </div>
             </div>
@@ -386,9 +388,9 @@
         <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
-              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('roundId').value">{{formMetadata.id}}</span>
+              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
               <span class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('roundTitle').value">{{formMetadata.name}}</span>
+                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
             </div>
             <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
               <div class="pageTitleRow">
@@ -515,12 +517,12 @@
           </div>
         </div>
         <!-- TASKS -->
-        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('tasks').value">
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('questions').value">
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
-              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('roundId').value">{{formMetadata.id}}</span>
+              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
               <span class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('roundTitle').value">{{formMetadata.name}}</span>
+                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
             </div>
             <div
               *ngIf="!(pdfBuilderConfigurationsForm.get('issues').value && pdfBuilderConfigurationsForm.get('issues').value)">
@@ -546,10 +548,11 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="pdfBuilderConfigurationsForm.get('tasks').value" class="issuesRow">
+            <div *ngIf="pdfBuilderConfigurationsForm.get('questions').value" class="issuesRow">
               <div class="tasksHead">
                 <span>Tasks</span>
-                <span>Total Locations: {{totalLocationsCount}}, Assets: {{totalAssetsCount}}, Tasks: {{totalTasksCount}}
+                <span>Total Locations: {{totalLocationsCount}}, Assets: {{totalAssetsCount}}, Tasks:
+                  {{totalQuestionsCount}}
                 </span>
               </div>
               <div class="actionCell" *ngIf="selectedFlatHierarchy">
@@ -560,8 +563,9 @@
                       <span class="nodeId"> {{ node.type==='asset'? 'Asset': 'Location'}} ID: <span
                           class="no-bold">{{node.nodeId}} - {{node.id}}</span></span>
                     </div>
-                    <div class="nodeRight">
-                      Pages: 10 • Sections: 3 • Tasks: 16
+                    <div class="nodeRight" *ngIf="getPagesOfNode(node.id) | async as totalPages">
+                      Pages: {{totalPages.length}} • Sections: {{ getSectionsCountByNode(totalPages)}} • Tasks:
+                      {{getAllQuestionsCountByNode(totalPages)}}
                     </div>
                   </div>
                   <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">

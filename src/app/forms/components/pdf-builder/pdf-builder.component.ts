@@ -37,16 +37,16 @@ export class PDFBuilderComponent implements OnInit {
   formMetadata$: Observable<FormMetadata>;
   selectedHierarchy$: Observable<any>;
   selectedFlatHierarchy: any = [];
-  totalTasksCount = 0;
+  totalQuestionsCount = 0;
   totalAssetsCount = 0;
   totalLocationsCount = 0;
 
   pdfBuilderConfigurationsForm: FormGroup = this.fb.group({
-    roundId: true,
-    roundTitle: true,
+    formId: true,
+    formTitle: true,
     subject: true,
     logo: true,
-    taskCompleted: true,
+    questionCompleted: true,
     submittedOn: true,
     submittedBy: true,
     pdfGeneratedDate: true,
@@ -55,12 +55,12 @@ export class PDFBuilderComponent implements OnInit {
     customTextField: '',
     actions: true,
     issues: true,
-    tasks: true,
-    incompleteTasks: true,
-    completedTasks: true,
-    capturedTasks: true,
+    questions: true,
+    incompleteQuestions: true,
+    completedQuestions: true,
+    capturedQuestions: true,
     photos: true,
-    skippedTasks: true
+    skippedQuestions: true
   });
 
   innovapptiveLogo =
@@ -99,7 +99,7 @@ export class PDFBuilderComponent implements OnInit {
       this.store
         .select(getTotalTasksCountByHierarchy(nodeIds))
         .subscribe((count) => {
-          this.totalTasksCount = count;
+          this.totalQuestionsCount = count;
         });
     });
 
@@ -131,11 +131,11 @@ export class PDFBuilderComponent implements OnInit {
   toggleSelectAll(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        roundId: true,
-        roundTitle: true,
+        formId: true,
+        formTitle: true,
         subject: true,
         logo: true,
-        taskCompleted: true,
+        questionCompleted: true,
         submittedOn: true,
         submittedBy: true,
         pdfGeneratedDate: true,
@@ -144,20 +144,20 @@ export class PDFBuilderComponent implements OnInit {
         customTextField: '',
         actions: true,
         issues: true,
-        tasks: true,
-        incompleteTasks: true,
-        completedTasks: true,
-        capturedTasks: true,
+        questions: true,
+        incompleteQuestions: true,
+        completedQuestions: true,
+        capturedQuestions: true,
         photos: true,
-        skippedTasks: true
+        skippedQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        roundId: false,
-        roundTitle: false,
+        formId: false,
+        formTitle: false,
         subject: false,
         logo: false,
-        taskCompleted: false,
+        questionCompleted: false,
         submittedOn: false,
         submittedBy: false,
         pdfGeneratedDate: false,
@@ -166,84 +166,84 @@ export class PDFBuilderComponent implements OnInit {
         customTextField: '',
         actions: false,
         issues: false,
-        tasks: false,
-        incompleteTasks: false,
-        completedTasks: false,
-        capturedTasks: false,
+        questions: false,
+        incompleteQuestions: false,
+        completedQuestions: false,
+        capturedQuestions: false,
         photos: false,
-        skippedTasks: false
+        skippedQuestions: false
       });
     }
   }
-  toggleAllTasks(event) {
+  toggleAllQuestions(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        incompleteTasks: true,
-        completedTasks: true,
-        capturedTasks: true,
+        questions: true,
+        incompleteQuestions: true,
+        completedQuestions: true,
+        capturedQuestions: true,
         photos: true,
-        skippedTasks: true
+        skippedQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: false,
-        incompleteTasks: false,
-        completedTasks: false,
-        capturedTasks: false,
+        questions: false,
+        incompleteQuestions: false,
+        completedQuestions: false,
+        capturedQuestions: false,
         photos: false,
-        skippedTasks: false
+        skippedQuestions: false
       });
     }
   }
-  toggleIncompleteTasks(event) {
+  toggleIncompleteQuestions(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        incompleteTasks: true
+        questions: true,
+        incompleteQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        incompleteTasks: false
+        incompleteQuestions: false
       });
     }
   }
-  toggleCompletedTasks(event) {
+  toggleCompletedQuestions(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        completedTasks: true,
-        capturedTasks: true,
+        questions: true,
+        completedQuestions: true,
+        capturedQuestions: true,
         photos: true,
-        skippedTasks: true
+        skippedQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        completedTasks: false,
-        capturedTasks: false,
+        completedQuestions: false,
+        capturedQuestions: false,
         photos: false,
-        skippedTasks: false
+        skippedQuestions: false
       });
     }
   }
-  togglecapturedTasks(event) {
+  togglecapturedQuestions(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        completedTasks: true,
-        capturedTasks: true
+        questions: true,
+        completedQuestions: true,
+        capturedQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        capturedTasks: false
+        capturedQuestions: false
       });
     }
   }
-  toggleTaskPhotos(event) {
+  toggleQuestionPhotos(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        completedTasks: true,
+        questions: true,
+        completedQuestions: true,
         photos: true
       });
     } else {
@@ -252,53 +252,53 @@ export class PDFBuilderComponent implements OnInit {
       });
     }
   }
-  toggleSkippedTasks(event) {
+  toggleSkippedQuestions(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        tasks: true,
-        completedTasks: true,
-        skippedTasks: true
+        questions: true,
+        completedQuestions: true,
+        skippedQuestions: true
       });
     } else {
       this.pdfBuilderConfigurationsForm.patchValue({
-        skippedTasks: false
+        skippedQuestions: false
       });
     }
   }
-  areTasksIndeterminate() {
+  areQuestionsIndeterminate() {
     const config = this.pdfBuilderConfigurationsForm.getRawValue();
     return (
-      config.incompleteTasks ||
-      config.completedTasks ||
-      config.capturedTasks ||
+      config.incompleteQuestions ||
+      config.completedQuestions ||
+      config.capturedQuestions ||
       config.photos ||
-      config.skippedTasks
+      config.skippedQuestions
     );
   }
-  areCompletedTasksIndeterminate() {
+  areCompletedQuestionsIndeterminate() {
     const config = this.pdfBuilderConfigurationsForm.getRawValue();
-    return config.capturedTasks || config.photos || config.skippedTasks;
+    return config.capturedQuestions || config.photos || config.skippedQuestions;
   }
   isSelectAllIndeterminate() {
     const config = this.pdfBuilderConfigurationsForm.getRawValue();
     return (
-      config.roundId ||
-      config.roundTitle ||
+      config.formId ||
+      config.formTitle ||
       config.subject ||
       config.logo ||
-      config.taskCompleted ||
+      config.questionCompleted ||
       config.submittedOn ||
       config.submittedBy ||
       config.pdfGeneratedDate ||
       config.customText ||
       config.actions ||
       config.issues ||
-      config.tasks ||
-      config.incompleteTasks ||
-      config.completedTasks ||
-      config.capturedTasks ||
+      config.questions ||
+      config.incompleteQuestions ||
+      config.completedQuestions ||
+      config.capturedQuestions ||
       config.photos ||
-      config.skippedTasks
+      config.skippedQuestions
     );
   }
 
@@ -337,6 +337,24 @@ export class PDFBuilderComponent implements OnInit {
       );
       return section;
     });
+  }
+  getSectionsCountByNode(allPages) {
+    let count = 0;
+    allPages.forEach((page) => {
+      if (page.sections) {
+        count += page.sections.length;
+      }
+    });
+    return count;
+  }
+  getAllQuestionsCountByNode(allPages) {
+    let count = 0;
+    allPages.forEach((page) => {
+      if (page.questions) {
+        count += page.questions.length;
+      }
+    });
+    return count;
   }
 
   onCancel(): void {
