@@ -953,7 +953,7 @@ fetchAllRounds$ = () => {
           condition: true
         },
         dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
-        responseCompleted: `0/0,0%`
+        tasksCompleted: `0/0,0%`
       }));
     return rows;
   }

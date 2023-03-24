@@ -103,7 +103,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'responseCompleted',
+      id: 'tasksCompleted',
       displayName: 'Responses Completed',
       type: 'string',
       controlType: 'space-between',
@@ -456,7 +456,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
   getFilter() {
