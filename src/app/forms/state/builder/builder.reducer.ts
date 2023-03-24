@@ -10,7 +10,7 @@ import {
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
-  pdfBuilderConfguration?: any;
+  pdfBuilderConfiguration?: any;
   pages: Page[];
   subForms?: any[];
   counter: number;
@@ -152,7 +152,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.updatePDFBuilderConfiguration,
     (state, action): FormConfigurationState => ({
       ...state,
-      pdfBuilderConfguration: action.pdfBuilderConfguration
+      pdfBuilderConfiguration: action.pdfBuilderConfiguration
     })
   ),
   on(

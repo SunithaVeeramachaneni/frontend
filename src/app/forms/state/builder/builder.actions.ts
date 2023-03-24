@@ -33,7 +33,7 @@ export const updateFormMetadata = createAction(
 export const updatePDFBuilderConfiguration = createAction(
   '[Builder Configuration] updatePDFBuilderConfiguration',
   props<{
-    pdfBuilderConfguration: any;
+    pdfBuilderConfiguration: any;
   }>()
 );
 

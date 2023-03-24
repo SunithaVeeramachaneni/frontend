@@ -549,11 +549,50 @@
             <div *ngIf="pdfBuilderConfigurationsForm.get('tasks').value" class="issuesRow">
               <div class="tasksHead">
                 <span>Tasks</span>
-                <span>Total Locations: 10, Assets: 5, Tasks: 16 </span>
+                <span>Total Locations: {{totalLocationsCount}}, Assets: {{totalAssetsCount}}, Tasks: {{totalTasksCount}}
+                </span>
               </div>
               <div class="actionCell" *ngIf="selectedFlatHierarchy">
-                <div *ngFor="let node of selectedFlatHierarchy">
-                  {{node.name}} - {{node.type}} - {{node.description}}
+                <div *ngFor="let node of selectedFlatHierarchy" class="hierarchyNode">
+                  <div class="hierarNodeHead">
+                    <div class="nodeLeft">
+                      <span class="nodeTitle">{{node.name}}</span>
+                      <span class="nodeId"> {{ node.type==='asset'? 'Asset': 'Location'}} ID: <span
+                          class="no-bold">{{node.nodeId}} - {{node.id}}</span></span>
+                    </div>
+                    <div class="nodeRight">
+                      Pages: 10 • Sections: 3 • Tasks: 16
+                    </div>
+                  </div>
+                  <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">
+                    <div *ngFor="let page of pages" class="pageContainer">
+                      <div class="nodePageHeader">
+                        <span class="nodePageTitle">{{page.name}}</span>
+                        <span class="nodePageRight">Sections: {{page.sections.length}} • Tasks:
+                          {{page.questions.length}}
+                        </span>
+                      </div>
+                      <div *ngFor="let section of getSectionsWithQuestionsOfPage(page)">
+                        <div class="pageSection">
+                          <div class="sectionHeadRow">
+                            <div class="sectionTitle">
+                              {{section.name}}
+                            </div>
+                            <div class="sectionRight">
+                              Tasks: {{section.questions.length}}
+                            </div>
+                          </div>
+                          <div class="sectionQuestionsContainer">
+                            <div *ngFor="let question of section.questions" class="questionRow">
+                              <app-question-preview [question]="question"
+                                [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"></app-question-preview>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

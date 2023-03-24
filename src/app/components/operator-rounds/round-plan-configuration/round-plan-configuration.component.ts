@@ -285,7 +285,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       tap(([formDetails, selectedHierarchyList]) => {
         const {
           formMetadata,
-          pdfBuilderConfguration,
+          pdfBuilderConfiguration,
           formStatus,
           counter,
           pages,
@@ -333,7 +333,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion,
                   hierarchy: selectedHierarchyList,
-                  pdfBuilderConfguration
+                  pdfBuilderConfiguration
                 })
               );
               this.formDetails = formDetails;

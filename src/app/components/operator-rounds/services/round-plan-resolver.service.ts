@@ -58,7 +58,7 @@ export class RoundPlanResolverService
 
         const {
           id: authoredFormDetailId,
-          pdfBuilderConfguration,
+          pdfBuilderConfiguration,
           counter,
           pages,
           subForms,
@@ -84,7 +84,7 @@ export class RoundPlanResolverService
         return {
           formConfigurationState: {
             formMetadata,
-            pdfBuilderConfguration,
+            pdfBuilderConfiguration,
             counter,
             pages: JSON.parse(pages),
             ...subFormsMap,

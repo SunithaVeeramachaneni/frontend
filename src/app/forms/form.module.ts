@@ -59,6 +59,7 @@ import { InstructionPdfComponent } from './components/field-types/instructions/i
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
+import { QuestionPreviewComponent } from './components/pdf-builder/question-preview/question-preview.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { CdkScrollableModule } from '@angular/cdk/scrolling';
     HyperlinkSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
+    QuestionPreviewComponent,
     HierarchyNodeComponent,
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
@@ -143,6 +145,7 @@ import { CdkScrollableModule } from '@angular/cdk/scrolling';
     ImportQuestionsSliderComponent,
     BuilderComponent,
     PDFBuilderComponent,
+    QuestionPreviewComponent,
     NgxShimmerLoadingModule
   ]
 })

@@ -346,7 +346,7 @@ export class OperatorRoundsService {
 
   updateAuthoredFormDetail$(formDetails) {
     const {
-      pdfBuilderConfguration,
+      pdfBuilderConfiguration,
       hierarchy,
       subForms,
       counter,
@@ -371,7 +371,7 @@ export class OperatorRoundsService {
         counter,
         hierarchy,
         flatHierarchy,
-        pdfBuilderConfguration,
+        pdfBuilderConfiguration,
         _version: formDetails.authoredFormDetailDynamoDBVersion,
         version: formDetails.authoredFormDetailVersion.toString()
       }

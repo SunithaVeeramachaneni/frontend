@@ -112,6 +112,25 @@ export const getSubFormPages = (subFormId) =>
     return state[key];
   });
 
+export const getTotalTasksCountByHierarchy = (subFormIds) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let count = 0;
+    let allPages = [];
+    subFormIds.forEach((subFormId) => {
+      let key = 'pages';
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      if (state[key]) {
+        allPages = [...allPages, ...state[key]];
+      }
+    });
+    allPages.forEach((page) => {
+      count = count + page.questions?.length;
+    });
+    return count;
+  });
+
 export const getPage = (pageIndex: number, subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
