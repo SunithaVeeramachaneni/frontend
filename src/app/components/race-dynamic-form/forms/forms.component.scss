@@ -52,15 +52,15 @@
   ::ng-deep .form-categories .mat-button-toggle .mat-button-toggle-ripple {
     border-radius: 30px;
   }
-
-  ::ng-deep .table-column {
-    width: 15%;
-    max-width: 195px;
-  }
 }
 
 ::ng-deep .remove-zindex th {
   z-index: 0 !important;
+}
+
+::ng-deep .table-column {
+  width: 15% !important;
+  max-width: 195px !important;
 }
 
 .padding-lr-20 {
