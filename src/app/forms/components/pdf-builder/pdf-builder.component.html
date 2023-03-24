@@ -7,7 +7,7 @@
   </div>
   <div class="dialogContainer">
     <div class="left">
-      <h2 class="configHead" translate="configuration"></h2>
+      <h2 class="configHead" translate="configuration" *ngIf="loadPDFBuilderConfig$ | async"></h2>
       <div class="configOptions" [formGroup]="pdfBuilderConfigurationsForm">
         <span class="selectAll">
           <mat-checkbox (change)="toggleSelectAll($event)" [indeterminate]="isSelectAllIndeterminate()">

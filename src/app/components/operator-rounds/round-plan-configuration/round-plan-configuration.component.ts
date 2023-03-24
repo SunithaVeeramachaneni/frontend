@@ -285,11 +285,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       tap(([formDetails, selectedHierarchyList]) => {
         const {
           formMetadata,
-          pdfBuilderConfiguration,
           formStatus,
           counter,
           pages,
           subForms,
+          pdfBuilderConfiguration,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,

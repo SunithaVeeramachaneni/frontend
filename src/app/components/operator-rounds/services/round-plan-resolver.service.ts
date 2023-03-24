@@ -55,10 +55,11 @@ export class RoundPlanResolverService
           tags,
           _version: formListDynamoDBVersion
         } = form;
-
+        const pdfBuilderConfiguration = JSON.parse(
+          authoredFormDetail?.pdfBuilderConfiguration
+        );
         const {
           id: authoredFormDetailId,
-          pdfBuilderConfiguration,
           counter,
           pages,
           subForms,

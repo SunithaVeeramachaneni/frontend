@@ -21,8 +21,10 @@ import {
   getFormMetadata,
   State,
   getSubFormPages,
-  getTotalTasksCountByHierarchy
+  getTotalTasksCountByHierarchy,
+  getPDFBuilderConfiguration
 } from '../../state/builder/builder-state.selectors';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pdf-builder',
@@ -33,6 +35,8 @@ import {
 export class PDFBuilderComponent implements OnInit {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
+
+  loadPDFBuilderConfig$: Observable<any>;
 
   formMetadata$: Observable<FormMetadata>;
   selectedHierarchy$: Observable<any>;
@@ -115,6 +119,16 @@ export class PDFBuilderComponent implements OnInit {
         })
       );
     });
+    this.loadPDFBuilderConfig$ = this.store
+      .select(getPDFBuilderConfiguration)
+      .pipe(
+        tap((config) => {
+          console.log(config);
+          this.pdfBuilderConfigurationsForm.patchValue(config, {
+            emitEvent: false
+          });
+        })
+      );
   }
   getFormConfigurationStatuses() {
     return {
@@ -276,11 +290,11 @@ export class PDFBuilderComponent implements OnInit {
     );
   }
   areCompletedQuestionsIndeterminate() {
-    const config = this.pdfBuilderConfigurationsForm.getRawValue();
+    const config = this.pdfBuilderConfigurationsForm?.getRawValue();
     return config.capturedQuestions || config.photos || config.skippedQuestions;
   }
   isSelectAllIndeterminate() {
-    const config = this.pdfBuilderConfigurationsForm.getRawValue();
+    const config = this.pdfBuilderConfigurationsForm?.getRawValue();
     return (
       config.formId ||
       config.formTitle ||
