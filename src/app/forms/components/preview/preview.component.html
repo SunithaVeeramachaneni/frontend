@@ -51,9 +51,9 @@
                 *ngIf="question.fieldType === 'INST'"
                 class="instruction-field"
               >
-                <div *ngIf="question.value.tag !== getNoneTag()">
+                <div *ngIf="question.value.tag.title !== getNoneTag()">
                   <p class="tag-text">
-                    {{ question.value.tag }}
+                    {{ question.value.tag.title }}
                   </p>
                 </div>
 
