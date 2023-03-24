@@ -96,7 +96,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       this.name.patchValue(this.globalResponse.name);
       this.description.patchValue(this.globalResponse.description);
       JSON.parse(this.globalResponse.values).forEach((item) => {
-        console.log(item);
         this.responses.push(
           this.fb.group({
             title: [item.title, [Validators.required]],
