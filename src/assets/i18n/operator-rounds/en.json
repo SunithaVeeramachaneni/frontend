@@ -223,5 +223,6 @@
   "advanceRoundsCount": "Rounds Count",
   "selectAnOperator": "Select an Operator",
   "min": "{name} must be at least {count}",
-  "max": "{name} must be at the max of {count}"
+  "max": "{name} must be at the max of {count}",
+  "noSearchResultsFound": "No search results found"
 }

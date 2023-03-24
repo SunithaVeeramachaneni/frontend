@@ -13,7 +13,8 @@ import {
   debounceTime,
   distinctUntilChanged,
   map,
-  startWith
+  startWith,
+  tap
 } from 'rxjs/operators';
 import { AssigneeDetails, UserDetails } from 'src/app/interfaces';
 
@@ -34,6 +35,7 @@ export class AssignRoundComponent implements OnInit {
     new EventEmitter<UserDetails>();
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
+  filteredUsersCount: number;
   private _assigneeDetails: AssigneeDetails;
   constructor() {}
 
@@ -52,7 +54,8 @@ export class AssignRoundComponent implements OnInit {
             (user.firstName.toLowerCase().indexOf(search) !== -1 ||
               user.lastName.toLowerCase().indexOf(search) !== -1)
         );
-      })
+      }),
+      tap((users) => (this.filteredUsersCount = users.length))
     );
   }
 

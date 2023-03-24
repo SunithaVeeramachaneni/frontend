@@ -36,6 +36,9 @@
           </span>
         </div>
       </ng-container>
+      <div *ngIf="!filteredUsersCount" class="no-results" translate>
+        noSearchResultsFound
+      </div>
     </mat-card-content>
   </mat-card>
 </div>
