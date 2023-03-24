@@ -52,29 +52,17 @@
   ::ng-deep .form-categories .mat-button-toggle .mat-button-toggle-ripple {
     border-radius: 30px;
   }
+
+  ::ng-deep .table-column {
+    width: 15%;
+    max-width: 195px;
+  }
 }
 
 ::ng-deep .remove-zindex th {
   z-index: 0 !important;
 }
 
-.plans-list {
-  ::ng-deep .table-column {
-    width: 40%;
-  }
-}
-
 .padding-lr-20 {
   padding: 0 20px;
-}
-
-.plans-loading {
-  width: 27%;
-  height: 32px;
-  border-radius: 5px;
-  position: relative;
-  float: right;
-  right: 280px;
-  margin-top: -35px;
-  top: 43px;
 }

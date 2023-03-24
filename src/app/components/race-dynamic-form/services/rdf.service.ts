@@ -103,7 +103,7 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormTaskFormsList$(
+  getFormQuestionsFormsList$(
     queryParams: FormQueryParam,
     info: ErrorInfo = {} as ErrorInfo
   ) {
@@ -121,7 +121,7 @@ export class RaceDynamicFormService {
       return this.appService
         ._getResp(
           environment.rdfApiUrl,
-          'forms/tasks-forms',
+          'forms/schedule-forms',
           { displayToast, failureResponse },
           rest
         )

@@ -99,52 +99,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locations',
-      displayName: 'F.Loc',
-      type: 'number',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'assets',
-      displayName: 'Assets',
-      type: 'number',
-      controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'tasks',
-      displayName: 'Tasks',
+      id: 'questions',
+      displayName: 'questions',
       type: 'number',
       controlType: 'string',
       order: 4,
@@ -448,7 +404,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId
     };
 
-    return this.raceDynamicFormService.getFormTaskFormsList$(obj).pipe(
+    return this.raceDynamicFormService.getFormQuestionsFormsList$(obj).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.formsCount;
@@ -498,8 +454,8 @@ export class FormsComponent implements OnInit, OnDestroy {
         action: 'showDetails'
       },
       {
-        title: 'Show Rounds',
-        action: 'showRounds',
+        title: 'Show Forms',
+        action: 'showForms',
         condition: {
           operand: this.placeHolder,
           operation: 'notContains',
@@ -568,7 +524,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   formDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.formDetail.id}`]);
+    this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
   openScheduleConfigHandler(row: ScheduleFormDetail) {
@@ -637,7 +593,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       case 'showDetails':
         this.openFormHandler(data);
         break;
-      case 'showRounds':
+      case 'showForms':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
         break;
       default:
