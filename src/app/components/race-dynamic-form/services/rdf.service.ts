@@ -953,7 +953,17 @@ fetchAllRounds$ = () => {
           condition: true
         },
         dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
-        tasksCompleted: `0/0,0%`
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
+          },${p.totalTasks > 0
+            ? Math.round(
+              (Math.abs(
+                p.totalTasksCompleted / p.totalTasks
+              ) +
+                Number.EPSILON) *
+              100
+            )
+            : 0
+          }%`
       }));
     return rows;
   }
