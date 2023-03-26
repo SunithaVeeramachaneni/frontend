@@ -21,7 +21,7 @@ import {
 import { Store } from '@ngrx/store';
 import { MCQResponseActions } from 'src/app/forms/state/actions';
 
-import { State, getResponseSets } from 'src/app/forms/state';
+import { State } from 'src/app/forms/state';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,

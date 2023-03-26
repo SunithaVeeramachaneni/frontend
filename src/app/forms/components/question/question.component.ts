@@ -54,6 +54,7 @@ import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -171,6 +172,7 @@ export class QuestionComponent implements OnInit {
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
+    private responseSetService: ResponseSetService,
     private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute,
     private toast: ToastService,
@@ -425,32 +427,44 @@ export class QuestionComponent implements OnInit {
   }
 
   handleGlobalResponseRefCount = (prev, curr) => {
-    const { value: prevValue, _version: prevVer, ...restPrev } = prev || {};
-    const { value: currValue, _version: currVer, ...restCurr } = curr || {};
-    const prevResponseAction = MCQResponseActions.updateGlobalResponseSet({
-      ...restPrev,
-      values: JSON.stringify(prev?.value),
-      refCount: prev?.refCount - 1,
-      version: prev?._version
-    });
-
-    const currResponseAction = MCQResponseActions.updateGlobalResponseSet({
-      ...restCurr,
-      values: JSON.stringify(curr?.value),
-      refCount: curr?.refCount + 1,
-      version: curr?._version
-    });
+    const { type: prevType, value: prevValue, ...prevValues } = prev;
+    const { type: currType, value: currValue, ...currValues } = curr;
     if (
       prev?.type === 'globalResponse' &&
       curr?.type === 'globalResponse' &&
       prev.id !== curr.id
     ) {
-      this.store.dispatch(prevResponseAction);
-      this.store.dispatch(currResponseAction);
-    } else if (prev?.type === 'globalResponse')
-      this.store.dispatch(prevResponseAction);
-    else if (curr?.type === 'globalResponse')
-      this.store.dispatch(currResponseAction);
+      this.responseSetService
+        .updateResponseSet$({
+          ...prevValues,
+          refCount: prevValues.refCount - 1,
+          values: JSON.stringify(prevValue)
+        })
+        .subscribe();
+      this.responseSetService
+        .createResponseSet$({
+          ...currValues,
+          refCount: currValues.refCount + 1,
+          values: JSON.stringify(currValue)
+        })
+        .subscribe();
+    } else if (prev?.type === 'globalResponse') {
+      this.responseSetService
+        .updateResponseSet$({
+          ...prevValues,
+          refCount: prevValues.refCount - 1,
+          values: JSON.stringify(prevValue)
+        })
+        .subscribe();
+    } else if (curr?.type === 'globalResponse') {
+      this.responseSetService
+        .createResponseSet$({
+          ...currValues,
+          refCount: currValues.refCount + 1,
+          values: JSON.stringify(currValue)
+        })
+        .subscribe();
+    }
   };
 
   sliderOpen() {

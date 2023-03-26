@@ -24,12 +24,11 @@ import {
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
-import { Store } from '@ngrx/store';
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getResponseSets } from 'src/app/forms/state';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
 
 const limit = 10000;
@@ -46,9 +45,9 @@ export class RaceDynamicFormService {
 
   constructor(
     private readonly awsApiService: APIService,
+    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
-    private store: Store,
     private translate: TranslateService
   ) {}
 
@@ -467,13 +466,14 @@ export class RaceDynamicFormService {
                 question.value?.type === 'globalResponse'
               ) {
                 let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.store
-                  .select(getResponseSets)
+                const currenGlobalResponse$ = this.responseSetService
+                  .fetchAllGlobalResponses$()
                   .pipe(
                     tap((responses) => {
                       currentGlobalResponseValues = JSON.parse(
-                        responses.find((item) => item.id === question.value.id)
-                          ?.values
+                        responses.items.find(
+                          (item) => item.id === question.value.id
+                        )
                       );
                     })
                   );

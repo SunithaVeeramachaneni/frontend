@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { map, catchError, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
 
 import { environment } from 'src/environments/environment';
 
 import { AppService } from 'src/app/shared/services/app.services';
-import { ToastService } from 'src/app/shared/toast';
 
 import {
   LoadEvent,
@@ -16,7 +16,6 @@ import {
   UpdateResponseSet,
   DeleteResponseSet
 } from '../../../../interfaces';
-import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -32,15 +31,17 @@ export class ResponseSetService {
 
   private maxLimit = '1000000';
 
-  constructor(private _appService: AppService, private toast: ToastService) {}
+  constructor(private _appService: AppService) {}
 
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'response-set/list?' + params.toString()
-    );
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'response-set/list?' + params.toString()
+      )
+      .pipe(shareReplay(1));
   };
 
   fetchResponseSetList$ = (queryParams: {
@@ -89,18 +90,8 @@ export class ResponseSetService {
         values: responseSet.values
       })
       .pipe(
-        tap((response) => {
-          if (response && Object.keys(response).length) {
-            this.addOrEditResponseSet$.next({
-              data: response,
-              actionType: 'add'
-            });
-            this.toast.show({
-              text: 'Global Response created successfully!',
-              type: 'success'
-            });
-          }
-        })
+        map((response) => of(response)),
+        catchError(() => of({}))
       );
 
   updateResponseSet$ = (responseSet: UpdateResponseSet) =>
@@ -119,26 +110,15 @@ export class ResponseSetService {
         }
       )
       .pipe(
-        tap((response) => {
-          if (response && Object.keys(response).length) {
-            this.addOrEditResponseSet$.next({
-              data: response,
-              actionType: 'edit'
-            });
-            this.toast.show({
-              text: 'Global Response updated successfully!',
-              type: 'success'
-            });
-          }
-        })
+        map((response) => of(response)),
+        catchError(() => of({}))
       );
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
-    return this._appService._removeData(
+  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
+    this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
-  };
 
   private formatGraphQLocationResponse(resp) {
     let rows =

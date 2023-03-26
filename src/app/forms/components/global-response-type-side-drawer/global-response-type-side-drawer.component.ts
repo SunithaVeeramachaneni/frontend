@@ -15,7 +15,6 @@ import {
   Validators
 } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Store } from '@ngrx/store';
 import {
   pairwise,
   debounceTime,
@@ -25,7 +24,8 @@ import {
 
 import { isEqual } from 'lodash-es';
 
-import { MCQResponseActions } from '../../state/actions';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
+import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
@@ -53,8 +53,9 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private responseSetService: ResponseSetService,
     private cdrf: ChangeDetectorRef,
-    private store: Store
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -170,26 +171,47 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       refCount: 0
     };
     if (this.globalResponse !== null) {
-      this.store.dispatch(
-        MCQResponseActions.updateGlobalResponseSet({
+      this.responseSetService
+        .updateResponseSet$({
+          ...responseSetPayload,
           id: this.globalResponse.id,
           version: this.globalResponse._version,
-          refCount: this.globalResponse.refCount,
-          ...responseSetPayload
+          refCount: this.globalResponse.refCount
         })
-      );
+        .subscribe((response) => {
+          if (Object.keys(response).length)
+            this.handleResponseSetSuccess(response, 'update');
+        });
     } else
-      this.store.dispatch(
-        MCQResponseActions.createGlobalResponseSet(responseSetPayload)
-      );
-
-    this.closeGlobalResponse();
+      this.responseSetService
+        .createResponseSet$(responseSetPayload)
+        .subscribe((response) => {
+          if (Object.keys(response))
+            this.handleResponseSetSuccess(response, 'create');
+        });
   };
 
   closeGlobalResponse = () => {
     this.globalResponseHandler.emit({
       isGlobalResponseOpen: false,
-      responseToBeEdited: null
+      responseToBeEdited: null,
+      responseSet: null,
+      actionType: 'cancel'
+    });
+    this.slideInOut.next('out');
+    this.cdrf.markForCheck();
+  };
+
+  handleResponseSetSuccess = (response, messageType) => {
+    this.toast.show({
+      text: `Response Set ${messageType}d successfully`,
+      type: 'success'
+    });
+    this.globalResponseHandler.emit({
+      responseSet: response,
+      isGlobalResponseOpen: false,
+      responseToBeEdited: null,
+      actionType: messageType
     });
     this.slideInOut.next('out');
     this.cdrf.markForCheck();

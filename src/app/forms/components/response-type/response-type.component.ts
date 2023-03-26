@@ -3,10 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { Store } from '@ngrx/store';
-import { State, getResponseSets } from '../../state';
-
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { FormService } from '../../services/form.service';
 
 import { slideInOut } from 'src/app/animations';
@@ -40,15 +38,14 @@ export class ResponseTypeComponent implements OnInit {
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
-    private store: Store<State>,
+    private responseSetService: ResponseSetService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.globalResponses$ = this.store
-      .select(getResponseSets)
-      .pipe((responses: any) => responses);
-    this.globalResponses$.subscribe();
+    this.globalResponses$ = this.responseSetService
+      .fetchAllGlobalResponses$()
+      .pipe(map((responses) => responses.items));
 
     this.route.params.subscribe((params) => {
       this.formId = params.id;
@@ -144,9 +141,10 @@ export class ResponseTypeComponent implements OnInit {
             name,
             value: JSON.parse(values),
             description,
-            _version: response._version,
+            version: response._version,
             createdBy: response.createdBy,
-            refCount: response.refCount
+            refCount: response.refCount,
+            isMultiColumn: false
           }
     );
   };
