@@ -31,5 +31,13 @@ export const responseSetReducer = createReducer<ResponseSetState>(
         return item;
       })
     })
+  ),
+  on(
+    MCQResponseApiActions.deleteResponseSetSuccess,
+    (state, action): ResponseSetState => ({
+      globalResponses: state.globalResponses.filter(
+        (item) => item.id !== action.response.id
+      )
+    })
   )
 );

@@ -46,7 +46,10 @@ import {
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 import { isEqual } from 'lodash-es';
-import { BuilderConfigurationActions } from '../../state/actions';
+import {
+  BuilderConfigurationActions,
+  MCQResponseActions
+} from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -232,6 +235,12 @@ export class QuestionComponent implements OnInit {
             ) {
               this.isINSTFieldChanged = true;
             } else {
+              if (
+                currValue?.type === 'globalResponse' ||
+                prevValue?.type === 'globalResponse'
+              )
+                this.handleGlobalResponseRefCount(prevValue, currValue);
+
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
                 sectionId: this.sectionId,
@@ -415,6 +424,35 @@ export class QuestionComponent implements OnInit {
     }
   }
 
+  handleGlobalResponseRefCount = (prev, curr) => {
+    const { value: prevValue, _version: prevVer, ...restPrev } = prev || {};
+    const { value: currValue, _version: currVer, ...restCurr } = curr || {};
+    const prevResponseAction = MCQResponseActions.updateGlobalResponseSet({
+      ...restPrev,
+      values: JSON.stringify(prev?.value),
+      refCount: prev?.refCount - 1,
+      version: prev?._version
+    });
+
+    const currResponseAction = MCQResponseActions.updateGlobalResponseSet({
+      ...restCurr,
+      values: JSON.stringify(curr?.value),
+      refCount: curr?.refCount + 1,
+      version: curr?._version
+    });
+    if (
+      prev?.type === 'globalResponse' &&
+      curr?.type === 'globalResponse' &&
+      prev.id !== curr.id
+    ) {
+      this.store.dispatch(prevResponseAction);
+      this.store.dispatch(currResponseAction);
+    } else if (prev?.type === 'globalResponse')
+      this.store.dispatch(prevResponseAction);
+    else if (curr?.type === 'globalResponse')
+      this.store.dispatch(currResponseAction);
+  };
+
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
@@ -491,7 +529,7 @@ export class QuestionComponent implements OnInit {
       .setValue(!responseTypeClosed, { emitEvent: false });
   }
   setQuestionValue(event) {
-    this.questionForm.get('value').setValue(event, { emitEvent: false });
+    this.questionForm.get('value').setValue(event);
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {

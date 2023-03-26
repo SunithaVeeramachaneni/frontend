@@ -143,7 +143,10 @@ export class ResponseTypeComponent implements OnInit {
             type: responseType,
             name,
             value: JSON.parse(values),
-            description
+            description,
+            _version: response._version,
+            createdBy: response.createdBy,
+            refCount: response.refCount
           }
     );
   };

@@ -57,6 +57,26 @@ export class ResponseSetEffects {
     )
   );
 
+  deleteResponseSet$ = createEffect(() =>
+    this.action$.pipe(
+      ofType(MCQResponseActions.deleteGlobalResponseSet),
+      concatMap((action) =>
+        this.responseSetService
+          .deleteResponseSet$(action)
+          .pipe(
+            map(() =>
+              MCQResponseApiActions.deleteResponseSetSuccess({
+                response: action
+              })
+            )
+          )
+      ),
+      catchError((error) =>
+        of(MCQResponseApiActions.deleteResponseSetFailure({ error }))
+      )
+    )
+  );
+
   constructor(
     private action$: Actions,
     private responseSetService: ResponseSetService

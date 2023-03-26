@@ -82,9 +82,9 @@ export class ResponseSetService {
   createResponseSet$ = (responseSet: CreateResponseSet) =>
     this._appService
       ._postData(environment.masterConfigApiUrl, 'response-set/create', {
-        type: responseSet.responseType,
         name: responseSet.name,
         description: responseSet?.description,
+        refCount: responseSet.refCount,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values
       })
@@ -110,9 +110,9 @@ export class ResponseSetService {
         `response-set/update/${responseSet.id}`,
         {
           id: responseSet.id,
-          type: responseSet.responseType,
           name: responseSet.name,
           description: responseSet.description,
+          refCount: responseSet.refCount,
           isMultiColumn: responseSet.isMultiColumn,
           values: responseSet.values,
           _version: responseSet.version
@@ -133,11 +133,12 @@ export class ResponseSetService {
         })
       );
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
-    this._appService._removeData(
+  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
+    return this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
+  };
 
   private formatGraphQLocationResponse(resp) {
     let rows =

@@ -26,7 +26,6 @@ import {
 import { isEqual } from 'lodash-es';
 
 import { MCQResponseActions } from '../../state/actions';
-import { LoginService } from 'src/app/components/login/services/login.service';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
@@ -54,7 +53,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private loginService: LoginService,
     private cdrf: ChangeDetectorRef,
     private store: Store
   ) {}
@@ -169,13 +167,14 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       isMultiColumn: false,
       values: JSON.stringify(this.responses.value),
       description: this.description.value,
-      createdBy: this.loginService.getLoggedInUserName()
+      refCount: 0
     };
     if (this.globalResponse !== null) {
       this.store.dispatch(
         MCQResponseActions.updateGlobalResponseSet({
           id: this.globalResponse.id,
           version: this.globalResponse._version,
+          refCount: this.globalResponse.refCount,
           ...responseSetPayload
         })
       );

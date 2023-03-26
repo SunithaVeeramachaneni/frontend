@@ -2,9 +2,9 @@ export interface CreateResponseSet {
   responseType: string;
   name: string;
   description?: string;
+  refCount: number;
   isMultiColumn: boolean;
   values: string;
-  createdBy: string;
 }
 
 export interface UpdateResponseSet extends CreateResponseSet {
@@ -14,5 +14,5 @@ export interface UpdateResponseSet extends CreateResponseSet {
 
 export interface DeleteResponseSet {
   id: string;
-  version: number;
+  _version: number;
 }

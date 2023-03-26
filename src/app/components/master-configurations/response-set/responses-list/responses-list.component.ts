@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { combineLatest, Observable, BehaviorSubject, of } from 'rxjs';
 import {
@@ -16,17 +17,11 @@ import {
   debounceTime,
   distinctUntilChanged
 } from 'rxjs/operators';
+
 import { Store } from '@ngrx/store';
+import { MCQResponseActions } from 'src/app/forms/state/actions';
 
 import { State, getResponseSets } from 'src/app/forms/state';
-
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
-
-import { LoginService } from 'src/app/components/login/services/login.service';
-import { ResponseSetService } from '../services/response-set.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -35,7 +30,15 @@ import {
   TableEvent,
   UserInfo
 } from 'src/app/interfaces';
-import { FormControl } from '@angular/forms';
+
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
+
+import { LoginService } from 'src/app/components/login/services/login.service';
+import { ResponseSetService } from '../services/response-set.service';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-responses-list',
@@ -207,6 +210,7 @@ export class ResponsesListComponent implements OnInit {
     private responseSetService: ResponseSetService,
     private loginService: LoginService,
     private store: Store<State>,
+    private toast: ToastService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -367,6 +371,20 @@ export class ResponsesListComponent implements OnInit {
         this.isGlobalResponseOpen = true;
         this.isControlModeView = false;
         break;
+      case 'delete':
+        if (data.refCount > 0) {
+          this.toast.show({
+            text: 'Global Response Set already in use!',
+            type: 'warning'
+          });
+        } else
+          this.store.dispatch(
+            MCQResponseActions.deleteGlobalResponseSet({
+              id: data.id,
+              _version: data._version
+            })
+          );
+        break;
       default:
     }
   };
@@ -413,6 +431,18 @@ export class ResponsesListComponent implements OnInit {
       menuActions.push({
         title: 'Edit',
         action: 'edit'
+      });
+    }
+
+    if (
+      this.loginService.checkUserHasPermission(
+        permissions,
+        'DELETE_GLOBAL_RESPONSES'
+      )
+    ) {
+      menuActions.push({
+        title: 'Delete',
+        action: 'delete'
       });
     }
 
