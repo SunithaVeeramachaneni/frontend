@@ -40,6 +40,8 @@
   "question": "Task",
   "copy": "Copy",
   "delete": "Delete",
+  "pattern": "{message}",
+  "invalidUrl": "Enter valid {name}",
   "requiredtext": "Required",
   "dateLabel": "Date",
   "timeLabel": "Time",
