@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -38,7 +39,8 @@ import {
   RoundDetail,
   RoundDetailResponse,
   SelectTab,
-  RowLevelActionEvent
+  RowLevelActionEvent,
+  UserDetails
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -61,6 +63,7 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  @Input() users$: Observable<UserDetails[]>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   columns: Column[] = [
@@ -220,8 +223,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,

@@ -15,7 +15,7 @@
         <p translate class="field-info">plan</p>
         <div class="field-name">{{ roundPlanDetail?.name }}</div>
         <div class="schedule">{{ 'schedule' | translate }}</div>
-        <mat-radio-group formControlName="scheduleType">
+        <mat-radio-group class="schedule-type" formControlName="scheduleType">
           <mat-radio-button
             color="primary"
             *ngFor="let scheduleType of scheduleTypes"
@@ -178,6 +178,7 @@
               [matDatepicker]="startDate"
               (dateChange)="updateDate($event, 'startDate')"
               [min]="currentDate"
+              formControlName="startDatePicker"
               hidden
             />
             <mat-datepicker-toggle
@@ -215,7 +216,6 @@
             <mat-datepicker #endDate disabled></mat-datepicker>
           </mat-form-field>
         </ng-container>
-
         <ng-container
           *ngIf="
             roundPlanSchedulerConfigForm.get('scheduleType').value === 'byDate'
@@ -230,6 +230,73 @@
               (selectedChange)="updateScheduleByDates($event)"
             ></mat-calendar>
           </div>
+        </ng-container>
+        <ng-container>
+          <div formGroupName="assignmentDetails" class="assign-to">
+            <div class="dis-flex">
+              <div class="title" translate>assignedTo</div>
+              <mat-radio-group class="radio-group" formControlName="type">
+                <mat-radio-button
+                  color="primary"
+                  *ngFor="let assignType of assignTypes; let i = index"
+                  [value]="assignType"
+                  [disabled]="i !== 0"
+                >
+                  {{ assignType | translate }}</mat-radio-button
+                >
+              </mat-radio-group>
+            </div>
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor"
+              [matMenuTriggerFor]="menu"
+              #menuTrigger="matMenuTrigger"
+            >
+              <mat-label translate>select</mat-label>
+              <input
+                type="text"
+                matInput
+                formControlName="displayValue"
+                class="cursor"
+              />
+              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <div class="info" translate>assignToInfo</div>
+          </div>
+          <div class="rounds-count">
+            <p translate class="title">roundsGeneration</p>
+            <div class="info m-b-5" translate>advanceRoundsCountInfo</div>
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>advanceRoundsCount</mat-label>
+              <input
+                type="number"
+                matInput
+                min="0"
+                formControlName="advanceRoundsCount"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('advanceRoundsCount')">
+              {{
+                errors.advanceRoundsCount.name
+                  | translate
+                    : {
+                        name: 'advanceRoundsCount' | translate,
+                        count:
+                          errors.advanceRoundsCount.name === 'min'
+                            ? roundsGeneration.min
+                            : errors.advanceRoundsCount.name === 'max'
+                            ? roundsGeneration.max
+                            : 0
+                      }
+              }}
+            </mat-error>
+          </div>
+          <mat-menu #menu="matMenu" backdropClass="assign-menu">
+            <app-assign-round
+              [assigneeDetails]="assigneeDetails"
+              (selectedAssignee)="selectedAssigneeHandler($event)"
+            ></app-assign-round>
+          </mat-menu>
         </ng-container>
 
         <div class="footer">
