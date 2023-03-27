@@ -909,4 +909,27 @@ fetchAllRounds$ = () => {
     return rows;
   }
 
+  private formatForms(forms: Form[] = []): Form[] {
+    const rows = forms
+      .sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p?.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        lastPublishedBy: p?.lastPublishedBy,
+        author: p?.author,
+        publishedDate: p?.publishedDate ? p.publishedDate : ''
+      }));
+    return rows;
+  }
 }
