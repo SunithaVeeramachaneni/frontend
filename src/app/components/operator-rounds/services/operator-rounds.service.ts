@@ -686,7 +686,6 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
-        assignedTo: this.getUserFullName(p.assignedTo),
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
