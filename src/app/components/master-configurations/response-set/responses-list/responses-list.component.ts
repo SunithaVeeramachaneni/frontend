@@ -313,7 +313,13 @@ export class ResponsesListComponent implements OnInit {
             switch (addEditData.action) {
               case 'create':
                 initial.data = [
-                  { ...form, responseCount: JSON.parse(form.values).length },
+                  {
+                    ...form,
+                    responseCount: JSON.parse(form.values).length,
+                    creator: this.responseSetService.getUserFullName(
+                      form.createdBy
+                    )
+                  },
                   ...initial.data
                 ];
                 break;
@@ -323,6 +329,9 @@ export class ResponsesListComponent implements OnInit {
                 );
                 initial.data[updatedIdx] = {
                   ...form,
+                  creator: this.responseSetService.getUserFullName(
+                    form.createdBy
+                  ),
                   responseCount: JSON.parse(form.values).length,
                   updatedAt: new Date()
                 };
@@ -342,7 +351,10 @@ export class ResponsesListComponent implements OnInit {
               scrollData.map((item) => ({
                 ...item,
                 responseCount: JSON.parse(item?.values)?.length,
-                createdBy: item.createdBy || ''
+                createdBy: item.createdBy || '',
+                creator: this.responseSetService.getUserFullName(
+                  item?.createdBy
+                )
               }))
             );
         }
