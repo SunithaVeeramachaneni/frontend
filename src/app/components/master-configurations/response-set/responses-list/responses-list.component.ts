@@ -196,8 +196,8 @@ export class ResponsesListComponent implements OnInit {
 
   public searchResponseSet: FormControl;
   private addEditDeleteResponseSet: boolean;
-  private addEditDeleteResponseSet$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
+  private addEditDeleteResponseSet$: BehaviorSubject<any> =
+    new BehaviorSubject<any>({
       action: null,
       form: {} as any
     });
@@ -271,10 +271,11 @@ export class ResponsesListComponent implements OnInit {
     };
     this.responseSets$ = combineLatest([
       responseSetOnLoadSearch$,
+      this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
       this.allResponseSets$
     ]).pipe(
-      map(([rows, scrollData, allResponseSets]) => {
+      map(([rows, addEditData, scrollData, allResponseSets]) => {
         const { items: unfilteredResponseSets } = allResponseSets;
         this.allResponseSets = unfilteredResponseSets.filter(
           (item) => !item._deleted
@@ -291,13 +292,42 @@ export class ResponsesListComponent implements OnInit {
             createdBy: item.createdBy || ''
           }));
         } else {
-          initial.data = initial.data.concat(
-            scrollData.map((item) => ({
-              ...item,
-              responseCount: JSON.parse(item?.values)?.length,
-              createdBy: item.createdBy || ''
-            }))
-          );
+          if (this.addEditDeleteResponseSet) {
+            const { form } = addEditData;
+            switch (addEditData.action) {
+              case 'create':
+                initial.data = [
+                  { ...form, responseCount: JSON.parse(form.values).length },
+                  ...initial.data
+                ];
+                break;
+              case 'edit':
+                const updatedIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[updatedIdx] = {
+                  ...form,
+                  responseCount: JSON.parse(form.values).length
+                };
+                break;
+              case 'delete':
+                initial.data = initial.data.filter(
+                  (item) => item.id !== form.id
+                );
+                break;
+              default:
+              // Do nothing
+            }
+
+            this.addEditDeleteResponseSet = false;
+          } else
+            initial.data = initial.data.concat(
+              scrollData.map((item) => ({
+                ...item,
+                responseCount: JSON.parse(item?.values)?.length,
+                createdBy: item.createdBy || ''
+              }))
+            );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
@@ -335,11 +365,24 @@ export class ResponsesListComponent implements OnInit {
     this.responseToBeEdited = null;
   };
 
-  handleGlobalResponseCancel = (event) => {
+  handleGlobalResponseChange = (event) => {
+    const { actionType: action, responseSet } = event;
+    if (action !== 'cancel') {
+      this.addEditDeleteResponseSet$.next({
+        action,
+        form: responseSet
+      });
+    }
+    this.addEditDeleteResponseSet = true;
     this.isGlobalResponseOpen = false;
     this.responseToBeEdited = null;
     this.globaResponseAddOrEditOpenState = 'out';
   };
+  // handleGlobalResponseCancel = (event) => {
+  //   this.isGlobalResponseOpen = false;
+  //   this.responseToBeEdited = null;
+  //   this.globaResponseAddOrEditOpenState = 'out';
+  // };
 
   addOrEditGlobalResponse = (responseData) => {
     if (responseData?.status === 'add' || responseData?.status === 'edit') {
@@ -378,12 +421,17 @@ export class ResponsesListComponent implements OnInit {
             type: 'warning'
           });
         } else
-          this.store.dispatch(
-            MCQResponseActions.deleteGlobalResponseSet({
+          this.responseSetService
+            .deleteResponseSet$({
               id: data.id,
               _version: data._version
             })
-          );
+            .subscribe(() => {
+              this.toast.show({
+                text: 'Global Response Set deleted successfully!',
+                type: 'success'
+              });
+            });
         break;
       default:
     }

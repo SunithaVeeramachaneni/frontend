@@ -81,38 +81,33 @@ export class ResponseSetService {
   };
 
   createResponseSet$ = (responseSet: CreateResponseSet) =>
-    this._appService
-      ._postData(environment.masterConfigApiUrl, 'response-set/create', {
+    this._appService._postData(
+      environment.masterConfigApiUrl,
+      'response-set/create',
+      {
         name: responseSet.name,
         description: responseSet?.description,
         refCount: responseSet.refCount,
         isMultiColumn: responseSet.isMultiColumn,
         values: responseSet.values
-      })
-      .pipe(
-        map((response) => of(response)),
-        catchError(() => of({}))
-      );
+      }
+    );
 
   updateResponseSet$ = (responseSet: UpdateResponseSet) =>
-    this._appService
-      .patchData(
-        environment.masterConfigApiUrl,
-        `response-set/update/${responseSet.id}`,
-        {
-          id: responseSet.id,
-          name: responseSet.name,
-          description: responseSet.description,
-          refCount: responseSet.refCount,
-          isMultiColumn: responseSet.isMultiColumn,
-          values: responseSet.values,
-          _version: responseSet.version
-        }
-      )
-      .pipe(
-        map((response) => of(response)),
-        catchError(() => of({}))
-      );
+    this._appService.patchData(
+      environment.masterConfigApiUrl,
+      `response-set/update/${responseSet.id}`,
+      {
+        id: responseSet.id,
+        name: responseSet.name,
+        description: responseSet.description,
+        refCount: responseSet.refCount,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values,
+        createdBy: responseSet.createdBy,
+        _version: responseSet.version
+      }
+    );
 
   deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
     this._appService._removeData(

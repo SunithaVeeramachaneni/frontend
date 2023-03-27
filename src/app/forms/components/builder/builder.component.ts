@@ -46,6 +46,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { isEqual } from 'lodash-es';
 
 @Component({
@@ -87,6 +88,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   constructor(
     private store: Store<State>,
     private roundPlanConfigurationService: RoundPlanConfigurationService,
+    private responseSetService: ResponseSetService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -128,9 +130,10 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(
-      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    );
+    this.responseSetService.fetchAllGlobalResponses$().subscribe();
+    // this.store.dispatch(
+    //   MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
+    // );
   }
 
   addPage() {

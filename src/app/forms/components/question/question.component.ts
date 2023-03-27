@@ -231,7 +231,7 @@ export class QuestionComponent implements OnInit {
           } = current;
           if (!isEqual(prev, curr)) {
             if (
-              this.questionForm.get('fieldType').value === 'INST' &&
+              current.fieldType === 'INST' &&
               prevValue !== undefined &&
               isEqual(prevValue, currValue)
             ) {
@@ -427,43 +427,39 @@ export class QuestionComponent implements OnInit {
   }
 
   handleGlobalResponseRefCount = (prev, curr) => {
-    const { type: prevType, value: prevValue, ...prevValues } = prev;
-    const { type: currType, value: currValue, ...currValues } = curr;
+    const updatePrevResponse$ = this.responseSetService.updateResponseSet$({
+      id: prev?.id,
+      name: prev?.name,
+      description: prev?.description,
+      isMultiColumn: prev?.isMultiColumn,
+      refCount: prev?.refCount - 1,
+      values: JSON.stringify(prev?.value),
+      createdBy: prev?.createdBy,
+      version: prev?._version
+    });
+
+    const updateCurrResponse$ = this.responseSetService.updateResponseSet$({
+      id: curr?.id,
+      name: curr?.name,
+      description: curr?.description,
+      isMultiColumn: curr?.isMultiColumn,
+      refCount: curr?.refCount + 1,
+      values: JSON.stringify(curr?.value),
+      createdBy: curr?.createdBy,
+      version: curr?._version
+    });
+
     if (
       prev?.type === 'globalResponse' &&
       curr?.type === 'globalResponse' &&
       prev.id !== curr.id
     ) {
-      this.responseSetService
-        .updateResponseSet$({
-          ...prevValues,
-          refCount: prevValues.refCount - 1,
-          values: JSON.stringify(prevValue)
-        })
-        .subscribe();
-      this.responseSetService
-        .createResponseSet$({
-          ...currValues,
-          refCount: currValues.refCount + 1,
-          values: JSON.stringify(currValue)
-        })
-        .subscribe();
+      updatePrevResponse$.subscribe();
+      updateCurrResponse$.subscribe();
     } else if (prev?.type === 'globalResponse') {
-      this.responseSetService
-        .updateResponseSet$({
-          ...prevValues,
-          refCount: prevValues.refCount - 1,
-          values: JSON.stringify(prevValue)
-        })
-        .subscribe();
+      updatePrevResponse$.subscribe();
     } else if (curr?.type === 'globalResponse') {
-      this.responseSetService
-        .createResponseSet$({
-          ...currValues,
-          refCount: currValues.refCount + 1,
-          values: JSON.stringify(currValue)
-        })
-        .subscribe();
+      updateCurrResponse$.subscribe();
     }
   };
 

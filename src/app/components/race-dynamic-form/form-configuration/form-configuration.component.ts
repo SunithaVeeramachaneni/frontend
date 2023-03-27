@@ -68,6 +68,7 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -110,6 +111,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
+    private responseSetService: ResponseSetService,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -139,9 +141,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    this.store.dispatch(
-      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    );
+    this.responseSetService.fetchAllGlobalResponses$().subscribe();
+    // this.store.dispatch(
+    //   MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
+    // );
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),

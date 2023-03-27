@@ -1,5 +1,4 @@
 export interface CreateResponseSet {
-  responseType: string;
   name: string;
   description?: string;
   refCount: number;
@@ -9,6 +8,7 @@ export interface CreateResponseSet {
 
 export interface UpdateResponseSet extends CreateResponseSet {
   id: string;
+  createdBy: string;
   version: number;
 }
 

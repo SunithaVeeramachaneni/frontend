@@ -29,6 +29,7 @@ export const updateGlobalResponseSet = createAction(
     refCount: number;
     isMultiColumn: boolean;
     values: string;
+    createdBy: string;
     version: number;
   }>()
 );

@@ -176,7 +176,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           ...responseSetPayload,
           id: this.globalResponse.id,
           version: this.globalResponse._version,
-          refCount: this.globalResponse.refCount
+          refCount: this.globalResponse.refCount,
+          createdBy: this.globalResponse.createdBy
         })
         .subscribe((response) => {
           if (Object.keys(response).length)
