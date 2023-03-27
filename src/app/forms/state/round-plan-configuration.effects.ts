@@ -77,7 +77,6 @@ export class RoundPlanConfigurationEffects {
     this.actions$.pipe(
       ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
-        console.log(action);
         const { authoredFormDetail, pdfBuilderConfiguration, ...formDetail } =
           action;
         const { hierarchy, subForms } = formDetail;
