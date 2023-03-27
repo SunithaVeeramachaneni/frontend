@@ -8,7 +8,7 @@ import { ErrorInfo } from '../../interfaces';
   providedIn: 'root'
 })
 export class AppService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Will prepare http header data and returns
