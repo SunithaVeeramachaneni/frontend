@@ -46,10 +46,7 @@ import {
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 import { isEqual } from 'lodash-es';
-import {
-  BuilderConfigurationActions,
-  MCQResponseActions
-} from '../../state/actions';
+import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';

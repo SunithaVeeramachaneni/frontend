@@ -49,10 +49,6 @@ import { PlantListComponent } from './plants/plant-list/plant-list.component';
 import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 import { ResponseSetService } from './response-set/services/response-set.service';
-import { StoreModule } from '@ngrx/store';
-import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
-import { EffectsModule } from '@ngrx/effects';
-import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -114,11 +110,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatRadioModule,
     NgxShimmerLoadingModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule,
-    StoreModule.forFeature('feature', {
-      responseSet: responseSetReducer
-    }),
-    EffectsModule.forFeature([ResponseSetEffects])
+    MatProgressBarModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,

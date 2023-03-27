@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { combineLatest, Observable, BehaviorSubject, of } from 'rxjs';
@@ -18,14 +13,9 @@ import {
   distinctUntilChanged
 } from 'rxjs/operators';
 
-import { Store } from '@ngrx/store';
-import { MCQResponseActions } from 'src/app/forms/state/actions';
-
-import { State } from 'src/app/forms/state';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  FormTableUpdate,
   Permission,
   TableEvent,
   UserInfo
@@ -209,9 +199,7 @@ export class ResponsesListComponent implements OnInit {
   constructor(
     private responseSetService: ResponseSetService,
     private loginService: LoginService,
-    private store: Store<State>,
-    private toast: ToastService,
-    private cdrf: ChangeDetectorRef
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -377,25 +365,6 @@ export class ResponsesListComponent implements OnInit {
     this.isGlobalResponseOpen = false;
     this.responseToBeEdited = null;
     this.globaResponseAddOrEditOpenState = 'out';
-  };
-  // handleGlobalResponseCancel = (event) => {
-  //   this.isGlobalResponseOpen = false;
-  //   this.responseToBeEdited = null;
-  //   this.globaResponseAddOrEditOpenState = 'out';
-  // };
-
-  addOrEditGlobalResponse = (responseData) => {
-    if (responseData?.status === 'add' || responseData?.status === 'edit') {
-      this.addEditDeleteResponseSet = true;
-      if (this.searchResponseSet.value) {
-        this.responseSetService.fetchResponses$.next({ data: 'search' });
-      } else {
-        this.addEditDeleteResponseSet$.next({
-          action: responseData.status,
-          form: responseData.data
-        });
-      }
-    }
   };
 
   handleTableEvent = (event): void => {

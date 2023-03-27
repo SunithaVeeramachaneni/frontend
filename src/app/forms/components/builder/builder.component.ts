@@ -35,10 +35,7 @@ import {
   getQuestionCounter
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
-import {
-  MCQResponseActions,
-  BuilderConfigurationActions
-} from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -131,9 +128,6 @@ export class BuilderComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.responseSetService.fetchAllGlobalResponses$().subscribe();
-    // this.store.dispatch(
-    //   MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    // );
   }
 
   addPage() {

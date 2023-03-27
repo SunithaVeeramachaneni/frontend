@@ -51,11 +51,7 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import {
-  FormConfigurationActions,
-  FormConfigurationApiActions,
-  MCQResponseActions
-} from 'src/app/forms/state/actions';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -142,9 +138,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     });
 
     this.responseSetService.fetchAllGlobalResponses$().subscribe();
-    // this.store.dispatch(
-    //   MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    // );
+
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),
