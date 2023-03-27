@@ -466,7 +466,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form: form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
@@ -565,7 +565,7 @@ export class FormListComponent implements OnInit {
     this.formsList$
       .pipe(
         tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.items
+          const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
             .filter((value, index, self) => self.indexOf(value) === index);
           for (const item of uniqueLastPublishedBy) {
@@ -573,7 +573,7 @@ export class FormListComponent implements OnInit {
               this.lastPublishedBy.push(item);
             }
           }
-          const uniqueAuthoredBy = formsList.items
+          const uniqueAuthoredBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
           for (const item of uniqueAuthoredBy) {
@@ -605,6 +605,7 @@ export class FormListComponent implements OnInit {
     for (const item of data) {
       this.filter[item.column] = item.value;
     }
+    this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 
@@ -615,6 +616,7 @@ export class FormListComponent implements OnInit {
       authoredBy: '',
       lastModifiedOn: ''
     };
+    this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }
