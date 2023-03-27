@@ -187,7 +187,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       this.responseSetService
         .createResponseSet$(responseSetPayload)
         .subscribe((response) => {
-          if (Object.keys(response))
+          if (Object.keys(response).length)
             this.handleResponseSetSuccess(response, 'create');
         });
   };

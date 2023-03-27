@@ -93,21 +93,25 @@ export class ResponseSetService {
       }
     );
 
-  updateResponseSet$ = (responseSet: UpdateResponseSet) =>
-    this._appService.patchData(
-      environment.masterConfigApiUrl,
-      `response-set/update/${responseSet.id}`,
-      {
-        id: responseSet.id,
-        name: responseSet.name,
-        description: responseSet.description,
-        refCount: responseSet.refCount,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        createdBy: responseSet.createdBy,
-        _version: responseSet.version
-      }
-    );
+  updateResponseSet$ = (responseSet: UpdateResponseSet) => {
+    const updatePayload = {
+      id: responseSet.id,
+      name: responseSet.name,
+      description: responseSet.description,
+      refCount: responseSet.refCount,
+      isMultiColumn: responseSet.isMultiColumn,
+      values: responseSet.values,
+      createdBy: responseSet.createdBy,
+      _version: responseSet.version
+    };
+    return this._appService
+      .patchData(
+        environment.masterConfigApiUrl,
+        `response-set/update/${responseSet.id}`,
+        updatePayload
+      )
+      .pipe(map((response) => (response === null ? updatePayload : {})));
+  };
 
   deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
     this._appService._removeData(
