@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -41,7 +43,9 @@ import {
   RoundPlanScheduleConfiguration,
   RoundPlanDetailResponse,
   RoundPlanDetail,
-  SelectTab
+  SelectTab,
+  UserDetails,
+  AssigneeDetails
 } from 'src/app/interfaces';
 import {
   graphQLDefaultLimit,
@@ -67,8 +71,17 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class PlansComponent implements OnInit, OnDestroy {
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
       id: 'name',
@@ -211,8 +224,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned to',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -317,6 +330,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  private _users$: Observable<UserDetails[]>;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -612,7 +626,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
             scheduleDates: this.getFormatedScheduleDates(
               roundPlanScheduleConfiguration
-            )
+            ),
+            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration)
           };
         }
         return data;
@@ -664,7 +679,9 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlanScheduleConfigurations[roundPlan.id]
           ),
           rounds: roundPlan.rounds || this.placeHolder,
-          operator: roundPlan.operator || this.placeHolder
+          assignedTo: this.getAssignedTo(
+            roundPlanScheduleConfigurations[roundPlan.id]
+          )
         };
       }
       return {
@@ -720,6 +737,16 @@ export class PlansComponent implements OnInit, OnDestroy {
         ? 'Monthly'
         : `Every ${repeatDuration} months`
       : 'Custom Dates';
+  }
+
+  getAssignedTo(
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+  ) {
+    const { assignmentDetails: { value } = {} } =
+      roundPlanScheduleConfiguration;
+    return value
+      ? this.operatorRoundsService.getUserFullName(value)
+      : this.placeHolder;
   }
 
   getFilter() {

@@ -1,3 +1,5 @@
+import { UserDetails } from './user';
+
 export interface RoundPlanScheduleConfiguration {
   id?: string;
   roundPlanId: string;
@@ -13,9 +15,16 @@ export interface RoundPlanScheduleConfiguration {
   endDate: string;
   scheduleByDates: ScheduleByDate[];
   scheduledTill?: string;
+  assignmentDetails: AssignmentDetail;
+  advanceRoundsCount: number;
   startDatePicker?: Date;
-  endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+}
+
+export interface AssignmentDetail {
+  type: string;
+  value: string;
+  displayValue: string;
 }
 
 export interface ScheduleByDate {
@@ -67,7 +76,6 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
-  operator: string;
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -77,6 +85,7 @@ export interface RoundDetail extends RoundPlan {
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
   locationAndAssetTasksCompleted: number;
+  assignedTo: string;
 }
 
 export interface RoundPlanDetailResponse {
@@ -136,4 +145,8 @@ export interface SelectTab {
   queryParams: {
     id: string;
   };
+}
+
+export interface AssigneeDetails {
+  users: UserDetails[];
 }
