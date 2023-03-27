@@ -55,7 +55,7 @@
   }
 
   .response-drop-list {
-    height: 500px;
+    height: calc(100vh - 315px);
     overflow-y: auto;
   }
 

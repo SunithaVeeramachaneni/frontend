@@ -136,7 +136,7 @@ export class ResponsesListComponent implements OnInit {
     {
       id: 'updatedAt',
       displayName: 'Last Modified',
-      type: 'string',
+      type: 'timeAgo',
       order: 3,
       controlType: 'string',
       showMenuOptions: false,
@@ -295,7 +295,8 @@ export class ResponsesListComponent implements OnInit {
                 );
                 initial.data[updatedIdx] = {
                   ...form,
-                  responseCount: JSON.parse(form.values).length
+                  responseCount: JSON.parse(form.values).length,
+                  updatedAt: new Date()
                 };
                 break;
               case 'delete':
@@ -355,16 +356,16 @@ export class ResponsesListComponent implements OnInit {
 
   handleGlobalResponseChange = (event) => {
     const { actionType: action, responseSet } = event;
+    this.addEditDeleteResponseSet = true;
+    this.isGlobalResponseOpen = false;
+    this.responseToBeEdited = null;
+    this.globaResponseAddOrEditOpenState = 'out';
     if (action !== 'cancel') {
       this.addEditDeleteResponseSet$.next({
         action,
         form: responseSet
       });
     }
-    this.addEditDeleteResponseSet = true;
-    this.isGlobalResponseOpen = false;
-    this.responseToBeEdited = null;
-    this.globaResponseAddOrEditOpenState = 'out';
   };
 
   handleTableEvent = (event): void => {
