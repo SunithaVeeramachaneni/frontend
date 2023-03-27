@@ -14,7 +14,8 @@ import {
   TableEvent,
   CreateResponseSet,
   UpdateResponseSet,
-  DeleteResponseSet
+  DeleteResponseSet,
+  UserDetails
 } from '../../../../interfaces';
 
 @Injectable({
@@ -28,6 +29,7 @@ export class ResponseSetService {
     data: {} as UpdateResponseSet,
     actionType: '' as string
   });
+  usersInfoByEmail = {};
 
   private maxLimit = '1000000';
 
@@ -118,6 +120,17 @@ export class ResponseSetService {
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
+
+  setUsers(users: UserDetails[]) {
+    this.usersInfoByEmail = users.reduce((acc, curr) => {
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      return acc;
+    }, {});
+  }
+
+  getUserFullName(email: string): string {
+    return this.usersInfoByEmail[email]?.fullName;
+  }
 
   private formatGraphQLocationResponse(resp) {
     let rows =

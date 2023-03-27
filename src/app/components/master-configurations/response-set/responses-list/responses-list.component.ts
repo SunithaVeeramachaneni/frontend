@@ -10,7 +10,8 @@ import {
   mergeMap,
   switchMap,
   debounceTime,
-  distinctUntilChanged
+  distinctUntilChanged,
+  shareReplay
 } from 'rxjs/operators';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
@@ -18,6 +19,7 @@ import {
   CellClickActionEvent,
   Permission,
   TableEvent,
+  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 
@@ -26,6 +28,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { ResponseSetService } from '../services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -112,7 +115,7 @@ export class ResponsesListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'createdBy',
+      id: 'creator',
       displayName: 'Created By',
       type: 'string',
       order: 3,
@@ -185,6 +188,8 @@ export class ResponsesListComponent implements OnInit {
   };
 
   public searchResponseSet: FormControl;
+
+  public users$: Observable<UserDetails[]>;
   private addEditDeleteResponseSet: boolean;
   private addEditDeleteResponseSet$: BehaviorSubject<any> =
     new BehaviorSubject<any>({
@@ -198,6 +203,7 @@ export class ResponsesListComponent implements OnInit {
 
   constructor(
     private responseSetService: ResponseSetService,
+    private usersService: UsersService,
     private loginService: LoginService,
     private toast: ToastService
   ) {}
@@ -216,6 +222,26 @@ export class ResponsesListComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.users$ = this.usersService
+      .getUsers$(
+        {
+          includeRoles: false,
+          includeSlackDetails: false
+        },
+        { displayToast: true, failureResponse: { rows: [] } }
+      )
+      .pipe(
+        map(({ rows: users }) =>
+          users.map((user: UserDetails) => ({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email
+          }))
+        ),
+        shareReplay(1),
+        tap((users) => this.responseSetService.setUsers(users))
+      );
 
     this.getDisplayedResponseSets();
 
@@ -261,9 +287,10 @@ export class ResponsesListComponent implements OnInit {
       responseSetOnLoadSearch$,
       this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
-      this.allResponseSets$
+      this.allResponseSets$,
+      this.users$
     ]).pipe(
-      map(([rows, addEditData, scrollData, allResponseSets]) => {
+      map(([rows, addEditData, scrollData, allResponseSets, users]) => {
         const { items: unfilteredResponseSets } = allResponseSets;
         this.allResponseSets = unfilteredResponseSets.filter(
           (item) => !item._deleted
@@ -277,7 +304,8 @@ export class ResponsesListComponent implements OnInit {
           initial.data = rows.map((item) => ({
             ...item,
             responseCount: JSON.parse(item?.values)?.length,
-            createdBy: item.createdBy || ''
+            createdBy: item?.createdBy || '',
+            creator: this.responseSetService.getUserFullName(item?.createdBy)
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
