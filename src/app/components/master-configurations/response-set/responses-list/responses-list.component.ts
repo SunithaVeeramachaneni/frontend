@@ -412,7 +412,7 @@ export class ResponsesListComponent implements OnInit {
     this.responseSetService.fetchResponses$.next(event);
   };
 
-  handleSlideState = () => {};
+  handleSlideState = (event) => {};
 
   configOptionsChangeHandler = (event): void => {};
 

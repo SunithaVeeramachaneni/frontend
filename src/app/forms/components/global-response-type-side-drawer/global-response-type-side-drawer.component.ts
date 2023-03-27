@@ -41,7 +41,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   public isViewMode: boolean;
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
-  private globalResponse: any;
+  public globalResponse: any;
 
   @Input() set globalResponseToBeEdited(response: any) {
     this.globalResponse = response ? response : null;
