@@ -1,20 +1,16 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
   APIService,
-  DeleteFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
-  ListFormSubmissionListsQuery,
-  ModelFormSubmissionListFilterInput,
-  UpdateAuthoredFormDetailInput,
-  UpdateFormDetailInput
+  ListFormSubmissionListsQuery
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -22,6 +18,8 @@ import {
   ErrorInfo,
   InspectionDetailResponse,
   InspectionQueryParam,
+  Form,
+  FormQueryParam,
   LoadEvent,
   SearchEvent,
   TableEvent
@@ -47,7 +45,6 @@ export class RaceDynamicFormService {
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
-    private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService,
     private store: Store,
@@ -102,6 +99,49 @@ export class RaceDynamicFormService {
       info
     );
 
+  getFormQuestionsFormsList$(
+    queryParams: FormQueryParam,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        rest.nextToken = '';
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.rdfApiUrl,
+          'forms/schedule-forms',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
+    } else {
+      return of({ rows: [] });
+    }
+  }
+
+  getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/rdf-inspection-filter.json',
+      info
+    );
+  }
+  getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/rdf-form-filter.json',
+      info
+    );
+  }
+
   getFormsList$(
     queryParams: {
       nextToken?: string;
@@ -110,124 +150,79 @@ export class RaceDynamicFormService {
       fetchType: string;
     },
     isArchived: boolean = false,
-    filterParam: any = null
+    filterData: any = null
   ) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      let filter = {
-        ...(queryParams.searchKey && {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        }),
-        isArchived: {
-          eq: isArchived
-        },
-        isDeleted: {
-          eq: false
-        }
-      };
-      if (filterParam && filterParam.status) {
-        filter['formStatus'] = {
-          eq: filterParam.status
-        };
-      }
-      if (filterParam && filterParam.modifiedBy) {
-        filter['lastPublishedBy'] = {
-          eq: filterParam.modifiedBy
-        };
-      }
-      if (filterParam && filterParam.authoredBy) {
-        filter['author'] = {
-          eq: filterParam.authoredBy
-        };
-      }
-      if (filterParam && filterParam.lastModifiedOn) {
-        filter['updatedAt'] = {
-          eq: new Date(filterParam.lastModifiedOn).toISOString()
-        };
-      }
-      return from(
-        this.awsApiService.ListFormLists(
-          filter,
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
-    } else {
-      return of({
-        count: 0,
-        rows: [],
-        nextToken: null
-      });
-    }
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    params.set('isArchived', String(isArchived));
+    params.set(
+      'formStatus',
+      filterData && filterData.status ? filterData.status : ''
+    );
+    params.set(
+      'modifiedBy',
+      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+    );
+    params.set(
+      'authoredBy',
+      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+    );
+    params.set(
+      'lastModifiedOn',
+      filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
+    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
   }
 
-  getSubmissionFormsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
-    if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
-    ) {
-      const isSearch = queryParams.fetchType === 'search';
-      return from(
-        this._ListFormSubmissionLists(
-          {
-            ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            })
-          },
-          !isSearch && queryParams.limit,
-          !isSearch && queryParams.nextToken
-        )
-      ).pipe(map((res) => this.formatSubmittedListResponse(res)));
-    } else {
-      return of({
-        rows: [],
-        nextToken: null
-      });
-    }
+  getSubmissionFormsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', queryParams?.searchKey);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    params.set(
+      'formStatus',
+      filterData && filterData.status ? filterData.status : ''
+    );
+    params.set(
+      'modifiedBy',
+      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+    );
+    params.set(
+      'lastModifiedOn',
+      filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
+    );
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        'forms/submission/list?' + params.toString()
+      )
+      .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
 
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false},isDeleted: {eq: false}}) {
-        items {
-          id
-        }
-      }
-    }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/count?isArchived=' + isArchived)
+      .pipe(map((res) => res.items.length || 0));
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormSubmissionLists } }: any) =>
-          listFormSubmissionLists?.items?.length || 0
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/submission/count')
+      .pipe(map((res) => res.items.length || 0));
   }
 
   createForm$(
@@ -243,95 +238,89 @@ export class RaceDynamicFormService {
       | 'isPublic'
     >
   ) {
-    return from(
-      this.awsApiService.CreateFormList({
-        name: formListQuery.name,
-        formLogo: formListQuery.formLogo,
-        description: formListQuery.description,
-        formStatus: formListQuery.formStatus,
-        author: formListQuery.author,
-        formType: formListQuery.formType,
-        tags: formListQuery.tags,
-        isPublic: formListQuery.isPublic,
-        isArchived: false,
-        isDeleted: false
-      })
-    );
+    return this.appService._postData(environment.rdfApiUrl, 'forms', {
+      name: formListQuery.name,
+      formLogo: formListQuery.formLogo,
+      description: formListQuery.description,
+      formStatus: formListQuery.formStatus,
+      author: formListQuery.author,
+      formType: formListQuery.formType,
+      tags: formListQuery.tags,
+      isPublic: formListQuery.isPublic,
+      isArchived: false,
+      isDeleted: false
+    });
   }
 
   updateForm$(formMetaDataDetails) {
-    return from(
-      this.awsApiService.UpdateFormList({
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/${formMetaDataDetails?.formMetadata?.id}`,
+      {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
-      })
+      }
     );
-  }
-
-  deleteForm$(values: DeleteFormListInput) {
-    return from(this.awsApiService.DeleteFormList({ ...values }));
   }
 
   getFormById$(id: string) {
-    return from(this.awsApiService.GetFormList(id));
-  }
-
-  createFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.CreateFormDetail({
-        formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        )
-      })
+    return this.appService._getRespById(
+      environment.rdfApiUrl,
+      `forms/list/`,
+      id
     );
   }
 
+  createFormDetail$(formDetails) {
+    return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
+      formlistID: formDetails.formListId,
+      formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
+    });
+  }
+
   updateFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.UpdateFormDetail({
-        id: formDetails.formDetailId,
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/detail/${formDetails.formDetailId}`,
+      {
         formlistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
         ),
         _version: formDetails.formDetailDynamoDBVersion
-      } as UpdateFormDetailInput)
+      }
     );
   }
 
   createAuthoredFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.CreateAuthoredFormDetail({
+    return this.appService._postData(environment.rdfApiUrl, 'forms/authored', {
+      formStatus: formDetails.formStatus,
+      formDetailPublishStatus: formDetails.formDetailPublishStatus,
+      formlistID: formDetails.formListId,
+      pages: JSON.stringify(formDetails.pages),
+      counter: formDetails.counter,
+      version: formDetails.authoredFormDetailVersion.toString()
+    });
+  }
+
+  updateAuthoredFormDetail$(formDetails) {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/authored/${formDetails.authoredFormDetailId}`,
+      {
         formStatus: formDetails.formStatus,
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
-      })
-    );
-  }
-
-  updateAuthoredFormDetail$(formDetails) {
-    return from(
-      this.awsApiService.UpdateAuthoredFormDetail(
-        {
-          formStatus: formDetails.formStatus,
-          formDetailPublishStatus: formDetails.formDetailPublishStatus,
-          formlistID: formDetails.formListId,
-          pages: JSON.stringify(formDetails.pages),
-          counter: formDetails.counter,
-          id: formDetails.authoredFormDetailId,
-          _version: formDetails.authoredFormDetailDynamoDBVersion
-        } as UpdateAuthoredFormDetailInput,
-        {
+        id: formDetails.authoredFormDetailId,
+        version: formDetails.authoredFormDetailDynamoDBVersion,
+        condition: {
           formlistID: { eq: formDetails.formListId },
           version: { eq: formDetails.authoredFormDetailVersion.toString() }
         }
-      )
+      }
     );
   }
 
@@ -390,10 +379,13 @@ export class RaceDynamicFormService {
     formId: string,
     formStatus: string = formConfigurationStatus.draft
   ) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formStatus', formStatus);
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        formStatus: { eq: formStatus }
-      })
+      this.appService._getResp(
+        environment.rdfApiUrl,
+        `forms/authored/${formId}?` + params.toString()
+      )
     ).pipe(
       map(({ items }) => {
         items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
@@ -404,14 +396,17 @@ export class RaceDynamicFormService {
 
   getAuthoredFormDetailsByFormId$(formId: string) {
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formId)
+      this.appService._getResp(
+        environment.rdfApiUrl,
+        `forms/authored/${formId}?formStatus=Draft`
+      )
     ).pipe(map(({ items }) => items));
   }
 
   getFormDetailByFormId$(formId: string) {
-    return from(this.awsApiService.FormDetailsByFormlistID(formId)).pipe(
-      map(({ items }) => items)
-    );
+    return from(
+      this.appService._getResp(environment.rdfApiUrl, `forms/${formId}`)
+    ).pipe(map(({ items }) => items));
   }
 
   handleError(error: any) {
@@ -684,25 +679,28 @@ export class RaceDynamicFormService {
   }
 
   fetchAllFormListNames$() {
-    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
-    return from(API.graphql(graphqlOperation(statement))).pipe(
-      map(
-        ({ data: { listFormLists } }: any) =>
-          listFormLists?.items as GetFormListQuery[]
-      )
-    );
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/name')
+      .pipe(map((res) => res.items));
   }
 
   getAuthoredFormDetail$(formlistID: string) {
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formlistID)
+      this.appService._getResp(
+        environment.rdfApiUrl,
+        `forms/authored/${formlistID}?formStatus=Draft`
+      )
     ).pipe(map(({ items }) => items));
   }
 
-  getInspectionDetailByInspectionId$ = (inspectionId: string) =>
-    from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
+  getInspectionDetailByInspectionId$ = (submissionId: string) => {
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/submission/detail/${submissionId}`
+    );
+  };
 
-  private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
     const rows =
       resp.items
         .sort(
@@ -785,70 +783,6 @@ export class RaceDynamicFormService {
       description: item.title
     }));
 
-  private async _ListFormSubmissionLists(
-    filter?: ModelFormSubmissionListFilterInput,
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    limit?: number,
-    nextToken?: string
-  ): Promise<ListFormSubmissionListsQuery> {
-    const statement = `query ListFormSubmissionLists($filter: ModelFormSubmissionListFilterInput, $limit: Int, $nextToken: String) {
-        listFormSubmissionLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
-          __typename
-          items {
-            __typename
-            id
-            name
-            description
-            formLogo
-            isPublic
-            location
-            roundType
-            status
-            assignee
-            dueDate
-            version
-            submittedBy
-            searchTerm
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            formSubmissionListFormSubmissionDetail {
-              items {
-                _version
-                createdAt
-                formData
-                formlistID
-                formsubmissionlistID
-                id
-                updatedAt
-                _lastChangedAt
-                _deleted
-              }
-            }
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return response?.data
-      ?.listFormSubmissionLists as ListFormSubmissionListsQuery;
-  }
-
   private countFormSubmissionsResponses(rows = []): string {
     const updatedResponse = {
       total: 0,
@@ -876,8 +810,21 @@ export class RaceDynamicFormService {
     return `${updatedResponse.count}/${updatedResponse.total}`;
   }
 
-  fetchAllForms$ = () =>
-    from(this.awsApiService.ListFormLists({}, LIST_LENGTH, ''));
+  fetchAllForms$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', LIST_LENGTH.toString());
+    params.set('nextToken', '');
+    params.set('fetchType', 'load');
+    params.set('isArchived', 'false');
+    params.set('modifiedBy', '');
+    params.set('formStatus', '');
+    params.set('authoredBy', '');
+    params.set('lastModifiedOn', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+  };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);

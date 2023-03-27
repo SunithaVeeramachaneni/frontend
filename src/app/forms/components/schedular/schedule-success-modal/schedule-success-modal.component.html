@@ -1,4 +1,4 @@
-<div id="round-plan-success-container">
+<div id="success-container">
   <mat-icon
     ><img
       src="assets/rdf-forms-icons/schedule-success.svg"
@@ -10,10 +10,21 @@
   </p>
   <div class="message">
     <p>
-      {{ data.roundPlanName }}
+      {{ data?.name }}
     </p>
     <p [innerHTML]="'scheduleSuccessMessage' | translate"></p>
   </div>
-  <button mat-button translate="viewRounds" (click)="viewRounds()"></button>
+  <button
+    *ngIf="!data?.isFormModule"
+    mat-button
+    translate="viewRounds"
+    (click)="goToList()"
+  ></button>
+  <button
+    *ngIf="data?.isFormModule"
+    mat-button
+    translate="viewForms"
+    (click)="goToList()"
+  ></button>
   <button mat-button translate="close" (click)="close()"></button>
 </div>
