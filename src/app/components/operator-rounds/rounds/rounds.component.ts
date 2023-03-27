@@ -363,9 +363,21 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows;
+          initial.data = rounds.rows.map((roundDetail) => ({
+            ...roundDetail,
+            assignedTo: this.operatorRoundsService.getUserFullName(
+              roundDetail.assignedTo
+            )
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData.rows);
+          initial.data = initial.data.concat(
+            scrollData.rows.map((roundDetail) => ({
+              ...roundDetail,
+              assignedTo: this.operatorRoundsService.getUserFullName(
+                roundDetail.assignedTo
+              )
+            }))
+          );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
