@@ -104,6 +104,14 @@ export class QuestionComponent implements OnInit {
     return this._isAskQuestion;
   }
 
+  @Input() set questionName(questionName: string) {
+    this._questionName = questionName;
+  }
+
+  get questionName() {
+    return this._questionName;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -163,6 +171,7 @@ export class QuestionComponent implements OnInit {
   private _sectionId: string;
   private _questionIndex: number;
   private _isAskQuestion: boolean;
+  private _questionName: string;
 
   constructor(
     private fb: FormBuilder,
@@ -207,6 +216,14 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF'
     );
+
+    // isAskQuestion true set question id and section id
+    if (this.isAskQuestion) {
+      this.questionForm.get('id').setValue(this.questionId);
+      this.questionForm.get('sectionId').setValue(this.sectionId);
+      this.questionForm.get('name').setValue(this.questionName);
+    }
+
     this.questionForm.valueChanges
       .pipe(
         startWith({}),
@@ -300,10 +317,10 @@ export class QuestionComponent implements OnInit {
     );
 
     this.instructionTagColours[this.translate.instant('cautionTag')] =
-      '#FEF3C7';
+      '#D27B16';
     this.instructionTagColours[this.translate.instant('warningTag')] =
-      '#FF5C00';
-    this.instructionTagColours[this.translate.instant('dangerTag')] = '#991B1B';
+      '#FF3D00';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
   }
 
   getRangeMetadata() {

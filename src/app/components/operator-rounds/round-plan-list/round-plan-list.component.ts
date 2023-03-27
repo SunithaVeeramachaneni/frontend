@@ -350,8 +350,9 @@ export class RoundPlanListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Round Plan archive successfully!',
               type: 'success'
             });
           } else {
@@ -533,6 +534,7 @@ export class RoundPlanListComponent implements OnInit {
         this.filter[item.column] = item.value;
       }
     }
+    this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -545,6 +547,7 @@ export class RoundPlanListComponent implements OnInit {
       scheduleStartDate: '',
       scheduleEndDate: ''
     };
+     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }

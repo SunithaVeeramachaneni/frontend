@@ -458,7 +458,8 @@ export class UsersComponent implements OnInit {
             this.usersService.prepareUser(user, user.roles)
           );
           return of(resp);
-        })
+        }),
+        tap((x) => (this.allUsersList = x))
       );
 
   rowLevelActionHandler = (event) => {

@@ -18,7 +18,9 @@ import {
   RoundPlanDetailResponse,
   RoundDetailResponse,
   RoundDetail,
-  RoundPlanQueryParam
+  RoundPlanQueryParam,
+  UserDetails,
+  UsersInfoByEmail
 } from '../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -41,6 +43,7 @@ export class OperatorRoundsService {
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
+  usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -632,6 +635,7 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        assignedTo: this.getUserFullName(p.assignedTo),
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
@@ -686,5 +690,20 @@ export class OperatorRoundsService {
       'assets/json/operator-rounds-round-filter.json',
       info
     );
+  }
+
+  setUsers(users: UserDetails[]) {
+    this.usersInfoByEmail = users.reduce((acc, curr) => {
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      return acc;
+    }, {});
+  }
+
+  getUsersInfo(): UsersInfoByEmail {
+    return this.usersInfoByEmail;
+  }
+
+  getUserFullName(email: string): string {
+    return this.usersInfoByEmail[email]?.fullName;
   }
 }
