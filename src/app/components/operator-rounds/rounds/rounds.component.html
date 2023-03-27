@@ -1,5 +1,5 @@
 <div class="search-container">
-  <div id="openviewtab">
+  <div id="opendetail">
     <app-form-detail
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
@@ -72,7 +72,7 @@
     ></app-filter>
   </ng-template>
 </div>
-<ng-container *ngIf="userInfo$ | async">
+<ng-container *ngIf="{ userInfo: userInfo$ | async, users: users$ | async }">
   <div
     *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
     class="rounds-list"
