@@ -350,6 +350,7 @@ export class RoundPlanListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
               text: 'Round Plan archive successfully!',
               type: 'success'
