@@ -123,7 +123,6 @@ export class PDFBuilderComponent implements OnInit {
       .select(getPDFBuilderConfiguration)
       .pipe(
         tap((config) => {
-          console.log(config);
           this.pdfBuilderConfigurationsForm.patchValue(config, {
             emitEvent: false
           });

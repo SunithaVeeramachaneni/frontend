@@ -362,6 +362,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 pages,
                 subForms: subFormsObj,
+                pdfBuilderConfiguration,
                 authoredFormDetail: {
                   formStatus,
                   formListId,
