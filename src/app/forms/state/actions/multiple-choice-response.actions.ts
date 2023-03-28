@@ -13,6 +13,7 @@ export const createGlobalResponseSet = createAction(
     responseType: string;
     name: string;
     description: string;
+    refCount: number;
     isMultiColumn: boolean;
     values: string;
   }>()
@@ -24,9 +25,11 @@ export const updateGlobalResponseSet = createAction(
     id: string;
     responseType: string;
     name: string;
-    description: string | null;
+    description: string;
+    refCount: number;
     isMultiColumn: boolean;
     values: string;
+    createdBy: string;
     version: number;
   }>()
 );
@@ -35,5 +38,6 @@ export const deleteGlobalResponseSet = createAction(
   '[Response Set] deleteGlobalResponseSet',
   props<{
     id: string;
+    _version: number;
   }>()
 );

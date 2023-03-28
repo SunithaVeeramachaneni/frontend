@@ -7,6 +7,7 @@
   "searchUom": "Search",
   "uom": "UOM",
   "cancel": "Cancel",
+  "apply": "Apply",
   "symbol": "Symbol",
   "unitOfMeasurement": "Unit of Measurement",
   "assets": "Assets",
@@ -21,6 +22,7 @@
   "cancelBtn": "Cancel",
   "search": "Search",
   "editBtn": "Edit",
+  "edit": "Edit",
   "id": "ID",
   "uploadExcel": "Upload Excel",
   "addManually": "Add Manually",
@@ -52,5 +54,10 @@
   "successfullyUpload": "Successfully uploaded",
   "failedUpload": "Failed to uploaded",
   "closeBtn": "Close",
-  "reviewFailed": "Review Failed"
+  "reviewFailed": "Review Failed",
+  "globalMcqHeading": "Global Response Set",
+  "globalResponseHeading": "GLOBAL RESPONSES",
+  "responseTitle": "Response Title",
+  "response": "Response",
+  "addRes": " + Add Response"
 }
