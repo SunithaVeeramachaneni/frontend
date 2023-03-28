@@ -351,7 +351,6 @@ export class ReportsComponent implements OnInit {
         report.isFavorite = false;
 
         this.reportService.copyReport$(report).subscribe((res) => {
-          res.isFavorite = false;
           this.addReport(res);
           this.changeReportCount$.next('increase');
           this.toast.show({
