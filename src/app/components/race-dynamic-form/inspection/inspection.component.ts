@@ -65,6 +65,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
+  scheduleItems = ['Overdue', 'Due Today', 'Custom dates']
   filter = {
     status: '',
     inspectedBy: ''
@@ -398,6 +399,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
           item.items = this.status;
         } else if (item['column'] == 'inspectedBy') {
           item.items = this.inspectedBy;
+        } else if (item['column'] == 'dueDate') {
+          item.items = this.scheduleItems;
         } 
       }
     });

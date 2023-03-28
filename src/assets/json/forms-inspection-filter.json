@@ -14,10 +14,10 @@
     "value": ""
   },
   {
-    "label": "Inspected On ",
+    "label": "Due Date",
     "items": [],
-    "column": "inspectedOn",
-    "type": "daterange",
+    "column": "dueDate",
+    "type": "schedule",
     "startDate": "",
     "endDate": "",
     "value": ""
