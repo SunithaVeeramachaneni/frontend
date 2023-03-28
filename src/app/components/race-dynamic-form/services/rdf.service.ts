@@ -5,12 +5,6 @@ import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  APIService,
-  GetFormListQuery,
-  ListFormListsQuery,
-  ListFormSubmissionListsQuery
-} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -25,6 +19,7 @@ import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 const limit = 10000;
 @Injectable({
@@ -178,7 +173,7 @@ export class RaceDynamicFormService {
 
   createForm$(
     formListQuery: Pick<
-      GetFormListQuery,
+      GetFormList,
       | 'name'
       | 'formLogo'
       | 'description'
@@ -331,6 +326,7 @@ export class RaceDynamicFormService {
       let { sections, questions, logics } = page;
 
       const pageItem = {
+        PAGENAME: page.name,
         SECTIONS: sections.map((section) => {
           let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
@@ -601,7 +597,7 @@ export class RaceDynamicFormService {
     );
   };
 
-  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -633,7 +629,7 @@ export class RaceDynamicFormService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: any) {
     const rows =
       resp.items
         .sort(
