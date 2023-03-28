@@ -222,6 +222,8 @@ export class RaceDynamicFormService {
       environment.rdfApiUrl,
       'forms/inspection',
       {
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
         formlistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
