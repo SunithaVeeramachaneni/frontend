@@ -51,6 +51,7 @@ import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -177,6 +178,7 @@ export class QuestionComponent implements OnInit {
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
+    private responseSetService: ResponseSetService,
     private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute,
     private toast: ToastService,
@@ -243,12 +245,18 @@ export class QuestionComponent implements OnInit {
           } = current;
           if (!isEqual(prev, curr)) {
             if (
-              this.questionForm.get('fieldType').value === 'INST' &&
+              current.fieldType === 'INST' &&
               prevValue !== undefined &&
               isEqual(prevValue, currValue)
             ) {
               this.isINSTFieldChanged = true;
             } else {
+              if (
+                currValue?.type === 'globalResponse' ||
+                prevValue?.type === 'globalResponse'
+              )
+                this.handleGlobalResponseRefCount(prevValue, currValue);
+
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
                 sectionId: this.sectionId,
@@ -432,6 +440,43 @@ export class QuestionComponent implements OnInit {
     }
   }
 
+  handleGlobalResponseRefCount = (prev, curr) => {
+    const updatePrevResponse$ = this.responseSetService.updateResponseSet$({
+      id: prev?.id,
+      name: prev?.name,
+      description: prev?.description,
+      isMultiColumn: prev?.isMultiColumn,
+      refCount: prev?.refCount - 1,
+      values: JSON.stringify(prev?.value),
+      createdBy: prev?.createdBy,
+      version: prev?._version
+    });
+
+    const updateCurrResponse$ = this.responseSetService.updateResponseSet$({
+      id: curr?.id,
+      name: curr?.name,
+      description: curr?.description,
+      isMultiColumn: curr?.isMultiColumn,
+      refCount: curr?.refCount + 1,
+      values: JSON.stringify(curr?.value),
+      createdBy: curr?.createdBy,
+      version: curr?._version
+    });
+
+    if (
+      prev?.type === 'globalResponse' &&
+      curr?.type === 'globalResponse' &&
+      prev.id !== curr.id
+    ) {
+      updatePrevResponse$.subscribe();
+      updateCurrResponse$.subscribe();
+    } else if (prev?.type === 'globalResponse') {
+      updatePrevResponse$.subscribe();
+    } else if (curr?.type === 'globalResponse') {
+      updateCurrResponse$.subscribe();
+    }
+  };
+
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
@@ -508,7 +553,7 @@ export class QuestionComponent implements OnInit {
       .setValue(!responseTypeClosed, { emitEvent: false });
   }
   setQuestionValue(event) {
-    this.questionForm.get('value').setValue(event, { emitEvent: false });
+    this.questionForm.get('value').setValue(event);
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {

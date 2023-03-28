@@ -36,7 +36,7 @@ import { Tenant, ValidationError } from 'src/app/interfaces';
 import { cloneDeep } from 'lodash-es';
 
 const regUrl =
-  '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
+  '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
 @Component({
   selector: 'app-tenant',

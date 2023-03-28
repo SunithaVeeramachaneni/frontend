@@ -87,7 +87,13 @@ export const permissions = Object.freeze({
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
   deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
-  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT',
+
+  viewGlobalResponses: 'VIEW_GLOBAL_RESPONSES',
+  createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
+  updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
+  deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
 });
 
 export const routingUrls = {
@@ -236,6 +242,11 @@ export const routingUrls = {
     url: '/master-configuration/plants',
     title: 'Plants',
     permission: permissions.viewPlants
+  },
+  globalResponse: {
+    url: '/master-configuration/global-response',
+    title: 'Global Response Set',
+    permission: permissions.viewGlobalResponses
   }
 };
 export const formConfigurationStatus = Object.freeze({

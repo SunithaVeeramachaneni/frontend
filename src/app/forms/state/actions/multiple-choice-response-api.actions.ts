@@ -34,3 +34,17 @@ export const updateResponseSetFailure = createAction(
   '[Response Set Service] updateResponseSetFailure',
   props<{ error: string }>()
 );
+
+export const deleteResponseSetSuccess = createAction(
+  '[Response Set Service] deleteResponseSetSuccess',
+  props<{
+    response: any;
+  }>()
+);
+
+export const deleteResponseSetFailure = createAction(
+  '[Response Set Service] deleteResponseSetSuccess',
+  props<{
+    error: string;
+  }>()
+);

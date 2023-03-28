@@ -5,11 +5,6 @@ import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  APIService,
-  GetFormListQuery,
-  ListFormListsQuery,
-  ListFormSubmissionListsQuery} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -18,13 +13,13 @@ import {
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
-import { Store } from '@ngrx/store';
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getResponseSets } from 'src/app/forms/state';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 const limit = 10000;
 @Injectable({
@@ -39,9 +34,9 @@ export class RaceDynamicFormService {
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
+    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
-    private store: Store,
     private translate: TranslateService
   ) {}
 
@@ -143,15 +138,24 @@ export class RaceDynamicFormService {
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit.toString());
     params.set('nextToken', queryParams?.nextToken);
-    params.set('fetchType', queryParams?.fetchType); 
+    params.set('fetchType', queryParams?.fetchType);
     params.set(
       'formStatus',
       filterData && filterData.status ? filterData.status : ''
     );
-    params.set('modifiedBy', filterData && filterData.modifiedBy ? filterData.modifiedBy : '');
-    params.set('lastModifiedOn', filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : '');
+    params.set(
+      'modifiedBy',
+      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+    );
+    params.set(
+      'lastModifiedOn',
+      filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
+    );
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms/submission/list?' + params.toString())
+      ._getResp(
+        environment.rdfApiUrl,
+        'forms/submission/list?' + params.toString()
+      )
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
 
@@ -169,7 +173,7 @@ export class RaceDynamicFormService {
 
   createForm$(
     formListQuery: Pick<
-      GetFormListQuery,
+      GetFormList,
       | 'name'
       | 'formLogo'
       | 'description'
@@ -206,18 +210,18 @@ export class RaceDynamicFormService {
   }
 
   getFormById$(id: string) {
-     return this.appService._getRespById(
-       environment.rdfApiUrl,
-       `forms/list/`,
-       id
-     );
+    return this.appService._getRespById(
+      environment.rdfApiUrl,
+      `forms/list/`,
+      id
+    );
   }
 
   createFormDetail$(formDetails) {
-   return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
-     formlistID: formDetails.formListId,
-     formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
-   });
+    return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
+      formlistID: formDetails.formListId,
+      formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
+    });
   }
 
   updateFormDetail$(formDetails) {
@@ -235,19 +239,15 @@ export class RaceDynamicFormService {
     );
   }
 
-  createAuthoredFormDetail$(formDetails) { 
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/authored',
-      {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
-      }
-    );
+  createAuthoredFormDetail$(formDetails) {
+    return this.appService._postData(environment.rdfApiUrl, 'forms/authored', {
+      formStatus: formDetails.formStatus,
+      formDetailPublishStatus: formDetails.formDetailPublishStatus,
+      formlistID: formDetails.formListId,
+      pages: JSON.stringify(formDetails.pages),
+      counter: formDetails.counter,
+      version: formDetails.authoredFormDetailVersion.toString()
+    });
   }
 
   updateAuthoredFormDetail$(formDetails) {
@@ -270,68 +270,17 @@ export class RaceDynamicFormService {
     );
   }
 
-  getResponseSet$(queryParams: {
-    nextToken?: string;
-    limit?: number;
-    responseType: string;
-  }) {
-    const params: URLSearchParams = new URLSearchParams();
-    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
-    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
-    params.set('type', queryParams?.responseType);
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets?' + params.toString()
-    );
-  }
-
-  createResponseSet$(responseSet) {
-    return this.appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets',
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet?.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
-      }
-    );
-  }
-
-  updateResponseSet$(responseSet) {
-    return this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSet.id}`,
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        _version: responseSet.version
-      }
-    );
-  }
-
-  deleteResponseSet$(responseSetId: string) {
-    return this.appService._removeData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSetId}`
-    );
-  }
-
   getAuthoredFormDetailByFormId$(
     formId: string,
     formStatus: string = formConfigurationStatus.draft
   ) {
-     const params: URLSearchParams = new URLSearchParams();
-     params.set('formStatus', formStatus);
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('formStatus', formStatus);
     return from(
-       this.appService._getResp(
-       environment.rdfApiUrl,
-       `forms/authored/${formId}?` + params.toString()
-     )
+      this.appService._getResp(
+        environment.rdfApiUrl,
+        `forms/authored/${formId}?` + params.toString()
+      )
     ).pipe(
       map(({ items }) => {
         items.sort((a, b) => parseInt(b.version, 10) - parseInt(a.version, 10));
@@ -351,10 +300,7 @@ export class RaceDynamicFormService {
 
   getFormDetailByFormId$(formId: string) {
     return from(
-      this.appService._getResp(
-        environment.rdfApiUrl,
-        `forms/${formId}`
-      )
+      this.appService._getResp(environment.rdfApiUrl, `forms/${formId}`)
     ).pipe(map(({ items }) => items));
   }
 
@@ -464,13 +410,14 @@ export class RaceDynamicFormService {
                 question.value?.type === 'globalResponse'
               ) {
                 let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.store
-                  .select(getResponseSets)
+                const currenGlobalResponse$ = this.responseSetService
+                  .fetchAllGlobalResponses$()
                   .pipe(
                     tap((responses) => {
                       currentGlobalResponseValues = JSON.parse(
-                        responses.find((item) => item.id === question.value.id)
-                          ?.values
+                        responses.items.find(
+                          (item) => item.id === question.value.id
+                        )
                       );
                     })
                   );
@@ -646,10 +593,10 @@ export class RaceDynamicFormService {
     return this.appService._getResp(
       environment.rdfApiUrl,
       `forms/submission/detail/${submissionId}`
-    )
+    );
   };
 
-  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -681,7 +628,7 @@ export class RaceDynamicFormService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -773,7 +720,7 @@ export class RaceDynamicFormService {
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
       .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
-  }
+  };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);

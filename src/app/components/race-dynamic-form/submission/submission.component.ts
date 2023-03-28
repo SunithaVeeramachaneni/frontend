@@ -32,10 +32,10 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-submission',
@@ -296,7 +296,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getSubmissionFormsList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );

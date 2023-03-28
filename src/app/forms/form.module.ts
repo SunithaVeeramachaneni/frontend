@@ -143,6 +143,7 @@ import { QuestionPreviewComponent } from './components/pdf-builder/question-prev
     ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
     QuestionPreviewComponent,
