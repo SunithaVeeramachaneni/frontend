@@ -112,6 +112,14 @@ export class QuestionComponent implements OnInit {
     return this._questionName;
   }
 
+  @Input() set subFormId(subFormId: string) {
+    this._subFormId = subFormId;
+  }
+
+  get subFormId() {
+    return this._subFormId;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -172,6 +180,7 @@ export class QuestionComponent implements OnInit {
   private _questionIndex: number;
   private _isAskQuestion: boolean;
   private _questionName: string;
+  private _subFormId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -222,6 +231,7 @@ export class QuestionComponent implements OnInit {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.selectedNodeId = this.subFormId;
     }
 
     this.questionForm.valueChanges

@@ -14,7 +14,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 
@@ -27,7 +26,7 @@ import { LocationService } from '../services/location.service';
 export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   @Input() set locationEditData(data) {
     this.locEditData = data;
     if (this.locEditData === null) {
