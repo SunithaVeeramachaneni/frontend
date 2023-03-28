@@ -368,6 +368,7 @@ export class RaceDynamicFormService {
       let { sections, questions, logics } = page;
 
       const pageItem = {
+        PAGENAME: page.name,
         SECTIONS: sections.map((section) => {
           let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
