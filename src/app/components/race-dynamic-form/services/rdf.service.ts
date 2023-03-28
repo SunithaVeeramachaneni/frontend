@@ -259,6 +259,7 @@ export class RaceDynamicFormService {
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
+        pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration,
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
         version: formDetails.authoredFormDetailDynamoDBVersion,

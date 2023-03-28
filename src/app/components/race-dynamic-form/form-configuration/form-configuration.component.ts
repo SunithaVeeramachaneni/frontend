@@ -65,6 +65,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
+import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
 
 @Component({
   selector: 'app-form-configuration',
@@ -235,6 +236,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formStatus,
           counter,
           pages,
+          pdfBuilderConfiguration,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -264,6 +266,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   formListId,
                   counter,
                   pages,
+                  pdfBuilderConfiguration,
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
@@ -290,6 +293,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
+                pdfBuilderConfiguration,
                 formDetailId,
                 formDetailDynamoDBVersion,
                 authoredFormDetail: {
@@ -701,4 +705,20 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       this.formConf.counter.value
     );
   }
+
+  goToPDFBuilderConfiguration = () => {
+    const dialogRef = this.dialog.open(PDFBuilderComponent, {
+      data: '',
+      hasBackdrop: false,
+      disableClose: true,
+      width: '100vw',
+      minWidth: '100vw',
+      height: '100vh'
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result.publishRoundPlan) {
+        this.publishFormDetail();
+      }
+    });
+  };
 }

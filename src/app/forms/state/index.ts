@@ -188,6 +188,7 @@ export const getFormDetails = createSelector(
     formStatus: state.formStatus,
     counter: state.counter,
     pages: state.pages,
+    pdfBuilderConfiguration: state.pdfBuilderConfiguration,
     authoredFormDetailId: state.authoredFormDetailId,
     formDetailId: state.formDetailId,
     authoredFormDetailVersion: state.authoredFormDetailVersion,

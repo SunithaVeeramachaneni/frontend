@@ -43,6 +43,9 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           _version: formListDynamoDBVersion
         } = form;
+        const pdfBuilderConfiguration = JSON.parse(
+          authoredFormDetail?.pdfBuilderConfiguration
+        );
         const {
           id: authoredFormDetailId,
           counter,
@@ -67,6 +70,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formMetadata,
           counter,
           pages: JSON.parse(pages),
+          pdfBuilderConfiguration,
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),

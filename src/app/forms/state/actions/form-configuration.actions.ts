@@ -47,6 +47,7 @@ export const updateFormDetail = createAction(
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
+    pdfBuilderConfiguration: any;
     formListId: string;
     formDetailId: string;
     authoredFormDetail: any;
@@ -74,6 +75,7 @@ export const updateAuthoredFormDetail = createAction(
     formDetailPublishStatus: string;
     counter: number;
     pages: Page[];
+    pdfBuilderConfiguration: any;
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailVersion: number;

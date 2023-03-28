@@ -10,6 +10,7 @@ import {
 } from './actions';
 
 export interface FormConfigurationState {
+  pdfBuilderConfiguration: any;
   formMetadata: FormMetadata;
   pages: Page[];
   counter: number;
@@ -31,6 +32,7 @@ export interface FormConfigurationState {
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
+  pdfBuilderConfiguration: {},
   counter: 0,
   formStatus: 'Draft',
   authoredFormDetailId: '',
