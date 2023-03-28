@@ -29,7 +29,12 @@
         <div id="preview" *ngFor="let question of section.questions">
           <div class="field-types">
             <div class="each-fieldtype">
-              <p class="question-name" *ngIf="question.fieldType !== 'ARD'">
+              <p
+                class="question-name"
+                *ngIf="
+                  question.fieldType !== 'ARD' && question.fieldType !== 'INST'
+                "
+              >
                 {{
                   (question.name ? question.name : 'typeQuestion') | translate
                 }}
@@ -39,6 +44,42 @@
               <h3 class="read-only-field" *ngIf="question.fieldType === 'LF'">
                 {{ question.value }}
               </h3>
+
+              <!-- Instruction-->
+
+              <div
+                *ngIf="question.fieldType === 'INST'"
+                class="instruction-field"
+              >
+                <div *ngIf="question.value.tag.title !== getNoneTag()">
+                  <p class="tag-text">
+                    {{ question.value.tag.title }}
+                  </p>
+                </div>
+
+                <!-- instructions needs unescaped HTML -->
+
+                <div [innerHTML]="question.name" class="instruction"></div>
+
+                <!-- Instructions Images -->
+                <div>
+                  <ng-container
+                    *ngFor="let image of question.value.images; index as i"
+                  >
+                    <img
+                      src="{{ image.objectURL }}"
+                      alt="image"
+                      class="instruction-image-field"
+                      *ngIf="image !== null"
+                    />
+                  </ng-container>
+                </div>
+
+                <ng-container *ngIf="question.value.pdf !== null">
+                  <app-instruction-pdf-preview [pdf]="question.value.pdf">
+                  </app-instruction-pdf-preview>
+                </ng-container>
+              </div>
 
               <!-- text answer  -->
               <input

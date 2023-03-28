@@ -10,6 +10,7 @@ import { OperatorRoundsContainerComponent } from './operator-rounds-container/op
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 import { SchedulerComponent } from './scheduler/scheduler.component';
+import { ObservationsComponent } from './observations/observations.component';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
-          permissions: [permissions.createForm]
+          permissions: [permissions.createForm],
+          componentMode: 'create'
         }
       },
       {
@@ -37,7 +39,8 @@ const routes: Routes = [
         resolve: { form: RoundPlanResolverService },
         data: {
           breadcrumb: { label: 'Edit Form', alias: 'formName' },
-          permissions: [permissions.updateForm]
+          permissions: [permissions.updateForm],
+          componentMode: 'edit'
         }
       },
       {
@@ -65,6 +68,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Archived', alias: 'formName' },
           permissions: [permissions.viewForms]
+        }
+      },
+      {
+        path: 'observations',
+        component: ObservationsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Observations' },
+          permissions: [permissions.viewORPlans]
         }
       }
     ]

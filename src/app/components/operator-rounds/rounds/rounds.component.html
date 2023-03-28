@@ -5,23 +5,35 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
-      (formDetailAction)="roundsDetailActionHandler($event)"
+      [hidden]="hideRoundDetail"
+      [formStatus]="formConfigurationStatus.published"
+      formDetailType="submitted"
+      (formDetailAction)="roundsDetailActionHandler()"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
-    <span class="no-of-forms" *ngIf="roundsCount$ | async as totalCount">
-      <span class="forms-count">
-        {{ totalCount }}
-      </span>
-      <span class="forms-text">{{
-        'rounds'
-          | translate
-            : {
-                count: totalCount || 0
-              }
-      }}</span>
+    <span class="no-of-rounds">
+      <ng-container *ngIf="(isLoading$ | async) === false; else loadingRounds">
+        <span class="rounds-count">
+          {{ roundsCount }}
+        </span>
+        <span class="rounds-text">{{
+          'roundsPlural'
+            | translate
+              : {
+                  count: roundsCount || 0
+                }
+        }}</span>
+      </ng-container>
+      <ng-template #loadingRounds>
+        <ngx-shimmer-loading
+          class="loading-rounds"
+          [width]="'100%'"
+          [height]="'35px'"
+        >
+        </ngx-shimmer-loading>
+      </ng-template>
     </span>
-
     <mat-form-field appearance="outline">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
       <input
@@ -43,7 +55,6 @@
     </mat-form-field>
   </span>
   <ng-template
-    *ngIf="false"
     cdkConnectedOverlay
     cdkConnectedOverlayPanelClass="custom-popover"
     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
@@ -53,19 +64,12 @@
     cdkConnectedOverlayWidth="400px"
     (backdropClick)="isPopoverOpen = false"
   >
-    <div class="filter-modal custom-form-field-white-color">
-      <div class="m-b-10 filter-header">
-        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-        <button
-          class="filter-modal-cancel"
-          (click)="isPopoverOpen = false"
-          aria-label="Close Filter"
-        >
-          <img src="assets/img/svg/cancel-icon.svg" alt="Close Filter" />
-        </button>
-      </div>
-      <div>{{ 'filters' | translate }}</div>
-    </div>
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilters($event)"
+      (reset)="clearFilters()"
+    ></app-filter>
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
@@ -79,6 +83,7 @@
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>

@@ -37,5 +37,20 @@
   "done": "Done",
   "addMore": "Add More",
   "save": "Save",
-  "unitTypeError": "Unit type is required"
+  "unitTypeError": "Unit type is required",
+  "plants": "Plants",
+  "plantId": "Plant Id",
+  "country": "Country",
+  "zipCode": "Zip Code",
+  "state": "State",
+  "additionalDetails": "Additional Details",
+  "label": "Label",
+  "field": "Field",
+  "minlength": "{name} must be atleast {length} characters",
+  "maxlength": "{name} must not exceed {length} characters",
+  "review": "Review",
+  "successfullyUpload": "Successfully uploaded",
+  "failedUpload": "Failed to uploaded",
+  "closeBtn": "Close",
+  "reviewFailed": "Review Failed"
 }

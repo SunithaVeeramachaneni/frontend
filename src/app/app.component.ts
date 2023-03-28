@@ -56,12 +56,14 @@ const {
   archivedForms,
   operatorRoundPlans,
   myRoundPlans,
-  roundPlanSubmissions,
+  roundPlanScheduler,
   masterConfiguration,
   locations,
   assets,
   unitOfMeasurement,
-  roundPlanArchivedForms
+  plants,
+  roundPlanArchivedForms,
+  roundPlanObservations
 } = routingUrls;
 
 @Component({
@@ -174,14 +176,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myRoundPlans.permission
         },
         {
-          title: roundPlanSubmissions.title,
-          url: roundPlanSubmissions.url,
-          permission: roundPlanSubmissions.permission
+          title: roundPlanScheduler.title,
+          url: roundPlanScheduler.url,
+          permission: roundPlanScheduler.permission
         },
         {
           title: roundPlanArchivedForms.title,
           url: roundPlanArchivedForms.url,
           permission: roundPlanArchivedForms.permission
+        },
+        {
+          title: roundPlanObservations.title,
+          url: roundPlanObservations.url,
+          permission: roundPlanObservations.permission
         }
       ]
     },
@@ -242,6 +249,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: unitOfMeasurement.title,
           url: unitOfMeasurement.url,
           permission: unitOfMeasurement.permission
+        },
+        {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
         }
       ]
     }
@@ -435,18 +447,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   registerServerSentEvents(userInfo, ref) {
+    const { tenantId, collaborationType } = this.tenantService.getTenantInfo();
     let userID;
-    if (userInfo.collaborationType === 'slack') {
+    if (collaborationType === 'slack') {
       if (userInfo.slackDetail && userInfo.slackDetail.slackID) {
         userID = userInfo.slackDetail.slackID;
       }
-    } else if (userInfo.collaborationType === 'msteams') {
+    } else if (collaborationType === 'msteams') {
       userID = userInfo.email;
     }
 
     // COLLABORATION CHAT SSE
     if (userID) {
-      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
+      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
         collaborationSSEUrl,
         null

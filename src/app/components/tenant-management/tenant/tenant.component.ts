@@ -76,7 +76,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
-  collaborationTypes = ['slack', 'msteams'];
+  collaborationTypes = ['slack', 'msteams', 'none'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   errors: ValidationError = {};
   tenantHeader = 'Adding Tenant...';
@@ -336,6 +336,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       }),
       tenantLogo: [''],
       tenantLogoName: [''],
+      slackTeamID: [''],
       amplifyConfig: ['', [Validators.required, this.jsonValidator()]]
     });
 
@@ -829,6 +830,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
         tenant.amplifyConfig = JSON.parse(tenant.amplifyConfig);
       }
       tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
+      let { slackTeamID = '' } = tenant.slackConfiguration || {};
+      if (/dev$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -3);
+      } else if (/qa$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -2);
+      } else if (/demo$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -4);
+      }
+      tenant.slackTeamID = slackTeamID;
       this.spinner.show();
 
       if (id) {

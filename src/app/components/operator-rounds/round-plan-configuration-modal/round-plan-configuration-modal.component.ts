@@ -27,7 +27,7 @@ import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import {
-  FormConfigurationActions,
+  BuilderConfigurationActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -157,22 +157,25 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         type: 'tags',
         values: newTags
       };
-      this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
-        // do nothing
-      });
+      // this.operatorRoundsService.createTags$(dataSet).subscribe((response) => {
+      //   // do nothing
+      // });
     }
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
-        FormConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value,
+        BuilderConfigurationActions.addFormMetadata({
+          formMetadata: {
+            ...this.headerDataForm.value,
+            moduleName: 'rdf'
+          },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })
       );
       this.store.dispatch(
-        FormConfigurationActions.updateCreateOrEditForm({
+        BuilderConfigurationActions.updateCreateOrEditForm({
           createOrEditForm: true
         })
       );

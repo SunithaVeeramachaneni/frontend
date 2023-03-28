@@ -1,17 +1,41 @@
 .spare-parts-body {
   height: 100%;
+  margin-right: 14px;
 }
 
 .spareparts-page {
   height: 120vh;
+  padding: 12px 0;
 }
 
 .header-filters {
   display: flex;
   background-color: #ffffff;
   height: 50px;
-  padding-top: 5px;
-  margin: 0 14px 14px 0;
+  padding-top: 10px;
+}
+
+.spcc-filters {
+  position: absolute;
+  right: 25px;
+  margin-top: -3px;
+}
+
+.plants-workcenters {
+  background: #ffffff;
+  margin-top: -52px;
+}
+
+@media (max-width: 1365px) {
+  .plants-workcenters {
+    padding-left: 0 !important;
+    margin-top: 0;
+    padding-top: 10px;
+  }
+
+  .header-filters {
+    height: auto;
+  }
 }
 
 .list-elements {

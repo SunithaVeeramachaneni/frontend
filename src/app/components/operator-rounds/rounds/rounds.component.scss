@@ -2,7 +2,7 @@
 
 .search-container {
   position: fixed;
-  top: 80px;
+  top: 75px;
   right: 10px;
   z-index: 100;
 
@@ -10,17 +10,17 @@
     margin-top: 5px;
     margin-right: 14px;
 
-    .no-of-forms {
+    .no-of-rounds {
       margin-right: 10px;
     }
 
-    .forms-count {
+    .rounds-count {
       font-weight: 500;
       font-size: 110%;
       color: $gray-bg;
     }
 
-    .forms-text {
+    .rounds-text {
       font-weight: 500;
       font-size: 110%;
       color: $gray1;
@@ -41,4 +41,13 @@
 
 .padding-lr-20 {
   padding: 0 20px;
+}
+
+.loading-rounds {
+  position: absolute;
+  width: 40%;
+  height: 35px;
+  border-radius: 5px;
+  right: 270px;
+  top: 6px;
 }

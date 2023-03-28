@@ -14,6 +14,7 @@ import {
   MatCalendar,
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import {
   addDays,
   addMonths,
@@ -24,10 +25,19 @@ import {
   weeksToDays
 } from 'date-fns';
 import { tap } from 'rxjs/operators';
-import { ScheduleByDate } from 'src/app/interfaces';
-import { ToastService } from 'src/app/shared/toast';
+import {
+  RoundPlanScheduleConfiguration,
+  RoundPlanScheduleConfigurationObj,
+  ScheduleByDate
+} from 'src/app/interfaces';
+import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
+import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
 
+export interface ScheduleConfig {
+  roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
+  mode: 'create' | 'update';
+}
 @Component({
   selector: 'app-round-plan-schedule-configuration',
   templateUrl: './round-plan-schedule-configuration.component.html',
@@ -39,41 +49,36 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
     if (roundPlanDetail) {
-      this.getRoundPlanSchedulerConfiguration(roundPlanDetail.id);
+      this.getRoundPlanSchedulerConfigurationByRoundPlanId(roundPlanDetail.id);
     }
   }
   get roundPlanDetail(): any {
     return this._roundPlanDetail;
   }
-  @Output() scheduleConfigState: EventEmitter<string> =
-    new EventEmitter<string>();
-  scheduleTypes: string[] = ['byFrequency', 'byDate'];
-  scheduleEndTypes: string[] = ['never', 'on', 'after'];
-  repeatTypes: string[] = ['day', 'week', 'month'];
-  daysOfWeek: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  weeksOfMonth: string[] = [
-    '1st Week',
-    '2nd Week',
-    '3rd Week',
-    '4th Week',
-    '5th Week'
-  ];
+  @Output()
+  scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
+  @Output()
+  scheduleConfig: EventEmitter<ScheduleConfig> =
+    new EventEmitter<ScheduleConfig>();
+  @Output()
+  viewRounds: EventEmitter<string> = new EventEmitter<string>();
+  scheduleTypes = scheduleConfigs.scheduleTypes;
+  scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
+  repeatTypes = scheduleConfigs.repeatTypes;
+  daysOfWeek = scheduleConfigs.daysOfWeek;
+  weeksOfMonth = scheduleConfigs.weeksOfMonth;
   roundPlanSchedulerConfigForm: FormGroup;
   currentDate: Date;
-  scheduleByDates: ScheduleByDate[] = [
-    {
-      date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
-      scheduled: false
-    }
-  ];
+  scheduleByDates: ScheduleByDate[];
   disableSchedule = false;
+  roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   private _roundPlanDetail: any;
 
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
-    private toastService: ToastService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -145,6 +150,29 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       });
 
     this.roundPlanSchedulerConfigForm
+      .get('scheduleType')
+      .valueChanges.subscribe((scheduleType) => {
+        switch (scheduleType) {
+          case 'byFrequency':
+            this.roundPlanSchedulerConfigForm
+              .get('repeatEvery')
+              .patchValue('day');
+            this.scheduleByDates = [];
+            break;
+          case 'byDate':
+            if (!this.scheduleByDates.length) {
+              this.scheduleByDates = [
+                {
+                  date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
+                  scheduled: false
+                }
+              ];
+            }
+            break;
+        }
+      });
+
+    this.roundPlanSchedulerConfigForm
       .get('repeatEvery')
       .valueChanges.subscribe((repeatEvery) => {
         switch (repeatEvery) {
@@ -180,6 +208,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             this.roundPlanSchedulerConfigForm
               .get('scheduleEndOccurrences')
               .patchValue(12);
+            this.setMonthlyDaysOfWeek();
             this.roundPlanSchedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
@@ -287,7 +316,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   scheduleConfiguration() {
     if (
       this.roundPlanSchedulerConfigForm.valid &&
-      this.roundPlanSchedulerConfigForm.valid
+      this.roundPlanSchedulerConfigForm.dirty
     ) {
       this.disableSchedule = true;
       const roundPlanSchedulerConfig =
@@ -315,12 +344,13 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             tap((scheduleConfig) => {
               this.disableSchedule = false;
               if (scheduleConfig && Object.keys(scheduleConfig).length) {
-                this.toastService.show({
-                  text: 'Round plan schedule updated sucessfully',
-                  type: 'success'
+                this.scheduleConfig.emit({
+                  roundPlanScheduleConfiguration: scheduleConfig,
+                  mode: 'update'
                 });
+                this.openRoundPlanScheduleSuccessModal('update');
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.markForCheck();
+                this.cdrf.detectChanges();
               }
             })
           )
@@ -338,15 +368,16 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
             tap((scheduleConfig) => {
               this.disableSchedule = false;
               if (scheduleConfig && Object.keys(scheduleConfig).length) {
-                this.toastService.show({
-                  text: 'Round plan schedule created sucessfully',
-                  type: 'success'
+                this.scheduleConfig.emit({
+                  roundPlanScheduleConfiguration: scheduleConfig,
+                  mode: 'create'
                 });
+                this.openRoundPlanScheduleSuccessModal('create');
                 this.roundPlanSchedulerConfigForm
                   .get('id')
                   .patchValue(scheduleConfig.id);
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.markForCheck();
+                this.cdrf.detectChanges();
               }
             })
           )
@@ -382,11 +413,11 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     this.calendar.updateTodaysDate();
   }
 
-  getRoundPlanSchedulerConfiguration(roundPlandId: string) {
+  getRoundPlanSchedulerConfigurationByRoundPlanId(roundPlandId: string) {
     this.rpscService
       .fetchRoundPlanScheduleConfigurationByRoundPlanId$(roundPlandId)
       .pipe(
-        tap(([config]) => {
+        tap((config) => {
           if (config && Object.keys(config).length) {
             const {
               startDate,
@@ -423,12 +454,6 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
 
   setDefaultRoundPlanSchedulerConfig(roundPlanId: string) {
-    this.scheduleByDates = [
-      {
-        date: new Date(format(new Date(), 'yyyy-MM-dd 00:00:00')),
-        scheduled: false
-      }
-    ];
     this.roundPlanSchedulerConfigForm.patchValue({
       id: '',
       roundPlanId,
@@ -448,6 +473,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null
     });
+    this.roundPlanSchedulerConfigForm.markAsDirty();
   }
 
   findDate(date: Date): number {
@@ -468,5 +494,29 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       ...scheduleByDate,
       date: new Date(format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'))
     }));
+  }
+
+  openRoundPlanScheduleSuccessModal(dailodMode: 'create' | 'update') {
+    const dialogRef = this.dialog.open(RoundPlanScheduleSuccessModalComponent, {
+      disableClose: true,
+      width: '354px',
+      height: '275px',
+      backdropClass: 'round-plan-schedule-success-modal',
+      data: {
+        roundPlanName: this.roundPlanDetail.name,
+        mode: dailodMode
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        if (data.redirectToRounds) {
+          this.scheduleConfigState.emit('out');
+          this.viewRounds.emit(this.roundPlanDetail.id);
+        } else {
+          this.scheduleConfigState.emit('out');
+        }
+      }
+    });
   }
 }

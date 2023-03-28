@@ -4,6 +4,7 @@ import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
   FormConfigurationActions,
+  BuilderConfigurationActions,
   FormConfigurationApiActions,
   RoundPlanConfigurationApiActions
 } from './actions';
@@ -24,6 +25,7 @@ export interface FormConfigurationState {
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
   isFormCreated: boolean;
+  moduleName: string;
 }
 
 const initialState = {
@@ -41,7 +43,8 @@ const initialState = {
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
   authoredFormDetailDynamoDBVersion: 0,
-  isFormCreated: false
+  isFormCreated: false,
+  moduleName: 'rdf'
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -147,6 +150,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateFormMetadata,
+    BuilderConfigurationActions.updateFormMetadata,
     (state, action): FormConfigurationState => {
       const { formStatus, ...formMetadata } = action.formMetadata;
       return {
@@ -163,6 +167,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateIsFormDetailPublished,
+    BuilderConfigurationActions.updateIsFormDetailPublished,
     (state, action): FormConfigurationState => ({
       ...state,
       isFormDetailPublished: action.isFormDetailPublished
@@ -170,6 +175,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateFormPublishStatus,
+    BuilderConfigurationActions.updateFormPublishStatus,
     (state, action): FormConfigurationState => ({
       ...state,
       formDetailPublishStatus: action.formDetailPublishStatus
@@ -177,6 +183,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateCreateOrEditForm,
+    BuilderConfigurationActions.updateCreateOrEditForm,
     (state, action): FormConfigurationState => ({
       ...state,
       createOrEditForm: action.createOrEditForm
@@ -184,6 +191,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateCounter,
+    BuilderConfigurationActions.updateCounter,
     (state, action): FormConfigurationState => ({
       ...state,
       counter: action.counter
@@ -191,6 +199,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.addPage,
+    BuilderConfigurationActions.addPage,
     (state, action): FormConfigurationState => ({
       ...state,
       pages: [
@@ -206,7 +215,28 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationActions.updatePage,
+    (state, action): FormConfigurationState => {
+      const updatedPageIdx = state.pages.findIndex(
+        (page) => page.position === action.pageIndex + 1
+      );
+      let newPages = state.pages;
+      newPages[updatedPageIdx] = {
+        ...newPages[updatedPageIdx],
+        ...action.page
+      };
+      return {
+        ...state,
+        pages: newPages,
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
+      };
+    }
+  ),
+  on(
     FormConfigurationActions.updatePageState,
+    BuilderConfigurationActions.updatePageState,
     (state, action): FormConfigurationState => ({
       ...state,
       pages: state.pages.map((page, index) => {
@@ -236,6 +266,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.deletePage,
+    BuilderConfigurationActions.deletePage,
     (state, action): FormConfigurationState => ({
       ...state,
       pages: [
@@ -251,6 +282,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.addSections,
+    BuilderConfigurationActions.addSections,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -281,6 +313,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateSection,
+    BuilderConfigurationActions.updateSection,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -307,6 +340,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateSectionState,
+    BuilderConfigurationActions.updateSectionState,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -340,6 +374,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.deleteSection,
+    BuilderConfigurationActions.deleteSection,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -372,6 +407,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updatePageSections,
+    BuilderConfigurationActions.updatePageSections,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, index) => {
         if (index === action.pageIndex) {
@@ -398,6 +434,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.addQuestions,
+    BuilderConfigurationActions.addQuestions,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -434,6 +471,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
 
   on(
     FormConfigurationActions.updateQuestion,
+    BuilderConfigurationActions.updateQuestion,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -467,6 +505,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
 
   on(
     FormConfigurationActions.updateQuestionState,
+    BuilderConfigurationActions.updateQuestionState,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page) => {
         const questions = page.questions.map((question) => {
@@ -495,6 +534,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateQuestionBySection,
+    BuilderConfigurationActions.updateQuestionBySection,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -522,6 +562,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.deleteQuestion,
+    BuilderConfigurationActions.deleteQuestion,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -561,6 +602,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.transferQuestionFromSection,
+    BuilderConfigurationActions.transferQuestionFromSection,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -640,6 +682,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updateFormConfiguration,
+    BuilderConfigurationActions.updateFormConfiguration,
     (state, action): FormConfigurationState => ({
       ...state,
       ...action.formConfiguration
@@ -647,6 +690,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.resetFormConfiguration,
+    BuilderConfigurationActions.resetFormConfiguration,
     (state): FormConfigurationState => ({
       ...state,
       ...initialState
@@ -835,6 +879,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.initPages,
+    BuilderConfigurationActions.initPages,
     (state, action): FormConfigurationState => ({
       ...state,
       pages: action.pages
@@ -842,6 +887,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.resetPages,
+    BuilderConfigurationActions.resetPages,
     (state, _): FormConfigurationState => ({
       ...state,
       pages: []

@@ -1,7 +1,11 @@
 <div
   class="pages"
   [formGroup]="pageForm"
-  *ngIf="{ page: page$ | async, pagesCount: pagesCount$ | async } as props"
+  *ngIf="{
+    page: page$ | async,
+    pagesCount: pagesCount$ | async,
+    pageTasksCount: pageTasksCount$ | async
+  } as props"
 >
   <div class="page-header">
     <mat-icon
@@ -19,29 +23,53 @@
       chevron_right
     </mat-icon>
 
-    <a>
-      <span class="form_page_name_input">
-        {{ 'page' | translate }} {{ pageForm.get('position').value }}
-      </span>
+    <a class="width-60">
+      <input
+        #pageName
+        type="text"
+        formControlName="name"
+        class="form_page_name_input"
+        placeholder="Untitled Page"
+        autocomplete="off"
+        (keyup.enter)="pageForm.get('name').disable()"
+      />
+
+      <button
+        mat-icon-button
+        (click)="editPage()"
+        class="edit-icon"
+        *ngIf="pageForm.get('isOpen').value === true"
+      >
+        <img
+          src="assets/rdf-forms-icons/edit-icon.svg"
+          alt="edit-icon"
+          class="page-edit-icon"
+        />
+      </button>
     </a>
 
-    <button
-      [matMenuTriggerFor]="pageMenu"
-      class="more-icon"
-      aria-label="More Options"
-    >
-      <mat-icon>more_horiz</mat-icon>
-    </button>
-    <mat-menu #pageMenu="matMenu">
+    <div class="pageHeadRight">
+      <span class="pageTaskCount">
+        {{ props.pageTasksCount }}
+      </span>
       <button
-        mat-menu-item
-        (click)="deletePage()"
-        class="text-red"
-        [disabled]="props.pagesCount === 1"
+        [matMenuTriggerFor]="pageMenu"
+        class="more-icon"
+        aria-label="More Options"
       >
-        <span translate="deletePage"></span>
+        <mat-icon>more_horiz</mat-icon>
       </button>
-    </mat-menu>
+      <mat-menu #pageMenu="matMenu">
+        <button
+          mat-menu-item
+          (click)="deletePage()"
+          class="text-red"
+          [disabled]="props.pagesCount === 1"
+        >
+          <span translate="deletePage"></span>
+        </button>
+      </mat-menu>
+    </div>
   </div>
   <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
     <ng-content></ng-content>

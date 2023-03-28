@@ -23,7 +23,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getQuestionLogics, getSectionQuestions, State } from '../../state';
+import {
+  getQuestionLogics,
+  getSectionQuestions,
+  State
+} from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
@@ -35,6 +39,7 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddLogicComponent implements OnInit {
+  @Input() selectedNodeId: any;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set questionId(id: string) {
@@ -103,7 +108,9 @@ export class AddLogicComponent implements OnInit {
   ngOnInit() {
     let logicsFormArray = [];
     this.store
-      .select(getQuestionLogics(this.pageIndex, this.questionId))
+      .select(
+        getQuestionLogics(this.pageIndex, this.questionId, this.selectedNodeId)
+      )
       .subscribe((logicsT) => {
         // eslint-disable-next-line arrow-body-style
         logicsFormArray = logicsT.map((logic, index) => {
@@ -154,6 +161,8 @@ export class AddLogicComponent implements OnInit {
             operand1: logic.operand1 || '',
             operand2: logic.operand2 || '',
             action: logic.action || '',
+            mandateAttachment: logic.mandateAttachment || false,
+            raiseIssue: logic.raiseIssue || false,
             logicTitle: logic.logicTitle || '',
             expression: logic.expression || '',
             questions: this.fb.array(askQuestionsFormArray),
@@ -221,7 +230,7 @@ export class AddLogicComponent implements OnInit {
     const sectionId = `AQ_${logicId}`;
     let askQuestions;
     this.store
-      .select(getSectionQuestions(pageIndex, sectionId))
+      .select(getSectionQuestions(pageIndex, sectionId, this.selectedNodeId))
       .subscribe((v) => {
         askQuestions = v;
       });
@@ -239,6 +248,7 @@ export class AddLogicComponent implements OnInit {
           fieldType: 'TF',
           position: 0,
           required: false,
+          enableHistory: false,
           multi: false,
           value: '',
           isPublished: false,
@@ -252,7 +262,8 @@ export class AddLogicComponent implements OnInit {
             pageIndex: this.pageIndex,
             logicIndex,
             logicId: logic.id,
-            question: newQuestion
+            question: newQuestion,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -261,7 +272,8 @@ export class AddLogicComponent implements OnInit {
           AddLogicActions.askQuestionsUpdate({
             questionId: event.question.id,
             pageIndex: event.pageIndex,
-            question: event.question
+            question: event.question,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -269,7 +281,8 @@ export class AddLogicComponent implements OnInit {
         this.store.dispatch(
           AddLogicActions.askQuestionsDelete({
             questionId: event.questionId,
-            pageIndex: event.pageIndex
+            pageIndex: event.pageIndex,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -328,7 +341,8 @@ export class AddLogicComponent implements OnInit {
         logic,
         viewMode,
         pageIndex: this.pageIndex,
-        questionId: this.questionId
+        questionId: this.questionId,
+        subFormId: this.selectedNodeId
       }
     });
     dialogRef.afterClosed().subscribe((result) => {
@@ -356,6 +370,26 @@ export class AddLogicComponent implements OnInit {
       pageIndex: this.pageIndex,
       logicIndex: index,
       type: 'ask_question_create',
+      logic
+    });
+  }
+  mandateAttachment(action, index, logic) {
+    logic.mandateAttachment = true;
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update',
+      logic
+    });
+  }
+  raiseIssue(action, index, logic) {
+    logic.raiseIssue = true;
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update',
       logic
     });
   }

@@ -12,14 +12,29 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { format } from 'date-fns';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { State } from 'src/app/forms/state';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { GetFormListQuery } from 'src/app/API.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import {
+  RoundPlan,
+  RoundPlanScheduleConfiguration,
+  RoundPlanDetail,
+  RoundDetail
+} from 'src/app/interfaces';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
+
+interface FrequencyDetail {
+  info: string;
+  more: string;
+  data: any;
+  repeatEvery: string;
+  scheduleType: string;
+}
+
 @Component({
   selector: 'app-form-detail',
   templateUrl: './form-detail.component.html',
@@ -28,19 +43,38 @@ import { OperatorRoundsService } from '../../operator-rounds/services/operator-r
 export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
-  @Input() selectedForm: GetFormListQuery = null;
+  @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
+    new EventEmitter();
+  @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
+  @Input() formStatus = formConfigurationStatus.draft;
+  @Input() formDetailType = 'Authored';
+  @Input() set scheduleConfiguration(
+    scheduleConfiguration: RoundPlanScheduleConfiguration
+  ) {
+    if (scheduleConfiguration) {
+      this._scheduleConfiguration = scheduleConfiguration;
+    }
+  }
 
+  get scheduleConfiguration() {
+    return this._scheduleConfiguration;
+  }
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
   pagesCount = 0;
   questionsCount = 0;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(19).fill(0).map((_, i) => i);
+  placeHolder = '_ _';
+  frequencyDetail = {} as FrequencyDetail;
+  readonly formConfigurationStatus = formConfigurationStatus;
+  readonly scheduleConfigs = scheduleConfigs;
+  private _scheduleConfiguration: RoundPlanScheduleConfiguration;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
-    private readonly router: Router,
     private readonly store: Store<State>
   ) {}
 
@@ -54,7 +88,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
         formDetail$ = this.operatorRoundsService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.id
+          this.selectedForm.id,
+          this.formStatus
         );
       }
       this.selectedFormDetail$ = formDetail$.pipe(
@@ -63,9 +98,12 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.questionsCount = 0;
           let data: any;
           if (formDetail) {
-            const pages = JSON.parse(formDetail.pages);
+            const pages =
+              formDetail && formDetail.pages
+                ? JSON.parse(formDetail?.pages)
+                : [];
             data = { ...formDetail, pages };
-            data.pages.forEach((page, pIdx) => {
+            data.pages?.forEach((page, pIdx) => {
               if (pIdx === 0) {
                 this.defaultFormName = `${page.name} ${page.position}`;
                 this.store.dispatch(
@@ -89,6 +127,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.toggleLoader(false);
         }
       );
+
+      this.setFrequencyInfo();
     }
   }
 
@@ -128,6 +168,81 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.selectedForm = null;
     this.toggleLoader(false);
+  }
+
+  scheduleRoundPlanEvent() {
+    this.scheduleRoundPlan.emit(this.selectedForm as RoundPlanDetail);
+  }
+
+  setFrequencyInfo() {
+    if (this.scheduleConfiguration) {
+      const {
+        repeatEvery,
+        daysOfWeek,
+        monthlyDaysOfWeek,
+        scheduleType,
+        scheduleByDates
+      } = this.scheduleConfiguration;
+      if (scheduleType === 'byFrequency') {
+      }
+
+      this.frequencyDetail =
+        scheduleType === 'byFrequency'
+          ? repeatEvery === 'week'
+            ? { ...this.getWeeklyDays(daysOfWeek), repeatEvery, scheduleType }
+            : repeatEvery === 'month'
+            ? {
+                ...this.getMontlyWeeks(monthlyDaysOfWeek),
+                repeatEvery,
+                scheduleType
+              }
+            : ({} as FrequencyDetail)
+          : {
+              ...this.getScheduleByDates(scheduleByDates),
+              repeatEvery,
+              scheduleType
+            };
+    }
+  }
+
+  getWeeklyDays(daysOfWeek: number[] = []) {
+    return {
+      info: scheduleConfigs.daysOfWeek[daysOfWeek[0]],
+      more: daysOfWeek.length > 1 ? `+ ${daysOfWeek.length - 1} more` : '',
+      data: daysOfWeek
+    };
+  }
+
+  getMontlyWeeks(monthlyDaysOfWeek: any = []) {
+    const filteredWeeks = monthlyDaysOfWeek
+      .map((week: number[], index: number) => {
+        if (week.length) {
+          return { index, week };
+        }
+      })
+      .filter((data) => data);
+
+    return {
+      info: scheduleConfigs.weeksOfMonth[filteredWeeks[0].index],
+      more:
+        filteredWeeks.length > 1 ? `+ ${filteredWeeks.length - 1} more` : '',
+      data: filteredWeeks
+    };
+  }
+
+  getScheduleByDates(scheduleByDates) {
+    return {
+      info: scheduleByDates[0].date,
+      more:
+        scheduleByDates.length > 1
+          ? `+ ${scheduleByDates.length - 1} more`
+          : '',
+      data: scheduleByDates
+    };
+  }
+
+  isDayOfWeekSelected(daysOfWeek, dayIndex) {
+    return daysOfWeek.includes(dayIndex);
   }
 
   private toggleLoader(action: boolean): void {

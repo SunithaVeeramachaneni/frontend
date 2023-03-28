@@ -15,6 +15,7 @@ export interface FormMetadata {
   formStatus: 'Draft' | 'Published';
   tags: string[];
   searchTerm: string;
+  hierarchy?: any;
 }
 
 export interface Page {
@@ -40,6 +41,7 @@ export interface Question {
   fieldType: string;
   position: number;
   required: boolean;
+  enableHistory: boolean;
   multi: boolean;
   value: any;
   isPublished: boolean;
@@ -67,7 +69,8 @@ export interface NumberRangeMetadata {
 
 export interface PageEvent {
   pageIndex: number;
-  type: 'add' | 'delete';
+  page?: Page;
+  type: 'add' | 'update' | 'delete';
 }
 
 export interface SectionEvent {
@@ -85,4 +88,11 @@ export interface QuestionEvent {
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
   isAskQuestion?: boolean;
+}
+
+export interface InstructionsFile {
+  name: string;
+  size: number;
+  objectKey: string;
+  objectURL: string;
 }

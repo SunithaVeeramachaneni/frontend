@@ -1,0 +1,19 @@
+@import '../../../../../../scss/colors.scss';
+
+.instruction-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.instruction-image-container .insert-instruction-image {
+  height: 60px;
+  width: 100px;
+}
+
+.instruction-image-container .close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 100;
+  cursor: pointer;
+}
