@@ -725,8 +725,6 @@ export class OperatorRoundsService {
     params.set('roundPlanId', '');
     params.set('status', '');
     params.set('inspectedBy', '');
-    params.set('inspectedOnStartDate', '');
-    params.set('inspectedOnEndDate', '');
     return this.appService
       ._getResp(environment.operatorRoundsApiUrl, 'rounds?' + params.toString())
       .pipe(map((res) => this.formatRounds(res.rows)));
