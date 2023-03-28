@@ -218,10 +218,17 @@ export class RaceDynamicFormService {
   }
 
   createFormDetail$(formDetails) {
-    return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
-      formlistID: formDetails.formListId,
-      formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
-    });
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/inspection',
+      {
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
+      }
+    );
   }
 
   updateFormDetail$(formDetails) {
