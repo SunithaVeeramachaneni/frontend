@@ -69,7 +69,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
-    inspectedBy: '' 
+    assignedTo: '',
+    dueDate: ''
   };
   columns: Column[] = [
     {
@@ -304,7 +305,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  inspectedBy: any = [];
+  assignedTo: string[] = [];
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -481,18 +482,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.createdBy)
+      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
-          this.inspectedBy.push(item);
+          this.assignedTo.push(item);
         }
       } 
       for (const item of this.filterJson) {
-        if (item['column'] == 'status') {
+        if (item['column'] === 'status') {
           item.items = this.status;
-        } else if (item['column'] == 'inspectedBy') {
-          item.items = this.inspectedBy;
+        } else if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
         } 
       }
     });
@@ -502,7 +503,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
       for (const item of this.filterJson) {
-        if (item['column'] == 'status') {
+        if (item['column'] === 'status') {
           item.items = this.status;
         }
       }
@@ -512,8 +513,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type != 'daterange') {
+      if (item.type !== 'daterange') {
         this.filter[item.column] = item.value;
+      } else if (item.type === 'date') {
+        this.filter[item.column] = item.value.toISOString();
       }
     }
     this.fetchRounds$.next({ data: 'load' });
@@ -521,6 +524,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
+    this.filter={
+      status: '',
+      assignedTo: '',
+      dueDate: '',
+    }
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
