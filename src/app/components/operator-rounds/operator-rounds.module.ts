@@ -33,10 +33,8 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
 import { hierarchyReducer } from 'src/app/forms/state/hierarchy.reducer';
-import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
-import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
@@ -158,13 +156,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
-      responseSet: responseSetReducer,
       hierarchy: hierarchyReducer
     }),
-    EffectsModule.forFeature([
-      RoundPlanConfigurationEffects,
-      ResponseSetEffects
-    ]),
+    EffectsModule.forFeature([RoundPlanConfigurationEffects]),
     NgxEchartsModule.forRoot({
       echarts
     })
