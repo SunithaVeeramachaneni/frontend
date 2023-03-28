@@ -28,6 +28,12 @@ export class ResponseTypeComponent implements OnInit {
   public globalResponses$: Observable<any[]>;
   public responseToBeEdited: any;
   public globalResponseSlideState: string;
+  addEditDeleteResponseSet: boolean;
+  addEditDeleteResponseSet$: BehaviorSubject<any> = new BehaviorSubject({
+    action: '',
+    form: {} as any
+  });
+  allResponses: any[] = [];
   quickResponsesData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<any>({
     type: 'create',
@@ -43,9 +49,33 @@ export class ResponseTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.globalResponses$ = this.responseSetService
-      .fetchAllGlobalResponses$()
-      .pipe(map((responses) => responses.items));
+    this.globalResponses$ = combineLatest([
+      this.responseSetService.fetchAllGlobalResponses$(),
+      this.addEditDeleteResponseSet$
+    ]).pipe(
+      map(([allResponses, addEditData]) => {
+        this.allResponses = allResponses.items;
+        if (this.addEditDeleteResponseSet) {
+          const { form, action } = addEditData;
+          switch (action) {
+            case 'create':
+              this.allResponses = [form, ...this.allResponses];
+              break;
+            case 'update':
+              const updatedIdx = this.allResponses.findIndex(
+                (item) => item.id === form.id
+              );
+              this.allResponses[updatedIdx] = form;
+              break;
+            default:
+            // Do nothing
+          }
+          this.addEditDeleteResponseSet = false;
+        }
+
+        return this.allResponses;
+      })
+    );
 
     this.route.params.subscribe((params) => {
       this.formId = params.id;
@@ -177,6 +207,20 @@ export class ResponseTypeComponent implements OnInit {
   handleEditGlobalResponse = (response: any) => {
     this.responseToBeEdited = response;
     this.handleGlobalResponsesToggle();
+  };
+
+  handleGlobalResponseChange = (event) => {
+    const { actionType: action, responseSet } = event;
+    this.addEditDeleteResponseSet = true;
+    this.responseToBeEdited = null;
+    this.globalResponseSlideState = 'out';
+    if (action !== 'cancel') {
+      this.addEditDeleteResponseSet$.next({
+        action,
+        form: responseSet
+      });
+    }
+    this.isGlobalResponseOpen = false;
   };
 
   handleGlobalResponseCancel = (event) => {

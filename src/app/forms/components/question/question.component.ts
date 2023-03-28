@@ -112,6 +112,14 @@ export class QuestionComponent implements OnInit {
     return this._questionName;
   }
 
+  @Input() set subFormId(subFormId: string) {
+    this._subFormId = subFormId;
+  }
+
+  get subFormId() {
+    return this._subFormId;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -172,6 +180,7 @@ export class QuestionComponent implements OnInit {
   private _questionIndex: number;
   private _isAskQuestion: boolean;
   private _questionName: string;
+  private _subFormId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -222,6 +231,7 @@ export class QuestionComponent implements OnInit {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.selectedNodeId = this.subFormId;
     }
 
     this.questionForm.valueChanges
@@ -231,19 +241,15 @@ export class QuestionComponent implements OnInit {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const {
-            isOpen,
-            isResponseTypeModalOpen,
-            value: prevValue,
-            ...prev
-          } = previous;
+          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
           const {
             isOpen: currIsOpen,
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
-            value: currValue,
             ...curr
           } = current;
           if (!isEqual(prev, curr)) {
+            const { value: prevValue } = prev;
+            const { value: currValue } = curr;
             if (
               current.fieldType === 'INST' &&
               prevValue !== undefined &&
@@ -441,39 +447,17 @@ export class QuestionComponent implements OnInit {
   }
 
   handleGlobalResponseRefCount = (prev, curr) => {
-    const updatePrevResponse$ = this.responseSetService.updateResponseSet$({
-      id: prev?.id,
-      name: prev?.name,
-      description: prev?.description,
-      isMultiColumn: prev?.isMultiColumn,
-      refCount: prev?.refCount - 1,
-      values: JSON.stringify(prev?.value),
-      createdBy: prev?.createdBy,
-      version: prev?._version
-    });
-
-    const updateCurrResponse$ = this.responseSetService.updateResponseSet$({
-      id: curr?.id,
-      name: curr?.name,
-      description: curr?.description,
-      isMultiColumn: curr?.isMultiColumn,
-      refCount: curr?.refCount + 1,
-      values: JSON.stringify(curr?.value),
-      createdBy: curr?.createdBy,
-      version: curr?._version
-    });
-
     if (
       prev?.type === 'globalResponse' &&
       curr?.type === 'globalResponse' &&
       prev.id !== curr.id
     ) {
-      updatePrevResponse$.subscribe();
-      updateCurrResponse$.subscribe();
+      this.updateResponseSet(prev, 'deselected').subscribe();
+      this.updateResponseSet(curr, 'selected').subscribe();
     } else if (prev?.type === 'globalResponse') {
-      updatePrevResponse$.subscribe();
+      this.updateResponseSet(prev, 'deselected').subscribe();
     } else if (curr?.type === 'globalResponse') {
-      updateCurrResponse$.subscribe();
+      this.updateResponseSet(curr, 'selected').subscribe();
     }
   };
 
@@ -516,6 +500,18 @@ export class QuestionComponent implements OnInit {
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
   }
+
+  updateResponseSet = (responseSet, actionType) =>
+    this.responseSetService.updateResponseSet$({
+      id: responseSet?.id,
+      name: responseSet?.name,
+      description: responseSet?.description,
+      isMultiColumn: responseSet?.isMultiColumn,
+      refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
+      values: JSON.stringify(responseSet?.value),
+      createdBy: responseSet?.createdBy,
+      version: responseSet?._version
+    });
 
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
@@ -715,7 +711,7 @@ export class QuestionComponent implements OnInit {
 
   instructionsFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    const allowedFileTypes: String[] = [
+    const allowedFileTypes: string[] = [
       'image/jpeg',
       'image/jpg',
       'image/png',
@@ -811,7 +807,7 @@ export class QuestionComponent implements OnInit {
   }
 
   stripHTMLTags(html) {
-    let doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || '';
   }
 
