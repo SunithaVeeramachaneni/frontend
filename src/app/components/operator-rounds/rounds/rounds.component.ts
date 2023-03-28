@@ -66,7 +66,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Input() users$: Observable<UserDetails[]>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
-  status = ['Open', 'In-progress', 'Completed'];
+  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
     inspectedBy: '' 
