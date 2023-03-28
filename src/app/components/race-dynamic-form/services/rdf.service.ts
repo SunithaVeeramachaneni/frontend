@@ -236,9 +236,11 @@ export class RaceDynamicFormService {
   updateFormDetail$(formDetails) {
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/detail/${formDetails.formDetailId}`,
+      `forms/inspection/${formDetails.formDetailId}`,
       {
         formlistID: formDetails.formListId,
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
