@@ -5,8 +5,6 @@ import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  GetFormListQuery} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -22,6 +20,7 @@ import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getResponseSets } from 'src/app/forms/state';
 import { TranslateService } from '@ngx-translate/core';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 const limit = 10000;
 @Injectable({
@@ -166,7 +165,7 @@ export class RaceDynamicFormService {
 
   createForm$(
     formListQuery: Pick<
-      GetFormListQuery,
+      GetFormList,
       | 'name'
       | 'formLogo'
       | 'description'
