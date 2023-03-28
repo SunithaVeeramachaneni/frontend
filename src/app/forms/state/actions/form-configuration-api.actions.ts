@@ -1,11 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import {
-  CreateAuthoredFormDetailMutation,
-  CreateFormDetailMutation,
-  UpdateAuthoredFormDetailMutation,
-  UpdateFormDetailMutation
-} from 'src/app/API.service';
 import { FormMetadata } from 'src/app/interfaces';
+import { CreateAuthoredFormDetail, CreateFormDetail, UpdateAuthoredFormDetail, UpdateFormDetail } from 'src/app/interfaces/master-data-management/forms';
 
 export const createFormSuccess = createAction(
   '[Form Configuration API] createFormSuccess',
@@ -30,8 +25,8 @@ export const updateFormFailure = createAction(
 export const createFormDetailSuccess = createAction(
   '[Form Configuration API] createFormDetailSuccess',
   props<{
-    formDetail: CreateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    formDetail: CreateFormDetail;
+    authoredFormDetail: CreateAuthoredFormDetail;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -47,8 +42,8 @@ export const createFormDetailFailure = createAction(
 export const updateFormDetailSuccess = createAction(
   '[Form Configuration API] updateFormDetailSuccess',
   props<{
-    formDetail: UpdateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    formDetail: UpdateFormDetail;
+    authoredFormDetail: CreateAuthoredFormDetail;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -64,7 +59,7 @@ export const updateFormDetailFailure = createAction(
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] createAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    authoredFormDetail: CreateAuthoredFormDetail;
     formSaveStatus: string;
     isFormCreated: boolean;
   }>()
@@ -78,7 +73,7 @@ export const createAuthoredFromDetailFailure = createAction(
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] updateAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail: UpdateAuthoredFormDetailMutation;
+    authoredFormDetail: UpdateAuthoredFormDetail;
     formSaveStatus: string;
   }>()
 );
