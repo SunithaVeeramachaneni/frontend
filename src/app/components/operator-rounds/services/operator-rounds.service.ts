@@ -676,7 +676,9 @@ export class OperatorRoundsService {
     params.set('nextToken', '');
     params.set('roundPlanId', '');
     params.set('status', '');
-    params.set('inspectedBy', '');
+    params.set('assignedTo', '');
+    params.set('dueDate', '');
+
     return this.appService
       ._getResp(environment.operatorRoundsApiUrl, 'rounds?' + params.toString())
       .pipe(map((res) => this.formatRounds(res.rows)));
