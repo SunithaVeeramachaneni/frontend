@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery, ListLocationsQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -43,7 +42,7 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   parentInformation;
   allParentsData;
@@ -437,7 +436,7 @@ export class AssetsListComponent implements OnInit {
     this.assetsEditData = null;
   }
 
-  showAssetDetail(row: GetFormListQuery): void {
+  showAssetDetail(row: any): void {
     this.selectedAsset = row;
     this.openAssetsDetailedView = 'in';
   }

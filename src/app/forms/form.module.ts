@@ -144,6 +144,7 @@ import { ScheduleConfigurationComponent } from './components/schedular/schedule-
     ShowHierarchyPopupComponent,
     AddFilterComponent,
     ImportQuestionsSliderComponent,
+    GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,

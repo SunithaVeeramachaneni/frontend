@@ -1,11 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import {
-  CreateAuthoredRoundPlanDetailMutation,
-  CreateRoundPlanDetailMutation,
-  UpdateAuthoredRoundPlanDetailMutation,
-  UpdateRoundPlanDetailMutation
-} from 'src/app/API.service';
 import { FormMetadata } from 'src/app/interfaces';
+import { CreateRoundPlanDetail, UpdateAuthoredRoundPlanDetail } from 'src/app/interfaces/master-data-management/round-plan';
 
 export const createRoundPlanSuccess = createAction(
   '[Round Plan Configuration API] createRoundPlanSuccess',
@@ -30,7 +25,7 @@ export const updateRoundPlanFailure = createAction(
 export const createAuthoredRoundPlanDetailSuccess = createAction(
   '[Round Plan Configuration API] createAuthoredRoundPlanDetailSuccess',
   props<{
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    authoredFormDetail: CreateRoundPlanDetail;
     formSaveStatus: string;
     isFormCreated: boolean;
   }>()
@@ -44,7 +39,7 @@ export const createAuthoredRoundPlanDetailFailure = createAction(
 export const updateAuthoredRoundPlanDetailSuccess = createAction(
   '[Round Plan Configuration API] updateAuthoredRoundPlanDetailSuccess',
   props<{
-    authoredFormDetail: UpdateAuthoredRoundPlanDetailMutation;
+    authoredFormDetail: UpdateAuthoredRoundPlanDetail;
     formSaveStatus: string;
   }>()
 );
@@ -57,7 +52,7 @@ export const updateAuthoredRoundPlanDetailFailure = createAction(
 export const publishRoundPlanSuccess = createAction(
   '[Round Plan Configuration API] publishRoundPlanSuccess',
   props<{
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    authoredFormDetail: CreateRoundPlanDetail;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
