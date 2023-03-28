@@ -783,9 +783,8 @@ fetchAllRounds$ = () => {
     params.set('nextToken', '');
     params.set('formId', '');
     params.set('status', '');
-    params.set('inspectedBy', '');
-    params.set('inspectedOnStartDate', '');
-    params.set('inspectedOnEndDate', '');
+    params.set('assignedTo', '');
+    params.set('dueDate', '');
     return this.appService
       ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString())
       .pipe(map((res) => this.formatInspections(res.rows)));

@@ -9,7 +9,7 @@
   {
     "label": "Inspected By",
     "items": [],
-    "column": "inspectedBy",
+    "column": "assignedTo",
     "type": "select",
     "value": ""
   },
@@ -17,7 +17,7 @@
     "label": "Due Date",
     "items": [],
     "column": "dueDate",
-    "type": "schedule",
+    "type": "date",
     "startDate": "",
     "endDate": "",
     "value": ""

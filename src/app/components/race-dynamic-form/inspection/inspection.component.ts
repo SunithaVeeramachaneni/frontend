@@ -65,12 +65,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
-  scheduleItems = ['Overdue', 'Due Today', 'Custom dates']
   filter = {
     status: '',
-    inspectedBy: ''
+    assignedTo: '',
+    dueDate: '',
   };
-  inspectedBy: any = [];
+  assignedTo: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -387,20 +387,18 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   getAllInspections() {
     this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.createdBy)
+      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
-          this.inspectedBy.push(item);
+          this.assignedTo.push(item);
         }
       } 
       for (const item of this.filterJson) {
-        if (item['column'] == 'status') {
+        if (item['column'] === 'status') {
           item.items = this.status;
-        } else if (item['column'] == 'inspectedBy') {
-          item.items = this.inspectedBy;
-        } else if (item['column'] == 'dueDate') {
-          item.items = this.scheduleItems;
+        } else if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
         } 
       }
     });
@@ -469,9 +467,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    debugger
     for (const item of data) {
-      if (item.type != 'daterange') { 
+      if (item.type !== 'date') {
         this.filter[item.column] = item.value;
+      } else if (item.type === 'date') {
+        this.filter[item.column] = item.value.toISOString();
       }
     }
     this.fetchInspection$.next({ data: 'load' });
@@ -479,6 +480,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      assignedTo: '',
+      dueDate: '',
+    }
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
