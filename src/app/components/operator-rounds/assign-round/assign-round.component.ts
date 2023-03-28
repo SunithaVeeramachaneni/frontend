@@ -33,6 +33,11 @@ export class AssignRoundComponent implements OnInit {
   }
   @Output() selectedAssignee: EventEmitter<UserDetails> =
     new EventEmitter<UserDetails>();
+
+  @Output() closeAssigneeModalHandler: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+
+  @Input() dropdownPosition;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
@@ -61,5 +66,9 @@ export class AssignRoundComponent implements OnInit {
 
   selectAssignee(user: UserDetails) {
     this.selectedAssignee.emit(user);
+  }
+
+  cancel() {
+    this.closeAssigneeModalHandler.emit(false);
   }
 }

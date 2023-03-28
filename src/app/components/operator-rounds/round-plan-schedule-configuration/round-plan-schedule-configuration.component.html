@@ -246,21 +246,24 @@
                 >
               </mat-radio-group>
             </div>
-            <mat-form-field
-              appearance="outline"
-              class="width-100 cursor"
-              [matMenuTriggerFor]="menu"
-              #menuTrigger="matMenuTrigger"
-            >
-              <mat-label translate>select</mat-label>
-              <input
-                type="text"
-                matInput
-                formControlName="displayValue"
-                class="cursor"
-              />
-              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
-            </mat-form-field>
+            <div id="assignDropdownPosition">
+              <mat-form-field
+                appearance="outline"
+                class="width-100 cursor"
+                cdkOverlayOrigin
+                #trigger="cdkOverlayOrigin"
+                (click)="openAssignModal = true"
+              >
+                <mat-label translate>select</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  formControlName="displayValue"
+                  class="cursor"
+                />
+                <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+              </mat-form-field>
+            </div>
             <div class="info" translate>assignToInfo</div>
           </div>
           <div class="rounds-count">
@@ -291,12 +294,25 @@
               }}
             </mat-error>
           </div>
-          <mat-menu #menu="matMenu" backdropClass="assign-menu">
-            <app-assign-round
-              [assigneeDetails]="assigneeDetails"
-              (selectedAssignee)="selectedAssigneeHandler($event)"
-            ></app-assign-round>
-          </mat-menu>
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayPanelClass="custom-popover"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            cdkConnectedOverlayWidth="400px"
+            [cdkConnectedOverlayOpen]="openAssignModal"
+            [cdkConnectedOverlayOrigin]="trigger"
+            (backdropClick)="openAssignModal = false"
+          >
+            <div class="assign-menu">
+              <app-assign-round
+                [assigneeDetails]="assigneeDetails"
+                [dropdownPosition]="dropdownPosition"
+                (closeAssigneeModalHandler)="openAssignModal = false"
+                (selectedAssignee)="selectedAssigneeHandler($event)"
+              ></app-assign-round>
+            </div>
+          </ng-template>
         </ng-container>
 
         <div class="footer">

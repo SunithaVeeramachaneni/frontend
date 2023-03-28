@@ -1,9 +1,12 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -40,7 +43,8 @@ import {
   RoundDetailResponse,
   SelectTab,
   RowLevelActionEvent,
-  UserDetails
+  UserDetails,
+  AssigneeDetails
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -54,6 +58,8 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-rounds',
@@ -63,8 +69,18 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @Input() users$: Observable<UserDetails[]>;
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
+  @ViewChild('picker') datePicker: MatDatepicker<Date>;
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  assigneeDetails: AssigneeDetails;
   filterJson = [];
   columns: Column[] = [
     {
@@ -145,7 +161,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       id: 'dueDate',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'string',
+      controlType: 'date-picker',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -226,7 +242,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       id: 'assignedTo',
       displayName: 'Assigned To',
       type: 'string',
-      controlType: 'string',
+      controlType: 'dropdown',
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -297,8 +313,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
+  openAssignModal = false;
+  assigneePosition: any;
+
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  private _users$: Observable<UserDetails[]>;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -369,6 +389,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       })
     );
 
+    this.rounds$.subscribe(console.log);
+
     this.activatedRoute.params.subscribe(() => {
       this.hideRoundDetail = true;
     });
@@ -406,8 +428,38 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
 
-  cellClickActionHandler = (event: CellClickActionEvent): void => {
-    this.openRoundHandler(event.row);
+  cellClickActionHandler = (event) => {
+    console.log(event);
+    const { columnId, row } = event;
+    switch (columnId) {
+      case 'assignedTo':
+        const pos = document
+          .getElementById(`${row.id}`)
+          .getBoundingClientRect();
+        console.log(pos);
+        this.assigneePosition = {
+          top: `${pos?.top + 7}px`,
+          left: `${pos?.left - 15}px`,
+          modalLeft: `calc(100vh - ${pos?.left}px)`
+        };
+        this.openAssignModal = true;
+        console.log(this.openAssignModal);
+        // this.assigneeMenuTrigger.openMenu();
+        break;
+      case 'dueDate':
+        // console.log(document.getElementById('dueDate'));
+        // const pos = document.getElementById('dueDate').getBoundingClientRect();
+        // console.log(pos);
+        // this.duedatePickerPosition = {
+        //   top: `${pos?.top}px`,
+        //   left: `${pos?.left}px`
+        // };
+        // this.datePicker.open();
+        // console.log(this.datePicker);
+        break;
+      default:
+        this.openRoundHandler(row);
+    }
   };
 
   prepareMenuActions(permissions: Permission[]): void {
@@ -481,4 +533,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
+
+  selectedAssigneeHandler(event: UserDetails) {
+    const { email: value, firstName, lastName } = event;
+    // this.roundPlanSchedulerConfigForm
+    //   .get('assignmentDetails')
+    //   .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    //this.roundPlanSchedulerConfigForm.markAsDirty();
+    //this.assigneeMenuTrigger.closeMenu();
+    this.openAssignModal = false;
+  }
+
+  onChangeDueDateHandler(event) {
+    console.log(event);
+  }
 }

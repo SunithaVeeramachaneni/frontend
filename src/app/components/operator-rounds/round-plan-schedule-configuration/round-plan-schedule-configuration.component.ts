@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DoCheck,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
@@ -15,7 +17,6 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
   addMonths,
@@ -49,9 +50,10 @@ export interface ScheduleConfig {
   styleUrls: ['./round-plan-schedule-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RoundPlanScheduleConfigurationComponent implements OnInit {
+export class RoundPlanScheduleConfigurationComponent
+  implements OnInit, DoCheck
+{
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
     if (roundPlanDetail) {
@@ -85,6 +87,8 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     min: 0,
     max: 30
   };
+  dropdownPosition: any;
+  openAssignModal = false;
   private _roundPlanDetail: any;
 
   constructor(
@@ -94,6 +98,11 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     private dialog: MatDialog,
     private operatorRoundsService: OperatorRoundsService
   ) {}
+
+  // @HostListener('click')
+  // clicked() {
+  //   if (this.openAssignModal) this.openAssignModal = false;
+  // }
 
   ngOnInit(): void {
     this.roundPlanSchedulerConfigForm = this.fb.group({
@@ -334,6 +343,16 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     this.currentDate = new Date();
     this.setMonthlyDaysOfWeek();
     this.roundPlanSchedulerConfigForm.markAsDirty();
+  }
+
+  ngDoCheck(): void {
+    const position = document
+      .getElementById('assignDropdownPosition')
+      ?.getBoundingClientRect();
+    this.dropdownPosition = {
+      left: '-15px',
+      top: `${position?.top + 20}px`
+    };
   }
 
   setMonthlyDaysOfWeek() {
@@ -586,7 +605,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       .get('assignmentDetails')
       .patchValue({ value, displayValue: `${firstName} ${lastName}` });
     this.roundPlanSchedulerConfigForm.markAsDirty();
-    this.menuTrigger.closeMenu();
+    this.openAssignModal = false;
   }
 
   processValidationErrors(controlName: string): boolean {

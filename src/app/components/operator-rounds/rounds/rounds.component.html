@@ -84,6 +84,7 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (onChangeDueDateHandler)="onChangeDueDateHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>
@@ -97,3 +98,28 @@
     </div>
   </div>
 </ng-container>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayPanelClass="custom-popover"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  cdkConnectedOverlayWidth="400px"
+  [cdkConnectedOverlayOpen]="openAssignModal"
+  [cdkConnectedOverlayOrigin]="trigger"
+  (backdropClick)="openAssignModal = false"
+>
+  <div
+    [ngStyle]="{
+      left: assigneePosition?.modalLeft
+    }"
+    class="assign-modal"
+  >
+    <app-assign-round
+      [assigneeDetails]="assigneeDetails"
+      [dropdownPosition]="assigneePosition"
+      (closeAssigneeModalHandler)="openAssignModal = false"
+      (selectedAssignee)="selectedAssigneeHandler($event)"
+    ></app-assign-round>
+  </div>
+</ng-template>
