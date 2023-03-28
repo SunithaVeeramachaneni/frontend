@@ -18,7 +18,9 @@ import {
   RoundPlanDetailResponse,
   RoundDetailResponse,
   RoundDetail,
-  RoundPlanQueryParam
+  RoundPlanQueryParam,
+  UserDetails,
+  UsersInfoByEmail
 } from '../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -41,6 +43,7 @@ export class OperatorRoundsService {
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
+  usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
@@ -376,50 +379,6 @@ export class OperatorRoundsService {
     );
   }
 
-  getResponseSet$(queryParams: {
-    nextToken?: string;
-    limit?: number;
-    responseType: string;
-  }) {
-    const params: URLSearchParams = new URLSearchParams();
-    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
-    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
-    params.set('type', queryParams?.responseType);
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets?' + params.toString()
-    );
-  }
-
-  createResponseSet$(responseSet) {
-    return this.appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets',
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet?.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
-      }
-    );
-  }
-
-  updateResponseSet$(responseSet) {
-    return this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSet.id}`,
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        _version: responseSet.version
-      }
-    );
-  }
-
   copyRoundPlan$(formId: string) {
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
@@ -427,13 +386,6 @@ export class OperatorRoundsService {
       {
         formId
       }
-    );
-  }
-
-  deleteResponseSet$(responseSetId: string) {
-    return this.appService._removeData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSetId}`
     );
   }
 
@@ -750,5 +702,20 @@ export class OperatorRoundsService {
       'assets/json/operator-rounds-round-filter.json',
       info
     );
+  }
+
+  setUsers(users: UserDetails[]) {
+    this.usersInfoByEmail = users.reduce((acc, curr) => {
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      return acc;
+    }, {});
+  }
+
+  getUsersInfo(): UsersInfoByEmail {
+    return this.usersInfoByEmail;
+  }
+
+  getUserFullName(email: string): string {
+    return this.usersInfoByEmail[email]?.fullName;
   }
 }

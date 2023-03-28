@@ -33,10 +33,8 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
 import { hierarchyReducer } from 'src/app/forms/state/hierarchy.reducer';
-import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
-import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
@@ -75,6 +73,7 @@ import { IssuesComponent } from './issues/issues.component';
 import { ActionsComponent } from './actions/actions.component';
 import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
 import { ChartComponent } from './observations/donut-chart/chart.component';
+import { AssignRoundComponent } from './assign-round/assign-round.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -106,7 +105,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     IssuesComponent,
     ActionsComponent,
     IssuesActionsDetailViewComponent,
-    ChartComponent
+    ChartComponent,
+    AssignRoundComponent
   ],
   imports: [
     FormsModule,
@@ -156,13 +156,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
-      responseSet: responseSetReducer,
       hierarchy: hierarchyReducer
     }),
-    EffectsModule.forFeature([
-      RoundPlanConfigurationEffects,
-      ResponseSetEffects
-    ]),
+    EffectsModule.forFeature([RoundPlanConfigurationEffects]),
     NgxEchartsModule.forRoot({
       echarts
     })

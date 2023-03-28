@@ -7,6 +7,7 @@ import { AssetsListComponent } from './assets/assets-list/assets-list.component'
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 import { PlantListComponent } from './plants/plant-list/plant-list.component';
+import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 const routes: Routes = [
   {
     path: '',
@@ -43,6 +44,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Plants' },
           permissions: [permissions.viewPlants]
+        }
+      },
+      {
+        path: 'global-response',
+        component: ResponsesListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Global Response Set' },
+          permissions: [permissions.viewGlobalResponses]
         }
       }
     ]

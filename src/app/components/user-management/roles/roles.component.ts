@@ -108,7 +108,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     public dialog: MatDialog,
     private toast: ToastService,
     private headerService: HeaderService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.searchRole = new FormControl('');
@@ -366,7 +366,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     const newRole = this.createDuplicateRole(this.rolesList, role);
     const postRole = {
       ...newRole,
-      permissionIds: newRole.permissionIds.map((p) => p.id)
+      permissionIds: newRole.permissionIds
     };
     this.roleService.createRole$(postRole).subscribe((resp) => {
       if (Object.keys(resp).length) {

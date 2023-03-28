@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -38,7 +39,8 @@ import {
   RoundDetail,
   RoundDetailResponse,
   SelectTab,
-  RowLevelActionEvent
+  RowLevelActionEvent,
+  UserDetails
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -61,6 +63,7 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  @Input() users$: Observable<UserDetails[]>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   status = ['Open', 'In-progress', 'Completed'];
@@ -225,8 +228,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -356,16 +359,32 @@ export class RoundsComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.rounds$ = combineLatest([roundsOnLoadSearch$, onScrollRounds$]).pipe(
+    this.rounds$ = combineLatest([
+      roundsOnLoadSearch$,
+      onScrollRounds$,
+      this.users$
+    ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows;
+          initial.data = rounds.rows.map((roundDetail) => ({
+            ...roundDetail,
+            assignedTo: this.operatorRoundsService.getUserFullName(
+              roundDetail.assignedTo
+            )
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData.rows);
+          initial.data = initial.data.concat(
+            scrollData.rows.map((roundDetail) => ({
+              ...roundDetail,
+              assignedTo: this.operatorRoundsService.getUserFullName(
+                roundDetail.assignedTo
+              )
+            }))
+          );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);

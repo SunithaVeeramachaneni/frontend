@@ -1,16 +1,19 @@
 import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { FormService } from '../../services/form.service';
-import { Store } from '@ngrx/store';
-import { getFormMetadata, State, getResponseSets } from '../../state';
-import { ActivatedRoute } from '@angular/router';
+
+import { slideInOut } from 'src/app/animations';
 
 @Component({
   selector: 'app-response-type',
   templateUrl: './response-type.component.html',
-  styleUrls: ['./response-type.component.scss']
+  styleUrls: ['./response-type.component.scss'],
+  animations: [slideInOut]
 })
 export class ResponseTypeComponent implements OnInit {
   @Input() fieldTypes;
@@ -24,6 +27,7 @@ export class ResponseTypeComponent implements OnInit {
   public isGlobalResponseOpen = false;
   public globalResponses$: Observable<any[]>;
   public responseToBeEdited: any;
+  public globalResponseSlideState: string;
   quickResponsesData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<any>({
     type: 'create',
@@ -34,15 +38,14 @@ export class ResponseTypeComponent implements OnInit {
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
-    private store: Store<State>,
+    private responseSetService: ResponseSetService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.globalResponses$ = this.store
-      .select(getResponseSets)
-      .pipe((responses: any) => responses);
-    this.globalResponses$.subscribe();
+    this.globalResponses$ = this.responseSetService
+      .fetchAllGlobalResponses$()
+      .pipe(map((responses) => responses.items));
 
     this.route.params.subscribe((params) => {
       this.formId = params.id;
@@ -137,7 +140,11 @@ export class ResponseTypeComponent implements OnInit {
             type: responseType,
             name,
             value: JSON.parse(values),
-            description
+            description,
+            version: response._version,
+            createdBy: response.createdBy,
+            refCount: response.refCount,
+            isMultiColumn: false
           }
     );
   };
@@ -162,7 +169,10 @@ export class ResponseTypeComponent implements OnInit {
 
   handleGlobalResponsesToggle() {
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
+    this.globalResponseSlideState = 'in';
   }
+
+  handleSlideState = (event) => (this.globalResponseSlideState = event);
 
   handleEditGlobalResponse = (response: any) => {
     this.responseToBeEdited = response;

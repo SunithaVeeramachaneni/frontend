@@ -51,11 +51,7 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import {
-  FormConfigurationActions,
-  FormConfigurationApiActions,
-  MCQResponseActions
-} from 'src/app/forms/state/actions';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -68,6 +64,7 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -110,6 +107,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
+    private responseSetService: ResponseSetService,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -139,9 +137,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    this.store.dispatch(
-      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
-    );
+    this.responseSetService.fetchAllGlobalResponses$().subscribe();
+
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),
@@ -385,12 +382,35 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
+        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
+        let df = this.formConfigurationService.getDefQues();
+        let questions = new Array(4).fill(0).map((q, index) => {
+          if (index === 0) {
+            return { ...df, name: 'Site Conducted' };
+          }
+          if (index === 1) {
+            return {
+              ...df,
+              name: 'Conducted On',
+              fieldType: 'DT',
+              date: true,
+              time: true
+            };
+          }
+          if (index === 2) {
+            return { ...df, name: 'Performed By' };
+          }
+          if (index === 3) {
+            return { ...df, name: 'Location', fieldType: 'GAL' };
+          }
+        });
         this.formConfigurationService.addPage(
           0,
           1,
-          1,
+          4,
           this.sectionIndexes,
-          this.formConf.counter.value
+          this.formConf.counter.value,
+          [{ section, questions }]
         );
       }
     });
