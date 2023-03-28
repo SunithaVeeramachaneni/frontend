@@ -481,7 +481,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.createdBy)
+      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
@@ -521,6 +521,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
+    this.filter={
+      status: '',
+      inspectedBy: '' 
+    }
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
