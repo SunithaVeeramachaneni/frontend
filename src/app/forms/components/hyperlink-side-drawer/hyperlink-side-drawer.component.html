@@ -27,7 +27,15 @@
         </div>
       </mat-form-field>
       <mat-error *ngIf="processValidationErrors('hyperlink')">
-        {{ errors.hyperlink.name | translate }}
+        {{
+          errors.hyperlink.name
+            | translate
+              : {
+                  name: 'hyperlink' | translate,
+                  message:
+                    'invalidUrl' | translate : { name: 'hyperlink' | translate }
+                }
+        }}
       </mat-error>
     </div>
 

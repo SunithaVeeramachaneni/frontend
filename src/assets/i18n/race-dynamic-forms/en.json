@@ -29,6 +29,8 @@
   "changesPublished": "All Changes Published",
   "publishingChanges": "Publishing Changes...",
   "page": "Page",
+  "pattern": "{message}",
+  "invalidUrl": "Enter valid {name}",
   "deletePage": "Delete Page",
   "addPage": "Add Page",
   "deleteSection": "Delete Section",

@@ -385,12 +385,35 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
+        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
+        let df = this.formConfigurationService.getDefQues();
+        let questions = new Array(4).fill(0).map((q, index) => {
+          if (index === 0) {
+            return { ...df, name: 'Site Conducted' };
+          }
+          if (index === 1) {
+            return {
+              ...df,
+              name: 'Conducted On',
+              fieldType: 'DT',
+              date: true,
+              time: true
+            };
+          }
+          if (index === 2) {
+            return { ...df, name: 'Performed By' };
+          }
+          if (index === 3) {
+            return { ...df, name: 'Location', fieldType: 'GAL' };
+          }
+        });
         this.formConfigurationService.addPage(
           0,
           1,
-          1,
+          4,
           this.sectionIndexes,
-          this.formConf.counter.value
+          this.formConf.counter.value,
+          [{ section, questions }]
         );
       }
     });
