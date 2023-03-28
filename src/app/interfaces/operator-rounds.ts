@@ -19,7 +19,6 @@ export interface RoundPlanScheduleConfiguration {
   assignmentDetails: AssignmentDetail;
   advanceRoundsCount: number;
   startDatePicker?: Date;
-  endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
 }
 
