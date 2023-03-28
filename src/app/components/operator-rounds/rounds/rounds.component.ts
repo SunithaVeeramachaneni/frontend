@@ -305,7 +305,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  assignedTo: any = [];
+  assignedTo: string[] = [];
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -490,9 +490,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         }
       } 
       for (const item of this.filterJson) {
-        if (item['column'] == 'status') {
+        if (item['column'] === 'status') {
           item.items = this.status;
-        } else if (item['column'] == 'assignedTo') {
+        } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
         } 
       }
@@ -503,7 +503,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
       for (const item of this.filterJson) {
-        if (item['column'] == 'status') {
+        if (item['column'] === 'status') {
           item.items = this.status;
         }
       }
@@ -513,9 +513,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type != 'daterange') {
+      if (item.type !== 'daterange') {
         this.filter[item.column] = item.value;
-      } else if (item.type == 'date') {
+      } else if (item.type === 'date') {
         this.filter[item.column] = item.value.toISOString();
       }
     }
