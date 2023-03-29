@@ -233,8 +233,8 @@ export class BuilderComponent implements OnInit, OnChanges {
           })
         );
 
-        const sections = this.getSectionsOfPage(pageIndex);
-        this.isEmptyPage[pageIndex] = sections.length === 0;
+        this.isEmptyPage[pageIndex] =
+          this.getSectionsOfPage(pageIndex).length === 0;
         break;
     }
   }
