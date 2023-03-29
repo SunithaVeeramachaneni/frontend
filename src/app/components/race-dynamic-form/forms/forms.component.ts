@@ -527,7 +527,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: ScheduleFormDetail) {
+  openScheduleConfigHandler(row: any) {
     this.hideScheduleConfig = false;
     this.closeFormHandler();
     this.scheduleFormDetail = { ...row };
