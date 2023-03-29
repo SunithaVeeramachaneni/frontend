@@ -240,7 +240,7 @@ export class RoundPlanListComponent implements OnInit {
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
@@ -441,7 +441,7 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => { };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
