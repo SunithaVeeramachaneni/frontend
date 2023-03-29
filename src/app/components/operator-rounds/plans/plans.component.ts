@@ -399,6 +399,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
+        this.isLoading$.next(false);
         if (this.skip === 0) {
           this.initial.data = this.formatRoundPlans(
             roundPlans.rows,
@@ -476,7 +477,6 @@ export class PlansComponent implements OnInit, OnDestroy {
           unscheduled:
             unscheduledCount !== undefined ? unscheduledCount : unscheduled
         };
-        this.isLoading$.next(false);
       })
     );
   }

@@ -167,7 +167,7 @@ export class RoundPlanListComponent implements OnInit {
     },
     {
       id: 'author',
-      displayName: 'Owner',
+      displayName: 'Created By',
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
@@ -240,7 +240,7 @@ export class RoundPlanListComponent implements OnInit {
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
@@ -441,7 +441,7 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => {};
+  configOptionsChangeHandler = (event): void => { };
 
   prepareMenuActions(): void {
     const menuActions = [
@@ -547,7 +547,7 @@ export class RoundPlanListComponent implements OnInit {
       scheduleStartDate: '',
       scheduleEndDate: ''
     };
-     this.nextToken = '';
+    this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 }
