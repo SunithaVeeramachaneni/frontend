@@ -1,9 +1,9 @@
-@use './../../../../scss/colors.scss' as colors;
+@import './../../../../scss/colors.scss';
 
 .min-toolbar {
   background-color: white;
   height: 65px;
-  border-bottom: 1px solid colors.$border-color;
+  border-bottom: 1px solid $border-color;
   margin-left: 65px;
   transition: 0.4s;
 }
@@ -13,7 +13,7 @@
 }
 
 .menu-icon {
-  color: colors.$menu-icon-color;
+  color: $menu-icon-color;
   margin-bottom: 4px;
 }
 
@@ -61,7 +61,7 @@
   font-weight: 500;
   font-size: 140%;
   margin-left: 10px;
-  color: #000000;
+  color: $black;
   line-height: 42px;
   text-overflow: ellipsis;
   width: 100%;
@@ -202,9 +202,9 @@
 
 .header-cols {
   .user-with-logo {
-    border-top: 1px solid #e0e0e0;
-    border-left: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
+    border-top: 1px solid $border-color;
+    border-left: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     padding: 0 7px;
@@ -225,9 +225,9 @@
   }
 
   .with-company-logo {
-    border-top: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
+    border-top: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     height: 49px;
@@ -249,7 +249,7 @@
     text-align: center;
     letter-spacing: 0.4px;
     text-transform: uppercase;
-    color: #000000;
+    color: $black;
     opacity: 0.3;
     margin: 10px 0;
   }
@@ -269,7 +269,7 @@
   margin: 0 auto;
   width: 0;
   height: 0;
-  border-bottom: 15px solid #ffffff;
+  border-bottom: 15px solid $white;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
@@ -283,13 +283,13 @@
   margin: 0 auto;
   width: 0;
   height: 0;
-  border-bottom: 15px solid #ffffff;
+  border-bottom: 15px solid $white;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
 
 .header-profile-menu {
-  background-color: #ffffff;
+  background-color: $white;
   border-radius: 8px;
   box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
   padding: 16px 0px;
@@ -310,7 +310,7 @@
     font-weight: 500;
     font-size: 120%;
     text-align: center;
-    color: #000000;
+    color: $black;
     word-wrap: break-word;
     margin: 10px 0 7px 0;
   }
@@ -338,7 +338,7 @@
   .profile-signout {
     font-weight: 400;
     font-size: 120%;
-    color: #000000;
+    color: $black;
   }
 }
 .collabDialog .mat-dialog-container {
@@ -362,15 +362,15 @@
     height: 12px;
     border-radius: 50%;
     // background-color: grey;
-    border: 2px solid colors.$white;
+    border: 2px solid $white;
     bottom: 2px;
     right: 5px;
     position: absolute;
   }
   .online {
-    background-color: colors.$green;
+    background-color: $green;
   }
   .offline {
-    background-color: colors.$gray;
+    background-color: $gray;
   }
 }
