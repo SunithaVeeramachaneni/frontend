@@ -307,7 +307,7 @@ export class RaceDynamicFormService {
         environment.rdfApiUrl,
         `forms/authored/${formId}?formStatus=Draft`
       )
-    ).pipe(map(({ items }) => items));
+    ).pipe(map((items) => items));
   }
 
   getFormDetailByFormId$(formId: string) {
