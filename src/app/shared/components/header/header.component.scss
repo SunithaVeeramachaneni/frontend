@@ -3,7 +3,7 @@
 .min-toolbar {
   background-color: white;
   height: 65px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid colors.$border-color;
   margin-left: 65px;
   transition: 0.4s;
 }
@@ -13,7 +13,7 @@
 }
 
 .menu-icon {
-  color: #727caf;
+  color: colors.$menu-icon-color;
   margin-bottom: 4px;
 }
 
