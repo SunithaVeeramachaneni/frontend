@@ -63,6 +63,7 @@ export class BuilderComponent implements OnInit, OnChanges {
     return this._selectedNode;
   }
   @Input() counter;
+  @Input() isPreviewActive;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -72,10 +73,10 @@ export class BuilderComponent implements OnInit, OnChanges {
   questionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   questionIndexes: any;
+  isEmptyPage: any = [];
+  isEmptyPlan = true;
 
   questionCounter$: Observable<number>;
-
-  isPreviewActive = false;
   formMetadata$: Observable<FormMetadata>;
 
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -96,13 +97,24 @@ export class BuilderComponent implements OnInit, OnChanges {
     this.pageIndexes$ = this.store.select(getPageIndexes(this.selectedNode.id));
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes(this.selectedNode.id))
-      .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
+      .pipe(
+        tap((sectionIndexes) => {
+          this.sectionIndexes = sectionIndexes;
+        })
+      );
     this.sectionIds$ = this.store.select(getSectionIds(this.selectedNode.id));
     this.questionIds$ = this.store.select(getQuestionIds(this.selectedNode.id));
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes(this.selectedNode.id))
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
     this.questionCounter$ = this.store.select(getQuestionCounter);
+    this.sectionIndexes$.subscribe((sectionIndexes) => {
+      // eslint-disable-next-line guard-for-in
+      for (const index in sectionIndexes) {
+        const empty = sectionIndexes[index].length === 0;
+        this.isEmptyPage.push(empty);
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -117,7 +129,9 @@ export class BuilderComponent implements OnInit, OnChanges {
           .pipe(
             tap((pages) => {
               if (!pages || !pages.length) {
-                this.addPage();
+                this.isEmptyPlan = true;
+              } else {
+                this.isEmptyPlan = false;
               }
             })
           )
@@ -131,6 +145,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
 
   addPage() {
+    this.isEmptyPlan = false;
     this.roundPlanConfigurationService.addPage(
       0,
       1,
@@ -217,6 +232,9 @@ export class BuilderComponent implements OnInit, OnChanges {
             subFormId: this.selectedNode.id
           })
         );
+
+        this.isEmptyPage[pageIndex] =
+          this.getSectionsOfPage(pageIndex).length === 0;
         break;
     }
   }
@@ -363,5 +381,10 @@ export class BuilderComponent implements OnInit, OnChanges {
       1,
       subFormId
     );
+  }
+
+  addSection(pageIndex) {
+    this.isEmptyPage[pageIndex] = false;
+    this.sectionEventHandler({ pageIndex, type: 'add', sectionIndex: 0 });
   }
 }
