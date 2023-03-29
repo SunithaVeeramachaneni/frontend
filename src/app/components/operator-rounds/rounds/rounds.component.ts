@@ -58,8 +58,6 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
-import { MatMenuTrigger } from '@angular/material/menu';
-import { MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-rounds',
@@ -69,8 +67,6 @@ import { MatDatepicker } from '@angular/material/datepicker';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
-  @ViewChild('picker') datePicker: MatDatepicker<Date>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -391,7 +387,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }));
         } else {
           initial.data = initial.data.concat(
-            scrollData.rows.map((roundDetail) => ({
+            scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
               assignedTo: this.operatorRoundsService.getUserFullName(
                 roundDetail.assignedTo
@@ -445,33 +441,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event) => {
-    console.log(event);
     const { columnId, row } = event;
     switch (columnId) {
       case 'assignedTo':
         const pos = document
           .getElementById(`${row.id}`)
           .getBoundingClientRect();
-        console.log(pos);
         this.assigneePosition = {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`,
-          modalLeft: `calc(100vh - ${pos?.left}px)`
+          modalLeft: `calc(100vh - ((${pos?.left}px) - 30px))`
         };
         this.openAssignModal = true;
-        console.log(this.openAssignModal);
-        // this.assigneeMenuTrigger.openMenu();
         break;
       case 'dueDate':
-        // console.log(document.getElementById('dueDate'));
-        // const pos = document.getElementById('dueDate').getBoundingClientRect();
-        // console.log(pos);
-        // this.duedatePickerPosition = {
-        //   top: `${pos?.top}px`,
-        //   left: `${pos?.left}px`
-        // };
-        // this.datePicker.open();
-        // console.log(this.datePicker);
         break;
       default:
         this.openRoundHandler(row);
@@ -552,11 +535,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(event: UserDetails) {
     const { email: value, firstName, lastName } = event;
-    // this.roundPlanSchedulerConfigForm
-    //   .get('assignmentDetails')
-    //   .patchValue({ value, displayValue: `${firstName} ${lastName}` });
-    //this.roundPlanSchedulerConfigForm.markAsDirty();
-    //this.assigneeMenuTrigger.closeMenu();
     this.openAssignModal = false;
   }
 

@@ -350,8 +350,9 @@ export class RoundPlanScheduleConfigurationComponent
       .getElementById('assignDropdownPosition')
       ?.getBoundingClientRect();
     this.dropdownPosition = {
-      left: '-15px',
-      top: `${position?.top + 20}px`
+      left: `${position?.left - 30}px`,
+      top: `${position?.top + 20}px`,
+      modalTop: `-${position?.top - 20}px`
     };
   }
 

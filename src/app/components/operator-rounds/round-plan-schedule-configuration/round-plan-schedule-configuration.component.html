@@ -304,7 +304,10 @@
             [cdkConnectedOverlayOrigin]="trigger"
             (backdropClick)="openAssignModal = false"
           >
-            <div class="assign-menu">
+            <div
+              class="assign-menu"
+              [ngStyle]="{ top: dropdownPosition.modalTop }"
+            >
               <app-assign-round
                 [assigneeDetails]="assigneeDetails"
                 [dropdownPosition]="dropdownPosition"
