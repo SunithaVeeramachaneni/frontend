@@ -1,0 +1,68 @@
+@import '../../../../scss/colors.scss';
+
+.search-container {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  z-index: 100;
+
+  .search {
+    margin-top: 5px;
+    margin-right: 14px;
+  }
+
+  ::ng-deep .form-categories .mat-button-toggle {
+    margin-right: 10px;
+    border-radius: 30px;
+    align-items: center;
+    height: 20px;
+    padding: 8px 18px;
+    background: $blue8;
+    border: none;
+  }
+
+  ::ng-deep .form-categories .mat-button-toggle-group-appearance-standard {
+    border: none;
+  }
+
+  ::ng-deep
+    .form-categories
+    .mat-button-toggle-group-appearance-standard
+    .mat-button-toggle-label-content {
+    line-height: 24px;
+    font-size: 90%;
+    font-weight: 600;
+    font-style: normal;
+    color: $blue-main;
+  }
+
+  ::ng-deep
+    .form-categories
+    .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+    background: $blue-main;
+  }
+
+  ::ng-deep
+    .form-categories
+    .mat-button-toggle-checked.mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    color: $white;
+  }
+
+  ::ng-deep .form-categories .mat-button-toggle .mat-button-toggle-ripple {
+    border-radius: 30px;
+  }
+}
+
+::ng-deep .remove-zindex th {
+  z-index: 0 !important;
+}
+
+::ng-deep .table-column {
+  width: 15% !important;
+  max-width: 195px !important;
+}
+
+.padding-lr-20 {
+  padding: 0 20px;
+}

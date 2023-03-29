@@ -12,6 +12,11 @@
     width: 55px;
   }
 
+  .question-line {
+    border: 1px solid $border-color;
+    margin-left: -23px;
+  }
+
   .questions-btn {
     background-color: $white;
     border: none;
@@ -49,8 +54,6 @@
   }
 
   .questions-div {
-    border-bottom: 1px solid $border-color;
-
     .question-input-box {
       margin-top: 7px;
     }
@@ -197,10 +200,9 @@
     .uomSymbol {
       font-weight: 600;
     }
-    .uomTitle {
-    }
   }
 }
+
 .rangeBtn {
   cursor: pointer;
   margin-left: 5px;

@@ -7,17 +7,17 @@
     "value": ""
   },
   {
-    "label": "Inspected By",
+    "label": "Operator",
     "items": [],
-    "column": "inspectedBy",
+    "column": "assignedTo",
     "type": "select",
     "value": ""
   },
   {
-    "label": "Inspected On ",
+    "label": "Due date",
     "items": [],
-    "column": "inspectedOn",
-    "type": "daterange",
+    "column": "dueDate",
+    "type": "date",
     "startDate": "",
     "endDate": "",
     "value": ""
