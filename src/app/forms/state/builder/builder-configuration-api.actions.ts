@@ -1,11 +1,7 @@
 import { createAction, props } from '@ngrx/store';
-import {
-  CreateAuthoredRoundPlanDetailMutation,
-  CreateFormDetailMutation,
-  UpdateAuthoredFormDetailMutation,
-  UpdateFormDetailMutation
-} from 'src/app/API.service';
 import { FormMetadata } from 'src/app/interfaces';
+import { CreateFormDetail, UpdateAuthoredFormDetail, UpdateFormDetail } from 'src/app/interfaces/master-data-management/forms';
+import { CreateAuthoredRoundPlanDetail } from 'src/app/interfaces/master-data-management/round-plan';
 
 export const createFormSuccess = createAction(
   '[Form Configuration API] createFormSuccess',
@@ -30,8 +26,8 @@ export const updateFormFailure = createAction(
 export const createFormDetailSuccess = createAction(
   '[Form Configuration API] createFormDetailSuccess',
   props<{
-    formDetail: CreateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    formDetail: CreateFormDetail;
+    authoredFormDetail: CreateAuthoredRoundPlanDetail;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -47,8 +43,8 @@ export const createFormDetailFailure = createAction(
 export const updateFormDetailSuccess = createAction(
   '[Form Configuration API] updateFormDetailSuccess',
   props<{
-    formDetail: UpdateFormDetailMutation;
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    formDetail: UpdateFormDetail;
+    authoredFormDetail: CreateAuthoredRoundPlanDetail;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -64,7 +60,7 @@ export const updateFormDetailFailure = createAction(
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] createAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail: CreateAuthoredRoundPlanDetailMutation;
+    authoredFormDetail: CreateAuthoredRoundPlanDetail;
     formSaveStatus: string;
     isFormCreated: boolean;
   }>()
@@ -78,7 +74,7 @@ export const createAuthoredFromDetailFailure = createAction(
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] updateAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail: UpdateAuthoredFormDetailMutation;
+    authoredFormDetail: UpdateAuthoredFormDetail;
     formSaveStatus: string;
   }>()
 );

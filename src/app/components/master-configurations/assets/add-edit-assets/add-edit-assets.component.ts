@@ -15,7 +15,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
@@ -29,7 +28,7 @@ import { AssetsService } from '../services/assets.service';
 export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   private assetEditData = null;
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;

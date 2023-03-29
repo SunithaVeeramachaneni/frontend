@@ -25,7 +25,6 @@ import {
   tap
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
-import { GetFormListQuery } from 'src/app/API.service';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
@@ -37,6 +36,7 @@ import {
   TableEvent,
   UserInfo
 } from 'src/app/interfaces';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
@@ -450,7 +450,7 @@ export class IssuesComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  openModal(row: GetFormListQuery): void {
+  openModal(row: GetFormList): void {
     this.dialog.open(IssuesActionsDetailViewComponent, {
       data: row,
       maxWidth: '100vw',
