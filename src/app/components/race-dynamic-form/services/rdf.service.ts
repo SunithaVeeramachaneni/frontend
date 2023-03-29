@@ -218,18 +218,29 @@ export class RaceDynamicFormService {
   }
 
   createFormDetail$(formDetails) {
-    return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
-      formlistID: formDetails.formListId,
-      formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
-    });
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/inspection',
+      {
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
+      }
+    );
   }
 
   updateFormDetail$(formDetails) {
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/detail/${formDetails.formDetailId}`,
+      `forms/inspection/${formDetails.formDetailId}`,
       {
         formlistID: formDetails.formListId,
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -326,6 +337,7 @@ export class RaceDynamicFormService {
       let { sections, questions, logics } = page;
 
       const pageItem = {
+        PAGENAME: page.name,
         SECTIONS: sections.map((section) => {
           let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
