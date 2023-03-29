@@ -481,8 +481,8 @@ export class RaceDynamicFormService {
                 ) {
                   Object.assign(questionItem, {
                     TAG: {
-                      TITLE: question.value.tag.title,
-                      COLOUR: question.value.tag.colour
+                      title: question.value.tag.title,
+                      colour: question.value.tag.colour
                     }
                   });
                 } else {
