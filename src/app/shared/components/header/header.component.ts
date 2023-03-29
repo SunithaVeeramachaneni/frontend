@@ -44,6 +44,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.headerService.setHeaderTitle(menu);
   }
 
+  @Input() set menuOpenClose(state) {
+    this.menustate = state;
+  }
+
   unreadMessageCount: number;
   slackVerification$: Observable<any>;
   msTeamsSignIn$: Observable<any>;
@@ -56,6 +60,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isOpen = false;
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
+  private menustate;
 
   constructor(
     public uploadDialog: MatDialog,
