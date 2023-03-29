@@ -27,6 +27,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
 import { TableComponent } from './components/field-types/table/table.component';
@@ -57,6 +59,8 @@ import { TagSelectComponent } from './components/field-types/instructions/tag-se
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
 import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
+import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
+import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +96,9 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     TagSelectComponent,
     InstructionImageComponent,
     InstructionPdfComponent,
-    InstructionPdfPreviewComponent
+    InstructionPdfPreviewComponent,
+    ScheduleSuccessModalComponent,
+    ScheduleConfigurationComponent
   ],
   imports: [
     FormsModule,
@@ -119,7 +125,8 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     MatTooltipModule,
     MatRadioModule,
     NgxShimmerLoadingModule,
-    TranslateModule.forChild({})
+    TranslateModule.forChild({}),
+    MatDatepickerModule
   ],
   exports: [
     FormWidgetComponent,
@@ -139,7 +146,9 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
     ImportQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    ScheduleSuccessModalComponent,
+    ScheduleConfigurationComponent
   ]
 })
 export class FormModule {}
