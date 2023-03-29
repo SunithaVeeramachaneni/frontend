@@ -40,7 +40,7 @@
         mat-icon-button
         (click)="editPage()"
         class="edit-icon"
-        *ngIf="pageForm.get('name').disabled == true"
+        *ngIf="pageForm.get('name').disabled === true"
       >
         <img
           src="assets/rdf-forms-icons/edit-icon.svg"
@@ -66,7 +66,6 @@
           mat-menu-item
           (click)="deletePage()"
           class="text-red"
-          font-weo
           [disabled]="props.pagesCount === 1"
         >
           <span translate="deletePage"></span>

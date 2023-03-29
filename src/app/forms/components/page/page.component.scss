@@ -35,13 +35,11 @@
       font-size: 110%;
       font-weight: 500;
       color: $black;
-      width-max: 50%;
+      max-width: 50%;
       display: inline-block;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      // position: relative;
-      // top: 3px;
     }
 
     .page-name {
