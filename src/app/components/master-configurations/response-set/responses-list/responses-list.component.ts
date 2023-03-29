@@ -323,7 +323,7 @@ export class ResponsesListComponent implements OnInit {
                   ...initial.data
                 ];
                 break;
-              case 'edit':
+              case 'update':
                 const updatedIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
