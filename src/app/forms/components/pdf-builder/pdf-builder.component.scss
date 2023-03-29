@@ -23,7 +23,7 @@
         font-size: 20px;
         line-height: 143%;
         letter-spacing: 0.25px;
-        color: #000000;
+        color: $black;
       }
       .configOptions {
         height: 85vh;
@@ -34,7 +34,7 @@
           .groupHead {
             font-size: 130%;
             font-weight: 500;
-            border-bottom: 1px solid #0000001f;
+            border-bottom: 1px solid $drag-preview-shadow2;
           }
           .option {
             display: flex;
@@ -97,28 +97,12 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 150%;
-  /* or 21px */
-
   letter-spacing: 0.15px;
-
-  /* gray/gray-900 */
-
-  color: #212121;
-
-  /* Inside auto layout */
-
+  color: $gray-bg;
   flex: none;
   order: 0;
   align-self: stretch;
   flex-grow: 1;
-}
-
-.example-section {
-  margin: 12px 0;
-}
-
-.example-margin {
-  margin: 0 12px;
 }
 
 ul {
@@ -126,52 +110,8 @@ ul {
   margin-top: 4px;
 }
 
-.boxes {
-  padding: 5px;
-
-  box-shadow: 0px 0.3px 0px 0px #ccccccc5;
-}
-
-.labels {
-  height: 18px;
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 150%;
-  /* or 21px */
-
-  letter-spacing: 0.15px;
-
-  /* gray/gray-900 */
-
-  color: #212121;
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 1;
-}
-
-.tabular {
-  border: 1px solid rgb(191, 190, 190);
-  font-family: 'SF Pro Text';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 11.7888px;
-  line-height: 15px;
-  padding: 5px;
-  /* identical to box height, or 129% */
-
-  text-align: center;
-  letter-spacing: -0.284319px;
-
-  color: #3f3a3a;
-}
 .title {
-  background-color: #e7ecef;
+  background-color: $gray1-bg;
 }
 
 .tab {
@@ -199,7 +139,6 @@ ul {
   background-color: $blue-primary;
   border-color: $blue-primary;
   border-radius: 8px;
-  // margin: 12px 12px 0px 12px;
 }
 
 .logo {
@@ -208,7 +147,7 @@ ul {
   left: 0px;
   top: 0px;
   margin-right: 15px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
   width: 30%;
   max-width: 30% !important;
@@ -255,7 +194,7 @@ ul {
 }
 .pdfPage-container {
   margin: 10px 0px;
-  box-shadow: 0px 0px 16.253px #00000026;
+  box-shadow: 0px 0px 16.253px $box-shadow;
 }
 
 ::-webkit-scrollbar {
@@ -284,85 +223,11 @@ ul {
 }
 
 .discribe {
-  // font-family: 'Roboto';
   font-weight: 400;
   font-size: 8pt;
   color: #76767b;
 }
 
-.updates {
-  height: 18px;
-  margin: 4% 0 3% 2%;
-
-  // font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 18px;
-  /* identical to box height */
-
-  letter-spacing: -0.005em;
-
-  /* Grays/Black */
-
-  color: #25282b;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-}
-
-.project {
-  display: flex;
-  flex-direction: column;
-  // margin-left: 15px;
-  width: auto;
-  padding: 15px;
-  height: auto;
-
-  background: #ffffff;
-  border-radius: 7px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 1;
-  flex-grow: 0;
-}
-
-.breadcrums {
-  width: 225px;
-  height: 20px;
-
-  /* body/2/regular */
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 143%;
-  /* identical to box height, or 20px */
-
-  //display: flex;
-  align-items: center;
-  text-align: right;
-  letter-spacing: 0.15px;
-
-  /* Grays/Black */
-
-  color: #25282b;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 2;
-  font-weight: 400;
-  font-size: 8pt;
-  color: #76767b;
-  flex-grow: 0;
-}
 .details {
   margin: 0px;
   padding: 0px;
@@ -371,89 +236,22 @@ ul {
 .project-info {
   display: flex;
   justify-content: space-between;
-  box-shadow: 0px 0.5px 0px 0px #ccccccc5;
+  box-shadow: 0px 0.5px 0px 0px $box-shadow1;
   padding-left: 5px;
-}
-
-.site {
-  height: 19px;
-  //padding-left: 15px;
-
-  /* body/1/bold */
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 120%;
-  /* or 19px */
-
-  letter-spacing: 0.15px;
-
-  /* gray/gray-900 */
-
-  color: #212121;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 1;
-  flex-grow: 1;
-}
-
-.heading2 {
-  display: flex;
-  margin-top: 10px;
 }
 
 .pages {
   height: 20px;
-  /* body/2/regular */
-
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 143%;
-  /* identical to box height, or 20px */
-
   display: flex;
   align-items: center;
   text-align: right;
   letter-spacing: 0.15px;
-
-  /* Grays/Black */
-
-  color: #25282b;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 2;
-  flex-grow: 0;
-}
-
-.pages2 {
-  height: 20px;
-  text-align: right;
-
-  /* body/2/regular */
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 143%;
-  /* identical to box height, or 20px */
-
-  letter-spacing: 0.15px;
-
-  /* Grays/Black */
-
-  color: #25282b;
-
-  /* Inside auto layout */
-
+  color: $gray11;
   flex: none;
   order: 2;
   flex-grow: 0;
@@ -464,31 +262,12 @@ ul {
   height: 29px;
   left: 533px;
   top: 90px;
-
-  font-family: 'Roboto';
   font-style: normal;
   font-weight: 500;
   font-size: 20px;
   line-height: 143%;
-  /* identical to box height, or 29px */
-
   letter-spacing: 0.25px;
-
-  color: #000000;
-}
-
-.back-ground {
-  width: 100px;
-  height: 100px;
-
-  background: url();
-  border-radius: 4px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
+  color: $black;
 }
 
 .pdf-logo {
@@ -501,225 +280,8 @@ ul {
   margin-left: 8px;
 }
 
-.project-details {
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-
-  /* body/2/regular */
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 143%;
-  /* identical to box height, or 20px */
-
-  letter-spacing: 0.15px;
-
-  /* Grays/Black */
-
-  color: #25282b;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.pdf-pages {
-  background-color: #fff;
-  height: auto;
-  margin-top: 10px;
-  margin-left: 15px;
-  border: 0.5px solid rgb(198, 197, 197);
-  border-radius: 5px;
-  border-style: ridge;
-}
-
-.pdf-info {
-  box-sizing: border-box;
-
-  /* Auto layout */
-
-  display: flex;
-  //flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 5px;
-  height: 44px;
-
-  /* primary/main-background */
-
-  background: rgba(103, 58, 183, 0.08);
-  /* gray/gray-300 */
-
-  border-bottom: 1px solid #e0e0e0;
-  border-radius: 0px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-// .pad17 {
-//   padding: 0px 17px;
-// }
-
-.page-no {
-  height: 20px;
-
-  /* body/2/medium */
-
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 143%;
-  /* identical to box height, or 20px */
-
-  letter-spacing: 0.15px;
-
-  /* gray/gray-900 */
-
-  color: #212121;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 1;
-  flex-grow: 1;
-}
-
-.pdf-sections {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 10px 10px;
-  gap: 5px;
-  margin-top: 15px;
-  margin-right: 15px;
-  margin-left: 15px;
-  height: 20px;
-
-  background: #f5f5f5;
-  border-radius: 5px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.read-question {
-  display: flex;
-  height: 40px;
-  justify-content: space-between;
-  box-shadow: 0px 0.5px 0px 0px #ccccccc5;
-  margin: 5px 15px 5px 15px;
-  padding: 0px 10px;
-  border-radius: 5px;
-}
-
-.instructions {
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 0px 0.5px 0px 0px #ccccccc5;
-  margin-top: 20px;
-  padding: 0px 0px;
-  border-radius: 5px;
-}
-
-.pdf-img {
-  background-color: #feffe0;
-}
-
-.instruct {
-  font-family: 'Roboto';
-  font-style: italic;
-  font-weight: 400;
-  font-size: 15.1809px;
-  line-height: 20px;
-  /* or 133% */
-  padding: 0px 20px;
-
-  letter-spacing: -0.242895px;
-
-  color: #000000;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-}
-
-.instruct-pg {
-  margin: 0px;
-}
-
-.images-added {
-  box-sizing: border-box;
-
-  /* Auto layout */
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 8.09649px 16.193px;
-  gap: 10.12px;
-
-  width: 756px;
-  height: 36.19px;
-
-  background: #feffe0;
-  /* gray/gray-300 */
-
-  border-bottom: 1.01206px solid #e0e0e0;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-}
-
-.column {
-  float: left;
-  padding: 5px;
-  border: 0.5px solid rgb(192, 190, 190);
-  border-radius: 5px;
-  margin: 2px;
-}
-
-.row {
-  margin: 0px 25px;
-  display: flex;
-}
-
-/* Clearfix (clear floats) */
-.row::after {
-  content: '';
-  clear: both;
-  display: table;
-}
 .table {
   width: 100%;
-}
-.head {
-  background: orange;
-}
-.column {
-  width: 70px;
 }
 
 .tableHead-logo {
@@ -742,14 +304,12 @@ ul {
   margin: 0px 5px;
 }
 .issuesHead {
-  background: #aa2e25;
-  color: white;
+  background: $issue-bg;
+  color: $white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  // margin-top: 15px;
-  // max-width: 95%;
 }
 .w-33 {
   width: 33%;
@@ -777,15 +337,15 @@ ul {
   margin-bottom: 15px;
 }
 .issuesRow {
-  border: 1px solid #23282f26;
+  border: 1px solid $issue-border;
   min-height: 800px;
 }
 .roundId {
-  color: #757575;
+  color: $light-gray;
   width: 45%;
 }
 .formName {
-  color: #757575;
+  color: $light-gray;
   font-weight: 500;
   font-size: 10pt;
 }
@@ -793,7 +353,7 @@ ul {
   padding: 15px 0px;
   display: flex;
   align-items: center;
-  color: gray;
+  color: $grey;
 }
 .generatedDate {
   font-weight: 500;
@@ -817,13 +377,13 @@ ul {
 }
 
 .issuesContainer {
-  border: 1px solid #23282f26;
+  border: 1px solid $issue-border;
 }
 .issueCell {
-  border: 1px solid #23282f26;
+  border: 1px solid $issue-border;
 }
 .issueHead {
-  background: #f5f5f5;
+  background: $white1;
   padding: 10px;
 }
 .issueBody {
@@ -837,9 +397,9 @@ ul {
 }
 
 .tasksHead {
-  background: #000000;
+  background: $black;
   padding: 10px;
-  color: #ffffff;
+  color: $white;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -847,19 +407,19 @@ ul {
 }
 
 .actionsHead {
-  background: #b28704;
+  background: $action-bg;
   padding: 10px;
-  color: #ffffff;
+  color: $white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
 }
 .actionCell {
-  border: 1px solid #23282f26;
+  border: 1px solid $issue-border;
 }
 .actionHead {
-  background: #f5f5f5;
+  background: $white1;
   padding: 10px;
 }
 .actionBody {
@@ -879,8 +439,8 @@ ul {
   align-items: center;
   padding: 10px;
   height: 55.08px;
-  background: #d2d9ff;
-  border-bottom: 1.01206px solid #e0e0e0;
+  background: $blue9;
+  border-bottom: 1.01206px solid $border-color;
   margin: 0px 10px;
 }
 .nodeLeft {
@@ -893,7 +453,7 @@ ul {
   font-size: 100%;
   line-height: 120%;
   letter-spacing: 0.151809px;
-  color: #212121;
+  color: $gray-bg;
 }
 .nodeId {
   font-family: 'Roboto';
@@ -902,7 +462,7 @@ ul {
   font-size: 90%;
   line-height: 143%;
   letter-spacing: 0.151809px;
-  color: #25282b;
+  color: $gray11;
 }
 .nodeRight {
   font-family: 'Roboto';
@@ -914,7 +474,7 @@ ul {
   align-items: center;
   text-align: right;
   letter-spacing: 0.151809px;
-  color: #25282b;
+  color: $gray11;
 }
 .hierarchyNodeContainer {
   margin: 0px 10px;
@@ -928,8 +488,8 @@ ul {
   align-items: center;
   padding: 6px 10px;
   height: 26px;
-  background: #eef4f9;
-  border-bottom: 1.01206px solid #e0e0e0;
+  background: $white4;
+  border-bottom: 1.01206px solid $border-color;
   justify-content: space-between;
   margin: 10px;
 }
@@ -940,7 +500,7 @@ ul {
   font-size: 90%;
   line-height: 143%;
   letter-spacing: 0.151809px;
-  color: #212121;
+  color: $gray-bg;
 }
 .nodePageRight {
   font-family: 'Roboto';
@@ -950,7 +510,7 @@ ul {
   line-height: 143%;
   text-align: right;
   letter-spacing: 0.151809px;
-  color: #25282b;
+  color: $gray11;
 }
 .sectionHeadRow {
   display: flex;
@@ -958,9 +518,9 @@ ul {
   align-items: center;
   padding: 6px 10px;
   height: 26px;
-  background: #2a3eb1;
+  background: $blue-head;
   border-radius: 0px;
-  color: white;
+  color: $white;
   justify-content: space-between;
 }
 .sectionTitle {
@@ -970,7 +530,7 @@ ul {
   font-size: 90%;
   line-height: 143%;
   letter-spacing: 0.151809px;
-  color: #ffffff;
+  color: $white;
 }
 .sectionRight {
   font-family: 'Roboto';
@@ -980,7 +540,7 @@ ul {
   line-height: 143%;
   text-align: right;
   letter-spacing: 0.151809px;
-  color: #ffffff;
+  color: $white;
 }
 .pageSection {
   display: flex;
@@ -994,9 +554,9 @@ ul {
   font-size: 90%;
   line-height: 143%;
   letter-spacing: 0.107276px;
-  color: #25282b;
+  color: $gray11;
   padding: 5.72139px 11.4428px;
-  border-bottom: 0.715174px solid #e0e0e0;
+  border-bottom: 0.715174px solid $border-color;
 }
 .sectionQuestionsContainer {
   padding: 10px;

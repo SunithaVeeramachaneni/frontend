@@ -806,7 +806,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       height: '100vh'
     });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result.publishRoundPlan) {
+      if (result && result.publishRoundPlan) {
         this.publishFormDetail();
       }
     });
