@@ -10,6 +10,8 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
+  InspectionDetailResponse,
+  InspectionQueryParam,
   Form,
   FormQueryParam,
   LoadEvent,
@@ -119,13 +121,7 @@ export class RaceDynamicFormService {
     }
   }
 
-  getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal(
-      '',
-      'assets/json/rdf-inspection-filter.json',
-      info
-    );
-  }
+  
   getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
@@ -352,7 +348,7 @@ export class RaceDynamicFormService {
         environment.rdfApiUrl,
         `forms/authored/${formId}?formStatus=Draft`
       )
-    ).pipe(map((items) => items));
+    ).pipe(map(({ items }) => items));
   }
 
   getFormDetailByFormId$(formId: string) {
@@ -782,6 +778,90 @@ export class RaceDynamicFormService {
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
+  }
+
+  getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/forms-inspection-filter.json',
+      info
+    );
+  }
+fetchAllRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('formId', '');
+    params.set('status', '');
+    params.set('assignedTo', '');
+    params.set('dueDate', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString())
+      .pipe(map((res) => this.formatInspections(res.rows)));
+  };
+
+  getInspectionsList$(
+    queryParams: InspectionQueryParam,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<InspectionDetailResponse> {
+    const { fetchType, ...rest } = queryParams;
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      const isSearch = fetchType === 'search';
+      if (isSearch) {
+        rest.nextToken = '';
+      }
+      const { displayToast, failureResponse = {} } = info;
+      return this.appService
+        ._getResp(
+          environment.rdfApiUrl,
+          'inspections',
+          { displayToast, failureResponse },
+          rest
+        )
+        .pipe(map((data) => ({ ...data, rows: this.formatInspections(data.rows) })));
+    } else {
+      return of({
+        rows: []
+      } as InspectionDetailResponse);
+    }
+  }
+
+
+  private formatInspections(rounds: any[] = []): any[] {
+    const rows = rounds
+      .sort(
+        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      )
+      .map((p) => ({
+        ...p,
+        preTextImage: {
+          image: p.formLogo,
+          style: {
+            width: '40px',
+            height: '40px',
+            marginRight: '10px'
+          },
+          condition: true
+        },
+        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
+          },${p.totalTasks > 0
+            ? Math.round(
+              (Math.abs(
+                p.totalTasksCompleted / p.totalTasks
+              ) +
+                Number.EPSILON) *
+              100
+            )
+            : 0
+          }%`
+      }));
+    return rows;
   }
 
   private formatForms(forms: Form[] = []): Form[] {

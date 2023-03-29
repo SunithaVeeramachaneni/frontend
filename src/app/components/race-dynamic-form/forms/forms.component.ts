@@ -44,6 +44,7 @@ import {
   FormScheduleConfiguration
 } from 'src/app/interfaces';
 import {
+  dateFormat,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -527,7 +528,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: ScheduleFormDetail) {
+  openScheduleConfigHandler(row: any) {
     this.hideScheduleConfig = false;
     this.closeFormHandler();
     this.scheduleFormDetail = { ...row };
@@ -636,15 +637,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       scheduleType === 'byFrequency'
         ? this.datePipe.transform(
             formScheduleConfiguration.startDate,
-            'MMM dd, yy'
+            dateFormat
           )
         : '';
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, 'MMM dd, yy')
+          ? this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, 'MMM dd, yy')
+          ? this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
 

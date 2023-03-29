@@ -4,6 +4,15 @@ export interface FormTableUpdate {
   form: GetFormList;
 }
 
+
+export interface InspectionQueryParam {
+  nextToken?: string;
+  limit: number;
+  searchTerm: string;
+  fetchType: string;
+  formId: string;
+}
+
 export interface FormScheduleByDate {
   date: Date;
   scheduled: boolean;
@@ -44,6 +53,12 @@ export interface FormQueryParam {
   fetchType: string;
   formId: string;
 }
+
+export interface InspectionDetailResponse {
+  rows: any[];
+  count: number;
+  nextToken: string | null;
+} 
 
 export interface ScheduleFormDetail extends Form {
   schedule: string;

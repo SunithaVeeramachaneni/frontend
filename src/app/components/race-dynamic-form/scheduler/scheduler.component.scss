@@ -2,3 +2,13 @@
   margin-bottom: 16px;
   margin-right: 10px;
 }
+::ng-deep .tableMain{
+  thead{
+    width: 100%;
+    display: table;
+  }
+  tbody{
+    width: 100%;
+    display: table;
+  }
+}

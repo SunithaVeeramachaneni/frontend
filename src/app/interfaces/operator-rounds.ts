@@ -9,6 +9,7 @@ export interface RoundPlanScheduleConfiguration {
   daysOfWeek: number[];
   monthlyDaysOfWeek: MonthlyDaysOfWeek[];
   scheduleEndType: string;
+  endDatePicker: Date;
   scheduleEndOn: string;
   scheduleEndOccurrences: number;
   startDate: string;
@@ -18,7 +19,6 @@ export interface RoundPlanScheduleConfiguration {
   assignmentDetails: AssignmentDetail;
   advanceRoundsCount: number;
   startDatePicker?: Date;
-  endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
 }
 

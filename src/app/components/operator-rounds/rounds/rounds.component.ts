@@ -513,7 +513,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'daterange') {
+      if (item.type !== 'date') {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date') {
         this.filter[item.column] = item.value.toISOString();
