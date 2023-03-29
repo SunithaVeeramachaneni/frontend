@@ -1,12 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
 import { FormConfigurationState } from './form-configuration.reducer';
-import { ResponseSetState } from './multiple-choice-response.reducer';
 import { HierarchyState } from './hierarchy.reducer';
 
 export interface FormModuleState {
   formConfiguration: FormConfigurationState;
-  responseSet: ResponseSetState;
   hierarchy: HierarchyState;
 }
 
@@ -19,11 +17,6 @@ const selectFeatureState = createFeatureSelector<FormModuleState>('feature');
 const selectFormConfigurationState = createSelector(
   selectFeatureState,
   (state) => state.formConfiguration
-);
-
-const selectResponseSetState = createSelector(
-  selectFeatureState,
-  (state) => state.responseSet
 );
 
 const selectHierarchyState = createSelector(
@@ -230,13 +223,6 @@ export const getIsFormCreated = createSelector(
 export const getQuestionCounter = createSelector(
   selectFormConfigurationState,
   (state) => state.counter
-);
-
-// Selectors for response sets begin here
-
-export const getResponseSets = createSelector(
-  selectResponseSetState,
-  (state) => state.globalResponses
 );
 
 // Hierarchy related selectors

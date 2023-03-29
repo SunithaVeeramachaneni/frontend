@@ -6,12 +6,6 @@ import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import {
-  APIService,
-  GetFormListQuery,
-  ListFormListsQuery,
-  ListFormSubmissionListsQuery
-} from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -22,13 +16,13 @@ import {
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
-import { Store } from '@ngrx/store';
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getResponseSets } from 'src/app/forms/state';
+import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 const limit = 10000;
 @Injectable({
@@ -43,9 +37,9 @@ export class RaceDynamicFormService {
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
+    private responseSetService: ResponseSetService,
     private toastService: ToastService,
     private appService: AppService,
-    private store: Store,
     private translate: TranslateService
   ) {}
 
@@ -225,7 +219,7 @@ export class RaceDynamicFormService {
 
   createForm$(
     formListQuery: Pick<
-      GetFormListQuery,
+      GetFormList,
       | 'name'
       | 'formLogo'
       | 'description'
@@ -270,18 +264,29 @@ export class RaceDynamicFormService {
   }
 
   createFormDetail$(formDetails) {
-    return this.appService._postData(environment.rdfApiUrl, 'forms/detail', {
-      formlistID: formDetails.formListId,
-      formData: this.formatFormData(formDetails.formMetadata, formDetails.pages)
-    });
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/inspection',
+      {
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
+      }
+    );
   }
 
   updateFormDetail$(formDetails) {
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/detail/${formDetails.formDetailId}`,
+      `forms/inspection/${formDetails.formDetailId}`,
       {
         formlistID: formDetails.formListId,
+        name: formDetails.formMetadata.name,
+        description: formDetails.formMetadata.description,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -319,57 +324,6 @@ export class RaceDynamicFormService {
           version: { eq: formDetails.authoredFormDetailVersion.toString() }
         }
       }
-    );
-  }
-
-  getResponseSet$(queryParams: {
-    nextToken?: string;
-    limit?: number;
-    responseType: string;
-  }) {
-    const params: URLSearchParams = new URLSearchParams();
-    if (queryParams?.limit) params.set('limit', queryParams?.limit?.toString());
-    if (queryParams?.nextToken) params.set('nextToken', queryParams?.nextToken);
-    params.set('type', queryParams?.responseType);
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets?' + params.toString()
-    );
-  }
-
-  createResponseSet$(responseSet) {
-    return this.appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plans/response-sets',
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet?.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values
-      }
-    );
-  }
-
-  updateResponseSet$(responseSet) {
-    return this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSet.id}`,
-      {
-        type: responseSet.responseType,
-        name: responseSet.name,
-        description: responseSet.description,
-        isMultiColumn: responseSet.isMultiColumn,
-        values: responseSet.values,
-        _version: responseSet.version
-      }
-    );
-  }
-
-  deleteResponseSet$(responseSetId: string) {
-    return this.appService._removeData(
-      environment.operatorRoundsApiUrl,
-      `round-plans/response-sets/${responseSetId}`
     );
   }
 
@@ -429,6 +383,7 @@ export class RaceDynamicFormService {
       let { sections, questions, logics } = page;
 
       const pageItem = {
+        PAGENAME: page.name,
         SECTIONS: sections.map((section) => {
           let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
@@ -513,13 +468,14 @@ export class RaceDynamicFormService {
                 question.value?.type === 'globalResponse'
               ) {
                 let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.store
-                  .select(getResponseSets)
+                const currenGlobalResponse$ = this.responseSetService
+                  .fetchAllGlobalResponses$()
                   .pipe(
                     tap((responses) => {
                       currentGlobalResponseValues = JSON.parse(
-                        responses.find((item) => item.id === question.value.id)
-                          ?.values
+                        responses.items.find(
+                          (item) => item.id === question.value.id
+                        )
                       );
                     })
                   );
@@ -698,7 +654,7 @@ export class RaceDynamicFormService {
     );
   };
 
-  private formateGetRdfFormsResponse(resp: ListFormListsQuery) {
+  private formateGetRdfFormsResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -730,7 +686,7 @@ export class RaceDynamicFormService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: any) {
     const rows =
       resp.items
         .sort(

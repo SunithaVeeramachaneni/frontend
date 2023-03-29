@@ -141,7 +141,10 @@
 </div>
 <div *ngIf="isGlobalResponseOpen">
   <app-global-response-type-side-drawer
+    [@slideInOut]="globalResponseSlideState"
+    (slideInOut)="handleSlideState($event)"
     [globalResponseToBeEdited]="responseToBeEdited"
-    (globalResponseHandler)="handleGlobalResponseCancel($event)"
+    [isControlInViewMode]="false"
+    (globalResponseHandler)="handleGlobalResponseChange($event)"
   ></app-global-response-type-side-drawer>
 </div>

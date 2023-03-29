@@ -63,6 +63,7 @@ const {
   assets,
   unitOfMeasurement,
   plants,
+  globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations
 } = routingUrls;
@@ -260,6 +261,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: plants.title,
           url: plants.url,
           permission: plants.permission
+        },
+        {
+          title: globalResponse.title,
+          url: globalResponse.url,
+          permission: globalResponse.permission
         }
       ]
     }
