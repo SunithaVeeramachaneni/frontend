@@ -27,6 +27,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
 import { TableComponent } from './components/field-types/table/table.component';
@@ -60,6 +62,8 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
 import { QuestionPreviewComponent } from './components/pdf-builder/question-preview/question-preview.component';
+import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
+import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +101,9 @@ import { QuestionPreviewComponent } from './components/pdf-builder/question-prev
     TagSelectComponent,
     InstructionImageComponent,
     InstructionPdfComponent,
-    InstructionPdfPreviewComponent
+    InstructionPdfPreviewComponent,
+    ScheduleSuccessModalComponent,
+    ScheduleConfigurationComponent
   ],
   imports: [
     FormsModule,
@@ -125,7 +131,8 @@ import { QuestionPreviewComponent } from './components/pdf-builder/question-prev
     MatTooltipModule,
     MatRadioModule,
     NgxShimmerLoadingModule,
-    TranslateModule.forChild({})
+    TranslateModule.forChild({}),
+    MatDatepickerModule
   ],
   exports: [
     FormWidgetComponent,
@@ -147,7 +154,10 @@ import { QuestionPreviewComponent } from './components/pdf-builder/question-prev
     BuilderComponent,
     PDFBuilderComponent,
     QuestionPreviewComponent,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    NgxShimmerLoadingModule,
+    ScheduleSuccessModalComponent,
+    ScheduleConfigurationComponent
   ]
 })
 export class FormModule {}

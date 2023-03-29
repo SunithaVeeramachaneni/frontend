@@ -50,7 +50,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
   @Input() set scheduleConfiguration(
-    scheduleConfiguration: RoundPlanScheduleConfiguration
+    scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
     if (scheduleConfiguration) {
       this._scheduleConfiguration = scheduleConfiguration;
