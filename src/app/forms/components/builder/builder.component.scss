@@ -346,7 +346,7 @@
   display: flex;
   justify-content: center;
   position: absolute;
-  left: -62px;
+  left: -80px; //-62px;
   top: 0px;
   .questions-btn {
     background-color: $white;
@@ -428,5 +428,103 @@
     .rotate-270 {
       transform: rotate(270deg);
     }
+  }
+}
+
+.emptyRoutePlanContainer {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  text-align: center;
+  left: 60%;
+}
+
+.emptyRoutePlanContainerWithPreview {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  text-align: center;
+  left: 30%;
+}
+
+.add-page-btn {
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: 5px;
+  font-weight: 400;
+  font-size: 80%;
+  letter-spacing: 0.4px;
+  color: $black;
+  padding: 8px 32px;
+  margin-top: 5px;
+
+  .add-page-btn-icon {
+    position: relative;
+    top: 2px;
+  }
+}
+
+.add-section-btn {
+  position: relative;
+  top: -80px;
+  left: 80px;
+  background-color: transparent;
+  border: none;
+  font-weight: 400;
+  font-size: 80%;
+  letter-spacing: 0.4px;
+  color: $black;
+  padding: 2px 5px;
+  margin-top: 5px;
+
+  .add-section-btn-icon {
+    position: relative;
+    top: 2px;
+  }
+}
+
+.floating-btns {
+  position: relative;
+  top: 16px;
+  margin-left: 16px;
+  border: 1px solid $border-color;
+  border-radius: 7px;
+  display: block;
+  width: 55px;
+
+  .questions-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+
+  .delete-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
+
+  .delete-icon {
+    background: white;
+    height: 20px;
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    width: 20px;
+    margin-left: 15px;
+  }
+
+  .questions-delete-btn-text {
+    margin: 0;
+    font-size: 75%;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: $black;
   }
 }
