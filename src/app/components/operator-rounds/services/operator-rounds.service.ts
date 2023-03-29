@@ -669,6 +669,21 @@ export class OperatorRoundsService {
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };
 
+  fetchAllRounds$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('roundPlanId', '');
+    params.set('status', '');
+    params.set('assignedTo', '');
+    params.set('dueDate', '');
+
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, 'rounds?' + params.toString())
+      .pipe(map((res) => this.formatRounds(res.rows)));
+  };
+
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',

@@ -1,0 +1,30 @@
+<div id="success-container">
+  <mat-icon
+    ><img
+      src="assets/rdf-forms-icons/schedule-success.svg"
+      alt="schedule"
+      class="schedule-icon"
+  /></mat-icon>
+  <p class="color">
+    {{ 'scheduleSuccess' | translate }}
+  </p>
+  <div class="message">
+    <p>
+      {{ data?.name }}
+    </p>
+    <p [innerHTML]="'scheduleSuccessMessage' | translate"></p>
+  </div>
+  <button
+    *ngIf="!data?.isFormModule"
+    mat-button
+    translate="viewRounds"
+    (click)="goToList()"
+  ></button>
+  <button
+    *ngIf="data?.isFormModule"
+    mat-button
+    translate="viewForms"
+    (click)="goToList()"
+  ></button>
+  <button mat-button translate="close" (click)="close()"></button>
+</div>

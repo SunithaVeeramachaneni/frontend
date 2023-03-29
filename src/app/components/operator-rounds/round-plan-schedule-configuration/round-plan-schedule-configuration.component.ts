@@ -206,7 +206,9 @@ export class RoundPlanScheduleConfigurationComponent
                 }
               ];
             }
-            this.roundPlanSchedulerConfigForm.get('repeatEvery').patchValue('');
+            this.roundPlanSchedulerConfigForm
+              .get('repeatEvery')
+              .patchValue('none');
             this.updateAdvanceRoundsCountValidation(12);
             break;
         }

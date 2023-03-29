@@ -62,11 +62,7 @@
             </button>
             <br />
 
-            <button
-              class="delete-btn"
-              (click)="deleteQuestion($event)"
-              [disabled]="props.sectionQuestionsCount === 1"
-            >
+            <button class="delete-btn" (click)="deleteQuestion($event)">
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"
                 alt="delete questions"
@@ -75,6 +71,7 @@
             </button>
           </div>
         </div>
+
         <span class="divider">|</span>
         <div class="width-30">
           <app-response-type-button
@@ -104,6 +101,7 @@
           />
         </div>
       </div>
+      <hr class="question-line" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input

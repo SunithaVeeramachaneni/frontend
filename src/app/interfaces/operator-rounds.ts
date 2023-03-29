@@ -9,6 +9,7 @@ export interface RoundPlanScheduleConfiguration {
   daysOfWeek: number[];
   monthlyDaysOfWeek: MonthlyDaysOfWeek[];
   scheduleEndType: string;
+  endDatePicker: Date;
   scheduleEndOn: string;
   scheduleEndOccurrences: number;
   startDate: string;
@@ -84,6 +85,8 @@ export interface RoundDetail extends RoundPlan {
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
+  createdBy: string;
+  status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
 }
