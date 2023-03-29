@@ -142,379 +142,11 @@
       <div *ngIf="formMetadata$ | async as formMetadata" class="pdf-container">
         <!-- ISSUES -->
         <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
-          <div id="content" #content class="pdfPage">
-            <div class="pageHeader">
-              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
-              <span class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
-            </div>
-            <div class="pageTitleRow">
-              <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
-                <img [src]="innovapptiveLogo" class="tablelogo" />
-              </div>
-              <div class="tableHeading-text">
-                <span class="name">{{formMetadata.name}}</span>
-                <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
-              </div>
-            </div>
-            <div class="subjectRow"
-              *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('questionCompleted').value">
-              <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
-                Submitted On: 18-03-2023 10:00PM
-              </div>
-              <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
-                Submitted By: Shiva Kumar K
-              </div>
-              <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
-                Task Completed: 35/35 (100%)
-              </div>
-            </div>
-            <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value" class="issuesRow">
-              <div class="issuesHead">
-                <span>Issues</span>
-                <span>Raised:3</span>
-              </div>
-              <div class="issueCell">
-                <div class="issue">
-                  <div class="issueHead">
-                    <span class="label">Issue:
-                    </span>
-                    Slippery Surface
-                  </div>
-                  <div class="issueBody">
-                    <div class="issueRow">
-                      <span class="label">
-                        Description:
-                      </span>
-                      <span class="description">
-                        Horem ipsum dolor sit amet, consectetur adipiscing
-                        elit. Nunc vulputate libero et velit interdum, ac
-                        aliquet odio mattis. Class aptent taciti sociosqu ad
-                        litora torqu
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Asset:
-                      </span>
-                      <span class="description">
-                        170442 - Water Pump Water Pump Water Pump Water
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Task:
-                      </span>
-                      <span class="description"> Check water pressure. </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Value:
-                      </span>
-                      <span class="description"> 90 </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Assigned to:
-                      </span>
-                      <span class="description">
-                        John, Krista, Marry, Alexander
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <table class="w-100">
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Priority:
-                            </span>
-                            <span class="description"> High </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Category:
-                            </span>
-                            <span class="description"> Safety </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Due Date:
-                            </span>
-                            <span class="description"> 25 Feb, 2023 </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Raised By:
-                            </span>
-                            <span class="description"> Aron </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Status:
-                            </span>
-                            <span class="description"> Open </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Notification No:
-                            </span>
-                            <span class="description"> 123456 </span>
-                          </td>
-                        </tr>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-                <div class="issue">
-                  <div class="issueHead">
-                    <span class="label">Issue:
-                    </span>
-                    Slippery Surface
-                  </div>
-                  <div class="issueBody">
-                    <div class="issueRow">
-                      <span class="label">
-                        Description:
-                      </span>
-                      <span class="description">
-                        Horem ipsum dolor sit amet, consectetur adipiscing
-                        elit. Nunc vulputate libero et velit interdum, ac
-                        aliquet odio mattis. Class aptent taciti sociosqu ad
-                        litora torqu
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Asset:
-                      </span>
-                      <span class="description">
-                        170442 - Water Pump Water Pump Water Pump Water
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Task:
-                      </span>
-                      <span class="description"> Check water pressure. </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Value:
-                      </span>
-                      <span class="description"> 90 </span>
-                    </div>
-                    <div class="issueRow">
-                      <span class="label">
-                        Assigned to:
-                      </span>
-                      <span class="description">
-                        John, Krista, Marry, Alexander
-                      </span>
-                    </div>
-                    <div class="issueRow">
-                      <table class="w-100">
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Priority:
-                            </span>
-                            <span class="description"> High </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Category:
-                            </span>
-                            <span class="description"> Safety </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Due Date:
-                            </span>
-                            <span class="description"> 25 Feb, 2023 </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Raised By:
-                            </span>
-                            <span class="description"> Aron </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Status:
-                            </span>
-                            <span class="description"> Open </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Notification No:
-                            </span>
-                            <span class="description"> 123456 </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="3">
-                            <div class="imagesContainer">
-                              <img [src]="image" *ngFor="let image of dummyImages" class="image" />
-                            </div>
-                          </td>
-                        </tr>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="pageFooter">
-              <span class="generatedDate"
-                *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">21/03/2023</span>
-              <span class="poweredBy">Powered By
-                <img [src]="innovapptiveLogo" class="footerLogo" /></span>
-              <span class="customText"
-                *ngIf="pdfBuilderConfigurationsForm.get('customText').value && pdfBuilderConfigurationsForm.get('customTextField').value && pdfBuilderConfigurationsForm.get('customTextLabel').value">
-                {{pdfBuilderConfigurationsForm.get('customTextLabel').value}}:{{pdfBuilderConfigurationsForm.get('customTextField').value}}
-              </span>
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="issuesTemplate; context: { formMetadata:formMetadata }"></ng-container>
         </div>
         <!-- ACTIONS -->
         <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
-          <div id="content" #content class="pdfPage">
-            <div class="pageHeader">
-              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
-              <span class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
-            </div>
-            <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
-              <div class="pageTitleRow">
-                <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
-                  <img [src]="innovapptiveLogo" class="tablelogo" />
-                </div>
-                <div class="tableHeading-text">
-                  <span class="name">{{formMetadata.name}}</span>
-                  <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
-                </div>
-              </div>
-              <div class="subjectRow"
-                *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('taskCompleted').value">
-                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
-                  Submitted On: 18-03-2023 10:00PM
-                </div>
-                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
-                  Submitted By: Shiva Kumar K
-                </div>
-                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('taskCompleted').value">
-                  Task Completed: 35/35 (100%)
-                </div>
-              </div>
-            </div>
-            <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value" class="issuesRow">
-              <div class="actionsHead">
-                <span>Actions</span>
-                <span>Raised:3</span>
-              </div>
-              <div class="actionCell">
-                <div class="action" *ngFor="let i of [1,2,3] ">
-                  <div class="actionHead">
-                    <span class="label">Action:
-                    </span>
-                    Lorem ipsum
-                  </div>
-                  <div class="actionBody">
-                    <div class="actionRow">
-                      <span class="label">
-                        Description:
-                      </span>
-                      <span class="description">
-                        Horem ipsum dolor sit amet, consectetur adipiscing
-                        elit. Nunc vulputate libero et velit interdum, ac
-                        aliquet odio mattis. Class aptent taciti sociosqu ad
-                        litora torqu
-                      </span>
-                    </div>
-                    <div class="actionRow">
-                      <span class="label">
-                        Asset:
-                      </span>
-                      <span class="description">
-                        170442 - Water Pump Water Pump Water Pump Water
-                      </span>
-                    </div>
-                    <div class="actionRow">
-                      <span class="label">
-                        Task:
-                      </span>
-                      <span class="description"> Check water pressure. </span>
-                    </div>
-                    <div class="actionRow">
-                      <span class="label">
-                        Value:
-                      </span>
-                      <span class="description"> 90 </span>
-                    </div>
-                    <div class="actionRow">
-                      <span class="label">
-                        Assigned to:
-                      </span>
-                      <span class="description">
-                        John, Krista, Marry, Alexander
-                      </span>
-                    </div>
-                    <div class="actionRow">
-                      <table class="w-100">
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Priority:
-                            </span>
-                            <span class="description"> High </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Raised by:
-                            </span>
-                            <span class="description"> Aron </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <span class="label">
-                              Due Date:
-                            </span>
-                            <span class="description"> 25 Feb, 2023 </span>
-                          </td>
-                          <td>
-                            <span class="label">
-                              Status:
-                            </span>
-                            <span class="description"> Open </span>
-                          </td>
-                        </tr>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="pageFooter">
-              <span class="generatedDate"
-                *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">21/03/2023</span>
-              <span class="poweredBy">Powered By
-                <img [src]="innovapptiveLogo" class="footerLogo" /></span>
-              <span class="customText"
-                *ngIf="pdfBuilderConfigurationsForm.get('customText').value && pdfBuilderConfigurationsForm.get('customTextField').value && pdfBuilderConfigurationsForm.get('customTextLabel').value">
-                {{pdfBuilderConfigurationsForm.get('customTextLabel').value}}:{{pdfBuilderConfigurationsForm.get('customTextField').value}}
-              </span>
-            </div>
-          </div>
+          <ng-container *ngTemplateOutlet="actionsTemplate; context: { formMetadata:formMetadata }"></ng-container>
         </div>
         <!-- TASKS -->
         <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('questions').value">
@@ -555,60 +187,36 @@
                   {{totalQuestionsCount}}
                 </span>
               </div>
-              <div class="actionCell" *ngIf="selectedFlatHierarchy">
-                <div *ngFor="let node of selectedFlatHierarchy" class="hierarchyNode">
-                  <div class="hierarchyNodeHead">
-                    <div class="nodeLeft">
-                      <span class="nodeTitle">{{node.name}}</span>
-                      <span class="nodeId"> {{ node.type==='asset'? 'Asset': 'Location'}} ID: <span
-                          class="no-bold">{{node.nodeId}} - {{node.id}}</span></span>
+              <div *ngIf="data.moduleName !== 'RDF'">
+                <div class="actionCell" *ngIf="selectedFlatHierarchy">
+                  <div *ngFor="let node of selectedFlatHierarchy" class="hierarchyNode">
+                    <div class="hierarchyNodeHead">
+                      <div class="nodeLeft">
+                        <span class="nodeTitle">{{node.name}}</span>
+                        <span class="nodeId"> {{ node.type==='asset'? 'Asset': 'Location'}} ID: <span
+                            class="no-bold">{{node.nodeId}} - {{node.id}}</span></span>
+                      </div>
+                      <div class="nodeRight" *ngIf="getPagesOfNode(node.id) | async as totalPages">
+                        Pages: {{totalPages.length}} • Sections: {{ getSectionsCountByNode(totalPages)}} • Tasks:
+                        {{getAllQuestionsCountByNode(totalPages)}}
+                      </div>
                     </div>
-                    <div class="nodeRight" *ngIf="getPagesOfNode(node.id) | async as totalPages">
-                      Pages: {{totalPages.length}} • Sections: {{ getSectionsCountByNode(totalPages)}} • Tasks:
-                      {{getAllQuestionsCountByNode(totalPages)}}
+                    <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">
+                      <ng-container *ngTemplateOutlet="pagesTemplate; context: { pages:pages }"></ng-container>
                     </div>
                   </div>
-                  <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">
-                    <div *ngFor="let page of pages" class="pageContainer">
-                      <div class="nodePageHeader">
-                        <span class="nodePageTitle">{{page.name}}</span>
-                        <span class="nodePageRight">Sections: {{page.sections.length}} • Tasks:
-                          {{page.questions.length}}
-                        </span>
-                      </div>
-                      <div *ngFor="let section of getSectionsWithQuestionsOfPage(page)">
-                        <div class="pageSection">
-                          <div class="sectionHeadRow">
-                            <div class="sectionTitle">
-                              {{section.name}}
-                            </div>
-                            <div class="sectionRight">
-                              Tasks: {{section.questions.length}}
-                            </div>
-                          </div>
-                          <div class="sectionQuestionsContainer">
-                            <div *ngFor="let question of section.questions" class="questionRow">
-                              <app-question-preview [question]="question"
-                                [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"></app-question-preview>
-                            </div>
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
+                </div>
+              </div>
+              <div *ngIf="data.moduleName === 'RDF'">
+                <div class="actionCell">
+                  <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(null) | async as pages">
+                    <ng-container *ngTemplateOutlet="pagesTemplate; context: { pages:pages }"></ng-container>
                   </div>
                 </div>
               </div>
             </div>
             <div class="pageFooter">
-              <span class="generatedDate"
-                *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">21/03/2023</span>
-              <span class="poweredBy">Powered By
-                <img [src]="innovapptiveLogo" class="footerLogo" /></span>
-              <span class="customText"
-                *ngIf="pdfBuilderConfigurationsForm.get('customText').value && pdfBuilderConfigurationsForm.get('customTextField').value && pdfBuilderConfigurationsForm.get('customTextLabel').value">
-                {{pdfBuilderConfigurationsForm.get('customTextLabel').value}}:{{pdfBuilderConfigurationsForm.get('customTextField').value}}
-              </span>
+              <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
             </div>
           </div>
         </div>
@@ -617,3 +225,406 @@
     </div>
   </div>
 </div>
+<ng-template #pagesTemplate let-pages="pages">
+  <div *ngFor="let page of pages" class="pageContainer">
+    <div class="nodePageHeader">
+      <span class="nodePageTitle">{{page.name}}</span>
+      <span class="nodePageRight">Sections: {{page.sections.length}} • Tasks:
+        {{page.questions.length}}
+      </span>
+    </div>
+    <div *ngFor="let section of getSectionsWithQuestionsOfPage(page)">
+      <div class="pageSection">
+        <div class="sectionHeadRow">
+          <div class="sectionTitle">
+            {{section.name}}
+          </div>
+          <div class="sectionRight">
+            Tasks: {{section.questions.length}}
+          </div>
+        </div>
+        <div class="sectionQuestionsContainer">
+          <div *ngFor="let question of section.questions" class="questionRow">
+            <app-question-preview [question]="question"
+              [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"></app-question-preview>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+<ng-template #issuesTemplate let-formMetadata="formMetadata">
+  <div id="content" #content class="pdfPage">
+    <div class="pageHeader">
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
+    </div>
+    <div class="pageTitleRow">
+      <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
+        <img [src]="innovapptiveLogo" class="tablelogo" />
+      </div>
+      <div class="tableHeading-text">
+        <span class="name">{{formMetadata.name}}</span>
+        <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
+      </div>
+    </div>
+    <div class="subjectRow"
+      *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('questionCompleted').value">
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
+        Submitted On: 18-03-2023 10:00PM
+      </div>
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
+        Submitted By: Shiva Kumar K
+      </div>
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
+        Task Completed: 35/35 (100%)
+      </div>
+    </div>
+    <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value" class="issuesRow">
+      <div class="issuesHead">
+        <span>Issues</span>
+        <span>Raised:3</span>
+      </div>
+      <div class="issueCell">
+        <div class="issue">
+          <div class="issueHead">
+            <span class="label">Issue:
+            </span>
+            Slippery Surface
+          </div>
+          <div class="issueBody">
+            <div class="issueRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Horem ipsum dolor sit amet, consectetur adipiscing
+                elit. Nunc vulputate libero et velit interdum, ac
+                aliquet odio mattis. Class aptent taciti sociosqu ad
+                litora torqu
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="issueRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Category:
+                    </span>
+                    <span class="description"> Safety </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised By:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Notification No:
+                    </span>
+                    <span class="description"> 123456 </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="issue">
+          <div class="issueHead">
+            <span class="label">Issue:
+            </span>
+            Slippery Surface
+          </div>
+          <div class="issueBody">
+            <div class="issueRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Horem ipsum dolor sit amet, consectetur adipiscing
+                elit. Nunc vulputate libero et velit interdum, ac
+                aliquet odio mattis. Class aptent taciti sociosqu ad
+                litora torqu
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="issueRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Category:
+                    </span>
+                    <span class="description"> Safety </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised By:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Notification No:
+                    </span>
+                    <span class="description"> 123456 </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <div class="imagesContainer">
+                      <img [src]="image" *ngFor="let image of dummyImages" class="image" />
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pageFooter">
+      <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
+    </div>
+  </div>
+</ng-template>
+<ng-template #actionsTemplate let-formMetadata="formMetadata">
+  <div id="content" #content class="pdfPage">
+    <div class="pageHeader">
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
+    </div>
+    <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
+      <div class="pageTitleRow">
+        <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
+          <img [src]="innovapptiveLogo" class="tablelogo" />
+        </div>
+        <div class="tableHeading-text">
+          <span class="name">{{formMetadata.name}}</span>
+          <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
+        </div>
+      </div>
+      <div class="subjectRow"
+        *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('taskCompleted').value">
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
+          Submitted On: 18-03-2023 10:00PM
+        </div>
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
+          Submitted By: Shiva Kumar K
+        </div>
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('taskCompleted').value">
+          Task Completed: 35/35 (100%)
+        </div>
+      </div>
+    </div>
+    <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value" class="issuesRow">
+      <div class="actionsHead">
+        <span>Actions</span>
+        <span>Raised:3</span>
+      </div>
+      <div class="actionCell">
+        <div class="action" *ngFor="let i of [1,2,3] ">
+          <div class="actionHead">
+            <span class="label">Action:
+            </span>
+            Lorem ipsum
+          </div>
+          <div class="actionBody">
+            <div class="actionRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Horem ipsum dolor sit amet, consectetur adipiscing
+                elit. Nunc vulputate libero et velit interdum, ac
+                aliquet odio mattis. Class aptent taciti sociosqu ad
+                litora torqu
+              </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="actionRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised by:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="pageFooter">
+      <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
+    </div>
+  </div>
+</ng-template>
+<ng-template #footerTemplate let-footerData="footerData">
+  <div class="w-33">
+    <span class="generatedDate"
+      *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">{{getCurrentDate()}}</span>
+  </div>
+  <div class="w-33">
+    <span class="poweredBy">Powered By
+      <img [src]="innovapptiveLogo" class="footerLogo" /></span>
+  </div>
+  <div class="w-33">
+    <span class="customText"
+      *ngIf="pdfBuilderConfigurationsForm.get('customText').value && pdfBuilderConfigurationsForm.get('customTextField').value && pdfBuilderConfigurationsForm.get('customTextLabel').value">
+      {{pdfBuilderConfigurationsForm.get('customTextLabel').value}}:{{pdfBuilderConfigurationsForm.get('customTextField').value}}
+    </span>
+  </div>
+</ng-template>

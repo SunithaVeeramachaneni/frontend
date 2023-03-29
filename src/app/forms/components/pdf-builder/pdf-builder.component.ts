@@ -372,6 +372,16 @@ export class PDFBuilderComponent implements OnInit {
     return count;
   }
 
+  getCurrentDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm: any = today.getMonth() + 1;
+    let dd: any = today.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    return dd + '/' + mm + '/' + yyyy;
+  }
+
   onCancel(): void {
     this.dialogRef.close();
   }
