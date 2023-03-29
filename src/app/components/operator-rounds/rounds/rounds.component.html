@@ -102,19 +102,14 @@
 <ng-template
   cdkConnectedOverlay
   [cdkConnectedOverlayHasBackdrop]="true"
-  cdkConnectedOverlayPanelClass="custom-popover"
+  cdkConnectedOverlayPanelClass="custom-assign-popover"
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
   cdkConnectedOverlayWidth="400px"
   [cdkConnectedOverlayOpen]="openAssignModal"
   [cdkConnectedOverlayOrigin]="trigger"
   (backdropClick)="openAssignModal = false"
 >
-  <div
-    [ngStyle]="{
-      left: assigneePosition?.modalLeft
-    }"
-    class="assign-modal"
-  >
+  <div class="assign-modal">
     <app-assign-round
       [assigneeDetails]="assigneeDetails"
       [dropdownPosition]="assigneePosition"

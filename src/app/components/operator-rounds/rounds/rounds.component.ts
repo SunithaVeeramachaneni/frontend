@@ -2,7 +2,6 @@
 import {
   ChangeDetectionStrategy,
   EventEmitter,
-  HostListener,
   Input,
   OnDestroy,
   Output,
@@ -449,8 +448,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           .getBoundingClientRect();
         this.assigneePosition = {
           top: `${pos?.top + 7}px`,
-          left: `${pos?.left - 15}px`,
-          modalLeft: `calc(100vh - ((${pos?.left}px) - 30px))`
+          left: `${pos?.left - 15}px`
         };
         this.openAssignModal = true;
         break;

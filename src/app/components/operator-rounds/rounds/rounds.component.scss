@@ -61,8 +61,55 @@
 }
 
 .assign-modal {
-  position: absolute;
-  top: 10px;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
     0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+@media (min-width: 1090px) and (max-width: 1240px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 195px !important;
+  }
+}
+
+@media (min-width: 1240px) and (max-width: 1365px) {
+  ::ng-deep .custom-assign-popover {
+    top: 175px !important;
+    right: 195px !important;
+  }
+}
+
+@media (min-width: 1365px) and (max-width: 1515px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 175px !important;
+  }
+}
+
+@media (min-width: 1515px) and (max-width: 1705px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 193px !important;
+  }
+}
+
+@media (min-width: 1705px) and (max-width: 1820px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 193px !important;
+  }
+}
+
+@media (min-width: 1820px) and (max-width: 2049px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 193px !important;
+  }
+}
+
+@media (min-width: 2049px) and (max-width: 2735px) {
+  ::ng-deep .custom-assign-popover {
+    top: 165px !important;
+    right: 193px !important;
+  }
 }
