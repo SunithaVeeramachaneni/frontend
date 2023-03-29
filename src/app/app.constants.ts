@@ -70,6 +70,7 @@ export const permissions = Object.freeze({
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewFormScheduler: 'VIEW_FORM_SCHEDULER',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
@@ -193,6 +194,12 @@ export const routingUrls = {
     permission: permissions.viewArchivedForms
   },
 
+  schedularForms: {
+    url: '/forms/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewFormScheduler
+  },
+
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
@@ -281,3 +288,4 @@ export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
+export const dateFormat = 'MMM dd, yy';
