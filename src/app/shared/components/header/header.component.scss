@@ -4,6 +4,17 @@
   background-color: white;
   height: 65px;
   border-bottom: 1px solid #e0e0e0;
+  margin-left: 65px;
+  transition: 0.4s;
+}
+.open-close-header {
+  margin-left: 270px;
+  transition: 0.4s;
+}
+
+.menu-icon {
+  color: #727caf;
+  margin-bottom: 4px;
 }
 
 ::ng-deep .sidebar-minimize-icons .mat-button-focus-overlay {
