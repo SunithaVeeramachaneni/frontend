@@ -7,14 +7,14 @@
     "value": ""
   },
   {
-    "label": "Operator",
+    "label": "Inspected By",
     "items": [],
     "column": "assignedTo",
     "type": "select",
     "value": ""
   },
   {
-    "label": "Due date",
+    "label": "Due Date",
     "items": [],
     "column": "dueDate",
     "type": "date",
