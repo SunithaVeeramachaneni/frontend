@@ -2048,6 +2048,24 @@
             </mat-error>
           </p>
         </div>
+
+        <div>
+          <p class="sub-headings" translate>configs</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>configs</mat-label>
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                [placeholder]="'configs' | translate"
+                formControlName="configurations"
+              ></textarea>
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('configurations')">
+              {{ 'required' | translate : { name: 'configs' | translate } }}
+            </mat-error>
+          </p>
+        </div>
       </div>
       <div [hidden]="selectedID.value !== 6">
         <div class="assets">

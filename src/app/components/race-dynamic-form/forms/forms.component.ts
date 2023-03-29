@@ -1,8 +1,6 @@
-/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   EventEmitter,
-  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -39,49 +37,38 @@ import {
   Permission,
   UserInfo,
   RowLevelActionEvent,
-  RoundPlanScheduleConfigurationObj,
-  RoundPlanScheduleConfiguration,
-  RoundPlanDetailResponse,
-  RoundPlanDetail,
   SelectTab,
-  UserDetails,
-  AssigneeDetails
+  FormsDetailResponse,
+  FormScheduleConfigurationObj,
+  ScheduleFormDetail,
+  FormScheduleConfiguration
 } from 'src/app/interfaces';
 import {
+  dateFormat,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
-import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
-import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { DatePipe } from '@angular/common';
-import { ScheduleConfig } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 
 @Component({
-  selector: 'app-plans',
-  templateUrl: './plans.component.html',
-  styleUrls: ['./plans.component.scss'],
+  selector: 'app-forms',
+  templateUrl: './forms.component.html',
+  styleUrls: ['./forms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class PlansComponent implements OnInit, OnDestroy {
-  @Input() set users$(users$: Observable<UserDetails[]>) {
-    this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
-    );
-  }
-  get users$(): Observable<UserDetails[]> {
-    return this._users$;
-  }
+export class FormsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
-  assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
       id: 'name',
@@ -113,52 +100,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locations',
-      displayName: 'F.Loc',
-      type: 'number',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'assets',
-      displayName: 'Assets',
-      type: 'number',
-      controlType: 'string',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'tasks',
-      displayName: 'Tasks',
+      id: 'questions',
+      displayName: 'questions',
       type: 'number',
       controlType: 'string',
       order: 4,
@@ -202,8 +145,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'rounds',
-      displayName: 'Rounds Generated',
+      id: 'forms',
+      displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
       order: 6,
@@ -224,8 +167,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'assignedTo',
-      displayName: 'Assigned to',
+      id: 'operator',
+      displayName: 'Operator',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -295,17 +238,17 @@ export class PlansComponent implements OnInit, OnDestroy {
     }
   };
   dataSource: MatTableDataSource<any>;
-  filteredRoundPlans$: Observable<{
+  filteredForms$: Observable<{
     columns: Column[];
     data: any[];
   }>;
-  fetchPlans$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  roundPlanCounts = {
+  formsCount = {
     scheduled: 0,
     unscheduled: 0
   };
@@ -315,36 +258,36 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  roundPlanDetail: RoundPlanDetail;
-  scheduleRoundPlanDetail: RoundPlanDetail;
+  formDetail: ScheduleFormDetail;
+  scheduleFormDetail: ScheduleFormDetail;
   zIndexDelay = 0;
   zIndexScheduleDelay = 0;
   scheduleConfigState = 'out';
-  roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj = {};
+  formScheduleConfigurations: FormScheduleConfigurationObj = {};
   scheduleTypes = { day: 'daily', week: 'weekly', month: 'monthly' };
   initial: any;
-  hideRoundPlanDetail: boolean;
+  hideFormDetail: boolean;
   hideScheduleConfig: boolean;
   placeHolder = '_ _';
-  planCategory: FormControl;
-  roundPlanId: string;
+  formCategory: FormControl;
+  formId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  private _users$: Observable<UserDetails[]>;
+  roundPlanDetail: any;
 
   constructor(
-    private readonly operatorRoundsService: OperatorRoundsService,
+    private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
-    private rpscService: RoundPlanScheduleConfigurationService,
+    private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.planCategory = new FormControl('all');
-    this.fetchPlans$.next({} as TableEvent);
+    this.formCategory = new FormControl('all');
+    this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
     this.searchForm.valueChanges
@@ -352,7 +295,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchPlans$.next({ data: 'search' });
+          this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
       )
@@ -362,28 +305,28 @@ export class PlansComponent implements OnInit, OnDestroy {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    const roundPlanScheduleConfigurations$ = this.rpscService
-      .fetchRoundPlanScheduleConfigurations$()
-      .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
+    const formScheduleConfigurations$ = this.formScheduleConfigurationService
+      .fetchFormScheduleConfigurations$()
+      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
 
-    const roundPlansOnLoadSearch$ = this.fetchPlans$.pipe(
+    const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getRoundPlanList();
+        return this.getFormsList();
       })
     );
 
-    const onScrollRoundPlans$ = this.fetchPlans$.pipe(
+    const onScrollForms$ = this.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundPlanList();
+          return this.getFormsList();
         } else {
-          return of({} as RoundPlanDetailResponse);
+          return of({} as FormsDetailResponse);
         }
       })
     );
@@ -392,25 +335,20 @@ export class PlansComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    const roundPlans$ = combineLatest([
-      roundPlansOnLoadSearch$,
-      onScrollRoundPlans$,
-      roundPlanScheduleConfigurations$,
-      this.users$
+    const forms$ = combineLatest([
+      formsOnLoadSearch$,
+      onScrollForms$,
+      formScheduleConfigurations$
     ]).pipe(
-      map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
-        this.isLoading$.next(false);
+      map(([forms, scrollData, formScheduleConfigurations]) => {
         if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
-            roundPlans.rows,
-            roundPlanScheduleConfigurations
+          this.initial.data = this.formatForms(
+            forms.rows,
+            formScheduleConfigurations
           );
         } else {
           this.initial.data = this.initial.data.concat(
-            this.formatRoundPlans(
-              scrollData.rows,
-              roundPlanScheduleConfigurations
-            )
+            this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
         this.skip = this.initial.data.length;
@@ -418,71 +356,72 @@ export class PlansComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.filteredRoundPlans$ = combineLatest([
-      roundPlans$,
-      this.planCategory.valueChanges.pipe(startWith('all'))
+    this.filteredForms$ = combineLatest([
+      forms$,
+      this.formCategory.valueChanges.pipe(startWith('all'))
     ]).pipe(
-      map(([roundPlans, planCategory]) => {
-        let filteredRoundPlans = [];
+      map(([forms, formCategory]) => {
+        let filteredForms = [];
         this.configOptions = {
           ...this.configOptions,
           tableHeight: 'calc(80vh - 20px)'
         };
-        if (planCategory === 'scheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+        if (formCategory === 'scheduled') {
+          filteredForms = forms.data.filter(
+            (form: ScheduleFormDetail) => form.schedule
           );
-        } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
+        } else if (formCategory === 'unscheduled') {
+          filteredForms = forms.data.filter(
+            (form: ScheduleFormDetail) => !form.schedule
           );
         } else {
-          filteredRoundPlans = roundPlans.data;
+          filteredForms = forms.data;
         }
-        this.dataSource = new MatTableDataSource(filteredRoundPlans);
-        return { ...roundPlans, data: filteredRoundPlans };
+        this.dataSource = new MatTableDataSource(filteredForms);
+        return { ...forms, data: filteredForms };
       })
     );
 
     this.activatedRoute.params.subscribe((params) => {
-      this.hideRoundPlanDetail = true;
+      this.hideFormDetail = true;
       this.hideScheduleConfig = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
-      this.fetchPlans$.next({ data: 'load' });
+    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
+      this.formId = formId;
+      this.fetchForms$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
 
     this.configOptions.allColumns = this.columns;
   }
 
-  getRoundPlanList() {
+  getFormsList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
+      formId: this.formId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj).pipe(
+    return this.raceDynamicFormService.getFormQuestionsFormsList$(obj).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
-        const { scheduled, unscheduled } = this.roundPlanCounts;
-        this.roundPlanCounts = {
-          ...this.roundPlanCounts,
+        const { scheduled, unscheduled } = this.formsCount;
+        this.formsCount = {
+          ...this.formsCount,
           scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
           unscheduled:
             unscheduledCount !== undefined ? unscheduledCount : unscheduled
         };
+        this.isLoading$.next(false);
       })
     );
   }
 
   handleTableEvent = (event): void => {
-    this.fetchPlans$.next(event);
+    this.fetchForms$.next(event);
   };
 
   ngOnDestroy(): void {}
@@ -494,18 +433,18 @@ export class PlansComponent implements OnInit, OnDestroy {
         if (!row.schedule) {
           this.openScheduleConfigHandler(row);
         } else {
-          this.openRoundPlanHandler(row);
+          this.openFormHandler(row);
         }
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
-          this.selectTab.emit({ index: 1, queryParams: { id: row.id } });
+          this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openFormHandler(row);
         }
         break;
       default:
-        this.openRoundPlanHandler(row);
+        this.openFormHandler(row);
     }
   };
 
@@ -516,15 +455,15 @@ export class PlansComponent implements OnInit, OnDestroy {
         action: 'showDetails'
       },
       {
-        title: 'Show Rounds',
-        action: 'showRounds',
+        title: 'Show Forms',
+        action: 'showForms',
         condition: {
           operand: this.placeHolder,
           operation: 'notContains',
           fieldName: 'rounds'
         }
       }
-    ] as any;
+    ];
 
     if (
       this.loginService.checkUserHasPermission(
@@ -552,7 +491,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       });
     } else {
       this.configOptions.allColumns = this.configOptions.allColumns.filter(
-        (column: Column) => column.id !== 'schedule'
+        (column: Column) => column?.id !== 'schedule'
       );
     }
 
@@ -561,44 +500,44 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions = { ...this.configOptions };
   }
 
-  closeRoundPlanHandler() {
-    this.roundPlanDetail = null;
+  closeFormHandler() {
+    this.formDetail = null;
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
           this.zIndexDelay = 0;
-          this.hideRoundPlanDetail = true;
+          this.hideFormDetail = true;
         })
       )
       .subscribe();
   }
 
-  openRoundPlanHandler(row: RoundPlanDetail): void {
-    this.hideRoundPlanDetail = false;
+  openFormHandler(row: ScheduleFormDetail): void {
+    this.hideFormDetail = false;
     this.closeScheduleConfigHandler('out');
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.roundPlanDetail = { ...row };
+    this.formDetail = { ...row };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
-  roundPlanDetailActionHandler() {
+  formDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
+    this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
-  openScheduleConfigHandler(row: RoundPlanDetail) {
+  openScheduleConfigHandler(row: any) {
     this.hideScheduleConfig = false;
-    this.closeRoundPlanHandler();
-    this.scheduleRoundPlanDetail = { ...row };
+    this.closeFormHandler();
+    this.scheduleFormDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
   }
 
   closeScheduleConfigHandler(state: string) {
-    this.scheduleRoundPlanDetail = null;
+    this.scheduleFormDetail = null;
     this.scheduleConfigState = state;
     timer(400)
       .pipe(
@@ -610,42 +549,40 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  scheduleConfigHandler(scheduleConfig: ScheduleConfig) {
-    const { roundPlanScheduleConfiguration, mode } = scheduleConfig;
-    this.roundPlanScheduleConfigurations[
-      roundPlanScheduleConfiguration.roundPlanId
-    ] = roundPlanScheduleConfiguration;
+  scheduleConfigHandler(scheduleConfig) {
+    const { formScheduleConfiguration, mode } = scheduleConfig;
+    this.formScheduleConfigurations[formScheduleConfiguration?.formId] =
+      formScheduleConfiguration;
     if (
-      roundPlanScheduleConfiguration &&
-      Object.keys(roundPlanScheduleConfiguration).length &&
-      roundPlanScheduleConfiguration.id !== ''
+      formScheduleConfiguration &&
+      Object.keys(formScheduleConfiguration)?.length &&
+      formScheduleConfiguration.id !== ''
     ) {
-      this.initial.data = this.dataSource.data.map((data) => {
-        if (data.id === this.scheduleRoundPlanDetail.id) {
+      this.initial.data = this.dataSource?.data?.map((data) => {
+        if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
-            schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
-            scheduleDates: this.getFormatedScheduleDates(
-              roundPlanScheduleConfiguration
-            ),
-            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration)
+            schedule: this.getFormattedSchedule(formScheduleConfiguration),
+            scheduleDates: this.getFormattedScheduleDates(
+              formScheduleConfiguration
+            )
           };
         }
         return data;
       });
-      this.dataSource = new MatTableDataSource(this.initial.data);
+      this.dataSource = new MatTableDataSource(this.initial?.data);
       if (mode === 'create') {
-        this.roundPlanCounts = {
-          ...this.roundPlanCounts,
-          scheduled: this.roundPlanCounts.scheduled + 1,
-          unscheduled: this.roundPlanCounts.unscheduled - 1
+        this.formsCount = {
+          ...this.formsCount,
+          scheduled: this.formsCount.scheduled + 1,
+          unscheduled: this.formsCount.unscheduled - 1
         };
       }
     }
   }
 
-  viewRoundsHandler(roundPlandId: string) {
-    this.selectTab.emit({ index: 1, queryParams: { id: roundPlandId } });
+  viewFormsHandler(id: any) {
+    this.selectTab.emit({ index: 1, queryParams: { id } });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
@@ -655,38 +592,35 @@ export class PlansComponent implements OnInit, OnDestroy {
         this.openScheduleConfigHandler(data);
         break;
       case 'showDetails':
-        this.openRoundPlanHandler(data);
+        this.openFormHandler(data);
         break;
-      case 'showRounds':
+      case 'showForms':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
         break;
       default:
-      // do nothing
     }
   };
 
-  formatRoundPlans(
-    roundPlans: RoundPlanDetail[],
-    roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj
+  formatForms(
+    forms: ScheduleFormDetail[],
+    formScheduleConfigurations: FormScheduleConfigurationObj
   ) {
-    return roundPlans.map((roundPlan) => {
-      if (roundPlanScheduleConfigurations[roundPlan.id]) {
+    return forms?.map((form) => {
+      if (formScheduleConfigurations[form?.id]) {
         return {
-          ...roundPlan,
-          schedule: this.getFormatedSchedule(
-            roundPlanScheduleConfigurations[roundPlan.id]
+          ...form,
+          schedule: this.getFormattedSchedule(
+            formScheduleConfigurations[form?.id]
           ),
-          scheduleDates: this.getFormatedScheduleDates(
-            roundPlanScheduleConfigurations[roundPlan.id]
+          scheduleDates: this.getFormattedScheduleDates(
+            formScheduleConfigurations[form?.id]
           ),
-          rounds: roundPlan.rounds || this.placeHolder,
-          assignedTo: this.getAssignedTo(
-            roundPlanScheduleConfigurations[roundPlan.id]
-          )
+          rounds: form.rounds || this.placeHolder,
+          operator: form.operator || this.placeHolder
         };
       }
       return {
-        ...roundPlan,
+        ...form,
         scheduleDates: this.placeHolder,
         rounds: this.placeHolder,
         operator: this.placeHolder
@@ -694,24 +628,24 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFormatedScheduleDates(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+  getFormattedScheduleDates(
+    formScheduleConfiguration: FormScheduleConfiguration
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
-      roundPlanScheduleConfiguration;
+      formScheduleConfiguration;
     const formatedStartDate =
       scheduleType === 'byFrequency'
         ? this.datePipe.transform(
-            roundPlanScheduleConfiguration.startDate,
-            'MMM dd, yy'
+            formScheduleConfiguration.startDate,
+            dateFormat
           )
         : '';
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, 'MMM dd, yy')
+          ? this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, 'MMM dd, yy')
+          ? this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
 
@@ -720,11 +654,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       : this.placeHolder;
   }
 
-  getFormatedSchedule(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
-  ) {
+  getFormattedSchedule(formScheduleConfiguration: FormScheduleConfiguration) {
     const { repeatEvery, scheduleType, repeatDuration } =
-      roundPlanScheduleConfiguration;
+      formScheduleConfiguration;
     return scheduleType === 'byFrequency'
       ? repeatEvery === 'day'
         ? repeatDuration === 1
@@ -740,18 +672,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       : 'Custom Dates';
   }
 
-  getAssignedTo(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
-  ) {
-    const { assignmentDetails: { value } = {} } =
-      roundPlanScheduleConfiguration;
-    return value
-      ? this.operatorRoundsService.getUserFullName(value)
-      : this.placeHolder;
-  }
-
   getFilter() {
-    this.operatorRoundsService.getPlanFilter().subscribe((res) => {
+    this.raceDynamicFormService.getFormsFilter().subscribe((res) => {
       this.filterJson = res;
     });
   }

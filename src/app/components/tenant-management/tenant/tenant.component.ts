@@ -337,7 +337,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
       tenantLogo: [''],
       tenantLogoName: [''],
       slackTeamID: [''],
-      amplifyConfig: ['', [Validators.required, this.jsonValidator()]]
+      amplifyConfig: ['', [Validators.required, this.jsonValidator()]],
+      configurations: ['', [Validators.required, this.jsonValidator()]]
     });
 
     this.slackConfiguration = this.fb.group({
@@ -561,6 +562,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
       tenant.amplifyConfig =
         tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'object'
           ? JSON.stringify(tenant?.amplifyConfig, null, ' ')
+          : '';
+      tenant.configurations =
+        tenant?.configurations && typeof tenant?.configurations === 'object'
+          ? JSON.stringify(tenant?.configurations, null, ' ')
           : '';
       this.tenantForm.patchValue(tenant);
       (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
@@ -828,6 +833,12 @@ export class TenantComponent implements OnInit, AfterViewInit {
       const { id, ...tenant } = this.tenantForm.getRawValue();
       if (tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'string') {
         tenant.amplifyConfig = JSON.parse(tenant.amplifyConfig);
+      }
+      if (
+        tenant?.configurations &&
+        typeof tenant?.configurations === 'string'
+      ) {
+        tenant.configurations = JSON.parse(tenant.configurations);
       }
       tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
       let { slackTeamID = '' } = tenant.slackConfiguration || {};
