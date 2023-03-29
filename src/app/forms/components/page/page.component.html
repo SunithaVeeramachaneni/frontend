@@ -60,12 +60,7 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #pageMenu="matMenu">
-        <button
-          mat-menu-item
-          (click)="deletePage()"
-          class="text-red"
-          [disabled]="props.pagesCount === 1"
-        >
+        <button mat-menu-item (click)="deletePage()" class="text-red">
           <span translate="deletePage"></span>
         </button>
       </mat-menu>
