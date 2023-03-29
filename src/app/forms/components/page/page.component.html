@@ -28,17 +28,19 @@
         #pageName
         type="text"
         formControlName="name"
+        [size]="getSize(pageForm.get('name').value)"
         class="form_page_name_input"
         placeholder="Untitled Page"
         autocomplete="off"
         (keyup.enter)="pageForm.get('name').disable()"
+        (blur)="pageForm.get('name').disable()"
       />
 
       <button
         mat-icon-button
         (click)="editPage()"
         class="edit-icon"
-        *ngIf="pageForm.get('isOpen').value === true"
+        *ngIf="pageForm.get('name').disabled == true"
       >
         <img
           src="assets/rdf-forms-icons/edit-icon.svg"
@@ -64,6 +66,7 @@
           mat-menu-item
           (click)="deletePage()"
           class="text-red"
+          font-weo
           [disabled]="props.pagesCount === 1"
         >
           <span translate="deletePage"></span>
