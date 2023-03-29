@@ -47,6 +47,7 @@ import { AddEditPlantComponent } from './plants/add-edit-plant/add-edit-plant.co
 import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detail-view.component';
 import { PlantListComponent } from './plants/plant-list/plant-list.component';
 import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
+import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -71,7 +72,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditPlantComponent,
     PlantDetailViewComponent,
     PlantListComponent,
-    UploadResponseModalComponent
+    UploadResponseModalComponent,
+    ResponsesListComponent
   ],
   imports: [
     FormsModule,

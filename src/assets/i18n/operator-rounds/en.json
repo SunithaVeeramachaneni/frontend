@@ -39,6 +39,7 @@
   "question": "Task",
   "copy": "Copy",
   "delete": "Delete",
+  "edit": "Edit",
   "pattern": "{message}",
   "invalidUrl": "Enter valid {name}",
   "requiredtext": "Required",

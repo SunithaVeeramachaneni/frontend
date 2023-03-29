@@ -129,14 +129,16 @@ export class HierarchyContainerComponent implements OnInit {
           ...allAssets.items.map((asset) => ({ ...asset, type: 'asset' }))
         ];
 
-        this.masterHierarchyList =
-          this.assetHierarchyUtil.prepareHierarchyList(hierarchyItems);
+        if (allLocations.items.length && allAssets.items.length) {
+          this.masterHierarchyList =
+            this.assetHierarchyUtil.prepareHierarchyList(hierarchyItems);
 
-        this.store.dispatch(
-          HierarchyActions.setMasterHierarchyList({
-            masterHierarchy: this.masterHierarchyList
-          })
-        );
+          this.store.dispatch(
+            HierarchyActions.setMasterHierarchyList({
+              masterHierarchy: this.masterHierarchyList
+            })
+          );
+        }
 
         return this.masterHierarchyList;
       })

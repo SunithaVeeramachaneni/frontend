@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -33,6 +32,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { slideInOut } from 'src/app/animations';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-locations-list',
@@ -451,7 +451,7 @@ export class LocationsListComponent implements OnInit {
     this.locationEditData = null;
   }
 
-  showLocationDetail(row: GetFormListQuery): void {
+  showLocationDetail(row: GetFormList): void {
     this.selectedLocation = row;
     this.openLocationDetailedView = 'in';
   }

@@ -215,6 +215,7 @@
                     [questionName]="questionObj.name"
                     [questionIndex]="questionIndex"
                     [isAskQuestion]="true"
+                    [subFormId]="selectedNodeId"
                     (questionEvent)="
                       askQuestionEventHandler($event, logic.value, i)
                     "
