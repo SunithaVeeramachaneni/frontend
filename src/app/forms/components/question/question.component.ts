@@ -51,6 +51,7 @@ import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -109,6 +110,14 @@ export class QuestionComponent implements OnInit {
 
   get questionName() {
     return this._questionName;
+  }
+
+  @Input() set subFormId(subFormId: string) {
+    this._subFormId = subFormId;
+  }
+
+  get subFormId() {
+    return this._subFormId;
   }
 
   fieldType = { type: 'TF', description: 'Text Answer' };
@@ -171,12 +180,14 @@ export class QuestionComponent implements OnInit {
   private _questionIndex: number;
   private _isAskQuestion: boolean;
   private _questionName: string;
+  private _subFormId: string;
 
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
+    private responseSetService: ResponseSetService,
     private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute,
     private toast: ToastService,
@@ -220,6 +231,7 @@ export class QuestionComponent implements OnInit {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.selectedNodeId = this.subFormId;
     }
 
     this.questionForm.valueChanges
@@ -229,26 +241,28 @@ export class QuestionComponent implements OnInit {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const {
-            isOpen,
-            isResponseTypeModalOpen,
-            value: prevValue,
-            ...prev
-          } = previous;
+          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
           const {
             isOpen: currIsOpen,
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
-            value: currValue,
             ...curr
           } = current;
           if (!isEqual(prev, curr)) {
+            const { value: prevValue } = prev;
+            const { value: currValue } = curr;
             if (
-              this.questionForm.get('fieldType').value === 'INST' &&
+              current.fieldType === 'INST' &&
               prevValue !== undefined &&
               isEqual(prevValue, currValue)
             ) {
               this.isINSTFieldChanged = true;
             } else {
+              if (
+                currValue?.type === 'globalResponse' ||
+                prevValue?.type === 'globalResponse'
+              )
+                this.handleGlobalResponseRefCount(prevValue, currValue);
+
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
                 sectionId: this.sectionId,
@@ -432,6 +446,21 @@ export class QuestionComponent implements OnInit {
     }
   }
 
+  handleGlobalResponseRefCount = (prev, curr) => {
+    if (
+      prev?.type === 'globalResponse' &&
+      curr?.type === 'globalResponse' &&
+      prev.id !== curr.id
+    ) {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+      this.updateResponseSet(curr, 'selected').subscribe();
+    } else if (prev?.type === 'globalResponse') {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+    } else if (curr?.type === 'globalResponse') {
+      this.updateResponseSet(curr, 'selected').subscribe();
+    }
+  };
+
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
@@ -472,6 +501,18 @@ export class QuestionComponent implements OnInit {
     return this.imageUtils.getImageSrc(base64);
   }
 
+  updateResponseSet = (responseSet, actionType) =>
+    this.responseSetService.updateResponseSet$({
+      id: responseSet?.id,
+      name: responseSet?.name,
+      description: responseSet?.description,
+      isMultiColumn: responseSet?.isMultiColumn,
+      refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
+      values: JSON.stringify(responseSet?.value),
+      createdBy: responseSet?.createdBy,
+      version: responseSet?._version
+    });
+
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
       this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
@@ -508,7 +549,7 @@ export class QuestionComponent implements OnInit {
       .setValue(!responseTypeClosed, { emitEvent: false });
   }
   setQuestionValue(event) {
-    this.questionForm.get('value').setValue(event, { emitEvent: false });
+    this.questionForm.get('value').setValue(event);
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
@@ -670,7 +711,7 @@ export class QuestionComponent implements OnInit {
 
   instructionsFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    const allowedFileTypes: String[] = [
+    const allowedFileTypes: string[] = [
       'image/jpeg',
       'image/jpg',
       'image/png',
@@ -766,7 +807,7 @@ export class QuestionComponent implements OnInit {
   }
 
   stripHTMLTags(html) {
-    let doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || '';
   }
 

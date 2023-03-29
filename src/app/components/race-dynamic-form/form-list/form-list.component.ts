@@ -26,7 +26,6 @@ import {
 import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
@@ -34,6 +33,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-form-list',
@@ -222,7 +222,7 @@ export class FormListComponent implements OnInit {
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as GetFormList
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
@@ -234,7 +234,7 @@ export class FormListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -296,7 +296,7 @@ export class FormListComponent implements OnInit {
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
+  onCopyFormMetaData(form: GetFormList): void {
     if (!form.id) {
       return;
     }
@@ -370,7 +370,7 @@ export class FormListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
@@ -450,7 +450,7 @@ export class FormListComponent implements OnInit {
       );
   }
 
-  openArchiveModal(form: GetFormListQuery): void {
+  openArchiveModal(form: GetFormList): void {
     this.raceDynamicFormService
       .updateForm$({
         formMetadata: {
@@ -530,8 +530,8 @@ export class FormListComponent implements OnInit {
   }
 
   private generateCopyFormName(
-    form: GetFormListQuery,
-    rows: GetFormListQuery[]
+    form: GetFormList,
+    rows: GetFormList[]
   ) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
@@ -551,7 +551,7 @@ export class FormListComponent implements OnInit {
     return null;
   }
 
-  private showFormDetail(row: GetFormListQuery): void {
+  private showFormDetail(row: GetFormList): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';

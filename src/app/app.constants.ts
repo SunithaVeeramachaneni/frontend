@@ -70,6 +70,7 @@ export const permissions = Object.freeze({
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewFormScheduler: 'VIEW_FORM_SCHEDULER',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
@@ -87,7 +88,13 @@ export const permissions = Object.freeze({
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
   deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
-  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT',
+
+  viewGlobalResponses: 'VIEW_GLOBAL_RESPONSES',
+  createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
+  updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
+  deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
 });
 
 export const routingUrls = {
@@ -187,6 +194,12 @@ export const routingUrls = {
     permission: permissions.viewArchivedForms
   },
 
+  schedularForms: {
+    url: '/forms/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewFormScheduler
+  },
+
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
@@ -236,6 +249,11 @@ export const routingUrls = {
     url: '/master-configuration/plants',
     title: 'Plants',
     permission: permissions.viewPlants
+  },
+  globalResponse: {
+    url: '/master-configuration/global-response',
+    title: 'Global Response Set',
+    permission: permissions.viewGlobalResponses
   }
 };
 export const formConfigurationStatus = Object.freeze({
@@ -270,3 +288,4 @@ export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
+export const dateFormat = 'MMM dd, yy';

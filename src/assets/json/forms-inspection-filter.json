@@ -1,0 +1,25 @@
+[
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Inspected By",
+    "items": [],
+    "column": "assignedTo",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Due Date",
+    "items": [],
+    "column": "dueDate",
+    "type": "date",
+    "startDate": "",
+    "endDate": "",
+    "value": ""
+  }
+]

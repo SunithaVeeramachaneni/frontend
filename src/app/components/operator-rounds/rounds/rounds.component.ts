@@ -66,6 +66,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Input() users$: Observable<UserDetails[]>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted'];
+  filter = {
+    status: '',
+    assignedTo: '',
+    dueDate: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -299,6 +305,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
+  assignedTo: string[] = [];
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -312,6 +319,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
+    this.getAllOperatorRounds();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -352,16 +360,32 @@ export class RoundsComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.rounds$ = combineLatest([roundsOnLoadSearch$, onScrollRounds$]).pipe(
+    this.rounds$ = combineLatest([
+      roundsOnLoadSearch$,
+      onScrollRounds$,
+      this.users$
+    ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows;
+          initial.data = rounds.rows.map((roundDetail) => ({
+            ...roundDetail,
+            assignedTo: this.operatorRoundsService.getUserFullName(
+              roundDetail.assignedTo
+            )
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData.rows);
+          initial.data = initial.data.concat(
+            scrollData.rows.map((roundDetail) => ({
+              ...roundDetail,
+              assignedTo: this.operatorRoundsService.getUserFullName(
+                roundDetail.assignedTo
+              )
+            }))
+          );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
@@ -391,13 +415,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getRoundsList$(obj).pipe(
-      tap(({ count, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
-        this.roundsCount = count !== undefined ? count : this.roundsCount;
-        this.isLoading$.next(false);
-      })
-    );
+    return this.operatorRoundsService
+      .getRoundsList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ count, nextToken }) => {
+          this.nextToken = nextToken !== undefined ? nextToken : null;
+          this.roundsCount = count !== undefined ? count : this.roundsCount;
+          this.isLoading$.next(false);
+        })
+      );
   }
 
   handleTableEvent = (event): void => {
@@ -454,18 +480,56 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
+  getAllOperatorRounds() {
+    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
+      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueInspectedBy) {
+        if (item) {
+          this.assignedTo.push(item);
+        }
+      } 
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        } else if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
+        } 
+      }
+    });
+  }
+
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        }
+      }
     });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'date') {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date') {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   clearFilters(): void {
     this.isPopoverOpen = false;
+    this.filter={
+      status: '',
+      assignedTo: '',
+      dueDate: '',
+    }
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {

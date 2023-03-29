@@ -395,7 +395,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     const roundPlans$ = combineLatest([
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
-      roundPlanScheduleConfigurations$
+      roundPlanScheduleConfigurations$,
+      this.users$
     ]).pipe(
       map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
         if (this.skip === 0) {

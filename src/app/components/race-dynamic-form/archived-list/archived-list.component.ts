@@ -27,10 +27,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -197,7 +197,7 @@ export class ArchivedListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getArchivedList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
