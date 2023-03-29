@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   EventEmitter,
-  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -39,8 +38,7 @@ import {
   RoundDetail,
   RoundDetailResponse,
   SelectTab,
-  RowLevelActionEvent,
-  UserDetails
+  RowLevelActionEvent
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -54,24 +52,25 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
-  selector: 'app-rounds',
-  templateUrl: './rounds.component.html',
-  styleUrls: ['./rounds.component.scss'],
+  selector: 'app-inspection',
+  templateUrl: './inspection.component.html',
+  styleUrls: ['./inspection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class RoundsComponent implements OnInit, OnDestroy {
-  @Input() users$: Observable<UserDetails[]>;
+export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
   };
+  assignedTo: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -103,30 +102,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locationAssetsCompleted',
-      displayName: 'Locations/Assets Completed',
-      type: 'string',
-      controlType: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
       id: 'tasksCompleted',
-      displayName: 'Tasks Completed',
+      displayName: 'Responses Completed',
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
@@ -229,8 +206,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'assignedTo',
-      displayName: 'Assigned To',
+      id: 'operator',
+      displayName: 'Operator',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -286,7 +263,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     columns: Column[];
     data: any[];
   }>;
-  fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+  fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = graphQLDefaultLimit;
@@ -305,10 +282,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  assignedTo: string[] = [];
 
   constructor(
-    private readonly operatorRoundsService: OperatorRoundsService,
+    private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
@@ -316,16 +292,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.fetchRounds$.next({} as TableEvent);
+    this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
-    this.getAllOperatorRounds();
+    this.getAllInspections();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchRounds$.next({ data: 'search' });
+          this.fetchInspection$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
       )
@@ -334,22 +310,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
+    const roundsOnLoadSearch$ = this.fetchInspection$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getRoundsList();
+        return this.getInspectionsList();
       })
     );
 
-    const onScrollRounds$ = this.fetchRounds$.pipe(
+    const onScrollInspections$ = this.fetchInspection$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundsList();
+          return this.getInspectionsList();
         } else {
           return of({} as RoundDetailResponse);
         }
@@ -362,8 +338,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     };
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
-      onScrollRounds$,
-      this.users$
+      onScrollInspections$
     ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
@@ -371,21 +346,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows.map((roundDetail) => ({
-            ...roundDetail,
-            assignedTo: this.operatorRoundsService.getUserFullName(
-              roundDetail.assignedTo
-            )
-          }));
+          initial.data = rounds.rows;
         } else {
-          initial.data = initial.data.concat(
-            scrollData.rows.map((roundDetail) => ({
-              ...roundDetail,
-              assignedTo: this.operatorRoundsService.getUserFullName(
-                roundDetail.assignedTo
-              )
-            }))
-          );
+          initial.data = initial.data.concat(scrollData.rows);
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
@@ -399,35 +362,50 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
     this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
       this.roundPlanId = roundPlanId;
-      this.fetchRounds$.next({ data: 'load' });
+      this.fetchInspection$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
 
     this.configOptions.allColumns = this.columns;
   }
 
-  getRoundsList() {
+  getInspectionsList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
+      formId: ''
     };
-
-    return this.operatorRoundsService
-      .getRoundsList$({ ...obj, ...this.filter })
-      .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
-          this.roundsCount = count !== undefined ? count : this.roundsCount;
-          this.isLoading$.next(false);
-        })
-      );
+    return this.raceDynamicFormService.getInspectionsList$({ ...obj, ...this.filter }).pipe(
+      tap(({ count, nextToken }) => {
+        this.nextToken = nextToken !== undefined ? nextToken : null;
+        this.roundsCount = count !== undefined ? count : this.roundsCount;
+        this.isLoading$.next(false);
+      })
+    );
+  }
+  getAllInspections() {
+    this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
+      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueInspectedBy) {
+        if (item) {
+          this.assignedTo.push(item);
+        }
+      } 
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        } else if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
+        } 
+      }
+    });
   }
 
   handleTableEvent = (event): void => {
-    this.fetchRounds$.next(event);
+    this.fetchInspection$.next(event);
   };
 
   ngOnDestroy(): void {}
@@ -477,41 +455,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
-  }
-
-  getAllOperatorRounds() {
-    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueInspectedBy) {
-        if (item) {
-          this.assignedTo.push(item);
-        }
-      } 
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        } else if (item['column'] === 'assignedTo') {
-          item.items = this.assignedTo;
-        } 
-      }
-    });
+    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
   getFilter() {
-    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
+    this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
       this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-      }
     });
   }
 
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    debugger
     for (const item of data) {
       if (item.type !== 'date') {
         this.filter[item.column] = item.value;
@@ -519,17 +475,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.fetchRounds$.next({ data: 'load' });
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-    this.filter={
+    this.filter = {
       status: '',
       assignedTo: '',
       dueDate: '',
     }
-    this.fetchRounds$.next({ data: 'load' });
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
