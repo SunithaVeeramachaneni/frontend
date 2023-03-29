@@ -58,6 +58,11 @@ import { ImportQuestionsModalComponent } from './import-questions/import-questio
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SchedulerComponent } from './scheduler/scheduler.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsComponent } from './forms/forms.component';
+import { InspectionComponent } from './inspection/inspection.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -78,7 +83,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     AvatarComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
-    ImportQuestionsModalComponent
+    ImportQuestionsModalComponent,
+    SchedulerComponent,
+    FormsComponent,
+    InspectionComponent
   ],
   imports: [
     FormsModule,
@@ -122,6 +130,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSelectModule,
     MatDatepickerModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatRadioModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
