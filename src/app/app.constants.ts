@@ -289,3 +289,25 @@ export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';
+
+export const DEFAULT_PDF_BUILDER_CONFIG = {
+  formId: true,
+  formTitle: true,
+  subject: true,
+  logo: true,
+  questionCompleted: true,
+  submittedOn: true,
+  submittedBy: true,
+  pdfGeneratedDate: true,
+  customText: true,
+  customTextLabel: '',
+  customTextField: '',
+  actions: true,
+  issues: true,
+  questions: true,
+  incompleteQuestions: true,
+  completedQuestions: true,
+  capturedQuestions: true,
+  photos: true,
+  skippedQuestions: true
+};

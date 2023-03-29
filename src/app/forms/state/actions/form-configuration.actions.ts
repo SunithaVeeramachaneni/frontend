@@ -35,6 +35,7 @@ export const createFormDetail = createAction(
   '[Form Configuration] createFormDetail',
   props<{
     formMetadata: FormMetadata;
+    pdfBuilderConfiguration: any;
     pages: Page[];
     formListId: string;
     authoredFormDetail: any;

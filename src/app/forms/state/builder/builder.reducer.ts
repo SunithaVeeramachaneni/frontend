@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
@@ -56,7 +57,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       formMetadata: { ...action.formMetadata },
       formDetailPublishStatus: action.formDetailPublishStatus,
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      pdfBuilderConfiguration: DEFAULT_PDF_BUILDER_CONFIG
     })
   ),
   on(

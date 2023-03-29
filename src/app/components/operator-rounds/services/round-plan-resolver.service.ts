@@ -4,6 +4,7 @@ import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -55,9 +56,12 @@ export class RoundPlanResolverService
           tags,
           _version: formListDynamoDBVersion
         } = form;
-        const pdfBuilderConfiguration = JSON.parse(
+        let pdfBuilderConfiguration = JSON.parse(
           authoredFormDetail?.pdfBuilderConfiguration
         );
+        if (!pdfBuilderConfiguration) {
+          pdfBuilderConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
+        }
         const {
           id: authoredFormDetailId,
           counter,

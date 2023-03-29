@@ -86,26 +86,28 @@ export class PDFBuilderComponent implements OnInit {
 
   ngOnInit(): void {
     this.formMetadata$ = this.store.select(getFormMetadata);
-    this.store.select(getSelectedHierarchyList).subscribe((data) => {
-      this.selectedFlatHierarchy =
-        this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
-      const hierarchyClone = JSON.parse(
-        JSON.stringify(this.selectedFlatHierarchy)
-      );
-      this.totalAssetsCount = hierarchyClone.filter(
-        (h) => h.type === 'asset'
-      ).length;
-      this.totalLocationsCount = hierarchyClone.filter(
-        (h) => h.type !== 'asset'
-      ).length;
+    if (this.data.moduleName && this.data.moduleName === 'OPERATOR_ROUNDS') {
+      this.store.select(getSelectedHierarchyList).subscribe((data) => {
+        this.selectedFlatHierarchy =
+          this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
+        const hierarchyClone = JSON.parse(
+          JSON.stringify(this.selectedFlatHierarchy)
+        );
+        this.totalAssetsCount = hierarchyClone.filter(
+          (h) => h.type === 'asset'
+        ).length;
+        this.totalLocationsCount = hierarchyClone.filter(
+          (h) => h.type !== 'asset'
+        ).length;
 
-      const nodeIds = hierarchyClone.map((node) => node.id);
-      this.store
-        .select(getTotalTasksCountByHierarchy(nodeIds))
-        .subscribe((count) => {
-          this.totalQuestionsCount = count;
-        });
-    });
+        const nodeIds = hierarchyClone.map((node) => node.id);
+        this.store
+          .select(getTotalTasksCountByHierarchy(nodeIds))
+          .subscribe((count) => {
+            this.totalQuestionsCount = count;
+          });
+      });
+    }
 
     this.pdfBuilderConfigurationsForm.valueChanges.subscribe((data) => {
       this.store.dispatch(
