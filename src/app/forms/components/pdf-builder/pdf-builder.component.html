@@ -1,4 +1,9 @@
-<div class="pdfBuilder-dialog">
+<div class="pdfBuilder-dialog" *ngIf="{
+  authoredFormDetail: authoredFormDetail$ | async,
+  formMetadata: formMetadata$ | async,
+  formSaveStatus: formSaveStatus$ | async,
+  formDetailPublishStatus: formDetailPublishStatus$ | async
+} as props">
   <div class="dialogHead">
     <button (click)="onCancel()" class="back-btn">
       <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
@@ -126,12 +131,39 @@
     <div class="right">
       <div class="view">
         <span class="pdf-head" translate="pdfPreviewTxt"></span>
-        <button mat-raised-button class="publish-btn" (click)="publish()">
-          <span>
-            <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
-            <span class="publish" translate="publishBtn"></span>
-          </span>
-        </button>
+        <div class="form-status">
+          <div class="save-status" [hidden]="props.formSaveStatus !== formConfigurationStatus.saved ||
+          props.authoredFormDetail.isFormDetailPublished">
+            {{ 'changesSaved' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          props.formSaveStatus !== formConfigurationStatus.saving ||
+          props.authoredFormDetail.isFormDetailPublished
+        ">
+            {{ 'savingChanges' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          formDetailPublishStatus !== formConfigurationStatus.published ||
+          formStatus !== formConfigurationStatus.published
+        ">
+            {{ 'changesPublished' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          formDetailPublishStatus !== formConfigurationStatus.publishing ||
+          !props.authoredFormDetail.isFormDetailPublished
+        ">
+            {{ 'publishingChanges' | translate }}
+          </div>
+          <button mat-raised-button class="publish-btn" (click)="publish()"
+            [disabled]="formStatus === 'Published' || props.authoredFormDetail.isFormDetailPublished">
+            <span>
+              <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
+              <span class="publish" translate="publishBtn"></span>
+            </span>
+          </button>
+
+        </div>
+
         <!-- <button mat-raised-button class="publish-btn" (click)="printPDF()">
           <span>
             <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />

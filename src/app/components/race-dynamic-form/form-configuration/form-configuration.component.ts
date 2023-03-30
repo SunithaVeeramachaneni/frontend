@@ -737,9 +737,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       height: '100vh'
     });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.publishRoundPlan) {
-        this.publishFormDetail();
-      }
+      // DO NOTHING...
     });
   };
 }
