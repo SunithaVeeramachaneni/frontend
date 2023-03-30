@@ -106,7 +106,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       monthlyDaysOfWeek: this.fb.array(
         this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
       ),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: [
         {
           value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
@@ -185,7 +185,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
               .patchValue('day');
             this.roundPlanSchedulerConfigForm
               .get('scheduleEndType')
-              .patchValue('never');
+              .patchValue('on'); // never
             this.scheduleByDates = [];
             break;
           case 'byDate':
@@ -400,8 +400,8 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
                 });
                 this.openRoundPlanScheduleSuccessModal('update');
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.detectChanges();
               }
+              this.cdrf.detectChanges();
             })
           )
           .subscribe();
@@ -519,7 +519,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       repeatEvery: 'day',
       daysOfWeek: [getDay(new Date())],
       monthlyDaysOfWeek: this.setMonthlyDaysOfWeek(),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on', // never
       scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
       scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
       scheduleEndOccurrences: 30,
