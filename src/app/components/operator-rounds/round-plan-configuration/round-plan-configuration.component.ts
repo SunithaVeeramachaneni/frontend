@@ -798,7 +798,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   goToPDFBuilderConfiguration = () => {
     const dialogRef = this.dialog.open(PDFBuilderComponent, {
-      data: '',
+      data: {
+        moduleName: 'OPERATOR_ROUNDS'
+      },
       hasBackdrop: false,
       disableClose: true,
       width: '100vw',

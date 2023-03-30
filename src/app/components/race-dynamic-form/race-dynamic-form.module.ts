@@ -63,6 +63,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
+import { environment } from 'src/environments/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -135,6 +137,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
     EffectsModule.forFeature([FormConfigurationEffects])
   ],
   exports: [
