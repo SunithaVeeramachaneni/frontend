@@ -257,7 +257,7 @@ export class AssetHierarchyUtil {
   ): HierarchyEntity[] => {
     let nodes = [] as HierarchyEntity[];
     hierarchyList.forEach((node) => {
-      const { type, nodeId: id, nodeDescription: description, name } = node;
+      const { type, nodeId: id, name, nodeDescription: description } = node;
       const nodePath = [...ancestralPath, { type, id, name, description }];
       if (node.isSelected && !node.hasChildren) {
         nodes.push({
