@@ -58,9 +58,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   tenantLogo: any;
   collaborationType = 'none';
   isOpen = false;
+  menustate;
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
-  private menustate;
 
   constructor(
     public uploadDialog: MatDialog,
