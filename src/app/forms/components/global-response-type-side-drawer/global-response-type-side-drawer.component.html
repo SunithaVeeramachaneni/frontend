@@ -2,7 +2,7 @@
   <mat-card class="p-0">
     <mat-icon (click)="closeGlobalResponse()">close</mat-icon>
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="globalMcqHeading"></div>
+      <div class="mcq-heading" translate="createResponses"></div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div>
@@ -89,14 +89,14 @@
               </div>
             </div>
           </div>
+          <button
+            *ngIf="!isViewMode"
+            mat-flat-button
+            (click)="addResponse()"
+            class="add-response"
+            translate="addRes"
+          ></button>
         </div>
-        <button
-          *ngIf="!isViewMode"
-          mat-flat-button
-          (click)="addResponse()"
-          class="add-response"
-          translate="addRes"
-        ></button>
       </mat-card-content>
     </div>
   </mat-card>

@@ -186,7 +186,7 @@ export class ResponsesListComponent implements OnInit {
       }
     }
   };
-
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   public searchResponseSet: FormControl;
 
   public users$: Observable<UserDetails[]>;

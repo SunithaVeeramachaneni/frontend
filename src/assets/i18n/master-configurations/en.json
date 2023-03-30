@@ -59,5 +59,6 @@
   "globalResponseHeading": "GLOBAL RESPONSES",
   "responseTitle": "Response Title",
   "response": "Response",
-  "addRes": " + Add Response"
+  "addRes": " + Add Response",
+  "createResponses": "Create Responses"
 }

@@ -16,8 +16,9 @@
                 autocomplete="off"
                 [formControl]="searchResponseSet"
               />
+
+              <img [src]="filterIcon" matSuffix alt="Open Filter" />
             </mat-form-field>
-            <img [src]="filterIcon" matSuffix alt="Open Filter" />
           </span>
 
           <button
@@ -69,15 +70,23 @@
           class="width-100"
         ></cwp-dynamictable>
       </div>
+      <div *ngIf="isGlobalResponseOpen">
+        <app-global-response-type-side-drawer
+          [@slideInOut]="globaResponseAddOrEditOpenState"
+          (slideInOut)="handleSlideState($event)"
+          [globalResponseToBeEdited]="responseToBeEdited"
+          [isControlInViewMode]="isControlModeView"
+          (globalResponseHandler)="handleGlobalResponseChange($event)"
+        ></app-global-response-type-side-drawer>
+      </div>
+      <div *ngIf="isLoading$ | async">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
+        </div>
+      </div>
     </div>
   </ng-container>
-</div>
-<div *ngIf="isGlobalResponseOpen">
-  <app-global-response-type-side-drawer
-    [@slideInOut]="globaResponseAddOrEditOpenState"
-    (slideInOut)="handleSlideState($event)"
-    [globalResponseToBeEdited]="responseToBeEdited"
-    [isControlInViewMode]="isControlModeView"
-    (globalResponseHandler)="handleGlobalResponseChange($event)"
-  ></app-global-response-type-side-drawer>
 </div>
