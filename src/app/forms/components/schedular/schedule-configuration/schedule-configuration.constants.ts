@@ -1,0 +1,15 @@
+export const scheduleConfigs = Object.freeze({
+  scheduleTypes: ['byFrequency', 'byDate'],
+  scheduleEndTypes: ['never', 'on', 'after'],
+  repeatTypes: ['day', 'week', 'month'],
+  daysOfWeek: [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday'
+  ],
+  weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week']
+});

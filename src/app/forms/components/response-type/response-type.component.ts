@@ -50,10 +50,8 @@ export class ResponseTypeComponent implements OnInit {
 
   ngOnInit(): void {
     this.globalResponses$ = combineLatest([
-      this.responseSetService
-        .fetchAllGlobalResponses$()
-        .pipe(tap((data) => console.log(data))),
-      this.addEditDeleteResponseSet$.pipe(tap((data) => console.log(data)))
+      this.responseSetService.fetchAllGlobalResponses$(),
+      this.addEditDeleteResponseSet$
     ]).pipe(
       map(([allResponses, addEditData]) => {
         this.allResponses = allResponses.items;

@@ -12,12 +12,24 @@
       'hide-content': isUserAuthenticated === false,
       'menu-close': !menuOpenClose
     }"
+    (mouseenter)="openMenuOnMouseEnter()"
+    (mouseleave)="closeMenuOnMouseLeave()"
   >
-    <div
-      class="sidebar-menu-items"
-      (mouseenter)="openMenuOnMouseEnter()"
-      (mouseleave)="closeMenuOnMouseLeave()"
-    >
+    <div class="logo-img">
+      <img
+        src="{{ bigInnovaIcon }}"
+        [hidden]="!menuOpenClose"
+        class="innov-big-img"
+        alt="Innovapptive Logo"
+      />
+      <img
+        src="{{ smallInnovaIcon }}"
+        [hidden]="menuOpenClose"
+        class="innov-small-img"
+        alt="Innovapptive Logo"
+      />
+    </div>
+    <div class="sidebar-menu-items">
       <mat-nav-list
         class="menu-item"
         *ngFor="let menuitem of menus; let i = index"
@@ -30,7 +42,6 @@
               title="{{ menuitem.title }}"
               *appCheckUserHasPermission="[menuitem.permission]"
               class="dis-flex"
-              [ngStyle]="{ 'padding-top': i === 0 ? '10px' : '0px' }"
             >
               <a
                 mat-list-item
@@ -119,22 +130,11 @@
         </div>
       </mat-nav-list>
     </div>
-    <img
-      src="{{ bigInnovaIcon }}"
-      [hidden]="!menuOpenClose"
-      class="innov-big-img"
-      alt="Innovapptive Logo"
-    />
-    <img
-      src="{{ smallInnovaIcon }}"
-      [hidden]="menuOpenClose"
-      class="innov-small-img"
-      alt="Innovapptive Logo"
-    />
   </mat-sidenav>
 
   <mat-sidenav-content>
     <app-header
+      [menuOpenClose]="menuOpenClose"
       (sideNavToggle)="toggleMenu()"
       (outsideClickTrigger)="closeSideNav()"
       (signOutHandler)="onSignOut()"

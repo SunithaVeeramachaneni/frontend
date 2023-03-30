@@ -184,7 +184,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,
-            formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+            formLogo: 'assets/img/svg/rounds-icon.svg'
           }
         })
       );
