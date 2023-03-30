@@ -39,6 +39,9 @@ export class FilterComponent implements OnInit, OnChanges {
   resetFilter() {
     for (const item of this.json) {
       item.value = '';
+      if (item.itemValue) {
+        item.itemValue = '';
+      }
     }
     this.reset.emit(this.json);
   }
@@ -46,7 +49,7 @@ export class FilterComponent implements OnInit, OnChanges {
   checkState() {
     let status = true;
     for (const item of this.json) {
-      if (item.value) {
+      if (item.value || item.itemValue) {
         status = false;
       }
     }

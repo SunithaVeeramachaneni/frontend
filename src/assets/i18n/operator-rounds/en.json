@@ -227,5 +227,9 @@
   "selectAnOperator": "Select an Operator",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
-  "noSearchResultsFound": "No search results found"
+  "noSearchResultsFound": "No search results found",
+  "emptyRoundsPlan": "To add the Tasks, add a Page first",
+  "publishPlanTitle": "Alert",
+  "publishPlanBody": "Plan cannot be published with blank tasks",
+  "publishWithoutTaskButton": "Publish without Blank Tasks"
 }
