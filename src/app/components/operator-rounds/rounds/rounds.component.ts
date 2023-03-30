@@ -278,6 +278,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       open: {
         'background-color': '#FEE2E2',
         color: '#991B1B'
+      },
+      'to-do': {
+        'background-color': '#FEE2E2',
+        color: '#991B1B'
       }
     }
   };
@@ -482,19 +486,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+      const uniqueInspectedBy = formsList
+        .map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
           this.assignedTo.push(item);
         }
-      } 
+      }
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
-        } 
+        }
       }
     });
   }
@@ -524,11 +529,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-    this.filter={
+    this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: '',
-    }
+      dueDate: ''
+    };
     this.fetchRounds$.next({ data: 'load' });
   }
 
