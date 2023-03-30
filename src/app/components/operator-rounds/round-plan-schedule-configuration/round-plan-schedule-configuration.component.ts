@@ -43,6 +43,10 @@ export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
   mode: 'create' | 'update';
 }
+export interface ScheduleConfigEvent {
+  slideInOut: 'out' | 'in';
+  viewRounds?: boolean;
+}
 @Component({
   selector: 'app-round-plan-schedule-configuration',
   templateUrl: './round-plan-schedule-configuration.component.html',
@@ -63,12 +67,11 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
   @Input() assigneeDetails: AssigneeDetails;
   @Output()
-  scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
+  scheduleConfigEvent: EventEmitter<ScheduleConfigEvent> =
+    new EventEmitter<ScheduleConfigEvent>();
   @Output()
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
-  @Output()
-  viewRounds: EventEmitter<string> = new EventEmitter<string>();
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -355,7 +358,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
   }
 
   cancel() {
-    this.scheduleConfigState.emit('out');
+    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
   scheduleConfiguration() {
@@ -573,10 +576,14 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data.redirectToRounds) {
-          this.scheduleConfigState.emit('out');
-          this.viewRounds.emit(this.roundPlanDetail.id);
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out',
+            viewRounds: true
+          });
         } else {
-          this.scheduleConfigState.emit('out');
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out'
+          });
         }
       }
     });
