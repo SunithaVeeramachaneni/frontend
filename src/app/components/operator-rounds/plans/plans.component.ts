@@ -695,7 +695,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         ...roundPlan,
         scheduleDates: this.placeHolder,
         rounds: this.placeHolder,
-        operator: this.placeHolder
+        assignedTo: this.placeHolder
       };
     });
   }
@@ -749,6 +749,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   getAssignedTo(
     roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
   ) {
+    console.log(roundPlanScheduleConfiguration);
     const { assignmentDetails: { value } = {} } =
       roundPlanScheduleConfiguration;
     return value
