@@ -192,9 +192,10 @@
   </div>
   <div
     *ngIf="isEmptyPlan"
+    class="emptyRoutePlanContainer"
     [ngClass]="{
-      emptyRoutePlanContainer: !isPreviewActive,
-      emptyRoutePlanContainerWithPreview: isPreviewActive
+      'left-60': !isPreviewActive,
+      'left-30': isPreviewActive
     }"
   >
     <div>
