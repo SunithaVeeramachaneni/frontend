@@ -522,12 +522,13 @@
   top: 50%;
   margin: 0;
   text-align: center;
-}
-
-.left-60 {
   left: 60%;
 }
 
-.left-30 {
+.emptyRoutePlanContainerWithPreview {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  text-align: center;
   left: 30%;
 }
