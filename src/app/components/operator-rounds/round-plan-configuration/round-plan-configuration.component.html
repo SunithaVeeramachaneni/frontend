@@ -209,6 +209,7 @@
           <app-builder
             *ngIf="selectedNodeLoadStatus"
             [selectedNode]="selectedNodeInstance"
+            [isPreviewActive]="isPreviewActive"
             [counter]="formConfiguration.get('counter').value"
           ></app-builder>
         </div>
