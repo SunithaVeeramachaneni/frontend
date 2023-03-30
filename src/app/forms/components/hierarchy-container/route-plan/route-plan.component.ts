@@ -148,6 +148,7 @@ export class RoutePlanComponent implements OnInit {
 
   drop(event) {
     if (!this.dropActionTodo) return;
+
     const draggedItemId = event.item.data;
     const parentItemId = event.previousContainer.id;
     const targetListId = this.getParentNodeId(
@@ -222,6 +223,7 @@ export class RoutePlanComponent implements OnInit {
       })
     );
     this.clearDragInfo(true);
+    this.setSelectedNode(draggedItem);
   }
 
   getParentNodeId(id: string, nodesToSearch: any[], parentId: string): string {
