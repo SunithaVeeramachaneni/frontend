@@ -428,8 +428,8 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
                   .get('id')
                   .patchValue(scheduleConfig.id);
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.detectChanges();
               }
+              this.cdrf.detectChanges();
             })
           )
           .subscribe();
