@@ -205,5 +205,6 @@
   "customDates": "Custom Dates",
   "scheduleSuccess": "Success",
   "scheduleSuccessMessage": " has been scheduled successfully",
-  "viewForms": "View Forms"
+  "viewForms": "View Forms",
+  "viewPDFBtn": "View PDF"
 }

@@ -1,0 +1,24 @@
+<div class="pdfPreview-dialog">
+  <div class="dialogHead">
+    <button (click)="onCancel()" class="back-btn">
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <span class="back-btn-text">
+        {{data.selectedForm.name}}
+      </span>
+    </button>
+    <button mat-stroked-button class="downloadPDFBtn">
+      <img src="assets/rdf-forms-icons/picture-as-pdf.svg" alt="picture-as-pdf" />
+      <span translate="download"></span>
+    </button>
+  </div>
+  <div class="dialogContainer">
+    <div class="pdfPreviewContainer">
+      <button mat-raised-button class="publish-btn" (click)="printPDF(data.selectedForm)">
+        <span>
+          <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
+          <span class="publish">Print PDF</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

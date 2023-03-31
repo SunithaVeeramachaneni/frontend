@@ -64,6 +64,7 @@ import { CdkScrollableModule } from '@angular/cdk/scrolling';
 import { QuestionPreviewComponent } from './components/pdf-builder/question-preview/question-preview.component';
 import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
+import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { ScheduleConfigurationComponent } from './components/schedular/schedule-
     HyperlinkSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
+    PDFPreviewComponent,
     QuestionPreviewComponent,
     HierarchyNodeComponent,
     HierarchyModalComponent,
@@ -153,6 +155,7 @@ import { ScheduleConfigurationComponent } from './components/schedular/schedule-
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
     PDFBuilderComponent,
+    PDFPreviewComponent,
     QuestionPreviewComponent,
     NgxShimmerLoadingModule,
     NgxShimmerLoadingModule,

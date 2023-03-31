@@ -54,6 +54,8 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 
 @Component({
   selector: 'app-rounds',
@@ -316,7 +318,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -472,6 +475,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   openRoundHandler(row: RoundDetail): void {
+    console.log(row);
+    console.log(this.dataSource);
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
@@ -479,9 +484,37 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+  roundsDetailActionHandler(event) {
+    if (event) {
+      const { type } = event;
+      if (type === 'VIEW_PDF') {
+        const dialogRef = this.dialog.open(PDFPreviewComponent, {
+          data: {
+            moduleName: 'OPERATOR_ROUNDS',
+            roundId: this.selectedForm.id,
+            selectedForm: this.selectedForm
+          },
+          hasBackdrop: false,
+          disableClose: true,
+          width: '100vw',
+          minWidth: '100vw',
+          height: '100vh'
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          // DO Nothing...
+        });
+        //
+      } else if (type === 'DOWNLOAD_PDF') {
+        this.downloadPDF(this.selectedForm.id);
+      }
+    } else {
+      this.store.dispatch(FormConfigurationActions.resetPages());
+      this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+    }
+  }
+
+  downloadPDF(formId) {
+    console.log('downloading pdf.....');
   }
 
   getAllOperatorRounds() {

@@ -164,6 +164,12 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   onNavigateToDetailPage() {
     this.formDetailAction.emit({ type: 'edit' });
   }
+  viewPDF() {
+    this.formDetailAction.emit({ type: 'VIEW_PDF' });
+  }
+  downloadPDF() {
+    this.formDetailAction.emit({ type: 'DOWNLOAD_PDF' });
+  }
 
   ngOnDestroy(): void {
     this.selectedForm = null;
