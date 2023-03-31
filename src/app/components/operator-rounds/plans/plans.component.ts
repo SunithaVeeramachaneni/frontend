@@ -228,7 +228,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'assignedTo',
-      displayName: 'Assigned to',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -601,8 +601,29 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
-    const { slideInOut: state, viewRounds } = event;
+    const { slideInOut: state, viewRounds, mode } = event;
     this.scheduleConfigState = state;
+
+    if (mode === 'create') {
+      this.operatorRoundsService
+        .getRoundsCountByRoundPlanId$(this.scheduleRoundPlanDetail.id)
+        .pipe(
+          tap(({ count = 0 }) => {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.id === this.scheduleRoundPlanDetail.id) {
+                return {
+                  ...data,
+                  rounds: count
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+          })
+        )
+        .subscribe();
+    }
+
     timer(400)
       .pipe(
         tap(() => {
@@ -749,7 +770,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   getAssignedTo(
     roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
   ) {
-    console.log(roundPlanScheduleConfiguration);
     const { assignmentDetails: { value } = {} } =
       roundPlanScheduleConfiguration;
     return value
