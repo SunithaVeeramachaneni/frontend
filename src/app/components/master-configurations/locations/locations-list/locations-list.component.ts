@@ -282,14 +282,9 @@ export class LocationsListComponent implements OnInit {
     this.locations$ = combineLatest([
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
-      onScrollLocations$,
-      this.allLocations$
+      onScrollLocations$
     ]).pipe(
-      map(([rows, form, scrollData, allLocations]) => {
-        const { items: unfilteredParentLocations } = allLocations;
-        this.allParentsLocations = unfilteredParentLocations.filter(
-          (location) => location._deleted !== true
-        );
+      map(([rows, form, scrollData ]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
