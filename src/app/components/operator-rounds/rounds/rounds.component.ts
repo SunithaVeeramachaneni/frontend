@@ -278,6 +278,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       open: {
         'background-color': '#FEE2E2',
         color: '#991B1B'
+      },
+      'to-do': {
+        'background-color': '#FEE2E2',
+        color: '#991B1B'
       }
     }
   };
@@ -294,7 +298,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   roundsCount = 0;
   nextToken = '';
-  menuState = 'out';
+  formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -455,7 +459,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   onCloseViewDetail() {
     this.selectedForm = null;
-    this.menuState = 'out';
+    this.formDetailState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
@@ -471,7 +475,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
-    this.menuState = 'in';
+    this.formDetailState = 'in';
     this.zIndexDelay = 400;
   }
 
@@ -482,19 +486,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+      const uniqueInspectedBy = formsList
+        .map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
           this.assignedTo.push(item);
         }
-      } 
+      }
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
-        } 
+        }
       }
     });
   }
@@ -524,11 +529,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-    this.filter={
+    this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: '',
-    }
+      dueDate: ''
+    };
     this.fetchRounds$.next({ data: 'load' });
   }
 
