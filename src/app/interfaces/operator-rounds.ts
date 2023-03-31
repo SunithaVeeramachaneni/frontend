@@ -80,6 +80,7 @@ export interface RoundPlanDetail extends RoundPlan {
 }
 
 export interface RoundDetail extends RoundPlan {
+  roundId: string;
   scheduledType: string;
   dueDate: string;
   locationAndAssets: number;
