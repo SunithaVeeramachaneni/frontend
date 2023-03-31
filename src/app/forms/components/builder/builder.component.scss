@@ -158,6 +158,7 @@
 
 .questionContainer {
   display: flex;
+  margin-top: 2px;
 
   .question {
     width: 100%;
@@ -431,22 +432,6 @@
   }
 }
 
-.emptyRoutePlanContainer {
-  position: absolute;
-  top: 50%;
-  margin: 0;
-  text-align: center;
-  left: 60%;
-}
-
-.emptyRoutePlanContainerWithPreview {
-  position: absolute;
-  top: 50%;
-  margin: 0;
-  text-align: center;
-  left: 30%;
-}
-
 .add-page-btn {
   background: $white;
   border: 1px solid $border-color;
@@ -527,4 +512,24 @@
     letter-spacing: 0.4px;
     color: $black;
   }
+}
+
+.empty-text {
+  font-size: large;
+}
+
+.emptyRoutePlanContainer {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  text-align: center;
+  left: 60%;
+}
+
+.emptyRoutePlanContainerWithPreview {
+  position: absolute;
+  top: 50%;
+  margin: 0;
+  text-align: center;
+  left: 30%;
 }
