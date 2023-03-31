@@ -44,6 +44,11 @@ export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
   mode: 'create' | 'update';
 }
+export interface ScheduleConfigEvent {
+  slideInOut: 'out' | 'in';
+  viewRounds?: boolean;
+  mode?: 'create' | 'update';
+}
 @Component({
   selector: 'app-round-plan-schedule-configuration',
   templateUrl: './round-plan-schedule-configuration.component.html',
@@ -65,12 +70,11 @@ export class RoundPlanScheduleConfigurationComponent
   }
   @Input() assigneeDetails: AssigneeDetails;
   @Output()
-  scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
+  scheduleConfigEvent: EventEmitter<ScheduleConfigEvent> =
+    new EventEmitter<ScheduleConfigEvent>();
   @Output()
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
-  @Output()
-  viewRounds: EventEmitter<string> = new EventEmitter<string>();
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -115,7 +119,7 @@ export class RoundPlanScheduleConfigurationComponent
       monthlyDaysOfWeek: this.fb.array(
         this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
       ),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: [
         {
           value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
@@ -194,7 +198,7 @@ export class RoundPlanScheduleConfigurationComponent
               .patchValue('day');
             this.roundPlanSchedulerConfigForm
               .get('scheduleEndType')
-              .patchValue('never');
+              .patchValue('on'); // never
             this.scheduleByDates = [];
             break;
           case 'byDate':
@@ -375,7 +379,7 @@ export class RoundPlanScheduleConfigurationComponent
   }
 
   cancel() {
-    this.scheduleConfigState.emit('out');
+    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
   scheduleConfiguration() {
@@ -420,8 +424,8 @@ export class RoundPlanScheduleConfigurationComponent
                 });
                 this.openRoundPlanScheduleSuccessModal('update');
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.detectChanges();
               }
+              this.cdrf.detectChanges();
             })
           )
           .subscribe();
@@ -448,8 +452,8 @@ export class RoundPlanScheduleConfigurationComponent
                   .get('id')
                   .patchValue(scheduleConfig.id);
                 this.roundPlanSchedulerConfigForm.markAsPristine();
-                this.cdrf.detectChanges();
               }
+              this.cdrf.detectChanges();
             })
           )
           .subscribe();
@@ -539,7 +543,7 @@ export class RoundPlanScheduleConfigurationComponent
       repeatEvery: 'day',
       daysOfWeek: [getDay(new Date())],
       monthlyDaysOfWeek: this.setMonthlyDaysOfWeek(),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on', // never
       scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
       scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
       scheduleEndOccurrences: 30,
@@ -578,7 +582,7 @@ export class RoundPlanScheduleConfigurationComponent
     }));
   }
 
-  openRoundPlanScheduleSuccessModal(dailodMode: 'create' | 'update') {
+  openRoundPlanScheduleSuccessModal(dialogMode: 'create' | 'update') {
     const dialogRef = this.dialog.open(RoundPlanScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
@@ -586,17 +590,22 @@ export class RoundPlanScheduleConfigurationComponent
       backdropClass: 'round-plan-schedule-success-modal',
       data: {
         roundPlanName: this.roundPlanDetail.name,
-        mode: dailodMode
+        mode: dialogMode
       }
     });
 
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data.redirectToRounds) {
-          this.scheduleConfigState.emit('out');
-          this.viewRounds.emit(this.roundPlanDetail.id);
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out',
+            viewRounds: true
+          });
         } else {
-          this.scheduleConfigState.emit('out');
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out',
+            mode: data.mode
+          });
         }
       }
     });

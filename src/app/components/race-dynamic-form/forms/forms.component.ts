@@ -101,7 +101,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     },
     {
       id: 'questions',
-      displayName: 'questions',
+      displayName: 'Questions',
       type: 'number',
       controlType: 'string',
       order: 4,

@@ -60,7 +60,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { DatePipe } from '@angular/common';
-import { ScheduleConfig } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
+import {
+  ScheduleConfig,
+  ScheduleConfigEvent
+} from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
@@ -225,7 +228,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'assignedTo',
-      displayName: 'Assigned to',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -310,7 +313,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     unscheduled: 0
   };
   nextToken = '';
-  menuState = 'out';
+  formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -563,7 +566,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   closeRoundPlanHandler() {
     this.roundPlanDetail = null;
-    this.menuState = 'out';
+    this.formDetailState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
@@ -577,10 +580,10 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   openRoundPlanHandler(row: RoundPlanDetail): void {
     this.hideRoundPlanDetail = false;
-    this.closeScheduleConfigHandler('out');
+    this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.roundPlanDetail = { ...row };
-    this.menuState = 'in';
+    this.formDetailState = 'in';
     this.zIndexDelay = 400;
   }
 
@@ -597,14 +600,42 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.zIndexScheduleDelay = 400;
   }
 
-  closeScheduleConfigHandler(state: string) {
-    this.scheduleRoundPlanDetail = null;
+  scheduleConfigEventHandler(event: ScheduleConfigEvent) {
+    const { slideInOut: state, viewRounds, mode } = event;
     this.scheduleConfigState = state;
+
+    if (mode === 'create') {
+      this.operatorRoundsService
+        .getRoundsCountByRoundPlanId$(this.scheduleRoundPlanDetail.id)
+        .pipe(
+          tap(({ count = 0 }) => {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.id === this.scheduleRoundPlanDetail.id) {
+                return {
+                  ...data,
+                  rounds: count
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+          })
+        )
+        .subscribe();
+    }
+
     timer(400)
       .pipe(
         tap(() => {
           this.zIndexScheduleDelay = 0;
           this.hideScheduleConfig = true;
+          if (viewRounds) {
+            this.selectTab.emit({
+              index: 1,
+              queryParams: { id: this.scheduleRoundPlanDetail.id }
+            });
+          }
+          this.scheduleRoundPlanDetail = null;
         })
       )
       .subscribe();
@@ -642,10 +673,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
       }
     }
-  }
-
-  viewRoundsHandler(roundPlandId: string) {
-    this.selectTab.emit({ index: 1, queryParams: { id: roundPlandId } });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
@@ -689,7 +716,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         ...roundPlan,
         scheduleDates: this.placeHolder,
         rounds: this.placeHolder,
-        operator: this.placeHolder
+        assignedTo: this.placeHolder
       };
     });
   }
