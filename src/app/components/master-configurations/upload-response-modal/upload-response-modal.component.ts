@@ -24,6 +24,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   successCount = 0;
   failedCount = 0;
   type = '';
+  failure: any = [];
   constructor(
     private readonly locationService: LocationService,
     private readonly assetsService: AssetsService,
@@ -52,11 +53,16 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           this.message = `Adding all ${result?.totalCount} ${type}`;
           this.successCount = result?.successCount;
           this.failedCount = result?.failedCount;
+          this.failure = result?.failure;
         }
       });
     } else {
       this.onClose();
     }
+  }
+
+  downloadExcel() {
+    this.locationService.exportAsExcelFile(this.failure, "location");
   }
 
   ngAfterViewChecked(): void {

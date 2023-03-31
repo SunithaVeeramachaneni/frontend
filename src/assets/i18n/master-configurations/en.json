@@ -55,6 +55,7 @@
   "failedUpload": "Failed to uploaded",
   "closeBtn": "Close",
   "reviewFailed": "Review Failed",
+  "downloadExcel": "Download Excel",
   "globalMcqHeading": "Global Response Set",
   "globalResponseHeading": "GLOBAL RESPONSES",
   "responseTitle": "Response Title",

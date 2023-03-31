@@ -58,8 +58,8 @@
           {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
         </div>
       </div>
-      <div class="review-text">
-        {{ 'reviewFailed' | translate }}
+      <div class="review-text" *ngIf="failedCount > 0" (click)="downloadExcel()">
+        {{ 'downloadExcel' | translate }}
       </div>
 
       <button
