@@ -46,7 +46,10 @@ export class PageComponent implements OnInit {
   @Output() pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   pageForm: FormGroup = this.fb.group({
-    name: '',
+    name: {
+      value: '',
+      disabled: true
+    },
     position: '',
     isOpen: true
   });

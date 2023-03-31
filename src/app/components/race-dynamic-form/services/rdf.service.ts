@@ -523,10 +523,10 @@ export class RaceDynamicFormService {
                   question.value.tag.title !== this.translate.instant('noneTag')
                 ) {
                   Object.assign(questionItem, {
-                    TAG: {
+                    TAG: JSON.stringify({
                       title: question.value.tag.title,
                       colour: question.value.tag.colour
-                    }
+                    })
                   });
                 } else {
                   Object.assign(questionItem, {

@@ -14,7 +14,7 @@
   } as props">
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img src="assets/rdf-forms-icons/formlogo.svg" alt="" width="50" height="50" />
+      <img src="assets/rdf-forms-icons/plansicon.svg" alt="" width="50" height="50" />
       <input hidden type="file" #formImageuploader accept="image/x-png,image/jpeg"
         (change)="uploadFormImageFile($event)" />
       <div class="width-90">
@@ -78,7 +78,7 @@
         [ngClass]="{ 'preview-btn-active': isPreviewActive }">
         <span>
           <img [src]="getImage('preview', isPreviewActive)" class="preview-btn-icon" />
-          <span translate="preview"></span>
+          <span translate="preview" class="preview-text"></span>
         </span>
       </button>
       <button mat-stroked-button class="next-btn">

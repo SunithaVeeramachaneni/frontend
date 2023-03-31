@@ -1,6 +1,6 @@
 <div class="search-container">
   <div id="opendetail">
-    <app-form-detail [@slideInOut]="menuState" (slideInOut)="onCloseViewDetail()" [selectedForm]="selectedForm"
+    <app-form-detail [@slideInOut]="formDetailState" (slideInOut)="onCloseViewDetail()" [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'" [hidden]="hideRoundDetail" [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted" (formDetailAction)="roundsDetailActionHandler($event)"></app-form-detail>
   </div>

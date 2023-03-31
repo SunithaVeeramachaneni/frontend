@@ -20,7 +20,8 @@ import {
   RoundDetail,
   RoundPlanQueryParam,
   UserDetails,
-  UsersInfoByEmail
+  UsersInfoByEmail,
+  Count
 } from '../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -179,6 +180,17 @@ export class OperatorRoundsService {
       } as RoundDetailResponse);
     }
   }
+
+  getRoundsCountByRoundPlanId$ = (
+    roundPlanId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Count> =>
+    this.appService._getRespById(
+      environment.operatorRoundsApiUrl,
+      'rounds/',
+      `${roundPlanId}/count`,
+      info
+    );
 
   getPlansList$(
     queryParams: RoundPlanQueryParam,
