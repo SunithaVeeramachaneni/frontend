@@ -261,10 +261,10 @@ export class FormListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
-   
+
     this.getAllForms();
     this.getDisplayedForms();
-    
+
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -409,7 +409,7 @@ export class FormListComponent implements OnInit {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
             });
           } else {
@@ -597,9 +597,9 @@ export class FormListComponent implements OnInit {
   }
 
   getFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => { 
+    this.raceDynamicFormService.getFilter().subscribe((res) => {
       this.filterJson = res;
-    })
+    });
   }
 
   applyFilter(data: any) {
