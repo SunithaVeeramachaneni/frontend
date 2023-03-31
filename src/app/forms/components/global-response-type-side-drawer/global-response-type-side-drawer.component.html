@@ -56,12 +56,13 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
                 <input
+                  #globalResponses
                   matInput
                   formControlName="title"
                   [placeholder]="'responseTitle' | translate"
                   autocomplete="off"
                   class="input-forms"
-                  (keyup.enter)="addResponse(); keytab($event)"
+                  (keyup.enter)="addResponse(i + 1)"
                 />
                 <div>
                   <button
@@ -92,7 +93,7 @@
           <button
             *ngIf="!isViewMode"
             mat-flat-button
-            (click)="addResponse()"
+            (click)="addResponse(getResponseCount())"
             class="add-response"
             translate="addRes"
           ></button>
