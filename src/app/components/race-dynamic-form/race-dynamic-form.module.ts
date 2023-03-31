@@ -43,12 +43,10 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
-import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
@@ -57,6 +55,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { SchedulerComponent } from './scheduler/scheduler.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsComponent } from './forms/forms.component';
+import { InspectionComponent } from './inspection/inspection.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -77,7 +83,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     AvatarComponent,
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
-    ImportQuestionsModalComponent
+    ImportQuestionsModalComponent,
+    SchedulerComponent,
+    FormsComponent,
+    InspectionComponent
   ],
   imports: [
     FormsModule,
@@ -85,6 +94,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RaceDynamicFormRoutingModule,
     DragDropModule,
     CommonModule,
+    SharedModule,
     FormModule,
     MatButtonModule,
     MatDialogModule,
@@ -100,6 +110,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
@@ -117,12 +128,14 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     OverlayModule,
     MatSelectModule,
+    MatDatepickerModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatRadioModule,
     StoreModule.forFeature('feature', {
-      formConfiguration: formConfigurationReducer,
-      responseSet: responseSetReducer
+      formConfiguration: formConfigurationReducer
     }),
-    EffectsModule.forFeature([FormConfigurationEffects, ResponseSetEffects])
+    EffectsModule.forFeature([FormConfigurationEffects])
   ],
   exports: [
     FormContainerComponent,

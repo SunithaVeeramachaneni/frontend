@@ -32,6 +32,7 @@
   "msTeamsPublicPrivateKeys": "RSA Public-Private Keys",
   "msTeamsRSAPrivateKey": "Private Key",
   "msTeamsRSAPublicKey": "Public Key",
+  "none": "None",
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
   "sapsamlDetails": "SAP SAML Details",
@@ -112,5 +113,6 @@
   "secretAccessKey": "Secret Access Key",
   "bucket": "Bucket",
   "region": "Region",
-  "amplifyConfig": "Amplify config"
+  "amplifyConfig": "Amplify config",
+  "configs": "Configurations"
 }

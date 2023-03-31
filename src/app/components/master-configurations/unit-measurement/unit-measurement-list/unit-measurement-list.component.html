@@ -28,7 +28,6 @@
           ></button>
           <mat-menu #createMenu="matMenu">
             <button
-              ngIf="false"
               mat-menu-item
               class="menu-buttons"
               (click)="uploader?.click()"
@@ -57,7 +56,6 @@
           </mat-menu>
 
           <button
-            *ngIf="false"
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
@@ -66,7 +64,6 @@
           </button>
           <mat-menu #moreMenu="matMenu">
             <button
-              disabled
               mat-menu-item
               class="menu-buttons"
               *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"

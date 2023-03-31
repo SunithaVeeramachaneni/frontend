@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/member-ordering */
 import {
   Component,
   EventEmitter,
@@ -13,7 +15,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
@@ -27,7 +28,7 @@ import { AssetsService } from '../services/assets.service';
 export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   private assetEditData = null;
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
@@ -65,12 +66,14 @@ export class AddEditAssetsComponent implements OnInit {
   get assetsEditData() {
     return this.assetEditData;
   }
+  assetIcon = 'assets/rdf-forms-icons/asset-icon.svg';
   errors: ValidationError = {};
   assetForm: FormGroup;
 
   assetStatus;
   assetTitle;
-  assetImage = '';
+  assetImage = 'assets/rdf-forms-icons/asset-icon.svg';
+
   assetButton;
 
   locations$;
@@ -86,7 +89,6 @@ export class AddEditAssetsComponent implements OnInit {
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
-      id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
       assetsId: new FormControl('', [Validators.required]),
@@ -110,7 +112,7 @@ export class AddEditAssetsComponent implements OnInit {
     if (this.assetStatus === 'add') {
       this.assetForm
         .get('image')
-        .setValue('assets/master-configurations/default-asset.png');
+        .setValue('assets/master-configurations/asset-icon.svg');
       this.assetService.createAssets$(this.assetForm.value).subscribe((res) => {
         this.createdAssetsData.emit({
           status: this.assetStatus,
@@ -121,19 +123,21 @@ export class AddEditAssetsComponent implements OnInit {
         this.slideInOut.emit('out');
       });
     } else if (this.assetStatus === 'edit') {
-      const updateData = {
-        data: this.assetForm.value,
-        version: this.assetEditData._version
-      };
-      this.assetService.updateAssets$(updateData).subscribe((res) => {
-        this.createdAssetsData.emit({
-          status: this.assetStatus,
-          data: res
+      this.assetService
+        .updateAssets$({
+          ...this.assetForm.value,
+          _version: this.assetEditData._version,
+          id: this.assetEditData?.id
+        })
+        .subscribe((res) => {
+          this.createdAssetsData.emit({
+            status: this.assetStatus,
+            data: res
+          });
+          this.assetForm.reset();
+          this.assetForm?.get('parentType').setValue('location');
+          this.slideInOut.emit('out');
         });
-        this.assetForm.reset();
-        this.assetForm?.get('parentType').setValue('location');
-        this.slideInOut.emit('out');
-      });
     }
   }
 

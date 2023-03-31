@@ -113,6 +113,7 @@ li.breadcrumb-item.active span {
   width: 100% !important;
   left: 43px !important;
 }
+
 .ql-toolbar.ql-snow {
   position: absolute;
   top: -29px !important;
@@ -150,6 +151,28 @@ li.breadcrumb-item.active span {
 
 .ql-toolbar.ql-snow + .ql-container.ql-snow {
   border: none;
+}
+
+.questions-div {
+  .ql-editor {
+    padding: 0 !important;
+  }
+
+  .ql-editor p,
+  .ql-editor ol,
+  .ql-editor ul {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ql-toolbar.ql-snow {
+    position: absolute;
+    top: -29px !important;
+    background: white;
+    z-index: 1;
+    right: 20px !important;
+    left: auto !important;
+  }
 }
 
 .form-field {
@@ -564,7 +587,8 @@ button.mat-menu-item {
 }
 
 .tableMain tr.mat-header-row {
-  height: 42px;
+  height: 48px;
+  
 }
 
 .mat-tab-label .mat-tab-label-content {
@@ -590,4 +614,9 @@ button.mat-menu-item {
 
 .question-bg .form-reading-1 {
   width: 94% !important;
+}
+
+.round-plan-schedule-success-modal {
+  background-color: $black;
+  opacity: 0.6;
 }

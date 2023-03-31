@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   EventEmitter,
@@ -13,7 +14,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
 
@@ -26,7 +26,7 @@ import { LocationService } from '../services/location.service';
 export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   @Input() set locationEditData(data) {
     this.locEditData = data;
     if (this.locEditData === null) {
@@ -54,12 +54,15 @@ export class AddEditLocationComponent implements OnInit {
   get locationEditData() {
     return this.locEditData;
   }
+
+  locationIcon = 'assets/rdf-forms-icons/locationIcon.svg';
+
   errors: ValidationError = {};
   locationForm: FormGroup;
   locations$: Observable<any>;
   locationStatus;
   locationTitle;
-  locationImage = '';
+  locationImage = this.locationIcon;
   locationButton;
 
   parentInformation;
@@ -73,7 +76,6 @@ export class AddEditLocationComponent implements OnInit {
 
   ngOnInit(): void {
     this.locationForm = this.fb.group({
-      id: '',
       image: '',
       name: new FormControl('', [Validators.required]),
       locationId: new FormControl('', [Validators.required]),
@@ -97,7 +99,7 @@ export class AddEditLocationComponent implements OnInit {
     if (this.locationStatus === 'add') {
       this.locationForm
         .get('image')
-        .setValue('assets/master-configurations/default-location.png');
+        .setValue('assets/master-configurations/locationIcon.svg');
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
@@ -109,23 +111,25 @@ export class AddEditLocationComponent implements OnInit {
           this.slideInOut.emit('out');
         });
     } else if (this.locationStatus === 'edit') {
-      const updateData = {
-        data: this.locationForm.value,
-        version: this.locEditData._version
-      };
-      this.locationService.updateLocation$(updateData).subscribe((res) => {
-        this.createdLocationData.emit({
-          status: this.locationStatus,
-          data: res
+      this.locationService
+        .updateLocation$({
+          ...this.locationForm.value,
+          _version: this.locEditData._version,
+          id: this.locEditData?.id
+        })
+        .subscribe((res) => {
+          this.createdLocationData.emit({
+            status: this.locationStatus,
+            data: res
+          });
+          this.locationForm.reset();
+          this.slideInOut.emit('out');
         });
-        this.locationForm.reset();
-        this.slideInOut.emit('out');
-      });
     }
   }
 
   onKey(event) {
-    const value = event.target.value || "";
+    const value = event.target.value || '';
     this.allParentsData = this.search(value);
   }
 

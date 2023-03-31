@@ -31,6 +31,7 @@ export interface Tenant {
   createdAt?: string;
   updatedAt?: string;
   amplifyConfig?: any;
+  configurations?: any;
 }
 
 export interface ProtectedResource {

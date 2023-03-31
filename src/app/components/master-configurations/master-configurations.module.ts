@@ -15,6 +15,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { MasterConfigurationsRoutingModule } from './master-configurations-routing.module';
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
@@ -42,6 +43,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
+import { AddEditPlantComponent } from './plants/add-edit-plant/add-edit-plant.component';
+import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detail-view.component';
+import { PlantListComponent } from './plants/plant-list/plant-list.component';
+import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
+import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -62,7 +68,12 @@ export const customTranslateLoader = (http: HttpClient) =>
     EditUnitPopupComponent,
     UnitOfMeasurementDeleteModalComponent,
     AddEditAssetsComponent,
-    AssetsDetailViewComponent
+    AssetsDetailViewComponent,
+    AddEditPlantComponent,
+    PlantDetailViewComponent,
+    PlantListComponent,
+    UploadResponseModalComponent,
+    ResponsesListComponent
   ],
   imports: [
     FormsModule,
@@ -97,7 +108,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSlideToggleModule,
     MatRadioModule,
     NgxShimmerLoadingModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatProgressBarModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,

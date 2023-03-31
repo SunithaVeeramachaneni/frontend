@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const permissions = Object.freeze({
   viewDashboards: 'VIEW_DASHBOARDS',
   createDashboard: 'CREATE_DASHBOARD',
@@ -54,6 +55,12 @@ export const permissions = Object.freeze({
   deleteAsset: 'DELETE_ASSET',
   importAssets: 'IMPORT_ASSETS',
 
+  viewPlants: 'VIEW_PLANTS',
+  createPlant: 'CREATE_PLANT',
+  updatePlant: 'UPDATE_PLANT',
+  deletePlant: 'DELETE_PLANT',
+  importPlants: 'IMPORT_PLANTS',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -63,23 +70,31 @@ export const permissions = Object.freeze({
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewFormScheduler: 'VIEW_FORM_SCHEDULER',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
-  viewRounds: 'VIEW_ROUNDS',
   downloadRounds: 'DOWNLOAD_ROUNDS',
   shareRounds: 'SHARE_ROUNDS',
-  scheduleRounds: 'SCHEDULE_ROUNDS',
+  viewScheduler: 'VIEW_SCHEDULER',
+  scheduleRoundPlan: 'SCHEDULE_ROUND_PLAN',
   viewORPTemplates: 'VIEW_OR_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
   deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
-  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT',
+
+  viewGlobalResponses: 'VIEW_GLOBAL_RESPONSES',
+  createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
+  updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
+  deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
 });
 
 export const routingUrls = {
@@ -179,6 +194,12 @@ export const routingUrls = {
     permission: permissions.viewArchivedForms
   },
 
+  schedularForms: {
+    url: '/forms/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewFormScheduler
+  },
+
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
@@ -189,15 +210,20 @@ export const routingUrls = {
     title: 'My Plans',
     permission: permissions.viewORPlans
   },
-  roundPlanSubmissions: {
+  roundPlanScheduler: {
     url: '/operator-rounds/scheduler/0',
     title: 'Scheduler',
-    permission: permissions.viewORPlans
+    permission: permissions.viewScheduler
   },
   roundPlanArchivedForms: {
     url: '/operator-rounds/archived',
     title: 'Archived',
     permission: permissions.viewArchivedORP
+  },
+  roundPlanObservations: {
+    url: '/operator-rounds/observations',
+    title: 'Observations',
+    permission: permissions.viewORObservations
   },
   masterConfiguration: {
     url: '/master-configuration',
@@ -218,6 +244,16 @@ export const routingUrls = {
     url: '/master-configuration/unit-measurement',
     title: 'Unit of Measurement',
     permission: permissions.viewUnitOfMeasurement
+  },
+  plants: {
+    url: '/master-configuration/plants',
+    title: 'Plants',
+    permission: permissions.viewPlants
+  },
+  globalResponse: {
+    url: '/master-configuration/global-response',
+    title: 'Global Response Set',
+    permission: permissions.viewGlobalResponses
   }
 };
 export const formConfigurationStatus = Object.freeze({
@@ -230,10 +266,18 @@ export const formConfigurationStatus = Object.freeze({
   embedded: 'Embedded'
 });
 
+export const HIERARCHY_MODES = Object.freeze({
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ASSET_HIERARCHY: 'asset_hierarchy',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ROUTE_PLAN: 'route_plan'
+});
+
 export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
+export const graphQLDefaultLimit = 100;
 export const defaultCountFieldName = 'Record Count';
 export const superAdminIcon =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAwhJREFUSInF1W9o1WUUB/DPubuyDSp0OWbZH4QKGogQRGVYhlEvgmgx96JMUMRtmXvRS7VY9Wq+qBFh907If73QiKKEoJERmAYiSWUEEflCbFqWvkisuXufXtzfvdvdvdYIogM/nt/znPN8v+ec53AO/7HEXIxSwTIsFbpQws+mHItNfvjXBGmXNn8YEgaw5CpmJzGqw+7oU5ozQSq4D/txC5LkuHAYZzAPi7EK3RnK18Lq2Oj7fyRIRasl+9CKd+VsbXYR0pi7lW3HSlwQHo9+n1+VII1ZruxT5ITnot9YA+gbrpf3kVaPxjoXUxIKXhJewHll98Szfqza52oXX9WubH/m+VBT8GF5eQeEa2OdixAhxaAXMYKFwr6Uph2vEWi3GTfj/RhQaJYSi4xglWRPg+6sLfhSWK6op5GgUi1JydZm2OlNT+N5lCRvz9bHsLKcbRVjg3UEWZ0vwYnY5LsG8KK7hJ3Z9pMYdKZphPONS34RHkw7LIB8plqarYcbwN/S6Yr30J55dzoVrc7+S876MIZNQfQppYIjeELenTiaz9Jzg4TkpzrwYXmTDuDW6VzYINmQ7SZ0GsfvM65VMMpunI6gbEogtNS532UNHmqaDibl9MZAHTjVd41KVNVHnsjWm+pMz9mrrKP28dV0eIZio6NNiBfPxKxGcFwLwiMzLWNYGRcgFXRjWQa+JwYVZyOnonmSFbis3claBFlX/FZyW9rh3iZewdps/cIV/U0tynowH4dirUs1gkxeUzkZScN159I7WrAGE67ojSF/Nni/S5vwSrYdrZ5PA3XYrZLjB3TVDCvyq4fRKac3NtdXWk0mjeEOHIwBhxoIok9JSS9+E7akgu2Z5+RckjzV7FHTLm2paK/kGZwS1s/UN7brSkf9AAtxAtt0+Hj2QEmvazVPj/AybscpJY/N7gTNB85OS5Tsw/3Z0XkcEU5L8ipNcQWuy/QHhfXR7/xsrL+dyangScmgsNJ0W6nKZYxLRmPQZ1fDmNvQ32GB0I1FwpSyc67xTbUU/1f5C9zA9dtYdVIPAAAAAElFTkSuQmCC';
@@ -243,3 +287,5 @@ export const defaultProfile = 'assets/user-management-icons/Vector.png';
 export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
+export const LIST_LENGTH = 20000000;
+export const dateFormat = 'MMM dd, yy';

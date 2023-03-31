@@ -1,6 +1,9 @@
-<mat-toolbar class="min-toolbar">
+<mat-toolbar
+  class="min-toolbar"
+  [ngClass]="{ 'open-close-header': menustate === true }"
+>
   <button mat-icon-button (click)="openSidenav()" aria-label="Side Menu Toggle">
-    <mat-icon>menu</mat-icon>
+    <mat-icon class="menu-icon">menu</mat-icon>
   </button>
 
   <div class="width-50" (click)="closeSidenav()">
@@ -21,7 +24,7 @@
     *ngIf="userInfo$ | async as userDetails; else userDetailsLoading"
     (click)="closeSidenav()"
   >
-    <div *ngIf="userDetails.collaborationType === 'msteams'">
+    <div *ngIf="collaborationType === 'msteams'">
       <mat-icon
         #collabButton
         class="collabButton"
@@ -43,7 +46,7 @@
         chat_bubble_outline
       </mat-icon>
     </div>
-    <div *ngIf="userDetails.collaborationType === 'slack'">
+    <div *ngIf="collaborationType === 'slack'">
       <div *ngIf="slackVerification$ | async as slackVerification">
         <div
           *ngIf="!slackVerification.slackInstalled"
@@ -98,7 +101,7 @@
     </div>
 
     <div
-      class="dis-flex cursor"
+      class="dis-flex cursor user-profile"
       (click)="isOpen = !isOpen"
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"

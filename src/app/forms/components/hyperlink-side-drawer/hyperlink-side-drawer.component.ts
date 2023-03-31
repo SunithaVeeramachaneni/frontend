@@ -37,7 +37,12 @@ export class HyperlinkSideDrawerComponent implements OnInit {
   ngOnInit(): void {
     this.hyperlinkForm = this.fb.group({
       displayText: new FormControl(''),
-      hyperlink: new FormControl('', [Validators.required, this.urlValidator()])
+      hyperlink: new FormControl('', [
+        Validators.required,
+        Validators.pattern(
+          '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$'
+        )
+      ])
     });
 
     if (this.question && this.isHyperlink(this.question.value)) {

@@ -6,10 +6,16 @@
       (selectedTabChange)="onTabChange($event)"
     >
       <mat-tab [label]="'plans' | translate">
-        <app-plans></app-plans>
+        <app-plans
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-plans>
       </mat-tab>
-      <mat-tab [label]="'rounds' | translate" disabled>
-        <app-rounds></app-rounds>
+      <mat-tab [label]="'rounds' | translate">
+        <app-rounds
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-rounds>
       </mat-tab>
     </mat-tab-group>
   </div>

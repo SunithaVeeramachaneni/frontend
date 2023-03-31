@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
+} from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -12,11 +18,9 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  mergeMap,
   map,
   switchMap,
-  tap,
-  catchError
+  tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -31,16 +35,24 @@ import {
   SearchEvent,
   CellClickActionEvent,
   Permission,
-  UserInfo
+  UserInfo,
+  RoundDetail,
+  RoundDetailResponse,
+  SelectTab,
+  RowLevelActionEvent,
+  UserDetails
 } from 'src/app/interfaces';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
-import { GetFormListQuery } from 'src/app/API.service';
+import {
+  formConfigurationStatus,
+  graphQLDefaultLimit,
+  permissions as perms
+} from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 
 @Component({
@@ -51,6 +63,15 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  @Input() users$: Observable<UserDetails[]>;
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted'];
+  filter = {
+    status: '',
+    assignedTo: '',
+    dueDate: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -81,9 +102,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    /* {
-      id: 'assets',
-      displayName: 'Assets',
+    {
+      id: 'locationAssetsCompleted',
+      displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -97,17 +118,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    }, */
+    },
     {
       id: 'tasksCompleted',
       displayName: 'Tasks Completed',
       type: 'string',
-      controlType: 'string',
+      controlType: 'space-between',
+      controlValue: ',',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -119,8 +141,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
-      titleStyle: {},
+      groupable: false,
+      titleStyle: { width: '125px' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -141,7 +163,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -163,7 +185,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -185,15 +207,30 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
-      titleStyle: {},
+      groupable: false,
+      titleStyle: {
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
+        height: '24px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
-    }
-    /* {
-      id: 'operator',
-      displayName: 'Operator',
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -207,15 +244,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
       movable: false,
       stickable: false,
       sticky: false,
-      groupable: true,
+      groupable: false,
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    } */
+    }
   ];
   configOptions: ConfigOptions = {
-    tableID: 'plansTable',
+    tableID: 'roundsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -230,13 +267,21 @@ export class RoundsComponent implements OnInit, OnDestroy {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      draft: {
+      submitted: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
+      },
+      'in-progress': {
         'background-color': '#FEF3C7',
         color: '#92400E'
       },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+      open: {
+        'background-color': '#FEE2E2',
+        color: '#991B1B'
+      },
+      'to-do': {
+        'background-color': '#FEE2E2',
+        color: '#991B1B'
       }
     }
   };
@@ -248,31 +293,37 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  roundsCount$: Observable<number>;
+  roundsCount = 0;
   nextToken = '';
-  menuState = 'out';
+  formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedForm: GetFormListQuery = null;
+  selectedForm: RoundDetail;
   zIndexDelay = 0;
+  hideRoundDetail: boolean;
+  roundPlanId: string;
   readonly perms = perms;
+  readonly formConfigurationStatus = formConfigurationStatus;
+  assignedTo: string[] = [];
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.fetchRounds$.next({ data: 'load' });
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
+    this.getFilter();
+    this.getAllOperatorRounds();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -283,22 +334,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.roundsCount$ = this.operatorRoundsService.getRoundsListCount$();
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-    this.displayRounds();
-    this.configOptions.allColumns = this.columns;
-  }
 
-  displayRounds(): void {
     const roundsOnLoadSearch$ = this.fetchRounds$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getRoundPlanList();
+        return this.getRoundsList();
       })
     );
 
@@ -307,9 +353,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getRoundPlanList();
+          return this.getRoundsList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of({} as RoundDetailResponse);
         }
       })
     );
@@ -318,61 +364,80 @@ export class RoundsComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.rounds$ = combineLatest([roundsOnLoadSearch$, onScrollRounds$]).pipe(
-      map(([rows, scrollData]) => {
+    this.rounds$ = combineLatest([
+      roundsOnLoadSearch$,
+      onScrollRounds$,
+      this.users$
+    ]).pipe(
+      map(([rounds, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rows;
+          initial.data = rounds.rows.map((roundDetail) => ({
+            ...roundDetail,
+            assignedTo: this.operatorRoundsService.getUserFullName(
+              roundDetail.assignedTo
+            )
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(
+            scrollData.rows.map((roundDetail) => ({
+              ...roundDetail,
+              assignedTo: this.operatorRoundsService.getUserFullName(
+                roundDetail.assignedTo
+              )
+            }))
+          );
         }
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
+
+    this.activatedRoute.params.subscribe(() => {
+      this.hideRoundDetail = true;
+    });
+
+    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
+      this.roundPlanId = roundPlanId;
+      this.fetchRounds$.next({ data: 'load' });
+      this.isLoading$.next(true);
+    });
+
+    this.configOptions.allColumns = this.columns;
   }
 
-  getRoundPlanList() {
+  getRoundsList() {
     const obj = {
       nextToken: this.nextToken,
       limit: this.limit,
-      searchKey: this.searchForm.value,
-      fetchType: this.fetchType
+      searchTerm: this.searchForm.value,
+      fetchType: this.fetchType,
+      roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getRoundsList$(obj).pipe(
-      mergeMap(({ rows, nextToken }) => {
-        this.nextToken = nextToken;
-        this.isLoading$.next(false);
-        return of(rows as any);
-      }),
-      catchError(() => {
-        this.isLoading$.next(false);
-        return of([]);
-      })
-    );
+    return this.operatorRoundsService
+      .getRoundsList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ count, nextToken }) => {
+          this.nextToken = nextToken !== undefined ? nextToken : null;
+          this.roundsCount = count !== undefined ? count : this.roundsCount;
+          this.isLoading$.next(false);
+        })
+      );
   }
 
   handleTableEvent = (event): void => {
     this.fetchRounds$.next(event);
   };
 
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    this.showFormDetail(event.row);
+    this.openRoundHandler(event.row);
   };
 
   prepareMenuActions(permissions: Permission[]): void {
@@ -380,6 +445,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       {
         title: 'Show Details',
         action: 'showDetails'
+      },
+      {
+        title: 'Show Plan',
+        action: 'showPlans'
       }
     ];
 
@@ -390,22 +459,95 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   onCloseViewDetail() {
     this.selectedForm = null;
-    this.menuState = 'out';
+    this.formDetailState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
-      .pipe(tap(() => (this.zIndexDelay = 0)))
+      .pipe(
+        tap(() => {
+          this.hideRoundDetail = true;
+          this.zIndexDelay = 0;
+        })
+      )
       .subscribe();
   }
 
-  showFormDetail(row: GetFormListQuery): void {
+  openRoundHandler(row: RoundDetail): void {
+    this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
-    this.menuState = 'in';
+    this.formDetailState = 'in';
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler(event) {
+  roundsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
+
+  getAllOperatorRounds() {
+    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
+      const uniqueInspectedBy = formsList
+        .map((item) => item.assignedTo)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueInspectedBy) {
+        if (item) {
+          this.assignedTo.push(item);
+        }
+      }
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        } else if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
+        }
+      }
+    });
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getRoundFilter().subscribe((res) => {
+      this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        }
+      }
+    });
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'date') {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date') {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    this.fetchRounds$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      assignedTo: '',
+      dueDate: ''
+    };
+    this.fetchRounds$.next({ data: 'load' });
+  }
+
+  rowLevelActionHandler = (event: RowLevelActionEvent) => {
+    const { action, data } = event;
+    switch (action) {
+      case 'showDetails':
+        this.openRoundHandler(data);
+        break;
+      case 'showPlans':
+        this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
+        break;
+      default:
+      // do nothing
+    }
+  };
 }
