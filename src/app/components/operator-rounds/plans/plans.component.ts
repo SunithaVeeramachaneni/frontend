@@ -228,7 +228,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'assignedTo',
-      displayName: 'Assigned to',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
