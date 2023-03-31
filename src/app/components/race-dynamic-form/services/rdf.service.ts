@@ -121,7 +121,6 @@ export class RaceDynamicFormService {
     }
   }
 
-  
   getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
@@ -522,10 +521,10 @@ export class RaceDynamicFormService {
                   question.value.tag.title !== this.translate.instant('noneTag')
                 ) {
                   Object.assign(questionItem, {
-                    TAG: {
+                    TAG: JSON.stringify({
                       title: question.value.tag.title,
                       colour: question.value.tag.colour
-                    }
+                    })
                   });
                 } else {
                   Object.assign(questionItem, {
@@ -787,7 +786,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-fetchAllRounds$ = () => {
+  fetchAllRounds$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -823,14 +822,15 @@ fetchAllRounds$ = () => {
           { displayToast, failureResponse },
           rest
         )
-        .pipe(map((data) => ({ ...data, rows: this.formatInspections(data.rows) })));
+        .pipe(
+          map((data) => ({ ...data, rows: this.formatInspections(data.rows) }))
+        );
     } else {
       return of({
         rows: []
       } as InspectionDetailResponse);
     }
   }
-
 
   private formatInspections(rounds: any[] = []): any[] {
     const rows = rounds
@@ -849,17 +849,15 @@ fetchAllRounds$ = () => {
           condition: true
         },
         dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
-          },${p.totalTasks > 0
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
+          p.totalTasks > 0
             ? Math.round(
-              (Math.abs(
-                p.totalTasksCompleted / p.totalTasks
-              ) +
-                Number.EPSILON) *
-              100
-            )
+                (Math.abs(p.totalTasksCompleted / p.totalTasks) +
+                  Number.EPSILON) *
+                  100
+              )
             : 0
-          }%`
+        }%`
       }));
     return rows;
   }
