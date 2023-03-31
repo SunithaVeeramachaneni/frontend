@@ -209,13 +209,6 @@ export class LocationsListComponent implements OnInit {
     private loginService: LoginService,
     private dialog: MatDialog
   ) {}
-  getAllLocations() {
-    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.parentInformation = allLocations.items.filter(
-        (location) => location._deleted !== true
-      );
-    });
-  }
 
   ngOnInit(): void {
     this.locationService.fetchLocations$.next({ data: 'load' });
@@ -233,7 +226,6 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     //this.locationsListCount$ = this.locationService.getFormsListCount$();
-    this.getAllLocations();
     this.getDisplayedLocations();
     this.locationsCount$ = combineLatest([
       this.locationsCount$,
@@ -282,9 +274,14 @@ export class LocationsListComponent implements OnInit {
     this.locations$ = combineLatest([
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
-      onScrollLocations$
+      onScrollLocations$,
+      this.allLocations$
     ]).pipe(
-      map(([rows, form, scrollData ]) => {
+      map(([rows, form, scrollData, allLocations]) => {
+        const { items: unfilteredParentLocations } = allLocations;
+        this.allParentsLocations = unfilteredParentLocations.filter(
+          (location) => location._deleted !== true
+        );
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -304,7 +301,7 @@ export class LocationsListComponent implements OnInit {
           }
         }
         for (const item of initial.data) {
-          if (item.parentId && item.parentId.trim().length > 0) {
+          if (item.parentId) {
             const parent = this.allParentsLocations.find(
               (d) => d.id === item.parentId
             );
@@ -481,7 +478,14 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
-
+ getAllLocations() {
+      this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+        this.parentInformation = allLocations.items.filter(
+          (location) => location._deleted !== true
+        );
+        this.allParentsLocations = this.parentInformation;
+      });
+    }
   uploadFile(event) {
     const file = event.target.files[0];
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
@@ -491,9 +495,9 @@ export class LocationsListComponent implements OnInit {
       },
       disableClose: true
     });
-
-    deleteReportRef.afterClosed().subscribe(async (res) => {
-      await this.getAllLocations();
+   
+    deleteReportRef.afterClosed().subscribe((res) => {
+      this.getAllLocations();
       this.addEditCopyDeleteLocations = true;
       this.nextToken = '';
       this.locationService.fetchLocations$.next({ data: 'load' });
