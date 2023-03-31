@@ -298,7 +298,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   isPopoverOpen = false;
   roundsCount = 0;
   nextToken = '';
-  menuState = 'out';
+  formDetailState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -459,7 +459,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   onCloseViewDetail() {
     this.selectedForm = null;
-    this.menuState = 'out';
+    this.formDetailState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
@@ -475,7 +475,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
-    this.menuState = 'in';
+    this.formDetailState = 'in';
     this.zIndexDelay = 400;
   }
 
