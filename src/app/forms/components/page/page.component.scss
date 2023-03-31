@@ -24,19 +24,22 @@
       color: $black;
     }
 
+    input[type='text']:focus {
+      outline: none;
+      caret-color: $black;
+    }
+
     .form_page_name_input {
       border: none;
       background: none;
       font-size: 110%;
       font-weight: 500;
       color: $black;
-      max-width: 80%;
+      max-width: 50%;
       display: inline-block;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      position: relative;
-      top: 3px;
     }
 
     .page-name {
@@ -49,17 +52,15 @@
       border: none;
       background-color: $white;
 
-      .edit-icon-img {
+      .page-edit-icon {
         position: relative;
-        top: 2px;
         width: 14px;
-        left: -10px;
+        margin-bottom: 5px;
+        margin-left: -40px;
+        top: -2px;
       }
     }
-    .page-edit-icon {
-      width: 14px;
-      margin-bottom: 6px;
-    }
+
     .more-icon {
       border: none;
       background-color: $white;
@@ -103,7 +104,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  top: 7px;
   .pageTaskCount {
+    font-size: 16px;
     margin-top: 5px;
   }
 }
