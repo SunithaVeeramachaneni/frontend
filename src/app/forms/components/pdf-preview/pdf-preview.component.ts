@@ -24,7 +24,9 @@ export class PDFPreviewComponent implements OnInit {
   printPDF(selectedForm) {
     const id = selectedForm;
     const htmlContent = `<h1>PDF BUILDER HTML CONTENT!</h1>`;
-    fetch('http://localhost:8007/slack/pdfbuilder/htmltopdf', {
+    const roundPlanId = '91762fbc-78e5-4799-8443-0332801a72f3';
+    const roundId = '44586bba-42c1-4401-ae59-6961d911fca7';
+    fetch(`http://localhost:8007/rounds/${roundPlanId}/${roundId}`, {
       method: 'post',
       body: JSON.stringify({ htmlContent }),
       headers: {
