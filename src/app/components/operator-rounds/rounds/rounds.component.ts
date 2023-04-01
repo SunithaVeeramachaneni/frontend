@@ -475,8 +475,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   openRoundHandler(row: RoundDetail): void {
-    console.log(row);
-    console.log(this.dataSource);
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;

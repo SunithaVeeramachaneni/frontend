@@ -662,7 +662,8 @@ export class OperatorRoundsService {
                   100
               )
             : 0
-        }%`
+        }%`,
+        roundId: p.roundId
       }));
     return rows;
   }
