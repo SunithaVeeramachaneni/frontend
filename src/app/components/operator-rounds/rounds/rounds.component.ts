@@ -392,6 +392,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           };
           initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
+            dueDate: new Date(roundDetail.dueDate),
             assignedTo: this.operatorRoundsService.getUserFullName(
               roundDetail.assignedTo
             )
@@ -400,6 +401,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
+              dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.operatorRoundsService.getUserFullName(
                 roundDetail.assignedTo
               )

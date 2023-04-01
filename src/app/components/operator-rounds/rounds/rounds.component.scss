@@ -34,12 +34,20 @@
     width: 20%;
   }
 
+  ::ng-deep .mat-form-field-infix {
+    border-top: none !important;
+  }
+
   ::ng-deep .dropdown .arrow {
     margin-right: 15px;
   }
 
+  ::ng-deep .date-picker {
+    align-items: center;
+  }
+
   ::ng-deep .date-picker mat-icon {
-    line-height: 70px !important;
+    line-height: 35px !important;
   }
 }
 
