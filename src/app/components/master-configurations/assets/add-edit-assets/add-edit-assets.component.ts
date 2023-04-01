@@ -32,6 +32,7 @@ export class AddEditAssetsComponent implements OnInit {
   private assetEditData = null;
   allLocationsData: any = [];
   allAssetsData: any  = [];
+  parentType: any = 'location';
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
     if (this.assetEditData === null) {
@@ -54,6 +55,7 @@ export class AddEditAssetsComponent implements OnInit {
         parentType: this.assetEditData.parentType == 'LOCATION' ? 'location' :'asset',
         parentId: this.assetEditData.parentId
       };
+      this.parentType = this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -103,6 +105,7 @@ export class AddEditAssetsComponent implements OnInit {
     this.getAllAssets();
     this.assetForm.get('parentType').valueChanges.subscribe((value) => {
       this.assetForm.get('parentId').setValue('');
+      this.parentType = value;
       if (value === 'location') {
         this.parentInformation = this.allLocationsData;
         this.allParentsData = this.allLocationsData;
