@@ -2,7 +2,7 @@
 
 .actions-list {
   ::ng-deep .table-column {
-    width: 20%;
+    min-width: fit-content;
   }
 
   .actions-search {
@@ -27,7 +27,7 @@
     color: $gray1;
     margin-left: 5px;
     .ghost-loading {
-      padding: 0 20px;
+      padding: 0 60px;
     }
   }
 }

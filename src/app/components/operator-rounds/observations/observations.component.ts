@@ -53,13 +53,16 @@ export class ObservationsComponent implements OnInit {
     },
     legend: {
       orient: 'horizontal',
-      top: '90%'
+      itemWidth: 15,
+      itemHeight: 15,
+      padding: [4, 5, 24, 5],
+      top: '86%'
     },
     series: [
       {
         name: '',
         type: 'pie',
-        radius: ['50%', '70%'],
+        radius: [30.5, 47.5],
         color: [],
         data: [],
         labelLine: {
@@ -76,8 +79,8 @@ export class ObservationsComponent implements OnInit {
     issues: {},
     actions: {}
   };
-  private priorityColors = ['#b76262', '#f4a915', '#cfcfcf'];
-  private statusColors = ['#B76262', '#C0D7FD'];
+  private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
+  private statusColors = ['#B76262', '#FFE5BD'];
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService
   ) {}

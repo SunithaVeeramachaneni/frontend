@@ -52,7 +52,7 @@ export class IssuesComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'title',
-      displayName: 'Name',
+      displayName: 'Title',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -125,7 +125,7 @@ export class IssuesComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -159,7 +159,7 @@ export class IssuesComponent implements OnInit {
         borderRadius: '12px'
       },
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false,
       hasConditionalStyles: true
     },
@@ -218,7 +218,10 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        display: 'inline-block',
+        width: 'max-content'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -284,22 +287,22 @@ export class IssuesComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      High: {
+      high: {
         color: '#ff4033'
       },
-      Medium: {
+      medium: {
         color: '#ffab46'
       },
-      Low: {
+      low: {
         color: '#98989a'
       },
-      Open: {
+      open: {
         'background-color': '#fde2e1',
         color: '#b76262'
       },
-      'In Progress': {
-        'background-color': '#c0d7fd',
-        color: '#3865b6'
+      'in-progress': {
+        'background-color': '#FFEAC9',
+        color: '#a5570e'
       }
     }
   };
