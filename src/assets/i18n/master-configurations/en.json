@@ -60,5 +60,6 @@
   "responseTitle": "Response Title",
   "response": "Response",
   "addRes": " + Add Response",
-  "createResponses": "Create Responses"
+  "createResponses": "Create Responses",
+  "editResponses": "Edit Responses"
 }

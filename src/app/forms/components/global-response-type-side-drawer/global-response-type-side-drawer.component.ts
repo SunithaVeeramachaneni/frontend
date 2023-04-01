@@ -110,7 +110,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           })
         );
       });
-    } else if (!this.globalResponse && !this.isViewMode) this.addResponse(0);
+    } else if (!this.globalResponse && !this.isViewMode) this.addResponse(1);
   }
 
   toggleViewMode = () => {
@@ -128,7 +128,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     timer(0).subscribe(() =>
       this.globalResponses.toArray()[index]?.nativeElement.focus()
     );
-    console.log(this.globalResponses);
   }
 
   getResponseCount() {
@@ -149,14 +148,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   getResponseList() {
     return (this.responseForm.get('responses') as FormArray).controls;
-  }
-
-  keytab(event) {
-    const element = event.srcElement.nextElementSibling;
-    console.log(element);
-    console.log(event.srcElement.nextSibling);
-    if (element == null) return;
-    else element.focus();
   }
 
   trackByFn(index: any, item: any) {
