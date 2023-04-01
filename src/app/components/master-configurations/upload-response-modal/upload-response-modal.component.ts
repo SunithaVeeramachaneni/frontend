@@ -9,6 +9,7 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
+import { ResponseSetService } from '../response-set/services/response-set.service';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -26,6 +27,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   type = '';
   constructor(
     private readonly locationService: LocationService,
+    private readonly responseSetService: ResponseSetService,
     private readonly assetsService: AssetsService,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
@@ -42,9 +44,12 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;
-      const observable = isAssets
-        ? this.assetsService.uploadExcel(formData)
-        : this.locationService.uploadExcel(formData);
+      const observable = this.assetsService.uploadExcel(formData);
+      if (type === 'locations') {
+        this.locationService.uploadExcel(formData);
+      } else if (type === 'responseSet') {
+        this.responseSetService.uploadExcel(formData);
+      }
       observable?.subscribe((result) => {
         if (result) {
           this.isSuccess = true;

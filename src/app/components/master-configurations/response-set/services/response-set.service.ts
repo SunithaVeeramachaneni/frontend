@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { map, catchError, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,7 +15,8 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails
+  UserDetails,
+  ErrorInfo
 } from '../../../../interfaces';
 
 @Injectable({
@@ -130,6 +131,18 @@ export class ResponseSetService {
 
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
+  }
+
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'response-set/upload',
+      form,
+      info
+    );
   }
 
   private formatGraphQLocationResponse(resp) {
