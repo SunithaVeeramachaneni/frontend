@@ -43,7 +43,7 @@ export interface RoundPlanScheduleConfigurationObj {
 
 export interface RoundPlanSuccessModalData {
   roundPlanName: string;
-  mode: 'update' | 'create';
+  mode: 'create' | 'update';
 }
 
 export interface RoundPlan {
