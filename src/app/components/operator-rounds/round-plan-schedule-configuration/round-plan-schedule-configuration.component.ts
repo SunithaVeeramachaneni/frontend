@@ -46,6 +46,7 @@ export interface ScheduleConfig {
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
   viewRounds?: boolean;
+  mode?: 'create' | 'update';
 }
 @Component({
   selector: 'app-round-plan-schedule-configuration',
@@ -561,7 +562,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
     }));
   }
 
-  openRoundPlanScheduleSuccessModal(dailodMode: 'create' | 'update') {
+  openRoundPlanScheduleSuccessModal(dialogMode: 'create' | 'update') {
     const dialogRef = this.dialog.open(RoundPlanScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
@@ -569,7 +570,7 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
       backdropClass: 'round-plan-schedule-success-modal',
       data: {
         roundPlanName: this.roundPlanDetail.name,
-        mode: dailodMode
+        mode: dialogMode
       }
     });
 
@@ -582,7 +583,8 @@ export class RoundPlanScheduleConfigurationComponent implements OnInit {
           });
         } else {
           this.scheduleConfigEvent.emit({
-            slideInOut: 'out'
+            slideInOut: 'out',
+            mode: data.mode
           });
         }
       }
