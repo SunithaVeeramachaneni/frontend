@@ -313,7 +313,8 @@
               roundPlanSchedulerConfigForm.invalid ||
               (roundPlanSchedulerConfigForm.get('scheduleType').value ===
                 'byDate' &&
-                scheduleByDates.length === 0)
+                scheduleByDates.length === 0) ||
+              disableSchedule
             "
             mat-raised-button
             color="primary"
