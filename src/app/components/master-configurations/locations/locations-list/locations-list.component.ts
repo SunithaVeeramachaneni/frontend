@@ -225,7 +225,7 @@ export class LocationsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    //this.locationsListCount$ = this.locationService.getFormsListCount$();
+    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.getDisplayedLocations();
     this.locationsCount$ = combineLatest([
       this.locationsCount$,
@@ -372,6 +372,7 @@ export class LocationsListComponent implements OnInit {
         });
       }
     }
+    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -444,6 +445,7 @@ export class LocationsListComponent implements OnInit {
         form: data
       });
     });
+    this.locationsListCount$ = this.locationService.getLocationCount$();
   }
 
   addManually() {
@@ -502,6 +504,7 @@ export class LocationsListComponent implements OnInit {
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
+        this.locationsListCount$ = this.locationService.getLocationCount$();
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'

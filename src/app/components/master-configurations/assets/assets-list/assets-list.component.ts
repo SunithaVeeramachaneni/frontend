@@ -192,7 +192,6 @@ export class AssetsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
-
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
@@ -215,6 +214,7 @@ export class AssetsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
@@ -309,6 +309,7 @@ export class AssetsListComponent implements OnInit {
           }
         }
         this.skip = initial.data.length;
+        this.assetsListCount$ = this.assetService.getAssetCount$();
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -368,6 +369,7 @@ export class AssetsListComponent implements OnInit {
         });
       }
     }
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
@@ -428,6 +430,7 @@ export class AssetsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
+      this.assetsListCount$ = this.assetService.getAssetCount$();
     });
   }
 
@@ -480,6 +483,7 @@ export class AssetsListComponent implements OnInit {
         this.getAllAssets();
         this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
+        this.assetsListCount$ = this.assetService.getAssetCount$();
         this.assetService.fetchAssets$.next({ data: 'load' });
           this.toast.show({
             text: 'Asset uploaded successfully!',
