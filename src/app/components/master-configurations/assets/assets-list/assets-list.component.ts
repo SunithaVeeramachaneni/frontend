@@ -475,14 +475,17 @@ export class AssetsListComponent implements OnInit {
     });
 
     deleteReportRef.afterClosed().subscribe((res) => {
-      this.addEditCopyDeleteAssets = true;
-      this.nextToken = '';
-      this.assetService.fetchAssets$.next({ data: 'load' });
-      if (res === 'close') {
-        this.toast.show({
-          text: 'Asset uploaded successfully!',
-          type: 'success'
-        });
+      if (res.data) {
+        this.getAllLocations();
+        this.getAllAssets();
+        this.addEditCopyDeleteAssets = true;
+        this.nextToken = '';
+        this.assetService.fetchAssets$.next({ data: 'load' });
+          this.toast.show({
+            text: 'Asset uploaded successfully!',
+            type: 'success'
+          });
+        
       }
     });
   }

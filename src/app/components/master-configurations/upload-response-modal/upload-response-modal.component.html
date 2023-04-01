@@ -4,7 +4,7 @@
       <h1 class="heading">{{ title }}</h1>
       <img
         src="assets/master-configurations/upload.svg"
-        *ngIf="!isSuccess"
+        *ngIf="!isSuccess && !isFailure"
         alt="upload-inprogress"
         class="center"
       />
@@ -14,12 +14,23 @@
         alt="upload-done"
         class="center mb-5"
       />
+      <img
+        src="assets/master-configurations/upload-error.svg"
+        *ngIf="isFailure"
+        alt="upload-done"
+        class="center mb-5"
+      />
       <mat-progress-bar
-        *ngIf="!isSuccess"
+        *ngIf="!isSuccess && !isFailure"
         mode="indeterminate"
       ></mat-progress-bar>
       <mat-progress-bar
         *ngIf="isSuccess"
+        mode="determinate"
+        value="100"
+      ></mat-progress-bar>
+      <mat-progress-bar
+        *ngIf="isFailure"
         mode="determinate"
         value="100"
       ></mat-progress-bar>

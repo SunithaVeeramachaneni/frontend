@@ -20,6 +20,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   title = '';
   message = '';
   isSuccess = false;
+  isFailure = false;
   isReviewed = false;
   successCount = 0;
   failedCount = 0;
@@ -37,23 +38,30 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
     this.init();
     if (this.dialogData) {
       const formData = new FormData();
+      this.isFailure = false;
+      this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
       const type = this.dialogData?.type;
       const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;
+      this.successCount = 0;
       const observable = isAssets
         ? this.assetsService.uploadExcel(formData)
         : this.locationService.uploadExcel(formData);
       observable?.subscribe((result) => {
-        if (result) {
+        if (Object.keys(result).length > 0) {
           this.isSuccess = true;
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${type}`;
           this.successCount = result?.successCount;
           this.failedCount = result?.failedCount;
           this.failure = result?.failure;
+        } else {
+          this.isFailure = true;
+          this.title = 'Failure!';
+          this.message = `Uploaded file is invalid`;
         }
       });
     } else {
@@ -62,7 +70,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   }
 
   downloadExcel() {
-    this.locationService.exportAsExcelFile(this.failure, "location");
+    this.locationService.exportAsExcelFile(this.failure, this.type === 'assets' ? "Assets" : "Location");
   }
 
   ngAfterViewChecked(): void {
@@ -70,7 +78,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   }
 
   onClose(): void {
-    this.dialogRef.close('close');
+    this.dialogRef.close({ event: 'close', data: this.successCount > 0 });
   }
 
   onReview(): void {

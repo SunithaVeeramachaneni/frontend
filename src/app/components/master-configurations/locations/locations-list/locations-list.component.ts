@@ -497,11 +497,11 @@ export class LocationsListComponent implements OnInit {
     });
    
     deleteReportRef.afterClosed().subscribe((res) => {
-      this.getAllLocations();
-      this.addEditCopyDeleteLocations = true;
-      this.nextToken = '';
-      this.locationService.fetchLocations$.next({ data: 'load' });
-      if (res === 'close') {
+      if (res.data) {
+        this.getAllLocations();
+        this.addEditCopyDeleteLocations = true;
+        this.nextToken = '';
+        this.locationService.fetchLocations$.next({ data: 'load' });
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
