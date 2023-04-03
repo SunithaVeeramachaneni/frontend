@@ -848,7 +848,7 @@ fetchAllRounds$ = () => {
           },
           condition: true
         },
-        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
           },${p.totalTasks > 0
             ? Math.round(
