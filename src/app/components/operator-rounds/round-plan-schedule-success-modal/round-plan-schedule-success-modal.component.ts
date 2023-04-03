@@ -17,10 +17,16 @@ export class RoundPlanScheduleSuccessModalComponent implements OnInit {
   ngOnInit(): void {}
 
   viewRounds() {
-    this.dialogRef.close({ redirectToRounds: true });
+    this.dialogRef.close({
+      redirectToRounds: true,
+      mode: this.data.mode
+    });
   }
 
   close() {
-    this.dialogRef.close({ redirectToRounds: false });
+    this.dialogRef.close({
+      redirectToRounds: false,
+      mode: this.data.mode
+    });
   }
 }
