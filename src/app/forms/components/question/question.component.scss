@@ -105,8 +105,9 @@
 
     .questionActionsRow {
       display: flex;
-      align-items: center;
+      align-items: left;
       .addLogicBtn {
+        margin-left: -23px;
         color: $blue-main;
         font-weight: 400;
         .icon {
