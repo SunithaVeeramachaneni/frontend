@@ -2,19 +2,20 @@
 
 .actions-list {
   ::ng-deep .table-column {
+    width: 15%;
     min-width: fit-content;
   }
 
   .actions-search {
     position: fixed;
     right: 14px;
-    top: 370px;
+    top: 387px;
   }
   .no-of-actions {
     margin-right: 10px;
     position: fixed;
     right: 265px;
-    top: 385px;
+    top: 402px;
   }
   .actions-count {
     font-weight: 500;
@@ -27,7 +28,7 @@
     color: $gray1;
     margin-left: 5px;
     .ghost-loading {
-      padding: 0 60px;
+      padding: 0 20px;
     }
   }
 }

@@ -55,14 +55,14 @@ export class ObservationsComponent implements OnInit {
       orient: 'horizontal',
       itemWidth: 15,
       itemHeight: 15,
-      padding: [4, 5, 24, 5],
+      padding: [11, 5, 24, 5],
       top: '86%'
     },
     series: [
       {
         name: '',
         type: 'pie',
-        radius: [30.5, 47.5],
+        radius: ['40%', '60%'],
         color: [],
         data: [],
         labelLine: {

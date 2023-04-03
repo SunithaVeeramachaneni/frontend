@@ -250,7 +250,7 @@ export class IssuesComponent implements OnInit {
     },
     {
       id: 'assignee',
-      displayName: 'Assignee',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
