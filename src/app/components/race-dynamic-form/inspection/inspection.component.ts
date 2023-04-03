@@ -469,12 +469,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     debugger
     for (const item of data) {
-      if (item.type !== 'date') {
+      if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.type === 'date') {
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
+    this.nextToken = "";
     this.fetchInspection$.next({ data: 'load' });
   }
 
