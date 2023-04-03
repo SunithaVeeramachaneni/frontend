@@ -7,7 +7,7 @@
     "value": ""
   },
   {
-    "label": "Operator",
+    "label": "Assigned To",
     "items": [],
     "column": "assignedTo",
     "type": "multiple",
