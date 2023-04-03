@@ -23,6 +23,7 @@ import {
   providedIn: 'root'
 })
 export class AssetsService {
+  
   assetsCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchAssets$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -157,6 +158,16 @@ export class AssetsService {
       info,
       true,
       {}
+    );
+  }
+
+  downloadFailure(body: { rows: any; }, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'assets/download/failure',
+      info,
+      false,
+      body
     );
   }
 

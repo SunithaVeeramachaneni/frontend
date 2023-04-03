@@ -17,10 +17,6 @@ import {
   DeleteLocation,
   LocationsResponse
 } from 'src/app/interfaces/master-data-management/locations';
-import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
-import { EXCEL_EXTENSION, EXCEL_TYPE } from 'src/app/app.constants';
-
 
 @Injectable({
   providedIn: 'root'
@@ -201,18 +197,14 @@ export class LocationService {
     );
   }
 
-  public exportAsExcelFile(json: any[], excelFileName: string): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
-    const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
-    this.saveAsExcelFile(excelBuffer, excelFileName);
+ 
+  downloadFailure(body: { rows: any; }, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'location/download/failure',
+      info,
+      false,
+      body
+    );
   }
-
-  private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], {
-      type: EXCEL_TYPE
-    });
-    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-  }
-
 }

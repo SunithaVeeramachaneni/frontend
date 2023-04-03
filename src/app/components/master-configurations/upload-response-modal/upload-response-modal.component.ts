@@ -7,6 +7,8 @@ import {
   OnInit
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { tap } from 'rxjs/operators';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
 
@@ -70,7 +72,21 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   }
 
   downloadExcel() {
-    this.locationService.exportAsExcelFile(this.failure, this.type === 'assets' ? "Assets" : "Location");
+    if (this.type === 'assets') {
+      this.assetsService.downloadFailure({ rows: this.failure }).pipe(
+        tap((data) => {
+          downloadFile(data, 'Asset_Failure');
+        })
+      )
+        .subscribe();
+    } else {
+      this.locationService.downloadFailure({ rows: this.failure }).pipe(
+        tap((data) => {
+          downloadFile(data, 'Location_Failure');
+        })
+      )
+        .subscribe();
+    }
   }
 
   ngAfterViewChecked(): void {
