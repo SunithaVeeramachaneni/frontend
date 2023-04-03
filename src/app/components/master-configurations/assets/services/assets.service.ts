@@ -23,6 +23,7 @@ import {
   providedIn: 'root'
 })
 export class AssetsService {
+  
   assetsCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchAssets$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -46,6 +47,16 @@ export class AssetsService {
       'asset/list?' + params.toString()
     );
   };
+
+  getAssetCount$(): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'asset/list?' + params.toString()
+    ).pipe(map((res) => res.items.length || 0));
+  }
+
 
   getAssetsList$(queryParams: {
     nextToken?: string;
@@ -147,6 +158,16 @@ export class AssetsService {
       info,
       true,
       {}
+    );
+  }
+
+  downloadFailure(body: { rows: any; }, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'assets/download/failure',
+      info,
+      false,
+      body
     );
   }
 
