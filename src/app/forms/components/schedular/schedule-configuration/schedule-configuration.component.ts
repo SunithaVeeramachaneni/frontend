@@ -17,6 +17,7 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
   addMonths,
@@ -29,15 +30,24 @@ import {
 import { tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
+  AssigneeDetails,
   FormScheduleConfiguration,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
-  ScheduleByDate
+  ScheduleByDate,
+  UserDetails,
+  ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
 
+export interface ScheduleConfigEvent {
+  slideInOut: 'out' | 'in';
+  viewRounds?: boolean;
+  viewForms?: boolean;
+  mode?: 'create' | 'update';
+}
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration?: RoundPlanScheduleConfiguration;
   formsScheduleConfiguration?: FormScheduleConfiguration;
@@ -50,6 +60,8 @@ export interface ScheduleConfig {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScheduleConfigurationComponent implements OnInit, OnChanges {
+  @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
+  @Input() assigneeDetails: AssigneeDetails;
   @Input() moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
@@ -71,13 +83,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     return this._formDetail;
   }
   @Output()
-  scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
+  scheduleConfigEvent: EventEmitter<ScheduleConfigEvent> =
+    new EventEmitter<ScheduleConfigEvent>();
   @Output()
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
   @Output()
-  viewRounds: EventEmitter<string> = new EventEmitter<string>();
-  viewForms: EventEmitter<string> = new EventEmitter<string>();
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -90,6 +101,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   isFormModule = false;
   formName = '';
+  assignTypes = scheduleConfigs.assignTypes;
+  errors: ValidationError = {};
+  roundsGeneration = {
+    min: 0,
+    max: 30
+  };
   private _roundPlanDetail: any;
   private _formDetail: any;
   constructor(
@@ -110,6 +127,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     if (changes?.moduleName?.currentValue === 'RDF') {
       this.isFormModule = true;
     }
+
+    if (this.isFormModule) {
+      this.formName = this.formDetail?.name || '';
+    } else {
+      this.formName = this.roundPlanDetail?.name || '';
+    }
   }
 
   ngOnInit(): void {
@@ -124,7 +147,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
       monthlyDaysOfWeek: this.fb.array(
         this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
       ),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: [
         {
           value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
@@ -146,7 +169,20 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         }
       ],
       endDatePicker: new Date(addDays(new Date(), 30)),
-      scheduledTill: null
+      scheduledTill: null,
+      assignmentDetails: this.fb.group({
+        type: ['user'],
+        value: '',
+        displayValue: ''
+      }),
+      advanceFormsCount: [
+        0,
+        [
+          Validators.required,
+          Validators.min(this.roundsGeneration.min),
+          Validators.max(this.roundsGeneration.max)
+        ]
+      ]
     });
     this.schedulerConfigForm
       .get('scheduleEndType')
@@ -190,6 +226,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                 }
               ];
             }
+            this.schedulerConfigForm.get('repeatEvery').patchValue('none');
+            this.updateAdvanceRoundsCountValidation(12);
             break;
         }
       });
@@ -208,6 +246,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'week':
             this.schedulerConfigForm
@@ -222,6 +261,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'month':
             this.schedulerConfigForm
@@ -234,6 +274,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
         }
       });
@@ -327,7 +368,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
   }
 
   cancel() {
-    this.scheduleConfigState.emit('out');
+    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
   scheduleConfiguration() {
@@ -366,8 +407,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                   });
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -385,8 +426,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                   });
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -416,8 +457,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -438,8 +479,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -525,7 +566,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
       repeatEvery: 'day',
       daysOfWeek: [getDay(new Date())],
       monthlyDaysOfWeek: this.setMonthlyDaysOfWeek(),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
       scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
       scheduleEndOccurrences: 30,
@@ -599,7 +640,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     }));
   }
 
-  openScheduleSuccessModal(dailodMode: 'create' | 'update') {
+  openScheduleSuccessModal(dialogMode: 'create' | 'update') {
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
@@ -609,7 +650,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         name: this.isFormModule
           ? this.formDetail?.name
           : this.roundPlanDetail.name,
-        mode: dailodMode,
+        mode: dialogMode,
         isFormModule: this.isFormModule
       }
     });
@@ -617,16 +658,60 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data?.redirect) {
-          this.scheduleConfigState.emit('out');
           if (this.isFormModule) {
-            this.viewForms.emit(this.formDetail?.id);
+            this.scheduleConfigEvent.emit({
+              slideInOut: 'out',
+              viewForms: true
+            });
           } else {
-            this.viewRounds.emit(this.roundPlanDetail?.id);
+            this.scheduleConfigEvent.emit({
+              slideInOut: 'out',
+              viewRounds: true
+            });
           }
         } else {
-          this.scheduleConfigState.emit('out');
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out',
+            mode: data.mode
+          });
         }
       }
     });
+  }
+
+  selectedAssigneeHandler(event: UserDetails) {
+    const { email: value, firstName, lastName } = event;
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    this.schedulerConfigForm.markAsDirty();
+    this.menuTrigger.closeMenu();
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.schedulerConfigForm.get(controlName).touched;
+    const errors = this.schedulerConfigForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  updateAdvanceRoundsCountValidation(roundsCount: number) {
+    this.roundsGeneration.max = roundsCount;
+    this.schedulerConfigForm
+      .get('advanceFormsCount')
+      .setValidators([
+        Validators.required,
+        Validators.min(this.roundsGeneration.min),
+        Validators.max(this.roundsGeneration.max)
+      ]);
+    this.schedulerConfigForm.get('advanceFormsCount').updateValueAndValidity();
   }
 }
