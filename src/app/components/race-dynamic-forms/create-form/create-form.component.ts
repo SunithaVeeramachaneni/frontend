@@ -649,6 +649,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
+    this.cdrf.detectChanges();
   };
 
   handleGlobalDatasetFieldType = (
@@ -940,7 +941,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (question.controls.value.value?.responseType) {
       return;
     }
-    question.get('logics').setControl(this.fb.array([]));
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
     const dropDownTypes = ['DD', 'VI', 'DDM'];
@@ -948,7 +948,44 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (dropDownTypes.indexOf(question.value.fieldType) > -1) {
       operand2Val = question.value.value.values[0].title;
     }
-    control.push(
+    // control.push(
+    //   this.fb.group({
+    //     operator: ['EQ'],
+    //     operand1: [''],
+    //     operand2: [operand2Val],
+    //     action: [''],
+    //     logicTitle: ['blank'],
+    //     expression: [''],
+    //     questions: this.fb.array([]),
+    //     mandateQuestions: this.fb.array([]),
+    //     hideQuestions: this.fb.array([]),
+    //     validationMessage: [''],
+    //     askEvidence: ['']
+    //   })
+    // );
+    question.get('fieldType').setValue(question.value.fieldType);
+    question.patchValue(
+      { fieldType: question.value.fieldType },
+      { emitEvent: true }
+    );
+    const sections = this.createForm.get('sections') as FormArray;
+    let sectionIndex = 0;
+    for (let i = 0; i < sections.value.length; i++) {
+      if (sections.value[i].uid === section.value.uid) {
+        sectionIndex = i;
+      }
+    }
+    const sectionControl = sections.at(sectionIndex) as FormArray;
+    const questions = sectionControl.get('questions') as FormArray;
+    let questionIndex = 0;
+    for (let j = 0; j < questions.value.length; j++) {
+      if (questions.value[j].id === question.value.id) {
+        questionIndex = j;
+      }
+    }
+
+    const logics = questions.at(questionIndex).get('logics') as FormArray;
+    logics.push(
       this.fb.group({
         operator: ['EQ'],
         operand1: [''],
@@ -963,6 +1000,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         askEvidence: ['']
       })
     );
+    this.createForm.patchValue(
+      { sections: sections.getRawValue() },
+      { emitEvent: true }
+    );
+    this.cdrf.detectChanges();
   }
 
   initQuestion = (
@@ -1295,6 +1337,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   selectFieldType(fieldType, question, i, j) {
+    question.get('logics').setControl(this.fb.array([]));
     if (fieldType.type === question.get('fieldType').value) {
       return;
     }
@@ -1357,6 +1400,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       default:
       // do nothing
     }
+    this.cdrf.detectChanges();
   }
 
   insertImageHandler(event) {
