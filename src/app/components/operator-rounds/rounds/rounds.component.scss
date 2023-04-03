@@ -46,6 +46,11 @@
     align-items: center;
   }
 
+  ::ng-deep .date-picker .mat-form-field {
+    position: relative;
+    top: 5px;
+  }
+
   ::ng-deep .date-picker mat-icon {
     line-height: 35px !important;
   }
@@ -68,56 +73,64 @@
   top: 6px;
 }
 
-.assign-modal {
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+::ng-deep .assign-menu-list + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  left: 915px;
 }
 
 @media (min-width: 1090px) and (max-width: 1240px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 172px !important;
+    left: 495px !important;
   }
 }
 
 @media (min-width: 1240px) and (max-width: 1365px) {
-  ::ng-deep .custom-assign-popover {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
     top: 175px !important;
-    right: 198px !important;
+    left: 641px !important;
   }
 }
 
 @media (min-width: 1365px) and (max-width: 1515px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 765px !important;
   }
 }
 
 @media (min-width: 1515px) and (max-width: 1705px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 915px !important;
   }
 }
 
 @media (min-width: 1705px) and (max-width: 1820px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1106px !important;
   }
 }
 
 @media (min-width: 1820px) and (max-width: 2049px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1220px !important;
   }
 }
 
 @media (min-width: 2049px) and (max-width: 2735px) {
-  ::ng-deep .custom-assign-popover {
-    top: 165px !important;
-    right: 198px !important;
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1450px !important;
   }
 }

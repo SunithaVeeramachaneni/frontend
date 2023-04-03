@@ -97,26 +97,19 @@
       </div>
     </div>
   </div>
-</ng-container>
-
-<ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayHasBackdrop]="true"
-  cdkConnectedOverlayPanelClass="custom-assign-popover"
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  cdkConnectedOverlayWidth="400px"
-  [cdkConnectedOverlayOpen]="openAssignModal"
-  [cdkConnectedOverlayOrigin]="trigger"
-  (backdropClick)="openAssignModal = false"
->
   <ng-container *ngIf="users$ | async">
-    <div class="assign-modal">
+    <button
+      style="display: none"
+      mat-button
+      [matMenuTriggerFor]="assigneeMenu"
+      #assigneeMenuTrigger="matMenuTrigger"
+    ></button>
+    <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
       <app-assign-round
         [assigneeDetails]="assigneeDetails"
         [dropdownPosition]="assigneePosition"
-        (closeAssigneeModalHandler)="openAssignModal = false"
         (selectedAssignee)="selectedAssigneeHandler($event)"
       ></app-assign-round>
-    </div>
+    </mat-menu>
   </ng-container>
-</ng-template>
+</ng-container>

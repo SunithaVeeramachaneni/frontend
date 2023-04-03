@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
@@ -5,7 +6,8 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -57,6 +59,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 
 @Component({
@@ -76,6 +79,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
@@ -164,6 +168,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Due Date',
       type: 'string',
       controlType: 'date-picker',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -245,6 +254,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -319,7 +333,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
-  openAssignModal = false;
   assigneePosition: any;
   initial: any;
 
@@ -468,7 +481,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        this.openAssignModal = true;
+        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
         this.selectedRound = row;
         break;
       case 'dueDate':
@@ -490,6 +503,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
         action: 'showPlans'
       }
     ];
+
+    if (
+      !this.loginService.checkUserHasPermission(
+        permissions,
+        'SCHEDULE_ROUND_PLAN'
+      )
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[6].controlType = 'string';
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -563,7 +586,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = "";
+    this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
 
@@ -593,7 +616,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    this.openAssignModal = false;
     const { roundId } = this.selectedRound;
     this.operatorRoundsService
       .updateRound$(

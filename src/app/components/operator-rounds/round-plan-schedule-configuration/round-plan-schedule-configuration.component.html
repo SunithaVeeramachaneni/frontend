@@ -250,9 +250,8 @@
               <mat-form-field
                 appearance="outline"
                 class="width-100 cursor"
-                cdkOverlayOrigin
-                #trigger="cdkOverlayOrigin"
-                (click)="openAssignModal = true"
+                [matMenuTriggerFor]="menu"
+                #menuTrigger="matMenuTrigger"
               >
                 <mat-label translate>select</mat-label>
                 <input
@@ -294,28 +293,13 @@
               }}
             </mat-error>
           </div>
-          <ng-template
-            cdkConnectedOverlay
-            [cdkConnectedOverlayHasBackdrop]="true"
-            cdkConnectedOverlayPanelClass="custom-popover"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            cdkConnectedOverlayWidth="400px"
-            [cdkConnectedOverlayOpen]="openAssignModal"
-            [cdkConnectedOverlayOrigin]="trigger"
-            (backdropClick)="openAssignModal = false"
-          >
-            <div
-              class="assign-menu"
-              [ngStyle]="{ top: dropdownPosition.modalTop }"
-            >
-              <app-assign-round
-                [assigneeDetails]="assigneeDetails"
-                [dropdownPosition]="dropdownPosition"
-                (closeAssigneeModalHandler)="openAssignModal = false"
-                (selectedAssignee)="selectedAssigneeHandler($event)"
-              ></app-assign-round>
-            </div>
-          </ng-template>
+          <mat-menu #menu="matMenu" backdropClass="assign-menu">
+            <app-assign-round
+              [assigneeDetails]="assigneeDetails"
+              [dropdownPosition]="dropdownPosition"
+              (selectedAssignee)="selectedAssigneeHandler($event)"
+            ></app-assign-round>
+          </mat-menu>
         </ng-container>
 
         <div class="footer">
