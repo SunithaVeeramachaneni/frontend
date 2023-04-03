@@ -5,8 +5,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
-  Output
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,7 +29,7 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
   templateUrl: './add-logic.component.html',
   styleUrls: ['./add-logic.component.scss']
 })
-export class AddLogicComponent implements OnInit {
+export class AddLogicComponent implements OnInit, OnChanges {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -52,6 +54,7 @@ export class AddLogicComponent implements OnInit {
 
   @Input() set question(question: any) {
     question.controls.logics.controls.forEach((logic) => {
+      this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
       if (!logic.value.logicTitle) {
         const logicSymbol = this.fieldOperators.find(
           (op) => op.code === logic.value.operator
@@ -116,6 +119,12 @@ export class AddLogicComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.fieldOperators =
+      fieldTypeOperatorMapping[changes.question.currentValue.value.fieldType];
+    this.cdrf.detectChanges();
   }
 
   get logics(): FormArray {
