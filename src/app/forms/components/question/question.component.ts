@@ -216,7 +216,7 @@ export class QuestionComponent implements OnInit {
     this.unitServiceOfMeasurement
       .getUnitOfMeasurementList$({
         nextToken: '',
-        limit: 25,
+        limit: 10000,
         searchKey: '',
         fetchType: 'load'
       })
