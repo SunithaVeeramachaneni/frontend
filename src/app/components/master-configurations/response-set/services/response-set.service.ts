@@ -115,11 +115,12 @@ export class ResponseSetService {
       .pipe(map((response) => (response === null ? updatePayload : {})));
   };
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
-    this._appService._removeData(
+  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
+    return this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
+  };
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
