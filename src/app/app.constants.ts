@@ -289,3 +289,5 @@ export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';
+export const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+export const EXCEL_EXTENSION = '.xlsx';

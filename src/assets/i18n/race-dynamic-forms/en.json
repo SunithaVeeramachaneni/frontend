@@ -182,5 +182,13 @@
   "customDates": "Custom Dates",
   "scheduleSuccess": "Success",
   "scheduleSuccessMessage": " has been scheduled successfully",
-  "viewForms": "View Forms"
+  "viewForms": "View Forms",
+  "selectAnOperator": "Select an Operator",
+  "noSearchResultsFound": "No search results found",
+  "assignToInfo": "The assignee will be auto assigned to all the forms generated, However you can still change from the forms",
+  "advanceFormsCountInfo": "How many forms would you like to generate for the first time in advance?",
+  "formsGeneration": "Forms Generation",
+  "advanceRoundsCount": "Forms Count",
+  "min": "{name} must be at least {count}",
+  "max": "{name} must be at the max of {count}"
 }

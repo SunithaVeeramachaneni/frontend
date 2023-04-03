@@ -1,9 +1,9 @@
 import { GetFormList } from './master-data-management/forms';
+import { AssignmentDetail } from './operator-rounds';
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'copy' | null;
   form: GetFormList;
 }
-
 
 export interface InspectionQueryParam {
   nextToken?: string;
@@ -58,7 +58,7 @@ export interface InspectionDetailResponse {
   rows: any[];
   count: number;
   nextToken: string | null;
-} 
+}
 
 export interface ScheduleFormDetail extends Form {
   schedule: string;
@@ -116,6 +116,7 @@ export interface FormScheduleConfiguration {
   startDatePicker?: Date;
   endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+  assignmentDetails: AssignmentDetail;
 }
 export interface FormScheduleConfigurationObj {
   [key: string]: FormScheduleConfiguration;
