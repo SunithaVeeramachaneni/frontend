@@ -523,6 +523,9 @@ export class RoundPlanScheduleConfigurationComponent
             this.roundPlanSchedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
               this.roundPlanSchedulerConfigForm.get('startDate').disable();
+              this.roundPlanSchedulerConfigForm
+                .get('advanceRoundsCount')
+                .disable();
             }
             this.roundPlanSchedulerConfigForm.markAsPristine();
             this.calendar?.updateTodaysDate();

@@ -3,7 +3,7 @@
     <app-form-detail
       [@slideInOut]="formDetailState"
       (slideInOut)="onCloseViewDetail()"
-      [selectedForm]="selectedForm"
+      [selectedForm]="selectedRound"
       [moduleName]="'OPERATOR_ROUNDS'"
       [hidden]="hideRoundDetail"
       [formStatus]="formConfigurationStatus.published"
@@ -109,12 +109,14 @@
   [cdkConnectedOverlayOrigin]="trigger"
   (backdropClick)="openAssignModal = false"
 >
-  <div class="assign-modal">
-    <app-assign-round
-      [assigneeDetails]="assigneeDetails"
-      [dropdownPosition]="assigneePosition"
-      (closeAssigneeModalHandler)="openAssignModal = false"
-      (selectedAssignee)="selectedAssigneeHandler($event)"
-    ></app-assign-round>
-  </div>
+  <ng-container *ngIf="users$ | async">
+    <div class="assign-modal">
+      <app-assign-round
+        [assigneeDetails]="assigneeDetails"
+        [dropdownPosition]="assigneePosition"
+        (closeAssigneeModalHandler)="openAssignModal = false"
+        (selectedAssignee)="selectedAssigneeHandler($event)"
+      ></app-assign-round>
+    </div>
+  </ng-container>
 </ng-template>
