@@ -20,10 +20,16 @@ export class ScheduleSuccessModalComponent implements OnInit {
   ngOnInit(): void {}
 
   goToList() {
-    this.dialogRef.close({ redirect: true });
+    this.dialogRef.close({
+      redirect: true,
+      mode: this.data.mode
+    });
   }
 
   close() {
-    this.dialogRef.close({ redirect: false });
+    this.dialogRef.close({
+      redirect: false,
+      mode: this.data.mode
+    });
   }
 }
