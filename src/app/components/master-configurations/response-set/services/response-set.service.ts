@@ -116,7 +116,6 @@ export class ResponseSetService {
   };
 
   deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
-    console.log(deleteResponsePayload);
     return this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
