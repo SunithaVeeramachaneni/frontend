@@ -479,6 +479,9 @@ export class RdfService {
     if (!question.logics || !question.logics.length) return expression;
 
     question.logics.forEach((logic) => {
+      if (question.fieldType === 'CB') {
+        logic.operand2 = logic.operand2 === 'true' ? 'X' : '';
+      }
       const isEmpty = !logic.operand2.length;
       const questionId = question.id;
 

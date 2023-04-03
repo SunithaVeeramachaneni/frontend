@@ -940,6 +940,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (question.controls.value.value?.responseType) {
       return;
     }
+    question.get('logics').setControl(this.fb.array([]));
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
     const dropDownTypes = ['DD', 'VI', 'DDM'];

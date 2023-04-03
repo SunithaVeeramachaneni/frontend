@@ -1,46 +1,20 @@
-<div
-  class="create-form-main"
-  [formGroup]="createForm"
-  style="position: relative"
->
-  <ngx-spinner
-    size="medium"
-    bdColor="rgba(0, 0, 0, 0.6)"
-    type="ball-clip-rotate-pulse"
-    [fullScreen]="false"
-  >
+<div class="create-form-main" [formGroup]="createForm" style="position: relative">
+  <ngx-spinner size="medium" bdColor="rgba(0, 0, 0, 0.6)" type="ball-clip-rotate-pulse" [fullScreen]="false">
   </ngx-spinner>
-  <div
-    class="dis-flex"
-    style="
+  <div class="dis-flex" style="
       justify-content: space-between;
       background-color: #ffffff;
       border-bottom: 1px solid #e5e5e5;
       position: relative;
-    "
-  >
+    ">
     <div>
       <a class="form-title">
-        <input
-          #name
-          type="text"
-          formControlName="name"
-          class="form_title_input"
-          placeholder="Untitled Form"
-          autofocus="true"
-          autocomplete="off"
-          (blur)="setFormTitle()"
-        />
+        <input #name type="text" formControlName="name" class="form_title_input" placeholder="Untitled Form"
+          autofocus="true" autocomplete="off" (blur)="setFormTitle()" />
       </a>
       <a class="form-description">
-        <input
-          type="text"
-          formControlName="description"
-          class="form_description_input"
-          placeholder="Add Form description"
-          autofocus="true"
-          autocomplete="off"
-        />
+        <input type="text" formControlName="description" class="form_description_input"
+          placeholder="Add Form description" autofocus="true" autocomplete="off" />
       </a>
     </div>
     <div class="dis-flex">
@@ -56,172 +30,89 @@
         Import Questions
       </button>
 
-      <button
-        (click)="publishForm()"
-        mat-raised-button
-        class="b-r-8 publish-btn"
-        [disabled]="
+      <button (click)="publishForm()" mat-raised-button class="b-r-8 publish-btn" [disabled]="
           disableFormFields ||
           publishInProgress ||
           createForm.get('isPublishedTillSave').value
-        "
-      >
+        ">
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
-            class="publish-btn-icon"
-          />
+          <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
           <span class="publish">Publish</span>
         </span>
       </button>
     </div>
   </div>
   <div class="dis-flex add-form">
-    <div
-      formArrayName="sections"
-      class="left-panel"
-      cdkDrop
-      cdkDropList
-      (cdkDropListDropped)="drop($event)"
-      [cdkDropListData]="getSections(createForm)"
-      cdkDropListGroup
-    >
-      <div
-        cdkDrag
-        *ngFor="let section of getSections(createForm); let i = index"
-        (mouseenter)="setSectionActiveState(i)"
-        (mouseleave)="setSectionActiveState(i)"
-      >
+    <div formArrayName="sections" class="left-panel" cdkDrop cdkDropList (cdkDropListDropped)="drop($event)"
+      [cdkDropListData]="getSections(createForm)" cdkDropListGroup>
+      <div cdkDrag *ngFor="let section of getSections(createForm); let i = index"
+        (mouseenter)="setSectionActiveState(i)" (mouseleave)="setSectionActiveState(i)">
         <div style="padding: 10px 0" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
-          <div
-            style="
+          <div style="
               background: rgba(61, 90, 254, 0.15);
               border-radius: 8px 8px 0px 0px;
               height: 35px;
               padding: 7px;
               display: flex;
-            "
-          >
+            ">
             <div class="width-90">
-              <img
-                cdkDragHandle
-                src="assets/rdf-forms-icons/six-dots.svg"
-                alt="six-dots"
-                class="m-l-10 six-dots"
-              />
-              <mat-icon
-                (click)="toggleOpenState(i)"
-                *ngIf="isOpenState[i + 1] === true"
-                class="section-arrow"
-              >
+              <img cdkDragHandle src="assets/rdf-forms-icons/six-dots.svg" alt="six-dots" class="m-l-10 six-dots" />
+              <mat-icon (click)="toggleOpenState(i)" *ngIf="isOpenState[i + 1] === true" class="section-arrow">
                 keyboard_arrow_down
               </mat-icon>
-              <mat-icon
-                (click)="toggleOpenState(i)"
-                *ngIf="isOpenState[i + 1] === false"
-                class="section-arrow"
-              >
+              <mat-icon (click)="toggleOpenState(i)" *ngIf="isOpenState[i + 1] === false" class="section-arrow">
                 keyboard_arrow_right
               </mat-icon>
 
               <a matTooltip="{{ section.get('name').value }}">
-                <input
-                  #sectionName
-                  type="text"
-                  formControlName="name"
-                  [size]="getSize(sectionName.value)"
-                  class="form_section_name_input"
-                  placeholder="Untitled Section"
-                  autofocus="true"
-                  autocomplete="off"
-                  (keyup.enter)="section.get('name').disable()"
-                  (keydown.control.c)="addSection(i, section)"
-                />
-                <button
-                  mat-icon-button
-                  [disabled]="disableFormFields"
-                  (click)="editSection(section)"
-                  *ngIf="section.get('name').disabled === true"
-                >
-                  <img
-                    src="assets/rdf-forms-icons/edit-icon.svg"
-                    alt="edit-icon"
-                    style="
+                <input #sectionName type="text" formControlName="name" [size]="getSize(sectionName.value)"
+                  class="form_section_name_input" placeholder="Untitled Section" autofocus="true" autocomplete="off"
+                  (keyup.enter)="section.get('name').disable()" (keydown.control.c)="addSection(i, section)" />
+                <button mat-icon-button [disabled]="disableFormFields" (click)="editSection(section)"
+                  *ngIf="section.get('name').disabled === true">
+                  <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" style="
                       position: relative;
                       top: -3px;
                       width: 14px;
                       left: -10px;
-                    "
-                  />
+                    " />
                 </button>
               </a>
             </div>
             <div class="width-10">
-              <button
-                [matMenuTriggerFor]="sectionMenu"
-                class="more-icon"
-                aria-label="More Options"
-              >
+              <button [matMenuTriggerFor]="sectionMenu" class="more-icon" aria-label="More Options">
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #sectionMenu="matMenu">
                 <button mat-menu-item (click)="addSection(i, section)">
                   <span>Copy Section</span>
                 </button>
-                <button
-                  mat-menu-item
-                  (click)="deleteSection(i, section)"
-                  class="text-red"
-                  [disabled]="getSections(createForm).length === 1"
-                >
+                <button mat-menu-item (click)="deleteSection(i, section)" class="text-red"
+                  [disabled]="getSections(createForm).length === 1">
                   <span>Delete Section</span>
                 </button>
               </mat-menu>
 
-              <button
-                mat-icon-button
-                matTooltip="Add Question"
-                matTooltipPosition="right"
-                [disabled]="disableFormFields"
-                *ngIf="
+              <button mat-icon-button matTooltip="Add Question" matTooltipPosition="right"
+                [disabled]="disableFormFields" *ngIf="
                   isOpenState[i + 1] === true &&
                   sectionActiveState[i + 1] === true
-                "
-                (click)="addQuestion(i)"
-                class="add-questions-btn"
-              >
-                <img
-                  src="assets/rdf-forms-icons/add-questions.svg"
-                  alt="add-questions"
-                />
+                " (click)="addQuestion(i)" class="add-questions-btn">
+                <img src="assets/rdf-forms-icons/add-questions.svg" alt="add-questions" />
               </button>
 
-              <button
-                mat-icon-button
-                matTooltip="Add Section"
-                matTooltipPosition="right"
-                *ngIf="
+              <button mat-icon-button matTooltip="Add Section" matTooltipPosition="right" *ngIf="
                   isOpenState[i + 1] === true &&
                   sectionActiveState[i + 1] === true
-                "
-                [disabled]="disableFormFields"
-                (click)="addSection(i)"
-                style="position: relative; left: 50px; float: right"
-              >
-                <img
-                  src="assets/rdf-forms-icons/add-sections.svg"
-                  alt="add-sections"
-                />
+                " [disabled]="disableFormFields" (click)="addSection(i)"
+                style="position: relative; left: 50px; float: right">
+                <img src="assets/rdf-forms-icons/add-sections.svg" alt="add-sections" />
               </button>
             </div>
           </div>
-          <div
-            *ngIf="isOpenState[i + 1] === true"
-            style="background-color: #ffffff; padding-bottom: 10px"
-            formArrayName="questions"
-          >
+          <div *ngIf="isOpenState[i + 1] === true" style="background-color: #ffffff; padding-bottom: 10px"
+            formArrayName="questions">
             <div class="dis-flex">
               <div class="width-70">
                 <p class="sub-headings m-l-30">Questions</p>
@@ -230,115 +121,62 @@
                 <p class="sub-headings">Response Type</p>
               </div>
             </div>
-            <div
-              cdkDrop
-              cdkDropList
-              (cdkDropListDropped)="drop($event)"
-              [cdkDropListData]="getQuestions(section)"
-              [id]="section.uid"
-            >
-              <div
-                cdkDrag
-                *ngFor="let question of getQuestions(section); let j = index"
-              >
-                <div
-                  [formGroupName]="j"
-                  (click)="
+            <div cdkDrop cdkDropList (cdkDropListDropped)="drop($event)" [cdkDropListData]="getQuestions(section)"
+              [id]="section.uid">
+              <div cdkDrag *ngFor="let question of getQuestions(section); let j = index">
+                <div [formGroupName]="j" (click)="
                     toggleFieldContentOpenState(i, j); openAddFilter(i, j, true)
-                  "
-                >
+                  ">
                   <div class="dis-flex">
-                    <input
-                      type="hidden"
-                      formControlName="position"
-                      [ngModel]="j + 1"
-                    />
+                    <input type="hidden" formControlName="position" [ngModel]="j + 1" />
                     <div class="width-70">
-                      <img
-                        cdkDragHandle
-                        src="assets/rdf-forms-icons/six-dots.svg"
-                        alt="six-dots"
-                        class="m-l-10 six-dots"
-                      />
-                      <mat-form-field
-                        appearance="outline"
-                        class="width-90"
-                        style="margin-left: 10px"
-                      >
-                        <input
-                          autocomplete="off"
-                          type="text"
-                          matInput
-                          formControlName="name"
-                          placeholder="Type Question"
-                          *ngIf="question.controls.fieldType.value !== 'LLF'"
-                        />
-                        <quill-material
-                          formControlName="name"
-                          placeholder="Type Question"
-                          [ngClass]="{
+                      <img cdkDragHandle src="assets/rdf-forms-icons/six-dots.svg" alt="six-dots"
+                        class="m-l-10 six-dots" />
+                      <mat-form-field appearance="outline" class="width-90" style="margin-left: 10px">
+                        <input autocomplete="off" type="text" matInput formControlName="name"
+                          placeholder="Type Question" *ngIf="question.controls.fieldType.value !== 'LLF'" />
+                        <quill-material formControlName="name" placeholder="Type Question" [ngClass]="{
                             'display-toolbar':
                               richTextEditorToolbarState[i + 1][j + 1]
-                          }"
-                          class="instruction-quill-box"
-                          *ngIf="question.controls.fieldType.value === 'LLF'"
-                          (editorFocus)="handleEditorFocus($event, i, j)"
-                        >
+                          }" class="instruction-quill-box" *ngIf="question.controls.fieldType.value === 'LLF'"
+                          (editorFocus)="handleEditorFocus($event, i, j)">
                         </quill-material>
                       </mat-form-field>
                     </div>
 
                     <div class="width-30">
-                      <button
-                        cdkOverlayOrigin
-                        #trigger="cdkOverlayOrigin"
-                        (click)="
+                      <button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="
                           togglePopOverOpenState(i, j);
                           isMCQResponseOpen = false;
                           currentQuestion = question
-                        "
-                        class="response-type-btn"
-                        [ngClass]="{
+                        " class="response-type-btn" [ngClass]="{
                           'dis-flex p-t-0':
                             question.controls.fieldType.value === 'VI' ||
                             question.controls.fieldType.value === 'DD'
-                        }"
-                      >
-                        <div
-                          *ngIf="
+                        }">
+                        <div *ngIf="
                             question.controls.fieldType.value === 'VI' ||
                               question.controls.fieldType.value === 'DD';
                             else nonMCQFields
-                          "
-                          class="chip-list"
-                        >
-                          <mat-chip-list
-                            *ngIf="
+                          " class="chip-list">
+                          <mat-chip-list *ngIf="
                               question.controls.value.value?.name &&
                               !question.controls.value.value?.globalDataset
-                            "
-                            class="response-type-chips"
-                          >
-                            <mat-chip
-                              [ngStyle]="{
+                            " class="response-type-chips">
+                            <mat-chip [ngStyle]="{
                                 backgroundColor: '#ffffff',
                                 border: '1px solid #d3d3d3',
                                 minHeight: '24px',
                                 fontSize: '90%'
-                              }"
-                            >
+                              }">
                               {{ question.controls.value.value?.name }}
                             </mat-chip>
                           </mat-chip-list>
-                          <mat-chip-list
-                            *ngIf="
+                          <mat-chip-list *ngIf="
                               !question.controls.value.value?.name &&
                               !question.controls.value.value?.globalDataset
-                            "
-                            class="response-type-chips"
-                          >
-                            <mat-chip
-                              [ngStyle]="{
+                            " class="response-type-chips">
+                            <mat-chip [ngStyle]="{
                                 color:
                                   question.controls.value.value?.values[0]
                                     ?.color,
@@ -346,18 +184,15 @@
                                 border: '1px solid #d3d3d3',
                                 minHeight: '24px',
                                 fontSize: '90%'
-                              }"
-                            >
+                              }">
                               {{
-                                question.controls.value.value?.values[0].title
+                              question.controls.value.value?.values[0].title
                               }}
                             </mat-chip>
-                            <mat-chip
-                              *ngIf="
+                            <mat-chip *ngIf="
                                 question.controls.value.value?.values.length >=
                                 2
-                              "
-                              [ngStyle]="{
+                              " [ngStyle]="{
                                 color:
                                   question.controls.value.value?.values[1]
                                     ?.color,
@@ -365,26 +200,20 @@
                                 border: '1px solid #d3d3d3',
                                 minHeight: '24px',
                                 fontSize: '90%'
-                              }"
-                            >
+                              }">
                               {{
-                                question.controls.value.value?.values[1].title
+                              question.controls.value.value?.values[1].title
                               }}
                             </mat-chip>
-                            <span
-                              *ngIf="
+                            <span *ngIf="
                                 question.controls.value.value?.values.length > 2
-                              "
-                              style="margin-top: 15px; margin-left: 5px"
-                              >+ ({{
-                                question.controls.value.value?.values.length - 2
+                              " style="margin-top: 15px; margin-left: 5px">+ ({{
+                              question.controls.value.value?.values.length - 2
                               }}
                               more)
                             </span>
                           </mat-chip-list>
-                          <div
-                            *ngIf="question.controls.value.value?.globalDataset"
-                            style="
+                          <div *ngIf="question.controls.value.value?.globalDataset" style="
                               white-space: nowrap;
                               display: inline-block;
                               text-overflow: ellipsis;
@@ -392,78 +221,53 @@
                               overflow: hidden;
                               position: relative;
                               top: 12px;
-                            "
-                          >
+                            ">
                             {{ question.controls.value.value?.responseType }}
                           </div>
                         </div>
                         <ng-template #nonMCQFields>
-                          <img
-                            [src]="
+                          <img [src]="
                               getFieldTypeImage(
                                 question.controls.fieldType.value
                               )
-                            "
-                            class="response-type-icons"
-                            style="position: relative; top: -2px"
-                          />&nbsp;
-                          <span
-                            style="
+                            " class="response-type-icons" style="position: relative; top: -2px" />&nbsp;
+                          <span style="
                               white-space: nowrap;
                               display: inline-block;
                               text-overflow: ellipsis;
                               width: 60%;
                               overflow: hidden;
-                            "
-                            >{{
-                              getFieldTypeDescription(
-                                question.controls.fieldType.value
-                              )
+                            ">{{
+                            getFieldTypeDescription(
+                            question.controls.fieldType.value
+                            )
                             }}
                           </span>
                         </ng-template>
-                        <mat-icon
-                          style="float: right; position: relative; top: -4px"
-                          [ngClass]="{
+                        <mat-icon style="float: right; position: relative; top: -4px" [ngClass]="{
                             'p-t-13':
                               question.controls.fieldType.value === 'VI' ||
                               question.controls.fieldType.value === 'DD'
-                          }"
-                        >
+                          }">
                           keyboard_arrow_down
                         </mat-icon>
                       </button>
 
-                      <ng-template
-                        cdkConnectedOverlay
-                        cdkConnectedOverlayPanelClass="custom-popover"
+                      <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                        [cdkConnectedOverlayHasBackdrop]="true"
-                        [cdkConnectedOverlayOpen]="
+                        [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayOpen]="
                           popOverOpenState[i + 1][j + 1]
-                        "
-                        [cdkConnectedOverlayOrigin]="trigger"
-                        cdkConnectedOverlayWidth="400px"
-                        (backdropClick)="togglePopOverOpenState(i, j)"
-                      >
+                        " [cdkConnectedOverlayOrigin]="trigger" cdkConnectedOverlayWidth="400px"
+                        (backdropClick)="togglePopOverOpenState(i, j)">
                         <div class="response-type-modal">
-                          <ngx-spinner
-                            size="medium"
-                            bdColor="rgba(0, 0, 0, 0.6)"
-                            type="ball-clip-rotate-pulse"
-                            [fullScreen]="false"
-                          >
+                          <ngx-spinner size="medium" bdColor="rgba(0, 0, 0, 0.6)" type="ball-clip-rotate-pulse"
+                            [fullScreen]="false">
                           </ngx-spinner>
                           <h1>
-                            <mat-icon
-                              (click)="togglePopOverOpenState(i, j)"
-                              style="cursor: pointer"
-                            >
+                            <mat-icon (click)="togglePopOverOpenState(i, j)" style="cursor: pointer">
                               clear
                             </mat-icon>
-                            <span
-                              style="position: relative; top: -7px; left: 5px"
-                            >
+                            <span style="position: relative; top: -7px; left: 5px">
                               Responses
                             </span>
                           </h1>
@@ -471,23 +275,15 @@
                           <div class="dis-flex content">
                             <div class="width-50">
                               <h2 style="color: #e8743b">QUESTIONS</h2>
-                              <li
-                                *ngFor="let fieldType of filteredFieldTypes"
-                                (click)="
+                              <li *ngFor="let fieldType of filteredFieldTypes" (click)="
                                   selectFieldType(fieldType, question, i, j);
                                   togglePopOverOpenState(i, j)
-                                "
-                                class="response-field-types"
-                                [ngClass]="{
+                                " class="response-field-types" [ngClass]="{
                                   active:
                                     fieldType.type ===
                                     question.controls.fieldType.value
-                                }"
-                              >
-                                <img
-                                  [src]="getFieldTypeImage(fieldType.type)"
-                                  class="response-type-icons"
-                                />&nbsp;
+                                }">
+                                <img [src]="getFieldTypeImage(fieldType.type)" class="response-type-icons" />&nbsp;
                                 <span style="position: relative; top: -2px">
                                   {{ fieldType.description }}
                                 </span>
@@ -498,213 +294,150 @@
                                 <h2 style="color: #e8743b">
                                   MULTIPLE CHOICE RESPONSES
                                 </h2>
-                                <ng-container
-                                  *ngIf="
+                                <ng-container *ngIf="
                                     quickResponsesData$
                                       | async as quickResponsesData
-                                  "
-                                >
+                                  ">
                                   <div>
-                                    <div
-                                      *ngFor="
+                                    <div *ngFor="
                                         let resp of quickResponsesData.data
-                                      "
-                                      style="height: 36px"
-                                    >
-                                      <button
-                                        style="padding: 0 0 0 5px; height: 36px"
-                                        mat-flat-button
-                                        class="quick-response"
-                                        [ngClass]="{
+                                      " style="height: 36px">
+                                      <button style="padding: 0 0 0 5px; height: 36px" mat-flat-button
+                                        class="quick-response" [ngClass]="{
                                           active:
                                             currentQuestion?.controls.value
                                               .value.id === resp.id
-                                        }"
-                                        (click)="
+                                        }" (click)="
                                           handleFieldType(question, resp);
                                           togglePopOverOpenState(i, j)
-                                        "
-                                      >
-                                        <mat-chip-list
-                                          *ngFor="
+                                        ">
+                                        <mat-chip-list *ngFor="
                                             let val of resp.values;
                                             let i = index
-                                          "
-                                        >
-                                          <mat-chip
-                                            *ngIf="i < 2"
-                                            style="margin-left: 10px"
-                                            [ngStyle]="{
+                                          ">
+                                          <mat-chip *ngIf="i < 2" style="margin-left: 10px" [ngStyle]="{
                                               color: val?.color,
                                               backgroundColor: '#ffffff',
                                               border: '1px solid #d3d3d3',
                                               minHeight: '24px',
                                               fontSize: '90%'
-                                            }"
-                                            (click)="
+                                            }" (click)="
                                               handleFieldType(question, resp);
                                               togglePopOverOpenState(i, j)
-                                            "
-                                          >
+                                            ">
                                             {{ val.title }}
                                           </mat-chip>
                                         </mat-chip-list>
-                                        <span
-                                          *ngIf="resp.values.length > 2"
-                                          style="
+                                        <span *ngIf="resp.values.length > 2" style="
                                             margin-top: -10px;
                                             margin-left: 5px;
                                             font-weight: 400;
-                                          "
-                                        >
+                                          ">
                                           + ({{ resp.values.length - 2 }}
                                           more)
                                         </span>
                                       </button>
-                                      <button
-                                        mat-flat-button
-                                        style="
+                                      <button mat-flat-button style="
                                           float: right;
                                           min-width: 10px;
                                           padding: 0;
-                                        "
-                                        (click)="
+                                        " (click)="
                                           handleResponses(
                                             'quickResponse',
                                             resp.id
                                           );
                                           isMCQResponseOpen = true;
                                           togglePopOverOpenState(i, j)
-                                        "
-                                      >
-                                        <img
-                                          src="assets/rdf-forms-icons/edit-icon.svg"
-                                          alt="edit-icon"
-                                        />
+                                        ">
+                                        <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" />
                                       </button>
                                     </div>
                                   </div>
-                                  <button
-                                    style="
+                                  <button style="
                                       color: #3d5afe;
                                       border: none;
                                       background: none;
                                       padding: 10px;
-                                    "
-                                    (click)="
+                                    " (click)="
                                       handleResponses('quickResponse', '-1');
                                       isMCQResponseOpen = true;
                                       togglePopOverOpenState(i, j)
-                                    "
-                                  >
+                                    ">
                                     Add New
                                   </button>
                                 </ng-container>
                               </div>
                               <div style="height: 50%">
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
-                                <ng-container
-                                  *ngIf="
+                                <ng-container *ngIf="
                                     globalResponsesData$
                                       | async as globalResponsesData
-                                  "
-                                >
-                                  <div
-                                    *ngFor="
+                                  ">
+                                  <div *ngFor="
                                       let resp of globalResponsesData.data
-                                    "
-                                  >
-                                    <button
-                                      mat-flat-button
-                                      (click)="
+                                    ">
+                                    <button mat-flat-button (click)="
                                         handleFieldType(question, resp);
                                         togglePopOverOpenState(i, j)
-                                      "
-                                      style="
+                                      " style="
                                         padding: 0 0 0 10px;
                                         width: 85%;
                                         text-align: left;
-                                      "
-                                      [ngClass]="{
+                                      " [ngClass]="{
                                         active:
                                           currentQuestion?.controls.value.value
                                             .name === resp.name
-                                      }"
-                                    >
+                                      }">
                                       {{ resp.name }}
                                     </button>
-                                    <button
-                                      mat-flat-button
-                                      style="
+                                    <button mat-flat-button style="
                                         float: right;
                                         padding: 0;
                                         min-width: 20px;
-                                      "
-                                      (click)="
+                                      " (click)="
                                         handleResponses(
                                           'globalResponse',
                                           resp.id
                                         );
                                         isMCQResponseOpen = true;
                                         togglePopOverOpenState(i, j)
-                                      "
-                                    >
-                                      <img
-                                        src="assets/rdf-forms-icons/edit-icon.svg"
-                                        alt="edit-icon"
-                                      />
+                                      ">
+                                      <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" />
                                     </button>
                                   </div>
                                 </ng-container>
-                                <ng-container
-                                  *ngIf="
+                                <ng-container *ngIf="
                                     globalDatasetsData$
                                       | async as globalDatasetsData
-                                  "
-                                >
-                                  <div
-                                    *ngFor="let resp of globalDatasetsData.data"
-                                  >
-                                    <button
-                                      mat-flat-button
-                                      style="
+                                  ">
+                                  <div *ngFor="let resp of globalDatasetsData.data">
+                                    <button mat-flat-button style="
                                         padding: 0 0 0 10px;
                                         width: 85%;
                                         text-align: left;
-                                      "
-                                      [ngClass]="{
+                                      " [ngClass]="{
                                         active:
                                           currentQuestion?.controls.value.value
                                             .name === resp.name
-                                      }"
-                                    >
+                                      }">
                                       {{ resp.name }}
                                     </button>
-                                    <button
-                                      mat-flat-button
-                                      style="
+                                    <button mat-flat-button style="
                                         float: right;
                                         padding: 0;
                                         min-width: 20px;
-                                      "
-                                      (click)="
+                                      " (click)="
                                         handleResponses(
                                           'globalDataset',
                                           resp.id
                                         )
-                                      "
-                                      [matMenuTriggerFor]="menu"
-                                    >
+                                      " [matMenuTriggerFor]="menu">
                                       <mat-icon>keyboard_arrow_right</mat-icon>
                                     </button>
                                     <mat-menu #menu="matMenu">
-                                      <button
-                                        mat-menu-item
-                                        *ngFor="
+                                      <button mat-menu-item *ngFor="
                                           let header of resp.values.headers
-                                        "
-                                        class="header-elements"
-                                        (click)="
+                                        " class="header-elements" (click)="
                                           handleGlobalDatasetFieldType(
                                             question,
                                             resp,
@@ -712,58 +445,41 @@
                                           );
                                           togglePopOverOpenState(i, j);
                                           hideShowFilterState(i, j)
-                                        "
-                                      >
+                                        ">
                                         <span>{{ header }}</span>
                                       </button>
                                     </mat-menu>
                                   </div>
-                                  <button
-                                    style="
+                                  <button style="
                                       color: #3d5afe;
                                       border: none;
                                       background: none;
                                       margin-top: 5px;
-                                    "
-                                  >
-                                    <img
-                                      src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                      alt="excel-icon"
-                                      style="width: 18px"
-                                    />
-                                    <input
-                                      #globalResponses
-                                      [hidden]="true"
-                                      type="file"
+                                    ">
+                                    <img src="../../../../assets/rdf-forms-icons/excel_icon.svg" alt="excel-icon"
+                                      style="width: 18px" />
+                                    <input #globalResponses [hidden]="true" type="file"
                                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                      (change)="uploadGlobalResponses($event)"
-                                      (click)="resetFile($event)"
-                                    />
-                                    <span
-                                      style="
+                                      (change)="uploadGlobalResponses($event)" (click)="resetFile($event)" />
+                                    <span style="
                                         position: relative;
                                         top: -4px;
                                         left: 7px;
-                                      "
-                                      (click)="globalResponses.click()"
-                                    >
+                                      " (click)="globalResponses.click()">
                                       Add From Excel
                                     </span>
                                   </button>
                                   <br />
-                                  <button
-                                    style="
+                                  <button style="
                                       color: #3d5afe;
                                       border: none;
                                       background: none;
                                       margin-top: 5px;
-                                    "
-                                    (click)="
+                                    " (click)="
                                       handleResponses('globalResponse', '-1');
                                       isMCQResponseOpen = true;
                                       togglePopOverOpenState(i, j)
-                                    "
-                                  >
+                                    ">
                                     Add Manually
                                   </button>
                                 </ng-container>
@@ -775,13 +491,10 @@
                     </div>
                   </div>
 
-                  <div
-                    id="app-customizer"
-                    *ngIf="
+                  <div id="app-customizer" *ngIf="
                       isCustomizerOpen &&
                       question.controls.fieldType.value === 'RT'
-                    "
-                  >
+                    ">
                     <mat-card class="p-0">
                       <mat-card-title class="m-0 light-gray">
                         <div class="slider-heading">Slider</div>
@@ -790,61 +503,31 @@
                         <div class="dis-flex">
                           <div class="width-50">
                             <label for="min">From</label><br />
-                            <input
-                              id="min"
-                              type="number"
-                              class="slider-inputs"
-                              [(ngModel)]="sliderOptions.min"
-                              [ngModelOptions]="{ standalone: true }"
-                            />
+                            <input id="min" type="number" class="slider-inputs" [(ngModel)]="sliderOptions.min"
+                              [ngModelOptions]="{ standalone: true }" />
                           </div>
                           <div class="width-50" style="text-align: end">
                             <label for="max">To</label><br />
-                            <input
-                              id="max"
-                              type="number"
-                              class="slider-inputs"
-                              [(ngModel)]="sliderOptions.max"
-                              [ngModelOptions]="{ standalone: true }"
-                            />
+                            <input id="max" type="number" class="slider-inputs" [(ngModel)]="sliderOptions.max"
+                              [ngModelOptions]="{ standalone: true }" />
                           </div>
                         </div>
-                        <mat-slider
-                          [max]="sliderOptions.max"
-                          [min]="sliderOptions.min"
-                          [step]="sliderOptions.increment"
-                          [(ngModel)]="sliderOptions.value"
-                          [ngModelOptions]="{ standalone: true }"
-                          class="width-100"
-                        >
+                        <mat-slider [max]="sliderOptions.max" [min]="sliderOptions.min" [step]="sliderOptions.increment"
+                          [(ngModel)]="sliderOptions.value" [ngModelOptions]="{ standalone: true }" class="width-100">
                         </mat-slider>
                         <div>
                           <label for="incre">Increment</label>
                           <br />
-                          <input
-                            id="incre"
-                            type="number"
-                            class="slider-inputs"
-                            [(ngModel)]="sliderOptions.increment"
-                            [ngModelOptions]="{ standalone: true }"
-                          />
+                          <input id="incre" type="number" class="slider-inputs" [(ngModel)]="sliderOptions.increment"
+                            [ngModelOptions]="{ standalone: true }" />
                         </div>
                         <br />
                         <br />
-                        <button
-                          mat-raised-button
-                          color="primary"
-                          style="width: 48%; margin-right: 10px"
-                          (click)="applySliderOptions(sliderOptions, question)"
-                        >
+                        <button mat-raised-button color="primary" style="width: 48%; margin-right: 10px"
+                          (click)="applySliderOptions(sliderOptions, question)">
                           Apply
                         </button>
-                        <button
-                          mat-raised-button
-                          color="primary"
-                          style="width: 48%"
-                          (click)="isCustomizerOpen = false"
-                        >
+                        <button mat-raised-button color="primary" style="width: 48%" (click)="isCustomizerOpen = false">
                           Cancel
                         </button>
                       </mat-card-content>
@@ -852,36 +535,20 @@
                   </div>
 
                   <div *ngIf="question.controls.fieldType.value === 'IMG'">
-                    <input
-                      #insertImages
-                      [hidden]="true"
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png"
-                      (change)="insertImageHandler($event)"
-                    />
+                    <input #insertImages [hidden]="true" type="file" accept="image/jpeg,image/jpg,image/png"
+                      (change)="insertImageHandler($event)" />
                   </div>
 
                   <div id="app-customizer" *ngIf="isMCQResponseOpen">
-                    <app-mcq-response
-                      [formId]="formId"
-                      [inputResponse]="activeResponses$"
-                      [responseType]="activeResponseType"
-                      [activeResponseId]="activeResponseId"
-                      (dialogClose)="
+                    <app-mcq-response [formId]="formId" [inputResponse]="activeResponses$"
+                      [responseType]="activeResponseType" [activeResponseId]="activeResponseId" (dialogClose)="
                         isMCQResponseOpen = false; handleMCQResponse($event)
-                      "
-                    ></app-mcq-response>
+                      "></app-mcq-response>
                   </div>
-                  <div
-                    *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
-                    class="dis-flex"
-                    [ngClass]="{
+                  <div *ngIf="fieldContentOpenState[i + 1][j + 1] === true" class="dis-flex" [ngClass]="{
                       height: question.controls.fieldType.value === 'LLF'
-                    }"
-                    style="justify-content: flex-end"
-                  >
-                    <div
-                      style="
+                    }" style="justify-content: flex-end">
+                    <div style="
                         background: #f3f3f3;
                         border-radius: 5px;
                         padding: 15px 10px 10px 10px;
@@ -890,346 +557,203 @@
                         width: 100%;
                         margin: 0 10px;
                         justify-content: center;
-                      "
-                      *ngIf="question.controls.fieldType.value !== 'LLF'"
-                    >
+                      " *ngIf="question.controls.fieldType.value !== 'LLF'">
                       <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
-                          <div
-                            *ngIf="
+                          <div *ngIf="
                               addLogicIgnoredFields.indexOf(
                                 question.controls.fieldType.value
                               ) < 0 &&
                               question.controls.fieldType.value !== 'TAF' &&
                               question.controls.fieldType.value !== 'ARD'
-                            "
-                            class="add-logic-btn"
-                            (click)="
+                            " class="add-logic-btn" (click)="
                               addLogicForQuestion(question, section, createForm)
-                            "
-                          >
-                            <button
-                              mat-button
-                              [disabled]="
+                            ">
+                            <button mat-button [disabled]="
                                 question.controls.value.value?.globalDataset
-                              "
-                              style="padding: 0"
-                            >
-                              <mat-icon
-                                class="icon"
-                                [ngClass]="{
+                              " style="padding: 0">
+                              <mat-icon class="icon" [ngClass]="{
                                   'icon-disable':
                                     question.controls.value.value?.globalDataset
-                                }"
-                                >link</mat-icon
-                              >
+                                }">link</mat-icon>
                               <span>Add Logic</span>
                             </button>
 
-                            <mat-divider
-                              [vertical]="true"
-                              class="vert-divider"
-                            ></mat-divider>
+                            <mat-divider [vertical]="true" class="vert-divider"></mat-divider>
                           </div>
 
-                          <div
-                            *ngIf="
+                          <div *ngIf="
                               question.controls.value.value?.globalDataset &&
                               question.controls.fieldType.value !== 'TAF' &&
                               question.controls.fieldType.value !== 'ARD'
-                            "
-                            class="add-logic-btn"
-                            (click)="openAddFilter(i, j, false)"
-                          >
+                            " class="add-logic-btn" (click)="openAddFilter(i, j, false)">
                             <mat-icon class="icon">link</mat-icon>
                             <span>Add Filter</span>
-                            <mat-divider
-                              [vertical]="true"
-                              class="vert-divider"
-                            ></mat-divider>
+                            <mat-divider [vertical]="true" class="vert-divider"></mat-divider>
                           </div>
 
-                          <span
-                            *ngIf="
+                          <span *ngIf="
                               question.controls.fieldType.value !== 'TAF' &&
                               question.controls.fieldType.value !== 'ARD'
-                            "
-                          >
-                            <input
-                              type="checkbox"
-                              id="required"
-                              class="required-input"
-                              name="required"
-                              formControlName="required"
-                            />&nbsp;
+                            ">
+                            <input type="checkbox" id="required" class="required-input" name="required"
+                              formControlName="required" />&nbsp;
                             <label for="required">Required</label>
                           </span>
 
-                          <span
-                            *ngIf="question.controls.fieldType.value === 'DF'"
-                            class="m-l-10"
-                          >
-                            <input
-                              type="checkbox"
-                              id="date"
-                              class="required-input"
-                              name="date"
-                              formControlName="value"
-                            />&nbsp;
+                          <span *ngIf="question.controls.fieldType.value === 'DF'" class="m-l-10">
+                            <input type="checkbox" id="date" class="required-input" name="date"
+                              formControlName="value" />&nbsp;
                             <label for="date">Default to current date</label>
                           </span>
 
-                          <span
-                            *ngIf="question.controls.fieldType.value === 'TIF'"
-                            class="m-l-10"
-                          >
-                            <input
-                              type="checkbox"
-                              id="time"
-                              class="required-input"
-                              name="time"
-                              formControlName="value"
-                            />&nbsp;
+                          <span *ngIf="question.controls.fieldType.value === 'TIF'" class="m-l-10">
+                            <input type="checkbox" id="time" class="required-input" name="time"
+                              formControlName="value" />&nbsp;
                             <label for="time">Default to current time</label>
                           </span>
 
-                          <span
-                            *ngIf="question.controls.fieldType.value === 'LF'"
-                            style="margin-left: 50px"
-                          >
-                            <label for="defaultValue">Default Value</label
-                            >&nbsp;&nbsp;
-                            <input
-                              type="text"
-                              id="defaultValue"
-                              formControlName="value"
-                              style="
+                          <span *ngIf="question.controls.fieldType.value === 'LF'" style="margin-left: 50px">
+                            <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
+                            <input type="text" id="defaultValue" formControlName="value" style="
                                 border: 1px solid #cccccc;
                                 border-radius: 3px;
-                              "
-                            />
+                              " />
                           </span>
-                          <span
-                            *ngIf="question.controls.fieldType.value === 'TF'"
-                            style="margin-left: 50px"
-                          >
+                          <span *ngIf="question.controls.fieldType.value === 'TF'" style="margin-left: 50px">
                             <label>Format:</label>&nbsp;
 
-                            <select
-                              formControlName="value"
-                              style="
+                            <select formControlName="value" style="
                                 border: none;
                                 background: transparent;
                                 -webkit-appearance: none;
                                 width: 110px;
                                 color: #3d5afe;
-                              "
-                            >
+                              ">
                               <option value="TF">Short Answer</option>
                               <option value="LTV">Long Answer</option>
                             </select>
                           </span>
-                          <span
-                            *ngIf="
+                          <span *ngIf="
                               question.controls.fieldType.value === 'DD' &&
                               !question.controls.value.value?.globalDataset
-                            "
-                            style="margin-left: 20px"
-                          >
-                            <input
-                              type="checkbox"
-                              id="multi"
-                              class="required-input"
-                              name="multi"
-                              formControlName="multi"
-                              (click)="
+                            " style="margin-left: 20px">
+                            <input type="checkbox" id="multi" class="required-input" name="multi"
+                              formControlName="multi" (click)="
                                 question
                                   .get('multi')
                                   .setValue(!question.controls.multi.value)
-                              "
-                            />&nbsp;
+                              " />&nbsp;
                             <label for="multi"> Multi Selection </label>
                           </span>
                         </div>
-                        <div
-                          class="logicBilder"
-                          *ngIf="
+                        <div class="logicBilder" *ngIf="
                             showFilterSection[i + 1][j + 1] === true &&
                             question.controls.value.value?.responseType
-                          "
-                        >
-                          <app-add-filter
-                            *ngIf="question.controls.value.value?.globalDataset"
-                            [globalDatasetsData$]="globalDatasetsData$"
-                            [question]="question"
-                            [sectionPosition]="i + 1"
+                          ">
+                          <app-add-filter *ngIf="question.controls.value.value?.globalDataset"
+                            [globalDatasetsData$]="globalDatasetsData$" [question]="question" [sectionPosition]="i + 1"
                             [sections]="this.getSections(createForm)"
-                            (filterDetails)="handleFilterDetails($event)"
-                          ></app-add-filter>
+                            (filterDetails)="handleFilterDetails($event)"></app-add-filter>
                         </div>
-                        <div
-                          class="logicBuilder"
-                          *ngIf="
+                        <div class="logicBuilder" *ngIf="
                             question.controls.fieldType.value !== 'TAF' &&
                             question.controls.fieldType.value !== 'ARD'
-                          "
-                        >
-                          <app-add-logic
-                            [formId]="formId"
-                            [question]="question"
+                          ">
+                          <app-add-logic [formId]="formId" [question]="question" *ngIf="question.hasLogic"
                             (onValueChanged)="
                               onValueChanged(section, question, $event)
-                            "
-                            (onLogicDelete)="
+                            " (onLogicDelete)="
                               onLogicDelete(section, question, $event)
-                            "
-                            (onAskEvidence)="
+                            " (onAskEvidence)="
                               onAskEvidence(section, question, j, $event)
-                            "
-                          ></app-add-logic>
+                            "></app-add-logic>
                         </div>
 
-                        <div
-                          *ngIf="
+                        <div *ngIf="
                             question.controls.fieldType.value === 'TAF' ||
                             question.controls.fieldType.value === 'ARD'
-                          "
-                        >
+                          ">
                           <div formArrayName="table">
                             <div>
                               <div>
-                                <div
-                                  style="margin: 0 0 10px 15px"
-                                  *ngIf="
+                                <div style="margin: 0 0 10px 15px" *ngIf="
                                     question.controls.fieldType.value === 'TAF'
-                                  "
-                                >
+                                  ">
                                   <mat-tab-group>
-                                    <mat-tab
-                                      label="COLUMNS"
-                                      style="
+                                    <mat-tab label="COLUMNS" style="
                                         display: flex;
                                         align-items: center;
                                         padding: 5px 10px;
                                         background: white;
                                         flex-direction: column;
                                         border-radius: 0px 0px 15px 15px;
-                                      "
-                                    >
-                                      <div
-                                        class="add-logic-row"
-                                        style="margin: 2px 0 4px 15px"
-                                      >
-                                        <div
-                                          style="margin: 8px"
-                                          class="add-logic-btn"
-                                          (click)="addTableRows(i, j)"
-                                        >
-                                          <img
-                                            src="assets/rdf-forms-icons/add-table.svg"
-                                            alt="add column"
-                                            style="
+                                      ">
+                                      <div class="add-logic-row" style="margin: 2px 0 4px 15px">
+                                        <div style="margin: 8px" class="add-logic-btn" (click)="addTableRows(i, j)">
+                                          <img src="assets/rdf-forms-icons/add-table.svg" alt="add column" style="
                                               margin-right: 5px;
                                               height: 14px;
-                                            "
-                                          />
-                                          <span style="color: #1351d8"
-                                            >Add Column</span
-                                          >
+                                            " />
+                                          <span style="color: #1351d8">Add Column</span>
                                         </div>
                                       </div>
-                                      <div
-                                        style="
+                                      <div style="
                                           background: white;
                                           padding: 10px 0;
-                                        "
-                                      >
-                                        <p
-                                          style="
+                                        ">
+                                        <p style="
                                             margin: 0 14px;
                                             font-weight: 500;
-                                          "
-                                          *ngIf="
+                                          " *ngIf="
                                             question.controls.fieldType
                                               .value === 'TAF'
-                                          "
-                                        >
+                                          ">
                                           Column Configurations
                                         </p>
-                                        <p
-                                          style="
+                                        <p style="
                                             margin: 0 14px;
                                             font-weight: 500;
-                                          "
-                                          *ngIf="
+                                          " *ngIf="
                                             question.controls.fieldType
                                               .value === 'ARD'
-                                          "
-                                        >
+                                          ">
                                           Subform Configurations
                                         </p>
-                                        <div
-                                          *ngFor="
+                                        <div *ngFor="
                                             let row of getTableData(question);
                                             let k = index
-                                          "
-                                        >
-                                          <div
-                                            class="dis-flex"
-                                            [formGroupName]="k"
-                                            (click)="
+                                          ">
+                                          <div class="dis-flex" [formGroupName]="k" (click)="
                                               toggleTableRowSelectState(
                                                 i,
                                                 j,
                                                 k,
                                                 $event
                                               )
-                                            "
-                                          >
+                                            ">
                                             <div class="width-70">
-                                              <mat-form-field
-                                                appearance="outline"
-                                                class="width-78"
-                                                style="
+                                              <mat-form-field appearance="outline" class="width-78" style="
                                                   margin-left: 10px;
                                                   width: 78%;
-                                                "
-                                              >
-                                                <input
-                                                  autocomplete="off"
-                                                  type="text"
-                                                  matInput
-                                                  formControlName="name"
-                                                  placeholder="Type Question"
-                                                />
+                                                ">
+                                                <input autocomplete="off" type="text" matInput formControlName="name"
+                                                  placeholder="Type Question" />
                                               </mat-form-field>
-                                              <span
-                                                *ngIf="
+                                              <span *ngIf="
                                                   row.controls.value.value
                                                     ?.globalDataset &&
                                                   question.controls.fieldType
                                                     .value === 'TAF'
-                                                "
-                                                class="m-l-10"
-                                              >
-                                                <input
-                                                  type="checkbox"
-                                                  id="date"
-                                                  class="required-input"
-                                                  name="date"
-                                                  formControlName="readOnly"
-                                                />&nbsp;
-                                                <label for="date"
-                                                  >Read only</label
-                                                >
+                                                " class="m-l-10">
+                                                <input type="checkbox" id="date" class="required-input" name="date"
+                                                  formControlName="readOnly" />&nbsp;
+                                                <label for="date">Read only</label>
                                               </span>
                                             </div>
 
                                             <div class="width-28">
-                                              <button
-                                                cdkOverlayOrigin
-                                                #trigger="cdkOverlayOrigin"
-                                                (click)="
+                                              <button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="
                                                   showReponseTypeOverlay(
                                                     i,
                                                     j,
@@ -1237,62 +761,47 @@
                                                   );
                                                   isMCQResponseOpen = false;
                                                   currentQuestion = question
-                                                "
-                                                class="response-type-btn table-response-type-btn"
-                                                [ngClass]="{
+                                                " class="response-type-btn table-response-type-btn" [ngClass]="{
                                                   'dis-flex p-t-0':
                                                     row.controls.fieldType
                                                       .value === 'VI' ||
                                                     row.controls.fieldType
                                                       .value === 'DD'
-                                                }"
-                                              >
-                                                <div
-                                                  *ngIf="
+                                                }">
+                                                <div *ngIf="
                                                     row.controls.fieldType
                                                       .value === 'VI' ||
                                                       row.controls.fieldType
                                                         .value === 'DD';
                                                     else nonMCQFields
-                                                  "
-                                                  class="chip-list"
-                                                >
-                                                  <mat-chip-list
-                                                    *ngIf="
+                                                  " class="chip-list">
+                                                  <mat-chip-list *ngIf="
                                                       row.controls.value.value
                                                         ?.name &&
                                                       !row.controls.value.value
                                                         ?.globalDataset
-                                                    "
-                                                    class="response-type-chips"
-                                                  >
-                                                    <mat-chip
-                                                      [ngStyle]="{
+                                                    " class="response-type-chips">
+                                                    <mat-chip [ngStyle]="{
                                                         backgroundColor:
                                                           '#ffffff',
                                                         border:
                                                           '1px solid #d3d3d3',
                                                         minHeight: '24px',
                                                         fontSize: '90%'
-                                                      }"
-                                                    >
+                                                      }">
                                                       {{
-                                                        row.controls.value.value
-                                                          ?.name
+                                                      row.controls.value.value
+                                                      ?.name
                                                       }}
                                                     </mat-chip>
                                                   </mat-chip-list>
-                                                  <mat-chip-list
-                                                    *ngIf="
+                                                  <mat-chip-list *ngIf="
                                                       !row.controls.value.value
                                                         ?.name &&
                                                       !row.controls.value.value
                                                         ?.globalDataset
-                                                    "
-                                                    class="response-type-chips"
-                                                  >
-                                                    <mat-chip
-                                                      [ngStyle]="{
+                                                    " class="response-type-chips">
+                                                    <mat-chip [ngStyle]="{
                                                         color:
                                                           row.controls.value
                                                             .value?.values[0]
@@ -1303,19 +812,16 @@
                                                           '1px solid #d3d3d3',
                                                         minHeight: '24px',
                                                         fontSize: '90%'
-                                                      }"
-                                                    >
+                                                      }">
                                                       {{
-                                                        row.controls.value.value
-                                                          ?.values[0].title
+                                                      row.controls.value.value
+                                                      ?.values[0].title
                                                       }}
                                                     </mat-chip>
-                                                    <mat-chip
-                                                      *ngIf="
+                                                    <mat-chip *ngIf="
                                                         row.controls.value.value
                                                           ?.values.length >= 2
-                                                      "
-                                                      [ngStyle]="{
+                                                      " [ngStyle]="{
                                                         color:
                                                           row.controls.value
                                                             .value?.values[1]
@@ -1326,35 +832,29 @@
                                                           '1px solid #d3d3d3',
                                                         minHeight: '24px',
                                                         fontSize: '90%'
-                                                      }"
-                                                    >
+                                                      }">
                                                       {{
-                                                        row.controls.value.value
-                                                          ?.values[1].title
+                                                      row.controls.value.value
+                                                      ?.values[1].title
                                                       }}
                                                     </mat-chip>
-                                                    <span
-                                                      *ngIf="
+                                                    <span *ngIf="
                                                         row.controls.value.value
                                                           ?.values.length > 2
-                                                      "
-                                                      style="
+                                                      " style="
                                                         margin-top: 15px;
                                                         margin-left: 5px;
-                                                      "
-                                                      >+ ({{
-                                                        row.controls.value.value
-                                                          ?.values.length - 2
+                                                      ">+ ({{
+                                                      row.controls.value.value
+                                                      ?.values.length - 2
                                                       }}
                                                       more)
                                                     </span>
                                                   </mat-chip-list>
-                                                  <div
-                                                    *ngIf="
+                                                  <div *ngIf="
                                                       row.controls.value.value
                                                         ?.globalDataset
-                                                    "
-                                                    style="
+                                                    " style="
                                                       white-space: nowrap;
                                                       display: inline-block;
                                                       text-overflow: ellipsis;
@@ -1362,131 +862,100 @@
                                                       overflow: hidden;
                                                       position: relative;
                                                       top: 12px;
-                                                    "
-                                                  >
+                                                    ">
                                                     {{
-                                                      row.controls.value.value
-                                                        ?.responseType
+                                                    row.controls.value.value
+                                                    ?.responseType
                                                     }}
                                                   </div>
                                                 </div>
                                                 <ng-template #nonMCQFields>
-                                                  <img
-                                                    [src]="
+                                                  <img [src]="
                                                       getFieldTypeImage(
                                                         row.controls.fieldType
                                                           .value
                                                       )
-                                                    "
-                                                    class="response-type-icons"
-                                                    style="
+                                                    " class="response-type-icons" style="
                                                       position: relative;
                                                       top: -2px;
-                                                    "
-                                                  />&nbsp;
-                                                  <span
-                                                    style="
+                                                    " />&nbsp;
+                                                  <span style="
                                                       white-space: nowrap;
                                                       display: inline-block;
                                                       text-overflow: ellipsis;
                                                       width: 60%;
                                                       overflow: hidden;
-                                                    "
-                                                    >{{
-                                                      getFieldTypeDescription(
-                                                        row.controls.fieldType
-                                                          .value
-                                                      )
+                                                    ">{{
+                                                    getFieldTypeDescription(
+                                                    row.controls.fieldType
+                                                    .value
+                                                    )
                                                     }}
                                                   </span>
                                                 </ng-template>
-                                                <mat-icon
-                                                  style="
+                                                <mat-icon style="
                                                     float: right;
                                                     position: relative;
                                                     top: -4px;
-                                                  "
-                                                  [ngClass]="{
+                                                  " [ngClass]="{
                                                     'p-t-13':
                                                       row.controls.fieldType
                                                         .value === 'VI' ||
                                                       row.controls.fieldType
                                                         .value === 'DD'
-                                                  }"
-                                                >
+                                                  }">
                                                   keyboard_arrow_down
                                                 </mat-icon>
                                               </button>
-                                              <ng-template
-                                                cdkConnectedOverlay
+                                              <ng-template cdkConnectedOverlay
                                                 cdkConnectedOverlayPanelClass="custom-popover"
                                                 cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                                 [cdkConnectedOverlayHasBackdrop]="
                                                   true
-                                                "
-                                                [cdkConnectedOverlayOpen]="
+                                                " [cdkConnectedOverlayOpen]="
                                                   showTableResponseType[i + 1][
                                                     j + 1
                                                   ][k + 1]
-                                                "
-                                                [cdkConnectedOverlayOrigin]="
+                                                " [cdkConnectedOverlayOrigin]="
                                                   trigger
-                                                "
-                                                cdkConnectedOverlayWidth="400px"
-                                                (backdropClick)="
+                                                " cdkConnectedOverlayWidth="400px" (backdropClick)="
                                                   showReponseTypeOverlay(
                                                     i,
                                                     j,
                                                     k
                                                   )
-                                                "
-                                              >
-                                                <div
-                                                  class="response-type-modal"
-                                                >
-                                                  <ngx-spinner
-                                                    size="medium"
-                                                    bdColor="rgba(0, 0, 0, 0.6)"
-                                                    type="ball-clip-rotate-pulse"
-                                                    [fullScreen]="false"
-                                                  >
+                                                ">
+                                                <div class="response-type-modal">
+                                                  <ngx-spinner size="medium" bdColor="rgba(0, 0, 0, 0.6)"
+                                                    type="ball-clip-rotate-pulse" [fullScreen]="false">
                                                   </ngx-spinner>
                                                   <h1>
-                                                    <mat-icon
-                                                      (click)="
+                                                    <mat-icon (click)="
                                                         showReponseTypeOverlay(
                                                           i,
                                                           j,
                                                           k
                                                         )
-                                                      "
-                                                      style="cursor: pointer"
-                                                    >
+                                                      " style="cursor: pointer">
                                                       clear
                                                     </mat-icon>
-                                                    <span
-                                                      style="
+                                                    <span style="
                                                         position: relative;
                                                         top: -7px;
                                                         left: 5px;
-                                                      "
-                                                    >
+                                                      ">
                                                       Responses
                                                     </span>
                                                   </h1>
 
                                                   <div class="dis-flex content">
                                                     <div class="width-50">
-                                                      <h2
-                                                        style="color: #e8743b"
-                                                      >
+                                                      <h2 style="color: #e8743b">
                                                         QUESTIONS
                                                       </h2>
-                                                      <li
-                                                        *ngFor="
+                                                      <li *ngFor="
                                                           let fieldType of tableFilteredFieldTypes
-                                                        "
-                                                        (click)="
+                                                        " (click)="
                                                           selectRowFieldType(
                                                             fieldType,
                                                             row
@@ -1496,67 +965,48 @@
                                                             j,
                                                             k
                                                           )
-                                                        "
-                                                        class="response-field-types"
-                                                        [ngClass]="{
+                                                        " class="response-field-types" [ngClass]="{
                                                           active:
                                                             fieldType.type ===
                                                             row.controls
                                                               .fieldType.value
-                                                        }"
-                                                      >
-                                                        <img
-                                                          [src]="
+                                                        }">
+                                                        <img [src]="
                                                             getFieldTypeImage(
                                                               fieldType.type
                                                             )
-                                                          "
-                                                          class="response-type-icons"
-                                                        />&nbsp;
-                                                        <span
-                                                          style="
+                                                          " class="response-type-icons" />&nbsp;
+                                                        <span style="
                                                             position: relative;
                                                             top: -2px;
-                                                          "
-                                                        >
+                                                          ">
                                                           {{
-                                                            fieldType.description
+                                                          fieldType.description
                                                           }}
                                                         </span>
                                                       </li>
                                                     </div>
                                                     <div class="width-50">
                                                       <div>
-                                                        <h2
-                                                          style="color: #e8743b"
-                                                        >
+                                                        <h2 style="color: #e8743b">
                                                           MULTIPLE CHOICE
                                                           RESPONSES
                                                         </h2>
-                                                        <ng-container
-                                                          *ngIf="
+                                                        <ng-container *ngIf="
                                                             quickResponsesData$
                                                               | async as quickResponsesData
-                                                          "
-                                                        >
+                                                          ">
                                                           <div>
-                                                            <div
-                                                              *ngFor="
+                                                            <div *ngFor="
                                                                 let resp of quickResponsesData.data
-                                                              "
-                                                              style="
+                                                              " style="
                                                                 height: 36px;
-                                                              "
-                                                            >
-                                                              <button
-                                                                style="
+                                                              ">
+                                                              <button style="
                                                                   padding: 0 0 0
                                                                     5px;
                                                                   height: 36px;
-                                                                "
-                                                                mat-flat-button
-                                                                class="quick-response"
-                                                                [ngClass]="{
+                                                                " mat-flat-button class="quick-response" [ngClass]="{
                                                                   active:
                                                                     currentQuestion
                                                                       ?.controls
@@ -1564,8 +1014,7 @@
                                                                       .value
                                                                       .id ===
                                                                     resp.id
-                                                                }"
-                                                                (click)="
+                                                                }" (click)="
                                                                   handleFieldType(
                                                                     row,
                                                                     resp
@@ -1575,22 +1024,16 @@
                                                                     j,
                                                                     k
                                                                   )
-                                                                "
-                                                              >
-                                                                <mat-chip-list
-                                                                  *ngFor="
+                                                                ">
+                                                                <mat-chip-list *ngFor="
                                                                     let val of resp.values;
                                                                     let i = index
-                                                                  "
-                                                                >
-                                                                  <mat-chip
-                                                                    *ngIf="
+                                                                  ">
+                                                                  <mat-chip *ngIf="
                                                                       i < 2
-                                                                    "
-                                                                    style="
+                                                                    " style="
                                                                       margin-left: 10px;
-                                                                    "
-                                                                    [ngStyle]="{
+                                                                    " [ngStyle]="{
                                                                       color:
                                                                         val?.color,
                                                                       backgroundColor:
@@ -1601,8 +1044,7 @@
                                                                         '24px',
                                                                       fontSize:
                                                                         '90%'
-                                                                    }"
-                                                                    (click)="
+                                                                    }" (click)="
                                                                       handleFieldType(
                                                                         row,
                                                                         resp
@@ -1612,41 +1054,34 @@
                                                                         j,
                                                                         k
                                                                       )
-                                                                    "
-                                                                  >
+                                                                    ">
                                                                     {{
-                                                                      val.title
+                                                                    val.title
                                                                     }}
                                                                   </mat-chip>
                                                                 </mat-chip-list>
-                                                                <span
-                                                                  *ngIf="
+                                                                <span *ngIf="
                                                                     resp.values
                                                                       .length >
                                                                     2
-                                                                  "
-                                                                  style="
+                                                                  " style="
                                                                     margin-top: -10px;
                                                                     margin-left: 5px;
                                                                     font-weight: 400;
-                                                                  "
-                                                                >
+                                                                  ">
                                                                   + ({{
-                                                                    resp.values
-                                                                      .length -
-                                                                      2
+                                                                  resp.values
+                                                                  .length -
+                                                                  2
                                                                   }}
                                                                   more)
                                                                 </span>
                                                               </button>
-                                                              <button
-                                                                mat-flat-button
-                                                                style="
+                                                              <button mat-flat-button style="
                                                                   float: right;
                                                                   min-width: 10px;
                                                                   padding: 0;
-                                                                "
-                                                                (click)="
+                                                                " (click)="
                                                                   handleResponses(
                                                                     'quickResponse',
                                                                     resp.id
@@ -1657,23 +1092,18 @@
                                                                     j,
                                                                     k
                                                                   )
-                                                                "
-                                                              >
-                                                                <img
-                                                                  src="assets/rdf-forms-icons/edit-icon.svg"
-                                                                  alt="edit-icon"
-                                                                />
+                                                                ">
+                                                                <img src="assets/rdf-forms-icons/edit-icon.svg"
+                                                                  alt="edit-icon" />
                                                               </button>
                                                             </div>
                                                           </div>
-                                                          <button
-                                                            style="
+                                                          <button style="
                                                               color: #3d5afe;
                                                               border: none;
                                                               background: none;
                                                               padding: 10px;
-                                                            "
-                                                            (click)="
+                                                            " (click)="
                                                               handleResponses(
                                                                 'quickResponse',
                                                                 '-1'
@@ -1684,32 +1114,23 @@
                                                                 j,
                                                                 k
                                                               )
-                                                            "
-                                                          >
+                                                            ">
                                                             Add New
                                                           </button>
                                                         </ng-container>
                                                       </div>
                                                       <div style="height: 50%">
-                                                        <h2
-                                                          style="color: #e8743b"
-                                                        >
+                                                        <h2 style="color: #e8743b">
                                                           GLOBAL RESPONSES
                                                         </h2>
-                                                        <ng-container
-                                                          *ngIf="
+                                                        <ng-container *ngIf="
                                                             globalResponsesData$
                                                               | async as globalResponsesData
-                                                          "
-                                                        >
-                                                          <div
-                                                            *ngFor="
+                                                          ">
+                                                          <div *ngFor="
                                                               let resp of globalResponsesData.data
-                                                            "
-                                                          >
-                                                            <button
-                                                              mat-flat-button
-                                                              (click)="
+                                                            ">
+                                                            <button mat-flat-button (click)="
                                                                 handleFieldType(
                                                                   row,
                                                                   resp
@@ -1719,32 +1140,26 @@
                                                                   j,
                                                                   k
                                                                 )
-                                                              "
-                                                              style="
+                                                              " style="
                                                                 padding: 0 0 0
                                                                   10px;
                                                                 width: 85%;
                                                                 text-align: left;
-                                                              "
-                                                              [ngClass]="{
+                                                              " [ngClass]="{
                                                                 active:
                                                                   currentQuestion
                                                                     ?.controls
                                                                     .value.value
                                                                     .name ===
                                                                   resp.name
-                                                              }"
-                                                            >
+                                                              }">
                                                               {{ resp.name }}
                                                             </button>
-                                                            <button
-                                                              mat-flat-button
-                                                              style="
+                                                            <button mat-flat-button style="
                                                                 float: right;
                                                                 padding: 0;
                                                                 min-width: 20px;
-                                                              "
-                                                              (click)="
+                                                              " (click)="
                                                                 handleResponses(
                                                                   'globalResponse',
                                                                   resp.id
@@ -1755,78 +1170,54 @@
                                                                   j,
                                                                   k
                                                                 )
-                                                              "
-                                                            >
-                                                              <img
-                                                                src="assets/rdf-forms-icons/edit-icon.svg"
-                                                                alt="edit-icon"
-                                                              />
+                                                              ">
+                                                              <img src="assets/rdf-forms-icons/edit-icon.svg"
+                                                                alt="edit-icon" />
                                                             </button>
                                                           </div>
                                                         </ng-container>
-                                                        <ng-container
-                                                          *ngIf="
+                                                        <ng-container *ngIf="
                                                             globalDatasetsData$
                                                               | async as globalDatasetsData
-                                                          "
-                                                        >
-                                                          <div
-                                                            *ngFor="
+                                                          ">
+                                                          <div *ngFor="
                                                               let resp of globalDatasetsData.data
-                                                            "
-                                                          >
-                                                            <button
-                                                              mat-flat-button
-                                                              style="
+                                                            ">
+                                                            <button mat-flat-button style="
                                                                 padding: 0 0 0
                                                                   10px;
                                                                 width: 85%;
                                                                 text-align: left;
-                                                              "
-                                                              [ngClass]="{
+                                                              " [ngClass]="{
                                                                 active:
                                                                   currentQuestion
                                                                     ?.controls
                                                                     .value.value
                                                                     .name ===
                                                                   resp.name
-                                                              }"
-                                                            >
+                                                              }">
                                                               {{ resp.name }}
                                                             </button>
-                                                            <button
-                                                              mat-flat-button
-                                                              style="
+                                                            <button mat-flat-button style="
                                                                 float: right;
                                                                 padding: 0;
                                                                 min-width: 20px;
-                                                              "
-                                                              (click)="
+                                                              " (click)="
                                                                 handleResponses(
                                                                   'globalDataset',
                                                                   resp.id
                                                                 )
-                                                              "
-                                                              [matMenuTriggerFor]="
+                                                              " [matMenuTriggerFor]="
                                                                 menu
-                                                              "
-                                                            >
-                                                              <mat-icon
-                                                                >keyboard_arrow_right</mat-icon
-                                                              >
+                                                              ">
+                                                              <mat-icon>keyboard_arrow_right</mat-icon>
                                                             </button>
-                                                            <mat-menu
-                                                              #menu="matMenu"
-                                                            >
-                                                              <button
-                                                                mat-menu-item
-                                                                *ngFor="
+                                                            <mat-menu #menu="matMenu">
+                                                              <button mat-menu-item *ngFor="
                                                                   let header of resp
                                                                     .values
                                                                     .headers
-                                                                "
-                                                                class="header-elements"
-                                                                (click)="
+                                                                " class="header-elements" (click)="
                                                                   handleGlobalDatasetRowFieldType(
                                                                     row,
                                                                     resp,
@@ -1841,67 +1232,51 @@
                                                                     j,
                                                                     k
                                                                   )
-                                                                "
-                                                              >
+                                                                ">
                                                                 <span>{{
                                                                   header
-                                                                }}</span>
+                                                                  }}</span>
                                                               </button>
                                                             </mat-menu>
                                                           </div>
-                                                          <button
-                                                            style="
+                                                          <button style="
                                                               color: #3d5afe;
                                                               border: none;
                                                               background: none;
                                                               margin-top: 5px;
-                                                            "
-                                                          >
-                                                            <img
-                                                              src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                                              alt="excel-icon"
-                                                              style="
+                                                            ">
+                                                            <img src="../../../../assets/rdf-forms-icons/excel_icon.svg"
+                                                              alt="excel-icon" style="
                                                                 width: 18px;
-                                                              "
-                                                            />
-                                                            <input
-                                                              #globalResponses
-                                                              [hidden]="true"
-                                                              type="file"
+                                                              " />
+                                                            <input #globalResponses [hidden]="true" type="file"
                                                               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                                               (change)="
                                                                 uploadGlobalResponses(
                                                                   $event
                                                                 )
-                                                              "
-                                                              (click)="
+                                                              " (click)="
                                                                 resetFile(
                                                                   $event
                                                                 )
-                                                              "
-                                                            />
-                                                            <span
-                                                              style="
+                                                              " />
+                                                            <span style="
                                                                 position: relative;
                                                                 top: -4px;
                                                                 left: 7px;
-                                                              "
-                                                              (click)="
+                                                              " (click)="
                                                                 globalResponses.click()
-                                                              "
-                                                            >
+                                                              ">
                                                               Add From Excel
                                                             </span>
                                                           </button>
                                                           <br />
-                                                          <button
-                                                            style="
+                                                          <button style="
                                                               color: #3d5afe;
                                                               border: none;
                                                               background: none;
                                                               margin-top: 5px;
-                                                            "
-                                                            (click)="
+                                                            " (click)="
                                                               handleResponses(
                                                                 'globalResponse',
                                                                 '-1'
@@ -1912,8 +1287,7 @@
                                                                 j,
                                                                 k
                                                               )
-                                                            "
-                                                          >
+                                                            ">
                                                             Add Manually
                                                           </button>
                                                         </ng-container>
@@ -1923,18 +1297,14 @@
                                                 </div>
                                               </ng-template>
                                             </div>
-                                            <div
-                                              *ngIf="
+                                            <div *ngIf="
                                                 getTableData(question)
                                                   .length !== 1 &&
                                                 tableRowSelectState[i + 1][
                                                   j + 1
                                                 ][k + 1] === true
-                                              "
-                                            >
-                                              <img
-                                                src="assets/rdf-forms-icons/delete-icon.svg"
-                                                alt="delete-icon"
+                                              ">
+                                              <img src="assets/rdf-forms-icons/delete-icon.svg" alt="delete-icon"
                                                 (click)="
                                                   deleteTableRow(
                                                     i,
@@ -1943,179 +1313,110 @@
                                                     row,
                                                     question
                                                   )
-                                                "
-                                                class="table-delete-icon"
-                                              />
+                                                " class="table-delete-icon" />
                                             </div>
                                           </div>
                                         </div>
                                       </div>
                                     </mat-tab>
-                                    <mat-tab
-                                      label="FILTER"
-                                      (click)="openAddFilter(i, j, false)"
-                                    >
+                                    <mat-tab label="FILTER" (click)="openAddFilter(i, j, false)">
                                       <div class="logicBilder">
-                                        <app-tabular-dependency
-                                          [globalDatasetsData$]="
+                                        <app-tabular-dependency [globalDatasetsData$]="
                                             globalDatasetsData$
-                                          "
-                                          [sectionPosition]="i + 1"
-                                          [sections]="
+                                          " [sectionPosition]="i + 1" [sections]="
                                             this.getSections(createForm)
-                                          "
-                                          [question]="question"
-                                        ></app-tabular-dependency>
+                                          " [question]="question"></app-tabular-dependency>
                                       </div>
                                     </mat-tab>
                                   </mat-tab-group>
                                 </div>
-                                <div
-                                  class="add-logic-row"
-                                  style="margin: 0 0 10px 15px"
-                                >
-                                  <div
-                                    *ngIf="
+                                <div class="add-logic-row" style="margin: 0 0 10px 15px">
+                                  <div *ngIf="
                                       question.controls.fieldType.value ===
                                       'ARD'
-                                    "
-                                    class="add-logic-btn"
-                                    (click)="addTableRows(i, j)"
-                                  >
-                                    <img
-                                      src="assets/rdf-forms-icons/add-table.svg"
-                                      alt="add subform"
-                                      style="margin-right: 5px; height: 14px"
-                                    />
+                                    " class="add-logic-btn" (click)="addTableRows(i, j)">
+                                    <img src="assets/rdf-forms-icons/add-table.svg" alt="add subform"
+                                      style="margin-right: 5px; height: 14px" />
                                     <span>Add Subform</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div
-                              style="background: white; padding: 10px 0"
-                              *ngIf="
+                            <div style="background: white; padding: 10px 0" *ngIf="
                                 question.controls.fieldType.value !== 'TAF'
-                              "
-                            >
-                              <p
-                                style="margin: 0 14px; font-weight: 500"
-                                *ngIf="
+                              ">
+                              <p style="margin: 0 14px; font-weight: 500" *ngIf="
                                   question.controls.fieldType.value === 'TAF'
-                                "
-                              >
+                                ">
                                 Column Configurations
                               </p>
-                              <p
-                                style="margin: 0 14px; font-weight: 500"
-                                *ngIf="
+                              <p style="margin: 0 14px; font-weight: 500" *ngIf="
                                   question.controls.fieldType.value === 'ARD'
-                                "
-                              >
+                                ">
                                 Subform Configurations
                               </p>
-                              <div
-                                *ngFor="
+                              <div *ngFor="
                                   let row of getTableData(question);
                                   let k = index
-                                "
-                              >
-                                <div
-                                  class="dis-flex"
-                                  [formGroupName]="k"
-                                  (click)="
+                                ">
+                                <div class="dis-flex" [formGroupName]="k" (click)="
                                     toggleTableRowSelectState(i, j, k, $event)
-                                  "
-                                >
+                                  ">
                                   <div class="width-70">
-                                    <mat-form-field
-                                      appearance="outline"
-                                      style="margin-left: 10px; width: 78%"
-                                    >
-                                      <input
-                                        autocomplete="off"
-                                        type="text"
-                                        matInput
-                                        formControlName="name"
-                                        placeholder="Type Question"
-                                      />
+                                    <mat-form-field appearance="outline" style="margin-left: 10px; width: 78%">
+                                      <input autocomplete="off" type="text" matInput formControlName="name"
+                                        placeholder="Type Question" />
                                     </mat-form-field>
-                                    <span
-                                      *ngIf="
+                                    <span *ngIf="
                                         row.controls.value.value
                                           ?.globalDataset &&
                                         question.controls.fieldType.value ===
                                           'TAF'
-                                      "
-                                      class="m-l-10"
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        id="date"
-                                        class="required-input"
-                                        name="date"
-                                        formControlName="readOnly"
-                                      />&nbsp;
+                                      " class="m-l-10">
+                                      <input type="checkbox" id="date" class="required-input" name="date"
+                                        formControlName="readOnly" />&nbsp;
                                       <label for="date">Read only</label>
                                     </span>
                                   </div>
 
                                   <div class="width-28">
-                                    <button
-                                      cdkOverlayOrigin
-                                      #trigger="cdkOverlayOrigin"
-                                      (click)="
+                                    <button cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="
                                         showReponseTypeOverlay(i, j, k);
                                         isMCQResponseOpen = false;
                                         currentQuestion = question
-                                      "
-                                      class="response-type-btn table-response-type-btn"
-                                      [ngClass]="{
+                                      " class="response-type-btn table-response-type-btn" [ngClass]="{
                                         'dis-flex p-t-0':
                                           row.controls.fieldType.value ===
                                             'VI' ||
                                           row.controls.fieldType.value === 'DD'
-                                      }"
-                                    >
-                                      <div
-                                        *ngIf="
+                                      }">
+                                      <div *ngIf="
                                           row.controls.fieldType.value ===
                                             'VI' ||
                                             row.controls.fieldType.value ===
                                               'DD';
                                           else nonMCQFields
-                                        "
-                                        class="chip-list"
-                                      >
-                                        <mat-chip-list
-                                          *ngIf="
+                                        " class="chip-list">
+                                        <mat-chip-list *ngIf="
                                             row.controls.value.value?.name &&
                                             !row.controls.value.value
                                               ?.globalDataset
-                                          "
-                                          class="response-type-chips"
-                                        >
-                                          <mat-chip
-                                            [ngStyle]="{
+                                          " class="response-type-chips">
+                                          <mat-chip [ngStyle]="{
                                               backgroundColor: '#ffffff',
                                               border: '1px solid #d3d3d3',
                                               minHeight: '24px',
                                               fontSize: '90%'
-                                            }"
-                                          >
+                                            }">
                                             {{ row.controls.value.value?.name }}
                                           </mat-chip>
                                         </mat-chip-list>
-                                        <mat-chip-list
-                                          *ngIf="
+                                        <mat-chip-list *ngIf="
                                             !row.controls.value.value?.name &&
                                             !row.controls.value.value
                                               ?.globalDataset
-                                          "
-                                          class="response-type-chips"
-                                        >
-                                          <mat-chip
-                                            [ngStyle]="{
+                                          " class="response-type-chips">
+                                          <mat-chip [ngStyle]="{
                                               color:
                                                 row.controls.value.value
                                                   ?.values[0]?.color,
@@ -2123,19 +1424,16 @@
                                               border: '1px solid #d3d3d3',
                                               minHeight: '24px',
                                               fontSize: '90%'
-                                            }"
-                                          >
+                                            }">
                                             {{
-                                              row.controls.value.value
-                                                ?.values[0].title
+                                            row.controls.value.value
+                                            ?.values[0].title
                                             }}
                                           </mat-chip>
-                                          <mat-chip
-                                            *ngIf="
+                                          <mat-chip *ngIf="
                                               row.controls.value.value?.values
                                                 .length >= 2
-                                            "
-                                            [ngStyle]="{
+                                            " [ngStyle]="{
                                               color:
                                                 row.controls.value.value
                                                   ?.values[1]?.color,
@@ -2143,35 +1441,29 @@
                                               border: '1px solid #d3d3d3',
                                               minHeight: '24px',
                                               fontSize: '90%'
-                                            }"
-                                          >
+                                            }">
                                             {{
-                                              row.controls.value.value
-                                                ?.values[1].title
+                                            row.controls.value.value
+                                            ?.values[1].title
                                             }}
                                           </mat-chip>
-                                          <span
-                                            *ngIf="
+                                          <span *ngIf="
                                               row.controls.value.value?.values
                                                 .length > 2
-                                            "
-                                            style="
+                                            " style="
                                               margin-top: 15px;
                                               margin-left: 5px;
-                                            "
-                                            >+ ({{
-                                              row.controls.value.value?.values
-                                                .length - 2
+                                            ">+ ({{
+                                            row.controls.value.value?.values
+                                            .length - 2
                                             }}
                                             more)
                                           </span>
                                         </mat-chip-list>
-                                        <div
-                                          *ngIf="
+                                        <div *ngIf="
                                             row.controls.value.value
                                               ?.globalDataset
-                                          "
-                                          style="
+                                          " style="
                                             white-space: nowrap;
                                             display: inline-block;
                                             text-overflow: ellipsis;
@@ -2179,96 +1471,71 @@
                                             overflow: hidden;
                                             position: relative;
                                             top: 12px;
-                                          "
-                                        >
+                                          ">
                                           {{
-                                            row.controls.value.value
-                                              ?.responseType
+                                          row.controls.value.value
+                                          ?.responseType
                                           }}
                                         </div>
                                       </div>
                                       <ng-template #nonMCQFields>
-                                        <img
-                                          [src]="
+                                        <img [src]="
                                             getFieldTypeImage(
                                               row.controls.fieldType.value
                                             )
-                                          "
-                                          class="response-type-icons"
-                                          style="position: relative; top: -2px"
-                                        />&nbsp;
-                                        <span
-                                          style="
+                                          " class="response-type-icons" style="position: relative; top: -2px" />&nbsp;
+                                        <span style="
                                             white-space: nowrap;
                                             display: inline-block;
                                             text-overflow: ellipsis;
                                             width: 60%;
                                             overflow: hidden;
-                                          "
-                                          >{{
-                                            getFieldTypeDescription(
-                                              row.controls.fieldType.value
-                                            )
+                                          ">{{
+                                          getFieldTypeDescription(
+                                          row.controls.fieldType.value
+                                          )
                                           }}
                                         </span>
                                       </ng-template>
-                                      <mat-icon
-                                        style="
+                                      <mat-icon style="
                                           float: right;
                                           position: relative;
                                           top: -4px;
-                                        "
-                                        [ngClass]="{
+                                        " [ngClass]="{
                                           'p-t-13':
                                             row.controls.fieldType.value ===
                                               'VI' ||
                                             row.controls.fieldType.value ===
                                               'DD'
-                                        }"
-                                      >
+                                        }">
                                         keyboard_arrow_down
                                       </mat-icon>
                                     </button>
-                                    <ng-template
-                                      cdkConnectedOverlay
-                                      cdkConnectedOverlayPanelClass="custom-popover"
+                                    <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
                                       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                      [cdkConnectedOverlayHasBackdrop]="true"
-                                      [cdkConnectedOverlayOpen]="
+                                      [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayOpen]="
                                         showTableResponseType[i + 1][j + 1][
                                           k + 1
                                         ]
-                                      "
-                                      [cdkConnectedOverlayOrigin]="trigger"
-                                      cdkConnectedOverlayWidth="400px"
+                                      " [cdkConnectedOverlayOrigin]="trigger" cdkConnectedOverlayWidth="400px"
                                       (backdropClick)="
                                         showReponseTypeOverlay(i, j, k)
-                                      "
-                                    >
+                                      ">
                                       <div class="response-type-modal">
-                                        <ngx-spinner
-                                          size="medium"
-                                          bdColor="rgba(0, 0, 0, 0.6)"
-                                          type="ball-clip-rotate-pulse"
-                                          [fullScreen]="false"
-                                        >
+                                        <ngx-spinner size="medium" bdColor="rgba(0, 0, 0, 0.6)"
+                                          type="ball-clip-rotate-pulse" [fullScreen]="false">
                                         </ngx-spinner>
                                         <h1>
-                                          <mat-icon
-                                            (click)="
+                                          <mat-icon (click)="
                                               showReponseTypeOverlay(i, j, k)
-                                            "
-                                            style="cursor: pointer"
-                                          >
+                                            " style="cursor: pointer">
                                             clear
                                           </mat-icon>
-                                          <span
-                                            style="
+                                          <span style="
                                               position: relative;
                                               top: -7px;
                                               left: 5px;
-                                            "
-                                          >
+                                            ">
                                             Responses
                                           </span>
                                         </h1>
@@ -2278,38 +1545,28 @@
                                             <h2 style="color: #e8743b">
                                               QUESTIONS
                                             </h2>
-                                            <li
-                                              *ngFor="
+                                            <li *ngFor="
                                                 let fieldType of tableFilteredFieldTypes
-                                              "
-                                              (click)="
+                                              " (click)="
                                                 selectRowFieldType(
                                                   fieldType,
                                                   row
                                                 );
                                                 showReponseTypeOverlay(i, j, k)
-                                              "
-                                              class="response-field-types"
-                                              [ngClass]="{
+                                              " class="response-field-types" [ngClass]="{
                                                 active:
                                                   fieldType.type ===
                                                   row.controls.fieldType.value
-                                              }"
-                                            >
-                                              <img
-                                                [src]="
+                                              }">
+                                              <img [src]="
                                                   getFieldTypeImage(
                                                     fieldType.type
                                                   )
-                                                "
-                                                class="response-type-icons"
-                                              />&nbsp;
-                                              <span
-                                                style="
+                                                " class="response-type-icons" />&nbsp;
+                                              <span style="
                                                   position: relative;
                                                   top: -2px;
-                                                "
-                                              >
+                                                ">
                                                 {{ fieldType.description }}
                                               </span>
                                             </li>
@@ -2319,34 +1576,24 @@
                                               <h2 style="color: #e8743b">
                                                 MULTIPLE CHOICE RESPONSES
                                               </h2>
-                                              <ng-container
-                                                *ngIf="
+                                              <ng-container *ngIf="
                                                   quickResponsesData$
                                                     | async as quickResponsesData
-                                                "
-                                              >
+                                                ">
                                                 <div>
-                                                  <div
-                                                    *ngFor="
+                                                  <div *ngFor="
                                                       let resp of quickResponsesData.data
-                                                    "
-                                                    style="height: 36px"
-                                                  >
-                                                    <button
-                                                      style="
+                                                    " style="height: 36px">
+                                                    <button style="
                                                         padding: 0 0 0 5px;
                                                         height: 36px;
-                                                      "
-                                                      mat-flat-button
-                                                      class="quick-response"
-                                                      [ngClass]="{
+                                                      " mat-flat-button class="quick-response" [ngClass]="{
                                                         active:
                                                           currentQuestion
                                                             ?.controls.value
                                                             .value.id ===
                                                           resp.id
-                                                      }"
-                                                      (click)="
+                                                      }" (click)="
                                                         handleFieldType(
                                                           row,
                                                           resp
@@ -2356,20 +1603,14 @@
                                                           j,
                                                           k
                                                         )
-                                                      "
-                                                    >
-                                                      <mat-chip-list
-                                                        *ngFor="
+                                                      ">
+                                                      <mat-chip-list *ngFor="
                                                           let val of resp.values;
                                                           let i = index
-                                                        "
-                                                      >
-                                                        <mat-chip
-                                                          *ngIf="i < 2"
-                                                          style="
+                                                        ">
+                                                        <mat-chip *ngIf="i < 2" style="
                                                             margin-left: 10px;
-                                                          "
-                                                          [ngStyle]="{
+                                                          " [ngStyle]="{
                                                             color: val?.color,
                                                             backgroundColor:
                                                               '#ffffff',
@@ -2377,8 +1618,7 @@
                                                               '1px solid #d3d3d3',
                                                             minHeight: '24px',
                                                             fontSize: '90%'
-                                                          }"
-                                                          (click)="
+                                                          }" (click)="
                                                             handleFieldType(
                                                               row,
                                                               resp
@@ -2388,35 +1628,28 @@
                                                               j,
                                                               k
                                                             )
-                                                          "
-                                                        >
+                                                          ">
                                                           {{ val.title }}
                                                         </mat-chip>
                                                       </mat-chip-list>
-                                                      <span
-                                                        *ngIf="
+                                                      <span *ngIf="
                                                           resp.values.length > 2
-                                                        "
-                                                        style="
+                                                        " style="
                                                           margin-top: -10px;
                                                           margin-left: 5px;
                                                           font-weight: 400;
-                                                        "
-                                                      >
+                                                        ">
                                                         + ({{
-                                                          resp.values.length - 2
+                                                        resp.values.length - 2
                                                         }}
                                                         more)
                                                       </span>
                                                     </button>
-                                                    <button
-                                                      mat-flat-button
-                                                      style="
+                                                    <button mat-flat-button style="
                                                         float: right;
                                                         min-width: 10px;
                                                         padding: 0;
-                                                      "
-                                                      (click)="
+                                                      " (click)="
                                                         handleResponses(
                                                           'quickResponse',
                                                           resp.id
@@ -2427,23 +1660,17 @@
                                                           j,
                                                           k
                                                         )
-                                                      "
-                                                    >
-                                                      <img
-                                                        src="assets/rdf-forms-icons/edit-icon.svg"
-                                                        alt="edit-icon"
-                                                      />
+                                                      ">
+                                                      <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" />
                                                     </button>
                                                   </div>
                                                 </div>
-                                                <button
-                                                  style="
+                                                <button style="
                                                     color: #3d5afe;
                                                     border: none;
                                                     background: none;
                                                     padding: 10px;
-                                                  "
-                                                  (click)="
+                                                  " (click)="
                                                     handleResponses(
                                                       'quickResponse',
                                                       '-1'
@@ -2454,8 +1681,7 @@
                                                       j,
                                                       k
                                                     )
-                                                  "
-                                                >
+                                                  ">
                                                   Add New
                                                 </button>
                                               </ng-container>
@@ -2464,20 +1690,14 @@
                                               <h2 style="color: #e8743b">
                                                 GLOBAL RESPONSES
                                               </h2>
-                                              <ng-container
-                                                *ngIf="
+                                              <ng-container *ngIf="
                                                   globalResponsesData$
                                                     | async as globalResponsesData
-                                                "
-                                              >
-                                                <div
-                                                  *ngFor="
+                                                ">
+                                                <div *ngFor="
                                                     let resp of globalResponsesData.data
-                                                  "
-                                                >
-                                                  <button
-                                                    mat-flat-button
-                                                    (click)="
+                                                  ">
+                                                  <button mat-flat-button (click)="
                                                       handleFieldType(
                                                         row,
                                                         resp
@@ -2487,29 +1707,23 @@
                                                         j,
                                                         k
                                                       )
-                                                    "
-                                                    style="
+                                                    " style="
                                                       padding: 0 0 0 10px;
                                                       width: 85%;
                                                       text-align: left;
-                                                    "
-                                                    [ngClass]="{
+                                                    " [ngClass]="{
                                                       active:
                                                         currentQuestion
                                                           ?.controls.value.value
                                                           .name === resp.name
-                                                    }"
-                                                  >
+                                                    }">
                                                     {{ resp.name }}
                                                   </button>
-                                                  <button
-                                                    mat-flat-button
-                                                    style="
+                                                  <button mat-flat-button style="
                                                       float: right;
                                                       padding: 0;
                                                       min-width: 20px;
-                                                    "
-                                                    (click)="
+                                                    " (click)="
                                                       handleResponses(
                                                         'globalResponse',
                                                         resp.id
@@ -2520,70 +1734,47 @@
                                                         j,
                                                         k
                                                       )
-                                                    "
-                                                  >
-                                                    <img
-                                                      src="assets/rdf-forms-icons/edit-icon.svg"
-                                                      alt="edit-icon"
-                                                    />
+                                                    ">
+                                                    <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" />
                                                   </button>
                                                 </div>
                                               </ng-container>
-                                              <ng-container
-                                                *ngIf="
+                                              <ng-container *ngIf="
                                                   globalDatasetsData$
                                                     | async as globalDatasetsData
-                                                "
-                                              >
-                                                <div
-                                                  *ngFor="
+                                                ">
+                                                <div *ngFor="
                                                     let resp of globalDatasetsData.data
-                                                  "
-                                                >
-                                                  <button
-                                                    mat-flat-button
-                                                    style="
+                                                  ">
+                                                  <button mat-flat-button style="
                                                       padding: 0 0 0 10px;
                                                       width: 85%;
                                                       text-align: left;
-                                                    "
-                                                    [ngClass]="{
+                                                    " [ngClass]="{
                                                       active:
                                                         currentQuestion
                                                           ?.controls.value.value
                                                           .name === resp.name
-                                                    }"
-                                                  >
+                                                    }">
                                                     {{ resp.name }}
                                                   </button>
-                                                  <button
-                                                    mat-flat-button
-                                                    style="
+                                                  <button mat-flat-button style="
                                                       float: right;
                                                       padding: 0;
                                                       min-width: 20px;
-                                                    "
-                                                    (click)="
+                                                    " (click)="
                                                       handleResponses(
                                                         'globalDataset',
                                                         resp.id
                                                       )
-                                                    "
-                                                    [matMenuTriggerFor]="menu"
-                                                  >
-                                                    <mat-icon
-                                                      >keyboard_arrow_right</mat-icon
-                                                    >
+                                                    " [matMenuTriggerFor]="menu">
+                                                    <mat-icon>keyboard_arrow_right</mat-icon>
                                                   </button>
                                                   <mat-menu #menu="matMenu">
-                                                    <button
-                                                      mat-menu-item
-                                                      *ngFor="
+                                                    <button mat-menu-item *ngFor="
                                                         let header of resp
                                                           .values.headers
-                                                      "
-                                                      class="header-elements"
-                                                      (click)="
+                                                      " class="header-elements" (click)="
                                                         handleGlobalDatasetRowFieldType(
                                                           row,
                                                           resp,
@@ -2598,59 +1789,43 @@
                                                           j,
                                                           k
                                                         )
-                                                      "
-                                                    >
+                                                      ">
                                                       <span>{{ header }}</span>
                                                     </button>
                                                   </mat-menu>
                                                 </div>
-                                                <button
-                                                  style="
+                                                <button style="
                                                     color: #3d5afe;
                                                     border: none;
                                                     background: none;
                                                     margin-top: 5px;
-                                                  "
-                                                >
-                                                  <img
-                                                    src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                                    alt="excel-icon"
-                                                    style="width: 18px"
-                                                  />
-                                                  <input
-                                                    #globalResponses
-                                                    [hidden]="true"
-                                                    type="file"
+                                                  ">
+                                                  <img src="../../../../assets/rdf-forms-icons/excel_icon.svg"
+                                                    alt="excel-icon" style="width: 18px" />
+                                                  <input #globalResponses [hidden]="true" type="file"
                                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                                     (change)="
                                                       uploadGlobalResponses(
                                                         $event
                                                       )
-                                                    "
-                                                    (click)="resetFile($event)"
-                                                  />
-                                                  <span
-                                                    style="
+                                                    " (click)="resetFile($event)" />
+                                                  <span style="
                                                       position: relative;
                                                       top: -4px;
                                                       left: 7px;
-                                                    "
-                                                    (click)="
+                                                    " (click)="
                                                       globalResponses.click()
-                                                    "
-                                                  >
+                                                    ">
                                                     Add From Excel
                                                   </span>
                                                 </button>
                                                 <br />
-                                                <button
-                                                  style="
+                                                <button style="
                                                     color: #3d5afe;
                                                     border: none;
                                                     background: none;
                                                     margin-top: 5px;
-                                                  "
-                                                  (click)="
+                                                  " (click)="
                                                     handleResponses(
                                                       'globalResponse',
                                                       '-1'
@@ -2661,8 +1836,7 @@
                                                       j,
                                                       k
                                                     )
-                                                  "
-                                                >
+                                                  ">
                                                   Add Manually
                                                 </button>
                                               </ng-container>
@@ -2672,22 +1846,15 @@
                                       </div>
                                     </ng-template>
                                   </div>
-                                  <div
-                                    *ngIf="
+                                  <div *ngIf="
                                       getTableData(question).length !== 1 &&
                                       tableRowSelectState[i + 1][j + 1][
                                         k + 1
                                       ] === true
-                                    "
-                                  >
-                                    <img
-                                      src="assets/rdf-forms-icons/delete-icon.svg"
-                                      alt="delete-icon"
-                                      (click)="
+                                    ">
+                                    <img src="assets/rdf-forms-icons/delete-icon.svg" alt="delete-icon" (click)="
                                         deleteTableRow(i, j, k, row, question)
-                                      "
-                                      class="table-delete-icon"
-                                    />
+                                      " class="table-delete-icon" />
                                   </div>
                                 </div>
                               </div>
@@ -2696,17 +1863,10 @@
                         </div>
                       </div>
                       <div *ngIf="question.controls.fieldType.value === 'IMG'">
-                        <div
-                          class="width-50 bg-white dis-flex"
-                          *ngIf="question.controls.value.value"
-                        >
-                          <img
-                            class="insert-image"
-                            [src]="
+                        <div class="width-50 bg-white dis-flex" *ngIf="question.controls.value.value">
+                          <img class="insert-image" [src]="
                               getImageSrc(question.controls.value.value.base64)
-                            "
-                            alt="image"
-                          />
+                            " alt="image" />
                           <div>
                             <span style="font-size: 90%">
                               {{ question.controls.value.value.name }}
@@ -2714,9 +1874,9 @@
                             <br />
                             <span style="font-size: 80%">
                               {{
-                                (
-                                  question.controls.value.value.size / 1024
-                                ).toFixed(2)
+                              (
+                              question.controls.value.value.size / 1024
+                              ).toFixed(2)
                               }}
                               KB
                             </span>
@@ -2726,12 +1886,8 @@
                     </div>
 
                     <div *ngIf="getQuestions(section).length !== 1">
-                      <img
-                        src="assets/rdf-forms-icons/delete-icon.svg"
-                        alt="delete-icon"
-                        (click)="deleteQuestion(i, j, question)"
-                        class="delete-icon"
-                      />
+                      <img src="assets/rdf-forms-icons/delete-icon.svg" alt="delete-icon"
+                        (click)="deleteQuestion(i, j, question)" class="delete-icon" />
                     </div>
                     <!-- <mat-icon
                       class="align-icon fa-pull-right p-l-0 p-t-5 step-action"
@@ -2742,11 +1898,7 @@
                   </div>
                 </div>
               </div>
-              <div
-                cdkDrag
-                *ngIf="!getQuestions(section).length"
-                class="empty-section"
-              >
+              <div cdkDrag *ngIf="!getQuestions(section).length" class="empty-section">
                 This section is empty. Please add a question.
               </div>
             </div>
@@ -2755,9 +1907,7 @@
       </div>
     </div>
     <div class="right-panel" style="padding: 10px 20px">
-      <app-rdf-forms-iphone-preview
-        [formData]="createForm$"
-      ></app-rdf-forms-iphone-preview>
+      <app-rdf-forms-iphone-preview [formData]="createForm$"></app-rdf-forms-iphone-preview>
     </div>
   </div>
 </div>
@@ -2774,37 +1924,23 @@
         </div>
         <div *ngFor="let section of selectedFormData.sections; let i = index">
           <p class="section-div">
-            <mat-checkbox
-              [checked]="section.checked"
-              [indeterminate]="fewComplete(section)"
-              (change)="setAllChecked($event.checked, section)"
-            >
+            <mat-checkbox [checked]="section.checked" [indeterminate]="fewComplete(section)"
+              (change)="setAllChecked($event.checked, section)">
             </mat-checkbox>
             {{ section.name }}
           </p>
           <div *ngFor="let question of section.questions" class="questions">
-            <mat-checkbox
-              [checked]="question.checked"
-              (change)="updateAllChecked($event.checked, question, section)"
-            >
+            <mat-checkbox [checked]="question.checked" (change)="updateAllChecked($event.checked, question, section)">
               <span *ngIf="question.fieldType !== 'LLF'">{{
                 question.name
-              }}</span>
-              <span
-                *ngIf="question.fieldType === 'LLF'"
-                [innerHTML]="question.name"
-              ></span>
+                }}</span>
+              <span *ngIf="question.fieldType === 'LLF'" [innerHTML]="question.name"></span>
             </mat-checkbox>
           </div>
         </div>
       </mat-card-content>
       <div style="padding: 0 15px 10px 15px">
-        <button
-          mat-raised-button
-          color="primary"
-          style="width: 48%; margin-right: 10px"
-          (click)="useForm()"
-        >
+        <button mat-raised-button color="primary" style="width: 48%; margin-right: 10px" (click)="useForm()">
           Use
         </button>
         <button mat-stroked-button style="width: 48%" (click)="cancelSlider()">
