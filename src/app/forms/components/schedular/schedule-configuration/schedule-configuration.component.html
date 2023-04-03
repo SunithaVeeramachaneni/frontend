@@ -238,7 +238,8 @@
               schedulerConfigForm?.pristine ||
               schedulerConfigForm?.invalid ||
               (schedulerConfigForm?.get('scheduleType')?.value === 'byDate' &&
-                scheduleByDates?.length === 0)
+                scheduleByDates?.length === 0) ||
+              disableSchedule
             "
             mat-raised-button
             color="primary"

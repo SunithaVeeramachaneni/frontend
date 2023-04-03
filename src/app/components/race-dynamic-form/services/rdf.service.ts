@@ -16,7 +16,8 @@ import {
   FormQueryParam,
   LoadEvent,
   SearchEvent,
-  TableEvent
+  TableEvent,
+  Count
 } from './../../../interfaces';
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -199,6 +200,17 @@ export class RaceDynamicFormService {
       )
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
+
+  getFormsCountByFormId$ = (
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Count> =>
+    this.appService._getRespById(
+      environment.rdfApiUrl,
+      'forms/',
+      `${formId}/count`,
+      info
+    );
 
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     return this.appService

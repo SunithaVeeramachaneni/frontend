@@ -58,6 +58,7 @@ import { DatePipe } from '@angular/common';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
+import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 
 @Component({
   selector: 'app-forms',
@@ -516,7 +517,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
-    this.closeScheduleConfigHandler('out');
+    this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.formDetail = { ...row };
     this.menuState = 'in';
@@ -536,14 +537,40 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.zIndexScheduleDelay = 400;
   }
 
-  closeScheduleConfigHandler(state: string) {
-    this.scheduleFormDetail = null;
+  scheduleConfigEventHandler(event: ScheduleConfigEvent) {
+    const { slideInOut: state, viewForms, mode } = event;
     this.scheduleConfigState = state;
+    if (mode === 'create') {
+      this.raceDynamicFormService
+        .getFormsCountByFormId$(this.scheduleFormDetail?.id)
+        .pipe(
+          tap(({ count = 0 }) => {
+            this.initial.data = this.dataSource?.data?.map((data) => {
+              if (data.id === this.scheduleFormDetail?.id) {
+                return {
+                  ...data,
+                  rounds: count
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+          })
+        )
+        .subscribe();
+    }
     timer(400)
       .pipe(
         tap(() => {
           this.zIndexScheduleDelay = 0;
           this.hideScheduleConfig = true;
+          if (viewForms) {
+            this.selectTab.emit({
+              index: 1,
+              queryParams: { id: this.scheduleFormDetail.id }
+            });
+          }
+          this.scheduleFormDetail = null;
         })
       )
       .subscribe();

@@ -17,7 +17,7 @@
     [formDetail]="scheduleFormDetail"
     [hidden]="hideScheduleConfig"
     [moduleName]="'RDF'"
-    (scheduleConfigState)="closeScheduleConfigHandler($event)"
+    (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
     (scheduleConfig)="scheduleConfigHandler($event)"
     (viewForms)="viewFormsHandler($event)"
   ></app-schedule-configuration>

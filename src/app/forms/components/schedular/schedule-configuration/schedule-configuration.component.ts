@@ -38,6 +38,12 @@ import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedul
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
 
+export interface ScheduleConfigEvent {
+  slideInOut: 'out' | 'in';
+  viewRounds?: boolean;
+  viewForms?: boolean;
+  mode?: 'create' | 'update';
+}
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration?: RoundPlanScheduleConfiguration;
   formsScheduleConfiguration?: FormScheduleConfiguration;
@@ -71,13 +77,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     return this._formDetail;
   }
   @Output()
-  scheduleConfigState: EventEmitter<string> = new EventEmitter<string>();
+  scheduleConfigEvent: EventEmitter<ScheduleConfigEvent> =
+    new EventEmitter<ScheduleConfigEvent>();
   @Output()
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
   @Output()
-  viewRounds: EventEmitter<string> = new EventEmitter<string>();
-  viewForms: EventEmitter<string> = new EventEmitter<string>();
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -124,7 +129,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
       monthlyDaysOfWeek: this.fb.array(
         this.initMonthWiseWeeklyDaysOfWeek(this.weeksOfMonth.length)
       ),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: [
         {
           value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
@@ -327,7 +332,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
   }
 
   cancel() {
-    this.scheduleConfigState.emit('out');
+    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
   scheduleConfiguration() {
@@ -366,8 +371,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                   });
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -385,8 +390,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                   });
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -416,8 +421,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -438,8 +443,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                     .get('id')
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
-                  this.cdrf.detectChanges();
                 }
+                this.cdrf.detectChanges();
               })
             )
             .subscribe();
@@ -525,7 +530,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
       repeatEvery: 'day',
       daysOfWeek: [getDay(new Date())],
       monthlyDaysOfWeek: this.setMonthlyDaysOfWeek(),
-      scheduleEndType: 'never',
+      scheduleEndType: 'on',
       scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
       scheduleEndOnPicker: new Date(addDays(new Date(), 29)),
       scheduleEndOccurrences: 30,
@@ -599,7 +604,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     }));
   }
 
-  openScheduleSuccessModal(dailodMode: 'create' | 'update') {
+  openScheduleSuccessModal(dialogMode: 'create' | 'update') {
     const dialogRef = this.dialog.open(ScheduleSuccessModalComponent, {
       disableClose: true,
       width: '354px',
@@ -609,7 +614,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         name: this.isFormModule
           ? this.formDetail?.name
           : this.roundPlanDetail.name,
-        mode: dailodMode,
+        mode: dialogMode,
         isFormModule: this.isFormModule
       }
     });
@@ -617,14 +622,22 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data?.redirect) {
-          this.scheduleConfigState.emit('out');
           if (this.isFormModule) {
-            this.viewForms.emit(this.formDetail?.id);
+            this.scheduleConfigEvent.emit({
+              slideInOut: 'out',
+              viewForms: true
+            });
           } else {
-            this.viewRounds.emit(this.roundPlanDetail?.id);
+            this.scheduleConfigEvent.emit({
+              slideInOut: 'out',
+              viewRounds: true
+            });
           }
         } else {
-          this.scheduleConfigState.emit('out');
+          this.scheduleConfigEvent.emit({
+            slideInOut: 'out',
+            mode: data.mode
+          });
         }
       }
     });
