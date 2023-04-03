@@ -23,7 +23,7 @@ const routes: Routes = [
         component: AssetsListComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Asssets' },
+          breadcrumb: { label: 'Assets' },
           permissions: [permissions.viewAssets]
         }
       },
