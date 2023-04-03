@@ -2,7 +2,16 @@
   <mat-card class="p-0">
     <mat-icon (click)="closeGlobalResponse()">close</mat-icon>
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="globalMcqHeading"></div>
+      <div
+        class="mcq-heading"
+        translate="createResponses"
+        [hidden]="isViewMode"
+      ></div>
+      <div
+        class="mcq-heading"
+        translate="editResponses"
+        *ngIf="isViewMode"
+      ></div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div>
@@ -13,6 +22,7 @@
           autocomplete="off"
           class="global_response_name_input"
           [hidden]="isViewMode"
+          #formName
         />
         <input
           *ngIf="isViewMode"
@@ -56,12 +66,13 @@
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
                 <input
+                  #globalResponses
                   matInput
                   formControlName="title"
                   [placeholder]="'responseTitle' | translate"
                   autocomplete="off"
                   class="input-forms"
-                  (keyup.enter)="addResponse(); keytab($event)"
+                  (keyup.enter)="addResponse(i + 1)"
                 />
                 <div>
                   <button
@@ -89,14 +100,14 @@
               </div>
             </div>
           </div>
+          <button
+            *ngIf="!isViewMode"
+            mat-flat-button
+            (click)="addResponse(getResponseCount())"
+            class="add-response"
+            translate="addRes"
+          ></button>
         </div>
-        <button
-          *ngIf="!isViewMode"
-          mat-flat-button
-          (click)="addResponse()"
-          class="add-response"
-          translate="addRes"
-        ></button>
       </mat-card-content>
     </div>
   </mat-card>
