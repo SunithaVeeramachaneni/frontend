@@ -550,21 +550,21 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   scheduleConfigHandler(scheduleConfig) {
-    const { formScheduleConfiguration, mode } = scheduleConfig;
-    this.formScheduleConfigurations[formScheduleConfiguration?.formId] =
-      formScheduleConfiguration;
+    const { formsScheduleConfiguration, mode } = scheduleConfig;
+    this.formScheduleConfigurations[formsScheduleConfiguration?.formId] =
+      formsScheduleConfiguration;
     if (
-      formScheduleConfiguration &&
-      Object.keys(formScheduleConfiguration)?.length &&
-      formScheduleConfiguration.id !== ''
+      formsScheduleConfiguration &&
+      Object.keys(formsScheduleConfiguration)?.length &&
+      formsScheduleConfiguration.id !== ''
     ) {
       this.initial.data = this.dataSource?.data?.map((data) => {
         if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
-            schedule: this.getFormattedSchedule(formScheduleConfiguration),
+            schedule: this.getFormattedSchedule(formsScheduleConfiguration),
             scheduleDates: this.getFormattedScheduleDates(
-              formScheduleConfiguration
+              formsScheduleConfiguration
             )
           };
         }
@@ -578,6 +578,8 @@ export class FormsComponent implements OnInit, OnDestroy {
           unscheduled: this.formsCount.unscheduled - 1
         };
       }
+      this.nextToken = '';
+      this.fetchForms$.next({ data: 'load' });
     }
   }
 
