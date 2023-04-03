@@ -55,7 +55,6 @@ export class AddLogicComponent implements OnInit, OnChanges {
   @Input() set question(question: any) {
     question.controls.logics.controls.forEach((logic) => {
       this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
-      this.cdrf.detectChanges();
       if (!logic.value.logicTitle) {
         const logicSymbol = this.fieldOperators.find(
           (op) => op.code === logic.value.operator

@@ -660,8 +660,9 @@
                             question.controls.fieldType.value !== 'TAF' &&
                             question.controls.fieldType.value !== 'ARD'
                           ">
-                          <app-add-logic [formId]="formId" [question]="question" *ngIf="question.hasLogic"
-                            (onValueChanged)="
+
+                          <app-add-logic [formId]="formId" [question]="question"
+                            *ngIf="question.value.logics.length || question.hasLogic" (onValueChanged)="
                               onValueChanged(section, question, $event)
                             " (onLogicDelete)="
                               onLogicDelete(section, question, $event)
