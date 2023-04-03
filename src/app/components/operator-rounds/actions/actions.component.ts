@@ -328,6 +328,7 @@ export class ActionsComponent implements OnInit {
   selectedData = null;
   zIndexDelay = 0;
   readonly perms = perms;
+  actionData: any;
 
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
@@ -394,6 +395,11 @@ export class ActionsComponent implements OnInit {
             tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
+          const newArray = initial.data.map((item, index) => ({
+            index,
+            ...item
+          }));
+          this.actionData = newArray;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
@@ -430,11 +436,14 @@ export class ActionsComponent implements OnInit {
     this.fetchActions$.next(event);
   };
 
-  cellClickActionHandler = (event: CellClickActionEvent): void => {
+  cellClickActionHandler = (
+    event: CellClickActionEvent,
+    issueData: any
+  ): void => {
     const { columnId, row } = event;
     switch (columnId) {
       default:
-        this.openModal(row);
+        this.openModal(row, issueData);
     }
   };
 
@@ -457,9 +466,9 @@ export class ActionsComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  openModal(row: GetFormListQuery): void {
+  openModal(row: GetFormListQuery, actionData): void {
     this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: row,
+      data: { row, actionData },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -468,11 +477,11 @@ export class ActionsComponent implements OnInit {
     });
   }
 
-  rowLevelActionHandler = (event: RowLevelActionEvent) => {
+  rowLevelActionHandler = (event: RowLevelActionEvent, actionData: any) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        this.openModal(data);
+        this.openModal(data, actionData);
         break;
       default:
     }

@@ -4,14 +4,28 @@
       <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
     </button>
     <h4 class="heading">
-      <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
-      {{ this.issuesActionsDetailViewForm?.get('name')?.value }}
-      &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
+      <mat-icon class="arrows" (click)="back()">keyboard_arrow_left</mat-icon>
+      &nbsp;
+      {{ this.issuesActionsDetailViewForm.get('name')?.value }}
+      &nbsp;
+      <mat-icon class="arrows" (click)="next()">keyboard_arrow_right</mat-icon>
     </h4>
   </mat-toolbar>
   <div class="dis-flex form-content">
     <div class="width-60 chart-div">
-      <div class="chat-panel"></div>
+      <div class="chat-panel">
+        <div>
+          <div>
+            <img
+              width="100%"
+              *ngIf="fileToUpload"
+              [src]="fileToUpload"
+              class="preview"
+              (click)="onClik($event)"
+            />
+          </div>
+        </div>
+      </div>
       <div class="custom-form-field-white-color footer">
         <mat-form-field appearance="outline" class="width-90 margin">
           <input type="text" matInput placeholder="Type" />
@@ -19,8 +33,17 @@
             src="assets/rdf-forms-icons/add-attachment-icon.svg"
             alt="add attachment"
             matSuffix
-            class="add-attachment-icon"
+            class="add-attachment-icon img-icon-cursor"
           />
+          <span class="img-icon-cursor">
+            <input
+              type="file"
+              name="files"
+              accept="image/*"
+              class="add-attachment-icon-image"
+              (change)="uploadAttachment($event)"
+            />
+          </span>
         </mat-form-field>
         <img
           src="assets/rdf-forms-icons/send-message.svg"
@@ -34,8 +57,8 @@
         <div class="titles" translate="title"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('name')?.value
-              ? this.issuesActionsDetailViewForm?.get('name')?.value
+            this.issuesActionsDetailViewForm.get('name')?.value
+              ? this.issuesActionsDetailViewForm.get('name')?.value
               : '--'
           }}
         </div>
@@ -45,8 +68,8 @@
         <div class="titles" translate="des"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('description')?.value
-              ? this.issuesActionsDetailViewForm?.get('description')?.value
+            this.issuesActionsDetailViewForm.get('description')?.value
+              ? this.issuesActionsDetailViewForm.get('description')?.value
               : '--'
           }}
         </div>
@@ -56,8 +79,8 @@
         <div class="titles" translate="category"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('category')?.value
-              ? this.issuesActionsDetailViewForm?.get('category')?.value
+            this.issuesActionsDetailViewForm.get('category')?.value
+              ? this.issuesActionsDetailViewForm.get('category')?.value
               : '--'
           }}
         </div>
@@ -66,11 +89,13 @@
       <div class="right-div p-5-0">
         <div class="titles" translate="round"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm?.get('round')?.value
-              ? this.issuesActionsDetailViewForm?.get('round')?.value
-              : '--'
-          }}
+          <a class="round-text">
+            {{
+              this.issuesActionsDetailViewForm.get('round')?.value
+                ? this.issuesActionsDetailViewForm.get('round')?.value
+                : '--'
+            }}
+          </a>
         </div>
       </div>
       <hr class="line" />
@@ -78,8 +103,8 @@
         <div class="titles" translate="location"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('location')?.value
-              ? this.issuesActionsDetailViewForm?.get('location')?.value
+            this.issuesActionsDetailViewForm.get('location')?.value
+              ? this.issuesActionsDetailViewForm.get('location')?.value
               : '--'
           }}
         </div>
@@ -89,8 +114,8 @@
         <div class="titles" translate="asset"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('asset')?.value
-              ? this.issuesActionsDetailViewForm?.get('asset')?.value
+            this.issuesActionsDetailViewForm.get('asset')?.value
+              ? this.issuesActionsDetailViewForm.get('asset')?.value
               : '--'
           }}
         </div>
@@ -100,8 +125,8 @@
         <div class="titles" translate="task"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('task')?.value
-              ? this.issuesActionsDetailViewForm?.get('task')?.value
+            this.issuesActionsDetailViewForm.get('task')?.value
+              ? this.issuesActionsDetailViewForm.get('task')?.value
               : '--'
           }}
         </div>
@@ -156,13 +181,35 @@
         <div class="titles m-t-15" translate="assignedTo"></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
-            <mat-select formControlName="assignedTo">
+            <mat-select formControlName="assignedTo" multiple>
               <input
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKey($event)"
               />
-              <mat-option value="John"> John </mat-option>
+              <mat-select-trigger>
+                {{ issuesActionsDetailViewForm.value?.assignedTo[0] }}
+                <span
+                  *ngIf="
+                    (issuesActionsDetailViewForm.value.assignedTo?.length ||
+                      0) > 1
+                  "
+                  class="example-additional-selection"
+                >
+                  +{{
+                    (issuesActionsDetailViewForm.value?.assignedTo?.length ||
+                      0) - 1
+                  }}
+                  {{
+                    issuesActionsDetailViewForm.value?.assignedTo?.length === 2
+                      ? 'more'
+                      : 'more'
+                  }}
+                </span>
+              </mat-select-trigger>
+              <mat-option *ngFor="let t of assignList" [value]="t">{{
+                t
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -181,8 +228,8 @@
         <div class="titles" translate="createdBy"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('createdBy')?.value
-              ? this.issuesActionsDetailViewForm?.get('createdBy')?.value
+            this.issuesActionsDetailViewForm.get('createdBy')?.value
+              ? this.issuesActionsDetailViewForm.get('createdBy')?.value
               : '--'
           }}
         </div>
@@ -193,8 +240,8 @@
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
           {{
-            this.issuesActionsDetailViewForm?.get('raisedBy')?.value
-              ? this.issuesActionsDetailViewForm?.get('raisedBy')?.value
+            this.issuesActionsDetailViewForm.get('raisedBy').value
+              ? this.issuesActionsDetailViewForm.get('raisedBy').value
               : '--'
           }}
         </div>
@@ -204,6 +251,31 @@
       <div class="right-div p-5-0">
         <div class="titles" translate="attachment"></div>
         <div class="values">3</div>
+      </div>
+      <div>
+        <div class="row" style="display: flex">
+          <div class="column">
+            <img
+              src="https://www.w3schools.com/howto/img_nature.jpg"
+              (click)="openImagePreviewModal()"
+              class="hover-shadow cursor"
+            />
+          </div>
+          <div class="column">
+            <img
+              src="https://www.w3schools.com/howto/img_snow_wide.jpg"
+              (click)="openImagePreviewModal()"
+              class="hover-shadow cursor"
+            />
+          </div>
+          <div class="column">
+            <img
+              src="https://www.w3schools.com/howto/img_mountains.jpg"
+              (click)="openImagePreviewModal()"
+              class="hover-shadow cursor"
+            />
+          </div>
+        </div>
       </div>
       <hr class="line" />
     </div>

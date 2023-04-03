@@ -324,6 +324,8 @@ export class IssuesComponent implements OnInit {
   zIndexDelay = 0;
   issuesCount$: Observable<number>;
   readonly perms = perms;
+  issueData: any;
+
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
@@ -386,9 +388,15 @@ export class IssuesComponent implements OnInit {
             tableHeight: 'calc(80vh - 240px)'
           };
           initial.data = rows;
+          const newArray = initial.data.map((item, index) => ({
+            index,
+            ...item
+          }));
+          this.issueData = newArray;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -422,11 +430,12 @@ export class IssuesComponent implements OnInit {
     this.fetchIssues$.next(event);
   };
 
-  cellClickActionHandler = (event: CellClickActionEvent): void => {
+  cellClickActionHandler = (event: CellClickActionEvent, data: any): void => {
     const { columnId, row } = event;
+
     switch (columnId) {
       default:
-        this.openModal(row);
+        this.openModal(row, data);
     }
   };
 
@@ -450,9 +459,9 @@ export class IssuesComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  openModal(row: GetFormListQuery): void {
+  openModal(row: GetFormListQuery, issueData): void {
     this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: row,
+      data: { row, issueData },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -461,11 +470,11 @@ export class IssuesComponent implements OnInit {
     });
   }
 
-  rowLevelActionHandler = (event: RowLevelActionEvent) => {
+  rowLevelActionHandler = (event: RowLevelActionEvent, issueData: any) => {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        this.openModal(data);
+        this.openModal(data, issueData);
         break;
       default:
     }

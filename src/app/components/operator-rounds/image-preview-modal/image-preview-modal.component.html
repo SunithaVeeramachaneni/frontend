@@ -1,0 +1,74 @@
+<div class="assets-modal .mat-dialog-container">
+  <span class="close cursor" (click)="closeModal()">&times;</span>
+  <div class="modal-content">
+    <div class="mySlides">
+      <div class="numbertext">1 / 3</div>
+      <img
+        src="https://www.w3schools.com/howto/img_nature_wide.jpg"
+        class="img-class"
+      />
+    </div>
+
+    <div class="mySlides">
+      <div class="numbertext">2 / 3</div>
+      <img
+        src="https://www.w3schools.com/howto/img_snow_wide.jpg"
+        class="img-class"
+      />
+    </div>
+
+    <div class="mySlides">
+      <div class="numbertext">3 / 3</div>
+      <img
+        src="https://www.w3schools.com/howto/img_mountains_wide.jpg"
+        class="img-class"
+      />
+    </div>
+
+    <a class="prev" (click)="plusSlides(-1)">&#10094;</a>
+    <a class="next" (click)="plusSlides(1)">&#10095;</a>
+
+    <div class="caption-container">
+      <p id="caption"></p>
+    </div>
+
+    <div class="row rowClass">
+      <div class="column">
+        <img
+          class="demo cursor"
+          src="https://www.w3schools.com/howto/img_nature_wide.jpg"
+          style="width: 100%"
+          (click)="currentSlide(1)"
+          alt="Nature and sunrise"
+        />
+      </div>
+      <div class="column">
+        <img
+          class="demo cursor"
+          src="https://www.w3schools.com/howto/img_snow_wide.jpg"
+          style="width: 100%"
+          (click)="currentSlide(2)"
+          alt="Snow"
+        />
+      </div>
+      <div class="column">
+        <img
+          class="demo cursor"
+          src="https://www.w3schools.com/howto/img_mountains_wide.jpg"
+          style="width: 100%"
+          (click)="currentSlide(3)"
+          alt="Mountains and fjords"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingForms>
+  <div class="ghost-loading">
+    <div>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+</ng-template>

@@ -19,6 +19,7 @@
       position: relative;
       top: 7px;
       font-size: 140%;
+      cursor: pointer;
     }
 
     .back-btn {
@@ -147,4 +148,71 @@
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 5px 12px;
+}
+
+.example-additional-selection {
+  opacity: 0.75;
+  font-size: 14px;
+}
+
+.add-attachment-icon-image {
+  position: absolute;
+  right: -26px;
+  bottom: 7px;
+  width: 30px;
+  height: 30px;
+  opacity: 0;
+  z-index: 1;
+  cursor: pointer;
+  font-size: 0;
+}
+
+.preview {
+  max-width: 200px;
+  vertical-align: middle;
+  float: right;
+  padding: 12px;
+}
+
+.round-text {
+  color: #3c5afe;
+}
+.img-icon-cursor {
+  cursor: pointer;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+:host {
+  ::ng-deep {
+    .mat-dialog-container {
+      background-color: green;
+    }
+  }
+}
+
+::ng-deep .my-custom-dialog-class {
+  .mat-dialog-container {
+    padding: 0;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.custom-modalbox {
+  .mat-dialog-container {
+    padding: 4px;
+    background: transparent !important;
+  }
+}
+
+::ng-deep .column {
+  width: 100px;
+  height: 60px;
+}
+
+::ng-deep .column img {
+  width: 90%;
+  height: 90%;
 }

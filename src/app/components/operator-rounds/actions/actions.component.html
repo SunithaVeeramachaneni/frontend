@@ -38,8 +38,8 @@
       [dataSource]="dataSource"
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
-      (cellClickActionHandler)="cellClickActionHandler($event)"
-      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event, actionData)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event, actionData)"
       class="width-100"
     ></cwp-dynamictable>
   </div>

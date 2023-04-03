@@ -72,6 +72,7 @@ import { ObservationsComponent } from './observations/observations.component';
 import { IssuesComponent } from './issues/issues.component';
 import { ActionsComponent } from './actions/actions.component';
 import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
+import { ImagePreviewModalComponent } from './image-preview-modal/image-preview-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -102,7 +103,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ObservationsComponent,
     IssuesComponent,
     ActionsComponent,
-    IssuesActionsDetailViewComponent
+    IssuesActionsDetailViewComponent,
+    ImagePreviewModalComponent
   ],
   imports: [
     FormsModule,
