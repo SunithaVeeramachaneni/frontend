@@ -127,6 +127,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     if (changes?.moduleName?.currentValue === 'RDF') {
       this.isFormModule = true;
     }
+
+    if (this.isFormModule) {
+      this.formName = this.formDetail?.name || '';
+    } else {
+      this.formName = this.roundPlanDetail?.name || '';
+    }
   }
 
   ngOnInit(): void {
