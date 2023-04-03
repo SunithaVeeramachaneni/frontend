@@ -100,11 +100,13 @@
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
             />
+            <div class="scrollable-area">
             <mat-option
               [value]="parent.id"
               *ngFor="let parent of allParentsData"
-              >{{ parent.name }}</mat-option
+              >{{parent.locationId}} {{ parent.name }}</mat-option
             >
+            </div>
           </mat-select>
         </mat-form-field>
       </p>
