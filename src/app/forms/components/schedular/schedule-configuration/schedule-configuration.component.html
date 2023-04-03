@@ -225,6 +225,74 @@
           </div>
         </ng-container>
 
+        <ng-container>
+          <div formGroupName="assignmentDetails" class="assign-to">
+            <div class="dis-flex">
+              <div class="title" translate>assignedTo</div>
+              <mat-radio-group class="radio-group" formControlName="type">
+                <mat-radio-button
+                  color="primary"
+                  *ngFor="let assignType of assignTypes; let i = index"
+                  [value]="assignType"
+                  [disabled]="i !== 0"
+                >
+                  {{ assignType | translate }}</mat-radio-button
+                >
+              </mat-radio-group>
+            </div>
+            <mat-form-field
+              appearance="outline"
+              class="width-100 cursor"
+              [matMenuTriggerFor]="menu"
+              #menuTrigger="matMenuTrigger"
+            >
+              <mat-label translate>select</mat-label>
+              <input
+                type="text"
+                matInput
+                formControlName="displayValue"
+                class="cursor"
+              />
+              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <div class="info" translate>assignToInfo</div>
+          </div>
+          <div class="forms-count">
+            <p translate class="title">formsGeneration</p>
+            <div class="info m-b-5" translate>advanceFormsCountInfo</div>
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>advanceFormsCount</mat-label>
+              <input
+                type="number"
+                matInput
+                min="0"
+                formControlName="advanceFormsCount"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('advanceFormsCount')">
+              {{
+                errors?.advanceFormsCount.name
+                  | translate
+                    : {
+                        name: 'advanceFormsCount' | translate,
+                        count:
+                          errors.advanceFormsCount.name === 'min'
+                            ? roundsGeneration.min
+                            : errors.advanceFormsCount.name === 'max'
+                            ? roundsGeneration.max
+                            : 0
+                      }
+              }}
+            </mat-error>
+          </div>
+          <mat-menu #menu="matMenu" backdropClass="assign-menu">
+            <app-assign
+              [assigneeDetails]="assigneeDetails"
+              (selectedAssignee)="selectedAssigneeHandler($event)"
+            ></app-assign>
+          </mat-menu>
+        </ng-container>
+
         <div class="footer">
           <button
             mat-stroked-button

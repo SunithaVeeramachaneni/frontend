@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -41,7 +43,9 @@ import {
   FormsDetailResponse,
   FormScheduleConfigurationObj,
   ScheduleFormDetail,
-  FormScheduleConfiguration
+  FormScheduleConfiguration,
+  AssigneeDetails,
+  UserDetails
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -168,8 +172,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -275,7 +279,16 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
-
+  assigneeDetails: AssigneeDetails;
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
+  private _users$: Observable<UserDetails[]>;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -339,7 +352,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     const forms$ = combineLatest([
       formsOnLoadSearch$,
       onScrollForms$,
-      formScheduleConfigurations$
+      formScheduleConfigurations$,
+      this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations]) => {
         if (this.skip === 0) {
@@ -576,6 +590,13 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
+    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
+    return value
+      ? this.raceDynamicFormService.getUserFullName(value)
+      : this.placeHolder;
+  }
+
   scheduleConfigHandler(scheduleConfig) {
     const { formsScheduleConfiguration, mode } = scheduleConfig;
     this.formScheduleConfigurations[formsScheduleConfiguration?.formId] =
@@ -592,7 +613,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             schedule: this.getFormattedSchedule(formsScheduleConfiguration),
             scheduleDates: this.getFormattedScheduleDates(
               formsScheduleConfiguration
-            )
+            ),
+            assignedTo: this.getAssignedTo(formsScheduleConfiguration)
           };
         }
         return data;
@@ -645,7 +667,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             formScheduleConfigurations[form?.id]
           ),
           rounds: form.rounds || this.placeHolder,
-          operator: form.operator || this.placeHolder
+          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
         };
       }
       return {

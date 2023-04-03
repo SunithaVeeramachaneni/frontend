@@ -17,6 +17,7 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
   addMonths,
@@ -29,10 +30,13 @@ import {
 import { tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
+  AssigneeDetails,
   FormScheduleConfiguration,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
-  ScheduleByDate
+  ScheduleByDate,
+  UserDetails,
+  ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
@@ -56,6 +60,8 @@ export interface ScheduleConfig {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScheduleConfigurationComponent implements OnInit, OnChanges {
+  @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
+  @Input() assigneeDetails: AssigneeDetails;
   @Input() moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
@@ -95,6 +101,12 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
   roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj[];
   isFormModule = false;
   formName = '';
+  assignTypes = scheduleConfigs.assignTypes;
+  errors: ValidationError = {};
+  roundsGeneration = {
+    min: 0,
+    max: 30
+  };
   private _roundPlanDetail: any;
   private _formDetail: any;
   constructor(
@@ -151,7 +163,20 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         }
       ],
       endDatePicker: new Date(addDays(new Date(), 30)),
-      scheduledTill: null
+      scheduledTill: null,
+      assignmentDetails: this.fb.group({
+        type: ['user'],
+        value: '',
+        displayValue: ''
+      }),
+      advanceFormsCount: [
+        0,
+        [
+          Validators.required,
+          Validators.min(this.roundsGeneration.min),
+          Validators.max(this.roundsGeneration.max)
+        ]
+      ]
     });
     this.schedulerConfigForm
       .get('scheduleEndType')
@@ -195,6 +220,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
                 }
               ];
             }
+            this.schedulerConfigForm.get('repeatEvery').patchValue('none');
+            this.updateAdvanceRoundsCountValidation(12);
             break;
         }
       });
@@ -213,6 +240,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 29), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'week':
             this.schedulerConfigForm
@@ -227,6 +255,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 90), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
           case 'month':
             this.schedulerConfigForm
@@ -239,6 +268,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
             this.schedulerConfigForm
               .get('endDate')
               .patchValue(format(addDays(new Date(), 364), 'd MMMM yyyy'));
+            this.updateAdvanceRoundsCountValidation(30);
             break;
         }
       });
@@ -641,5 +671,41 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         }
       }
     });
+  }
+
+  selectedAssigneeHandler(event: UserDetails) {
+    const { email: value, firstName, lastName } = event;
+    this.schedulerConfigForm
+      .get('assignmentDetails')
+      .patchValue({ value, displayValue: `${firstName} ${lastName}` });
+    this.schedulerConfigForm.markAsDirty();
+    this.menuTrigger.closeMenu();
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.schedulerConfigForm.get(controlName).touched;
+    const errors = this.schedulerConfigForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  updateAdvanceRoundsCountValidation(roundsCount: number) {
+    this.roundsGeneration.max = roundsCount;
+    this.schedulerConfigForm
+      .get('advanceFormsCount')
+      .setValidators([
+        Validators.required,
+        Validators.min(this.roundsGeneration.min),
+        Validators.max(this.roundsGeneration.max)
+      ]);
+    this.schedulerConfigForm.get('advanceFormsCount').updateValueAndValidity();
   }
 }
