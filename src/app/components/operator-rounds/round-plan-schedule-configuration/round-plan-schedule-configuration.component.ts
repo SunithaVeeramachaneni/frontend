@@ -103,11 +103,6 @@ export class RoundPlanScheduleConfigurationComponent
     private operatorRoundsService: OperatorRoundsService
   ) {}
 
-  // @HostListener('click')
-  // clicked() {
-  //   if (this.openAssignModal) this.openAssignModal = false;
-  // }
-
   ngOnInit(): void {
     this.roundPlanSchedulerConfigForm = this.fb.group({
       id: '',
