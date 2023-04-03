@@ -732,4 +732,19 @@ export class OperatorRoundsService {
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
   }
+
+  updateRound$ = (
+    roundId: string,
+    round: RoundDetail,
+    type: 'due-date' | 'assigned-to',
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<RoundDetail> =>
+    this.appService
+      .patchData(
+        environment.operatorRoundsApiUrl,
+        `rounds/${roundId}/${type}`,
+        round,
+        info
+      )
+      .pipe(map((response) => (response === null ? round : response)));
 }
