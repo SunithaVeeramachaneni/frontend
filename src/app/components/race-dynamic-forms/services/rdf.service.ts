@@ -312,19 +312,19 @@ export class RdfService {
 
   getProperties(question, formId = null) {
     let properties = {};
-    const { fieldType, readOnly } = question;
+    const { fieldType, readOnly, value } = question;
     switch (fieldType) {
       case 'DF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: 'CD'
+          DEFAULTVALUE: value ? 'CD' : '' // Confirm from mobile
         };
         break;
       }
       case 'TIF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: 'CT'
+          DEFAULTVALUE: value ? 'CT' : '' // Confirm from mobile
         };
         break;
       }
