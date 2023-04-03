@@ -186,7 +186,7 @@ export class ResponsesListComponent implements OnInit {
       }
     }
   };
-
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   public searchResponseSet: FormControl;
 
   public users$: Observable<UserDetails[]>;
@@ -333,7 +333,7 @@ export class ResponsesListComponent implements OnInit {
                     form.createdBy
                   ),
                   responseCount: JSON.parse(form.values).length,
-                  updatedAt: new Date()
+                  updatedAt: new Date().toISOString()
                 };
                 break;
               case 'delete':
@@ -389,6 +389,7 @@ export class ResponsesListComponent implements OnInit {
   }
 
   addManually = () => {
+    this.isControlModeView = false;
     this.globaResponseAddOrEditOpenState = 'in';
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
     this.responseToBeEdited = null;
@@ -437,6 +438,11 @@ export class ResponsesListComponent implements OnInit {
               _version: data._version
             })
             .subscribe(() => {
+              this.addEditDeleteResponseSet = true;
+              this.addEditDeleteResponseSet$.next({
+                action: 'delete',
+                form: data
+              });
               this.toast.show({
                 text: 'Global Response Set deleted successfully!',
                 type: 'success'
