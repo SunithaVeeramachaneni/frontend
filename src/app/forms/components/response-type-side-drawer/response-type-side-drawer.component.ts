@@ -194,7 +194,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       data: this.responseForm.getRawValue(),
       formId: this.formId
     });
-    console.log(this.responseForm.getRawValue());
+
     this.multipleChoiceOpenState = false;
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
@@ -207,7 +207,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     const opacity = 0.2;
     const bgColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
     response.patchValue({ backgroundColor: bgColor });
-    console.log(response);
   }
 
   keytab(event) {
