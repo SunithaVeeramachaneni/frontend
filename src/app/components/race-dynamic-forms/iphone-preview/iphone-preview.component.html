@@ -62,6 +62,15 @@
                   </span>
                 </div>
 
+                <div class="width-100 question-name" *ngIf="question.fieldType === 'GAL'">
+                  <span class="font-90">{{ question.name ? question.name : 'Type Question'
+                    }}{{ question.required ? '*' : '' }}
+                  </span>
+                  <span class="">
+                    <img src="assets/rdf-forms-icons/location.svg" alt="location-icon" class="location-icon" />
+                  </span>
+                </div>
+
                 <div class="width-40 question-name" *ngIf="
                     question.fieldType !== 'USR' &&
                     question.fieldType !== 'LLF' &&
@@ -112,15 +121,12 @@
                     question.fieldType !== 'IMG' &&
                     question.fieldType !== 'RT' &&
                     question.fieldType !== 'ARD' &&
-                    question.fieldType !== 'DFR'
+                    question.fieldType !== 'DFR' &&
+                    question.fieldType !== 'GAL' 
                   ">
-                  <p class="m-0 question-name" *ngIf="question.fieldType === 'GAL'">
-                    <span class="font-90">{{ question.name
-                      }}{{ question.required ? '*' : '' }}</span>
-                    <span>
-                      <img src="assets/rdf-forms-icons/location.svg" alt="location-icon" class="location-icon" />
-                    </span>
-                  </p>
+
+
+
                   <p *ngIf="question.fieldType === 'USR'" class="default-value m-0">
                     {{ question.name }}
                   </p>

@@ -386,6 +386,7 @@
   border: 1px solid #cccccc;
   padding-left: 5px;
   font-size: 90%;
+  margin-bottom: 5px;
 }
 
 .input-fields:focus {
@@ -458,8 +459,16 @@
 .location-icon {
   width: 20px;
   position: relative;
-  left: 50px;
+  left: 55px;
   top: 5px;
+}
+
+.location-column-text {
+  max-width: 60%;
+}
+
+.location-column-logo {
+  max-width: 40%;
 }
 
 .attachment-div {
@@ -532,5 +541,5 @@
 }
 
 .font-90 {
-  font-size: 90%;
+  font-size: 100%;
 }
