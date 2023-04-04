@@ -71,6 +71,7 @@
 
   .justify-content-end {
     justify-content: flex-end;
+    align-items: center;
   }
 
   .changes-text {
@@ -114,7 +115,7 @@
     padding: 3px, 20px, 3px, 20px;
     height: 34px;
     border-radius: 4px;
-    margin: 8px 12px 15px 12px;
+    margin: 8px 12px -5px 12px;
     color: $blue-primary;
     border: 1px solid;
     border-color: $blue-primary;

@@ -177,8 +177,10 @@ export class PDFBuilderComponent implements OnInit {
     );
     if (this.data.moduleName === 'OPERATOR_ROUNDS') {
       this.router.navigate(['/operator-rounds']);
+      this.dialogRef.close();
     } else {
       this.router.navigate(['/forms']);
+      this.dialogRef.close();
     }
   }
 
