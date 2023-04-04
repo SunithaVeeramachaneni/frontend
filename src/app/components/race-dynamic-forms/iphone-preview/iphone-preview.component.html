@@ -50,6 +50,19 @@
                   <span>User</span>
                 </div>
                 <div
+                  class="width-100 question-name"
+                  *ngIf="question.fieldType === 'SGF'"
+                >
+                  <span>Signature</span>
+                  <span class="signature-div">
+                    <img
+                      src="assets/rdf-forms-icons/fieldType-icons/SGF.svg"
+                      alt="signature-icon"
+                      class="signature-icon"
+                    />
+                  </span>
+                </div>
+                <div
                   class="width-40 question-name"
                   *ngIf="
                     question.fieldType !== 'USR' &&
@@ -73,7 +86,6 @@
                     question.fieldType !== 'LLF' &&
                     (question.fieldType === 'VI' ||
                       question.fieldType === 'DD' ||
-                      question.fieldType === 'SGF' ||
                       question.fieldType === 'GAL' ||
                       question.fieldType === 'ATT' ||
                       question.fieldType === 'IMG' ||
@@ -179,19 +191,6 @@
                 </div>
               </div>
               <div class="width-100">
-                <div *ngIf="question.fieldType === 'SGF'" class="signature-div">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    class="signature-input-fields"
-                  />
-                  <img
-                    src="assets/rdf-forms-icons/signature.svg"
-                    alt="signature-icon"
-                    class="signature-icon"
-                  />
-                </div>
-
                 <div *ngIf="question.fieldType === 'GAL'" class="signature-div">
                   <input type="text" class="signature-input-fields" />
                   <img
