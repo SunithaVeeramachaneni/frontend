@@ -222,11 +222,14 @@ export class QuestionComponent implements OnInit {
       })
       .subscribe((data) => {
         this.unitOfMeasurementsAvailable = data.rows;
+
         this.unitOfMeasurementsAvailable =
           this.unitOfMeasurementsAvailable.filter(
             (value, index, array) =>
               index ===
-              array.findIndex((item) => item.description === value.description)
+                array.findIndex(
+                  (item) => item.description === value.description
+                ) && value.isActive === true
           );
       });
 
