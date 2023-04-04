@@ -5,7 +5,10 @@ import {
   ChangeDetectorRef,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChildren,
+  QueryList,
+  ElementRef
 } from '@angular/core';
 import {
   FormBuilder,
@@ -28,6 +31,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -38,6 +42,10 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChildren('globalResponses')
+  private globalResponses: QueryList<ElementRef>;
+
   public isViewMode: boolean;
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
@@ -102,20 +110,28 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           })
         );
       });
-    } else if (!this.globalResponse && !this.isViewMode) this.addResponse();
+    } else if (!this.globalResponse && !this.isViewMode) this.addResponse(1);
   }
 
   toggleViewMode = () => {
     this.isViewMode = !this.isViewMode;
   };
 
-  addResponse() {
+  addResponse(index: number) {
     this.responses.push(
       this.fb.group({
         title: ['', [Validators.required]],
         color: ''
       })
     );
+
+    timer(0).subscribe(() =>
+      this.globalResponses.toArray()[index]?.nativeElement.focus()
+    );
+  }
+
+  getResponseCount() {
+    return this.globalResponses.toArray().length;
   }
 
   get responses(): FormArray {
@@ -134,11 +150,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     return (this.responseForm.get('responses') as FormArray).controls;
   }
 
-  keytab(event) {
-    const element = event.srcElement.nextElementSibling;
-
-    if (element == null) return;
-    else element.focus();
+  trackByFn(index: any, item: any) {
+    return index;
   }
 
   dropResponse = (event: CdkDragDrop<any>) => {

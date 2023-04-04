@@ -3,14 +3,14 @@
     "label": "Status",
     "items": [],
     "column": "status",
-    "type": "select",
+    "type": "multiple",
     "value": ""
   },
   {
-    "label": "Operator",
+    "label": "Assigned To",
     "items": [],
     "column": "assignedTo",
-    "type": "select",
+    "type": "multiple",
     "value": ""
   },
   {
