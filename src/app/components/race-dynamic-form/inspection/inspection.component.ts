@@ -494,6 +494,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
       }
     ];
 
+    if (
+      !this.loginService.checkUserHasPermission(
+        permissions,
+        'SCHEDULE_FORM'
+      )
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[6].controlType = 'string';
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
