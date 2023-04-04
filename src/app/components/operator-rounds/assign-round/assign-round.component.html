@@ -7,6 +7,10 @@
       </div>
     </mat-card-title>
     <mat-card-content (click)="$event.stopPropagation()">
+      <div
+        class="arrow"
+        [ngStyle]="{ left: dropdownPosition?.left, top: dropdownPosition?.top }"
+      ></div>
       <span class="custom-form-field-gray-color">
         <mat-form-field appearance="outline" class="search width-100">
           <mat-icon matPrefix class="searchIcon">search</mat-icon>

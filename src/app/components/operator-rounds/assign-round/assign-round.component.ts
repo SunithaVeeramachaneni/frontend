@@ -33,6 +33,8 @@ export class AssignRoundComponent implements OnInit {
   }
   @Output() selectedAssignee: EventEmitter<UserDetails> =
     new EventEmitter<UserDetails>();
+
+  @Input() dropdownPosition;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
