@@ -1,8 +1,8 @@
 {
   "locations": "Locations",
   "createNew": "Create New",
-  "name": "Name",
-  "locationId": "Location Id",
+  "name": "Name *",
+  "locationId": "Location Id *",
   "required": "{name} is required",
   "searchUom": "Search",
   "uom": "UOM",
@@ -12,7 +12,7 @@
   "unitOfMeasurement": "Unit of Measurement",
   "assets": "Assets",
   "image": "Image",
-  "assetsId": "Asset Id",
+  "assetsId": "Asset Id *",
   "model": "Model",
   "description": "Description",
   "parentType": "Parent Type",
@@ -55,9 +55,12 @@
   "failedUpload": "Failed to uploaded",
   "closeBtn": "Close",
   "reviewFailed": "Review Failed",
+  "downloadExcel": "Download Excel",
   "globalMcqHeading": "Global Response Set",
   "globalResponseHeading": "GLOBAL RESPONSES",
   "responseTitle": "Response Title",
   "response": "Response",
-  "addRes": " + Add Response"
+  "addRes": " + Add Response",
+  "createResponses": "Create Responses",
+  "editResponses": "Edit Responses"
 }

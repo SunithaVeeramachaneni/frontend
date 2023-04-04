@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   EventEmitter,
+  Input,
   OnDestroy,
   Output
 } from '@angular/core';
@@ -41,7 +43,9 @@ import {
   FormsDetailResponse,
   FormScheduleConfigurationObj,
   ScheduleFormDetail,
-  FormScheduleConfiguration
+  FormScheduleConfiguration,
+  AssigneeDetails,
+  UserDetails
 } from 'src/app/interfaces';
 import {
   dateFormat,
@@ -58,6 +62,7 @@ import { DatePipe } from '@angular/common';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
+import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 
 @Component({
   selector: 'app-forms',
@@ -167,8 +172,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -274,7 +279,16 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
-
+  assigneeDetails: AssigneeDetails;
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
+  private _users$: Observable<UserDetails[]>;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -338,7 +352,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     const forms$ = combineLatest([
       formsOnLoadSearch$,
       onScrollForms$,
-      formScheduleConfigurations$
+      formScheduleConfigurations$,
+      this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations]) => {
         if (this.skip === 0) {
@@ -516,7 +531,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
-    this.closeScheduleConfigHandler('out');
+    this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.formDetail = { ...row };
     this.menuState = 'in';
@@ -536,36 +551,70 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.zIndexScheduleDelay = 400;
   }
 
-  closeScheduleConfigHandler(state: string) {
-    this.scheduleFormDetail = null;
+  scheduleConfigEventHandler(event: ScheduleConfigEvent) {
+    const { slideInOut: state, viewForms, mode } = event;
     this.scheduleConfigState = state;
+    if (mode === 'create') {
+      this.raceDynamicFormService
+        .getFormsCountByFormId$(this.scheduleFormDetail?.id)
+        .pipe(
+          tap(({ count = 0 }) => {
+            this.initial.data = this.dataSource?.data?.map((data) => {
+              if (data.id === this.scheduleFormDetail?.id) {
+                return {
+                  ...data,
+                  rounds: count
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+          })
+        )
+        .subscribe();
+    }
     timer(400)
       .pipe(
         tap(() => {
           this.zIndexScheduleDelay = 0;
           this.hideScheduleConfig = true;
+          if (viewForms) {
+            this.selectTab.emit({
+              index: 1,
+              queryParams: { id: this.scheduleFormDetail.id }
+            });
+          }
+          this.scheduleFormDetail = null;
         })
       )
       .subscribe();
   }
 
+  getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
+    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
+    return value
+      ? this.raceDynamicFormService.getUserFullName(value)
+      : this.placeHolder;
+  }
+
   scheduleConfigHandler(scheduleConfig) {
-    const { formScheduleConfiguration, mode } = scheduleConfig;
-    this.formScheduleConfigurations[formScheduleConfiguration?.formId] =
-      formScheduleConfiguration;
+    const { formsScheduleConfiguration, mode } = scheduleConfig;
+    this.formScheduleConfigurations[formsScheduleConfiguration?.formId] =
+      formsScheduleConfiguration;
     if (
-      formScheduleConfiguration &&
-      Object.keys(formScheduleConfiguration)?.length &&
-      formScheduleConfiguration.id !== ''
+      formsScheduleConfiguration &&
+      Object.keys(formsScheduleConfiguration)?.length &&
+      formsScheduleConfiguration.id !== ''
     ) {
       this.initial.data = this.dataSource?.data?.map((data) => {
         if (data?.id === this.scheduleFormDetail?.id) {
           return {
             ...data,
-            schedule: this.getFormattedSchedule(formScheduleConfiguration),
+            schedule: this.getFormattedSchedule(formsScheduleConfiguration),
             scheduleDates: this.getFormattedScheduleDates(
-              formScheduleConfiguration
-            )
+              formsScheduleConfiguration
+            ),
+            assignedTo: this.getAssignedTo(formsScheduleConfiguration)
           };
         }
         return data;
@@ -578,6 +627,8 @@ export class FormsComponent implements OnInit, OnDestroy {
           unscheduled: this.formsCount.unscheduled - 1
         };
       }
+      this.nextToken = '';
+      this.fetchForms$.next({ data: 'load' });
     }
   }
 
@@ -616,7 +667,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             formScheduleConfigurations[form?.id]
           ),
           rounds: form.rounds || this.placeHolder,
-          operator: form.operator || this.placeHolder
+          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
         };
       }
       return {

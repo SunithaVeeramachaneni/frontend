@@ -66,6 +66,7 @@ import { ScheduleSuccessModalComponent } from './components/schedular/schedule-s
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
+import { AssignToComponent } from './components/schedular/assign/assign.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -105,7 +106,8 @@ import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.compon
     InstructionPdfComponent,
     InstructionPdfPreviewComponent,
     ScheduleSuccessModalComponent,
-    ScheduleConfigurationComponent
+    ScheduleConfigurationComponent,
+    AssignToComponent
   ],
   imports: [
     FormsModule,
@@ -160,7 +162,8 @@ import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.compon
     NgxShimmerLoadingModule,
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
-    ScheduleConfigurationComponent
+    ScheduleConfigurationComponent,
+    AssignToComponent
   ]
 })
 export class FormModule {}

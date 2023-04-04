@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   EventEmitter,
   Input,
   OnDestroy,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -40,7 +44,8 @@ import {
   RoundDetailResponse,
   SelectTab,
   RowLevelActionEvent,
-  UserDetails
+  UserDetails,
+  AssigneeDetails
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -56,6 +61,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-rounds',
@@ -65,8 +72,17 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @Input() users$: Observable<UserDetails[]>;
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
+  assigneeDetails: AssigneeDetails;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -153,7 +169,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       id: 'dueDate',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'string',
+      controlType: 'date-picker',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -234,7 +255,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       id: 'assignedTo',
       displayName: 'Assigned To',
       type: 'string',
-      controlType: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -305,13 +331,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedForm: RoundDetail;
+  selectedRound: RoundDetail;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
+  assigneePosition: any;
+  initial: any;
+
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   assignedTo: string[] = [];
+  private _users$: Observable<UserDetails[]>;
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -319,7 +349,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastService: ToastService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -363,7 +395,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       })
     );
 
-    const initial = {
+    this.initial = {
       columns: this.columns,
       data: []
     };
@@ -378,25 +410,27 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows.map((roundDetail) => ({
+          this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
+            dueDate: new Date(roundDetail.dueDate),
             assignedTo: this.operatorRoundsService.getUserFullName(
               roundDetail.assignedTo
             )
           }));
         } else {
-          initial.data = initial.data.concat(
-            scrollData.rows.map((roundDetail) => ({
+          this.initial.data = this.initial.data.concat(
+            scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
+              dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.operatorRoundsService.getUserFullName(
                 roundDetail.assignedTo
               )
             }))
           );
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
+        this.skip = this.initial.data.length;
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
 
@@ -439,8 +473,26 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
 
-  cellClickActionHandler = (event: CellClickActionEvent): void => {
-    this.openRoundHandler(event.row);
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const { columnId, row } = event;
+    switch (columnId) {
+      case 'assignedTo':
+        const pos = document
+          .getElementById(`${row.id}`)
+          .getBoundingClientRect();
+        this.assigneePosition = {
+          top: `${pos?.top + 7}px`,
+          left: `${pos?.left - 15}px`
+        };
+        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
+        this.selectedRound = row;
+        break;
+      case 'dueDate':
+        this.selectedRound = row;
+        break;
+      default:
+        this.openRoundHandler(row);
+    }
   };
 
   prepareMenuActions(permissions: Permission[]): void {
@@ -455,13 +507,23 @@ export class RoundsComponent implements OnInit, OnDestroy {
       }
     ];
 
+    if (
+      !this.loginService.checkUserHasPermission(
+        permissions,
+        'SCHEDULE_ROUND_PLAN'
+      )
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[6].controlType = 'string';
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
 
   onCloseViewDetail() {
-    this.selectedForm = null;
+    this.selectedRound = null;
     this.formDetailState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
@@ -477,7 +539,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   openRoundHandler(row: RoundDetail): void {
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
+    this.selectedRound = row;
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
   }
@@ -489,8 +551,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         const dialogRef = this.dialog.open(PDFPreviewComponent, {
           data: {
             moduleName: 'OPERATOR_ROUNDS',
-            roundId: this.selectedForm.id,
-            selectedForm: this.selectedForm
+            roundId: this.selectedRound.id,
+            selectedForm: this.selectedRound
           },
           hasBackdrop: false,
           disableClose: true,
@@ -503,11 +565,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
         });
         //
       } else if (type === 'DOWNLOAD_PDF') {
-        this.downloadPDF(this.selectedForm.id);
+        this.downloadPDF(this.selectedRound.id);
       }
     } else {
       this.store.dispatch(FormConfigurationActions.resetPages());
-      this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
+      this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
     }
   }
 
@@ -549,12 +611,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date') {
+      if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.type === 'date') {
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
+    this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
 
@@ -581,4 +644,69 @@ export class RoundsComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
+
+  selectedAssigneeHandler(userDetails: UserDetails) {
+    const { email: assignedTo } = userDetails;
+    const { roundId } = this.selectedRound;
+    this.operatorRoundsService
+      .updateRound$(
+        roundId,
+        { ...this.selectedRound, assignedTo },
+        'assigned-to'
+      )
+      .pipe(
+        tap((resp) => {
+          if (Object.keys(resp).length) {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.roundId === roundId) {
+                return {
+                  ...data,
+                  assignedTo:
+                    this.operatorRoundsService.getUserFullName(assignedTo),
+                  roundDBVersion: resp.roundDBVersion + 1,
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
+            this.toastService.show({
+              type: 'success',
+              text: 'Assigned to updated successfully'
+            });
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  onChangeDueDateHandler(dueDate: Date) {
+    const { roundId } = this.selectedRound;
+    this.operatorRoundsService
+      .updateRound$(roundId, { ...this.selectedRound, dueDate }, 'due-date')
+      .pipe(
+        tap((resp) => {
+          if (Object.keys(resp).length) {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.roundId === roundId) {
+                return {
+                  ...data,
+                  dueDate,
+                  roundDBVersion: resp.roundDBVersion + 1,
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.toastService.show({
+              type: 'success',
+              text: 'Due date updated successfully'
+            });
+          }
+        })
+      )
+      .subscribe();
+  }
 }

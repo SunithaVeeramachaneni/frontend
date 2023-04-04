@@ -29,7 +29,7 @@ export class AddEditLocationComponent implements OnInit {
   allLocations$: Observable<any>;
   @Input() set locationEditData(data) {
     this.locEditData = data;
-    if (this.locEditData === null) {
+    if (!this.locEditData) {
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';
       this.locationButton = 'Create';
@@ -37,7 +37,7 @@ export class AddEditLocationComponent implements OnInit {
       this.locationStatus = 'edit';
       this.locationTitle = 'Edit Location';
       this.locationButton = 'Update';
-      this.locationImage = this.locEditData.image;
+      this.locationImage = this.locEditData && this.locEditData.image ? this.locEditData.image : this.locationIcon;
       const locdata = {
         id: this.locEditData.id,
         image: this.locEditData.image,
@@ -136,7 +136,7 @@ export class AddEditLocationComponent implements OnInit {
   search(value: string) {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter((parent) =>
-      parent.name.toLowerCase().startsWith(searchValue)
+      parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
     );
   }
 

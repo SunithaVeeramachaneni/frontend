@@ -247,7 +247,7 @@
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
   "advanceRoundsCount": "Rounds Count",
-  "selectAnOperator": "Select an Operator",
+  "assignedToHeader": "Assigned to",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "noSearchResultsFound": "No search results found",
