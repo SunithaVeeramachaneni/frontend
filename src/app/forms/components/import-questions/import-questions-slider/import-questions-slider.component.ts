@@ -23,6 +23,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() selectedFormName;
   @Input() selectedFormData;
   @Input() currentFormData;
+  @Input() isFooter;
+  @Input() title;
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
@@ -39,6 +41,16 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    for (const item of this.selectedFormData) {
+      if (item) {
+        item.isOpen = false;
+        for (const sec of item.sections) {
+          if (sec) {
+            sec.isOpen = false;
+          }
+        }
+      }
+    }
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes)
       .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
@@ -110,7 +122,9 @@ export class ImportQuestionsSliderComponent implements OnInit {
       this.cancelSliderEvent.emit(false);
     });
   }
-
+  toggleIsOpen(page) {
+    page.isOpen = !page.isOpen;
+  }
   cancel() {
     this.cancelSliderEvent.emit(false);
   }

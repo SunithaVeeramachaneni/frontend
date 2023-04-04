@@ -93,7 +93,6 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
       })
     );
- 
 
     const initial = {
       columns: [],
@@ -131,7 +130,6 @@ export class ImportQuestionsModalComponent implements OnInit {
 
   selectListItem(form, index) {
     this.selectedItem = index;
-    this.disableSelectBtn = false;
 
     this.raceDynamicFormService
       .getAuthoredFormDetailByFormId$(form.id)
@@ -157,6 +155,7 @@ export class ImportQuestionsModalComponent implements OnInit {
       )
       .subscribe((response) => {
         this.selectedForm = response;
+        this.disableSelectBtn = false;
       });
   }
 

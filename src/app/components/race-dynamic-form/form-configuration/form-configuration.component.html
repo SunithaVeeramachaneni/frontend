@@ -144,7 +144,7 @@
             src="assets/work-instructions-icons/svg/upload-white.png"
             class="publish-btn-icon"
           />
-          <span class="publish" translate="publishBtn" ></span>
+          <span class="publish" translate="publishBtn"></span>
         </span>
       </button>
     </div>
@@ -300,6 +300,8 @@
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
     <app-import-questions-slider
+      [title]="'forms'"
+      [isFooter]="true"
       [selectedFormName]="selectedFormName"
       [selectedFormData]="selectedFormData"
       [currentFormData]="currentFormData"

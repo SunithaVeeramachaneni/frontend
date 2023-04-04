@@ -1,5 +1,5 @@
 <div
-  id="import-form-customizer"
+  [ngClass]="{ importQuestions: title === 'forms' }"
   *ngIf="{
     sectionIndexes: sectionIndexes$ | async,
     pagesCount: pagesCount$ | async,
@@ -8,7 +8,7 @@
 >
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div class="slider-heading">{{ 'importTasks' | translate }}</div>
+      <div class="slider-heading" translate>Import Questions</div>
     </mat-card-title>
     <mat-card-content>
       <div class="form-name">
@@ -16,6 +16,20 @@
       </div>
       <div *ngFor="let page of selectedFormData; let i = index">
         <p>
+          <mat-icon
+            (click)="toggleIsOpen(page)"
+            *ngIf="page.isOpen === false"
+            class="page-arrow"
+          >
+            chevron_right
+          </mat-icon>
+          <mat-icon
+            (click)="toggleIsOpen(page)"
+            *ngIf="page.isOpen === true"
+            class="page-arrow"
+          >
+            expand_more
+          </mat-icon>
           <mat-checkbox
             [checked]="page.checked"
             [indeterminate]="fewComplete(page)"
@@ -24,43 +38,63 @@
           </mat-checkbox>
           {{ page.name }} {{ page.position }}
         </p>
-        <div *ngFor="let section of page.sections">
-          <p class="section-div">
-            <mat-checkbox
-              [checked]="section.checked"
-              [indeterminate]="fewSectionComplete(section, page)"
-              (change)="setAllSectionChecked($event.checked, section)"
-            >
-            </mat-checkbox>
-            {{ section.name }}
-          </p>
-          <div *ngFor="let question of section.questions" class="questions">
-            <mat-checkbox
-              [checked]="question.checked"
-              (change)="
-                updateAllChecked($event.checked, question, section, page)
-              "
-            >
-              <span>{{ question.name }}</span>
-            </mat-checkbox>
+        <div *ngIf="page.isOpen === true">
+          <div *ngFor="let section of page.sections; let j = index">
+            <p class="section-div">
+              <mat-icon
+                (click)="toggleIsOpen(section)"
+                *ngIf="section.isOpen === false"
+                class="page-arrow"
+              >
+                chevron_right
+              </mat-icon>
+              <mat-icon
+                (click)="toggleIsOpen(section)"
+                *ngIf="section.isOpen === true"
+                class="page-arrow"
+              >
+                expand_more
+              </mat-icon>
+              <mat-checkbox
+                [checked]="section.checked"
+                [indeterminate]="fewSectionComplete(section, page)"
+                (change)="setAllSectionChecked($event.checked, section)"
+              >
+              </mat-checkbox>
+              {{ section.name }}
+            </p>
+            <div *ngIf="section.isOpen === true">
+              <div *ngFor="let question of section.questions" class="questions">
+                <mat-checkbox
+                  [checked]="question.checked"
+                  (change)="
+                    updateAllChecked($event.checked, question, section, page)
+                  "
+                >
+                  <span>{{ question.name }}</span>
+                </mat-checkbox>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </mat-card-content>
-    <div class="import-form-footer">
-      <button
-        mat-stroked-button
-        class="cancel-button"
-        (click)="cancel()"
-        translate="cancel"
-      ></button>
-      <button
-        mat-raised-button
-        color="primary"
-        class="use-button"
-        (click)="useForm()"
-        translate="use"
-      ></button>
+    <div *ngIf="isFooter">
+      <div class="import-form-footer">
+        <button
+          mat-stroked-button
+          class="cancel-button"
+          (click)="cancel()"
+          translate="cancel"
+        ></button>
+        <button
+          mat-raised-button
+          color="primary"
+          class="use-button"
+          (click)="useForm()"
+          translate="use"
+        ></button>
+      </div>
     </div>
   </mat-card>
 </div>
