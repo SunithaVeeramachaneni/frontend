@@ -236,5 +236,6 @@
   "emptyRoundsPlan": "To add the Tasks, add a Page first",
   "publishPlanTitle": "Alert",
   "publishPlanBody": "Plan cannot be published with blank tasks",
-  "publishWithoutTaskButton": "Publish without Blank Tasks"
+  "publishWithoutTaskButton": "Publish without Blank Tasks",
+  "createResponses": "Create Responses"
 }

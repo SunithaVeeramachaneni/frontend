@@ -193,5 +193,6 @@
   "formsGeneration": "Forms Generation",
   "advanceRoundsCount": "Forms Count",
   "min": "{name} must be at least {count}",
-  "max": "{name} must be at the max of {count}"
+  "max": "{name} must be at the max of {count}",
+  "createResponses": "Create Responses"
 }
