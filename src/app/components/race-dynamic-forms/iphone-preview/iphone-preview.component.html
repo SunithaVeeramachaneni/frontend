@@ -47,14 +47,17 @@
                   class="width-40 question-name"
                   *ngIf="question.fieldType === 'USR'"
                 >
-                  <span>User</span>
+                  <span>User{{ question.required ? '*' : '' }}</span>
                 </div>
                 <div
-                  class="width-100 question-name"
+                  class="width-100 question-name dis-flex dis-flex-center"
                   *ngIf="question.fieldType === 'SGF'"
                 >
-                  <span>Signature</span>
-                  <span class="signature-div">
+                  <span
+                    >{{ question.name }}{{ question.required ? '*' : '' }}</span
+                  >
+
+                  <span>
                     <img
                       src="assets/rdf-forms-icons/fieldType-icons/SGF.svg"
                       alt="signature-icon"
@@ -77,7 +80,8 @@
                     question.fieldType !== 'ARD'
                   "
                 >
-                  {{ question.name ? question.name : 'Type Question' }}
+                  {{ question.name ? question.name : 'Type Question'
+                  }}{{ question.required ? '*' : '' }}
                 </div>
 
                 <div
@@ -93,7 +97,8 @@
                       question.fieldType === 'ARD')
                   "
                 >
-                  {{ question.name ? question.name : 'Type Question' }}
+                  {{ question.name ? question.name : 'Type Question'
+                  }}{{ question.required ? '*' : '' }}
 
                   <mat-icon
                     *ngIf="question.fieldType === 'ARD'"

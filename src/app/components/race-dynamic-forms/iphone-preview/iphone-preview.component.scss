@@ -452,9 +452,6 @@
 
 .signature-icon {
   width: 20px;
-  position: relative;
-  left: 140px;
-  top: 5px;
 }
 
 .location-icon {
@@ -519,4 +516,9 @@
     position: relative;
     top: -3px;
   }
+}
+
+.dis-flex-center {
+  justify-content: space-between;
+  align-items: center;
 }
