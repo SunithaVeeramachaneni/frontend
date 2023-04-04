@@ -222,7 +222,6 @@ export class QuestionComponent implements OnInit {
       })
       .subscribe((data) => {
         this.unitOfMeasurementsAvailable = data.rows;
-
         this.unitOfMeasurementsAvailable =
           this.unitOfMeasurementsAvailable.filter(
             (value, index, array) =>
@@ -361,10 +360,9 @@ export class QuestionComponent implements OnInit {
     const value = event.target.value;
     const filter = value.toLowerCase();
     this.unitOfMeasurements = [...unitOfMeasurementsMock];
-
     this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
       (option) =>
-        option.title.toLowerCase().startsWith(filter) ||
+        option.description.toLowerCase().startsWith(filter) ||
         option.code.toLowerCase().startsWith(filter) ||
         option.symbol.toLowerCase().startsWith(filter)
     );
