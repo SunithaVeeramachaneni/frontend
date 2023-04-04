@@ -15,7 +15,8 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails
+  UserDetails,
+  ErrorInfo
 } from '../../../../interfaces';
 
 @Injectable({
@@ -34,6 +35,19 @@ export class ResponseSetService {
   private maxLimit = '1000000';
 
   constructor(private _appService: AppService) {}
+
+  uploadExcel(
+    form: FormData,
+    type,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'resposne-set/upload',
+      { form, type },
+      info
+    );
+  }
 
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();

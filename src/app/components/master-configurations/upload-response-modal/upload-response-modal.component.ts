@@ -11,6 +11,7 @@ import { tap } from 'rxjs/operators';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
+import { ResponseSetService } from '../response-set/services/response-set.service';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -31,6 +32,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   constructor(
     private readonly locationService: LocationService,
     private readonly assetsService: AssetsService,
+    private readonly resposneSetService: ResponseSetService,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData
@@ -49,9 +51,10 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
-      const observable = isAssets
-        ? this.assetsService.uploadExcel(formData)
-        : this.locationService.uploadExcel(formData);
+      // const observable = isAssets
+      //   ? this.assetsService.uploadExcel(formData)
+      //   : this.locationService.uploadExcel(formData);
+      const observable = this.resposneSetService.uploadExcel(formData, type);
       observable?.subscribe((result) => {
         if (Object.keys(result).length > 0) {
           this.isSuccess = true;
@@ -73,18 +76,22 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
 
   downloadExcel() {
     if (this.type === 'assets') {
-      this.assetsService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Asset_Failure');
-        })
-      )
+      this.assetsService
+        .downloadFailure({ rows: this.failure })
+        .pipe(
+          tap((data) => {
+            downloadFile(data, 'Asset_Failure');
+          })
+        )
         .subscribe();
     } else {
-      this.locationService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Location_Failure');
-        })
-      )
+      this.locationService
+        .downloadFailure({ rows: this.failure })
+        .pipe(
+          tap((data) => {
+            downloadFile(data, 'Location_Failure');
+          })
+        )
         .subscribe();
     }
   }
