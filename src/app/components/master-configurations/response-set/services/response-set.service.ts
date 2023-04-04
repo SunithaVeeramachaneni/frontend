@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { map, catchError, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -127,6 +127,17 @@ export class ResponseSetService {
       acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
       return acc;
     }, {});
+  }
+
+  getResponseSetCount$(): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.maxLimit);
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'response-set/list?' + params.toString()
+      )
+      .pipe(map((res) => res.items.length || 0));
   }
 
   getUserFullName(email: string): string {
