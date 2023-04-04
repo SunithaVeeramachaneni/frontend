@@ -317,14 +317,14 @@ export class RdfService {
       case 'DF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: value ? 'CD' : '' // Confirm from mobile
+          DEFAULTVALUE: value ? 'CD' : ''
         };
         break;
       }
       case 'TIF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: value ? 'CT' : '' // Confirm from mobile
+          DEFAULTVALUE: value ? 'CT' : ''
         };
         break;
       }
