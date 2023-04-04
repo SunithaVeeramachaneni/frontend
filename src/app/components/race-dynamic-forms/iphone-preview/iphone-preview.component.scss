@@ -395,6 +395,7 @@
 .default-value {
   float: right;
   font-size: 90%;
+  text-align: right;
 }
 
 .input-fields-with-icons {
@@ -462,16 +463,20 @@
 }
 
 .attachment-div {
-  margin: -5px 0 10px -10px;
+  margin: -5px 168px 10px -10px;
 }
 
 .attachment-btn {
-  width: 215px;
   position: relative;
   left: 5px;
-  background-color: #0053d7;
-  color: white;
-  height: 34px;
+}
+.attachment-btn :hover {
+  background-color: #d7dbf4;
+  cursor: pointer;
+}
+
+.attachment-btn-img {
+  width: 60px;
 }
 
 .image-field {
