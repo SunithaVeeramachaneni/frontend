@@ -81,8 +81,9 @@ export interface RoundPlanDetail extends RoundPlan {
 
 export interface RoundDetail extends RoundPlan {
   roundId: string;
+  roundDetailId: string;
   scheduledType: string;
-  dueDate: string;
+  dueDate: string | Date;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
@@ -90,6 +91,8 @@ export interface RoundDetail extends RoundPlan {
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
+  roundDBVersion: number;
+  roundDetailDBVersion: number;
 }
 
 export interface RoundPlanDetailResponse {

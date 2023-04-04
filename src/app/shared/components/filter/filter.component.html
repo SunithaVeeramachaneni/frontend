@@ -26,6 +26,18 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field
+        *ngIf="item.type === 'multiple'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <mat-select multiple [(ngModel)]="item.value" name="showStatus">
+          <mat-option *ngFor="let showdue of item.items" [value]="showdue">
+            {{ showdue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
         <div [ngClass]="(item.itemValue && (item.itemValue == 'Daily' || item.itemValue == 'Monthly' || item.itemValue == 'Weekly' || item.itemValue == 'Custom dates')) ? 'width50' : 'width100'">
           <mat-form-field appearance="outline" class="mat-field"> 
