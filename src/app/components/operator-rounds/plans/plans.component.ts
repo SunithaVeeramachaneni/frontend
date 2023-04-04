@@ -117,7 +117,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'locations',
-      displayName: 'F.Loc',
+      displayName: 'Location',
       type: 'number',
       controlType: 'string',
       order: 2,
