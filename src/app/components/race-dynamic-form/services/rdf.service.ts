@@ -1,4 +1,4 @@
-import { UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
+import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -913,4 +913,18 @@ export class RaceDynamicFormService {
       }));
     return rows;
   }
+  updateInspection$ = (
+    inspectionId: string,
+    round: InspectionDetail,
+    type: 'due-date' | 'assigned-to',
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<InspectionDetail> =>
+    this.appService
+      .patchData(
+        environment.rdfApiUrl,
+        `inspections/${inspectionId}/${type}`,
+        round,
+        info
+      )
+      .pipe(map((response) => (response === null ? round : response)));
 }
