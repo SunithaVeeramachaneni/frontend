@@ -43,7 +43,7 @@ export class ResponseSetService {
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      'resposne-set/upload',
+      'response-set/upload',
       { form, type },
       info
     );
