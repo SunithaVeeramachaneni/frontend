@@ -186,7 +186,7 @@
   "scheduleSuccess": "Success",
   "scheduleSuccessMessage": " has been scheduled successfully",
   "viewForms": "View Forms",
-  "selectAnOperator": "Select an Operator",
+  "assignedToHeader": "Assigned to",
   "noSearchResultsFound": "No search results found",
   "assignToInfo": "The assignee will be auto assigned to all the forms generated, However you can still change from the forms",
   "advanceFormsCountInfo": "How many forms would you like to generate for the first time in advance?",
