@@ -54,7 +54,7 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
-
+import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -143,9 +143,9 @@ export class QuestionComponent implements OnInit {
     'INST'
   ];
 
-  unitOfMeasurementsAvailable = [];
-
+  unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
+  fetchUnitOfMeasurement: Observable<any>;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -191,7 +191,8 @@ export class QuestionComponent implements OnInit {
     private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private unitServiceOfMeasurement: UnitMeasurementService
   ) {}
 
   ngOnInit(): void {
@@ -212,7 +213,24 @@ export class QuestionComponent implements OnInit {
       .select(getModuleName)
       .subscribe((event) => (this.moduleName = event));
 
-    this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
+    this.unitServiceOfMeasurement
+      .getUnitOfMeasurementList$({
+        nextToken: '',
+        limit: 10000,
+        searchKey: '',
+        fetchType: 'load'
+      })
+      .subscribe((data) => {
+        this.unitOfMeasurementsAvailable = data.rows;
+        this.unitOfMeasurementsAvailable =
+          this.unitOfMeasurementsAvailable.filter(
+            (value, index, array) =>
+              index ===
+                array.findIndex(
+                  (item) => item.description === value.description
+                ) && value.isActive === true
+          );
+      });
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -344,7 +362,7 @@ export class QuestionComponent implements OnInit {
     this.unitOfMeasurements = [...unitOfMeasurementsMock];
     this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
       (option) =>
-        option.title.toLowerCase().startsWith(filter) ||
+        option.description.toLowerCase().startsWith(filter) ||
         option.code.toLowerCase().startsWith(filter) ||
         option.symbol.toLowerCase().startsWith(filter)
     );
@@ -664,7 +682,7 @@ export class QuestionComponent implements OnInit {
     switch (event.eventType) {
       case 'quickResponsesAdd':
         const createDataset = {
-          formId: this.formId,
+          formId: event.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses'

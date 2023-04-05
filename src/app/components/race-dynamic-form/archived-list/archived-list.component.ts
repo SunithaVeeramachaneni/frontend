@@ -34,7 +34,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
-  form: GetFormList;
+  form: any;
 }
 
 @Component({
@@ -152,7 +152,7 @@ export class ArchivedListComponent implements OnInit {
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormList
+      form: {} as any
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -220,17 +220,27 @@ export class ArchivedListComponent implements OnInit {
           initial.data = rows;
         } else {
           if (action === 'restore') {
-            initial.data = initial.data.filter((d) => d.id !== form.id);
+            initial.data = initial.data.filter(
+              (d) => d.id !== form.data.updateFormList.id
+            );
             this.toast.show({
-              text: 'Form restore successfully!',
+              text:
+                'Form "' +
+                form.data.updateFormList.name +
+                '" restore successfully!',
               type: 'success'
             });
             action = null;
           }
           if (action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.id);
+            initial.data = initial.data.filter(
+              (d) => d.id !== form.data.updateFormList.id
+            );
             this.toast.show({
-              text: 'Form delete successfully!',
+              text:
+                'Form "' +
+                form.data.updateFormList.name +
+                '" delete successfully!',
               type: 'success'
             });
             action = null;
@@ -301,7 +311,7 @@ export class ArchivedListComponent implements OnInit {
     }
   };
 
-  private onRestoreForm(form: GetFormList): void {
+  private onRestoreForm(form: any): void {
     this.raceDynamicFormService
       .updateForm$({
         formMetadata: {
@@ -324,7 +334,7 @@ export class ArchivedListComponent implements OnInit {
       });
   }
 
-  private onDeleteForm(form: GetFormList): void {
+  private onDeleteForm(form: any): void {
     const deleteReportRef = this.dialog.open(ArchivedDeleteModalComponent, {
       data: form
     });

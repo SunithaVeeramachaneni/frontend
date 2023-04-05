@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   EventEmitter,
+  Input,
   OnDestroy,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -35,10 +38,12 @@ import {
   CellClickActionEvent,
   Permission,
   UserInfo,
-  RoundDetail,
+  InspectionDetail,
   RoundDetailResponse,
   SelectTab,
-  RowLevelActionEvent
+  RowLevelActionEvent,
+  UserDetails,
+  AssigneeDetails
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -53,6 +58,8 @@ import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RaceDynamicFormService } from '../services/rdf.service';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-inspection',
@@ -62,7 +69,18 @@ import { RaceDynamicFormService } from '../services/rdf.service';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
+  assigneeDetails: AssigneeDetails;
+  private _users$: Observable<UserDetails[]>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -71,6 +89,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     dueDate: '',
   };
   assignedTo: string[] = [];
+  assigneePosition: any;
   columns: Column[] = [
     {
       id: 'name',
@@ -128,7 +147,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
       id: 'dueDate',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'string',
+      controlType: 'date-picker',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -206,10 +230,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'operator',
-      displayName: 'Operator',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
-      controlType: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        displayType: 'text'
+      },
       order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -229,7 +258,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
   ];
   configOptions: ConfigOptions = {
-    tableID: 'roundsTable',
+    tableID: 'inspectionsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -255,6 +284,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
       open: {
         'background-color': '#FEE2E2',
         color: '#991B1B'
+      },
+      'to-do': {
+        'background-color': '#FEE2E2',
+        color: '#991B1B'
       }
     }
   };
@@ -276,18 +309,23 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedForm: RoundDetail;
+  selectedForm: InspectionDetail;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-
+  initial = {
+    columns: this.columns,
+    data: []
+  };
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
+    private toastService: ToastService,
+    private cdrf: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -332,13 +370,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
       })
     );
 
-    const initial = {
-      columns: this.columns,
-      data: []
-    };
+   
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
-      onScrollInspections$
+      onScrollInspections$,
+      this.users$
     ]).pipe(
       map(([rounds, scrollData]) => {
         if (this.skip === 0) {
@@ -346,13 +382,27 @@ export class InspectionComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rounds.rows;
+          this.initial.data = rounds.rows.map((inspectionDetail) => ({
+            ...inspectionDetail,
+            dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate): "",
+            assignedTo: this.raceDynamicFormService.getUserFullName(
+              inspectionDetail.assignedTo
+            )
+          }));
         } else {
-          initial.data = initial.data.concat(scrollData.rows);
+          this.initial.data = this.initial.data.concat(
+            scrollData.rows?.map((inspectionDetail) => ({
+              ...inspectionDetail,
+              dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate) : "",
+              assignedTo: this.raceDynamicFormService.getUserFullName(
+                inspectionDetail.assignedTo
+              )
+            }))
+          );
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
+        this.skip = this.initial.data.length;
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
 
@@ -411,7 +461,25 @@ export class InspectionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    this.openRoundHandler(event.row);
+    const { columnId, row } = event;
+    switch (columnId) {
+      case 'assignedTo':
+        const pos = document
+          .getElementById(`${row.id}`)
+          .getBoundingClientRect();
+        this.assigneePosition = {
+          top: `${pos?.top + 7}px`,
+          left: `${pos?.left - 15}px`
+        };
+        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
+        this.selectedForm = row;
+        break;
+      case 'dueDate':
+        this.selectedForm = row;
+        break;
+      default:
+        this.openInspectionHandler(row);
+    }
   };
 
   prepareMenuActions(permissions: Permission[]): void {
@@ -425,6 +493,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
         action: 'showPlans'
       }
     ];
+
+    if (
+      !this.loginService.checkUserHasPermission(
+        permissions,
+        'SCHEDULE_FORM'
+      )
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[6].controlType = 'string';
+    }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -445,7 +523,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  openRoundHandler(row: RoundDetail): void {
+  openInspectionHandler(row: InspectionDetail): void {
     this.hideRoundDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
@@ -467,14 +545,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
-    debugger
     for (const item of data) {
-      if (item.type !== 'date') {
+      if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.type === 'date') {
+      } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
+    this.nextToken = "";
     this.fetchInspection$.next({ data: 'load' });
   }
 
@@ -492,7 +570,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     const { action, data } = event;
     switch (action) {
       case 'showDetails':
-        this.openRoundHandler(data);
+        this.openInspectionHandler(data);
         break;
       case 'showPlans':
         this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
@@ -501,4 +579,71 @@ export class InspectionComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
+
+
+  selectedAssigneeHandler(userDetails: UserDetails) {
+    const { email: assignedTo } = userDetails;
+    const { inspectionId } = this.selectedForm;
+    this.raceDynamicFormService
+      .updateInspection$(
+        inspectionId,
+        { ...this.selectedForm, assignedTo },
+        'assigned-to'
+      )
+      .pipe(
+        tap((resp) => {
+          if (Object.keys(resp).length) {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.inspectionId === inspectionId) {
+                return {
+                  ...data,
+                  assignedTo:
+                    this.raceDynamicFormService.getUserFullName(assignedTo),
+                  inspectionDBVersion: resp.inspectionDBVersion + 1,
+                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
+            this.toastService.show({
+              type: 'success',
+              text: 'Assigned to updated successfully'
+            });
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  onChangeDueDateHandler(dueDate: Date) {
+    console.log(dueDate);
+    const { inspectionId } = this.selectedForm;
+    this.raceDynamicFormService
+      .updateInspection$(inspectionId, { ...this.selectedForm, dueDate }, 'due-date')
+      .pipe(
+        tap((resp) => {
+          if (Object.keys(resp).length) {
+            this.initial.data = this.dataSource.data.map((data) => {
+              if (data.inspectionId === inspectionId) {
+                return {
+                  ...data,
+                  dueDate,
+                  inspectionDBVersion: resp.inspectionDBVersion + 1,
+                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                };
+              }
+              return data;
+            });
+            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.toastService.show({
+              type: 'success',
+              text: 'Due date updated successfully'
+            });
+          }
+        })
+      )
+      .subscribe();
+  }
 }

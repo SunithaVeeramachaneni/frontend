@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   EventEmitter,
   Input,
   OnDestroy,
@@ -117,7 +118,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'locations',
-      displayName: 'F.Loc',
+      displayName: 'Location',
       type: 'number',
       controlType: 'string',
       order: 2,
@@ -342,7 +343,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     private router: Router,
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -605,12 +607,13 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.scheduleConfigState = state;
 
     if (mode === 'create') {
+      const roundPlanId = this.scheduleRoundPlanDetail.id;
       this.operatorRoundsService
-        .getRoundsCountByRoundPlanId$(this.scheduleRoundPlanDetail.id)
+        .getRoundsCountByRoundPlanId$(roundPlanId)
         .pipe(
           tap(({ count = 0 }) => {
             this.initial.data = this.dataSource.data.map((data) => {
-              if (data.id === this.scheduleRoundPlanDetail.id) {
+              if (data.id === roundPlanId) {
                 return {
                   ...data,
                   rounds: count
@@ -619,6 +622,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
           })
         )
         .subscribe();
@@ -671,6 +675,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           scheduled: this.roundPlanCounts.scheduled + 1,
           unscheduled: this.roundPlanCounts.unscheduled - 1
         };
+        if (this.planCategory.value === 'unscheduled') {
+          this.planCategory.patchValue('unscheduled');
+        }
       }
     }
   }

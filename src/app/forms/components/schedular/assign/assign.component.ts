@@ -19,12 +19,12 @@ import {
 import { AssigneeDetails, UserDetails } from 'src/app/interfaces';
 
 @Component({
-  selector: 'app-assign-round',
-  templateUrl: './assign-round.component.html',
-  styleUrls: ['./assign-round.component.scss'],
+  selector: 'app-assign',
+  templateUrl: './assign.component.html',
+  styleUrls: ['./assign.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AssignRoundComponent implements OnInit {
+export class AssignToComponent implements OnInit {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
   }
@@ -33,8 +33,6 @@ export class AssignRoundComponent implements OnInit {
   }
   @Output() selectedAssignee: EventEmitter<UserDetails> =
     new EventEmitter<UserDetails>();
-
-  @Input() dropdownPosition;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
@@ -50,14 +48,14 @@ export class AssignRoundComponent implements OnInit {
       distinctUntilChanged(),
       map((search) => {
         search = search.toLowerCase();
-        return this.assigneeDetails.users.filter(
+        return this.assigneeDetails?.users?.filter(
           (user) =>
             user.isActive &&
             (user.firstName.toLowerCase().indexOf(search) !== -1 ||
               user.lastName.toLowerCase().indexOf(search) !== -1)
         );
       }),
-      tap((users) => (this.filteredUsersCount = users.length))
+      tap((users) => (this.filteredUsersCount = users?.length || 0))
     );
   }
 

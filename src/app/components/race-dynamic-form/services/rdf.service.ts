@@ -1,3 +1,4 @@
+import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -16,7 +17,8 @@ import {
   FormQueryParam,
   LoadEvent,
   SearchEvent,
-  TableEvent
+  TableEvent,
+  Count
 } from './../../../interfaces';
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
@@ -37,6 +39,7 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+  usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -199,6 +202,17 @@ export class RaceDynamicFormService {
       )
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
+
+  getFormsCountByFormId$ = (
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Count> =>
+    this.appService._getRespById(
+      environment.rdfApiUrl,
+      'forms/',
+      `${formId}/count`,
+      info
+    );
 
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     return this.appService
@@ -642,12 +656,11 @@ export class RaceDynamicFormService {
     ).pipe(map(({ items }) => items));
   }
 
-  getInspectionDetailByInspectionId$ = (submissionId: string) => {
-    return this.appService._getResp(
+  getInspectionDetailByInspectionId$ = (submissionId: string) =>
+    this.appService._getResp(
       environment.rdfApiUrl,
       `forms/submission/detail/${submissionId}`
     );
-  };
 
   private formateGetRdfFormsResponse(resp: any) {
     const rows =
@@ -832,6 +845,21 @@ export class RaceDynamicFormService {
     }
   }
 
+  setUsers(users: UserDetails[]) {
+    this.usersInfoByEmail = users.reduce((acc, curr) => {
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      return acc;
+    }, {});
+  }
+
+  getUsersInfo(): UsersInfoByEmail {
+    return this.usersInfoByEmail;
+  }
+
+  getUserFullName(email: string): string {
+    return this.usersInfoByEmail[email]?.fullName;
+  }
+
   private formatInspections(rounds: any[] = []): any[] {
     const rows = rounds
       .sort(
@@ -848,9 +876,9 @@ export class RaceDynamicFormService {
           },
           condition: true
         },
-        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
-          p.totalTasks > 0
+        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
+          },${p.totalTasks > 0
             ? Math.round(
                 (Math.abs(p.totalTasksCompleted / p.totalTasks) +
                   Number.EPSILON) *
@@ -885,4 +913,18 @@ export class RaceDynamicFormService {
       }));
     return rows;
   }
+  updateInspection$ = (
+    inspectionId: string,
+    round: InspectionDetail,
+    type: 'due-date' | 'assigned-to',
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<InspectionDetail> =>
+    this.appService
+      .patchData(
+        environment.rdfApiUrl,
+        `inspections/${inspectionId}/${type}`,
+        round,
+        info
+      )
+      .pipe(map((response) => (response === null ? round : response)));
 }

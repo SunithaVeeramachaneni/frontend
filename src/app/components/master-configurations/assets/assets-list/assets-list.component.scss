@@ -35,7 +35,6 @@
   .create-new-btn {
     background: $blue-main;
     color: $white;
-    margin-right: 15px;
   }
 
   .more-btn {
@@ -45,7 +44,24 @@
     min-width: 50px;
     margin-right: 15px;
   }
+ .asset-text {
+    font-weight: 500;
+    font-size: 110%;
+    color: #9e9e9e;
+    margin-left: 5px;
 
+    .ghost-loading {
+      padding: 0 20px;
+    }
+  }
+.no-of-asset {
+    margin-right: 10px;
+  }
+  .asset-count {
+    font-weight: 500;
+    font-size: 110%;
+    color: #212121;
+  }
   .ghost-loading {
     padding: 0 20px;
   }

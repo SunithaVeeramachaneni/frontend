@@ -153,11 +153,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myForms.permission
         },
         {
-          title: submissionForms.title,
-          url: submissionForms.url,
-          permission: submissionForms.permission
-        },
-        {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
