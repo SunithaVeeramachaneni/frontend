@@ -86,7 +86,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: '',
+    dueDate: ''
   };
   assignedTo: string[] = [];
   assigneePosition: any;
@@ -312,7 +312,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedForm: InspectionDetail;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
-  roundPlanId: string;
+  formId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   initial = {
@@ -370,7 +370,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       })
     );
 
-   
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
       onScrollInspections$,
@@ -384,7 +383,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           };
           this.initial.data = rounds.rows.map((inspectionDetail) => ({
             ...inspectionDetail,
-            dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate): "",
+            dueDate: inspectionDetail.dueDate
+              ? new Date(inspectionDetail.dueDate)
+              : '',
             assignedTo: this.raceDynamicFormService.getUserFullName(
               inspectionDetail.assignedTo
             )
@@ -393,7 +394,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((inspectionDetail) => ({
               ...inspectionDetail,
-              dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate) : "",
+              dueDate: inspectionDetail.dueDate
+                ? new Date(inspectionDetail.dueDate)
+                : '',
               assignedTo: this.raceDynamicFormService.getUserFullName(
                 inspectionDetail.assignedTo
               )
@@ -410,8 +413,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
+    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
+      this.formId = formId;
       this.fetchInspection$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
@@ -425,31 +428,34 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: ''
+      formId: this.formId
     };
-    return this.raceDynamicFormService.getInspectionsList$({ ...obj, ...this.filter }).pipe(
-      tap(({ count, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
-        this.roundsCount = count !== undefined ? count : this.roundsCount;
-        this.isLoading$.next(false);
-      })
-    );
+    return this.raceDynamicFormService
+      .getInspectionsList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ count, nextToken }) => {
+          this.nextToken = nextToken !== undefined ? nextToken : null;
+          this.roundsCount = count !== undefined ? count : this.roundsCount;
+          this.isLoading$.next(false);
+        })
+      );
   }
   getAllInspections() {
     this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+      const uniqueInspectedBy = formsList
+        .map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
           this.assignedTo.push(item);
         }
-      } 
+      }
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
-        } 
+        }
       }
     });
   }
@@ -495,13 +501,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
     ];
 
     if (
-      !this.loginService.checkUserHasPermission(
-        permissions,
-        'SCHEDULE_FORM'
-      )
+      !this.loginService.checkUserHasPermission(permissions, 'SCHEDULE_FORM')
     ) {
-      this.columns[3].controlType = 'string';
-      this.columns[6].controlType = 'string';
+      if (this.columns[3]?.controlType) {
+        this.columns[3].controlType = 'string';
+      }
+      if (this.columns[6]?.controlType) {
+        this.columns[6].controlType = 'string';
+      }
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -542,7 +549,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
-
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -552,7 +558,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = "";
+    this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
   }
 
@@ -561,8 +567,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: '',
-    }
+      dueDate: ''
+    };
     this.fetchInspection$.next({ data: 'load' });
   }
 
@@ -579,7 +585,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
-
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
@@ -621,7 +626,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
     console.log(dueDate);
     const { inspectionId } = this.selectedForm;
     this.raceDynamicFormService
-      .updateInspection$(inspectionId, { ...this.selectedForm, dueDate }, 'due-date')
+      .updateInspection$(
+        inspectionId,
+        { ...this.selectedForm, dueDate },
+        'due-date'
+      )
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
