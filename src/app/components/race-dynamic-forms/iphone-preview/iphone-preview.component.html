@@ -141,7 +141,8 @@
                   </p>
 
                   <p *ngIf="question.fieldType === 'CB'" class="m-0 cb-input">
-                    <input type="radio" />
+                    <input type="checkbox" id="option1" class="radio-checkbox" />
+                    <label for="option1" class="radio-label"></label>
                   </p>
 
                   <p *ngIf="question.fieldType === 'TIF'" class="m-0">
