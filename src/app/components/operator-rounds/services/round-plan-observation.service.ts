@@ -49,12 +49,12 @@ export class RoundPlanObservationsService {
         obj['Due Date and Time'] &&
         obj['Due Date and Time'] instanceof Date &&
         !isNaN(obj['Due Date and Time'] as any)
-          ? format(new Date(obj['Due Date and Time']), 'do MMM, yyyy')
-          : obj['Due Date and Time'];
+          ? format(new Date(obj['Due Date and Time']), 'dd MMM, yyyy')
+          : obj['Due Date and Time'].slice(0, 12);
       return {
         ...obj,
         preTextImage: {
-          // image: obj?.Photo,
+          image: '/assets/maintenance-icons/Issue icon.svg',
           style: {
             width: '40px',
             height: '40px',
