@@ -1,0 +1,76 @@
+<div
+  class="import-questions-modal"
+  *ngIf="{ formMetadata: formMetadata$ | async }"
+>
+  <div class="dis-flex heading-conatiner">
+    <h2 class="heading" translate>selectForm</h2>
+    <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
+  </div>
+  <div class="search">
+    <mat-form-field class="width-100" appearance="outline">
+      <input
+        matInput
+        [placeholder]="'search' | translate"
+        class="width-100"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
+      <mat-icon matSuffix class="icon">search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div
+    *ngIf="forms$ | async as forms; else loadingForms"
+    class="list-container"
+  >
+    <div
+      *ngFor="let form of forms.data; let i = index"
+      class="dis-flex list-item-conatiner"
+    >
+      <li
+        class="selected-list-element"
+        (click)="selectListItem(form, i)"
+        [ngClass]="{ active: selectedItem === i }"
+      >
+        <div class="width-100">
+          <p class="form-name">{{ form.name }}</p>
+          <p class="form-des">
+            {{
+              (form.description ? form.description : 'formDescription')
+                | translate
+            }}
+          </p>
+        </div>
+        <!-- <div class="width-30">
+          <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
+        </div> -->
+      </li>
+    </div>
+    <div class="dis-flex no-records" *ngIf="forms.data.length === 0" translate>
+      noResults
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="actions">
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="disableSelectBtn"
+      (click)="selectFormElement()"
+      translate="select"
+    ></button>
+    <button
+      mat-stroked-button
+      mat-dialog-close="true"
+      translate="close"
+    ></button>
+  </div>
+</div>
+
+<ng-template #loadingForms>
+  <div class="ghost-loading">
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
+  </div>
+</ng-template>

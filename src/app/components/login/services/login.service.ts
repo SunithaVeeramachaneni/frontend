@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { ConfigUserDataResult } from 'angular-auth-oidc-client';
+import { UserDataResult } from 'angular-auth-oidc-client';
 import { BehaviorSubject } from 'rxjs';
 import { Permission, UserInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -35,27 +35,17 @@ export class LoginService {
     this.loggedInUserInfo = userInfo;
   }
 
-  performPostLoginActions = (
-    configUserDataResult: ConfigUserDataResult,
-    configIds: string[]
-  ) => {
+  performPostLoginActions = (userDataResult: UserDataResult) => {
     const {
-      configId,
       userData: { email }
-    } = configUserDataResult;
+    } = userDataResult;
     this.loggedInEmail = email;
-    const tenantInfo = this.tenantService
-      .getTenantsInfo()
-      .find((tenant) => tenant.tenantId === configId);
+    const tenantInfo = this.tenantService.getTenantInfo();
     const { protectedResources } = tenantInfo;
     const { node, sap } = protectedResources || {};
-
-    this.tenantService.setTenantInfo(tenantInfo);
     this.commonService.setProtectedResources(node);
     this.commonService.setProtectedResources(sap);
     this.setUserAuthenticated(true);
-
-    configIds.forEach((key) => sessionStorage.removeItem(key));
   };
 
   checkUserHasPermission(permissions: Permission[], checkPermissions: string) {

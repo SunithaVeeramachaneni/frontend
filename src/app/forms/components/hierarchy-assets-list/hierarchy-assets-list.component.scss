@@ -1,0 +1,118 @@
+@import '../../../../scss/colors.scss';
+
+.assets-modal {
+  height: 500px;
+  width: 700px;
+  overflow: hidden;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+
+  .heading-container {
+    justify-content: space-between;
+    padding: 10px 10px 0 15px;
+
+    .heading {
+      font-size: 120%;
+      margin-top: 10px;
+    }
+  }
+
+  .search {
+    margin: 0px 60px;
+
+    .icon {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  .searchField {
+    width: 83%;
+  }
+
+  .list-container {
+    height: 319px;
+    overflow-y: auto;
+  }
+
+  .actions {
+    float: right;
+    margin-right: 15px;
+    margin-top: 20px;
+    .cancel-btn {
+      border-color: $blue-main;
+      color: $blue-main;
+      width: 160px;
+      background-color: $white;
+      margin-right: 10px;
+    }
+
+    .next-btn {
+      background-color: $blue-main;
+      color: $white;
+      width: 160px;
+    }
+
+    .next-btn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
+  }
+}
+
+.node-container {
+  padding: 0px 30px;
+}
+
+.selected-items {
+  margin-top: 30px;
+  margin-left: 15px;
+  font-weight: 500;
+  color: $black;
+}
+
+.assets-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  justify-content: center;
+  line-height: 1.5;
+  .title {
+    font-weight: 500;
+  }
+  .subTitle {
+    font-weight: 400;
+  }
+}
+
+.searchResultOption {
+  height: 65px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.nodeContent {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  width: inherit;
+}
+
+.closeIcon {
+  position: relative;
+  top: -2px;
+  cursor: pointer;
+}
+
+img {
+  max-width: 40px;
+  max-height: 40px;
+}

@@ -19,9 +19,9 @@
   <ng-container
     *ngIf="
       this.isCategoriesLoading === false && this.categoriesList
-        | filter: searchCriteria
-        | orderBy: 'Created_At':true:true
-        | paginate: config as result
+        | filter : searchCriteria
+        | orderBy : 'Created_At' : true : true
+        | paginate : config as result
     "
   >
     <div
@@ -41,10 +41,11 @@
       class="categories-details"
       [ngClass]="{ 'categories-details-with-no-results': result.length === 0 }"
     >
-      <mat-grid-tile *ngFor="let obj of result">
+      <mat-grid-tile *ngFor="let obj of result; let i = index">
         <div
           *ngIf="obj.CId !== defaultCategoryId"
           class="card custom-card hoverWrapper categories-details-card"
+          [ngClass]="{ highlight: selectedCategoryIndex === i }"
         >
           <a [routerLink]="['/work-instructions/category', obj.CId]">
             <img
@@ -74,6 +75,8 @@
               <button
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
+                (menuOpened)="menuOpened(i)"
+                (menuClosed)="menuClosed()"
                 style="margin-right: 20px"
                 *appCheckUserHasPermission="[
                   permissions.updateCategory,

@@ -44,6 +44,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.headerService.setHeaderTitle(menu);
   }
 
+  @Input() set menuOpenClose(state) {
+    this.menustate = state;
+  }
+
   unreadMessageCount: number;
   slackVerification$: Observable<any>;
   msTeamsSignIn$: Observable<any>;
@@ -52,7 +56,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   audio: any;
   eventSource: any;
   tenantLogo: any;
+  collaborationType = 'none';
   isOpen = false;
+  menustate;
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
 
@@ -161,7 +167,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
 
     this.tenantService.tenantInfo$.subscribe(
-      ({ tenantLogo }) => (this.tenantLogo = tenantLogo)
+      ({ tenantLogo, collaborationType }) => {
+        this.collaborationType = collaborationType;
+        this.tenantLogo = tenantLogo;
+      }
     );
   }
 

@@ -68,12 +68,27 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'rdf-forms',
+    path: 'forms',
     loadChildren: () =>
-      import('./components/race-dynamic-forms/race-dynamic-forms.module').then(
-        (m) => m.RaceDynamicFormsModule
+      import('./components/race-dynamic-form/race-dynamic-form.module').then(
+        (m) => m.RaceDynamicFormModule
       )
   },
+  {
+    path: 'operator-rounds',
+    loadChildren: () =>
+      import('./components/operator-rounds/operator-rounds.module').then(
+        (m) => m.OperatorRoundsModule
+      )
+  },
+  {
+    path: 'master-configuration',
+    loadChildren: () =>
+      import(
+        './components/master-configurations/master-configurations.module'
+      ).then((m) => m.MasterConfigurationsModule)
+  },
+
   {
     path: 'user-settings',
     loadChildren: () =>

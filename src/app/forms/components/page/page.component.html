@@ -1,0 +1,83 @@
+<div
+  class="pages"
+  [formGroup]="pageForm"
+  *ngIf="{
+    page: page$ | async,
+    pagesCount: pagesCount$ | async,
+    pageTasksCount: pageTasksCount$ | async
+  } as props"
+>
+  <div class="page-header">
+    <mat-icon
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === true"
+      class="page-arrow"
+    >
+      expand_more
+    </mat-icon>
+    <mat-icon
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === false"
+      class="page-arrow"
+    >
+      chevron_right
+    </mat-icon>
+
+    <a class="width-60">
+      <input
+        #pageName
+        type="text"
+        formControlName="name"
+        [size]="getSize(pageForm.get('name').value)"
+        class="form_page_name_input"
+        placeholder="Untitled Page"
+        autocomplete="off"
+        (keyup.enter)="pageForm.get('name').disable()"
+        (blur)="pageForm.get('name').disable()"
+      />
+
+      <button
+        mat-icon-button
+        (click)="editPage()"
+        class="edit-icon"
+        *ngIf="pageForm.get('name').disabled === true"
+      >
+        <img
+          src="assets/rdf-forms-icons/edit-icon.svg"
+          alt="edit-icon"
+          class="page-edit-icon"
+        />
+      </button>
+    </a>
+
+    <div class="pageHeadRight">
+      <span class="pageTaskCount">
+        {{ props.pageTasksCount }}
+      </span>
+      <button
+        [matMenuTriggerFor]="pageMenu"
+        class="more-icon"
+        aria-label="More Options"
+      >
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #pageMenu="matMenu">
+        <button mat-menu-item (click)="deletePage()" class="text-red">
+          <span translate="deletePage"></span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
+    <ng-content></ng-content>
+  </div>
+
+  <button class="add-page-btn" (click)="addPage()">
+    <img
+      src="assets/rdf-forms-icons/add-page.svg"
+      alt="add page"
+      class="add-page-btn-icon"
+    />
+    {{ 'addPage' | translate }}
+  </button>
+</div>

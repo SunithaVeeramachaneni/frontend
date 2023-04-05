@@ -1,5 +1,3 @@
-import { ChartType } from 'chart.js';
-
 export interface ReportDetails {
   report: ReportConfiguration;
   reportData: any[];
@@ -32,7 +30,7 @@ export interface ReportConfiguration {
 export interface ChartDetail {
   id?: string;
   title: string;
-  type: ChartType;
+  type: string;
   indexAxis: 'x' | 'y';
   isStacked: boolean;
   showLegends: boolean;

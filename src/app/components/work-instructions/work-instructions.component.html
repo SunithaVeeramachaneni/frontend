@@ -1,8 +1,8 @@
-<div
-  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
-  class="work-instructions-body"
->
-  <div *ngIf="currentRouteUrl === routingUrls.workInstructions.url">
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div
+    *ngIf="currentRouteUrl === routingUrls.workInstructions.url"
+    class="work-instructions-body"
+  >
     <div class="bg-white work-instructions-header custom-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-field">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>

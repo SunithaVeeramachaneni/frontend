@@ -81,6 +81,7 @@ export class ReportService {
         id,
         displayName,
         type,
+        controlType: 'string',
         visible: true,
         sticky: false,
         searchable: true,

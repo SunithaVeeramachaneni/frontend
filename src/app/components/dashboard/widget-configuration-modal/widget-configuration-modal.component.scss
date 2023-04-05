@@ -57,7 +57,7 @@
 
 .chart-wrapper {
   height: 260px;
-  margin: 10px 0px;
+  margin: 10px 0px 10px 10px;
 }
 
 .warning-message {
@@ -101,12 +101,14 @@
 }
 
 .filter-component {
-  margin-left: 15px;
+  margin-left: 8px;
   margin-top: 5px;
 }
 
 .preview-heading {
-  margin: 0 10px;
+  margin: 0;
+  position: relative;
+  top: -12px;
 }
 
 .report-list-height {

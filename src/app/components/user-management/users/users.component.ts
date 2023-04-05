@@ -64,6 +64,7 @@ export class UsersComponent implements OnInit {
       id: 'user',
       displayName: 'User',
       type: 'string',
+      controlType: 'string',
       order: 1,
       searchable: false,
       sortable: true,
@@ -88,6 +89,7 @@ export class UsersComponent implements OnInit {
       id: 'displayRoles',
       displayName: 'Role',
       type: 'string',
+      controlType: 'string',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -110,6 +112,7 @@ export class UsersComponent implements OnInit {
       id: 'email',
       displayName: 'Email',
       type: 'string',
+      controlType: 'string',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -131,6 +134,7 @@ export class UsersComponent implements OnInit {
       id: 'createdAt',
       displayName: 'Created At',
       type: 'date',
+      controlType: 'string',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -454,7 +458,8 @@ export class UsersComponent implements OnInit {
             this.usersService.prepareUser(user, user.roles)
           );
           return of(resp);
-        })
+        }),
+        tap((x) => (this.allUsersList = x))
       );
 
   rowLevelActionHandler = (event) => {
@@ -547,9 +552,7 @@ export class UsersComponent implements OnInit {
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
-  configOptionsChangeHandler = (event) => {
-    // console.log('event', event);
-  };
+  configOptionsChangeHandler = (event) => {};
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];

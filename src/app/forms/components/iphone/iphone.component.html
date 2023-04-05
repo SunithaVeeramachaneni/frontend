@@ -1,0 +1,33 @@
+<div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
+  <div class="iphone-header">
+    <h3 class="form-heading" matTooltip="{{ formMetadata.name }}">
+      {{ formMetadata.name }}
+    </h3>
+    <p class="form-description" matTooltip=" {{ formMetadata.description }}">
+      {{
+        (formMetadata.description ? formMetadata.description : 'des')
+          | translate
+      }}
+    </p>
+  </div>
+  <div class="iphone-preview">
+    <app-preview
+      [pageIndex]="currentPage"
+      [subFormId]="subFormId"
+    ></app-preview>
+  </div>
+  <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
+    <span class="page-count">{{ currentPage }} / {{ pagesCount }}</span>
+
+    <button
+      class="btn-next"
+      translate="nextBtnPreview"
+      (click)="nextPage()"
+    ></button>
+    <button
+      class="btn-previous"
+      translate="prevBtn"
+      (click)="prevPage()"
+    ></button>
+  </div>
+</div>

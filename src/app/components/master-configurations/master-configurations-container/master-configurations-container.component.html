@@ -1,0 +1,6 @@
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.masterConfiguration.url">
+    <app-locations-list></app-locations-list>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>

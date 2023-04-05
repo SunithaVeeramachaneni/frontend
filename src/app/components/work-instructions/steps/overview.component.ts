@@ -24,7 +24,6 @@ import { combineLatest, of, Subscription } from 'rxjs';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { Instruction, Step } from '../../../interfaces';
 import { Store } from '@ngrx/store';
-import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { getInstruction, getSteps } from '../state/instruction.selectors';
 import {
@@ -32,6 +31,7 @@ import {
   defaultCategoryName,
   permissions
 } from '../../../app.constants';
+import { State } from '../state/instruction.reducer';
 
 interface Category {
   Category_Id: string;

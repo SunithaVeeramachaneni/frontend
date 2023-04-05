@@ -25,7 +25,6 @@ import { Base64HelperService } from '../../services/base64-helper.service';
 import { Subject } from 'rxjs';
 import { Step, Instruction } from '../../../../interfaces';
 import { Store } from '@ngrx/store';
-import { State } from '../../../../state/app.state';
 import * as InstructionActions from '../../state/intruction.actions';
 import {
   getCurrentStep,
@@ -35,6 +34,7 @@ import {
   getUploadedFile
 } from '../../state/instruction.selectors';
 import { permissions } from 'src/app/app.constants';
+import { State } from '../../state/instruction.reducer';
 
 @Component({
   selector: 'app-step-content',
@@ -430,7 +430,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
           }
         },
         (error) => {
-          console.log(error);
+          // console.log(error);
         }
       );
   }

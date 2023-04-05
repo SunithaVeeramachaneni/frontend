@@ -6,21 +6,122 @@
         class="very-high-priority"
         >{{ 'veryHigh' | translate }}</span
       >
-      <span *ngIf="workOrder.priorityText === 'High'" class="high-priority">{{
-        'high' | translate
-      }}</span>
       <span
-        *ngIf="workOrder.priorityText === 'Medium'"
-        class="medium-priority"
-        >{{ 'medium' | translate }}</span
+        *ngIf="workOrder.kitStatusText === 'Waiting On Parts'"
+        class="waiting-on-parts"
+        >{{ 'waitingOnParts' | translate }}</span
+      >
+      <span *ngIf="workOrder.kitStatusText === 'Kit Ready'" class="kit-ready">{{
+        'kitsReady' | translate
+      }}</span></span
+    >
+    <br />
+
+    <span class="kit-number">{{ workOrder.headerText }}</span>
+    <span class="display-flex">
+      <img
+        src="../../../assets/maintenance-icons/dataIcon.svg"
+        class="list-icons"
+      />
+      <span class="date-priority-label">{{ workOrder.workCenterInfo }} </span>
+    </span>
+    <span class="display-flex">
+      <img
+        src="../../../assets/maintenance-icons/dateIcon.svg"
+        class="list-icons"
+      />
+      <span class="date-priority-label">{{
+        workOrder.dueDate
+          | date : 'dd-MMM-yyyy' : '' : translateService.currentLang
+      }}</span>
+    </span>
+    <span
+      *ngIf="
+        workOrder.status === 'unassigned' || workOrder.status === 'assigned'
+      "
+      class="display-flex"
+    >
+      <img
+        src="../../../assets/maintenance-icons/timeIcon.svg"
+        class="list-icons"
+      />
+      <span class="date-priority-label">{{ workOrder.estimatedTime }}</span>
+    </span>
+    <span
+      *ngIf="
+        workOrder.status === 'inProgress' || workOrder.status === 'completed'
+      "
+      class="display-flex"
+    >
+      <img
+        src="../../../assets/maintenance-icons/timeIcon.svg"
+        class="list-icons"
+      />
+      <span class="width-100 display-flex">
+        <span class="date-priority-label">{{
+          'actualTime' | translate : { time: workOrder.actualTime }
+        }}</span>
+        <span class="date-priority-label float-right">{{
+          'plannedTime' | translate : { time: workOrder.estimatedTime }
+        }}</span>
+      </span>
+    </span>
+    <mat-progress-bar
+      *ngIf="
+        workOrder.status === 'inProgress' || workOrder.status === 'completed'
+      "
+      mode="determinate"
+      value="{{ workOrder?.timeProgress * 100 }}"
+      class="progress-bar-class"
+    ></mat-progress-bar>
+    <span
+      *ngIf="
+        workOrder.status === 'inProgress' || workOrder.status === 'completed'
+      "
+      class="display-flex"
+    >
+      <img
+        src="../../../assets/maintenance-icons/operationsIcon.svg"
+        class="list-icons"
+      />
+      <span class="date-priority-label"
+        >{{
+          'operationsStatus'
+            | translate
+              : {
+                  completed: workOrder.operationProgress[0],
+                  total: workOrder.operationProgress[1]
+                }
+        }}
+      </span>
+    </span>
+
+    <mat-progress-bar
+      *ngIf="
+        workOrder.status === 'inProgress' || workOrder.status === 'completed'
+      "
+      mode="determinate"
+      value="{{ workOrder.operationProgress[2] * 100 }}"
+      class="progress-bar-class"
+    ></mat-progress-bar>
+    <div style="width: 100%" *ngIf="workOrder.isLoading">
+      <ngx-shimmer-loading [shape]="'circle'" [width]="'34px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading
+        [width]="'80%'"
+        [height]="'20px'"
+        style="position: relative; top: -7px; left: 10px"
       >
       <span *ngIf="workOrder.priorityText === 'Low'" class="low-priority">{{
         'low' | translate
       }}</span>
       <span
-        *ngIf="
-          workOrder.status === 'unassigned' || workOrder.status === 'assigned'
-        "
+        *ngIf="workOrder.status !== 'unassigned'"
+        class="inprogress-user-name m-l-7"
+        [ngClass]="{
+          'assign-user-name': workOrder.status !== 'unassigned'
+        }"
+        >{{ workOrder.technician[0].personName }}</span
       >
         <span
           *ngIf="workOrder.kitStatusText === 'Parts Available'"
@@ -162,42 +263,65 @@
       </ng-container>
     </div>
 
-    <div class="text-align-center">
-      <button
-        (click)="toggleDropdown()"
-        class="show-operations-btn"
-        *ngIf="!isDropdownOpen"
-      >
-        <mat-icon class="down-up-arrow">keyboard_arrow_down</mat-icon>
-        {{
-          'showOperations'
-            | translate: { noOfOperations: workOrder.operations.length }
-        }}
-      </button>
-      <button
-        (click)="toggleDropdown()"
-        class="show-operations-btn"
-        *ngIf="isDropdownOpen"
-      >
-        <mat-icon class="down-up-arrow">keyboard_arrow_up</mat-icon>
-        {{
-          'hideOperations'
-            | translate: { noOfOperations: workOrder.operations.length }
-        }}
-      </button>
-    </div>
+  <div class="text-align-center">
+    <button
+      (click)="toggleDropdown()"
+      class="show-operations-btn"
+      *ngIf="!isDropdownOpen"
+    >
+      <mat-icon class="down-up-arrow">keyboard_arrow_down</mat-icon>
+      {{
+        'showOperations'
+          | translate : { noOfOperations: workOrder.operations.length }
+      }}
+    </button>
+    <button
+      (click)="toggleDropdown()"
+      class="show-operations-btn"
+      *ngIf="isDropdownOpen"
+    >
+      <mat-icon class="down-up-arrow">keyboard_arrow_up</mat-icon>
+      {{
+        'hideOperations'
+          | translate : { noOfOperations: workOrder.operations.length }
+      }}
+    </button>
+  </div>
 
-    <hr *ngIf="isDropdownOpen === true" class="operations-line" />
-    <span>
-      <div *ngIf="isDropdownOpen === true" class="operations-div">
-        <li
-          class="operations-list"
-          *ngFor="let operation of workOrder.operations; let j = index"
-        >
-          <span>
-            <span class="kit-number">{{ operation.operationName }}</span>
-            <span class="display-flex">
-              <svg-icon icon="icon-dataIcon" class="list-icons"></svg-icon>
+  <hr *ngIf="isDropdownOpen === true" class="operations-line" />
+  <span>
+    <div *ngIf="isDropdownOpen === true" class="operations-div">
+      <li
+        class="operations-list"
+        *ngFor="let operation of workOrder.operations; let j = index"
+      >
+        <span>
+          <span class="kit-number">{{ operation.operationName }}</span>
+          <span class="display-flex">
+            <img
+              src="../../../assets/maintenance-icons/dataIcon.svg"
+              class="list-icons"
+            />
+            <span class="date-priority-label">{{
+              workOrder.workCenterInfo
+            }}</span>
+          </span>
+          <span class="display-flex">
+            <img
+              src="../../../assets/maintenance-icons/dateIcon.svg"
+              class="list-icons"
+            />
+            <span class="date-priority-label">{{
+              workOrder.dueDate
+                | date : 'dd-MMM-yyyy' : '' : translateService.currentLang
+            }}</span>
+          </span>
+          <span class="display-flex">
+            <img
+              src="../../../assets/maintenance-icons/timeIcon.svg"
+              class="list-icons"
+            />
+            <span class="width-100">
               <span class="date-priority-label">{{
                 workOrder.workCenterInfo
               }}</span>

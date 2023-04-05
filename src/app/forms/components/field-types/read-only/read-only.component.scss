@@ -1,0 +1,9 @@
+@import '../../../../../scss/colors.scss';
+
+.default-field-input-box {
+  border: 1px solid $border-color;
+  border-radius: 3px;
+  background: $white;
+  height: 25px;
+  width: 40%;
+}

@@ -1,0 +1,91 @@
+<div
+  class="section dis-flex"
+  [formGroup]="sectionForm"
+  *ngIf="{
+    section: section$ | async,
+    sectionsCount: sectionsCount$ | async,
+    sectionTasksCount: sectionTasksCount$ | async
+  } as props"
+>
+  <div class="width-95 section-margin">
+    <div>
+      <input type="hidden" formControlName="position" />
+      <div class="section-header">
+        <mat-icon
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === true"
+          class="section-arrow"
+        >
+          expand_more
+        </mat-icon>
+        <mat-icon
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === false"
+          class="section-arrow"
+        >
+          chevron_right
+        </mat-icon>
+
+        <a class="width-60">
+          <input
+            #sectionName
+            type="text"
+            autofocus
+            formControlName="name"
+            [size]="getSize(sectionForm.get('name').value)"
+            class="form_section_name_input"
+            placeholder="Untitled Section"
+            autocomplete="off"
+            (keyup.enter)="sectionForm.get('name').disable()"
+            (blur)="sectionForm.get('name').disable()"
+          />
+          <button
+            mat-icon-button
+            (click)="editSection()"
+            class="edit-icon"
+            *ngIf="sectionForm.get('name').disabled === true"
+          >
+            <img
+              src="assets/rdf-forms-icons/edit-icon-white.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
+            />
+          </button>
+        </a>
+        <div class="sectionHeadRight">
+          <span class="sectionTaskCount">
+            {{ props.sectionTasksCount }}
+          </span>
+
+          <button
+            [matMenuTriggerFor]="sectionMenu"
+            class="more-icon"
+            aria-label="More Options"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #sectionMenu="matMenu">
+            <button mat-menu-item (click)="deleteSection()" class="text-red">
+              <span translate="deleteSection"></span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+      <div
+        *ngIf="sectionForm.get('isOpen').value === true"
+        class="questions-content"
+      >
+        <ng-content></ng-content>
+      </div>
+
+      <button class="add-section-btn" (click)="addSection()">
+        <img
+          src="assets/rdf-forms-icons/add-section.svg"
+          alt="add section"
+          class="add-section-btn-icon"
+        />
+        {{ 'addSection' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

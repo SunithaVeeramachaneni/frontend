@@ -347,8 +347,8 @@ export class ReportsComponent implements OnInit {
           );
         break;
       case 'copy':
-        report = event.data;
-
+        report = Object.assign({}, event.data);
+        report.isFavorite = false;
         this.reportService.copyReport$(report).subscribe((res) => {
           this.addReport(res);
           this.changeReportCount$.next('increase');

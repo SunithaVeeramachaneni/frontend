@@ -1,0 +1,226 @@
+@import '../../../../scss/colors.scss';
+
+.app-customizer {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  width: 400px;
+  z-index: 999;
+  height: 100vh;
+  background-color: $white;
+  border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
+
+  ::ng-deep .mat-card {
+    box-shadow: none !important;
+  }
+
+  .mcq-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid $border-color;
+    padding: 15px;
+    font-weight: 600;
+    padding-left: 0;
+  }
+
+  .add-response {
+    color: $blue-main;
+    margin-top: 10px;
+    position: relative;
+    left: -12px;
+    background-color: transparent;
+    border: none;
+  }
+
+  .margin {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .response-heading {
+    padding-left: 2px;
+    font-weight: bold;
+  }
+
+  .dis-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+
+  .response-list {
+    border-bottom: 1px solid #e0e0e0;
+    height: 45px;
+  }
+
+  .input-forms {
+    border: none;
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+
+  .color-type {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 10px;
+  }
+
+  .slider-inputs {
+    width: 100px;
+    height: 35px;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+  }
+
+  .delete-btn {
+    float: right;
+    padding: 0;
+    min-width: 40px;
+    margin-top: 3px;
+
+    .delete-btn-icon {
+      width: 15px;
+    }
+  }
+
+  .text-align-end {
+    text-align: end;
+  }
+
+  .apply-slider-btn {
+    width: 48%;
+    margin-right: 10px;
+  }
+
+  .cancel-slider {
+    width: 48%;
+  }
+
+  .submit-response-btn {
+    width: 48%;
+    margin-right: 10px;
+  }
+
+  .cancel-response-btn {
+    width: 48%;
+  }
+}
+.rangeSelectorFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  height: 75px;
+  align-items: center;
+  width: 94%;
+  justify-content: center;
+  .applyBtn {
+    width: 48%;
+  }
+  .cancelBtn {
+    width: 48%;
+    margin-right: 10px;
+  }
+}
+.rangeLimitContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 15px;
+  .limitDivider {
+    position: relative;
+    margin: 15px 0px;
+  }
+  .limit {
+    .limitContent {
+      display: flex;
+      padding: 10px 0px;
+      .limitValue {
+        width: 30%;
+        font-weight: 500;
+        .inputField {
+          width: 80%;
+          height: 25px;
+          margin-top: 10px;
+          border: 1px solid $gray3;
+          border-radius: 4px;
+        }
+      }
+      .limitAction {
+        width: 70%;
+        label {
+          font-weight: 500;
+        }
+        .limitRadioGroup {
+          display: flex;
+          flex-direction: column;
+        }
+        .limitRadioOption {
+          padding: 6px 0px;
+        }
+      }
+    }
+    .limitMessage {
+      width: 100%;
+      min-height: 65px;
+      background: $gray3;
+      border-radius: 5px;
+      padding: 5px;
+      .messageHead {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        .titleRow {
+          display: flex;
+          align-items: center;
+          .titleRowIcon {
+            margin: 5px;
+            font-size: 12pt;
+          }
+        }
+        .editIcon {
+          margin: 5px;
+          font-size: 12pt;
+          margin-top: 10px;
+          cursor: pointer;
+        }
+      }
+      .messageInput {
+        .inputField {
+          width: -webkit-fill-available;
+          background: none;
+          border: none;
+          color: inherit !important;
+          padding: 5px 0px;
+          margin-left: 35px;
+          overflow:hidden; 
+          resize:none;
+        }
+      }
+    }
+    .warning {
+      background: $warning-bg;
+    }
+    .alert {
+      background: $alert-bg;
+      color: $white;
+    }
+    .note {
+      background: $note-bg;
+      // color: $white;
+    }
+  }
+}
+.matCardContent {
+  height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
+}

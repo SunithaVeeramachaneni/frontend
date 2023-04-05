@@ -58,7 +58,7 @@
   "minlength": "Title must be at least 3 characters",
   "maxlength": "Title must be at the max of 48 characters",
   "whiteSpace": "Title is required",
-  "trimWhiteSpace": "Title msut not start or end with spaces",
+  "trimWhiteSpace": "Title must not start or end with spaces",
   "categoryNameExists": "Category name already exists",
   "pattern": "Title doesn't allow special characters"
 }

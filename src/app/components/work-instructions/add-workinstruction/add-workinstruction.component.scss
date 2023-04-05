@@ -1,5 +1,12 @@
 @import '../../../../scss/colors.scss';
 
+.add-instruction-main {
+  height: calc(100vh - 85px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+}
+
 .wi-status-container {
   height: auto;
   background: #ffffff;

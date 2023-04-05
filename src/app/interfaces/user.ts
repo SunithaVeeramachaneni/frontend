@@ -21,6 +21,7 @@ export interface UserDetails {
   title: string;
   email: string;
   profileImage?: any;
+  profileImageFileName?: string;
   preTextImage?: any;
   postTextImage?: any;
   contact?: string;
@@ -43,4 +44,12 @@ export interface UserInfo extends UserDetails {
 export interface UserTable {
   columns: Column[];
   data: UserDetails[];
+}
+
+export interface UsersInfoByEmail {
+  [key: string]: Info;
+}
+
+export interface Info {
+  fullName: string;
 }

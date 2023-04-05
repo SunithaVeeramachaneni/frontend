@@ -36,7 +36,7 @@ import { Tenant, ValidationError } from 'src/app/interfaces';
 import { cloneDeep } from 'lodash-es';
 
 const regUrl =
-  '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
+  '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
 @Component({
   selector: 'app-tenant',
@@ -67,14 +67,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'Maintenance Control Center',
     'Spare Parts Control Center',
     'User Management',
-    'Work Instructions Authoring',
-    'Race Dynamic Forms'
+    'Forms',
+    'Operator Rounds',
+    'Master Configuration',
+    'Work Instructions Authoring'
   ];
   idps = ['azure'];
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
-  collaborationTypes = ['slack', 'msteams'];
+  collaborationTypes = ['slack', 'msteams', 'none'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   errors: ValidationError = {};
   tenantHeader = 'Adding Tenant...';
@@ -333,7 +335,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ]
       }),
       tenantLogo: [''],
-      tenantLogoName: ['']
+      tenantLogoName: [''],
+      slackTeamID: [''],
+      amplifyConfig: ['', [Validators.required, this.jsonValidator()]],
+      configurations: ['', [Validators.required, this.jsonValidator()]]
     });
 
     this.slackConfiguration = this.fb.group({
@@ -554,6 +559,14 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.tenantLogo = '';
       }
 
+      tenant.amplifyConfig =
+        tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'object'
+          ? JSON.stringify(tenant?.amplifyConfig, null, ' ')
+          : '';
+      tenant.configurations =
+        tenant?.configurations && typeof tenant?.configurations === 'object'
+          ? JSON.stringify(tenant?.configurations, null, ' ')
+          : '';
       this.tenantForm.patchValue(tenant);
       (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
         'urls',
@@ -818,7 +831,25 @@ export class TenantComponent implements OnInit, AfterViewInit {
   saveTenant() {
     if (this.tenantForm.valid && this.tenantForm.dirty) {
       const { id, ...tenant } = this.tenantForm.getRawValue();
+      if (tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'string') {
+        tenant.amplifyConfig = JSON.parse(tenant.amplifyConfig);
+      }
+      if (
+        tenant?.configurations &&
+        typeof tenant?.configurations === 'string'
+      ) {
+        tenant.configurations = JSON.parse(tenant.configurations);
+      }
       tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
+      let { slackTeamID = '' } = tenant.slackConfiguration || {};
+      if (/dev$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -3);
+      } else if (/qa$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -2);
+      } else if (/demo$/i.test(slackTeamID)) {
+        slackTeamID = slackTeamID.slice(0, -4);
+      }
+      tenant.slackTeamID = slackTeamID;
       this.spinner.show();
 
       if (id) {
@@ -878,6 +909,17 @@ export class TenantComponent implements OnInit, AfterViewInit {
           return null;
         })
       );
+  }
+
+  jsonValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      try {
+        JSON.parse(control.value);
+        return null;
+      } catch (err) {
+        return { isInvalidJSON: true };
+      }
+    };
   }
 
   maskField(value: string, fieldId: string) {

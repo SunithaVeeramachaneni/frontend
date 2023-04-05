@@ -50,7 +50,22 @@ const {
   inActiveTenants,
   inActiveUsers,
   tenantManagement,
-  raceDynamicForms
+  raceDynamicForms,
+  submissionForms,
+  myForms,
+  archivedForms,
+  schedularForms,
+  operatorRoundPlans,
+  myRoundPlans,
+  roundPlanScheduler,
+  masterConfiguration,
+  locations,
+  assets,
+  unitOfMeasurement,
+  plants,
+  globalResponse,
+  roundPlanArchivedForms,
+  roundPlanObservations
 } = routingUrls;
 
 @Component({
@@ -130,8 +145,54 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       imageName: 'rdf-forms',
       showSubMenu: false,
       permission: raceDynamicForms.permission,
-      subPages: null,
-      disable: false
+      disable: false,
+      subPages: [
+        {
+          title: myForms.title,
+          url: myForms.url,
+          permission: myForms.permission
+        },
+        {
+          title: archivedForms.title,
+          url: archivedForms.url,
+          permission: archivedForms.permission
+        },
+        {
+          title: schedularForms.title,
+          url: schedularForms.url,
+          permission: schedularForms.permission
+        }
+      ]
+    },
+    {
+      title: operatorRoundPlans.title,
+      url: operatorRoundPlans.url,
+      imageName: 'operator-rounds',
+      showSubMenu: false,
+      permission: operatorRoundPlans.permission,
+      disable: false,
+      subPages: [
+        {
+          title: myRoundPlans.title,
+          url: myRoundPlans.url,
+          permission: myRoundPlans.permission
+        },
+        {
+          title: roundPlanScheduler.title,
+          url: roundPlanScheduler.url,
+          permission: roundPlanScheduler.permission
+        },
+        {
+          title: roundPlanArchivedForms.title,
+          url: roundPlanArchivedForms.url,
+          permission: roundPlanArchivedForms.permission
+        },
+        {
+          title: roundPlanObservations.title,
+          url: roundPlanObservations.url,
+          permission: roundPlanObservations.permission
+        }
+      ]
     },
     {
       title: workInstructions.title,
@@ -167,6 +228,41 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       ],
       disable: false
+    },
+    {
+      title: masterConfiguration.title,
+      url: masterConfiguration.url,
+      imageName: 'master-configuration',
+      showSubMenu: false,
+      permission: masterConfiguration.permission,
+      disable: false,
+      subPages: [
+        {
+          title: locations.title,
+          url: locations.url,
+          permission: locations.permission
+        },
+        {
+          title: assets.title,
+          url: assets.url,
+          permission: assets.permission
+        },
+        {
+          title: unitOfMeasurement.title,
+          url: unitOfMeasurement.url,
+          permission: unitOfMeasurement.permission
+        },
+        {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
+        },
+        {
+          title: globalResponse.title,
+          url: globalResponse.url,
+          permission: globalResponse.permission
+        }
+      ]
     }
   ];
   loggedIn = false;
@@ -183,6 +279,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  isMenuOpenOnItemClick = true;
+  hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
@@ -357,53 +455,56 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   registerServerSentEvents(userInfo, ref) {
+    const { tenantId, collaborationType } = this.tenantService.getTenantInfo();
     let userID;
-    if (userInfo.collaborationType === 'slack') {
+    if (collaborationType === 'slack') {
       if (userInfo.slackDetail && userInfo.slackDetail.slackID) {
         userID = userInfo.slackDetail.slackID;
       }
-    } else if (userInfo.collaborationType === 'msteams') {
+    } else if (collaborationType === 'msteams') {
       userID = userInfo.email;
     }
 
     // COLLABORATION CHAT SSE
-    const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
-    this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
-      collaborationSSEUrl,
-      null
-    );
-    this.eventSourceCollaboration.stream();
-    this.eventSourceCollaboration.onmessage = (event) => {
-      if (event) {
-        const eventData = JSON.parse(event.data);
-        if (!eventData.isHeartbeat) {
-          eventData.forEach((evt: any) => {
-            const { message } = evt;
-            if (
-              message.eventType === 'message' ||
-              message.messageType === 'message' ||
-              message.eventType === 'GROUP_CREATED_EVENT' ||
-              message.messageType === 'GROUP_CREATED_EVENT'
-            ) {
-              const collaborationWindowStatus =
-                ref.chatService.getCollaborationWindowStatus();
-              if (collaborationWindowStatus.isOpen) {
-                ref.chatService.newMessageReceived(message);
-              } else {
-                let unreadCount = ref.chatService.getUnreadMessageCount();
-                unreadCount = unreadCount + 1;
-                ref.chatService.setUnreadMessageCount(unreadCount);
+    if (userID) {
+      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
+      this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
+        collaborationSSEUrl,
+        null
+      );
+      this.eventSourceCollaboration.stream();
+      this.eventSourceCollaboration.onmessage = (event) => {
+        if (event) {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            eventData.forEach((evt: any) => {
+              const { message } = evt;
+              if (
+                message.eventType === 'message' ||
+                message.messageType === 'message' ||
+                message.eventType === 'GROUP_CREATED_EVENT' ||
+                message.messageType === 'GROUP_CREATED_EVENT'
+              ) {
+                const collaborationWindowStatus =
+                  ref.chatService.getCollaborationWindowStatus();
+                if (collaborationWindowStatus.isOpen) {
+                  ref.chatService.newMessageReceived(message);
+                } else {
+                  let unreadCount = ref.chatService.getUnreadMessageCount();
+                  unreadCount = unreadCount + 1;
+                  ref.chatService.setUnreadMessageCount(unreadCount);
+                }
+                const audio = new Audio('../assets/audio/notification.mp3');
+                audio.play();
               }
-              const audio = new Audio('../assets/audio/notification.mp3');
-              audio.play();
-            }
-          });
+            });
+          }
         }
-      }
-    };
-    this.eventSourceCollaboration.onerror = (event) => {
-      // console.log(event);
-    };
+      };
+      this.eventSourceCollaboration.onerror = (event) => {
+        // console.log(event);
+      };
+    }
 
     // JITSI AV CALLING SSE
     const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
@@ -528,5 +629,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
+  }
+
+  openMenuOnMouseEnter() {
+    if (!this.isMenuOpenOnItemClick) {
+      clearTimeout(this.hoverMenuTimer);
+      this.hoverMenuTimer = setTimeout(() => {
+        this.menuOpenClose = true;
+        this.isMenuOpenOnItemClick = true;
+      }, 250);
+    }
+  }
+
+  closeMenuOnMouseLeave() {
+    clearTimeout(this.hoverMenuTimer);
+    this.hoverMenuTimer = setTimeout(() => {
+      this.menuOpenClose = false;
+      this.isMenuOpenOnItemClick = false;
+    }, 250);
   }
 }

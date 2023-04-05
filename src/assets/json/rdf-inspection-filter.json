@@ -1,0 +1,25 @@
+[
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Inspected By",
+    "items": [],
+    "column": "inspectedBy",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Inspected On ",
+    "items": [],
+    "column": "inspectedOn",
+    "type": "daterange",
+    "startDate": "",
+    "endDate": "",
+    "value": ""
+  }
+]

@@ -51,6 +51,10 @@ import { AddPeopleToCallComponent } from './components/collaboration/calls/video
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuillMaterialComponent } from './components/quill-material/quill-material.component';
 import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
+import { FilterComponent } from './components/filter/filter.component';
+import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
+import { MatCardModule } from '@angular/material/card';
+import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +81,10 @@ import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent,
     QuillMaterialComponent,
-    SvgIconComponent
+    SvgIconComponent,
+    FilterComponent,
+    CustomRangePanelComponent,
+    FilterSidePanelComponent
   ],
   imports: [
     FormsModule,
@@ -94,6 +101,7 @@ import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
     MatInputModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatCardModule,
     MatMenuModule,
     MatSidenavModule,
     MatListModule,
@@ -115,7 +123,9 @@ import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
     TimeAgoPipe,
     DropDownFilterPipe,
     DateTimePipe,
+    FilterSidePanelComponent,
     DateSegmentComponent,
+    FilterComponent,
     CommonFilterComponent,
     HeaderComponent,
     NumberToKMPipe,

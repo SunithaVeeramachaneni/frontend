@@ -1,0 +1,66 @@
+<div
+  id="import-form-customizer"
+  *ngIf="{
+    sectionIndexes: sectionIndexes$ | async,
+    pagesCount: pagesCount$ | async,
+    questionCounter: questionCounter$ | async
+  }"
+>
+  <mat-card class="p-0">
+    <mat-card-title class="m-0 light-gray">
+      <div class="slider-heading">{{ 'importTasks' | translate }}</div>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="form-name">
+        {{ selectedFormName }}
+      </div>
+      <div *ngFor="let page of selectedFormData; let i = index">
+        <p>
+          <mat-checkbox
+            [checked]="page.checked"
+            [indeterminate]="fewComplete(page)"
+            (change)="setAllChecked($event.checked, page)"
+          >
+          </mat-checkbox>
+          {{ page.name }} {{ page.position }}
+        </p>
+        <div *ngFor="let section of page.sections">
+          <p class="section-div">
+            <mat-checkbox
+              [checked]="section.checked"
+              [indeterminate]="fewSectionComplete(section, page)"
+              (change)="setAllSectionChecked($event.checked, section)"
+            >
+            </mat-checkbox>
+            {{ section.name }}
+          </p>
+          <div *ngFor="let question of section.questions" class="questions">
+            <mat-checkbox
+              [checked]="question.checked"
+              (change)="
+                updateAllChecked($event.checked, question, section, page)
+              "
+            >
+              <span>{{ question.name }}</span>
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <div class="import-form-footer">
+      <button
+        mat-stroked-button
+        class="cancel-button"
+        (click)="cancel()"
+        translate="cancel"
+      ></button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="use-button"
+        (click)="useForm()"
+        translate="use"
+      ></button>
+    </div>
+  </mat-card>
+</div>

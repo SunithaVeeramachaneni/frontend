@@ -1,0 +1,180 @@
+<div class="response-type-modal" [hidden]="isGlobalResponseOpen">
+  <div class="modal-heading">
+    <h3 class="response-heading" translate="chooseResponses"></h3>
+    <mat-icon (click)="toggleResponseTypeModal($event)" class="cancel-icon">
+      clear
+    </mat-icon>
+  </div>
+
+  <div class="list-view">
+    <div class="main-container">
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab [label]="'Responses' | translate">
+          <div class="response-container">
+            <div
+              *ngFor="let fieldType of fieldTypes"
+              (click)="selectFieldType(fieldType)"
+              class="response-field-types"
+              [ngClass]="{
+                active: fieldType.type === question.fieldType
+              }"
+            >
+              <img
+                [src]="getFieldTypeImage(fieldType.type)"
+                class="response-type-icons"
+              />&nbsp;
+              <span class="response-type-description">
+                {{ fieldType.description }}
+              </span>
+            </div>
+          </div>
+          <div *ngIf="question.fieldType === 'RT'">
+            <app-response-type-side-drawer
+              (responseTypeHandler)="quickResponseTypeHandler($event)"
+              [formId]="formId"
+            ></app-response-type-side-drawer>
+          </div>
+        </mat-tab>
+        <mat-tab [label]="'Dropdown' | translate">
+          <div class="picklist-scroll">
+            <div class="multiple-responses">
+              <ng-container
+                *ngIf="
+                  quickResponsesData$ | async as quickResponsesData;
+                  else loadingQuickResponses
+                "
+              >
+                <div *ngFor="let resp of quickResponsesData.data" class="h-36">
+                  <button
+                    mat-flat-button
+                    class="quick-response responseBtn"
+                    (click)="
+                      handleMCQRepsonseSelection('quickResponse', resp);
+                      closeResponseType()
+                    "
+                  >
+                    <mat-chip-list
+                      *ngFor="let val of resp.values; let i = index"
+                    >
+                      <mat-chip
+                        *ngIf="i < 2"
+                        class="m-l-10"
+                        (click)="
+                          handleMCQRepsonseSelection('quickResponse', resp);
+                          closeResponseType()
+                        "
+                        [ngStyle]="{
+                          color: val?.color,
+                          backgroundColor: val?.backgroundColor
+                            ? val.backgroundColor
+                            : 'rgba(10, 1, 0, 0.2)',
+                          border: '1px solid',
+                          borderColor: val?.backgroundColor
+                            ? val.backgroundColor
+                            : 'rgba(10, 1, 0, 0.2)',
+                          minHeight: '24px',
+                          fontSize: '90%'
+                        }"
+                      >
+                        {{ val.title }}
+                      </mat-chip>
+                    </mat-chip-list>
+                    <span *ngIf="resp.values.length > 2" class="more">
+                      + ({{ resp.values.length - 2 }}
+                      more)
+                    </span>
+                  </button>
+                  <button
+                    *ngIf="resp?.formId"
+                    mat-flat-button
+                    class="editBtn"
+                    (click)="handleResponses(resp)"
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/edit-icon.svg"
+                      alt="edit-icon"
+                      class="edit-icon-img"
+                    />
+                  </button>
+                </div>
+              </ng-container>
+              <ng-template #loadingQuickResponses>
+                <div class="p-15">
+                  <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+                  </ngx-shimmer-loading>
+                  <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+                  </ngx-shimmer-loading>
+                </div>
+              </ng-template>
+              <button class="add-new-btn" (click)="handleResponses()">
+                <img
+                  class="add-more-icon"
+                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
+                />
+                <span translate="addMore"></span>
+              </button>
+            </div>
+            <p class="orange-color" translate="globalPicklist"></p>
+            <div class="multiple-responses global-resp">
+              <div
+                *ngIf="globalResponses$ | async as globalResponses"
+                class="response-container"
+              >
+                <mat-chip-list
+                  *ngFor="let response of globalResponses"
+                  style="flex: 45%"
+                >
+                  <mat-chip
+                    (click)="
+                      handleMCQRepsonseSelection('globalResponse', response);
+                      closeResponseType()
+                    "
+                    style="background-color: none"
+                  >
+                    {{ response?.name }}
+                  </mat-chip>
+                  <button
+                    mat-flat-button
+                    (click)="handleEditGlobalResponse(response)"
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/edit-icon.svg"
+                      alt="edit-icon"
+                      class="edit-icon-img"
+                    />
+                  </button>
+                </mat-chip-list>
+              </div>
+
+              <button class="add-new-btn" (click)="handleResponses()">
+                <img
+                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
+                  class="add-more-icon"
+                />
+                <span translate="addMore"></span>
+              </button>
+            </div>
+
+            <div *ngIf="isMCQResponseOpen">
+              <app-response-type-side-drawer
+                (responseTypeHandler)="quickResponseTypeHandler($event)"
+                [formId]="formId"
+              ></app-response-type-side-drawer>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab [label]="'Masterdata' | translate"> </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isGlobalResponseOpen">
+  <app-global-response-type-side-drawer
+    [@slideInOut]="globalResponseSlideState"
+    (slideInOut)="handleSlideState($event)"
+    [globalResponseToBeEdited]="responseToBeEdited"
+    [isControlInViewMode]="false"
+    (globalResponseHandler)="handleGlobalResponseChange($event)"
+  ></app-global-response-type-side-drawer>
+</div>

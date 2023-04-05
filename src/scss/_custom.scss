@@ -1,3 +1,5 @@
+@import 'colors.scss';
+
 .p-0 {
   padding: 0;
 }
@@ -11,7 +13,29 @@
 }
 
 .m-5 {
-  margin: 5;
+  margin: 5px;
+}
+
+.m-1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 9px 16px;
+
+  width: 93%;
+  height: 39px;
+
+  background: rgba(61, 90, 254, 0.15);
+  border-radius: 8px;
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.m-2 {
+  display: flex;
+  flex-direction: row;
 }
 
 .m-l-0 {
@@ -50,8 +74,8 @@
   margin-left: 20px;
 }
 
-.m-l-30 {
-  margin-left: 30px;
+.m-l-40 {
+  margin-left: 40px;
 }
 
 .m-r-5 {
@@ -68,6 +92,10 @@
 
 .m-r-20 {
   margin-right: 20px;
+}
+
+.m-r-40 {
+  margin-right: 40px;
 }
 
 .p-r-0 {
@@ -194,6 +222,10 @@
   margin-bottom: 5px;
 }
 
+.m-t-0 {
+  margin-top: 0px;
+}
+
 .m-t-2 {
   margin-top: 2px;
 }
@@ -216,6 +248,10 @@
 
 .m-t-15 {
   margin-top: 15px;
+}
+
+.m-t-20 {
+  margin-top: 20px;
 }
 
 .m-b-10 {
@@ -262,12 +298,24 @@
   width: 40%;
 }
 
+.width-45 {
+  width: 45%;
+}
+
 .width-50 {
   width: 50%;
 }
 
+.width-55 {
+  width: 55%;
+}
+
 .width-60 {
   width: 60%;
+}
+
+.width-65 {
+  width: 65%;
 }
 
 .width-70 {
@@ -340,22 +388,41 @@ li {
   list-style-type: none;
 }
 
-.question-name ul li {
-  list-style-type: disc;
+.instruction ol li {
+  list-style-type: auto !important;
 }
 
-.question-name ol li {
-  list-style-type: auto;
+.instruction ul li {
+  list-style-type: disc !important;
 }
 
-.question-name ol,
-.question-name ul {
-  padding: 0 0 0 20px;
-  margin: 0;
+.instruction ol,
+ul {
+  padding: 0 20px;
 }
 
 a {
   text-decoration: none;
+}
+
+.f-w-400 {
+  font-weight: 400;
+}
+
+.f-w-500 {
+  font-weight: 500;
+}
+
+.f-s-100 {
+  font-size: 100%;
+}
+
+.f-s-120 {
+  font-size: 120%;
+}
+
+.f-s-80 {
+  font-size: 80%;
 }
 
 @media screen and (min-width: 769px) {
@@ -612,6 +679,11 @@ body {
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
   opacity: 0.7;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing .success-modal {
+  background-color: $black;
+  opacity: 0.6;
 }
 
 @-webkit-keyframes fadein {

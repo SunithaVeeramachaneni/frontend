@@ -1,0 +1,141 @@
+<div class="app-customizer">
+  <mat-card class="p-0">
+    <mat-icon (click)="closeGlobalResponse()">close</mat-icon>
+    <mat-card-title class="m-0 light-gray">
+      <div
+        class="mcq-heading"
+        translate="createResponses"
+        [hidden]="isViewMode"
+      ></div>
+      <div
+        class="mcq-heading"
+        translate="editResponses"
+        *ngIf="isViewMode"
+      ></div>
+    </mat-card-title>
+    <div [formGroup]="responseForm">
+      <div>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Untitled Response Set"
+          autocomplete="off"
+          class="global_response_name_input"
+          [hidden]="isViewMode"
+          #formName
+        />
+        <input
+          *ngIf="isViewMode"
+          matInput
+          disabled
+          [value]="globalResponse?.name"
+          class="global_response_name_input"
+        />
+      </div>
+      <div>
+        <input
+          matInput
+          formControlName="description"
+          placeholder="Untitled description"
+          autocomplete="off"
+          class="global_response_description_input"
+          [hidden]="isViewMode"
+        />
+        <input
+          *ngIf="isViewMode"
+          matInput
+          disabled
+          [value]="getDescription()"
+          class="global_response_description_input"
+        />
+      </div>
+      <div class="margin response-heading" translate="response"></div>
+      <mat-card-content>
+        <div
+          class="width-100 response-drop-list"
+          formArrayName="responses"
+          cdkScrollable
+        >
+          <div
+            *ngIf="!isViewMode"
+            cdkDrop
+            cdkDropList
+            (cdkDropListDropped)="dropResponse($event)"
+            [cdkDropListData]="getResponseList()"
+          >
+            <div *ngFor="let response of getResponseList(); let i = index">
+              <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
+                <input
+                  #globalResponses
+                  matInput
+                  formControlName="title"
+                  [placeholder]="'responseTitle' | translate"
+                  autocomplete="off"
+                  class="input-forms"
+                  (keyup.enter)="addResponse(i + 1)"
+                />
+                <div>
+                  <button
+                    mat-flat-button
+                    (click)="deleteResponse(i)"
+                    class="delete-btn"
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/delete-icon.svg"
+                      class="delete-btn-icon"
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="isViewMode">
+            <div *ngFor="let response of getResponseList(); let i = index">
+              <div [formGroupName]="i" class="dis-flex response-list">
+                <input
+                  formControlName="title"
+                  matInput
+                  class="input-forms-view"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            *ngIf="!isViewMode"
+            mat-flat-button
+            (click)="addResponse(getResponseCount())"
+            class="add-response"
+            translate="addRes"
+          ></button>
+        </div>
+      </mat-card-content>
+    </div>
+  </mat-card>
+  <div class="actions-footer" *ngIf="!isViewMode; else viewBlock">
+    <button
+      mat-raised-button
+      color="primary"
+      class="submit-response-btn"
+      (click)="submitResponseSet()"
+      [disabled]="isResponseFormUpdated === false || responseForm.pristine"
+      translate="apply"
+    ></button>
+    <button
+      mat-stroked-button
+      class="cancel-response-btn"
+      (click)="closeGlobalResponse()"
+      translate="cancel"
+    ></button>
+  </div>
+  <ng-template #viewBlock>
+    <div class="actions-footer-view">
+      <button
+        mat-raised-button
+        color="primary"
+        class="edit-button"
+        (click)="toggleViewMode()"
+        translate="edit"
+      ></button>
+    </div>
+  </ng-template>
+</div>

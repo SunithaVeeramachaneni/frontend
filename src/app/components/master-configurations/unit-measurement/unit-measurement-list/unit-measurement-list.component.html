@@ -1,0 +1,124 @@
+<div class="uom-list-view">
+  <ng-container *ngIf="userInfo$ | async">
+    <div class="main-container">
+      <div class="uom-header">
+        <div>
+          <h2 class="heading" translate="uom"></h2>
+        </div>
+        <div>
+          <span class="custom-form-field-gray-color search">
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'searchUom' | translate"
+                autocomplete="off"
+                [formControl]="searchUom"
+              />
+              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+            </mat-form-field>
+          </span>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="createMenu"
+            translate="createNew"
+            class="create-new-btn"
+          ></button>
+          <mat-menu #createMenu="matMenu">
+            <button
+              mat-menu-item
+              class="menu-buttons"
+              (click)="uploader?.click()"
+              *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
+            >
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="uploadExcel"></span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="addManually()"
+              *appCheckUserHasPermission="[perms.createUnitOfMeasurement]"
+              class="menu-buttons"
+            >
+              <img
+                src="assets/master-configurations/add-manually.svg"
+                alt="add manually"
+                class="add-manually-icon"
+              />
+              <span translate="addManually"></span>
+            </button>
+          </mat-menu>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="moreMenu"
+            class="more-btn"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+            <button
+              mat-menu-item
+              class="menu-buttons"
+              *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
+              (click)="exportAsXLSX()"
+            >
+              <img
+                src="assets/master-configurations/upload-from-excel.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="downloadTemplate"></span>
+            </button>
+          </mat-menu>
+          <input
+            id="upload"
+            hidden
+            type="file"
+            #uploader
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+            (change)="uploadFile($event)"
+            (click)="resetFile($event)"
+          />
+        </div>
+      </div>
+
+      <div
+        *ngIf="(unitOfMeasurements$ | async) && (isLoading$ | async) === false"
+      >
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+
+    <ng-container *ngIf="unitAddOrEditOpenState">
+      <app-add-edit-uom
+        [@slideInOut]="unitAddOrEditOpenState"
+        (slideInOut)="onCloseUomAddOrEditOpenState($event)"
+        [unitEditData]="unitEditData"
+        (createUnitData)="addOrUpdateUnit($event)"
+      ></app-add-edit-uom>
+    </ng-container>
+
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

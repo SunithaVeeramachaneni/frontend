@@ -1,0 +1,150 @@
+@import '../../../../scss/colors.scss';
+
+.form-header-modal {
+  background: $white;
+  overflow: hidden;
+
+  .form-toolbar {
+    height: 65px;
+    background-color: $white;
+    border-bottom: 1px solid $border-color;
+
+    .heading {
+      margin: 0 auto;
+      font-size: 90%;
+    }
+
+    .arrows {
+      color: $blue-main;
+      position: relative;
+      top: 7px;
+      font-size: 140%;
+    }
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+    }
+  }
+
+  .form-content {
+    height: calc(100vh - 65px);
+
+    .form-fields {
+      ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+        padding: 0.2em 0px 0.6em 0px !important;
+        display: flex;
+        height: 16px;
+      }
+
+      ::ng-deep .mat-form-field-label-wrapper {
+        top: -1.5em;
+      }
+
+      ::ng-deep
+        .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+        .mat-form-field-label {
+        transform: translateY(-1.1em) scale(0.75);
+        width: 133.33333%;
+      }
+
+      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+        background: #ffffff;
+        border-radius: 4px;
+      }
+
+      ::ng-deep .mat-select-arrow {
+        margin-top: 10px !important;
+      }
+
+      ::ng-deep .mat-datepicker-toggle {
+        position: relative;
+        top: -13px;
+        left: 15px;
+      }
+
+      ::ng-deep .mat-button-focus-overlay {
+        background-color: transparent !important;
+      }
+    }
+
+    .chart-div {
+      border: 1px solid rgba(61, 90, 254, 0.5);
+      margin: 12px;
+      border-radius: 7px;
+
+      .chat-panel {
+        height: calc(100vh - 148px);
+        overflow-y: auto;
+      }
+
+      .footer {
+        background-color: rgba(61, 90, 254, 0.08);
+        border-top: 1px solid rgba(61, 90, 254, 0.5);
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+      }
+
+      .add-attachment-icon {
+        color: $blue-main;
+        cursor: pointer;
+      }
+
+      .margin {
+        margin: 0 15px;
+      }
+
+      .send-message {
+        position: relative;
+        top: 10px;
+      }
+    }
+
+    .details-div {
+      padding: 20px 0;
+      overflow-y: auto;
+
+      .right-div {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .p-5-0 {
+        padding: 5px 0;
+      }
+
+      .titles {
+        font-weight: 400;
+        font-size: 100%;
+        letter-spacing: 0.15px;
+        color: $light-gray;
+        padding-left: 10px;
+        margin-right: 80px;
+      }
+      .values {
+        font-weight: 500;
+        font-size: 90%;
+        color: $black;
+        padding-right: 20px;
+      }
+
+      .dropdowns {
+        height: 48px;
+      }
+
+      .line {
+        border-bottom: 1px solid $border-color;
+        border-top: none;
+        margin-right: 12px;
+      }
+    }
+  }
+}
+
+.searchable-input {
+  width: 85%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 5px 12px;
+}

@@ -32,6 +32,7 @@
   "msTeamsPublicPrivateKeys": "RSA Public-Private Keys",
   "msTeamsRSAPrivateKey": "Private Key",
   "msTeamsRSAPublicKey": "Public Key",
+  "none": "None",
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
   "sapsamlDetails": "SAP SAML Details",
@@ -50,7 +51,7 @@
   "min": "{message}",
   "max": "{message}",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} msut not start or end with spaces",
+  "trimWhiteSpace": "{name} must not start or end with spaces",
   "invalidPort": "Enter a valid port",
   "invalidLicenceCount": "Enter valid licence count",
   "invalidUrl": "Enter valid {name}",
@@ -111,5 +112,7 @@
   "accessKeyId": "Access Key Id",
   "secretAccessKey": "Secret Access Key",
   "bucket": "Bucket",
-  "region": "Region"
+  "region": "Region",
+  "amplifyConfig": "Amplify config",
+  "configs": "Configurations"
 }

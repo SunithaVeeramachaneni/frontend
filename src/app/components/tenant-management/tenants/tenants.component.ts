@@ -227,7 +227,8 @@ export class TenantsComponent implements OnInit {
       limit: this.limit,
       isActive: true,
       searchKey: this.searchForm.get('search').value,
-      products: this.getProducts()
+      products: this.getProducts(),
+      info: true
     });
 
   getTenantsCount = () =>

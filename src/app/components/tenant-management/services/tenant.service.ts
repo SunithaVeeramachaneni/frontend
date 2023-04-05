@@ -98,6 +98,20 @@ export class TenantService {
       info
     );
 
+  getTenantInfoByTenantUrlDomainName$ = (
+    tenantUrlDomainName: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Tenant> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService
+      ._getResp(
+        environment.userRoleManagementApiUrl,
+        `catalogs/${tenantUrlDomainName}/info`,
+        { displayToast, failureResponse }
+      )
+      .pipe(tap((tenant) => this.setTenantInfo(cloneDeep(tenant))));
+  };
+
   getTenantsInfo$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Tenant[]> =>
     this.appService
       ._getResp(environment.userRoleManagementApiUrl, 'catalogs/info', info)
@@ -142,6 +156,7 @@ export class TenantService {
         id,
         displayName,
         type,
+        controlType: 'string',
         visible,
         sticky: false,
         searchable: true,
