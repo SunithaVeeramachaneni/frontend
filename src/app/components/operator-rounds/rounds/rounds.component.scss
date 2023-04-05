@@ -33,10 +33,35 @@
   ::ng-deep .table-column {
     width: 20%;
   }
+
+  ::ng-deep .mat-form-field-infix {
+    border-top: none !important;
+  }
+
+  ::ng-deep .dropdown .arrow {
+    margin-right: 15px;
+  }
+
+  ::ng-deep .date-picker {
+    align-items: center;
+  }
+
+  ::ng-deep .date-picker .mat-form-field {
+    position: relative;
+    top: 5px;
+  }
+
+  ::ng-deep .date-picker mat-icon {
+    line-height: 35px !important;
+  }
+
+  ::ng-deep .cdk-column-locationAssetsCompleted {
+    width: 210px !important;
+  }
 }
 
 ::ng-deep .remove-zindex th {
-  z-index: 1 !important;
+  z-index: 2 !important;
 }
 
 .padding-lr-20 {
@@ -50,4 +75,66 @@
   border-radius: 5px;
   right: 270px;
   top: 6px;
+}
+
+::ng-deep .assign-menu-list + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  left: 915px;
+}
+
+@media (min-width: 1090px) and (max-width: 1240px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 172px !important;
+    left: 495px !important;
+  }
+}
+
+@media (min-width: 1240px) and (max-width: 1365px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 641px !important;
+  }
+}
+
+@media (min-width: 1365px) and (max-width: 1515px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 765px !important;
+  }
+}
+
+@media (min-width: 1515px) and (max-width: 1705px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 915px !important;
+  }
+}
+
+@media (min-width: 1705px) and (max-width: 1820px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1106px !important;
+  }
+}
+
+@media (min-width: 1820px) and (max-width: 2049px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1220px !important;
+  }
+}
+
+@media (min-width: 2049px) and (max-width: 2735px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1450px !important;
+  }
 }

@@ -803,8 +803,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     BuilderConfigurationActions.resetFormConfiguration,
-    (state): FormConfigurationState => ({
-      ...state,
+    (): FormConfigurationState => ({
       ...initialState
     })
   ),

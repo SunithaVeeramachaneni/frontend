@@ -57,10 +57,12 @@
   "range": "Range:",
   "multiLabel": "Allow more than one selection",
   "responseHeading": "Responses",
+  "chooseResponses": "Choose Responses",
   "questionHeading": "RESPONSES",
   "multiChoiceHeading": "MULTIPLE CHOICE RESPONSES",
   "addNew": "Add New",
-  "globalResponseHeading": "GLOBAL RESPONSES",
+  "addMore": "Add More",
+  "globalPicklist": "Global Picklist",
   "slider": "Slider",
   "from": "From",
   "to": "To",
@@ -93,6 +95,7 @@
   "mandateQuestions": "Mandate Tasks",
   "hideQuestions": "Hide Tasks",
   "mandateAttachment": "Mandate Attachment",
+  "askEvidence": "Ask Evidence",
   "raiseIssue": "Raise Issue",
   "historyTxt": "History",
   "then": "then",
@@ -224,7 +227,7 @@
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
   "advanceRoundsCount": "Rounds Count",
-  "selectAnOperator": "Select an Operator",
+  "assignedToHeader": "Assigned to",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "noSearchResultsFound": "No search results found",
@@ -233,5 +236,6 @@
   "emptyRoundsPlan": "To add the Tasks, add a Page first",
   "publishPlanTitle": "Alert",
   "publishPlanBody": "Plan cannot be published with blank tasks",
-  "publishWithoutTaskButton": "Publish without Blank Tasks"
+  "publishWithoutTaskButton": "Publish without Blank Tasks",
+  "createResponses": "Create Responses"
 }
