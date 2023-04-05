@@ -45,16 +45,18 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.isFailure = false;
       this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
+      // formData.append('type', this.dialogData?.type);
       const type = this.dialogData?.type;
       const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
+      // formData.append('type', this.dialogData?.type);
       // const observable = isAssets
       //   ? this.assetsService.uploadExcel(formData)
       //   : this.locationService.uploadExcel(formData);
-      const observable = this.resposneSetService.uploadExcel(formData, type);
+      const observable = this.resposneSetService.uploadExcel(formData);
       observable?.subscribe((result) => {
         if (Object.keys(result).length > 0) {
           this.isSuccess = true;

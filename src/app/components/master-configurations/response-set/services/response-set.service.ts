@@ -38,13 +38,12 @@ export class ResponseSetService {
 
   uploadExcel(
     form: FormData,
-    type,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     return this._appService._postData(
       environment.masterConfigApiUrl,
       'response-set/upload',
-      { form, type },
+      form,
       info
     );
   }
