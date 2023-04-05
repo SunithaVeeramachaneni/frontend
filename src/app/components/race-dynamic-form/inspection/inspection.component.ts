@@ -82,7 +82,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
+  status = ['To-Do', 'Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
     assignedTo: '',

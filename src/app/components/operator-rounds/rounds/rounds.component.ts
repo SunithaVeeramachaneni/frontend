@@ -82,7 +82,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
+  status = ['To-Do', 'Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
     assignedTo: '',

@@ -63,7 +63,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
         } else {
           this.isFailure = true;
           this.title = 'Failure!';
-          this.message = `Uploaded file is invalid`;
+          this.message = `Uploaded template is invalid`;
         }
       });
     } else {
