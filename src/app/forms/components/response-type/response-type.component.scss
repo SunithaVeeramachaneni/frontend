@@ -1,9 +1,10 @@
 @import '../../../../scss/colors.scss';
 
 .response-type-modal {
-  height: calc(100vh - 130px);
-  width: 500px;
-  border: 1px solid;
+  height: 70vh;
+  border-radius: 4px;
+  width: 380px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
   position: fixed;
   left: 50%;
   top: 90px;
@@ -12,33 +13,58 @@
 
   .modal-heading {
     margin: 15px 10px 5px 10px;
+    display: flex;
+    justify-content: space-between;
   }
 
   .cancel-icon {
     cursor: pointer;
     font-size: 150%;
   }
+  .search {
+    width: 100%;
+
+    .icon {
+      position: relative;
+    }
+  }
+
+  .search-width {
+    width: 94%;
+    margin: 10px 10px 0px;
+  }
+
+  .width-100 {
+    border: none;
+    padding: 5px 5px;
+  }
+
+  ::ng-deep .mat-tab-label {
+    min-width: 125px !important;
+    padding: 0 !important;
+  }
 
   .response-heading {
     position: relative;
-    top: -7px;
     left: 5px;
+    margin: 0;
   }
 
   .orange-color {
-    color: $orange-text;
+    color: $gray1;
+    margin: 21px 0px 12px 22px;
   }
 
   .content {
-    height: calc(100vh - 175px);
+    height: 74%;
     overflow-y: scroll;
     padding: 0 15px;
   }
 
   .response-field-types {
-    padding: 10px 0 5px 10px;
-    margin: 5px 0;
-    cursor: pointer;
+    height: 35px;
+    box-sizing: border-box;
+    max-width: 45%;
   }
 
   .response-field-types:hover,
@@ -46,14 +72,38 @@
     background-color: $hover-bg2;
   }
 
+  .response-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 10px;
+
+    ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+      margin: 0 !important;
+    }
+
+    ::ng-deep .mat-chip.mat-standard-chip {
+      background-color: transparent !important;
+    }
+
+    ::ng-deep .mat-chip.mat-standard-chip::after {
+      background-color: transparent !important;
+    }
+  }
+
+  .response-container > div {
+    flex: 50%;
+  }
+
   .response-type-icons {
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
+    padding: 10px 0px 0px 10px;
   }
 
   .response-type-description {
     position: relative;
-    top: -2px;
+    top: -4px;
     font-weight: 500;
     opacity: 0.8;
     font-size: 100%;
@@ -63,18 +113,22 @@
     color: $blue-main;
     border: none;
     background: none;
-    padding: 10px;
+    margin-bottom: 35px;
   }
 
   .height-50 {
     height: 50%;
   }
 }
+.main-conatiner {
+  ::ng-deep .mat-tab-label {
+    min-width: 123px;
+  }
+}
 
 .quick-response {
   ::ng-deep .mat-button-wrapper {
     display: flex;
-    width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -82,8 +136,26 @@
   }
 
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
-    margin: 12px 5px 5px 5px !important;
+    margin: 12px 10px 5px 5px !important;
   }
+}
+
+.picklist-scroll {
+  overflow-y: scroll;
+  height: calc(70vh - 95px);
+  overflow-x: hidden;
+}
+
+.add-more-icon {
+  height: 25px;
+  width: 20px;
+  position: relative;
+  top: 7px;
+  right: 5px;
+}
+
+.multiple-responses {
+  margin: 10px 15px;
 }
 
 .h-36 {
@@ -102,7 +174,19 @@
   font-weight: 400;
 }
 .editBtn {
-  float: right;
   min-width: 10px;
   padding: 0;
+}
+
+::ng-deep .global-resp .mat-standard-chip {
+  padding: 0 !important;
+}
+
+.edit-icon-img {
+  padding: 10px;
+  height: 14px;
+}
+
+.global-resp {
+  margin-left: 25px;
 }
