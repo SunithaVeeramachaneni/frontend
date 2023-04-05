@@ -386,6 +386,7 @@
   border: 1px solid #cccccc;
   padding-left: 5px;
   font-size: 90%;
+  margin-bottom: 5px;
 }
 
 .input-fields:focus {
@@ -395,6 +396,7 @@
 .default-value {
   float: right;
   font-size: 90%;
+  text-align: right;
 }
 
 .input-fields-with-icons {
@@ -440,6 +442,44 @@
 .cb-input {
   float: right;
   margin-right: -40px;
+
+  .radio-checkbox {
+    display: none;
+  }
+  .radio-label {
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+    margin-right: 15px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .radio-label:before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    left: 16px;
+    top: -12px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #eee;
+    border-radius: 50%;
+    background-color: #fff;
+  }
+  .radio-checkbox:checked + .radio-label:before {
+    content: '\2022';
+    color: #3d5afe;
+    font-size: 36px;
+    text-align: center;
+    line-height: 12px;
+  }
+  .radio-label:hover:before {
+    border-color: #999;
+  }
+  .radio-label:active:before {
+    background-color: #eee;
+  }
 }
 
 .m-r-minus40 {
@@ -451,31 +491,39 @@
 }
 
 .signature-icon {
-  width: 35px;
-  position: relative;
-  left: 10px;
-  top: 5px;
+  width: 20px;
 }
 
 .location-icon {
-  width: 35px;
+  width: 20px;
   position: relative;
-  left: 10px;
+  left: 55px;
   top: 5px;
-  height: 20px;
+}
+
+.location-column-text {
+  max-width: 60%;
+}
+
+.location-column-logo {
+  max-width: 40%;
 }
 
 .attachment-div {
-  margin: -5px 0 10px -10px;
+  margin: -5px 168px 10px -10px;
 }
 
 .attachment-btn {
-  width: 215px;
   position: relative;
   left: 5px;
-  background-color: #0053d7;
-  color: white;
-  height: 34px;
+}
+.attachment-btn :hover {
+  background-color: #d7dbf4;
+  cursor: pointer;
+}
+
+.attachment-btn-img {
+  width: 60px;
 }
 
 .image-field {
@@ -519,4 +567,29 @@
     position: relative;
     top: -3px;
   }
+}
+
+.dis-flex-center {
+  justify-content: space-between;
+  align-items: center;
+}
+
+::ng-deep .mat-accent .mat-slider-track-fill {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb-label {
+  background-color: blue !important;
+}
+
+.width-min {
+  width: min-content;
+}
+
+.font-90 {
+  font-size: 100%;
 }
