@@ -70,6 +70,7 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  schedule: any = [];
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -86,7 +87,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    schedule: ''
   };
   columns: Column[] = [
     {
@@ -547,13 +549,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   getAllOperatorRounds() {
-    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
+    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList: any) => {
       const uniqueInspectedBy = formsList
         .map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
+      const uniqueSchedule = formsList
+        .map((item) => item.schedule)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      
       for (const item of uniqueInspectedBy) {
-        if (item) {
+        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1) {
           this.assignedTo.push(item);
+        }
+      }
+      for (const item of uniqueSchedule) {
+        if (item && this.schedule.indexOf(item.toLowerCase()) == -1) {
+          this.schedule.push(item);
         }
       }
       for (const item of this.filterJson) {
@@ -561,6 +572,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
+        } else if (item['column'] === 'schedule') {
+          item.items = this.schedule;
         }
       }
     });
@@ -595,7 +608,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      schedule: ''
     };
     this.fetchRounds$.next({ data: 'load' });
   }

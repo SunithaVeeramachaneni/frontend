@@ -485,11 +485,6 @@ export class AssetsListComponent implements OnInit {
         this.nextToken = '';
         this.assetsListCount$ = this.assetService.getAssetCount$();
         this.assetService.fetchAssets$.next({ data: 'load' });
-          this.toast.show({
-            text: 'Asset uploaded successfully!',
-            type: 'success'
-          });
-        
       }
     });
   }

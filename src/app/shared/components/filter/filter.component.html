@@ -38,6 +38,35 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field
+        *ngIf="item.type === 'user-multiple'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <mat-select multiple [(ngModel)]="item.value" name="showStatus">
+          <mat-select-trigger>
+            <span class="custom">
+              {{getUserProfileForView(item.value)}}
+            </span>
+            </mat-select-trigger>
+          <mat-option *ngFor="let showdue of item.items" [value]="showdue" class="user-profile-option">
+            <div class="user-profile-wrap">
+            <div class="user-profile">
+              <img
+                [src]="getUserProfile(showdue) ? getUserProfile(showdue) : 'assets/img/user.png'"
+                alt="Profile Image"
+                class="profile-image"
+              />
+            </div>
+            <div class="user-profile">
+              <div class="user-name">{{ getUserName(showdue) ? getUserName(showdue) : getFromEmail(showdue) }}</div>
+              <div class="user-email">{{ showdue }}</div>
+            </div>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
         <div [ngClass]="(item.itemValue && (item.itemValue == 'Daily' || item.itemValue == 'Monthly' || item.itemValue == 'Weekly' || item.itemValue == 'Custom dates')) ? 'width50' : 'width100'">
           <mat-form-field appearance="outline" class="mat-field"> 

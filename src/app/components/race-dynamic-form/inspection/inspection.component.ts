@@ -69,6 +69,7 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  schedule: any = [];
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -87,6 +88,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     status: '',
     assignedTo: '',
     dueDate: '',
+    schedule: ''
   };
   assignedTo: string[] = [];
   assigneePosition: any;
@@ -439,17 +441,27 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
       const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
+      const uniqueSchedule = formsList
+        .map((item) => item.schedule)
+        .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
-        if (item) {
+        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1) {
           this.assignedTo.push(item);
         }
-      } 
+      }
+      for (const item of uniqueSchedule) {
+        if (item && this.schedule.indexOf(item.toLowerCase()) == -1) {
+          this.schedule.push(item);
+        }
+      }
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
-        } 
+        } else if (item['column'] === 'schedule') {
+          item.items = this.schedule;
+        }
       }
     });
   }
@@ -562,6 +574,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       status: '',
       assignedTo: '',
       dueDate: '',
+      schedule: ''
     }
     this.fetchInspection$.next({ data: 'load' });
   }
@@ -607,6 +620,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
             this.cdrf.detectChanges();
+            this.getAllInspections();
             this.toastService.show({
               type: 'success',
               text: 'Assigned to updated successfully'
@@ -636,6 +650,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
+            this.getAllInspections();
             this.dataSource = new MatTableDataSource(this.initial.data);
             this.toastService.show({
               type: 'success',

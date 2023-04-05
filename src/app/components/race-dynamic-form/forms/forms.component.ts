@@ -74,6 +74,14 @@ import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule
 export class FormsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  filter = {
+    assignedTo: '',
+    scheduleStartDate: '',
+    scheduleEndDate: '',
+    schedule: ''
+  };
+  assignedTo: any = [];
+  schedule: any = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -303,6 +311,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
+    this.getAllForms();
     this.getFilter();
     this.searchForm.valueChanges
       .pipe(
@@ -420,7 +429,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId
     };
 
-    return this.raceDynamicFormService.getFormQuestionsFormsList$(obj).pipe(
+    return this.raceDynamicFormService.getFormQuestionsFormsList$({ ...obj, ...this.filter}).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.formsCount;
@@ -434,6 +443,44 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  getAllForms() {
+    const formScheduleConfigurations$ = this.formScheduleConfigurationService
+      .fetchFormScheduleConfigurations$()
+      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
+    this.raceDynamicFormService.getAllFormQuestionsFormsList$().subscribe((formsList: any) => {
+      console.log(this.formScheduleConfigurations);
+      const result: any = this.formatForms(
+        formsList,
+        this.formScheduleConfigurations
+      )
+      const uniqueSchedule = result
+        .map((item) => item.schedule)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      console.log(uniqueSchedule);
+      const uniqueAssignedTo = result
+        .map((item) => item.assignedTo)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueAssignedTo) {
+        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+          this.assignedTo.push(item);
+        }
+      }
+      for (const item of uniqueSchedule) {
+        if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+          this.schedule.push(item);
+        }
+      }
+      for (const item of this.filterJson) {
+        if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
+        } else if (item['column'] === 'schedule') {
+          item.items = this.schedule;
+        }
+      }
+    });
+  }
+
 
   handleTableEvent = (event): void => {
     this.fetchForms$.next(event);
@@ -731,9 +778,28 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter.scheduleStartDate = item.startDate.toISOString();
+        this.filter.scheduleEndDate = item.endDate.toISOString();
+      }
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
 
   resetFilter(): void {
     this.isPopoverOpen = false;
+    this.filter = {
+      assignedTo: '',
+      scheduleStartDate: '',
+      scheduleEndDate: '',
+      schedule: ''
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+
   }
 }

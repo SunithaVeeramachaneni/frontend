@@ -505,10 +505,6 @@ export class LocationsListComponent implements OnInit {
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
         this.locationsListCount$ = this.locationService.getLocationCount$();
-        this.toast.show({
-          text: 'Locations uploaded successfully!',
-          type: 'success'
-        });
       }
     });
   }

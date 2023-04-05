@@ -222,6 +222,24 @@ export class OperatorRoundsService {
     }
   }
 
+
+  fetchAllPlansList$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('roundPlanId', '');
+    params.set('scheduleEndDate', '');
+    params.set('assignedTo', '');
+    params.set('scheduleStartDate', '');
+    params.set('schedule', '');
+
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, 'round-plans/tasks-rounds?' + params.toString())
+      .pipe(map((res) => this.formatRoundPlans(res.rows)));
+  };
+
+
   getSubmissionFormsList$(queryParams: {
     nextToken?: string;
     limit: any;
@@ -690,6 +708,7 @@ export class OperatorRoundsService {
     params.set('status', '');
     params.set('assignedTo', '');
     params.set('dueDate', '');
+    params.set('schedule', '');
 
     return this.appService
       ._getResp(environment.operatorRoundsApiUrl, 'rounds?' + params.toString())
@@ -720,7 +739,7 @@ export class OperatorRoundsService {
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}`, profileImage: curr.profileImage };
       return acc;
     }, {});
   }
@@ -731,6 +750,10 @@ export class OperatorRoundsService {
 
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
+  }
+
+  getUserProfile(email: string): string {
+    return this.usersInfoByEmail[email]?.profileImage;
   }
 
   updateRound$ = (

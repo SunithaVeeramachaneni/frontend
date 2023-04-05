@@ -52,4 +52,5 @@ export interface UsersInfoByEmail {
 
 export interface Info {
   fullName: string;
+  profileImage: string;
 }

@@ -7,10 +7,10 @@
     "value": ""
   },
   {
-    "label": "Inspected By",
+    "label": "Assigned To",
     "items": [],
     "column": "assignedTo",
-    "type": "multiple",
+    "type": "user-multiple",
     "value": ""
   },
   {
@@ -20,6 +20,13 @@
     "type": "date",
     "startDate": "",
     "endDate": "",
+    "value": ""
+  },
+  {
+    "label": "Schedule",
+    "items": [],
+    "column": "schedule",
+    "type": "multiple",
     "value": ""
   }
 ]

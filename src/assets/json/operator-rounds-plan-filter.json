@@ -1,22 +1,22 @@
 [
   {
-    "label": "Status",
+    "label": "Schedule",
     "items": [],
-    "column": "status",
+    "column": "schedule",
     "type": "select",
     "value": ""
   },
   {
-    "label": "Inspected By",
+    "label": "Assigned To",
     "items": [],
-    "column": "inspectedBy",
-    "type": "select",
+    "column": "assignedTo",
+    "type": "user-multiple",
     "value": ""
   },
   {
-    "label": "Inspected On ",
+    "label": "Scheduling Period",
     "items": [],
-    "column": "inspectedOn",
+    "column": "scheduleDates",
     "type": "daterange",
     "startDate": "",
     "endDate": "",

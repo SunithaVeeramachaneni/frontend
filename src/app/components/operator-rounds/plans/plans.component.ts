@@ -75,6 +75,8 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class PlansComponent implements OnInit, OnDestroy {
+  assignedTo: any = [];
+  schedule: any = [];
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -86,6 +88,12 @@ export class PlansComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   assigneeDetails: AssigneeDetails;
+  filter = {
+    assignedTo: '',
+    scheduleStartDate: '',
+    scheduleEndDate: '',
+    schedule: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -352,6 +360,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
+    this.getAllPlans();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -472,7 +481,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj).pipe(
+    return this.operatorRoundsService.getPlansList$({ ...obj, ...this.filter}).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.roundPlanCounts;
@@ -485,6 +494,44 @@ export class PlansComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  getAllPlans() {
+    this.rpscService
+      .fetchRoundPlanScheduleConfigurations$()
+      .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
+    this.operatorRoundsService.fetchAllPlansList$().subscribe((formsList: any) => {
+      console.log(this.roundPlanScheduleConfigurations);
+      const result = this.formatRoundPlans(
+        formsList,
+        this.roundPlanScheduleConfigurations
+      )
+      const uniqueSchedule = result
+        .map((item) => item.schedule)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      console.log(uniqueSchedule);
+      const uniqueAssignedTo = result
+        .map((item) => item.assignedTo)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueAssignedTo) {
+        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+          this.assignedTo.push(item);
+        }
+      }
+      for (const item of uniqueSchedule) {
+        if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+          this.schedule.push(item);
+        }
+      }
+      for (const item of this.filterJson) {
+        if (item['column'] === 'assignedTo') {
+          item.items = this.assignedTo;
+        } else if (item['column'] === 'schedule') {
+          item.items = this.schedule;
+        }
+      }
+    });
+  }
+
 
   handleTableEvent = (event): void => {
     this.fetchPlans$.next(event);
@@ -791,10 +838,28 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any): void {
-    this.isPopoverOpen = false;
+     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter.scheduleStartDate = item.startDate.toISOString();
+        this.filter.scheduleEndDate = item.endDate.toISOString();
+      }
+    }
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 
   resetFilter(): void {
     this.isPopoverOpen = false;
+    this.filter = {
+      assignedTo: '',
+      scheduleStartDate: '',
+      scheduleEndDate: '',
+      schedule: ''
+    }
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 }

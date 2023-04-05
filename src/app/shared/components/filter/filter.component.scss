@@ -109,8 +109,11 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   position: fixed;
   right: 20px;
 }
+.custom{
+  text-transform: capitalize;
+}
 .filter-form-fields {
-  max-height: 230px;
+  max-height: 170px;
   overflow-y: scroll;
   margin-bottom: 10px;
   padding: 0px 20px;
@@ -127,4 +130,37 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   .width100 {
     width: 100%;
   }
+}
+
+.user-profile-option{
+  height: 4rem;
+}
+.user-profile-wrap {
+    height: 40px;
+    display: flex;
+    justify-content: flex-start;
+    .user-profile {
+      position: relative;
+      img {
+        width: 40px;
+        height: 40px;
+      }
+      .user-name {
+          margin: 0px;
+          padding: 0px;
+          position: absolute;
+          font-weight: 700;
+          text-transform: capitalize;
+          top: -7px;
+          left: 4px;
+      }
+      .user-email {
+          margin: 0px;
+          padding: 0px;
+          position: absolute;
+          font-size: 10px;
+          top: 6px;
+          left: 4px;
+      }
+    }
 }

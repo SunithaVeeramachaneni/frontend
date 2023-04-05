@@ -95,6 +95,20 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}/${formId}`,
       info
     );
+  getAllFormQuestionsFormsList$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('roundPlanId', '');
+    params.set('scheduleEndDate', '');
+    params.set('assignedTo', '');
+    params.set('scheduleStartDate', '');
+    params.set('schedule', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms/schedule-forms?' + params.toString())
+      .pipe(map((res) => this.formatForms(res.rows)));
+  };
 
   getFormQuestionsFormsList$(
     queryParams: FormQueryParam,
