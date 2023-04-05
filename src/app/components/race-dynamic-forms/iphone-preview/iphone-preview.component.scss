@@ -574,6 +574,18 @@
   align-items: center;
 }
 
+::ng-deep .mat-accent .mat-slider-track-fill {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb-label {
+  background-color: blue !important;
+}
+
 .width-min {
   width: min-content;
 }

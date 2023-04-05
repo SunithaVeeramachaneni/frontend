@@ -181,7 +181,21 @@
                 </div>
 
                 <div *ngIf="question.fieldType === 'RT'">
-                  <mat-slider class="range-field"> </mat-slider>
+                  <mat-slider
+                    class="range-field"
+                    min="{{ question.value.min }}"
+                    max="{{ question.value.max }}"
+                    step="{{ question.value.increment }}"
+                    thumbLabel
+                    [displayWith]="formatLabel"
+                  >
+                  </mat-slider>
+                  <span style="float: left; margin: -20px 0 0 10px">{{
+                    question.value.min
+                  }}</span>
+                  <span style="float: right; margin: -20px 10px 0 0">{{
+                    question.value.max
+                  }}</span>
                 </div>
 
                 <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
