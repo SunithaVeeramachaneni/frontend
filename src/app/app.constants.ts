@@ -229,10 +229,15 @@ export const routingUrls = {
   masterConfiguration: {
     url: '/master-configuration',
     title: 'Master Configuration',
-    permission: permissions.viewLocations
+    permission: permissions.viewPlants
+  },
+  plants: {
+    url: '/master-configuration',
+    title: 'Plants',
+    permission: permissions.viewPlants
   },
   locations: {
-    url: '/master-configuration',
+    url: '/master-configuration/locations',
     title: 'Locations',
     permission: permissions.viewLocations
   },
@@ -245,11 +250,6 @@ export const routingUrls = {
     url: '/master-configuration/unit-measurement',
     title: 'Unit of Measurement',
     permission: permissions.viewUnitOfMeasurement
-  },
-  plants: {
-    url: '/master-configuration/plants',
-    title: 'Plants',
-    permission: permissions.viewPlants
   },
   globalResponse: {
     url: '/master-configuration/global-response',
