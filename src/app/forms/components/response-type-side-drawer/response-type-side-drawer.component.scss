@@ -217,15 +217,7 @@
       // color: $white;
     }
   }
-}
-.matCardContent {
-  height: 75vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 5px;
-}
 
-:host {
   ::ng-deep {
     .mat-radio-outer-circle {
       border-color: $radio-button-unchecked !important;
@@ -246,4 +238,10 @@
       border-color: $radio-button-unchecked !important;
     }
   }
+}
+.matCardContent {
+  height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
 }
