@@ -238,6 +238,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       disable: false,
       subPages: [
         {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
+        },
+        {
           title: locations.title,
           url: locations.url,
           permission: locations.permission
@@ -252,11 +257,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           url: unitOfMeasurement.url,
           permission: unitOfMeasurement.permission
         },
-        {
-          title: plants.title,
-          url: plants.url,
-          permission: plants.permission
-        },
+
         {
           title: globalResponse.title,
           url: globalResponse.url,
