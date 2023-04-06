@@ -1,0 +1,21 @@
+@import '../../../../../../scss/colors.scss';
+
+.attachment {
+  height: 30px;
+  background: $blue-head;
+  border-radius: 4px;
+  color: $white;
+  width: 100%;
+  border: none;
+  font-size: 85%;
+  margin-top: 4px;
+
+  .add-photo {
+    background-color: white;
+    color: white;
+    height: 20px;
+    width: 20px;
+    -webkit-mask: url('/assets/preview/Photo.svg') no-repeat center;
+    mask: url('/assets/preview/Photo.svg') no-repeat center;
+  }
+}

@@ -1,0 +1,15 @@
+<div>
+  <input
+    type="date"
+    class="text-answer"
+    [placeholder]="'enter' | translate"
+    *ngIf="question.value.date"
+  />
+
+  <input
+    type="time"
+    class="text-answer"
+    [placeholder]="'enter' | translate"
+    *ngIf="question.value.time"
+  />
+</div>

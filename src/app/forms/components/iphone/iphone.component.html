@@ -1,33 +1,52 @@
 <div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
   <div class="iphone-header">
-    <h3 class="form-heading" matTooltip="{{ formMetadata.name }}">
+    <img src="/assets/preview/Back_Page.svg" alt="<" />
+    <p class="form-heading" matTooltip="{{ formMetadata.name }}">
       {{ formMetadata.name }}
-    </h3>
-    <p class="form-description" matTooltip=" {{ formMetadata.description }}">
-      {{
-        (formMetadata.description ? formMetadata.description : 'des')
-          | translate
-      }}
     </p>
+    <!-- <img src="/assets/preview/Scan_Asset.svg" alt="scan" /> -->
+    <img class="iphone-more" src="/assets/preview/More.svg" alt="more" />
   </div>
+  <div class="header-name"></div>
   <div class="iphone-preview">
     <app-preview
       [pageIndex]="currentPage"
       [subFormId]="subFormId"
     ></app-preview>
+    <button *ngIf="currentPage === totalPages" class="submit-button">
+      Submit
+    </button>
   </div>
-  <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
-    <span class="page-count">{{ currentPage }} / {{ pagesCount }}</span>
-
-    <button
-      class="btn-next"
-      translate="nextBtnPreview"
-      (click)="nextPage()"
-    ></button>
-    <button
-      class="btn-previous"
-      translate="prevBtn"
-      (click)="prevPage()"
-    ></button>
+  <div class="iphone-footer" *ngIf="totalPages">
+    <button class="btn-save">Save</button>
+    <div class="iphone-bottom-navigation" *ngIf="totalPages > 1">
+      <button
+        class="previous-page"
+        (click)="prevPage()"
+        [disabled]="currentPage === 1"
+      >
+        <div class="back-page-svg"></div>
+        <!-- <img
+          class="back-page-svg"
+          src="/assets/preview/Back_Page.svg"
+          alt="scan"
+        /> -->
+        <div class="text-previous" translate="prevBtn"></div>
+      </button>
+      <span class="page-count">{{ currentPage }}/{{ totalPages }}</span>
+      <button
+        class="next-page"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+      >
+        <div class="text-next" translate="nextBtnPreview"></div>
+        <div class="front-page-svg"></div>
+        <!-- <img
+          class="front-page-svg"
+          src="/assets/preview/Back_Page.svg"
+          alt="scan"
+        /> -->
+      </button>
+    </div>
   </div>
 </div>

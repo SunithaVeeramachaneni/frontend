@@ -35,12 +35,14 @@ export class IphoneComponent implements OnInit {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         this.formMetadata = formMetadata;
+        console.dir(this.formMetadata);
       })
     );
 
     this.pagesCount$ = this.store.select(getPagesCount(this.subFormId));
     this.pagesCount$.subscribe((res) => {
       this.totalPages = res;
+      this.currentPage = Math.min(this.currentPage, this.totalPages);
     });
   }
 

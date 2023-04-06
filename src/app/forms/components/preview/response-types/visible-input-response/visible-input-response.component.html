@@ -1,0 +1,12 @@
+<div class="dis-flex">
+  <mat-button-toggle
+    class="vi-item"
+    *ngFor="let question of question.value.value"
+    [value]="question.title"
+    [ngStyle]="{
+      color: question.color
+    }"
+  >
+    {{ question.title }}
+  </mat-button-toggle>
+</div>
