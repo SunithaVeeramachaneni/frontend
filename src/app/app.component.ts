@@ -257,7 +257,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           url: unitOfMeasurement.url,
           permission: unitOfMeasurement.permission
         },
-
         {
           title: globalResponse.title,
           url: globalResponse.url,

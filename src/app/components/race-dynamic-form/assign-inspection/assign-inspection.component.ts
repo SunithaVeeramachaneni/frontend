@@ -19,12 +19,12 @@ import {
 import { AssigneeDetails, UserDetails } from 'src/app/interfaces';
 
 @Component({
-  selector: 'app-assign-round',
-  templateUrl: './assign-round.component.html',
-  styleUrls: ['./assign-round.component.scss'],
+  selector: 'app-assign-inspection',
+  templateUrl: './assign-inspection.component.html',
+  styleUrls: ['./assign-inspection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AssignRoundComponent implements OnInit {
+export class AssignInspectionComponent implements OnInit {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
   }

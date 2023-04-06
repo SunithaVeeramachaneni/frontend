@@ -3,14 +3,14 @@
     "label": "Status",
     "items": [],
     "column": "status",
-    "type": "select",
+    "type": "multiple",
     "value": ""
   },
   {
     "label": "Inspected By",
     "items": [],
     "column": "inspectedBy",
-    "type": "select",
+    "type": "multiple",
     "value": ""
   },
   {
