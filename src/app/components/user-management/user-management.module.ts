@@ -41,6 +41,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
+import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -68,6 +70,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatDialogModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule,
+    MatProgressBarModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -91,7 +94,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     PermissionsComponent,
     CancelModalComponent,
     RoleDeleteModalComponent,
-    InactiveUsersComponent
+    InactiveUsersComponent,
+    UploadResponseModalComponent
   ],
   schemas: [],
   providers: [],

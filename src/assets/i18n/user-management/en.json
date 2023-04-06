@@ -58,5 +58,10 @@
   "cannotBeDeletedText": " cannot be deleted",
   "usersAssignedText": " as users are assigned to it.",
   "doYouWantToText": " Do you want to",
-  "delete": " delete"
+  "delete": " delete",
+  "downloadExcel": "Download Excel",
+  "closeBtn": "Close",
+  "failedUpload": "Responses Failed to upload",
+  "successfullyUpload": "Responses Successfully uploaded",
+  "downloadTemplate": "Download Template"
 }

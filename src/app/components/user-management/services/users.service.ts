@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { Buffer } from 'buffer';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
@@ -13,7 +13,10 @@ import {
   Role,
   Permission,
   UserProfile,
-  UserInfo
+  UserInfo,
+  TableEvent,
+  LoadEvent,
+  SearchEvent
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -26,6 +29,9 @@ export class UsersService {
 
   reportDefinitionAction$ = this.reportDefinitionNameSubject.asObservable();
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
+
+  fetchUser$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
@@ -231,4 +237,40 @@ export class UsersService {
         info
       )
       .pipe(map((response) => response));
+
+  downloadSampleUserTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.downloadFile(
+      environment.userRoleManagementApiUrl,
+      'user/download/sample-template',
+      info,
+      true,
+      {}
+    );
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService.downloadFile(
+      environment.userRoleManagementApiUrl,
+      'user/download/uploadFailure',
+      info,
+      false,
+      body
+    );
+  }
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      'user/upload',
+      form,
+      info
+    );
+  }
 }

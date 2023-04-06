@@ -23,7 +23,8 @@ import {
   TableEvent,
   UserDetails,
   UserInfo,
-  UserTable
+  UserTable,
+  FormTableUpdate
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
 import {
@@ -46,7 +47,8 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
-
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
+import { UploadResponseModalComponent } from '../upload-response-modal/upload-response-modal.component';
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -153,6 +155,15 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     }
   ];
+
+  addEditCopyDeleteLocations = false;
+  addEditCopyDeleteLocations$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
+      action: null,
+      form: {} as any
+    });
+  nextToken = '';
+
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
   fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -581,5 +592,43 @@ export class UsersComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  downloadTemplate(): void {
+    this.usersService
+      .downloadSampleUserTemplate()
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'User_Sample_Template');
+        })
+      )
+      .subscribe();
+  }
+
+  uploadFile(event: any) {
+    const file = event.target.files[0];
+    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+      data: {
+        file,
+        type: 'locations'
+      },
+      disableClose: true
+    });
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res.data) {
+        this.addEditCopyDeleteLocations = true;
+        this.nextToken = '';
+        this.usersService.fetchUser$.next({ data: 'load' });
+        this.toast.show({
+          text: 'User uploaded successfully!',
+          type: 'success'
+        });
+      }
+    });
+  }
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }

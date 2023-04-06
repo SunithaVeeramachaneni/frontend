@@ -16,10 +16,39 @@
     <button
       mat-raised-button
       class="add-user-btn"
-      (click)="openEditAddUserModal()"
-      *appCheckUserHasPermission="[perms.createUser]"
+      [matMenuTriggerFor]="addUserMenu"
       translate="addUserBtn"
     ></button>
+
+    <mat-menu menu #addUserMenu="matMenu">
+      <button mat-menu-item class="text-black" (click)="uploader.click()">
+        <img
+          src="assets/user-management-icons/upload-from-excel.svg"
+          alt="Excel"
+          class="menu-icons"
+        />
+        <span translate="Upload Excel"></span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="openEditAddUserModal()"
+        *appCheckUserHasPermission="[perms.createUser]"
+        class="text-black"
+      >
+        <span translate="Add Manually"></span>
+      </button>
+    </mat-menu>
+
+    <input
+      id="upload"
+      hidden
+      type="file"
+      #uploader
+      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+      (change)="uploadFile($event)"
+      (click)="resetFile($event)"
+    />
+
     <span class="no-of-users" *ngIf="userCount$ | async as userCount">
       <span class="users-count" *ngIf="userCount.count">
         {{ userCount.count }}
@@ -50,6 +79,14 @@
         class="text-red"
       >
         <span translate="deactivate"></span>
+      </button>
+      <button (click)="downloadTemplate()" mat-menu-item class="menu-buttons">
+        <img
+          src="assets/user-management-icons/upload-from-excel.svg"
+          alt="Excel"
+          class="menu-icons"
+        />
+        <span translate="downloadTemplate"></span>
       </button>
     </mat-menu>
   </div>
