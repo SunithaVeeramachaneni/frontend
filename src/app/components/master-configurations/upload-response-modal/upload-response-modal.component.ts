@@ -12,6 +12,7 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
 import { ResponseSetService } from '../response-set/services/response-set.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -29,6 +30,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   failedCount = 0;
   type = '';
   failure: any = [];
+  observable: Observable<any>;
   constructor(
     private readonly locationService: LocationService,
     private readonly assetsService: AssetsService,
@@ -45,19 +47,24 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.isFailure = false;
       this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
-      // formData.append('type', this.dialogData?.type);
       const type = this.dialogData?.type;
       const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
-      // formData.append('type', this.dialogData?.type);
-      // const observable = isAssets
-      //   ? this.assetsService.uploadExcel(formData)
-      //   : this.locationService.uploadExcel(formData);
-      const observable = this.resposneSetService.uploadExcel(formData);
-      observable?.subscribe((result) => {
+      switch (type) {
+        case 'assets':
+          this.observable = this.assetsService.uploadExcel(formData);
+          break;
+        case 'locations':
+          this.observable = this.locationService.uploadExcel(formData);
+          break;
+        case 'response-set':
+          this.observable = this.resposneSetService.uploadExcel(formData);
+          break;
+      }
+      this.observable?.subscribe((result) => {
         if (Object.keys(result).length > 0) {
           this.isSuccess = true;
           this.title = 'All done!';
