@@ -48,7 +48,6 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
       const type = this.dialogData?.type;
-      const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;

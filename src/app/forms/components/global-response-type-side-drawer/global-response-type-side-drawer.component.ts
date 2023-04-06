@@ -76,7 +76,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       description: new FormControl(''),
       responses: this.fb.array([])
     });
-    console.log(this.responseForm);
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
@@ -175,7 +174,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   };
 
   submitResponseSet = () => {
-    console.log(this.responses.value);
     const responseSetPayload = {
       name: this.name.value ? this.name.value : 'Untitled Response Set',
       responseType: 'globalResponse',
