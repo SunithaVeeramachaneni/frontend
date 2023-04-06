@@ -237,7 +237,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formStatus,
           counter,
           pages,
-          pdfBuilderConfiguration,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -267,7 +266,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   formListId,
                   counter,
                   pages,
-                  pdfBuilderConfiguration,
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
@@ -294,7 +292,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
-                pdfBuilderConfiguration,
                 formDetailId,
                 formDetailDynamoDBVersion,
                 authoredFormDetail: {
@@ -315,7 +312,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 formMetadata,
                 formListId,
                 pages,
-                pdfBuilderConfiguration,
                 authoredFormDetail: {
                   formStatus,
                   formListId,

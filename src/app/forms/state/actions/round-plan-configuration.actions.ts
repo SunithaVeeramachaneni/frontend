@@ -18,7 +18,6 @@ export const publishRoundPlan = createAction(
     pages: Page[];
     hierarchy: any;
     subForms: any;
-    pdfBuilderConfiguration: any;
     formListId: string;
     authoredFormDetail: any;
     formListDynamoDBVersion: number;
@@ -52,6 +51,5 @@ export const updateAuthoredRoundPlanDetail = createAction(
     authoredFormDetailVersion: number;
     authoredFormDetailDynamoDBVersion: number;
     hierarchy: any;
-    pdfBuilderConfiguration: any;
   }>()
 );

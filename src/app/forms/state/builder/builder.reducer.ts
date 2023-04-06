@@ -11,7 +11,6 @@ import {
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
-  pdfBuilderConfiguration?: any;
   pages: Page[];
   subForms?: any[];
   counter: number;
@@ -55,10 +54,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({
       ...state,
-      formMetadata: { ...action.formMetadata },
+      formMetadata: {
+        ...action.formMetadata,
+        pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+      },
       formDetailPublishStatus: action.formDetailPublishStatus,
-      formSaveStatus: action.formSaveStatus,
-      pdfBuilderConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(
@@ -154,7 +155,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.updatePDFBuilderConfiguration,
     (state, action): FormConfigurationState => ({
       ...state,
-      pdfBuilderConfiguration: action.pdfBuilderConfiguration
+      formMetadata: {
+        ...state.formMetadata,
+        pdfTemplateConfiguration: action.pdfBuilderConfiguration
+      }
     })
   ),
   on(

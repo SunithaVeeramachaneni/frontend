@@ -24,8 +24,11 @@ export class PDFPreviewComponent implements OnInit {
   printPDF(selectedForm) {
     const id = selectedForm;
     const htmlContent = `<h1>PDF BUILDER HTML CONTENT!</h1>`;
-    const roundPlanId = '91762fbc-78e5-4799-8443-0332801a72f3';
-    const roundId = '44586bba-42c1-4401-ae59-6961d911fca7';
+    // ALL FIELDS ROUND PLAN -----
+    const roundPlanId = '0c0e2092-22d5-447e-a539-a2a4daa25816';
+    const roundId = 'd6a0c8e3-b4f9-4cd8-b99b-525184af5c74';
+    // const roundPlanId = '91762fbc-78e5-4799-8443-0332801a72f3';
+    // const roundId = '44586bba-42c1-4401-ae59-6961d911fca7';
     fetch(`http://localhost:8007/rounds/${roundPlanId}/${roundId}`, {
       method: 'post',
       body: JSON.stringify({ htmlContent }),

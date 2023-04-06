@@ -10,7 +10,6 @@ import {
 } from './actions';
 
 export interface FormConfigurationState {
-  pdfBuilderConfiguration: any;
   formMetadata: FormMetadata;
   pages: Page[];
   counter: number;

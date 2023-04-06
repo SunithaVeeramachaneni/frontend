@@ -69,11 +69,11 @@
             <div class="customText">
               <mat-form-field class="field" appearance="outline">
                 <mat-label translate="label"></mat-label>
-                <input matInput formControlName="customTextLabel" />
+                <input matInput formControlName="customTextLabel" maxlength="25" />
               </mat-form-field>
               <mat-form-field class="field" appearance="outline">
                 <mat-label translate="field"></mat-label>
-                <input matInput formControlName="customTextField" />
+                <input matInput formControlName="customTextField" maxlength="25" />
               </mat-form-field>
             </div>
           </span>
@@ -88,6 +88,11 @@
           <span class="option">
             <mat-checkbox formControlName="issues" class="checkbox">
               <span translate="issues"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleQuestionPhotos($event)">
+              <span translate="photos"></span>
             </mat-checkbox>
           </span>
           <span class="option">
@@ -112,11 +117,6 @@
             <mat-checkbox formControlName="capturedQuestions" class="checkbox"
               (change)="togglecapturedQuestions($event)">
               <span translate="capturedTasks"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option m-l-80">
-            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleQuestionPhotos($event)">
-              <span translate="photos"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">

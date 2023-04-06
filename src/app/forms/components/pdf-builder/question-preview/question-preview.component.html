@@ -28,10 +28,10 @@
         <div *ngIf="question.fieldType === 'SGF'"></div>
       </span>
 
-      <span *ngIf="hideMockFieldValueTypes.indexOf(question.fieldType) < 0">
+      <!-- <span *ngIf="hideMockFieldValueTypes.indexOf(question.fieldType) < 0">
         <span> / </span>
         <span class="userName"> Aron</span>
-      </span>
+      </span> -->
     </div>
   </div>
   <div *ngIf="inlineMockResponses.indexOf(question.fieldType) > -1" class="w-100">

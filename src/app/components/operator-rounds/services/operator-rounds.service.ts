@@ -284,7 +284,8 @@ export class OperatorRoundsService {
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
-        isDeleted: false
+        isDeleted: false,
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
       }
     );
   }
@@ -361,7 +362,6 @@ export class OperatorRoundsService {
 
   updateAuthoredFormDetail$(formDetails) {
     const {
-      pdfBuilderConfiguration,
       hierarchy,
       subForms,
       counter,
@@ -386,7 +386,6 @@ export class OperatorRoundsService {
         counter,
         hierarchy,
         flatHierarchy,
-        pdfBuilderConfiguration,
         _version: formDetails.authoredFormDetailDynamoDBVersion,
         version: formDetails.authoredFormDetailVersion.toString()
       }

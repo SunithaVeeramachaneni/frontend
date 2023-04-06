@@ -24,7 +24,7 @@ export const getFormMetadata = createSelector(
 
 export const getPDFBuilderConfiguration = createSelector(
   selectFormConfigurationState,
-  (state) => state.pdfBuilderConfiguration
+  (state) => state.formMetadata.pdfTemplateConfiguration
 );
 
 export const getPages = createSelector(

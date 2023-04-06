@@ -47,6 +47,9 @@ export class PDFBuilderComponent implements OnInit {
   formSaveStatus$: Observable<string>;
   formDetailPublishStatus$: Observable<string>;
 
+  formMetadata: FormMetadata;
+  formListVersion: number;
+
   selectedHierarchy$: Observable<any>;
   selectedFlatHierarchy: any = [];
   totalQuestionsCount = 0;
@@ -99,8 +102,20 @@ export class PDFBuilderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authoredFormDetail$ = this.store.select(getFormDetails);
-    this.formMetadata$ = this.store.select(getFormMetadata);
+    this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
+      tap((formDetails) => {
+        const { formListDynamoDBVersion } = formDetails;
+        this.formListVersion = formListDynamoDBVersion;
+      })
+    );
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        if (Object.keys(formMetadata).length) {
+          this.formMetadata = formMetadata;
+        }
+      })
+    );
+
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
     this.formDetailPublishStatus$ = this.store
       .select(getFormPublishStatus)
@@ -141,7 +156,11 @@ export class PDFBuilderComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        BuilderConfigurationActions.updateFormStatuses({
+        BuilderConfigurationActions.updateFormMetadata({
+          formMetadata: {
+            ...this.formMetadata,
+            pdfTemplateConfiguration: data
+          },
           ...this.getFormConfigurationStatuses()
         })
       );
@@ -238,7 +257,6 @@ export class PDFBuilderComponent implements OnInit {
         incompleteQuestions: true,
         completedQuestions: true,
         capturedQuestions: true,
-        photos: true,
         skippedQuestions: true
       });
     } else {
@@ -247,7 +265,6 @@ export class PDFBuilderComponent implements OnInit {
         incompleteQuestions: false,
         completedQuestions: false,
         capturedQuestions: false,
-        photos: false,
         skippedQuestions: false
       });
     }
@@ -298,8 +315,6 @@ export class PDFBuilderComponent implements OnInit {
   toggleQuestionPhotos(event) {
     if (event.checked) {
       this.pdfBuilderConfigurationsForm.patchValue({
-        questions: true,
-        completedQuestions: true,
         photos: true
       });
     } else {

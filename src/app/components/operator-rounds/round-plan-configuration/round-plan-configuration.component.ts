@@ -289,7 +289,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           counter,
           pages,
           subForms,
-          pdfBuilderConfiguration,
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
@@ -332,8 +331,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion,
-                  hierarchy: selectedHierarchyList,
-                  pdfBuilderConfiguration
+                  hierarchy: selectedHierarchyList
                 })
               );
               this.formDetails = formDetails;
@@ -362,7 +360,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                 formListId,
                 pages,
                 subForms: subFormsObj,
-                pdfBuilderConfiguration,
                 authoredFormDetail: {
                   formStatus,
                   formListId,

@@ -74,7 +74,6 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formMetadata,
           counter,
           pages: JSON.parse(pages),
-          pdfBuilderConfiguration,
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),

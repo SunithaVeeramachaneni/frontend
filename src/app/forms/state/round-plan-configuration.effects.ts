@@ -77,8 +77,7 @@ export class RoundPlanConfigurationEffects {
     this.actions$.pipe(
       ofType(RoundPlanConfigurationActions.publishRoundPlan),
       concatMap((action) => {
-        const { authoredFormDetail, pdfBuilderConfiguration, ...formDetail } =
-          action;
+        const { authoredFormDetail, ...formDetail } = action;
         const { hierarchy, subForms } = formDetail;
         return of(true).pipe(
           mergeMap(() =>
@@ -96,8 +95,7 @@ export class RoundPlanConfigurationEffects {
                   pages: JSON.stringify(authoredFormDetail.pages),
                   subForms, // Handle subforms form round-plan config,
                   hierarchy
-                },
-                pdfBuilderConfiguration
+                }
               })
               .pipe(
                 map((createAuthoredFormDetail) =>

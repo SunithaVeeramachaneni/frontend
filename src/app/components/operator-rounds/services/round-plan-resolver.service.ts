@@ -82,7 +82,8 @@ export class RoundPlanResolverService
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          pdfTemplateConfiguration: pdfBuilderConfiguration
         };
 
         const subFormsMap = JSON.parse(subForms);
