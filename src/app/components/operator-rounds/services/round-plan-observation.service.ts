@@ -50,12 +50,15 @@ export class RoundPlanObservationsService {
         obj['Due Date and Time'] &&
         obj['Due Date and Time'] instanceof Date &&
         !isNaN(obj['Due Date and Time'] as any)
-          ? format(new Date(obj['Due Date and Time']), 'do MMM, yyyy')
-          : obj['Due Date and Time'];
+          ? format(new Date(obj['Due Date and Time']), 'dd MMM, yyyy')
+          : obj['Due Date and Time'].slice(0, 12);
+      console.log({ p: obj?.Priority });
+
       return {
         ...obj,
         preTextImage: {
           image: this.prepareStatusUrl(obj?.Priority),
+          // image: '/assets/maintenance-icons/Issue icon.svg',
           style: {
             width: '25px',
             height: '25px',

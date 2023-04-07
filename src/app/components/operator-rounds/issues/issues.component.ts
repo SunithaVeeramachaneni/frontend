@@ -52,7 +52,7 @@ export class IssuesComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'title',
-      displayName: 'Name',
+      displayName: 'Title',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -218,7 +218,10 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        display: 'inline-block',
+        width: 'max-content'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -247,7 +250,7 @@ export class IssuesComponent implements OnInit {
     },
     {
       id: 'assignee',
-      displayName: 'Assignee',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -285,21 +288,29 @@ export class IssuesComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#fe6c64'
+        color: '#FF3B30'
       },
       medium: {
-        color: '#ff9502'
+        color: '#FF9500'
       },
       low: {
-        color: '#8a8a8c'
+        color: ' #8A8A8C'
+      },
+      'to-do': {
+        'background-color': '#fde2e1',
+        color: '#b76262'
       },
       open: {
-        'background-color': '#fee2e1',
-        color: '#c98282'
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      resolved: {
+        'background-color': '#EEFFF1',
+        color: '#2C9E53'
       },
       'in-progress': {
-        'background-color': '#ffebce',
-        color: '#ffb040'
+        'background-color': '#FFEAC9',
+        color: '#a5570e'
       }
     }
   };

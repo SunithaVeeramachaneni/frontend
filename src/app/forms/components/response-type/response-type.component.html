@@ -35,7 +35,7 @@
             ></app-response-type-side-drawer>
           </div>
         </mat-tab>
-        <mat-tab [label]="'Dropdown' | translate">
+        <mat-tab [label]="'Picklist' | translate">
           <div class="picklist-scroll">
             <div class="multiple-responses">
               <ng-container
@@ -146,7 +146,10 @@
                 </mat-chip-list>
               </div>
 
-              <button class="add-new-btn" (click)="handleResponses()">
+              <button
+                class="add-new-btn add-btn-margin"
+                (click)="handleResponses()"
+              >
                 <img
                   src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
                   class="add-more-icon"
@@ -163,7 +166,7 @@
             </div>
           </div>
         </mat-tab>
-        <mat-tab [label]="'Masterdata' | translate"> </mat-tab>
+        <!-- <mat-tab [label]="'Masterdata' | translate" disabled></mat-tab> -->
       </mat-tab-group>
     </div>
   </div>

@@ -12,8 +12,6 @@ import {
 import { CommonService } from 'src/app/shared/services/common.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormModule } from 'src/app/forms/form.module';
-import { NgxEchartsModule } from 'ngx-echarts';
-import * as echarts from 'echarts';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -156,10 +154,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       formConfiguration: formConfigurationReducer,
       hierarchy: hierarchyReducer
     }),
-    EffectsModule.forFeature([RoundPlanConfigurationEffects]),
-    NgxEchartsModule.forRoot({
-      echarts
-    })
+    EffectsModule.forFeature([RoundPlanConfigurationEffects])
   ],
   exports: [OperatorRoundsContainerComponent]
 })

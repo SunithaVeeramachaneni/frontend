@@ -53,7 +53,10 @@ export class ObservationsComponent implements OnInit {
     },
     legend: {
       orient: 'horizontal',
-      top: '90%'
+      itemWidth: 15,
+      itemHeight: 15,
+      padding: [11, 5, 24, 5],
+      top: '86%'
     },
     series: {
       name: '',
@@ -89,8 +92,8 @@ export class ObservationsComponent implements OnInit {
     issues: {},
     actions: {}
   };
-  private priorityColors = ['#b76262', '#f4a915', '#cfcfcf'];
-  private statusColors = ['#b76262', '#C0D7FD'];
+  private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
+  private statusColors = ['#B76262', '#FFE5BD'];
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService
   ) {}
@@ -99,40 +102,38 @@ export class ObservationsComponent implements OnInit {
     this.roundPlanObservationsService
       .getObservationChartCounts$()
       .subscribe((result) => {
-        if (result) {
-          this.priorityData = {
-            issues: {
-              config: this.prepareGraphConfig(
-                result?.openIssues?.priorityTotal,
-                this.priorityColors
-              ),
-              data: this.transformChartPayload(result?.openIssues?.priority)
-            },
-            actions: {
-              config: this.prepareGraphConfig(
-                result?.openActions?.priorityTotal,
-                this.priorityColors
-              ),
-              data: this.transformChartPayload(result?.openActions?.priority)
-            }
-          };
-          this.statusData = {
-            issues: {
-              config: this.prepareGraphConfig(
-                result?.openIssues?.statusTotal,
-                this.statusColors
-              ),
-              data: this.transformChartPayload(result?.openIssues?.status)
-            },
-            actions: {
-              config: this.prepareGraphConfig(
-                result?.openActions?.statusTotal,
-                this.statusColors
-              ),
-              data: this.transformChartPayload(result?.openActions?.status)
-            }
-          };
-        }
+        this.priorityData = {
+          issues: {
+            config: this.prepareGraphConfig(
+              result?.openIssues?.priorityTotal,
+              this.priorityColors
+            ),
+            data: this.transformChartPayload(result?.openIssues?.priority)
+          },
+          actions: {
+            config: this.prepareGraphConfig(
+              result?.openActions?.priorityTotal,
+              this.priorityColors
+            ),
+            data: this.transformChartPayload(result?.openActions?.priority)
+          }
+        };
+        this.statusData = {
+          issues: {
+            config: this.prepareGraphConfig(
+              result?.openIssues?.statusTotal,
+              this.statusColors
+            ),
+            data: this.transformChartPayload(result?.openIssues?.status)
+          },
+          actions: {
+            config: this.prepareGraphConfig(
+              result?.openActions?.statusTotal,
+              this.statusColors
+            ),
+            data: this.transformChartPayload(result?.openActions?.status)
+          }
+        };
       });
   }
 
