@@ -302,7 +302,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  roundsCount = 0;
+  inspectionsCount = 0;
   nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -435,7 +435,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap(({ count, nextToken }) => {
           this.nextToken = nextToken !== undefined ? nextToken : null;
-          this.roundsCount = count !== undefined ? count : this.roundsCount;
+          this.inspectionsCount =
+            count !== undefined ? count : this.inspectionsCount;
           this.isLoading$.next(false);
         })
       );
