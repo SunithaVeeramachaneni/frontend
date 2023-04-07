@@ -94,6 +94,7 @@
                     matInput
                     class="input-forms"
                     type="color"
+                    (change)="applyBGColor($event, response)"
                     class="color-type"
                     formControlName="color"
                     [hidden]="respType === 'globalResponse'"

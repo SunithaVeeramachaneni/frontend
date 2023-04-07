@@ -242,7 +242,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         height: '24px',
         background: '#FEF3C7',
         color: '#92400E',
-        borderRadius: '12px'
+        borderRadius: '12px',
+        padding: '0 5px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,

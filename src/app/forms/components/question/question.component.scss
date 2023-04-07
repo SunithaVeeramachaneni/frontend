@@ -14,7 +14,9 @@
 
   .question-line {
     border: 1px solid $border-color;
-    margin-left: -23px;
+    margin: 0px 0px 0px -23px;
+    position: relative;
+    top: 2px;
   }
 
   .questions-btn {

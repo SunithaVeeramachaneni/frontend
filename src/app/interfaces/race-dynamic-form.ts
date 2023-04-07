@@ -126,3 +126,20 @@ export interface FormSuccessModalData {
   roundPlanName: string;
   mode: 'update' | 'create';
 }
+
+
+export interface InspectionDetail extends Form {
+  inspectionId: string;
+  inspectionDetailId: string;
+  scheduledType: string;
+  dueDate: string | Date;
+  locationAndAssets: number;
+  locationAndAssetsCompleted: number;
+  locationAndAssetTasks: number;
+  createdBy: string;
+  status: string;
+  locationAndAssetTasksCompleted: number;
+  assignedTo: string;
+  inspectionDBVersion: number;
+  inspectionDetailDBVersion: number;
+}

@@ -71,6 +71,7 @@ export const permissions = Object.freeze({
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
   viewFormScheduler: 'VIEW_FORM_SCHEDULER',
+  scheduleInspection: 'SCHEDULE_FORM',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
@@ -228,10 +229,15 @@ export const routingUrls = {
   masterConfiguration: {
     url: '/master-configuration',
     title: 'Master Configuration',
-    permission: permissions.viewLocations
+    permission: permissions.viewPlants
+  },
+  plants: {
+    url: '/master-configuration',
+    title: 'Plants',
+    permission: permissions.viewPlants
   },
   locations: {
-    url: '/master-configuration',
+    url: '/master-configuration/locations',
     title: 'Locations',
     permission: permissions.viewLocations
   },
@@ -244,11 +250,6 @@ export const routingUrls = {
     url: '/master-configuration/unit-measurement',
     title: 'Unit of Measurement',
     permission: permissions.viewUnitOfMeasurement
-  },
-  plants: {
-    url: '/master-configuration/plants',
-    title: 'Plants',
-    permission: permissions.viewPlants
   },
   globalResponse: {
     url: '/master-configuration/global-response',
@@ -289,5 +290,6 @@ export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';
-export const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+export const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';

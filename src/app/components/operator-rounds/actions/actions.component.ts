@@ -52,7 +52,7 @@ export class ActionsComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'title',
-      displayName: 'Name',
+      displayName: 'Title',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -67,7 +67,8 @@ export class ActionsComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        width: '280px',
+        color: '#212121'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -108,7 +109,7 @@ export class ActionsComponent implements OnInit {
     },
     {
       id: 'plant',
-      displayName: 'Plan',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 3,
@@ -125,7 +126,7 @@ export class ActionsComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -159,7 +160,7 @@ export class ActionsComponent implements OnInit {
         borderRadius: '12px'
       },
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false,
       hasConditionalStyles: true
     },
@@ -218,14 +219,17 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        display: 'inline-block',
+        width: 'max-content'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
       id: 'assignee',
-      displayName: 'Assignee',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -284,22 +288,30 @@ export class ActionsComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      High: {
-        color: '#ff4033'
+      high: {
+        color: '#FF3B30'
       },
-      Medium: {
-        color: '#ffab46'
+      medium: {
+        color: '#FF9500'
       },
-      Low: {
-        color: '#98989a'
+      low: {
+        color: ' #8A8A8C'
       },
-      'To-do': {
+      'to-do': {
         'background-color': '#fde2e1',
         color: '#b76262'
       },
-      'In Progress': {
-        'background-color': '#c0d7fd',
-        color: '#3865b6'
+      open: {
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      resolved: {
+        'background-color': '#EEFFF1',
+        color: '#2C9E53'
+      },
+      'in-progress': {
+        'background-color': '#FFEAC9',
+        color: '#a5570e'
       }
     }
   };
@@ -394,6 +406,10 @@ export class ActionsComponent implements OnInit {
           initial.data = initial.data.concat(scrollData);
         }
         this.skip = initial.data.length;
+        initial.data.map((item) => {
+          item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
+          return item;
+        });
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
