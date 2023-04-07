@@ -61,7 +61,7 @@ export class NodeComponent implements OnInit {
     if (this.hierarchyMode === 'asset_hierarchy') {
       nodeId = node.uid;
       const instanceIdMappings = this.formService.getInstanceIdMappings();
-      const instances = instanceIdMappings[nodeId];
+      const instances = instanceIdMappings[nodeId] || [];
       const instanceIds = instances.map((i) => i.id);
       this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
         count = c;

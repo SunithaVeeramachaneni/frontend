@@ -5,7 +5,8 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Input
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import {
@@ -46,6 +47,8 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchyContainerComponent implements OnInit {
+  @Input() isPreview: boolean;
+  @Input() hierarcyInput$: Observable<any>;
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
 
   filteredOptions$: Observable<any[]>;
@@ -86,7 +89,7 @@ export class HierarchyContainerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
+    this.selectedHierarchy$ = this.hierarcyInput$.pipe(
       tap((selectedHierarchy) => {
         if (selectedHierarchy) {
           this.totalAssetsLocationsCount =

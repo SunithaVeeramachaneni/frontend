@@ -132,47 +132,46 @@ export class ImportTaskModalComponent implements OnInit {
   }
 
   selectFormElement = () => {
-    this.selectedRoundPlan?.forEach((page) => {
-      page.sections.forEach((sec) => {
-        sec.checked = false;
-        sec.questions.forEach((que) => {
-          que.checked = false;
-        });
-      });
-    });
-    this.data.selectedFormData = this.selectedRoundPlan;
+    this.data.selectedFormNode = this.selectedRoundPlan.node;
+    this.data.selectedFormData = this.selectedRoundPlan.filteredForm;
     this.data.openImportQuestionsSlider = true;
     this.dialogRef.close(this.data);
   };
 
   selectListItem(form, index) {
     this.selectedItem = index;
-    this.disableSelectBtn = false;
 
     this.operatorRoundsService
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
         map((authoredFormDetail) => {
           this.data.selectedFormName = form.name;
-          const filteredForm = JSON.parse(authoredFormDetail.pages);
-          let sectionData;
-          const pageData = filteredForm.map((page) => {
-            sectionData = page.sections.map((section) => {
-              const questionsArray = [];
-              page.questions.forEach((question) => {
-                if (section.id === question.sectionId) {
-                  questionsArray.push(question);
-                }
-              });
-              return { ...section, questions: questionsArray };
-            });
-            return { ...page, sections: sectionData };
-          });
-          return pageData;
+          const filteredForm = JSON.parse(authoredFormDetail.subForms);
+          const node = JSON.parse(authoredFormDetail.hierarchy);
+          let x = {
+            filteredForm,
+            node
+          };
+          return x;
+          // const pageData = filteredForm.map((page) => {
+          //   sectionData = page.sections.map((section) => {
+          //     const questionsArray = [];
+          //     page.questions.forEach((question) => {
+          //       if (section.id === question.sectionId) {
+          //         questionsArray.push(question);
+          //       }
+          //     });
+          //     return { ...section, questions: questionsArray };
+          //   });
+          //   return { ...page, sections: sectionData };
+          // });
+          // return pageData;
         })
       )
       .subscribe((response) => {
         this.selectedRoundPlan = response;
+        this.disableSelectBtn = false;
+        console.log(this.selectedRoundPlan.filteredForm);
       });
   }
 }

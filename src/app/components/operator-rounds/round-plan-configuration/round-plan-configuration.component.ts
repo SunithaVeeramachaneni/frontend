@@ -116,8 +116,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   selectedHierarchyList: any;
   selectedFormName: string;
   selectedFormData: any;
+  selectedFormNode: any;
   currentFormData: any;
-
+  hierarcyInput$: Observable<any>;
   selectedNode: any;
   hierarchyMode$: Observable<any>;
   hierarchyMode: 'asset_hierarchy';
@@ -147,6 +148,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.hierarcyInput$ = this.store.select(getSelectedHierarchyList);
     this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
       tap((data) => {
         if (data && Object.keys(data).length) {
@@ -698,12 +700,14 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       data: {
         selectedFormData: '',
         selectedFormName: '',
+        selectedFormNode: '',
         openImportQuestionsSlider: false
       }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
+      this.selectedFormNode = result.selectedFormNode;
       this.selectedFormName = result.selectedFormName;
       this.authoredFormDetail$.subscribe((pagesData) => {
         this.currentFormData = pagesData;

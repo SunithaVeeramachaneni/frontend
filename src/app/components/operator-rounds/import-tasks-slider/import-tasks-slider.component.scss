@@ -1,0 +1,24 @@
+@import '../../../../scss/colors.scss';
+
+// .import-tasks-modal {
+//   height: 535px;
+//   width: 500px;
+// }
+
+#import-form-customizer {
+  position: fixed;
+  bottom: 0px;
+  top: 0;
+  right: 314px;
+  width: 900px;
+  z-index: 999;
+  background-color: $white;
+  border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
+  .heading {
+    margin-left: 11px;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 24px;
+  }
+}

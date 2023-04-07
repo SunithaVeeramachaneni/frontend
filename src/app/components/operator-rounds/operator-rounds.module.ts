@@ -74,7 +74,7 @@ import { ActionsComponent } from './actions/actions.component';
 import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
 import { ChartComponent } from './observations/donut-chart/chart.component';
 import { AssignRoundComponent } from './assign-round/assign-round.component';
-
+import { ImportTasksSliderComponent } from './import-tasks-slider/import-tasks-slider.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -106,7 +106,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ActionsComponent,
     IssuesActionsDetailViewComponent,
     ChartComponent,
-    AssignRoundComponent
+    AssignRoundComponent,
+    ImportTasksSliderComponent
   ],
   imports: [
     FormsModule,

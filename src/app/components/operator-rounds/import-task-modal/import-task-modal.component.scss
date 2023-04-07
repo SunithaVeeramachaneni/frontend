@@ -1,7 +1,7 @@
 @import '../../../../scss/colors.scss';
 
 .import-questions-modal {
-  height: 500px;
+  height: 535px;
   width: 500px;
   overflow: hidden;
 
@@ -102,4 +102,7 @@
 
 .ghost-loading {
   padding: 0 15px;
+}
+.rounds-filter {
+  right: 290px;
 }

@@ -1,0 +1,35 @@
+<div id="import-form-customizer">
+  <div class="header">
+    <h2 class="heading" translate="Import Tasks"></h2>
+    <div class="dis-flex">
+      <div class="width-40">
+        <h2>{{ selectedFormName }}</h2>
+        <app-hierarchy-container
+          [hierarcyInput$]="hierarcyInput$"
+          [isPreview]="true"
+        >
+        </app-hierarchy-container>
+      </div>
+      <div class="width-60">
+        <app-import-questions-slider [isFooter]="false" [title]="rounds">
+        </app-import-questions-slider>
+      </div>
+    </div>
+  </div>
+
+  <div class="import-form-footer">
+    <button
+      mat-stroked-button
+      class="cancel-button"
+      (click)="cancel()"
+      translate="cancel"
+    ></button>
+    <button
+      mat-raised-button
+      color="primary"
+      class="use-button"
+      (click)="useForm()"
+      translate="use"
+    ></button>
+  </div>
+</div>

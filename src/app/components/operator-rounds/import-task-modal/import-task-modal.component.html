@@ -3,8 +3,16 @@
   *ngIf="{ formMetadata: formMetadata$ | async }"
 >
   <div class="dis-flex heading-conatiner">
-    <h2 class="heading" translate>selectRoundPlan</h2>
+    <h2 class="heading" translate>Import from?</h2>
     <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
+  </div>
+  <div class="list-view">
+    <div class="main-container">
+      <mat-tab-group animationDuration="0ms">
+        <mat-tab [label]="'TEMPLATES' | translate"> </mat-tab>
+        <mat-tab [label]="'ROUND PLANS' | translate"> </mat-tab>
+      </mat-tab-group>
+    </div>
   </div>
   <div class="search">
     <mat-form-field class="width-100" appearance="outline">
@@ -50,6 +58,24 @@
     </div>
   </div>
 
+  <!-- <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [ngClass]="{ 'rounds-filter': nameRound === true }"
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilter($event)"
+      (reset)="resetFilter()"
+    ></app-filter>
+  </ng-template> -->
   <div mat-dialog-actions class="actions">
     <button
       mat-raised-button
