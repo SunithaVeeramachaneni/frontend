@@ -2,7 +2,7 @@
 
 .search-container {
   position: fixed;
-  top: 79px;
+  top: 83px;
   right: 10px;
   z-index: 100;
 
@@ -25,6 +25,11 @@
       font-size: 110%;
       color: $gray1;
       margin-left: 5px;
+    }
+
+    .common-filter-icon {
+      width: 15px;
+      height: 15px;
     }
   }
 }
