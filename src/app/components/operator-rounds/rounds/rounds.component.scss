@@ -54,6 +54,10 @@
   ::ng-deep .date-picker mat-icon {
     line-height: 35px !important;
   }
+
+  ::ng-deep .cdk-column-locationAssetsCompleted {
+    width: 210px !important;
+  }
 }
 
 ::ng-deep .remove-zindex th {
