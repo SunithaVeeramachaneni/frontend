@@ -1,6 +1,5 @@
 .user-modal {
   width: 480px;
-  height: 450px;
   overflow: hidden;
   padding: 20px;
   background: #ffffff;
@@ -116,6 +115,7 @@
 .error-fields {
   white-space: nowrap;
   margin-left: -10px;
+  margin-top: 15px;
 }
 
 ::ng-deep .roles-select .mat-option-text {

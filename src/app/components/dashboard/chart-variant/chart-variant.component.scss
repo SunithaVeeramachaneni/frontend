@@ -1,42 +1,51 @@
-// .configurations-div {
-//   border-right: 1px solid #e5e5e5;
-// }
+.configurations-div {
+  ::ng-deep
+    .mat-button-toggle-group-appearance-standard
+    .mat-button-toggle
+    + .mat-button-toggle {
+    border-left: 1px solid #e5e5e5;
+  }
 
-::ng-deep .configurations-div .mat-button-toggle {
-  margin-right: 5px;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  align-items: center;
-  width: 35px;
-  height: 35px;
-}
+  ::ng-deep .mat-button-toggle {
+    margin-right: 5px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-group-appearance-standard
-  .mat-button-toggle
-  + .mat-button-toggle {
-  border-left: 1px solid #e5e5e5;
-}
+  ::ng-deep .mat-button-toggle-group-appearance-standard {
+    border: none;
+  }
 
-::ng-deep .configurations-div .mat-button-toggle-group-appearance-standard {
-  border: none;
-}
+  ::ng-deep .mat-button-toggle {
+    background: #ffffff;
+  }
 
-::ng-deep .configurations-div .mat-button-toggle {
-  background: #ffffff;
-}
+  ::ng-deep .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
+    background: #f2f2f2;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
-  background: #3d5afe;
-}
+  ::ng-deep .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+    background: #3d5afe;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
-  background: #f2f2f2;
+  ::ng-deep
+    .mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    padding: 0 !important;
+  }
+
+  ::ng-deep
+    .mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    line-height: 35px !important;
+  }
+
+  ::ng-deep mat-error {
+    margin: 5px 0;
+  }
 }
 
 .variants-title {
@@ -46,13 +55,4 @@
   color: #000000;
   margin-bottom: 5px;
   margin-top: 0px;
-}
-
-.chart-icons {
-  margin-top: -13px;
-  margin-left: -5px;
-}
-
-::ng-deep .configurations-div mat-error {
-  margin: 5px 0;
 }

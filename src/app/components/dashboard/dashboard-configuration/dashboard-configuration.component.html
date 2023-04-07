@@ -1,7 +1,4 @@
-<div
-  class="dashboard"
-  [ngClass]="dashboardDisplayMode === 'ALL' ? 'cust-row-all' : ''"
->
+<div class="dashboard">
   <mat-form-field
     appearance="outline"
     *ngIf="dashboardDisplayMode !== 'ALL'"
@@ -45,7 +42,7 @@
       </ng-container>
     </mat-select>
   </mat-form-field>
-  <div class="width-60 dis-flex">
+  <div class="width-60 dis-flex align-center">
     <span class="dashboard-title">
       {{ dashboard.name }}
       <span *ngIf="dashboard.isDefault" class="default-chip">Default</span>

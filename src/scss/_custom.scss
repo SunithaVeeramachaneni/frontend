@@ -372,6 +372,10 @@
   display: flex;
 }
 
+.align-center {
+  align-items: center;
+}
+
 button {
   cursor: pointer;
 }
@@ -767,12 +771,12 @@ body {
 
 .author-dropdown {
   width: 208px;
-  height: 36px;
+  height: 30px;
   border: 1px solid lightgrey;
   border-radius: 4px;
   background-color: white;
   font: inherit;
-  line-height: 1.5em;
+  line-height: 15px;
   padding: 0.5em 3.5em 0.5em 1em;
   margin-top: 10px;
   -webkit-box-sizing: border-box;
