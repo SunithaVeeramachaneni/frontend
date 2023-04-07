@@ -360,7 +360,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
-    this.getAllPlans();
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -415,17 +414,24 @@ export class PlansComponent implements OnInit, OnDestroy {
       map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
         this.isLoading$.next(false);
         if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
+          let plans = this.formatRoundPlans(
             roundPlans.rows,
             roundPlanScheduleConfigurations
           );
+          this.manageFilter(plans);
+          plans = this.filterData(plans);
+          console.log("plans=", plans);
+          this.initial.data = plans;
         } else {
-          this.initial.data = this.initial.data.concat(
+          let plans = this.initial.data.concat(
             this.formatRoundPlans(
               scrollData.rows,
               roundPlanScheduleConfigurations
             )
           );
+          this.manageFilter(plans);
+          plans = this.filterData(plans);
+          this.initial.data = plans;
         }
         this.skip = this.initial.data.length;
         return this.initial;
@@ -472,6 +478,51 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
+  filterData = (plans: any) => {
+    const filterBy = [];
+    if (this.filter.schedule) {
+      filterBy.push({
+        key: 'schedule',
+        value: this.filter.schedule,
+        type: 'string'
+      });
+    } 
+    if (this.filter.assignedTo) {
+      filterBy.push({
+        key: 'assignedToEmail',
+        value: this.filter.assignedTo,
+        type: 'string'
+      });
+    }
+    if (this.filter.scheduleStartDate && this.filter.scheduleEndDate) {
+      
+    }
+    console.log("filterBy=", filterBy);
+    if (filterBy.length > 0) { 
+      plans = plans.filter((item) => {
+        for (let i = 0; i < filterBy.length; i += 1) {
+          if (filterBy[i].key !== 'scheduleDates') {
+            let filterItem = item[filterBy[i].key];
+            if (filterItem) {
+              filterItem = filterItem.toLowerCase();
+            }
+            if (filterBy[i].value.indexOf(filterItem) == -1) {
+              return false;
+            }
+          } else {
+             
+          }
+        }
+        return true;
+      });
+      console.log(plans);
+      return plans;
+    } else {
+      console.log(plans);
+      return plans;
+    }
+  }
+
   getRoundPlanList() {
     const obj = {
       nextToken: this.nextToken,
@@ -481,7 +532,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$({ ...obj, ...this.filter}).pipe(
+    return this.operatorRoundsService.getPlansList$(obj).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.roundPlanCounts;
@@ -494,42 +545,35 @@ export class PlansComponent implements OnInit, OnDestroy {
       })
     );
   }
-
-  getAllPlans() {
-    this.rpscService
-      .fetchRoundPlanScheduleConfigurations$()
-      .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
-    this.operatorRoundsService.fetchAllPlansList$().subscribe((formsList: any) => {
-      console.log(this.roundPlanScheduleConfigurations);
-      const result = this.formatRoundPlans(
-        formsList,
-        this.roundPlanScheduleConfigurations
-      )
-      const uniqueSchedule = result
-        .map((item) => item.schedule)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      console.log(uniqueSchedule);
-      const uniqueAssignedTo = result
-        .map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueAssignedTo) {
-        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-          this.assignedTo.push(item);
-        }
+ 
+  manageFilter(result) {
+    const uniqueSchedule = result
+      .map((item) => item.schedule)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    console.log(uniqueSchedule);
+    const uniqueAssignedTo = result
+      .map((item) => item.assignedToEmail)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    this.schedule = [];
+    this.assignedTo = [];
+    for (const item of uniqueAssignedTo) {
+      if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+        this.assignedTo.push(item);
       }
-      for (const item of uniqueSchedule) {
-        if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-          this.schedule.push(item);
-        }
+    }
+    for (const item of uniqueSchedule) {
+      if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+        this.schedule.push(item);
       }
-      for (const item of this.filterJson) {
-        if (item['column'] === 'assignedTo') {
-          item.items = this.assignedTo;
-        } else if (item['column'] === 'schedule') {
-          item.items = this.schedule;
-        }
+    }
+    for (const item of this.filterJson) {
+      if (item['column'] === 'assignedTo') {
+        item.items = this.assignedTo;
+      } else if (item['column'] === 'schedule') {
+        item.items = this.schedule;
       }
-    });
+    }
+    return result;
   }
 
 
@@ -710,7 +754,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormatedScheduleDates(
               roundPlanScheduleConfiguration
             ),
-            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration)
+            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
+            assignedToEmail: this.getAssignedToEmail(roundPlanScheduleConfiguration)
           };
         }
         return data;
@@ -762,6 +807,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
+            roundPlanScheduleConfigurations[roundPlan.id]
+          ),
+          assignedToEmail: this.getAssignedToEmail(
             roundPlanScheduleConfigurations[roundPlan.id]
           )
         };
@@ -828,6 +876,15 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfiguration;
     return value
       ? this.operatorRoundsService.getUserFullName(value)
+      : this.placeHolder;
+  }
+  getAssignedToEmail(
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+  ) {
+    const { assignmentDetails: { value } = {} } =
+      roundPlanScheduleConfiguration;
+    return value
+      ? value
       : this.placeHolder;
   }
 
