@@ -669,7 +669,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
-            this.cdrf.detectChanges();
+            this.cdrf.markForCheck();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'
