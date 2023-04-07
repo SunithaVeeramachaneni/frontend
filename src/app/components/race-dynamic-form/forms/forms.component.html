@@ -66,7 +66,7 @@
         autocomplete="off"
         [formControl]="searchForm"
       />
-      <img
+      <!-- <img
         src="assets/maintenance-icons/filterIcon.svg"
         matSuffix
         cdkOverlayOrigin
@@ -74,7 +74,16 @@
         alt="Open Filter"
         #trigger="cdkOverlayOrigin"
         (click)="isPopoverOpen = !isPopoverOpen"
-      />
+      /> -->
+
+      <svg-icon
+        icon="icon-filterIcon"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
+        matSuffix
+        class="filter-icon"
+      ></svg-icon>
     </mat-form-field>
   </span>
   <ng-template

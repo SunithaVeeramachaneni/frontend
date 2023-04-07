@@ -6,13 +6,9 @@
     (change)="onChartVarientChange($event)"
     style="margin: 0 0 15px 0"
   >
-    <mat-button-toggle
-      value="bar_y"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Column Chart"
-    >
-      <img
-        [src]="getImage('bar_chart', f.chartVarient.value === 'bar_y')"
+    <mat-button-toggle value="bar_y" [disabled]="report.groupBy?.length === 0">
+      <svg-icon
+        icon="icon-bar_chart"
         class="chart-icons"
         *ngIf="f.chartVarient.value !== 'bar_y'"
       ></svg-icon>
@@ -22,13 +18,9 @@
         *ngIf="f.chartVarient.value === 'bar_y'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="bar_x"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Bar Chart"
-    >
-      <img
-        [src]="getImage('column_chart', f.chartVarient.value === 'bar_x')"
+    <mat-button-toggle value="bar_x" [disabled]="report.groupBy?.length === 0">
+      <svg-icon
+        icon="icon-column_chart"
         class="chart-icons"
         *ngIf="f.chartVarient.value !== 'bar_x'"
       ></svg-icon>
@@ -70,13 +62,9 @@
         *ngIf="f.chartVarient.value === 'stacked_bar_x'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="line_x"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Line Chart"
-    >
-      <img
-        [src]="getImage('line_chart', f.chartVarient.value === 'line_x')"
+    <mat-button-toggle value="line_x" [disabled]="report.groupBy?.length === 0">
+      <svg-icon
+        icon="icon-line_chart"
         class="chart-icons"
         *ngIf="f.chartVarient.value !== 'line_x'"
       ></svg-icon>
@@ -86,23 +74,9 @@
         *ngIf="f.chartVarient.value === 'line_x'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="area"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Area Chart"
-    >
-      <img
-        [src]="getImage('area_chart', f.chartVarient.value === 'area')"
-        class="chart-icons"
-      />
-    </mat-button-toggle>
-    <mat-button-toggle
-      value="pie"
-      [disabled]="report.groupBy?.length === 0"
-      matTooltip="Pie Chart"
-    >
-      <img
-        [src]="getImage('pie_chart', f.chartVarient.value === 'pie')"
+    <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0">
+      <svg-icon
+        icon="icon-pie_chart"
         class="chart-icons"
         *ngIf="f.chartVarient.value !== 'pie'"
       ></svg-icon>
@@ -128,13 +102,9 @@
         *ngIf="f.chartVarient.value === 'doughnut'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle
-      value="table"
-      *ngIf="displayTableVarient"
-      matTooltip="Table"
-    >
-      <img
-        [src]="getImage('table', f.chartVarient.value === 'table')"
+    <mat-button-toggle value="table" *ngIf="displayTableVarient">
+      <svg-icon
+        icon="icon-table"
         class="chart-icons"
         *ngIf="f.chartVarient.value !== 'table'"
       ></svg-icon>

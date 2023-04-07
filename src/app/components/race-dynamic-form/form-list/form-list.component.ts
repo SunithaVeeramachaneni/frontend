@@ -78,7 +78,7 @@ export class FormListComponent implements OnInit {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    
+
     {
       id: 'formStatus',
       displayName: 'Status',
@@ -231,7 +231,7 @@ export class FormListComponent implements OnInit {
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  //filterIcon = 'icon-filterIcon';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
@@ -530,10 +530,7 @@ export class FormListComponent implements OnInit {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(
-    form: GetFormList,
-    rows: GetFormList[]
-  ) {
+  private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
       const regex: RegExp = generateCopyRegex(form?.name);
