@@ -20,6 +20,9 @@
   .cancel-icon {
     cursor: pointer;
     font-size: 150%;
+    color: $dark-gray;
+    position: relative;
+    top: -3px;
   }
   .search {
     width: 100%;
@@ -52,7 +55,7 @@
 
   .orange-color {
     color: $gray1;
-    margin: 21px 0px 12px 22px;
+    margin: 15px 0px 20px 22px;
   }
 
   .content {
@@ -113,7 +116,13 @@
     color: $blue-main;
     border: none;
     background: none;
+    margin-bottom: 5px;
+  }
+
+  .add-btn-margin {
     margin-bottom: 35px;
+    position: relative;
+    top: -13px;
   }
 
   .height-50 {

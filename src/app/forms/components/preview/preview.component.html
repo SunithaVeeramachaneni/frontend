@@ -1,9 +1,14 @@
 <div class="preview" *ngIf="previewFormData$ | async as pageData">
+  <!-- {{ pageIndex }} -->
+  <!-- {{ subFormId }} -->
+  <!-- {{ pageData | json }} -->
   <div
     *ngFor="let page of pageData; let i = index"
     class="pages"
     [ngClass]="{ active: pageIndex === i + 1 }"
   >
+    <!-- {{ pageData | json }} -->
+    <!-- {{ subFormId }} -->
     <div class="page-header">
       <div class="page-name">{{ page.name }}</div>
       <div class="task-progress-bar">0/{{ page.sections.length }} Filled</div>

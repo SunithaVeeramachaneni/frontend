@@ -1,0 +1,56 @@
+.history-bottom-list {
+  text-align: center;
+  padding: 0;
+  width: 100%;
+  .history-bottom-list-heading {
+    font-size: medium;
+    font-weight: bold;
+  }
+  .history-bottom-list-action {
+    color: rgb(43, 179, 233);
+    border-color: white;
+    background-color: white;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex-end;
+    justify-content: space-between;
+    float: right;
+    font-size: 1rem;
+  }
+}
+.history-question {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.history-bottom-sheet-box {
+  border-color: black;
+  border-bottom: 1rem;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.history-bottom-sheet-chart {
+  width: 400px;
+}
+.history-bottom-list-content {
+  .history-bottom-list-table-header {
+    margin-left: 100px;
+    padding-left: 10px;
+    text-align: center;
+  }
+  .history-bottom-sheet-table {
+    border-collapse: collapse;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    text-align: left;
+    margin-left: 30px;
+  }
+  .history-bottom-sheet-table-heading {
+    padding-right: 90px;
+    padding-left: 0px;
+    text-align: center;
+  }
+}

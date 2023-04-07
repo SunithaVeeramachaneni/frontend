@@ -588,7 +588,6 @@ button.mat-menu-item {
 
 .tableMain tr.mat-header-row {
   height: 48px;
-  
 }
 
 .mat-tab-label .mat-tab-label-content {
@@ -619,4 +618,32 @@ button.mat-menu-item {
 .round-plan-schedule-success-modal {
   background-color: $black;
   opacity: 0.6;
+}
+
+.preview-menu {
+  position: fixed;
+  top: 494px;
+  right: 64px;
+  max-width: 233.6px;
+  min-width: 233.6px;
+  width: 233.6px;
+  padding: 0;
+  border-radius: 24px;
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.mat-bottom-sheet-container {
+  min-width: 233.6px;
+  max-width: 233.6;
+  width: 233.6;
+  padding: 0;
+}
+
+.mat-bottom-sheet-container-large {
+  min-width: 233.6px;
+  max-width: 233.6;
+  width: 233.6;
+  padding: 0;
 }

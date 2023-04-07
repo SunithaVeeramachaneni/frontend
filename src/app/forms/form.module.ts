@@ -80,6 +80,9 @@ import { DropdownResponseComponent } from './components/preview/response-types/d
 import { ArrayResponseComponent } from './components/preview/response-types/array-response/array-response.component';
 import { VisibleInputResponseComponent } from './components/preview/response-types/visible-input-response/visible-input-response.component';
 import { AttachmentResponseComponent } from './components/preview/response-types/attachment-response/attachment-response.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [
@@ -150,11 +153,14 @@ import { AttachmentResponseComponent } from './components/preview/response-types
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatBottomSheetModule,
+    MatListModule,
     MatIconModule,
     MatCardModule,
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
+    MatSidenavModule,
     MatCheckboxModule,
     MatButtonToggleModule,
     MatRadioModule,

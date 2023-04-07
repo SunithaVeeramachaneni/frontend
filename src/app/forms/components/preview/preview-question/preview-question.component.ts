@@ -24,6 +24,9 @@ import { DateRangeResponseComponent } from '../response-types/date-range-respons
 import { AttachmentResponseComponent } from '../response-types/attachment-response/attachment-response.component';
 import { DropdownResponseComponent } from '../response-types/dropdown-response/dropdown-response.component';
 import { VisibleInputResponseComponent } from '../response-types/visible-input-response/visible-input-response.component';
+import { MoreMenuComponent } from '../more-menu/more-menu.component';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { HistoryBottomSheetComponent } from '../history-bottom-sheet/history-bottom-sheet.component';
 @Component({
   selector: 'app-preview-question',
   templateUrl: './preview-question.component.html',
@@ -57,11 +60,20 @@ export class PreviewQuestionComponent implements OnInit {
     DropdownResponseComponent
   ];
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private bottomSheet: MatBottomSheet
+  ) {}
 
   ngOnInit(): void {
     this.initializeFieldTypeRef();
     this.loadDynamicResponseType();
+  }
+
+  openMoreMenu(): void {
+    this.bottomSheet.open(MoreMenuComponent, {
+      panelClass: 'preview-menu'
+    });
   }
 
   private initializeFieldTypeRef(): void {

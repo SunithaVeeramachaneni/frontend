@@ -1,0 +1,22 @@
+.bottom-list {
+  text-align: center;
+  padding: 0;
+  width: 100%;
+  .close-bottom-sheet {
+    width: 100%;
+    background-color: white;
+    border-color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .skip-task-list-item {
+    color: red;
+  }
+  .history-bottom-sheet {
+    width: 100%;
+    background-color: white;
+    border-color: white;
+    border: none;
+    cursor: pointer;
+  }
+}

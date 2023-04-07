@@ -28,7 +28,6 @@ export class PreviewComponent implements OnInit, OnChanges {
 
   isSectionOpenState = true;
   fieldTypes: any;
-  arrayField = false;
   sliderOptions = {
     value: 0,
     min: 0,
@@ -41,7 +40,10 @@ export class PreviewComponent implements OnInit, OnChanges {
   constructor(private store: Store<State>) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.page && changes.page.currentValue) {
+      console.log('Page Index Previous: ' + this.pageIndex);
+      console.log('Changes: ', changes.page.currentValue);
       this.pageIndex = changes.page.currentValue;
+      console.log('Page Index Current: ' + this.pageIndex);
     }
     if (
       changes.subFormId &&
@@ -67,7 +69,6 @@ export class PreviewComponent implements OnInit, OnChanges {
                 return { ...page, sections: sectionData };
               });
             }
-            // console.log('Page Data: ' + JSON.stringify(pageData));
             return pageData;
           })
         );
@@ -76,9 +77,6 @@ export class PreviewComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
-  }
-  openBottomSheet(): void {
-    this.arrayField = !this.arrayField;
   }
 
   toggleSectionOpenState = () => {

@@ -35,7 +35,6 @@ export class IphoneComponent implements OnInit {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         this.formMetadata = formMetadata;
-        console.dir(this.formMetadata);
       })
     );
 
