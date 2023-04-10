@@ -14,6 +14,7 @@ import {
   shareReplay
 } from 'rxjs/operators';
 
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -546,6 +547,17 @@ export class ResponsesListComponent implements OnInit {
         });
       }
     });
+  }
+  exportAsXLSX(): void {
+    console.log('tsfile');
+    this.responseSetService
+      .downloadSampleResponseSetTemplate()
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Response-Set_Sample_Template');
+        })
+      )
+      .subscribe();
   }
 
   resetFile(event: Event) {

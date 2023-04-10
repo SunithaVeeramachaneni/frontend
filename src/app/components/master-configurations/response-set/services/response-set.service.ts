@@ -142,6 +142,18 @@ export class ResponseSetService {
     }, {});
   }
 
+  downloadSampleResponseSetTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    console.log('service');
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/sample-template',
+      info,
+      true,
+      {}
+    );
+  }
   getResponseSetCount$(): Observable<number> {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.maxLimit);

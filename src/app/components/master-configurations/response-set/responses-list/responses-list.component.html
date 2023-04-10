@@ -50,16 +50,16 @@
             </button>
           </mat-menu>
 
-          <!-- <button
+          <button
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
-            *appCheckUserHasPermission="[perms.importGlobalResponses]"
+            *appCheckUserHasPermission="[perms.importLocations]"
           >
             <mat-icon>more_horiz</mat-icon>
           </button>
-          <mat-menu #moreMenu="matMenu" mat-menu-item class="menu-buttons">
-            <button disabled>
+          <mat-menu #moreMenu="matMenu">
+            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
                 alt="Excel"
@@ -67,7 +67,8 @@
               />
               <span translate="downloadTemplate"></span>
             </button>
-          </mat-menu> -->
+          </mat-menu>
+
           <input
             id="upload"
             hidden
