@@ -63,6 +63,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { validateDateBetweenTwoDates } from 'src/app/shared/utils/dateUtil';
 
 @Component({
   selector: 'app-forms',
@@ -438,13 +439,17 @@ export class FormsComponent implements OnInit, OnDestroy {
       });
     }
     if (this.filter.scheduleStartDate && this.filter.scheduleEndDate) {
-
+      filterBy.push({
+        key: 'scheduleDate',
+        value: [this.filter.scheduleStartDate, this.filter.scheduleEndDate],
+        type: 'string'
+      });
     }
     console.log("filterBy=", filterBy);
     if (filterBy.length > 0) {
       plans = plans.filter((item) => {
         for (let i = 0; i < filterBy.length; i += 1) {
-          if (filterBy[i].key !== 'scheduleDates') {
+          if (filterBy[i].key !== 'scheduleDate') {
             let filterItem = item[filterBy[i].key];
             if (filterItem) {
               filterItem = filterItem.toLowerCase();
@@ -453,7 +458,16 @@ export class FormsComponent implements OnInit, OnDestroy {
               return false;
             }
           } else {
-
+            let scheduleDate = item.scheduleDate;
+            let dates = filterBy[i].value;
+            if (scheduleDate) {
+              if (!(validateDateBetweenTwoDates(scheduleDate.formatedStartDate, scheduleDate.formatedEndDate, dates[0]) &&
+                validateDateBetweenTwoDates(scheduleDate.formatedStartDate, scheduleDate.formatedEndDate, dates[1]))) {
+                return false;
+              }
+            } else {
+              return false;
+            }
           }
         }
         return true;
@@ -488,44 +502,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
   }
-
-  // getAllForms() {
-  //   const formScheduleConfigurations$ = this.formScheduleConfigurationService
-  //     .fetchFormScheduleConfigurations$()
-  //     .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
-  //   this.raceDynamicFormService.getAllFormQuestionsFormsList$().subscribe((formsList: any) => {
-  //     console.log(this.formScheduleConfigurations);
-  //     const result: any = this.formatForms(
-  //       formsList,
-  //       this.formScheduleConfigurations
-  //     )
-  //     const uniqueSchedule = result
-  //       .map((item) => item.schedule)
-  //       .filter((value, index, self) => self.indexOf(value) === index);
-  //     console.log(uniqueSchedule);
-  //     const uniqueAssignedTo = result
-  //       .map((item) => item.assignedTo)
-  //       .filter((value, index, self) => self.indexOf(value) === index);
-  //     for (const item of uniqueAssignedTo) {
-  //       if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-  //         this.assignedTo.push(item);
-  //       }
-  //     }
-  //     for (const item of uniqueSchedule) {
-  //       if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-  //         this.schedule.push(item);
-  //       }
-  //     }
-  //     for (const item of this.filterJson) {
-  //       if (item['column'] === 'assignedTo') {
-  //         item.items = this.assignedTo;
-  //       } else if (item['column'] === 'schedule') {
-  //         item.items = this.schedule;
-  //       }
-  //     }
-  //   });
-  // }
-
 
   handleTableEvent = (event): void => {
     this.fetchForms$.next(event);

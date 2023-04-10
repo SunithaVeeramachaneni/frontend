@@ -66,6 +66,7 @@ import {
   ScheduleConfigEvent
 } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { validateDateBetweenTwoDates } from 'src/app/shared/utils/dateUtil';
 
 @Component({
   selector: 'app-plans',
@@ -492,13 +493,16 @@ export class PlansComponent implements OnInit, OnDestroy {
       });
     }
     if (this.filter.scheduleStartDate && this.filter.scheduleEndDate) {
-      
+      filterBy.push({
+        key: 'scheduleDate',
+        value: [this.filter.scheduleStartDate, this.filter.scheduleEndDate],
+        type: 'string'
+      });
     }
-    console.log("filterBy=", filterBy);
     if (filterBy.length > 0) { 
       plans = plans.filter((item) => {
         for (let i = 0; i < filterBy.length; i += 1) {
-          if (filterBy[i].key !== 'scheduleDates') {
+          if (filterBy[i].key !== 'scheduleDate') {
             let filterItem = item[filterBy[i].key];
             if (filterItem) {
               filterItem = filterItem.toLowerCase();
@@ -507,15 +511,23 @@ export class PlansComponent implements OnInit, OnDestroy {
               return false;
             }
           } else {
-             
+            let scheduleDate = item.scheduleDate;
+            let dates = filterBy[i].value;
+            if (scheduleDate) {
+              if (!(validateDateBetweenTwoDates(scheduleDate.formatedStartDate, scheduleDate.formatedEndDate, dates[0]) &&
+                validateDateBetweenTwoDates(scheduleDate.formatedStartDate, scheduleDate.formatedEndDate, dates[1])))
+              {
+                return false;
+              }
+            } else {
+              return false;
+            }
           }
         }
         return true;
       });
-      console.log(plans);
       return plans;
     } else {
-      console.log(plans);
       return plans;
     }
   }
