@@ -67,49 +67,50 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.createFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        return this.raceDynamicFormService.createFormDetail$(formDetail).pipe(
-          mergeMap((response) =>
-            forkJoin([
-              this.raceDynamicFormService.updateForm$({
-                formMetadata: {
-                  ...formDetail.formMetadata,
-                  lastPublishedBy: this.loginService.getLoggedInUserName(),
-                  publishedDate: new Date().toISOString(),
-                  formStatus: formConfigurationStatus.published
-                },
-                formListDynamoDBVersion: action.formListDynamoDBVersion
-              }),
-              this.raceDynamicFormService.updateAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formStatus: formConfigurationStatus.published,
-                formDetailPublishStatus: formConfigurationStatus.published
-              }),
-              this.raceDynamicFormService.createAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formDetailPublishStatus: formConfigurationStatus.published,
-                authoredFormDetailVersion:
-                  authoredFormDetail.authoredFormDetailVersion + 1
-              })
-            ]).pipe(
-              map(([, , createAuthoredFormDetail]) =>
-                FormConfigurationApiActions.createFormDetailSuccess({
-                  formDetail: response,
-                  authoredFormDetail: createAuthoredFormDetail,
+        return this.raceDynamicFormService
+          .updateForm$({
+            formMetadata: {
+              ...formDetail.formMetadata,
+              lastPublishedBy: this.loginService.getLoggedInUserName(),
+              publishedDate: new Date().toISOString(),
+              formStatus: formConfigurationStatus.published
+            },
+            formListDynamoDBVersion: action.formListDynamoDBVersion
+          })
+          .pipe(
+            mergeMap((response) =>
+              forkJoin([
+                this.raceDynamicFormService.updateAuthoredFormDetail$({
+                  ...authoredFormDetail,
                   formStatus: formConfigurationStatus.published,
                   formDetailPublishStatus: formConfigurationStatus.published
+                }),
+                this.raceDynamicFormService.createAuthoredFormDetail$({
+                  ...authoredFormDetail,
+                  formDetailPublishStatus: formConfigurationStatus.published,
+                  authoredFormDetailVersion:
+                    authoredFormDetail.authoredFormDetailVersion + 1
                 })
+              ]).pipe(
+                map(([, createAuthoredFormDetail]) =>
+                  FormConfigurationApiActions.createFormDetailSuccess({
+                    formDetail: response?.data?.updateFormList,
+                    authoredFormDetail: createAuthoredFormDetail,
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published
+                  })
+                )
               )
-            )
-          ),
-          catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
-            return of(
-              FormConfigurationApiActions.createFormDetailFailure({
-                error
-              })
-            );
-          })
-        );
+            ),
+            catchError((error) => {
+              this.raceDynamicFormService.handleError(error);
+              return of(
+                FormConfigurationApiActions.createFormDetailFailure({
+                  error
+                })
+              );
+            })
+          );
       })
     )
   );
@@ -119,48 +120,49 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.updateFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
-        return this.raceDynamicFormService.updateFormDetail$(formDetail).pipe(
-          mergeMap((response) =>
-            forkJoin([
-              this.raceDynamicFormService.updateForm$({
-                formMetadata: {
-                  ...formDetail.formMetadata,
-                  lastPublishedBy: this.loginService.getLoggedInUserName(),
-                  publishedDate: new Date().toISOString()
-                },
-                formListDynamoDBVersion: action.formListDynamoDBVersion
-              }),
-              this.raceDynamicFormService.updateAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formStatus: formConfigurationStatus.published,
-                formDetailPublishStatus: formConfigurationStatus.published
-              }),
-              this.raceDynamicFormService.createAuthoredFormDetail$({
-                ...authoredFormDetail,
-                formDetailPublishStatus: formConfigurationStatus.published,
-                authoredFormDetailVersion:
-                  authoredFormDetail.authoredFormDetailVersion + 1
-              })
-            ]).pipe(
-              map(([, , createAuthoredFormDetail]) =>
-                FormConfigurationApiActions.updateFormDetailSuccess({
-                  formDetail: response,
-                  authoredFormDetail: createAuthoredFormDetail,
+        return this.raceDynamicFormService
+          .updateForm$({
+            formMetadata: {
+              ...formDetail.formMetadata,
+              lastPublishedBy: this.loginService.getLoggedInUserName(),
+              publishedDate: new Date().toISOString()
+            },
+            formListDynamoDBVersion: action.formListDynamoDBVersion
+          })
+          .pipe(
+            mergeMap((response) =>
+              forkJoin([
+                this.raceDynamicFormService.updateAuthoredFormDetail$({
+                  ...authoredFormDetail,
                   formStatus: formConfigurationStatus.published,
                   formDetailPublishStatus: formConfigurationStatus.published
+                }),
+                this.raceDynamicFormService.createAuthoredFormDetail$({
+                  ...authoredFormDetail,
+                  formDetailPublishStatus: formConfigurationStatus.published,
+                  authoredFormDetailVersion:
+                    authoredFormDetail.authoredFormDetailVersion + 1
                 })
+              ]).pipe(
+                map(([, createAuthoredFormDetail]) =>
+                  FormConfigurationApiActions.updateFormDetailSuccess({
+                    formDetail: response?.data?.updateFormList,
+                    authoredFormDetail: createAuthoredFormDetail,
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published
+                  })
+                )
               )
-            )
-          ),
-          catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
-            return of(
-              FormConfigurationApiActions.updateFormDetailFailure({
-                error
-              })
-            );
-          })
-        );
+            ),
+            catchError((error) => {
+              this.raceDynamicFormService.handleError(error);
+              return of(
+                FormConfigurationApiActions.updateFormDetailFailure({
+                  error
+                })
+              );
+            })
+          );
       })
     )
   );

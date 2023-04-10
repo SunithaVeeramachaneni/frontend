@@ -40,13 +40,10 @@
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div *ngIf="(rounds$ | async) && (isLoading$ | async) === false" class="rounds-list">
-    <div *ngIf="(rounds$ | async) && (isLoading$ | async) === false" class="rounds-list">
-      <cwp-dynamictable [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }" [dataSource]="dataSource"
-        [configOptions]="configOptions" (fetchDataCallback)="handleTableEvent($event)"
-        (cellClickActionHandler)="cellClickActionHandler($event)"
-        (rowLevelActionHandler)="rowLevelActionHandler($event)"
-        (onChangeDueDateHandler)="onChangeDueDateHandler($event)" class="width-100"></cwp-dynamictable>
-    </div>
+    <cwp-dynamictable [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }" [dataSource]="dataSource"
+      [configOptions]="configOptions" (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)" (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (onDateChangeHandler)="onChangeDueDateHandler($event)" class="width-100"></cwp-dynamictable>
   </div>
 
   <div *ngIf="isLoading$ | async">

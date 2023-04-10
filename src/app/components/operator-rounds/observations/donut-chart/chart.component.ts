@@ -55,6 +55,8 @@ export class ChartComponent implements OnInit, OnChanges {
     },
     legend: {
       orient: 'horizontal',
+      itemWidth: 20,
+      itemHeight: 20,
       top: '90%'
     },
     series: [

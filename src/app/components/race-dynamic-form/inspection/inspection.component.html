@@ -12,20 +12,22 @@
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
-    <span class="no-of-rounds">
-      <ng-container *ngIf="(isLoading$ | async) === false; else loadingRounds">
-        <span class="rounds-count"> {{ roundsCount }} </span>
-        <span class="rounds-text">{{
+    <span class="no-of-inspections">
+      <ng-container
+        *ngIf="(isLoading$ | async) === false; else loadingInspections"
+      >
+        <span class="inspections-count"> {{ inspectionsCount }} </span>
+        <span class="inspections-text">{{
           'inspectionPlural'
             | translate
               : {
-                  count: roundsCount || 0
+                  count: inspectionsCount || 0
                 }
         }}</span>
       </ng-container>
-      <ng-template #loadingRounds>
+      <ng-template #loadingInspections>
         <ngx-shimmer-loading
-          class="loading-rounds"
+          class="loading-inspections"
           [width]="'100%'"
           [height]="'35px'"
         >
@@ -82,6 +84,7 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (onDateChangeHandler)="onChangeDueDateHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>
@@ -94,4 +97,19 @@
       </div>
     </div>
   </div>
+  <ng-container *ngIf="users$ | async">
+    <button
+      style="display: none"
+      mat-button
+      [matMenuTriggerFor]="assigneeMenu"
+      #assigneeMenuTrigger="matMenuTrigger"
+    ></button>
+    <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
+      <app-assign-inspection
+        [assigneeDetails]="assigneeDetails"
+        [dropdownPosition]="assigneePosition"
+        (selectedAssignee)="selectedAssigneeHandler($event)"
+      ></app-assign-inspection>
+    </mat-menu>
+  </ng-container>
 </ng-container>

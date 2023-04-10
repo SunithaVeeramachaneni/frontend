@@ -65,6 +65,7 @@ import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
 import { environment } from 'src/environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -84,6 +85,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
+    AssignInspectionComponent,
     ArchivedDeleteModalComponent,
     ImportQuestionsModalComponent,
     SchedulerComponent,

@@ -58,10 +58,12 @@
   "range": "Range:",
   "multiLabel": "Allow more than one selection",
   "responseHeading": "Responses",
+  "chooseResponses": "Choose Responses",
   "questionHeading": "RESPONSES",
   "multiChoiceHeading": "MULTIPLE CHOICE RESPONSES",
   "addNew": "Add New",
-  "globalResponseHeading": "GLOBAL RESPONSES",
+  "addMore": "Add More",
+  "globalPicklist": "Global Picklist",
   "slider": "Slider",
   "from": "From",
   "to": "To",
@@ -94,6 +96,7 @@
   "mandateQuestions": "Mandate Tasks",
   "hideQuestions": "Hide Tasks",
   "mandateAttachment": "Mandate Attachment",
+  "askEvidence": "Ask Evidence",
   "raiseIssue": "Raise Issue",
   "historyTxt": "History",
   "then": "then",
@@ -257,5 +260,6 @@
   "publishPlanTitle": "Alert",
   "publishPlanBody": "Plan cannot be published with blank tasks",
   "publishWithoutTaskButton": "Publish without Blank Tasks",
-  "viewPDFBtn": "View PDF"
+  "viewPDFBtn": "View PDF",
+  "createResponses": "Create Responses"
 }

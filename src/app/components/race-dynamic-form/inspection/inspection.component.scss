@@ -10,17 +10,17 @@
     margin-top: 5px;
     margin-right: 14px;
 
-    .no-of-rounds {
+    .no-of-inspections {
       margin-right: 10px;
     }
 
-    .rounds-count {
+    .inspections-count {
       font-weight: 500;
       font-size: 110%;
       color: $gray-bg;
     }
 
-    .rounds-text {
+    .inspections-text {
       font-weight: 500;
       font-size: 110%;
       color: $gray1;
@@ -43,11 +43,73 @@
   padding: 0 20px;
 }
 
-.loading-rounds {
+.loading-inspections {
   position: absolute;
   width: 40%;
   height: 35px;
   border-radius: 5px;
   right: 270px;
   top: 6px;
+}
+
+::ng-deep .assign-menu-list + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  left: 915px;
+}
+
+@media (min-width: 1090px) and (max-width: 1240px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 172px !important;
+    left: 495px !important;
+  }
+}
+
+@media (min-width: 1240px) and (max-width: 1365px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 641px !important;
+  }
+}
+
+@media (min-width: 1365px) and (max-width: 1515px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 765px !important;
+  }
+}
+
+@media (min-width: 1515px) and (max-width: 1705px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 915px !important;
+  }
+}
+
+@media (min-width: 1705px) and (max-width: 1820px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1106px !important;
+  }
+}
+
+@media (min-width: 1820px) and (max-width: 2049px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1220px !important;
+  }
+}
+
+@media (min-width: 2049px) and (max-width: 2735px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1450px !important;
+  }
 }
