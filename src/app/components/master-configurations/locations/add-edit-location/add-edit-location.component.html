@@ -93,6 +93,23 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="plantMandatory"></mat-label>
+          <mat-select formControlName="plantsID">
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyPlant($event)"
+            />
+            <div class="scrollable-area">
+              <mat-option [value]="plant.id" *ngFor="let plant of allPlantsData"
+                >{{ plant.plantId }} - {{ plant.name }}</mat-option
+              >
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="parent"></mat-label>
           <mat-select formControlName="parentId">
             <input
@@ -101,11 +118,11 @@
               (keyup)="onKey($event)"
             />
             <div class="scrollable-area">
-            <mat-option
-              [value]="parent.id"
-              *ngFor="let parent of allParentsData"
-              >{{parent.locationId}} {{ parent.name }}</mat-option
-            >
+              <mat-option
+                [value]="parent.id"
+                *ngFor="let parent of allParentsData"
+                >{{ parent.locationId }} {{ parent.name }}</mat-option
+              >
             </div>
           </mat-select>
         </mat-form-field>

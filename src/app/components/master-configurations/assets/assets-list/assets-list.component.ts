@@ -44,6 +44,25 @@ export class AssetsListComponent implements OnInit {
   readonly perms = perms;
   allLocations$: Observable<any>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  samplePlant: any = {
+    _deleted: false,
+    _lastChangedAt: 1679994407082,
+    _version: 1,
+    country: 'Japan',
+    createdAt: '2023-03-28T09:06:47.056Z',
+    createdBy: null,
+    description: null,
+    field: null,
+    id: '858220f4-d4ff-4e40-af1b-c45ba199c009',
+    image: 'assets/master-configurations/default-plant.svg',
+    label: null,
+    name: 'Hiroshima Power Plant',
+    plantId: '5000667',
+    searchTerm: 'hiroshima power plant japan 5000667',
+    state: null,
+    updatedAt: '2023-03-28T09:06:47.056Z',
+    zipCode: '440056'
+  };
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -77,11 +96,34 @@ export class AssetsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasConditionalStyles: true
+    },
+    {
       id: 'description',
       displayName: 'Description',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -104,7 +146,7 @@ export class AssetsListComponent implements OnInit {
       displayName: 'Model',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -126,7 +168,7 @@ export class AssetsListComponent implements OnInit {
       displayName: 'Parent',
       type: 'string',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -310,6 +352,18 @@ export class AssetsListComponent implements OnInit {
         }
         this.skip = initial.data.length;
         this.assetsListCount$ = this.assetService.getAssetCount$();
+        const data = initial.data.map((item) => {
+          if (item.plantsID) {
+            item = {
+              ...item,
+              plant: `${item.plant.plantId} - ${item.plant.name}`
+            };
+          } else {
+            item = { ...item, plant: '' };
+          }
+          return item;
+        });
+        initial.data = data;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -485,11 +539,10 @@ export class AssetsListComponent implements OnInit {
         this.nextToken = '';
         this.assetsListCount$ = this.assetService.getAssetCount$();
         this.assetService.fetchAssets$.next({ data: 'load' });
-          this.toast.show({
-            text: 'Asset uploaded successfully!',
-            type: 'success'
-          });
-        
+        this.toast.show({
+          text: 'Asset uploaded successfully!',
+          type: 'success'
+        });
       }
     });
   }

@@ -92,14 +92,31 @@
           </textarea>
         </mat-form-field>
       </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="plantMandatory"></mat-label>
+          <mat-select formControlName="plantsID">
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyPlant($event)"
+            />
+            <div class="scrollable-area">
+              <mat-option [value]="plant.id" *ngFor="let plant of allPlantsData"
+                >{{ plant.plantId }} - {{ plant.name }}</mat-option
+              >
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </p>
       <p class="parent-type">
         <span class="m-r-20" translate="parentType"></span>
         <mat-radio-group formControlName="parentType" class="parent-type-radio">
           <mat-radio-button value="location" class="m-r-20">
             <span translate="location"></span>
           </mat-radio-button>
-          <mat-radio-button value="asset">
-            <span translate="asset"></span>
+          <mat-radio-button value="plant">
+            <span translate="plant"></span>
           </mat-radio-button>
         </mat-radio-group>
       </p>
@@ -112,13 +129,18 @@
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
             />
-             <div class="scrollable-area" >
-            <mat-option
-              [value]="parent.id"
-              *ngFor="let parent of allParentsData"
-            >
-             {{ parentType === 'location' ? parent.locationId : parent.assetsId}} {{ parent.name }}
-            </mat-option>
+            <div class="scrollable-area">
+              <mat-option
+                [value]="parent.id"
+                *ngFor="let parent of allParentsData"
+              >
+                {{
+                  parentType === 'location'
+                    ? parent.locationId
+                    : parent.assetsId
+                }}
+                {{ parent.name }}
+              </mat-option>
             </div>
           </mat-select>
         </mat-form-field>

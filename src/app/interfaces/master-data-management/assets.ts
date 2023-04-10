@@ -10,6 +10,7 @@ export interface CreateAssets {
   parentId?: string;
   assetsId: string;
   image?: string;
+  plantsID?: string;
   searchTerm?: string;
 }
 

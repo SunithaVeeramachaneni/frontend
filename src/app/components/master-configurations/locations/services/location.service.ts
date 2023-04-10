@@ -22,7 +22,6 @@ import {
   providedIn: 'root'
 })
 export class LocationService {
-  
   locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -48,10 +47,12 @@ export class LocationService {
   getLocationCount$(): Observable<number> {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'location/list?' + params.toString()
-    ).pipe(map((res) => res.items.length || 0));
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'location/list?' + params.toString()
+      )
+      .pipe(map((res) => res.items.length || 0));
   }
 
   getLocationsList$(queryParams: {
@@ -99,7 +100,13 @@ export class LocationService {
   createLocation$(
     formLocationQuery: Pick<
       CreateLocation,
-      'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
+      | 'name'
+      | 'image'
+      | 'description'
+      | 'model'
+      | 'locationId'
+      | 'parentId'
+      | 'plantsID'
     >
   ) {
     return this._appService._postData(
@@ -197,8 +204,10 @@ export class LocationService {
     );
   }
 
- 
-  downloadFailure(body: { rows: any; }, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
       'location/download/failure',

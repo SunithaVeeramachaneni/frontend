@@ -6,7 +6,10 @@
           <h2 class="heading" translate="locations"></h2>
         </div>
         <div>
-          <span class="no-of-location" *ngIf="locationsListCount$ | async as totalCount">
+          <span
+            class="no-of-location"
+            *ngIf="locationsListCount$ | async as totalCount"
+          >
             <span class="location-count">
               {{ totalCount }}
             </span>
@@ -28,9 +31,34 @@
                 autocomplete="off"
                 [formControl]="searchLocation"
               />
-              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+              <img
+                src="assets/maintenance-icons/filterIcon.svg"
+                matSuffix
+                cdkOverlayOrigin
+                class="common-filter-icon"
+                alt="Open Filter"
+                #trigger="cdkOverlayOrigin"
+                (click)="isPopoverOpen = !isPopoverOpen"
+              />
             </mat-form-field>
           </span>
+          <ng-template
+            cdkConnectedOverlay
+            cdkConnectedOverlayPanelClass="custom-popover"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            [cdkConnectedOverlayOpen]="isPopoverOpen"
+            [cdkConnectedOverlayOrigin]="trigger"
+            cdkConnectedOverlayWidth="400px"
+            (backdropClick)="isPopoverOpen = false"
+          >
+            <app-filter
+              [json]="filterJson"
+              (close)="isPopoverOpen = false"
+              (apply)="applyFilters($event)"
+              (reset)="clearFilters()"
+            ></app-filter>
+          </ng-template>
 
           <button
             mat-raised-button

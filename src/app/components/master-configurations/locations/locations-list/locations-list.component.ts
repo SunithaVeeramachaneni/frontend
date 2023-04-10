@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -45,6 +50,25 @@ export class LocationsListComponent implements OnInit {
   readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   allParentsLocations: any[] = [];
+  samplePlant: any = {
+    _deleted: false,
+    _lastChangedAt: 1679994407082,
+    _version: 1,
+    country: 'Japan',
+    createdAt: '2023-03-28T09:06:47.056Z',
+    createdBy: null,
+    description: null,
+    field: null,
+    id: '858220f4-d4ff-4e40-af1b-c45ba199c009',
+    image: 'assets/master-configurations/default-plant.svg',
+    label: null,
+    name: 'Hiroshima Power Plant',
+    plantId: '5000667',
+    searchTerm: 'hiroshima power plant japan 5000667',
+    state: null,
+    updatedAt: '2023-03-28T09:06:47.056Z',
+    zipCode: '440056'
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -76,11 +100,33 @@ export class LocationsListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'description',
       displayName: 'Description',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -103,7 +149,7 @@ export class LocationsListComponent implements OnInit {
       displayName: 'Model',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -125,7 +171,7 @@ export class LocationsListComponent implements OnInit {
       displayName: 'Parent',
       type: 'string',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -203,11 +249,21 @@ export class LocationsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   parentInformation: any;
 
+  isPopoverOpen = false;
+  filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted'];
+  filter = {
+    status: '',
+    assignedTo: '',
+    dueDate: ''
+  };
+
   constructor(
     private locationService: LocationService,
     private readonly toast: ToastService,
     private loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -313,10 +369,45 @@ export class LocationsListComponent implements OnInit {
           }
         }
         this.skip = initial.data.length;
+        const data = initial.data.map((item) => {
+          if (item.plantsID) {
+            item = {
+              ...item,
+              plant: `${item.plant.plantId} - ${item.plant.name}`
+            };
+          } else {
+            item = { ...item, plant: '' };
+          }
+          return item;
+        });
+        initial.data = data;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    this.nextToken = '';
+    this.locationService.fetchLocations$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      assignedTo: '',
+      dueDate: ''
+    };
+    this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
   getLocations() {
@@ -480,14 +571,14 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
- getAllLocations() {
-      this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-        this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
-        );
-        this.allParentsLocations = this.parentInformation;
-      });
-    }
+  getAllLocations() {
+    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (location) => location._deleted !== true
+      );
+      this.allParentsLocations = this.parentInformation;
+    });
+  }
   uploadFile(event) {
     const file = event.target.files[0];
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
@@ -497,7 +588,7 @@ export class LocationsListComponent implements OnInit {
       },
       disableClose: true
     });
-   
+
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
