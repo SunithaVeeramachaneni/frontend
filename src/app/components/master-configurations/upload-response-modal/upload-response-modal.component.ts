@@ -83,24 +83,36 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   }
 
   downloadExcel() {
-    if (this.type === 'assets') {
-      this.assetsService
-        .downloadFailure({ rows: this.failure })
-        .pipe(
-          tap((data) => {
-            downloadFile(data, 'Asset_Failure');
-          })
-        )
-        .subscribe();
-    } else {
-      this.locationService
-        .downloadFailure({ rows: this.failure })
-        .pipe(
-          tap((data) => {
-            downloadFile(data, 'Location_Failure');
-          })
-        )
-        .subscribe();
+    switch (this.type) {
+      case 'assets':
+        this.assetsService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Asset_Failure');
+            })
+          )
+          .subscribe();
+        break;
+      case 'locations':
+        this.locationService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Location_Failure');
+            })
+          )
+          .subscribe();
+        break;
+      case 'response-set':
+        this.resposneSetService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Response-Set_Failure');
+            })
+          )
+          .subscribe();
     }
   }
 

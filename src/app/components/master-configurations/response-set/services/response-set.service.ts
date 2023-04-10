@@ -202,4 +202,17 @@ export class ResponseSetService {
       nextToken
     };
   }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/failure',
+      info,
+      false,
+      body
+    );
+  }
 }
