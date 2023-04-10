@@ -305,13 +305,13 @@ export class FormsComponent implements OnInit, OnDestroy {
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
-    this.getAllForms();
+    // this.getAllForms();
     this.getFilter();
     this.searchForm.valueChanges
       .pipe(
@@ -401,6 +401,8 @@ export class FormsComponent implements OnInit, OnDestroy {
         } else {
           filteredForms = forms.data;
         }
+        this.manageFilter(filteredForms);
+        filteredForms = this.filterData(filteredForms);
         this.dataSource = new MatTableDataSource(filteredForms);
         return { ...forms, data: filteredForms };
       })
@@ -419,7 +421,50 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     this.configOptions.allColumns = this.columns;
   }
+  filterData = (plans: any) => {
+    const filterBy = [];
+    if (this.filter.schedule) {
+      filterBy.push({
+        key: 'schedule',
+        value: this.filter.schedule.toLowerCase(),
+        type: 'string'
+      });
+    }
+    if (this.filter.assignedTo) {
+      filterBy.push({
+        key: 'assignedToEmail',
+        value: this.filter.assignedTo,
+        type: 'string'
+      });
+    }
+    if (this.filter.scheduleStartDate && this.filter.scheduleEndDate) {
 
+    }
+    console.log("filterBy=", filterBy);
+    if (filterBy.length > 0) {
+      plans = plans.filter((item) => {
+        for (let i = 0; i < filterBy.length; i += 1) {
+          if (filterBy[i].key !== 'scheduleDates') {
+            let filterItem = item[filterBy[i].key];
+            if (filterItem) {
+              filterItem = filterItem.toLowerCase();
+            }
+            if (filterBy[i].value.indexOf(filterItem) == -1) {
+              return false;
+            }
+          } else {
+
+          }
+        }
+        return true;
+      });
+      console.log(plans);
+      return plans;
+    } else {
+      console.log(plans);
+      return plans;
+    }
+  }
   getFormsList() {
     const obj = {
       nextToken: this.nextToken,
@@ -429,7 +474,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId
     };
 
-    return this.raceDynamicFormService.getFormQuestionsFormsList$({ ...obj, ...this.filter}).pipe(
+    return this.raceDynamicFormService.getFormQuestionsFormsList$({ ...obj, ...this.filter }).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.formsCount;
@@ -444,49 +489,49 @@ export class FormsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getAllForms() {
-    const formScheduleConfigurations$ = this.formScheduleConfigurationService
-      .fetchFormScheduleConfigurations$()
-      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
-    this.raceDynamicFormService.getAllFormQuestionsFormsList$().subscribe((formsList: any) => {
-      console.log(this.formScheduleConfigurations);
-      const result: any = this.formatForms(
-        formsList,
-        this.formScheduleConfigurations
-      )
-      const uniqueSchedule = result
-        .map((item) => item.schedule)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      console.log(uniqueSchedule);
-      const uniqueAssignedTo = result
-        .map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueAssignedTo) {
-        if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-          this.assignedTo.push(item);
-        }
-      }
-      for (const item of uniqueSchedule) {
-        if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
-          this.schedule.push(item);
-        }
-      }
-      for (const item of this.filterJson) {
-        if (item['column'] === 'assignedTo') {
-          item.items = this.assignedTo;
-        } else if (item['column'] === 'schedule') {
-          item.items = this.schedule;
-        }
-      }
-    });
-  }
+  // getAllForms() {
+  //   const formScheduleConfigurations$ = this.formScheduleConfigurationService
+  //     .fetchFormScheduleConfigurations$()
+  //     .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
+  //   this.raceDynamicFormService.getAllFormQuestionsFormsList$().subscribe((formsList: any) => {
+  //     console.log(this.formScheduleConfigurations);
+  //     const result: any = this.formatForms(
+  //       formsList,
+  //       this.formScheduleConfigurations
+  //     )
+  //     const uniqueSchedule = result
+  //       .map((item) => item.schedule)
+  //       .filter((value, index, self) => self.indexOf(value) === index);
+  //     console.log(uniqueSchedule);
+  //     const uniqueAssignedTo = result
+  //       .map((item) => item.assignedTo)
+  //       .filter((value, index, self) => self.indexOf(value) === index);
+  //     for (const item of uniqueAssignedTo) {
+  //       if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+  //         this.assignedTo.push(item);
+  //       }
+  //     }
+  //     for (const item of uniqueSchedule) {
+  //       if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+  //         this.schedule.push(item);
+  //       }
+  //     }
+  //     for (const item of this.filterJson) {
+  //       if (item['column'] === 'assignedTo') {
+  //         item.items = this.assignedTo;
+  //       } else if (item['column'] === 'schedule') {
+  //         item.items = this.schedule;
+  //       }
+  //     }
+  //   });
+  // }
 
 
   handleTableEvent = (event): void => {
     this.fetchForms$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -637,13 +682,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
-    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
-    return value
-      ? this.raceDynamicFormService.getUserFullName(value)
-      : this.placeHolder;
-  }
-
   scheduleConfigHandler(scheduleConfig) {
     const { formsScheduleConfiguration, mode } = scheduleConfig;
     this.formScheduleConfigurations[formsScheduleConfiguration?.formId] =
@@ -661,7 +699,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormattedScheduleDates(
               formsScheduleConfiguration
             ),
-            assignedTo: this.getAssignedTo(formsScheduleConfiguration)
+            assignedTo: this.getAssignedTo(formsScheduleConfiguration),
+            assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
           };
         }
         return data;
@@ -682,7 +721,21 @@ export class FormsComponent implements OnInit, OnDestroy {
   viewFormsHandler(id: any) {
     this.selectTab.emit({ index: 1, queryParams: { id } });
   }
-
+  getAssignedToEmail(
+    formsScheduleConfiguration: FormScheduleConfiguration
+  ) {
+    const { assignmentDetails: { value } = {} } =
+      formsScheduleConfiguration;
+    return value
+      ? value
+      : this.placeHolder;
+  }
+  getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
+    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
+    return value
+      ? this.raceDynamicFormService.getUserFullName(value)
+      : this.placeHolder;
+  }
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
@@ -714,7 +767,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             formScheduleConfigurations[form?.id]
           ),
           rounds: form.rounds || this.placeHolder,
-          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
+          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
+          assignedToEmail: this.getAssignedToEmail(formScheduleConfigurations[form.id])
         };
       }
       return {
@@ -734,17 +788,17 @@ export class FormsComponent implements OnInit, OnDestroy {
     const formatedStartDate =
       scheduleType === 'byFrequency'
         ? this.datePipe.transform(
-            formScheduleConfiguration.startDate,
-            dateFormat
-          )
+          formScheduleConfiguration.startDate,
+          dateFormat
+        )
         : '';
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
           ? this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, dateFormat)
-          : 'Never'
+            ? this.datePipe.transform(endDate, dateFormat)
+            : 'Never'
         : '';
 
     return formatedStartDate !== ''
@@ -761,12 +815,12 @@ export class FormsComponent implements OnInit, OnDestroy {
           ? 'Daily'
           : `Every ${repeatDuration} days`
         : repeatEvery === 'week'
-        ? repeatDuration === 1
-          ? 'Weekly'
-          : `Every ${repeatDuration} weeks`
-        : repeatDuration === 1
-        ? 'Monthly'
-        : `Every ${repeatDuration} months`
+          ? repeatDuration === 1
+            ? 'Weekly'
+            : `Every ${repeatDuration} weeks`
+          : repeatDuration === 1
+            ? 'Monthly'
+            : `Every ${repeatDuration} months`
       : 'Custom Dates';
   }
 
@@ -774,6 +828,36 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService.getFormsFilter().subscribe((res) => {
       this.filterJson = res;
     });
+  }
+
+  manageFilter(result) {
+    const uniqueSchedule = result
+      .map((item) => item.schedule)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    console.log(uniqueSchedule);
+    const uniqueAssignedTo = result
+      .map((item) => item.assignedToEmail)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    this.schedule = [];
+    this.assignedTo = [];
+    for (const item of uniqueAssignedTo) {
+      if (item && this.assignedTo.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+        this.assignedTo.push(item);
+      }
+    }
+    for (const item of uniqueSchedule) {
+      if (item && this.schedule.indexOf(item.toLowerCase()) == -1 && item != this.placeHolder) {
+        this.schedule.push(item);
+      }
+    }
+    for (const item of this.filterJson) {
+      if (item['column'] === 'assignedTo') {
+        item.items = this.assignedTo;
+      } else if (item['column'] === 'schedule') {
+        item.items = this.schedule;
+      }
+    }
+    return result;
   }
 
   applyFilters(data: any): void {

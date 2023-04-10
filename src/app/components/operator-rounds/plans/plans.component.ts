@@ -418,9 +418,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlans.rows,
             roundPlanScheduleConfigurations
           );
-          this.manageFilter(plans);
-          plans = this.filterData(plans);
-          console.log("plans=", plans);
           this.initial.data = plans;
         } else {
           let plans = this.initial.data.concat(
@@ -428,9 +425,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               scrollData.rows,
               roundPlanScheduleConfigurations
             )
-          );
-          this.manageFilter(plans);
-          plans = this.filterData(plans);
+          ); 
           this.initial.data = plans;
         }
         this.skip = this.initial.data.length;
@@ -459,6 +454,8 @@ export class PlansComponent implements OnInit, OnDestroy {
         } else {
           filteredRoundPlans = roundPlans.data;
         }
+        this.manageFilter(filteredRoundPlans);
+        filteredRoundPlans = this.filterData(filteredRoundPlans);
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
         return { ...roundPlans, data: filteredRoundPlans };
       })
@@ -483,7 +480,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     if (this.filter.schedule) {
       filterBy.push({
         key: 'schedule',
-        value: this.filter.schedule,
+        value: this.filter.schedule.toLowerCase(),
         type: 'string'
       });
     } 
