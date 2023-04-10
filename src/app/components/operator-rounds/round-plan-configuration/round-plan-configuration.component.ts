@@ -239,17 +239,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             } = current;
 
             if (!isEqual(prev, curr)) {
+              const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: curr,
+                  formMetadata: currentVal,
                   ...this.getFormConfigurationStatuses()
                 })
               );
-
               this.store.dispatch(
-                BuilderConfigurationActions.updateForm({
+                RoundPlanConfigurationActions.updateRoundPlan({
                   formMetadata: this.formMetadata,
-                  formListDynamoDBVersion: this.formListVersion
+                  formListDynamoDBVersion: this.formListVersion,
+                  ...this.getFormConfigurationStatuses()
                 })
               );
             }

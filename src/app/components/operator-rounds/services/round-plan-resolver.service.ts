@@ -56,11 +56,11 @@ export class RoundPlanResolverService
           tags,
           _version: formListDynamoDBVersion
         } = form;
-        let pdfBuilderConfiguration = JSON.parse(
-          authoredFormDetail?.pdfBuilderConfiguration
+        let pdfTemplateConfiguration = JSON.parse(
+          form?.pdfTemplateConfiguration
         );
-        if (!pdfBuilderConfiguration) {
-          pdfBuilderConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
+        if (!pdfTemplateConfiguration) {
+          pdfTemplateConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
         }
         const {
           id: authoredFormDetailId,
@@ -83,14 +83,13 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
-          pdfTemplateConfiguration: pdfBuilderConfiguration
+          pdfTemplateConfiguration
         };
 
         const subFormsMap = JSON.parse(subForms);
         return {
           formConfigurationState: {
             formMetadata,
-            pdfBuilderConfiguration,
             counter,
             pages: JSON.parse(pages),
             ...subFormsMap,

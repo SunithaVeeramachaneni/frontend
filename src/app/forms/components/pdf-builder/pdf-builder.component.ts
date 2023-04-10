@@ -16,7 +16,10 @@ import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
-import { BuilderConfigurationActions } from '../../state/actions';
+import {
+  BuilderConfigurationActions,
+  RoundPlanConfigurationActions
+} from '../../state/actions';
 import {
   getFormMetadata,
   State,
@@ -155,12 +158,11 @@ export class PDFBuilderComponent implements OnInit {
           pdfBuilderConfiguration: data
         })
       );
+
       this.store.dispatch(
-        BuilderConfigurationActions.updateFormMetadata({
-          formMetadata: {
-            ...this.formMetadata,
-            pdfTemplateConfiguration: data
-          },
+        RoundPlanConfigurationActions.updateRoundPlan({
+          formMetadata: this.formMetadata,
+          formListDynamoDBVersion: this.formListVersion,
           ...this.getFormConfigurationStatuses()
         })
       );

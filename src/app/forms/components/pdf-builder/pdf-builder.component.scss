@@ -42,6 +42,7 @@
             flex-direction: column;
             .customText {
               display: flex;
+              justify-content: flex-start;
               .field {
                 margin: 10px;
               }
