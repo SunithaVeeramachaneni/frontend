@@ -1,14 +1,16 @@
+@import '../../../../scss/colors.scss';
+
 .configurations-div {
   ::ng-deep
     .mat-button-toggle-group-appearance-standard
     .mat-button-toggle
     + .mat-button-toggle {
-    border-left: 1px solid #e5e5e5;
+    border-left: 1px solid $border-color;
   }
 
   ::ng-deep .mat-button-toggle {
     margin-right: 5px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid $border-color;
     border-radius: 10px;
     align-items: center;
     width: 35px;
@@ -20,15 +22,15 @@
   }
 
   ::ng-deep .mat-button-toggle {
-    background: #ffffff;
+    background: $white;
   }
 
   ::ng-deep .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
-    background: #f2f2f2;
+    background: $white2;
   }
 
   ::ng-deep .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
-    background: #3d5afe;
+    background: $blue-main;
   }
 
   ::ng-deep
@@ -52,7 +54,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 120%;
-  color: #000000;
+  color: $black;
   margin-bottom: 5px;
   margin-top: 0px;
 }
