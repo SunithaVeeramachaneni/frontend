@@ -9,12 +9,11 @@
   <mat-card>
     <ng-container>
       <div>
-        <img
+        <svg-icon
+          icon="icon-close"
+          class="cancel-icon"
           (click)="cancelForm()"
-          src="assets/rdf-forms-icons/close.svg"
-          alt="close"
-          class="pointer"
-        />
+        ></svg-icon>
         <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
       <ng-container *ngIf="formStatus === formConfigurationStatus.published">
@@ -295,10 +294,7 @@
           <ng-container>
             {{ defaultFormName }}
             <label [matMenuTriggerFor]="menu">
-              <img
-                src="assets/rdf-forms-icons/arrow-down.svg"
-                alt="arrow-down"
-              />
+              <svg-icon icon="icon-arrow-down" class="arrow-icon"></svg-icon>
             </label>
           </ng-container>
         </h3>

@@ -19,12 +19,6 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <!-- <img
-        src="assets/rdf-forms-icons/plansicon.svg"
-        alt=""
-        width="50"
-        height="50"
-      /> -->
       <svg-icon icon="icon-plansicon" class="plansicon"></svg-icon>
       <input
         hidden
@@ -70,11 +64,7 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
+            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
           </button>
         </a>
         <br />
@@ -151,11 +141,15 @@
         [disabled]="formStatus === 'Published' || isFormDetailPublished"
       >
         <span>
-          <img
+          <!-- <img
             alt="upload"
             src="assets/work-instructions-icons/svg/upload-white.png"
             class="publish-btn-icon"
-          />
+          /> -->
+          <svg-icon
+            icon="icon-upload-white"
+            class="publish-btn-icon"
+          ></svg-icon>
           <span class="publish" translate="publishBtn"></span>
         </span>
       </button>

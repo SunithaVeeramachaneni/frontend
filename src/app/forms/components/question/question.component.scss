@@ -14,7 +14,7 @@
 
   .question-line {
     border: 1px solid $border-color;
-    margin: 0px 0px 0px -23px;
+    margin: 0px 0px 0px -29px;
     position: relative;
   }
 
@@ -101,7 +101,7 @@
     padding: 10px 0px;
     display: flex;
     flex-direction: column;
-    width: 98%;
+    width: 92.5%;
     justify-content: center;
 
     .questionActionsRow {
@@ -213,4 +213,9 @@
   .rangeValuesNone {
     color: $blue-main;
   }
+}
+
+.question-icon {
+  height: 25px;
+  width: 25px;
 }

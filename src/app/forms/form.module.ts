@@ -62,6 +62,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
 import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 import { AssignToComponent } from './components/schedular/assign/assign.component';
+import { SharedModule } from '../shared/shared.module';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -102,6 +103,7 @@ import { AssignToComponent } from './components/schedular/assign/assign.componen
     AssignToComponent
   ],
   imports: [
+    SharedModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,

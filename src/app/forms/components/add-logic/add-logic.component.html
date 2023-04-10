@@ -16,12 +16,11 @@
       >
         <div class="tabContent" [formGroupName]="i">
           <div class="logicRow">
-            <img
-              src="assets/rdf-forms-icons/delete-icon.svg"
-              alt="delete-icon"
+            <svg-icon
+              icon="icon-delete-icon"
               class="delete-icon"
               (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
-            />
+            ></svg-icon>
             <input type="hidden" formControlName="id" />
             <input type="hidden" formControlName="logicTitle" />
             <input type="hidden" formControlName="expression" />

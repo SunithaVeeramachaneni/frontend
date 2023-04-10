@@ -131,11 +131,10 @@
         [disabled]="formStatus === 'Published' || isFormDetailPublished"
       >
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
+          <svg-icon
+            icon="icon-upload-white"
             class="publish-btn-icon"
-          />
+          ></svg-icon>
           <span class="publish" translate="publishBtn"></span>
         </span>
       </button>
@@ -252,12 +251,11 @@
                               }"
                             >
                               <div class="question-drag-handler">
-                                <img
+                                <svg-icon
                                   cdkDragHandle
-                                  src="assets/rdf-forms-icons/six-dots.svg"
-                                  alt="six-dots"
+                                  icon="icon-six-dots"
                                   class="question-six-dots"
-                                />
+                                ></svg-icon>
                               </div>
 
                               <app-question

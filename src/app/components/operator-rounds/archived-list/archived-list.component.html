@@ -28,13 +28,12 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
+          <svg-icon
+            matSuffix
+            icon="icon-filterIcon"
+            class="common-filter-icon"
+          ></svg-icon>
         </mat-form-field>
-        <img
-          *ngIf="false"
-          [src]="filterIcon"
-          class="common-filter-icon"
-          alt="Open Filter"
-        />
       </span>
     </div>
 

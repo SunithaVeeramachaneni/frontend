@@ -64,7 +64,10 @@
       left: -5px;
 
       .edit-icon-img {
-        width: 11px;
+        height: 13px;
+        width: 15px;
+        position: relative;
+        top: 2px;
       }
     }
 
@@ -92,6 +95,8 @@
     .add-section-btn-icon {
       position: relative;
       top: 2px;
+      height: 13px;
+      width: 13px;
     }
   }
 
