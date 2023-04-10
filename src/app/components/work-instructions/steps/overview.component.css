@@ -32,13 +32,13 @@
 
 .btn-hide-show-preview {
   font-weight: 500;
-  font-size: 80%;
+  font-size: 90%;
   text-transform: uppercase;
   color: #76767b;
-  position: absolute;
-  right: 30px;
+  position: relative;
+  right: 0px;
   text-align: right !important;
-  top: 15px;
+  top: 25px;
   width: auto;
   z-index: 99999;
   background: transparent;

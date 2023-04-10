@@ -25,6 +25,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 55px;
   }
 
   .search {
@@ -32,11 +33,16 @@
     margin-right: 15px;
   }
 
+  .filter-icon {
+    width: 15px;
+    height: 15px;
+  }
+
   .create-new-btn {
     background: $blue-main;
     color: $white;
   }
-   .location-text {
+  .location-text {
     font-weight: 500;
     font-size: 110%;
     color: #9e9e9e;
@@ -46,7 +52,7 @@
       padding: 0 20px;
     }
   }
-.no-of-location {
+  .no-of-location {
     margin-right: 10px;
   }
   .location-count {

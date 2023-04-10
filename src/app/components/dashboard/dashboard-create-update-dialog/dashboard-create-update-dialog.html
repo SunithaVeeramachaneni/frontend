@@ -1,5 +1,5 @@
 <div class="dashboard-create-update-dialog">
-  <div mat-dialog-title class="dialog-head" disableClose="true">
+  <div class="dialog-head" disableClose="true">
     <span class="dialog-title">
       {{dialogData.dialogMode ==='CREATE' ? "Create " :"Update "}} Dashboard
     </span>
@@ -10,7 +10,7 @@
   <div mat-dialog-content class="dialog-content" [formGroup]="dashboardForm">
     <mat-form-field
       appearance="outline"
-      class="width-100 dashboardTitle-formfield"
+      class="width-100 custom-form-field-white-color"
     >
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" formControlName="dashboardName" />
