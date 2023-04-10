@@ -13,6 +13,7 @@ import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
 import { ResponseSetService } from '../response-set/services/response-set.service';
 import { Observable } from 'rxjs';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -76,7 +77,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           this.title = 'Failure!';
           this.message = `Uploaded file is invalid`;
         }
-      });
+      );
     } else {
       this.onClose();
     }
@@ -104,7 +105,6 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           )
           .subscribe();
         break;
-      case 'response-set':
         this.resposneSetService
           .downloadFailure({ rows: this.failure })
           .pipe(
@@ -115,26 +115,6 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           .subscribe();
     }
   }
-
-  ngAfterViewChecked(): void {
-    this.changeDetectorRef.detectChanges();
-  }
-
-  onClose(): void {
-    this.dialogRef.close({ event: 'close', data: this.successCount > 0 });
-  }
-
-  onReview(): void {
-    this.isReviewed = true;
-  }
-
-  private init(): void {
-    this.title = '';
-    this.message = '';
-    this.isSuccess = false;
-    this.isReviewed = false;
-    this.successCount = 0;
-    this.failedCount = 0;
     this.type = '';
   }
 }

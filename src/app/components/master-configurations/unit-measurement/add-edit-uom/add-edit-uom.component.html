@@ -16,7 +16,7 @@
       >
         <mat-form-field
           appearance="outline"
-          class="unit-measurement"
+          class="unit-measurement m-b-10"
           *ngIf="unitType !== 'addNew'"
         >
           <mat-label translate="unitOfMeasurement"></mat-label>
@@ -40,7 +40,7 @@
             </mat-option>
           </mat-select>
           <mat-error
-            class="m-l-5 m-t-2 text-red"
+            class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="!unitType && isSubmittedForm"
           >
             {{ 'selectmsg' | translate | uppercase }}
@@ -51,11 +51,11 @@
         class="display-flex custom-form-field-white-color"
         *ngIf="unitType === 'addNew'"
       >
-        <mat-form-field appearance="outline" class="newUnitType">
+        <mat-form-field appearance="outline" class="newUnitType m-b-10">
           <mat-label translate="unit_type"></mat-label>
           <input matInput [(ngModel)]="newUnitType" required />
           <mat-error
-            class="m-l-5 m-t-2 text-red"
+            class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="unitType === 'addNew' && newUnitType === ''"
           >
             {{ 'unitTypeError' | translate }}
@@ -74,7 +74,7 @@
               [size]="
                 measurement?.value !== '' ? getSize(measurement?.value) : 20
               "
-              class="form_title_input"
+              class="form_title_input m-b-10"
               [(ngModel)]="unitType"
               autofocus="true"
               autocomplete="off"
@@ -83,7 +83,7 @@
               required
             />
             <mat-error
-              class="m-l-5 m-t-2 text-red"
+              class="m-l-5 m-t-2 text-red error-fields"
               *ngIf="!isEditMeasurement && unitType === ''"
             >
               {{ 'unitTypeError' | translate }}
@@ -126,7 +126,10 @@
           *ngFor="let item of unitMeasurementFormControl; let i = index"
         >
           <div [formGroupName]="i">
-            <mat-form-field appearance="outline" class="m-l-5 description">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-5 description m-b-10"
+            >
               <input
                 matInput
                 formControlName="description"
@@ -146,7 +149,7 @@
                 }}
               </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="m-l-5 symbol">
+            <mat-form-field appearance="outline" class="m-l-5 symbol m-b-10">
               <input
                 matInput
                 formControlName="symbol"
