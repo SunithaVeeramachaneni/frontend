@@ -699,6 +699,9 @@ export class FormsComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormattedScheduleDates(
               formsScheduleConfiguration
             ),
+            scheduleDate: this.getFormatedScheduleDatesObj(
+              formsScheduleConfiguration
+            ),
             assignedTo: this.getAssignedTo(formsScheduleConfiguration),
             assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
           };
@@ -766,6 +769,9 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
+          scheduleDate: this.getFormatedScheduleDatesObj(
+            formScheduleConfigurations[form?.id]
+          ),
           rounds: form.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
           assignedToEmail: this.getAssignedToEmail(formScheduleConfigurations[form.id])
@@ -778,6 +784,31 @@ export class FormsComponent implements OnInit, OnDestroy {
         operator: this.placeHolder
       };
     });
+  }
+  getFormatedScheduleDatesObj(
+    formScheduleConfiguration: FormScheduleConfiguration
+  ) {
+    const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
+      formScheduleConfiguration;
+    const formatedStartDate =
+      scheduleType === 'byFrequency'
+        ? formScheduleConfiguration.startDate
+        : '';
+    const formatedEndDate =
+      scheduleType === 'byFrequency'
+        ? scheduleEndType === 'on'
+          ? scheduleEndOn
+          : scheduleEndType === 'after'
+            ? endDate
+            : ''
+        : '';
+
+    return formatedStartDate !== ''
+      ? {
+        formatedStartDate,
+        formatedEndDate
+      }
+      : this.placeHolder;
   }
 
   getFormattedScheduleDates(

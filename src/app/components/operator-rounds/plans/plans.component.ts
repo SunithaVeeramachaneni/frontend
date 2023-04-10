@@ -751,6 +751,9 @@ export class PlansComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormatedScheduleDates(
               roundPlanScheduleConfiguration
             ),
+            scheduleDate: this.getFormatedScheduleDatesObj(
+              roundPlanScheduleConfiguration
+            ),
             assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
             assignedToEmail: this.getAssignedToEmail(roundPlanScheduleConfiguration)
           };
@@ -802,6 +805,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormatedScheduleDates(
             roundPlanScheduleConfigurations[roundPlan.id]
           ),
+          scheduleDate: this.getFormatedScheduleDatesObj(
+            roundPlanScheduleConfigurations[roundPlan.id]
+          ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
             roundPlanScheduleConfigurations[roundPlan.id]
@@ -843,6 +849,32 @@ export class PlansComponent implements OnInit, OnDestroy {
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
+      : this.placeHolder;
+  }
+
+  getFormatedScheduleDatesObj(
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+  ) {
+    const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
+      roundPlanScheduleConfiguration;
+    const formatedStartDate =
+      scheduleType === 'byFrequency'
+        ? roundPlanScheduleConfiguration.startDate
+        : '';
+    const formatedEndDate =
+      scheduleType === 'byFrequency'
+        ? scheduleEndType === 'on'
+          ? scheduleEndOn
+          : scheduleEndType === 'after'
+            ? endDate
+            : ''
+        : '';
+
+    return formatedStartDate !== ''
+      ? {
+        formatedStartDate,
+        formatedEndDate
+      }
       : this.placeHolder;
   }
 
