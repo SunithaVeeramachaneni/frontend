@@ -666,14 +666,12 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
-          rounds: form.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
         };
       }
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        rounds: this.placeHolder,
         operator: this.placeHolder
       };
     });

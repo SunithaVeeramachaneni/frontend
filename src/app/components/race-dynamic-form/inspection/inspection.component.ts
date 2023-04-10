@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -39,7 +40,6 @@ import {
   Permission,
   UserInfo,
   InspectionDetail,
-  RoundDetailResponse,
   SelectTab,
   RowLevelActionEvent,
   UserDetails,
@@ -50,7 +50,6 @@ import {
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
-import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
@@ -69,6 +68,8 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -78,9 +79,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  private _users$: Observable<UserDetails[]>;
-  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -292,7 +290,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
   };
   dataSource: MatTableDataSource<any>;
-  rounds$: Observable<{
+  inspections$: Observable<{
     columns: Column[];
     data: any[];
   }>;
@@ -311,14 +309,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   selectedForm: InspectionDetail;
   zIndexDelay = 0;
-  hideRoundDetail: boolean;
+  hideInspectionDetail: boolean;
   formId: string;
-  readonly perms = perms;
-  readonly formConfigurationStatus = formConfigurationStatus;
   initial = {
     columns: this.columns,
     data: []
   };
+  readonly perms = perms;
+  readonly formConfigurationStatus = formConfigurationStatus;
+  private _users$: Observable<UserDetails[]>;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -348,7 +347,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    const roundsOnLoadSearch$ = this.fetchInspection$.pipe(
+    const inspectionsOnLoadSearch$ = this.fetchInspection$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -365,23 +364,33 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getInspectionsList();
         } else {
-          return of({} as RoundDetailResponse);
+          return of(
+            {} as {
+              rows: any[];
+              count: number;
+              nextToken: string | null;
+            }
+          );
         }
       })
     );
 
-    this.rounds$ = combineLatest([
-      roundsOnLoadSearch$,
+    this.initial = {
+      columns: this.columns,
+      data: []
+    };
+    this.inspections$ = combineLatest([
+      inspectionsOnLoadSearch$,
       onScrollInspections$,
       this.users$
     ]).pipe(
-      map(([rounds, scrollData]) => {
+      map(([inspections, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          this.initial.data = rounds.rows.map((inspectionDetail) => ({
+          this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
             dueDate: inspectionDetail.dueDate
               ? new Date(inspectionDetail.dueDate)
@@ -410,7 +419,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     );
 
     this.activatedRoute.params.subscribe(() => {
-      this.hideRoundDetail = true;
+      this.hideInspectionDetail = true;
     });
 
     this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
@@ -442,23 +451,25 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
   }
   getAllInspections() {
-    this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList
-        .map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueInspectedBy) {
-        if (item) {
-          this.assignedTo.push(item);
+    this.raceDynamicFormService
+      .fetchAllInspections$()
+      .subscribe((formsList) => {
+        const uniqueInspectedBy = formsList
+          ?.map((item) => item.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueInspectedBy) {
+          if (item) {
+            this.assignedTo.push(item);
+          }
         }
-      }
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        } else if (item['column'] === 'assignedTo') {
-          item.items = this.assignedTo;
+        for (const item of this.filterJson) {
+          if (item.column === 'status') {
+            item.items = this.status;
+          } else if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          }
         }
-      }
-    });
+      });
   }
 
   handleTableEvent = (event): void => {
@@ -496,8 +507,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         action: 'showDetails'
       },
       {
-        title: 'Show Plan',
-        action: 'showPlans'
+        title: 'Show Forms',
+        action: 'showForms'
       }
     ];
 
@@ -524,7 +535,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     timer(400)
       .pipe(
         tap(() => {
-          this.hideRoundDetail = true;
+          this.hideInspectionDetail = true;
           this.zIndexDelay = 0;
         })
       )
@@ -532,14 +543,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   openInspectionHandler(row: InspectionDetail): void {
-    this.hideRoundDetail = false;
+    this.hideInspectionDetail = false;
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler() {
+  formsDetailActionHandler() {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
@@ -579,7 +590,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       case 'showDetails':
         this.openInspectionHandler(data);
         break;
-      case 'showPlans':
+      case 'showForms':
         this.selectTab.emit({ index: 0, queryParams: { id: data.id } });
         break;
       default:
@@ -624,7 +635,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    console.log(dueDate);
     const { inspectionId } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(

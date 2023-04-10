@@ -5,10 +5,10 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
-      [hidden]="hideRoundDetail"
+      [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
-      (formDetailAction)="roundsDetailActionHandler()"
+      (formDetailAction)="formsDetailActionHandler()"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
@@ -74,7 +74,7 @@
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
+    *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
     class="rounds-list"
   >
     <cwp-dynamictable
