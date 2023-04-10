@@ -543,8 +543,8 @@ export class FormsComponent implements OnInit, OnDestroy {
           this.openFormHandler(row);
         }
         break;
-      case 'rounds':
-        if (row.rounds !== this.placeHolder) {
+      case 'forms':
+        if (row.forms !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
           this.openFormHandler(row);
@@ -562,12 +562,12 @@ export class FormsComponent implements OnInit, OnDestroy {
         action: 'showDetails'
       },
       {
-        title: 'Show Forms',
-        action: 'showForms',
+        title: 'Show Inspections',
+        action: 'showInspections',
         condition: {
           operand: this.placeHolder,
           operation: 'notContains',
-          fieldName: 'rounds'
+          fieldName: 'forms'
         }
       }
     ];
@@ -745,7 +745,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       case 'showDetails':
         this.openFormHandler(data);
         break;
-      case 'showForms':
+      case 'showInspections':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
         break;
       default:
