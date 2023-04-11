@@ -95,7 +95,10 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="plantMandatory"></mat-label>
-          <mat-select formControlName="plantsID">
+          <mat-select
+            formControlName="plantsID"
+            (valueChange)="onSelectPlant($event)"
+          >
             <input
               class="searchable-input"
               [placeholder]="'search' | translate"
@@ -111,19 +114,26 @@
       </p>
       <p class="parent-type">
         <span class="m-r-20" translate="parentType"></span>
-        <mat-radio-group formControlName="parentType" class="parent-type-radio">
+        <mat-radio-group
+          formControlName="parentType"
+          class="parent-type-radio"
+          (change)="onChangeParentType($event)"
+        >
           <mat-radio-button value="location" class="m-r-20">
             <span translate="location"></span>
           </mat-radio-button>
-          <mat-radio-button value="plant">
-            <span translate="plant"></span>
+          <mat-radio-button value="asset">
+            <span translate="asset"></span>
           </mat-radio-button>
         </mat-radio-group>
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="parent"></mat-label>
-          <mat-select formControlName="parentId">
+          <mat-select
+            formControlName="parentId"
+            (valueChange)="onSelectLocation($event)"
+          >
             <input
               class="searchable-input"
               [placeholder]="'search' | translate"

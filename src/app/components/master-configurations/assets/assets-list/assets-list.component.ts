@@ -352,18 +352,6 @@ export class AssetsListComponent implements OnInit {
         }
         this.skip = initial.data.length;
         this.assetsListCount$ = this.assetService.getAssetCount$();
-        const data = initial.data.map((item) => {
-          if (item.plantsID) {
-            item = {
-              ...item,
-              plant: `${item.plant.plantId} - ${item.plant.name}`
-            };
-          } else {
-            item = { ...item, plant: '' };
-          }
-          return item;
-        });
-        initial.data = data;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -389,7 +377,20 @@ export class AssetsListComponent implements OnInit {
           this.assetsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantsID) {
+              item = {
+                ...item,
+                plant: `${item.plant.plantId} - ${item.plant.name}`
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 

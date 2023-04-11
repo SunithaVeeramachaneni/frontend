@@ -106,7 +106,7 @@ export class AddEditAssetsComponent implements OnInit {
       description: '',
       parentType: 'location',
       parentId: '',
-      plantsID: ''
+      plantsID: new FormControl('', [Validators.required])
     });
     this.getAllLocations();
     this.getAllAssets();
@@ -124,6 +124,62 @@ export class AddEditAssetsComponent implements OnInit {
         this.getAllAssets();
       }
     });
+  }
+
+  onSelectPlant(plantId) {
+    const parentId = this.assetForm.get('parentId').value;
+    const parentType = this.assetForm.get('parentType').value;
+
+    if (parentType === 'location') {
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+
+    if (parentId) {
+      this.allParentsData = this.parentInformation;
+    } else {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantId
+      );
+    }
+  }
+
+  onChangeParentType(event) {
+    const parentType = event.value;
+    const plantsID = this.assetForm.get('plantsID').value;
+
+    // select parentData
+    if (parentType === 'location') {
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+
+    // if plant is selected already
+    if (plantsID) {
+      this.allParentsData = this.parentInformation.filter(
+        (parent) => parent.plantsID === plantsID
+      );
+    }
+  }
+
+  onSelectLocation(parentId) {
+    const plantsID = this.assetForm.get('plantsID').value;
+    const parentType = this.assetForm.get('parentType').value;
+
+    if (parentType === 'location') {
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+    if (!plantsID) {
+      // set plant value if plant field was not selected first
+      const parent = this.parentInformation.find((d) => d.id === parentId);
+      if (parent.plantsID) {
+        this.assetForm.get('plantsID').setValue(parent.plantsID);
+      }
+    }
   }
 
   create() {
@@ -189,6 +245,7 @@ export class AddEditAssetsComponent implements OnInit {
     this.slideInOut.emit('out');
     this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
+    this.allParentsData = this.allLocationsData;
   }
 
   getAllLocations() {

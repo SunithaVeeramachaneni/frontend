@@ -94,7 +94,10 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="plantMandatory"></mat-label>
-          <mat-select formControlName="plantsID">
+          <mat-select
+            formControlName="plantsID"
+            (valueChange)="onSelectPlant($event)"
+          >
             <input
               class="searchable-input"
               [placeholder]="'search' | translate"
@@ -111,7 +114,10 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="parent"></mat-label>
-          <mat-select formControlName="parentId">
+          <mat-select
+            formControlName="parentId"
+            (valueChange)="onSelectLocation($event)"
+          >
             <input
               class="searchable-input"
               [placeholder]="'search' | translate"

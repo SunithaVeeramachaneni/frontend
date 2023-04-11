@@ -89,7 +89,7 @@ export class AddEditLocationComponent implements OnInit {
       model: '',
       description: '',
       parentId: '',
-      plantsID: ''
+      plantsID: new FormControl('', [Validators.required])
     });
     this.getAllLocations();
     this.getAllPlants();
@@ -109,6 +109,35 @@ export class AddEditLocationComponent implements OnInit {
       this.allPlantsData = allPlants.items;
       this.plantInformation = allPlants.items;
     });
+  }
+
+  onSelectPlant(event) {
+    const parentId = this.locationForm.get('parentId').value;
+
+    if (parentId) {
+      this.allParentsData = this.parentInformation;
+    } else {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === event
+      );
+    }
+  }
+
+  onSelectLocation(event) {
+    const plantsID = this.locationForm.get('plantsID').value;
+
+    if (plantsID) {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      // set plant value if plant field was not selected first
+      this.allParentsData = this.parentInformation;
+      const location = this.allParentsData.find((d) => d.id === event);
+      if (location.plantsID) {
+        this.locationForm.get('plantsID').setValue(location.plantsID);
+      }
+    }
   }
 
   create() {
@@ -172,6 +201,7 @@ export class AddEditLocationComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit('out');
+    this.allParentsData = this.parentInformation;
     this.locationForm.reset();
   }
 
