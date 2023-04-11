@@ -2,13 +2,18 @@
 
 .search-container {
   position: fixed;
-  top: 70px;
+  top: 78px;
   right: 10px;
   z-index: 100;
 
   .search {
     margin-top: 5px;
     margin-right: 14px;
+
+    .common-filter-icon {
+      width: 15px;
+      height: 15px;
+    }
   }
 
   .common-filter-icon {
@@ -19,8 +24,8 @@
     margin-right: 10px;
     border-radius: 30px;
     align-items: center;
-    height: 20px;
-    padding: 8px 18px;
+    height: 16px;
+    padding: 5px 15px 10px 15px;
     background: $blue8;
     border: none;
   }
