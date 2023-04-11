@@ -1,16 +1,25 @@
-<div class="form-header-modal" [formGroup]="issuesActionsDetailViewForm">
+<div
+  class="form-header-modal"
+  [formGroup]="issuesActionsDetailViewForm"
+  [ngClass]="{
+    'disable-detail-interactions': updatingDetails === true
+  }"
+>
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
       <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
     </button>
     <h4 class="heading">
       <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
-      {{ this.issuesActionsDetailViewForm.get('name').value }}
+      {{ this.issuesActionsDetailViewForm.get('title').value }}
       &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
     </h4>
   </mat-toolbar>
   <div class="dis-flex form-content">
-    <div class="width-60 chart-div">
+    <div
+      class="width-60 chat-div"
+      *ngIf="logHistory$ | async; else historyLoading"
+    >
       <div class="chat-panel"></div>
       <div class="custom-form-field-white-color footer">
         <mat-form-field appearance="outline" class="width-90 margin">
@@ -29,81 +38,74 @@
         />
       </div>
     </div>
+    <ng-template #historyLoading>
+      <div class="width-60 chat-div">
+        <div class="chat-panel"></div>
+        <div class="custom-form-field-white-color footer">
+          <mat-form-field appearance="outline" class="width-90 margin">
+            <input type="text" matInput placeholder="Type" />
+            <img
+              src="assets/rdf-forms-icons/add-attachment-icon.svg"
+              alt="add attachment"
+              matSuffix
+              class="add-attachment-icon"
+            />
+          </mat-form-field>
+          <img
+            src="assets/rdf-forms-icons/send-message.svg"
+            alt="send message"
+            class="send-message"
+          />
+        </div>
+      </div>
+    </ng-template>
     <div class="width-40 details-div form-fields">
       <div class="right-div p-5-0">
         <div class="titles" translate="title"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('name').value
-              ? this.issuesActionsDetailViewForm.get('name').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('title').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="des"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('description').value
-              ? this.issuesActionsDetailViewForm.get('description').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('description').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="category"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('category').value
-              ? this.issuesActionsDetailViewForm.get('category').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('category').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="round"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('round').value
-              ? this.issuesActionsDetailViewForm.get('round').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('round').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('location').value
-              ? this.issuesActionsDetailViewForm.get('location').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('location').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="asset"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('asset').value
-              ? this.issuesActionsDetailViewForm.get('asset').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('asset').value }}
         </div>
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="task"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('task').value
-              ? this.issuesActionsDetailViewForm.get('task').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('task').value }}
         </div>
       </div>
       <hr class="line" />
@@ -111,10 +113,17 @@
         <div class="titles m-t-15" translate="priority"></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
-            <mat-select formControlName="priority">
-              <mat-option *ngFor="let p of priority" [value]="p">{{
-                p
-              }}</mat-option>
+            <mat-select
+              formControlName="priority"
+              (selectionChange)="
+                updateIssueOrAction({ field: 'priority', value: $event.value })
+              "
+            >
+              <mat-option
+                *ngFor="let priority of priorities"
+                [value]="priority"
+                >{{ priority }}</mat-option
+              >
             </mat-select>
           </mat-form-field>
         </div>
@@ -124,10 +133,17 @@
         <div class="titles m-t-15" translate="status"></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
-            <mat-select formControlName="status">
-              <mat-option *ngFor="let s of status" [value]="s">{{
-                s
-              }}</mat-option>
+            <mat-select
+              formControlName="status"
+              (selectionChange)="
+                updateIssueOrAction({ field: 'status', value: $event.value })
+              "
+            >
+              <mat-option
+                *ngFor="let status of statuses; let i = index"
+                [value]="status"
+                >{{ statusValues[i] }}</mat-option
+              >
             </mat-select>
           </mat-form-field>
         </div>
@@ -139,14 +155,24 @@
           <mat-form-field appearance="outline">
             <input
               matInput
-              [matDatepicker]="picker1"
+              type="text"
+              formControlName="dueDateDisplayValue"
+              readonly
+            />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [min]="minDate"
               formControlName="dueDate"
+              (dateChange)="updateDate($event, 'dueDateDisplayValue')"
+              hidden
             />
             <mat-datepicker-toggle
               matIconSuffix
-              [for]="picker1"
+              [for]="picker"
+              (click)="picker.open()"
             ></mat-datepicker-toggle>
-            <mat-datepicker #picker1></mat-datepicker>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
@@ -154,18 +180,32 @@
 
       <div class="right-div">
         <div class="titles m-t-15" translate="assignedTo"></div>
-        <div class="values dropdowns">
-          <mat-form-field appearance="outline">
-            <mat-select formControlName="assignedTo">
+        <ng-container *ngIf="users$ | async">
+          <div class="values dropdowns">
+            <mat-form-field
+              appearance="outline"
+              [matMenuTriggerFor]="menu"
+              #menuTrigger="matMenuTrigger"
+            >
               <input
                 class="searchable-input"
-                [placeholder]="'search' | translate"
-                (keyup)="onKey($event)"
+                type="text"
+                matInput
+                formControlName="assignedTo"
+                class="cursor"
               />
-              <mat-option value="John"> John </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <mat-menu #menu="matMenu" backdropClass="assign-menu">
+            <app-assign-to
+              [assigneeDetails]="assigneeDetails"
+              [isMultiple]="true"
+              (selectedAssignee)="selectedAssigneeHandler($event)"
+            ></app-assign-to>
+          </mat-menu>
+        </ng-container>
       </div>
       <hr class="line" />
 
@@ -178,25 +218,9 @@
       <hr class="line" />
 
       <div class="right-div p-5-0">
-        <div class="titles" translate="createdBy"></div>
-        <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('createdBy').value
-              ? this.issuesActionsDetailViewForm.get('createdBy').value
-              : '--'
-          }}
-        </div>
-      </div>
-      <hr class="line" />
-
-      <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
-          {{
-            this.issuesActionsDetailViewForm.get('raisedBy').value
-              ? this.issuesActionsDetailViewForm.get('raisedBy').value
-              : '--'
-          }}
+          {{ this.issuesActionsDetailViewForm.get('raisedBy').value }}
         </div>
       </div>
       <hr class="line" />
