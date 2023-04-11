@@ -62,6 +62,7 @@ import { InstructionPdfPreviewComponent } from './components/field-types/instruc
 import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 import { AssignToComponent } from './components/schedular/assign/assign.component';
+import { MasterDataSliderComponent } from './components/master-data-slider/master-data-slider.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -99,7 +100,8 @@ import { AssignToComponent } from './components/schedular/assign/assign.componen
     InstructionPdfPreviewComponent,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent
+    AssignToComponent,
+    MasterDataSliderComponent
   ],
   imports: [
     FormsModule,

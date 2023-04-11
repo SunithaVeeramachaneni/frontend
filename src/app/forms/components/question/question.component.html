@@ -417,3 +417,10 @@
     ></app-hyperlink-side-drawer>
   </div>
 </div>
+
+<ng-container *ngIf="isMasterDataOpen">
+  <app-master-data-slider
+    [@slideInOut]="isMasterDataOpen"
+    (slideInOut)="isMasterDataOpen = 'out'"
+  ></app-master-data-slider>
+</ng-container>

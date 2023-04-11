@@ -55,11 +55,13 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
+import { slideInOut } from 'src/app/animations';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [slideInOut]
 })
 export class QuestionComponent implements OnInit {
   @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
@@ -173,6 +175,7 @@ export class QuestionComponent implements OnInit {
   formId: string;
   isINSTFieldChanged = false;
   instructionTagColours = {};
+  isMasterDataOpen = 'out';
 
   private _pageIndex: number;
   private _id: string;
@@ -561,10 +564,13 @@ export class QuestionComponent implements OnInit {
       .setValue(isResponseTypeModalOpen, { emitEvent: false });
   }
 
-  responseTypeCloseEventHandler(responseTypeClosed: boolean) {
+  responseTypeCloseEventHandler(event) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(!responseTypeClosed, { emitEvent: false });
+      .setValue(!event.closeResponseModal, { emitEvent: false });
+    if (event.openMasterDataSlider) {
+      this.isMasterDataOpen = 'in';
+    }
   }
   setQuestionValue(event) {
     this.questionForm.get('value').setValue(event);

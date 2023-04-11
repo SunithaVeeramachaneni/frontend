@@ -10,22 +10,24 @@
     <div class="main-container">
       <mat-tab-group animationDuration="0ms">
         <mat-tab [label]="'Responses' | translate">
-          <div class="response-container">
-            <div
-              *ngFor="let fieldType of fieldTypes"
-              (click)="selectFieldType(fieldType)"
-              class="response-field-types"
-              [ngClass]="{
-                active: fieldType.type === question.fieldType
-              }"
-            >
-              <img
-                [src]="getFieldTypeImage(fieldType.type)"
-                class="response-type-icons"
-              />&nbsp;
-              <span class="response-type-description">
-                {{ fieldType.description }}
-              </span>
+          <div class="first-tab">
+            <div class="response-container">
+              <div
+                *ngFor="let fieldType of fieldTypes"
+                (click)="selectFieldType(fieldType)"
+                class="response-field-types"
+                [ngClass]="{
+                  active: fieldType.type === question.fieldType
+                }"
+              >
+                <img
+                  [src]="getFieldTypeImage(fieldType.type)"
+                  class="response-type-icons"
+                />&nbsp;
+                <span class="response-type-description">
+                  {{ fieldType.description }}
+                </span>
+              </div>
             </div>
           </div>
           <div *ngIf="question.fieldType === 'RT'">
@@ -164,20 +166,32 @@
                 [formId]="formId"
               ></app-response-type-side-drawer>
             </div>
+            <div *ngIf="isGlobalResponseOpen">
+              <app-global-response-type-side-drawer
+                [@slideInOut]="globalResponseSlideState"
+                (slideInOut)="handleSlideState($event)"
+                [globalResponseToBeEdited]="responseToBeEdited"
+                [isControlInViewMode]="false"
+                (globalResponseHandler)="handleGlobalResponseChange($event)"
+              ></app-global-response-type-side-drawer>
+            </div>
           </div>
         </mat-tab>
-        <!-- <mat-tab [label]="'Masterdata' | translate" disabled></mat-tab> -->
+        <mat-tab [label]="'Masterdata' | translate">
+          <div class="masterdata-container">
+            <div *ngFor="let response of masterData">
+              <div
+                class="p-5 cursor-pointer"
+                (click)="openGlobalMasterDataSlider(response)"
+              >
+                <span class="response">{{ response }}</span>
+                <mat-icon class="arrow">keyboard_arrow_right</mat-icon>
+              </div>
+              <hr class="line" />
+            </div>
+          </div>
+        </mat-tab>
       </mat-tab-group>
     </div>
   </div>
-</div>
-
-<div *ngIf="isGlobalResponseOpen">
-  <app-global-response-type-side-drawer
-    [@slideInOut]="globalResponseSlideState"
-    (slideInOut)="handleSlideState($event)"
-    [globalResponseToBeEdited]="responseToBeEdited"
-    [isControlInViewMode]="false"
-    (globalResponseHandler)="handleGlobalResponseChange($event)"
-  ></app-global-response-type-side-drawer>
 </div>

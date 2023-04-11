@@ -20,8 +20,7 @@ export class ResponseTypeComponent implements OnInit {
   @Input() question;
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
-  @Output() responseTypeCloseEvent: EventEmitter<boolean> =
-    new EventEmitter<boolean>();
+  @Output() responseTypeCloseEvent: EventEmitter<any> = new EventEmitter<any>();
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
@@ -40,6 +39,7 @@ export class ResponseTypeComponent implements OnInit {
     response: {}
   });
   formId: string;
+  masterData = ['Plants', 'Locations', 'Assets'];
 
   constructor(
     private formService: FormService,
@@ -152,7 +152,7 @@ export class ResponseTypeComponent implements OnInit {
     if (fieldType.type === 'RT') {
       this.formService.setsliderOpenState(true);
     }
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   handleMCQRepsonseSelection = (responseType, response) => {
@@ -179,11 +179,11 @@ export class ResponseTypeComponent implements OnInit {
     );
   };
   closeResponseType() {
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   toggleResponseTypeModal(value) {
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   handleResponses(response = {}) {
@@ -193,7 +193,7 @@ export class ResponseTypeComponent implements OnInit {
         isOpen: true,
         response
       });
-      this.responseTypeCloseEvent.emit(true);
+      this.responseTypeCloseEvent.emit({ closeResponseModal: true });
     }
   }
 
@@ -228,4 +228,11 @@ export class ResponseTypeComponent implements OnInit {
     this.responseToBeEdited = event.responseToBeEdited;
   };
   quickResponseTypeHandler(event) {}
+
+  openGlobalMasterDataSlider(res) {
+    this.responseTypeCloseEvent.emit({
+      closeResponseModal: true,
+      openMasterDataSlider: true
+    });
+  }
 }
