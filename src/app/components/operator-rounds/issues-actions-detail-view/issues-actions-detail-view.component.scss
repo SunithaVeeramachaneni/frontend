@@ -1,5 +1,10 @@
 @import '../../../../scss/colors.scss';
 
+.disable-detail-interactions {
+  pointer-events: none;
+  user-select: none;
+}
+
 .form-header-modal {
   background: $white;
   overflow: hidden;
@@ -68,7 +73,7 @@
       }
     }
 
-    .chart-div {
+    .chat-div {
       border: 1px solid rgba(61, 90, 254, 0.5);
       margin: 12px;
       border-radius: 7px;
