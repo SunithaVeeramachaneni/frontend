@@ -196,5 +196,6 @@
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "createResponses": "Create Responses",
-  "globalMasterData": "Global Masterdata"
+  "globalMasterData": "Global Masterdata",
+  "save": "Save"
 }

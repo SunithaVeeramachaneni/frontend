@@ -239,5 +239,6 @@
   "publishPlanBody": "Plan cannot be published with blank tasks",
   "publishWithoutTaskButton": "Publish without Blank Tasks",
   "createResponses": "Create Responses",
-  "globalMasterData": "Global Masterdata"
+  "globalMasterData": "Global Masterdata",
+  "save": "Save"
 }
