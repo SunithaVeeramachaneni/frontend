@@ -23,15 +23,11 @@ export class PDFPreviewComponent implements OnInit {
 
   printPDF(selectedForm) {
     const id = selectedForm;
-    const htmlContent = `<h1>PDF BUILDER HTML CONTENT!</h1>`;
-    // ALL FIELDS ROUND PLAN -----
-    const roundPlanId = '0c0e2092-22d5-447e-a539-a2a4daa25816';
-    const roundId = 'd6a0c8e3-b4f9-4cd8-b99b-525184af5c74';
-    // const roundPlanId = '91762fbc-78e5-4799-8443-0332801a72f3';
-    // const roundId = '44586bba-42c1-4401-ae59-6961d911fca7';
+    const roundPlanId = selectedForm.id;
+    const roundId = selectedForm.roundId;
+
     fetch(`http://localhost:8007/rounds/${roundPlanId}/${roundId}`, {
-      method: 'post',
-      body: JSON.stringify({ htmlContent }),
+      method: 'get',
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'Content-Type': 'application/json',
@@ -43,7 +39,11 @@ export class PDFPreviewComponent implements OnInit {
       .then((res) => res.blob())
       .then((res) => {
         const aElement = document.createElement('a');
-        aElement.setAttribute('download', 'output.pdf');
+        const fileName =
+          selectedForm.name && selectedForm.name?.length
+            ? selectedForm.name
+            : 'untitled';
+        aElement.setAttribute('download', `${fileName}.pdf`);
         const href = URL.createObjectURL(res);
         aElement.href = href;
         aElement.setAttribute('target', '_blank');
