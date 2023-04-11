@@ -16,7 +16,6 @@
     border: 1px solid $border-color;
     margin: 0px 0px 0px -23px;
     position: relative;
-    top: 2px;
   }
 
   .questions-btn {
@@ -75,7 +74,7 @@
   }
 
   .question-input {
-    padding: 7px;
+    padding: 7px 7px 14px 7px;
     border: none;
     margin-left: 5px;
     width: 90%;

@@ -633,8 +633,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo:
                     this.operatorRoundsService.getUserFullName(assignedTo),
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  roundDBVersion: resp.roundDBVersion + 1
                 };
               }
               return data;
@@ -670,6 +669,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.markForCheck();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'
