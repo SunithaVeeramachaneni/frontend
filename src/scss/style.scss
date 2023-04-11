@@ -621,3 +621,87 @@ button.mat-menu-item {
   background-color: $black;
   opacity: 0.6;
 }
+
+.preview-menu {
+  position: fixed;
+  top: 496px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.preview-menu-operator-rounds {
+  position: fixed;
+  top: 528px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.preview-backdrop {
+  position: fixed;
+  top: 154px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-backdrop-operator-rounds {
+  position: fixed;
+  top: 192px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-history-menu {
+  position: fixed;
+  top: 265px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.preview-history-menu-operator-rounds {
+  position: fixed;
+  top: 300px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.preview-history-backdrop {
+  position: fixed;
+  top: 154px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-history-backdrop-operator-rounds {
+  position: fixed;
+  top: 192px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}

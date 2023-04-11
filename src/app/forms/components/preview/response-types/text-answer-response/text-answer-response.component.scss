@@ -1,0 +1,38 @@
+@import '../../../../../../scss/colors.scss';
+
+.text-answer {
+  width: 93%;
+  border: 1px solid $gray3;
+  height: 28px;
+  padding-left: 0.5rem;
+  border-radius: 6px;
+  margin-top: 5px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    font-size: 90%;
+  }
+}
+
+.long-text-answer {
+  width: 93%;
+  max-width: 93%;
+  min-width: 93%;
+  border: 1px solid $gray3;
+  height: 60px;
+  min-height: 60px;
+  max-height: 100px;
+  padding-left: 0.5rem;
+  border-radius: 6px;
+  margin-top: 5px;
+
+  &:focus {
+    outline: none;
+  }
+  &::placeholder {
+    font-size: 90%;
+  }
+}

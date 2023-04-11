@@ -1,0 +1,25 @@
+<div class="bottom-list">
+  <div class="bottom-list-option" matLine>Choose Option</div>
+  <hr />
+  <span matListItemTitle>Create Issue</span>
+  <hr />
+  <button
+    (click)="openHistoryBottomSheet()"
+    class="history-bottom-sheet"
+    click
+    matListItemTitle
+    [disabled]="data.history === false"
+  >
+    History
+  </button>
+  <hr />
+  <span class="skip-task-list-item" matListItemTitle>Skip Task</span>
+  <hr />
+  <button
+    matListItemTitle
+    class="close-bottom-sheet"
+    (click)="closeBottomSheet()"
+  >
+    Cancel
+  </button>
+</div>

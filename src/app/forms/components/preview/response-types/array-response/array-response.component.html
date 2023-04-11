@@ -1,0 +1,19 @@
+<!-- Array-->
+<div>
+  <label>
+    <img
+      class="img-array"
+      (click)="openBottomSheet()"
+      src="assets/rdf-forms-icons/array-arrow.svg"
+      alt="img-array"
+    />
+  </label>
+  <span class="array-heading">
+    {{ (question.name ? question.name : 'typeQuestion') | translate }}
+  </span>
+
+  <div class="add-new-button">
+    <img src="assets/img/add-new.svg" class="add-new-icon" />
+    <label>Add new</label>
+  </div>
+</div>

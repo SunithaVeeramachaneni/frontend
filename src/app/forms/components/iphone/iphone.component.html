@@ -1,33 +1,74 @@
 <div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
+  <div class="current-time">{{ currentTime }}</div>
   <div class="iphone-header">
-    <h3 class="form-heading" matTooltip="{{ formMetadata.name }}">
+    <img src="/assets/preview/Back_Page.svg" alt="<" />
+    <p class="form-heading" matTooltip="{{ formMetadata.name }}">
       {{ formMetadata.name }}
-    </h3>
-    <p class="form-description" matTooltip=" {{ formMetadata.description }}">
-      {{
-        (formMetadata.description ? formMetadata.description : 'des')
-          | translate
-      }}
     </p>
+    <img
+      *ngIf="moduleType === 'operator-rounds'"
+      src="/assets/preview/Scan_Asset.svg"
+      alt="scan"
+    />
+    <img
+      *ngIf="moduleType === 'forms'"
+      class="iphone-more"
+      src="/assets/preview/More.svg"
+      alt="more"
+    />
   </div>
-  <div class="iphone-preview">
+  <div
+    *ngIf="moduleType === 'operator-rounds'"
+    class="asset-navigation-container"
+  >
+    <div class="asset-navigation">
+      <img src="/assets/preview/Arrow_Backward.svg" alt="<" />
+      <div class="asset-name">{{ assetLocationName }}</div>
+      <img src="/assets/preview/Arrow_Forward.svg" alt=">" />
+    </div>
+    <img src="/assets/preview/More.svg" alt="more" class="more" />
+  </div>
+  <div
+    class="iphone-preview"
+    [ngClass]="moduleType === 'operator-rounds' ? 'iphone-preview-height' : ''"
+  >
     <app-preview
+      (totalPageCount)="changePageCount($event)"
       [pageIndex]="currentPage"
       [subFormId]="subFormId"
+      [moduleType]="moduleType"
     ></app-preview>
   </div>
-  <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
-    <span class="page-count">{{ currentPage }} / {{ pagesCount }}</span>
-
+  <div class="iphone-footer" *ngIf="totalPages">
     <button
-      class="btn-next"
-      translate="nextBtnPreview"
-      (click)="nextPage()"
-    ></button>
-    <button
-      class="btn-previous"
-      translate="prevBtn"
+      class="previous-page"
       (click)="prevPage()"
-    ></button>
+      [style.visibility]="currentPage !== 1 ? 'visible' : 'hidden'"
+    >
+      <img
+        src="/assets/preview/Back_Page.svg"
+        alt="front-page"
+        class="back-page-svg"
+      />
+      <div class="text-previous">Page {{ currentPage - 1 }}</div>
+    </button>
+    <button class="btn-save">Save</button>
+    <span class="page-count" *ngIf="totalPages > 1"
+      >{{ currentPage }}/{{ totalPages }}</span
+    >
+    <button
+      class="next-page"
+      (click)="nextPage()"
+      [style.visibility]="
+        currentPage === totalPages || totalPages <= 1 ? 'hidden' : 'visible'
+      "
+    >
+      <div class="text-next">Page {{ currentPage + 1 }}</div>
+      <img
+        src="/assets/preview/Back_Page.svg"
+        alt="front-page"
+        class="front-page-svg"
+      />
+    </button>
   </div>
 </div>

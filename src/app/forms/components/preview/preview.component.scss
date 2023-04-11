@@ -1,9 +1,39 @@
 @import '../../../../scss/colors.scss';
 
 .preview {
-  padding: 7px;
   .pages {
     display: none;
+    .page-header {
+      background-color: $white2;
+      padding: 8px;
+      border-bottom: 1px solid $disabled-color;
+      .page-name {
+        display: flex;
+        justify-content: center;
+        margin: 0px 0px 4px 15px;
+        font-size: 85%;
+        align-items: center;
+        width: 90%;
+      }
+      .task-progress-bar {
+        font-size: 85%;
+      }
+      hr {
+        height: 3px;
+        background-color: $disabled-color;
+        border: none;
+        margin-bottom: 12px;
+      }
+    }
+    .submit-button {
+      margin: 0 0 8px 16px;
+      padding: 8px;
+      background-color: $blue-head;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      width: 86%;
+    }
   }
   .read-only-field {
     color: rgb(125 125 125);
@@ -12,15 +42,15 @@
     display: block !important;
   }
   .preview-content {
-    border: 1px solid $border-color;
-    border-radius: 4px;
+    padding: 8px 8px 0 8px;
   }
 
   .section-header {
     background: $blue-head;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: 8px;
     color: $white;
     padding: 4px;
+    margin-bottom: 4px;
 
     .fix-arrow {
       cursor: pointer;
@@ -51,242 +81,8 @@
   }
 
   #preview {
-    .field-types {
-      margin: 10px 7px;
-
-      .each-fieldtype {
-        padding: 5px;
-        background-color: $white;
-        border-radius: 6px;
-
-        .question-name {
-          color: $gray4;
-          font-size: 95%;
-          font-weight: 500;
-          margin: 0;
-        }
-
-        .read-only-field {
-          font-weight: 500;
-          font-size: 85%;
-          margin: 5px 0 0 5px;
-        }
-
-        .text-answer {
-          width: 93%;
-          border: 1px solid $gray3;
-          height: 28px;
-          padding-left: 0.5rem;
-          border-radius: 6px;
-          margin-top: 5px;
-
-          &:focus {
-            outline: none;
-          }
-
-          &::placeholder {
-            font-size: 90%;
-          }
-        }
-
-        .long-text-answer {
-          width: 93%;
-          border: 1px solid $gray3;
-          height: 60px;
-          padding-left: 0.5rem;
-          border-radius: 6px;
-          margin-top: 5px;
-
-          &:focus {
-            outline: none;
-          }
-          &::placeholder {
-            font-size: 90%;
-          }
-        }
-
-        .instruction {
-          word-wrap: break-word;
-        }
-
-        .instruction ol li {
-          list-style-type: auto;
-        }
-
-        .number {
-          width: 93%;
-          border: 1px solid $gray3;
-          height: 28px;
-          padding-left: 0.5rem;
-          border-radius: 6px;
-          margin-top: 5px;
-
-          &:focus {
-            outline: none;
-          }
-
-          &::placeholder {
-            font-size: 90%;
-          }
-        }
-
-        .scan-icon {
-          width: 31px;
-          position: relative;
-          top: 2px;
-          margin-left: 5px;
-        }
-
-        .checkbox {
-          float: right;
-          margin-top: -17px;
-        }
-
-        .signature-icon {
-          float: right;
-          position: relative;
-          top: -25px;
-          right: 5px;
-        }
-
-        .slider-values {
-          font-size: 90%;
-        }
-
-        .slider {
-          height: 48px;
-          width: 75%;
-          margin-left: 7px;
-        }
-
-        .attachment {
-          height: 30px;
-          background: $blue-head;
-          border-radius: 4px;
-          color: $white;
-          width: 100%;
-          border: none;
-          font-size: 85%;
-        }
-
-        .date-range-hypion {
-          margin: 12px 5px;
-        }
-
-        .hyperlink {
-          font-size: 11px;
-          color: blue;
-          text-decoration: underline;
-          cursor: pointer;
-        }
-
-        .add-link {
-          font-size: 11px;
-        }
-
-        .image-field {
-          width: 100%;
-          margin-top: 7px;
-        }
-
-        .instruction-image-field {
-          width: 56px;
-          margin: 3px;
-          height: 56px;
-          border-radius: 8px;
-        }
-
-        .tag-text {
-          margin-left: 8px;
-          color: red;
-        }
-
-        .dropdown {
-          width: 100%;
-        }
-
-        ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
-          padding: 0.2em 0px 0.6em 0px !important;
-        }
-
-        ::ng-deep .mat-form-field-label-wrapper {
-          top: -1.4em;
-        }
-
-        ::ng-deep .mat-select-arrow {
-          margin-top: 8px !important;
-        }
-
-        .mat-button-toggle-group {
-          flex-direction: column;
-          width: 100%;
-          border: none;
-          margin-top: 7px;
-        }
-
-        .mat-button-toggle {
-          border: 1px solid $gray3;
-          border-radius: 5px;
-          background: $white;
-          margin-bottom: 0.4rem;
-          font-size: 90%;
-          height: 30px;
-          align-items: center;
-        }
-
-        ::ng-deep .mat-button-toggle-label-content {
-          line-height: 32px;
-        }
-
-        .table-class {
-          width: 97%;
-          border: 1px solid $gray3;
-          margin-top: 7px;
-
-          thead {
-            background-color: $gray1-bg;
-            padding: 5px;
-          }
-          td {
-            padding: 4px;
-            text-align: center;
-          }
-          tbody td {
-            padding: 4px;
-          }
-          .bg-color {
-            background-color: $gray1-bg;
-          }
-          .input-p {
-            width: 80%;
-          }
-        }
-        .add-new-icon {
-          width: 15px;
-          margin-top: 5px;
-          position: relative;
-          top: 2px;
-          margin-right: 5px;
-        }
-
-        .img-array {
-          margin-right: 5px;
-          width: 10px;
-          position: relative;
-          top: 1px;
-        }
-
-        .array-heading {
-          font-weight: 500;
-          font-size: 110%;
-          color: $black;
-        }
-      }
-    }
-
     .bg-bottom-array {
       background: $white;
-      // padding: 0px;
 
       .bottom-header {
         display: flex;
