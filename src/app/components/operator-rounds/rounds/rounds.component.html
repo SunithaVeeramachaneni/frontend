@@ -1,8 +1,9 @@
 <div class="search-container">
   <div id="opendetail">
-    <app-form-detail [@slideInOut]="formDetailState" (slideInOut)="onCloseViewDetail()" [selectedForm]="selectedRound"
-      [moduleName]="'OPERATOR_ROUNDS'" [hidden]="hideRoundDetail" [formStatus]="formConfigurationStatus.published"
-      formDetailType="submitted" (formDetailAction)="roundsDetailActionHandler($event)"></app-form-detail>
+    <app-form-detail [@slideInOut]="formDetailState" [showPDFDownload]="true" (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedRound" [moduleName]="'OPERATOR_ROUNDS'" [hidden]="hideRoundDetail"
+      [formStatus]="formConfigurationStatus.published" formDetailType="submitted"
+      (formDetailAction)="roundsDetailActionHandler($event)"></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-rounds">

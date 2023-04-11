@@ -47,6 +47,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
+  @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
   @Input() set scheduleConfiguration(
