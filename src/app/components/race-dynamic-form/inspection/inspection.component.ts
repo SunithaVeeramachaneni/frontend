@@ -80,13 +80,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
-    status: '',
+    schedule: '',
     assignedTo: '',
     dueDate: ''
   };
   assignedTo: string[] = [];
+  schedules: string[] = [];
   assigneePosition: any;
   columns: Column[] = [
     {
@@ -412,6 +412,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
             }))
           );
         }
+
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
+          );
+        }
         this.skip = this.initial.data.length;
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
@@ -454,19 +460,33 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService
       .fetchAllInspections$()
       .subscribe((formsList) => {
-        const uniqueInspectedBy = formsList
+        const uniqueAssignTo = formsList
           ?.map((item) => item.assignedTo)
           .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueInspectedBy) {
+
+        const uniqueSchedules = formsList
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.schedules.push(item);
+            }
+          });
+        }
+
+        for (const item of uniqueAssignTo) {
           if (item) {
             this.assignedTo.push(item);
           }
         }
         for (const item of this.filterJson) {
-          if (item.column === 'status') {
-            item.items = this.status;
-          } else if (item.column === 'assignedTo') {
+          if (item.column === 'assignedTo') {
             item.items = this.assignedTo;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
           }
         }
       });
@@ -570,17 +590,29 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = '';
-    this.fetchInspection$.next({ data: 'load' });
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.dueDate &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchInspection$.next({ data: 'load' });
+    }
   }
 
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
+      schedule: '',
       assignedTo: '',
       dueDate: ''
     };
+    this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
   }
 

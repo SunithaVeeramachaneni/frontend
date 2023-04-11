@@ -78,7 +78,7 @@ export class FormListComponent implements OnInit {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    
+
     {
       id: 'formStatus',
       displayName: 'Status',
@@ -214,7 +214,7 @@ export class FormListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
+    createdBy: '',
     lastModifiedOn: ''
   };
   dataSource: MatTableDataSource<any>;
@@ -238,6 +238,10 @@ export class FormListComponent implements OnInit {
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -467,7 +471,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: form
+          form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
@@ -530,37 +534,6 @@ export class FormListComponent implements OnInit {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(
-    form: GetFormList,
-    rows: GetFormList[]
-  ) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
-  }
-
-  private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllForms() {
     this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
     this.formsList$
@@ -574,21 +547,21 @@ export class FormListComponent implements OnInit {
               this.lastPublishedBy.push(item);
             }
           }
-          const uniqueAuthoredBy = formsList.rows
+          const uniqueCreatedBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueAuthoredBy) {
+          for (const item of uniqueCreatedBy) {
             if (item) {
-              this.authoredBy.push(item);
+              this.createdBy.push(item);
             }
           }
           for (const item of this.filterJson) {
-            if (item['column'] == 'status') {
+            if (item.column === 'status') {
               item.items = this.status;
-            } else if (item['column'] == 'modifiedBy') {
+            } else if (item.column === 'modifiedBy') {
               item.items = this.lastPublishedBy;
-            } else if (item['column'] == 'authoredBy') {
-              item.items = this.authoredBy;
+            } else if (item.column === 'createdBy') {
+              item.items = this.createdBy;
             }
           }
         })
@@ -614,10 +587,35 @@ export class FormListComponent implements OnInit {
     this.filter = {
       status: '',
       modifiedBy: '',
-      authoredBy: '',
+      createdBy: '',
       lastModifiedOn: ''
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(form?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${form?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
+  }
+
+  private showFormDetail(row: GetFormList): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }

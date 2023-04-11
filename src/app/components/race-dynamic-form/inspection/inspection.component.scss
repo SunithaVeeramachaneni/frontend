@@ -26,10 +26,14 @@
       color: $gray1;
       margin-left: 5px;
     }
+
+    .common-filter-icon {
+      cursor: pointer;
+    }
   }
 }
 
-.rounds-list {
+.inspections-list {
   ::ng-deep .table-column {
     width: 20%;
   }

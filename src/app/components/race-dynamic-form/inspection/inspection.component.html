@@ -42,6 +42,7 @@
         [placeholder]="'search' | translate"
         autocomplete="off"
         [formControl]="searchForm"
+        class="pointer"
       />
       <img
         src="assets/maintenance-icons/filterIcon.svg"
@@ -75,7 +76,7 @@
 <ng-container *ngIf="userInfo$ | async">
   <div
     *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
-    class="rounds-list"
+    class="inspections-list"
   >
     <cwp-dynamictable
       [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }"

@@ -14,9 +14,9 @@
     "value": ""
   },
   {
-    "label": "Authored By",
+    "label": "Created By",
     "items": [],
-    "column": "authoredBy",
+    "column": "createdBy",
     "type": "select",
     "value": ""
   }

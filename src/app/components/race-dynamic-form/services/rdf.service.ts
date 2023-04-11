@@ -99,10 +99,7 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormQuestionsFormsList$(
-    queryParams: FormQueryParam,
-    info: ErrorInfo = {} as ErrorInfo
-  ) {
+  getFormQuestionsFormsList$(queryParams, info: ErrorInfo = {} as ErrorInfo) {
     const { fetchType, ...rest } = queryParams;
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
@@ -160,8 +157,8 @@ export class RaceDynamicFormService {
       filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
-      'authoredBy',
-      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+      'createdBy',
+      filterData && filterData.createdBy ? filterData.createdBy : ''
     );
     params.set(
       'lastModifiedOn',
