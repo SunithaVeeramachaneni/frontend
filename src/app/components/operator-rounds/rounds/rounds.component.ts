@@ -82,12 +82,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
-    status: '',
+    schedule: '',
     assignedTo: '',
     dueDate: ''
   };
+  assignedTo: string[] = [];
+  schedules: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -339,7 +340,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  assignedTo: string[] = [];
   private _users$: Observable<UserDetails[]>;
 
   constructor(
@@ -424,6 +424,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundDetail.assignedTo
               )
             }))
+          );
+        }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -549,19 +554,36 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList
-        .map((item) => item.assignedTo)
+      const uniqueAssignTo = formsList
+        ?.map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueInspectedBy) {
-        if (item) {
-          this.assignedTo.push(item);
-        }
+
+      const uniqueSchedules = formsList
+        ?.map((item) => item?.schedule)
+        .filter((value, index, self) => self?.indexOf(value) === index);
+
+      if (uniqueSchedules?.length > 0) {
+        uniqueSchedules?.filter(Boolean).forEach((item) => {
+          if (item) {
+            this.schedules.push(item);
+          }
+        });
       }
+
+      if (uniqueAssignTo?.length > 0) {
+        uniqueAssignTo?.filter(Boolean).forEach((item) => {
+          if (item) {
+            this.assignedTo.push(item);
+          }
+        });
+      }
+
       for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        } else if (item['column'] === 'assignedTo') {
+        if (item.column === 'assignedTo') {
           item.items = this.assignedTo;
+        }
+        if (item.column === 'schedule') {
+          item.items = this.schedules;
         }
       }
     });
@@ -570,11 +592,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-      }
     });
   }
 
@@ -587,14 +604,25 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = '';
-    this.fetchRounds$.next({ data: 'load' });
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.dueDate &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchRounds$.next({ data: 'load' });
+    }
   }
 
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
+      schedule: '',
       assignedTo: '',
       dueDate: ''
     };

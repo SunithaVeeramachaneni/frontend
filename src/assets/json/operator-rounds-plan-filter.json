@@ -14,9 +14,9 @@
     "value": ""
   },
   {
-    "label": "Due date",
+    "label": "Scheduling Period",
     "items": [],
-    "column": "dueDate",
+    "column": "scheduledAt",
     "type": "daterange",
     "startDate": "",
     "endDate": "",

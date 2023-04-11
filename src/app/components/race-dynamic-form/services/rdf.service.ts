@@ -99,7 +99,10 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormQuestionsFormsList$(queryParams, info: ErrorInfo = {} as ErrorInfo) {
+  getFormQuestionsFormsList$(
+    queryParams: FormQueryParam,
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     const { fetchType, ...rest } = queryParams;
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
