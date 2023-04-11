@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -69,6 +70,8 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -78,15 +81,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  private _users$: Observable<UserDetails[]>;
-  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: '',
+    dueDate: ''
   };
   assignedTo: string[] = [];
   assigneePosition: any;
@@ -302,7 +302,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  roundsCount = 0;
+  inspectionsCount = 0;
   nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -312,13 +312,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedForm: InspectionDetail;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
-  roundPlanId: string;
+  formId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   initial = {
     columns: this.columns,
     data: []
   };
+  private _users$: Observable<UserDetails[]>;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -370,7 +372,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       })
     );
 
-   
     this.rounds$ = combineLatest([
       roundsOnLoadSearch$,
       onScrollInspections$,
@@ -384,7 +385,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           };
           this.initial.data = rounds.rows.map((inspectionDetail) => ({
             ...inspectionDetail,
-            dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate): "",
+            dueDate: inspectionDetail.dueDate
+              ? new Date(inspectionDetail.dueDate)
+              : '',
             assignedTo: this.raceDynamicFormService.getUserFullName(
               inspectionDetail.assignedTo
             )
@@ -393,7 +396,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((inspectionDetail) => ({
               ...inspectionDetail,
-              dueDate: inspectionDetail.dueDate ? new Date(inspectionDetail.dueDate) : "",
+              dueDate: inspectionDetail.dueDate
+                ? new Date(inspectionDetail.dueDate)
+                : '',
               assignedTo: this.raceDynamicFormService.getUserFullName(
                 inspectionDetail.assignedTo
               )
@@ -410,8 +415,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
+    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
+      this.formId = formId;
       this.fetchInspection$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
@@ -425,31 +430,35 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: ''
+      formId: this.formId
     };
-    return this.raceDynamicFormService.getInspectionsList$({ ...obj, ...this.filter }).pipe(
-      tap(({ count, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
-        this.roundsCount = count !== undefined ? count : this.roundsCount;
-        this.isLoading$.next(false);
-      })
-    );
+    return this.raceDynamicFormService
+      .getInspectionsList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ count, nextToken }) => {
+          this.nextToken = nextToken !== undefined ? nextToken : null;
+          this.inspectionsCount =
+            count !== undefined ? count : this.inspectionsCount;
+          this.isLoading$.next(false);
+        })
+      );
   }
   getAllInspections() {
     this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList.map((item) => item.assignedTo)
+      const uniqueInspectedBy = formsList
+        .map((item) => item.assignedTo)
         .filter((value, index, self) => self.indexOf(value) === index);
       for (const item of uniqueInspectedBy) {
         if (item) {
           this.assignedTo.push(item);
         }
-      } 
+      }
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
-        } 
+        }
       }
     });
   }
@@ -495,13 +504,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
     ];
 
     if (
-      !this.loginService.checkUserHasPermission(
-        permissions,
-        'SCHEDULE_FORM'
-      )
+      !this.loginService.checkUserHasPermission(permissions, 'SCHEDULE_FORM')
     ) {
-      this.columns[3].controlType = 'string';
-      this.columns[6].controlType = 'string';
+      if (this.columns[3]?.controlType) {
+        this.columns[3].controlType = 'string';
+      }
+      if (this.columns[6]?.controlType) {
+        this.columns[6].controlType = 'string';
+      }
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -542,7 +552,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
 
-
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -552,7 +561,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = "";
+    this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
   }
 
@@ -561,8 +570,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: '',
-    }
+      dueDate: ''
+    };
     this.fetchInspection$.next({ data: 'load' });
   }
 
@@ -579,7 +588,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       // do nothing
     }
   };
-
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
@@ -618,10 +626,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    console.log(dueDate);
     const { inspectionId } = this.selectedForm;
     this.raceDynamicFormService
-      .updateInspection$(inspectionId, { ...this.selectedForm, dueDate }, 'due-date')
+      .updateInspection$(
+        inspectionId,
+        { ...this.selectedForm, dueDate },
+        'due-date'
+      )
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {

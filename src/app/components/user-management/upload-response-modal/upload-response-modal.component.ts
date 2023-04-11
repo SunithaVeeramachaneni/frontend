@@ -7,13 +7,10 @@ import {
   OnInit
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-// import { AssetsService } from '../services/';
-// import { LocationService } from '../locations/services/location.service';
-import { Observable } from 'rxjs';
+
 import { UsersService } from '../services/users.service';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { tap } from 'rxjs/internal/operators/tap';
-import { BulkUploadComponent } from '../../work-instructions/modal/templates/bulk-upload/bulk-upload.component';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -32,8 +29,6 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   failure: any = [];
   isFailure = false;
   constructor(
-    // private readonly locationService: LocationService,
-    // private readonly assetsService: AssetsService,
     private readonly userService: UsersService,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
@@ -46,13 +41,9 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       const formData = new FormData();
       formData.append('file', this.dialogData?.file);
       const type = this.dialogData?.type;
-      // const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding users`;
-      // const observable = isAssets
-      //   ? this.assetsService.uploadExcel(formData)
-      //   : this.locationService.uploadExcel(formData);
       console.log('FormData:', formData);
       const observable = this.userService.uploadExcel(formData);
       observable?.subscribe((result) => {

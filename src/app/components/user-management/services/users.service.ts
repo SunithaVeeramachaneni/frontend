@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { Buffer } from 'buffer';
-import { map, mergeMap, toArray } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { AppService } from '../../../shared/services/app.services';
 import {
@@ -16,7 +16,8 @@ import {
   UserInfo,
   TableEvent,
   LoadEvent,
-  SearchEvent
+  SearchEvent,
+  UsersInfoByEmail
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -29,6 +30,8 @@ export class UsersService {
 
   reportDefinitionAction$ = this.reportDefinitionNameSubject.asObservable();
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
+  userDetails: UserDetails;
+  usersInfoByEmail: UsersInfoByEmail;
 
   fetchUser$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
@@ -156,6 +159,44 @@ export class UsersService {
       `users/${email}/permissions`,
       info
     );
+
+  getUsersInfo$ = (): Observable<UserDetails[]> =>
+    this.getUsers$(
+      {
+        includeRoles: false,
+        includeSlackDetails: false
+      },
+      { displayToast: true, failureResponse: { rows: [] } }
+    ).pipe(
+      map(({ rows: users }) =>
+        users.map((user: UserDetails) => ({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          profileImage: this.getImageSrc(
+            Buffer.from(user.profileImage).toString()
+          ),
+          isActive: user.isActive
+        }))
+      ),
+      tap((users) => this.setUsers(users)),
+      shareReplay(1)
+    );
+
+  setUsers(users: UserDetails[]) {
+    this.usersInfoByEmail = users.reduce((acc, curr) => {
+      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
+      return acc;
+    }, {});
+  }
+
+  getUsersInfo(): UsersInfoByEmail {
+    return this.usersInfoByEmail;
+  }
+
+  getUserFullName(email: string): string {
+    return this.usersInfoByEmail[email]?.fullName;
+  }
 
   deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };

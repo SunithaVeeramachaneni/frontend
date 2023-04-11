@@ -171,7 +171,7 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
       endDatePicker: new Date(addDays(new Date(), 30)),
       scheduledTill: null,
       assignmentDetails: this.fb.group({
-        type: ['user'],
+        type: ['User'],
         value: '',
         displayValue: ''
       }),

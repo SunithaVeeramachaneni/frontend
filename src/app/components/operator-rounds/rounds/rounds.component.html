@@ -84,7 +84,7 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      (onChangeDueDateHandler)="onChangeDueDateHandler($event)"
+      (onDateChangeHandler)="onChangeDueDateHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>
@@ -105,11 +105,11 @@
       #assigneeMenuTrigger="matMenuTrigger"
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-round
+      <app-assign-to
         [assigneeDetails]="assigneeDetails"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
-      ></app-assign-round>
+      ></app-assign-to>
     </mat-menu>
   </ng-container>
 </ng-container>
