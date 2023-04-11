@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -69,6 +70,8 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -78,9 +81,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  private _users$: Observable<UserDetails[]>;
-  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -302,7 +302,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  roundsCount = 0;
+  inspectionsCount = 0;
   nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -312,13 +312,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedForm: InspectionDetail;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
-  roundPlanId: string;
+  formId: string;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   initial = {
     columns: this.columns,
     data: []
   };
+  private _users$: Observable<UserDetails[]>;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -413,8 +415,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
+    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
+      this.formId = formId;
       this.fetchInspection$.next({ data: 'load' });
       this.isLoading$.next(true);
     });
@@ -428,14 +430,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: ''
+      formId: this.formId
     };
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
         tap(({ count, nextToken }) => {
           this.nextToken = nextToken !== undefined ? nextToken : null;
-          this.roundsCount = count !== undefined ? count : this.roundsCount;
+          this.inspectionsCount =
+            count !== undefined ? count : this.inspectionsCount;
           this.isLoading$.next(false);
         })
       );
@@ -503,8 +506,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
     if (
       !this.loginService.checkUserHasPermission(permissions, 'SCHEDULE_FORM')
     ) {
-      this.columns[3].controlType = 'string';
-      this.columns[6].controlType = 'string';
+      if (this.columns[3]?.controlType) {
+        this.columns[3].controlType = 'string';
+      }
+      if (this.columns[6]?.controlType) {
+        this.columns[6].controlType = 'string';
+      }
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;

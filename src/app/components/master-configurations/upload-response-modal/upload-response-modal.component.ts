@@ -11,6 +11,7 @@ import { tap } from 'rxjs/operators';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -49,23 +50,30 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
+      const info: ErrorInfo = {
+        displayToast: false,
+        failureResponse: 'throwError'
+      };
       const observable = isAssets
-        ? this.assetsService.uploadExcel(formData)
-        : this.locationService.uploadExcel(formData);
-      observable?.subscribe((result) => {
-        if (Object.keys(result).length > 0) {
-          this.isSuccess = true;
-          this.title = 'All done!';
-          this.message = `Adding all ${result?.totalCount} ${type}`;
-          this.successCount = result?.successCount;
-          this.failedCount = result?.failedCount;
-          this.failure = result?.failure;
-        } else {
+        ? this.assetsService.uploadExcel(formData, info)
+        : this.locationService.uploadExcel(formData, info);
+      observable?.subscribe(
+        (result) => {
+          if (Object.keys(result).length > 0) {
+            this.isSuccess = true;
+            this.title = 'All done!';
+            this.message = `Adding all ${result?.totalCount} ${type}`;
+            this.successCount = result?.successCount;
+            this.failedCount = result?.failedCount;
+            this.failure = result?.failure;
+          }
+        },
+        (error) => {
           this.isFailure = true;
           this.title = 'Failure!';
           this.message = `Uploaded file is invalid`;
         }
-      });
+      );
     } else {
       this.onClose();
     }
@@ -73,18 +81,22 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
 
   downloadExcel() {
     if (this.type === 'assets') {
-      this.assetsService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Asset_Failure');
-        })
-      )
+      this.assetsService
+        .downloadFailure({ rows: this.failure })
+        .pipe(
+          tap((data) => {
+            downloadFile(data, 'Asset_Failure');
+          })
+        )
         .subscribe();
     } else {
-      this.locationService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Location_Failure');
-        })
-      )
+      this.locationService
+        .downloadFailure({ rows: this.failure })
+        .pipe(
+          tap((data) => {
+            downloadFile(data, 'Location_Failure');
+          })
+        )
         .subscribe();
     }
   }
