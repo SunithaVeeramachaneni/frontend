@@ -60,6 +60,10 @@
     float: right;
     margin-right: 15px;
   }
+
+  .error-fields {
+    margin-top: 14px;
+  }
 }
 
 .searchable-input {
@@ -70,6 +74,6 @@
   margin: 10px 10px 10px 12px;
 }
 .scrollable-area {
-    max-height: 200px;
-    overflow: auto;
+  max-height: 200px;
+  overflow: auto;
 }
