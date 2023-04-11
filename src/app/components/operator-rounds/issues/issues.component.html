@@ -37,9 +37,6 @@
     class="issue-table"
   >
     <cwp-dynamictable
-      [ngClass]="{
-        'remove-zindex': zIndexDelay === 400
-      }"
       [dataSource]="dataSource"
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
