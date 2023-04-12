@@ -1,4 +1,9 @@
-import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
+import {
+  InspectionDetail,
+  RoundDetail,
+  UserDetails,
+  UsersInfoByEmail
+} from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -237,6 +242,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'plantsID'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -248,6 +254,7 @@ export class RaceDynamicFormService {
       formType: formListQuery.formType,
       tags: formListQuery.tags,
       isPublic: formListQuery.isPublic,
+      plantsID: formListQuery.plantsID,
       isArchived: false,
       isDeleted: false
     });
@@ -877,8 +884,8 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
-          },${p.totalTasks > 0
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
+          p.totalTasks > 0
             ? Math.round(
                 (Math.abs(p.totalTasksCompleted / p.totalTasks) +
                   Number.EPSILON) *

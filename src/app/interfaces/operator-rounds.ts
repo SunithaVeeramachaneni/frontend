@@ -77,6 +77,8 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
+  plantsID?: string;
+  plant?: string;
 }
 
 export interface RoundDetail extends RoundPlan {

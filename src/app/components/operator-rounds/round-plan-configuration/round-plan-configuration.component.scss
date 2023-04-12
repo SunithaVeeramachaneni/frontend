@@ -66,7 +66,7 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    width: 90%;
+    width: 100%;
   }
 
   .justify-content-end {
@@ -445,4 +445,13 @@
 }
 .nodeInstance {
   padding-bottom: 25px;
+}
+
+.dis-flex .center {
+  justify-content: space-between;
+  align-items: center;
+
+  .plant {
+    font-weight: 500;
+  }
 }

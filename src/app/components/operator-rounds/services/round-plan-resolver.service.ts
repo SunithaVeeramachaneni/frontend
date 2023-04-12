@@ -53,9 +53,10 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
+          plantsID,
+          plant,
           _version: formListDynamoDBVersion
         } = form;
-
         const {
           id: authoredFormDetailId,
           counter,
@@ -76,7 +77,9 @@ export class RoundPlanResolverService
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          plantsID,
+          plant: plant.name
         };
 
         const subFormsMap = JSON.parse(subForms);

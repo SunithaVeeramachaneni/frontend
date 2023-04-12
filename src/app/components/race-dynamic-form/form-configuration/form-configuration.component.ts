@@ -102,6 +102,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   currentFormData: any;
   errors: ValidationError = {};
   formDetails: any;
+  plant = '';
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -181,6 +182,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
+        this.plant = formMetadata?.plant || '';
         const { name, description, id, formLogo, formStatus } = formMetadata;
         this.formMetadata = formMetadata;
         this.formConfiguration.patchValue(
@@ -382,9 +384,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
-        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
-        let df = this.formConfigurationService.getDefQues();
-        let questions = new Array(4).fill(0).map((q, index) => {
+        const section = {
+          id: 'S1',
+          name: 'Section',
+          position: 1,
+          isOpen: true
+        };
+        const df = this.formConfigurationService.getDefQues();
+        const questions = new Array(4).fill(0).map((q, index) => {
           if (index === 0) {
             return { ...df, name: 'Site Conducted' };
           }

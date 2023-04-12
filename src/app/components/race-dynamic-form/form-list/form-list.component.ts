@@ -78,7 +78,6 @@ export class FormListComponent implements OnInit {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    
     {
       id: 'formStatus',
       displayName: 'Status',
@@ -117,11 +116,33 @@ export class FormListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -143,7 +164,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -166,7 +187,7 @@ export class FormListComponent implements OnInit {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -238,6 +259,10 @@ export class FormListComponent implements OnInit {
   selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -447,7 +472,20 @@ export class FormListComponent implements OnInit {
           this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantsID) {
+              item = {
+                ...item,
+                plant: item.plant
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
@@ -467,7 +505,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: form
+          form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
@@ -530,37 +568,6 @@ export class FormListComponent implements OnInit {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(
-    form: GetFormList,
-    rows: GetFormList[]
-  ) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
-  }
-
-  private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllForms() {
     this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
     this.formsList$
@@ -583,11 +590,11 @@ export class FormListComponent implements OnInit {
             }
           }
           for (const item of this.filterJson) {
-            if (item['column'] == 'status') {
+            if (item.column === 'status') {
               item.items = this.status;
-            } else if (item['column'] == 'modifiedBy') {
+            } else if (item.column === 'modifiedBy') {
               item.items = this.lastPublishedBy;
-            } else if (item['column'] == 'authoredBy') {
+            } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
             }
           }
@@ -619,5 +626,30 @@ export class FormListComponent implements OnInit {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  private showFormDetail(row: GetFormList): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
+  }
+
+  private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(form?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${form?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
   }
 }

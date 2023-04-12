@@ -32,6 +32,7 @@ import {
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -54,6 +55,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allTags: string[] = [];
   originalTags: string[] = [];
 
+  allPlantsData = [];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -65,6 +68,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
+    private plantService: PlantService,
     private cdrf: ChangeDetectorRef
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -83,6 +87,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
 
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items;
+    });
+  }
+
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
@@ -98,8 +108,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      plantsID: ['']
     });
+    this.getAllPlantsData();
   }
 
   add(event: MatChipInputEvent): void {
@@ -162,12 +174,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       // });
     }
 
+    const plant = this.allPlantsData.find(
+      (p) => p.id === this.headerDataForm.get('plantsID').value
+    );
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
             ...this.headerDataForm.value,
+            plant: plant.name,
             moduleName: 'rdf'
           },
           formDetailPublishStatus: formConfigurationStatus.draft,

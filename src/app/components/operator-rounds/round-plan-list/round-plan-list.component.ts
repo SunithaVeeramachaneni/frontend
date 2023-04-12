@@ -122,11 +122,33 @@ export class RoundPlanListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -148,7 +170,7 @@ export class RoundPlanListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -171,7 +193,7 @@ export class RoundPlanListComponent implements OnInit {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -235,12 +257,16 @@ export class RoundPlanListComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   infiniteScrollEnabled = true;
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
@@ -359,7 +385,6 @@ export class RoundPlanListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -393,6 +418,24 @@ export class RoundPlanListComponent implements OnInit {
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
+        }),
+        map((data) => {
+          const rows = data.map((item) => {
+            if (item.plantsID) {
+              item = {
+                ...item,
+                plant: `${item.plant.plantId} - ${item.plant.name}`
+              };
+            } else {
+              // remove if condition after clearing data since plant will be mandatory
+              item = {
+                ...item,
+                plant: ``
+              };
+            }
+            return item;
+          });
+          return rows;
         })
       );
   }
@@ -404,6 +447,7 @@ export class RoundPlanListComponent implements OnInit {
           id: form?.id,
           isArchived: true,
           name: form?.name,
+          plantsID: form?.plantsID,
           description: form?.description,
           isArchivedAt: new Date().toISOString()
         },
@@ -441,7 +485,7 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => { };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
@@ -477,16 +521,6 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllOperatorRounds() {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
@@ -508,11 +542,11 @@ export class RoundPlanListComponent implements OnInit {
           }
         }
         for (const item of this.filterJson) {
-          if (item['column'] == 'status') {
+          if (item.column === 'status') {
             item.items = this.status;
-          } else if (item['column'] == 'modifiedBy') {
+          } else if (item.column === 'modifiedBy') {
             item.items = this.lastPublishedBy;
-          } else if (item['column'] == 'authoredBy') {
+          } else if (item.column === 'authoredBy') {
             item.items = this.authoredBy;
           }
         }
@@ -527,7 +561,7 @@ export class RoundPlanListComponent implements OnInit {
 
   applyFilter(data: any) {
     for (const item of data) {
-      if (item.type == 'daterange') {
+      if (item.type === 'daterange') {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else {
@@ -549,5 +583,10 @@ export class RoundPlanListComponent implements OnInit {
     };
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+  private showFormDetail(row: RoundPlan): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }

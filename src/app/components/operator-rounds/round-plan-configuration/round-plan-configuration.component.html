@@ -77,16 +77,22 @@
           </button>
         </a>
         <br />
-        <a matTooltip="{{ formConfiguration.get('description').value }}">
-          <input
-            type="text"
-            class="form_description_input"
-            placeholder="{{ 'addFormDesc' | translate }}"
-            formControlName="description"
-            autofocus="true"
-            autocomplete="off"
-          />
-        </a>
+        <div class="dis-flex center">
+          <a matTooltip="{{ formConfiguration.get('description').value }}">
+            <input
+              type="text"
+              class="form_description_input"
+              placeholder="{{ 'addFormDesc' | translate }}"
+              formControlName="description"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+          <span
+            ><span class="plant">{{ 'plant' | translate }}:</span>
+            {{ ' ' + plant }}</span
+          >
+        </div>
       </div>
     </div>
     <div class="dis-flex width-45 justify-content-end">

@@ -283,6 +283,7 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
+        plantsID: formListQuery.plantsID,
         isArchived: false,
         isDeleted: false
       }

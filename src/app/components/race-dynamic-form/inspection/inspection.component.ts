@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -69,6 +70,8 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -78,9 +81,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  private _users$: Observable<UserDetails[]>;
-  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -118,6 +118,29 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: 'darkgray'
       },
       hasPreTextImage: true,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      controlValue: ',',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { width: '125px' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -319,6 +342,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: this.columns,
     data: []
   };
+  private _users$: Observable<UserDetails[]>;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -452,9 +476,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
         }
       }
       for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
+        if (item.column === 'status') {
           item.items = this.status;
-        } else if (item['column'] === 'assignedTo') {
+        } else if (item.column === 'assignedTo') {
           item.items = this.assignedTo;
         }
       }

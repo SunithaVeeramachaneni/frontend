@@ -41,6 +41,8 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formStatus,
           formType,
           tags,
+          plantsID,
+          plant,
           _version: formListDynamoDBVersion
         } = form;
         const {
@@ -61,7 +63,9 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          plantsID,
+          plant: plant.name
         };
         return {
           formMetadata,

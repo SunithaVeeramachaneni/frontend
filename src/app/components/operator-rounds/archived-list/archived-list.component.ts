@@ -75,12 +75,35 @@ export class ArchivedListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'isArchivedAt',
       displayName: 'Archived',
       type: 'timeAgo',
       controlType: 'string',
       isMultiValued: true,
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -102,7 +125,7 @@ export class ArchivedListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -270,7 +293,20 @@ export class ArchivedListComponent implements OnInit {
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantsID) {
+              item = {
+                ...item,
+                plant: `${item.plant.plantId} - ${item.plant.name}`
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
