@@ -53,6 +53,10 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
+      const info: ErrorInfo = {
+        displayToast: false,
+        failureResponse: 'throwError'
+      };
       switch (type) {
         case 'assets':
           this.observable = this.assetsService.uploadExcel(formData);
@@ -64,25 +68,27 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
           this.observable = this.resposneSetService.uploadExcel(formData);
           break;
       }
-      this.observable?.subscribe((result) => {
-        if (Object.keys(result).length > 0) {
-          this.isSuccess = true;
-          this.title = 'All done!';
-          this.message = `Adding all ${result?.totalCount} ${type}`;
-          this.successCount = result?.successCount;
-          this.failedCount = result?.failedCount;
-          this.failure = result?.failure;
-        } else {
+      this.observable?.subscribe(
+        (result) => {
+          if (Object.keys(result).length > 0) {
+            this.isSuccess = true;
+            this.title = 'All done!';
+            this.message = `Adding all ${result?.totalCount} ${type}`;
+            this.successCount = result?.successCount;
+            this.failedCount = result?.failedCount;
+            this.failure = result?.failure;
+          }
+        },
+        (error) => {
           this.isFailure = true;
           this.title = 'Failure!';
           this.message = `Uploaded file is invalid`;
         }
-      });
+      );
     } else {
       this.onClose();
     }
   }
-
   downloadExcel() {
     switch (this.type) {
       case 'assets':
