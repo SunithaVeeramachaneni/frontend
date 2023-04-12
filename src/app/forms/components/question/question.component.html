@@ -101,7 +101,7 @@
           />
         </div>
       </div>
-      <hr class="question-line" />
+      <hr class="question-line" *ngIf="!isAskQuestion" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input
