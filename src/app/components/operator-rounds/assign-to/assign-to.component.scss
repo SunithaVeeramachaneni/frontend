@@ -12,7 +12,7 @@
   background-color: $white;
 }
 
-#assign-rounds {
+#assign-to {
   .mat-card {
     margin: 0;
     border-radius: 4px;
@@ -55,18 +55,18 @@
         border-left: 12px solid $white;
       }
 
-      .profile-image {
-        height: 35px;
-        width: 35px;
-        margin-top: 7px;
-        margin-right: 7px;
-        border-radius: 50%;
-      }
-
       .user-menu-item {
         display: flex;
         flex-direction: row;
         padding-left: 0;
+
+        .profile-image {
+          height: 35px;
+          width: 35px;
+          margin-top: 7px;
+          margin-right: 7px;
+          border-radius: 50%;
+        }
 
         .user-info {
           display: flex;
@@ -84,6 +84,26 @@
             font-weight: 400;
             line-height: 15px;
           }
+        }
+      }
+
+      .disable-events {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .enable-events {
+        pointer-events: all;
+        user-select: auto;
+        cursor: pointer;
+      }
+
+      .jsutify-content {
+        padding-right: 0;
+        justify-content: space-between;
+
+        .mat-ripple-element {
+          display: none !important;
         }
       }
 

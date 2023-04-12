@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -69,6 +70,8 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
+  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -78,9 +81,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
-  private _users$: Observable<UserDetails[]>;
-  @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
@@ -319,6 +319,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: this.columns,
     data: []
   };
+  private _users$: Observable<UserDetails[]>;
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -624,7 +626,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    console.log(dueDate);
     const { inspectionId } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(

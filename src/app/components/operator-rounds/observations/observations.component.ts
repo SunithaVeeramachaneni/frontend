@@ -1,4 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UserDetails } from 'src/app/interfaces';
+import { UsersService } from '../../user-management/services/users.service';
 
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 
@@ -79,13 +82,17 @@ export class ObservationsComponent implements OnInit {
     issues: {},
     actions: {}
   };
+  users$: Observable<UserDetails[]>;
   private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
   private statusColors = ['#B76262', '#FFE5BD'];
+
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService
+    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
+    this.users$ = this.userService.getUsersInfo$();
     this.roundPlanObservationsService
       .getObservationChartCounts$()
       .subscribe((result) => {

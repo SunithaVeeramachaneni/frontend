@@ -157,3 +157,37 @@ export interface SelectTab {
 export interface AssigneeDetails {
   users: UserDetails[];
 }
+
+export interface IssueOrAction {
+  id: string;
+  status?: string;
+  priority?: string;
+  dueDate?: string;
+  assignee?: string;
+  issueData?: string;
+  actionData?: string;
+  issueOrActionDBVersion: number;
+  history: History;
+}
+
+export interface History {
+  [key: string]: string; // issuelistID || actionlistID
+  id?: string;
+  message: string;
+  username: string;
+  createdAt?: string;
+  createdBy?: string;
+  assignedTo?: string;
+  type: 'Object' | 'Media' | 'Message';
+}
+
+export interface UpdateIssueOrActionEvent {
+  field: string;
+  value: string;
+  checked?: boolean;
+}
+
+export interface SelectedAssignee {
+  user: UserDetails;
+  checked: boolean;
+}
