@@ -6,7 +6,9 @@
   >
     <div class="page-header">
       <div class="page-name">{{ page.name }}</div>
-      <div class="task-progress-bar">0/{{ page.sections.length }} Filled</div>
+      <div class="task-progress-bar">
+        0/{{ page.sections.length }} <span translate="filled"></span>
+      </div>
       <hr />
     </div>
     <div *ngFor="let section of page.sections" class="preview-content">
@@ -42,8 +44,7 @@
     <button
       *ngIf="pageIndex === pageData.length && page.sections.length !== 0"
       class="submit-button"
-    >
-      Submit
-    </button>
+      translate="submit"
+    ></button>
   </div>
 </div>

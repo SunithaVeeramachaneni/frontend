@@ -29,14 +29,14 @@
       margin: 0 0 8px 16px;
       padding: 8px;
       background-color: $blue-head;
-      color: white;
+      color: $white;
       border-radius: 8px;
       border: none;
       width: 86%;
     }
   }
   .read-only-field {
-    color: rgb(125 125 125);
+    color: $dark-gray;
   }
   .pages.active {
     display: block !important;

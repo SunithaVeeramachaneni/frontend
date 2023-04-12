@@ -1,19 +1,26 @@
 <div class="history-bottom-list">
-  <span class="history-bottom-list-heading" matLine>History</span>
+  <span
+    class="history-bottom-list-heading"
+    matLine
+    translate="historyTxt"
+  ></span>
   <span matLine
     ><button
       (click)="closeHistoryBottomSheet()"
       class="history-bottom-list-action"
-    >
-      Done
-    </button></span
-  >
+      translate="done"
+    ></button
+  ></span>
   <hr />
 </div>
 <div class="history-bottom-list-content">
-  <span class="history-reading-heading" matLine>Last 5 readings</span>
+  <span
+    class="history-reading-heading"
+    matLine
+    translate="lastFiveReadingsHeader"
+  ></span>
   <div class="history-question">
-    <span matLine>What is the pressure reading?</span>
+    <span matLine translate="whatIsPressureReadingHeader"></span>
   </div>
   <table class="history-bottom-sheet-box">
     <img
@@ -24,9 +31,12 @@
   </table>
   <table class="history-bottom-sheet-table">
     <tr>
-      <th class="history-bottom-sheet-table-heading">Date</th>
-      <th class="history-bottom-sheet-table-heading">Reading</th>
-      <th class="history-bottom-sheet-table-heading">Operator</th>
+      <th class="history-bottom-sheet-table-heading" translate="dateLabel"></th>
+      <th
+        class="history-bottom-sheet-table-heading"
+        translate="readingLabel"
+      ></th>
+      <th class="history-bottom-sheet-table-heading" translate="operator"></th>
     </tr>
     <tr>
       <td>--</td>

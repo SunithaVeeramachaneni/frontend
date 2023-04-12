@@ -21,6 +21,14 @@
   font-weight: 500;
 }
 
+.current-time-operator-rounds {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  font-size: 75%;
+  font-weight: 500;
+}
+
 .iphone-header {
   background-color: $white;
   text-align: center;
@@ -154,12 +162,30 @@
   }
 
   .iphone-preview {
+    height: 347px;
+  }
+
+  .iphone-preview-height {
     height: 330px;
   }
 
   .iphone-footer {
-    margin-top: 8px;
+    margin-top: 2px;
     margin-left: 30px;
+  }
+  .current-time {
+    top: 14.5%;
+    left: 73.5%;
+  }
+  .current-time-operator-rounds {
+    top: 21%;
+    left: 75%;
+  }
+  .asset-navigation-container {
+    width: 85%;
+    .more {
+      right: 74px;
+    }
   }
 }
 
@@ -184,11 +210,27 @@
   }
 
   .iphone-preview {
-    height: 350px;
+    height: 372px;
   }
 
   .iphone-footer {
     margin-top: 18px;
     margin-left: 25px;
+  }
+
+  .current-time {
+    top: 20%;
+    left: 74.5%;
+  }
+
+  .current-time-operator-rounds {
+    top: 25%;
+    left: 76%;
+  }
+  .asset-navigation-container {
+    width: 85%;
+    .more {
+      right: 20px;
+    }
   }
 }

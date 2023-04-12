@@ -9,7 +9,11 @@
     class="rangeMetadata"
     *ngIf="question.rangeMetadata.min && question.rangeMetadata.max"
   >
-    <div class="range-text">Min: {{ question.rangeMetadata.min }}</div>
-    <div class="range-text">Max: {{ question.rangeMetadata.max }}</div>
+    <div class="range-text">
+      <span translate="minTxt"></span>: {{ question.rangeMetadata.min }}
+    </div>
+    <div class="range-text">
+      <span translate="maxTxt"></span>: {{ question.rangeMetadata.max }}
+    </div>
   </div>
 </div>

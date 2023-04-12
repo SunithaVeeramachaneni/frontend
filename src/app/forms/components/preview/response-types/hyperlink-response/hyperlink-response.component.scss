@@ -1,6 +1,8 @@
+@import '../../../../../../scss/colors.scss';
+
 .hyperlink {
   font-size: 11px;
-  color: blue;
+  color: $blue;
   text-decoration: underline;
   cursor: pointer;
 }

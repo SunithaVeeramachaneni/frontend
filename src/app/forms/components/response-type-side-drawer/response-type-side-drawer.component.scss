@@ -50,7 +50,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     height: 45px;
   }
 
@@ -223,7 +223,7 @@
       border-color: $radio-button-unchecked !important;
     }
     .mat-radio-inner-circle {
-      background-color: white !important;
+      background-color: $white !important;
     }
     .mat-radio-checked .mat-radio-outer-circle {
       background-color: $radio-button-checked !important;

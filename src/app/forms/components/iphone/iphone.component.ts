@@ -37,7 +37,6 @@ export class IphoneComponent implements OnInit {
   changePageCount(pages) {
     this.totalPages = Number(pages);
     this.currentPage = 1;
-    console.log('Pagessss...' + pages, this.totalPages);
   }
 
   ngOnInit(): void {
