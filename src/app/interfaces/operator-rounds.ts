@@ -61,6 +61,8 @@ export interface RoundPlan {
   isDeleted?: boolean;
   location?: string;
   roundType?: string;
+  plant?: any;
+  plantsID?: string;
   formStatus?: string;
   assignee?: string;
   tags?: string[];

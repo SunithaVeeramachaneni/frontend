@@ -86,7 +86,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
   columns: Column[] = [
     {
@@ -358,6 +359,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   assigneePosition: any;
   initial: any;
+  plants = [];
+  plantsIdNameMap = {};
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -579,11 +582,29 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.assignedTo.push(item);
         }
       }
+
+      const uniquePlants = formsList
+        .map((item) => {
+          if (item.plant) {
+            this.plantsIdNameMap[item.plant] = item.plantsID;
+            return item.plant;
+          }
+          return '';
+        })
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniquePlants) {
+        if (item) {
+          this.plants.push(item);
+        }
+      }
+
       for (const item of this.filterJson) {
         if (item['column'] === 'status') {
           item.items = this.status;
         } else if (item['column'] === 'assignedTo') {
           item.items = this.assignedTo;
+        } else if (item['column'] === 'plant') {
+          item.items = this.plants;
         }
       }
     });
@@ -607,6 +628,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'plant') {
+        const plantsID = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantsID;
       }
     }
     this.nextToken = '';
@@ -618,7 +642,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.fetchRounds$.next({ data: 'load' });
   }

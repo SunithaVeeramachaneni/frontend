@@ -19,5 +19,12 @@
     "column": "authoredBy",
     "type": "select",
     "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
+    "type": "select",
+    "value": ""
   }
 ]

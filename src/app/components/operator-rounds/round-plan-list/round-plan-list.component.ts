@@ -52,7 +52,8 @@ export class RoundPlanListComponent implements OnInit {
     authoredBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
-    scheduleEndDate: ''
+    scheduleEndDate: '',
+    plant: ''
   };
   columns: Column[] = [
     {
@@ -261,6 +262,8 @@ export class RoundPlanListComponent implements OnInit {
   lastPublishedBy = [];
   lastPublishedOn = [];
   authoredBy = [];
+  plants = [];
+  plantsIdNameMap = {};
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -541,6 +544,22 @@ export class RoundPlanListComponent implements OnInit {
             this.authoredBy.push(item);
           }
         }
+
+        const uniquePlants = formsList.rows
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+              return `${item.plant.plantId} - ${item.plant.name}`;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
+          }
+        }
+
         for (const item of this.filterJson) {
           if (item.column === 'status') {
             item.items = this.status;
@@ -548,6 +567,8 @@ export class RoundPlanListComponent implements OnInit {
             item.items = this.lastPublishedBy;
           } else if (item.column === 'authoredBy') {
             item.items = this.authoredBy;
+          } else if (item.column === 'plant') {
+            item.items = this.plants;
           }
         }
       });
@@ -564,10 +585,15 @@ export class RoundPlanListComponent implements OnInit {
       if (item.type === 'daterange') {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
+      } else if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
       } else {
         this.filter[item.column] = item.value;
       }
     }
+    console.log(this.filter);
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
@@ -579,7 +605,8 @@ export class RoundPlanListComponent implements OnInit {
       authoredBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
-      scheduleEndDate: ''
+      scheduleEndDate: '',
+      plant: ''
     };
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });

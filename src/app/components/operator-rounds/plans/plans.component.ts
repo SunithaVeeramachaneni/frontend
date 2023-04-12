@@ -85,6 +85,9 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  filter = {
+    plant: ''
+  };
   assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
@@ -354,6 +357,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   planCategory: FormControl;
   roundPlanId: string;
+  plants = [];
+  plantsIdNameMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -483,6 +488,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
+
+    this.getAllRoundPlans();
   }
 
   getRoundPlanList() {
@@ -494,7 +501,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj).pipe(
+    return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
       tap(({ scheduledCount, unscheduledCount, nextToken }) => {
         this.nextToken = nextToken !== undefined ? nextToken : null;
         const { scheduled, unscheduled } = this.roundPlanCounts;
@@ -506,6 +513,31 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
       })
     );
+  }
+
+  getAllRoundPlans() {
+    this.operatorRoundsService.fetchAllPlansList$().subscribe((plansList) => {
+      const uniquePlants = plansList.rows
+        .map((item) => {
+          if (item.plant) {
+            this.plantsIdNameMap[item.plant] = item.plantsID;
+            return item.plant;
+          }
+          return '';
+        })
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniquePlants) {
+        if (item) {
+          this.plants.push(item);
+        }
+      }
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = this.plants;
+        }
+      }
+    });
   }
 
   handleTableEvent = (event): void => {
@@ -813,10 +845,21 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any): void {
-    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantsID = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantsID;
+      }
+    }
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 
   resetFilter(): void {
-    this.isPopoverOpen = false;
+    this.filter = {
+      plant: ''
+    };
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 }
