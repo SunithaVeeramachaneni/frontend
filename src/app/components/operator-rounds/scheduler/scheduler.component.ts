@@ -7,12 +7,9 @@ import {
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
-import { Buffer } from 'buffer';
 import { SelectTab, UserDetails } from 'src/app/interfaces';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { UsersService } from '../../user-management/services/users.service';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
   selector: 'app-scheduler',
@@ -29,8 +26,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private headerService: HeaderService,
-    private userService: UsersService,
-    private operatorRoundsService: OperatorRoundsService
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -38,30 +34,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
       this.tabIndex = tabIndex;
     });
     this.headerService.setHeaderTitle('Scheduler');
-
-    this.users$ = this.userService
-      .getUsers$(
-        {
-          includeRoles: false,
-          includeSlackDetails: false
-        },
-        { displayToast: true, failureResponse: { rows: [] } }
-      )
-      .pipe(
-        map(({ rows: users }) =>
-          users.map((user: UserDetails) => ({
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            profileImage: this.userService.getImageSrc(
-              Buffer.from(user.profileImage).toString()
-            ),
-            isActive: user.isActive
-          }))
-        ),
-        shareReplay(1),
-        tap((users) => this.operatorRoundsService.setUsers(users))
-      );
+    this.users$ = this.userService.getUsersInfo$();
   }
 
   getSelectedIndex(): number {

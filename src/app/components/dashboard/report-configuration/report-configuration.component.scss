@@ -246,9 +246,9 @@
   background: white;
   border: 1ps solid gray;
   border: 1px solid gray;
-  padding: 15px;
+  padding: 15px 0 15px 8px;
   position: absolute;
-  width: 290px;
+  width: auto;
   right: 400px;
   top: -25px;
 }
@@ -262,6 +262,7 @@
 
 .yes-no-btn {
   float: right;
+  margin-right: 10px;
 }
 
 .m-t-14 {

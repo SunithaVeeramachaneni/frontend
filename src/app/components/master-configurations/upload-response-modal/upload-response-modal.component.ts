@@ -11,6 +11,9 @@ import { tap } from 'rxjs/operators';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { AssetsService } from '../assets/services/assets.service';
 import { LocationService } from '../locations/services/location.service';
+import { ResponseSetService } from '../response-set/services/response-set.service';
+import { Observable } from 'rxjs';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-upload-response-modal',
@@ -28,9 +31,11 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
   failedCount = 0;
   type = '';
   failure: any = [];
+  observable: Observable<any>;
   constructor(
     private readonly locationService: LocationService,
     private readonly assetsService: AssetsService,
+    private readonly resposneSetService: ResponseSetService,
     private changeDetectorRef: ChangeDetectorRef,
     private dialogRef: MatDialogRef<UploadResponseModalComponent>,
     @Inject(MAT_DIALOG_DATA) public dialogData
@@ -44,51 +49,80 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.isSuccess = false;
       formData.append('file', this.dialogData?.file);
       const type = this.dialogData?.type;
-      const isAssets = type === 'assets';
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding ${type}`;
       this.successCount = 0;
-      const observable = isAssets
-        ? this.assetsService.uploadExcel(formData)
-        : this.locationService.uploadExcel(formData);
-      observable?.subscribe((result) => {
-        if (Object.keys(result).length > 0) {
-          this.isSuccess = true;
-          this.title = 'All done!';
-          this.message = `Adding all ${result?.totalCount} ${type}`;
-          this.successCount = result?.successCount;
-          this.failedCount = result?.failedCount;
-          this.failure = result?.failure;
-        } else {
+      const info: ErrorInfo = {
+        displayToast: false,
+        failureResponse: 'throwError'
+      };
+      switch (type) {
+        case 'assets':
+          this.observable = this.assetsService.uploadExcel(formData);
+          break;
+        case 'locations':
+          this.observable = this.locationService.uploadExcel(formData);
+          break;
+        case 'response-set':
+          this.observable = this.resposneSetService.uploadExcel(formData);
+          break;
+      }
+      this.observable?.subscribe(
+        (result) => {
+          if (Object.keys(result).length > 0) {
+            this.isSuccess = true;
+            this.title = 'All done!';
+            this.message = `Adding all ${result?.totalCount} ${type}`;
+            this.successCount = result?.successCount;
+            this.failedCount = result?.failedCount;
+            this.failure = result?.failure;
+          }
+        },
+        (error) => {
           this.isFailure = true;
           this.title = 'Failure!';
           this.message = `Uploaded file is invalid`;
         }
-      });
+      );
     } else {
       this.onClose();
     }
   }
-
   downloadExcel() {
-    if (this.type === 'assets') {
-      this.assetsService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Asset_Failure');
-        })
-      )
-        .subscribe();
-    } else {
-      this.locationService.downloadFailure({ rows: this.failure }).pipe(
-        tap((data) => {
-          downloadFile(data, 'Location_Failure');
-        })
-      )
-        .subscribe();
+    switch (this.type) {
+      case 'assets':
+        this.assetsService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Asset_Failure');
+            })
+          )
+          .subscribe();
+        break;
+      case 'locations':
+        this.locationService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Location_Failure');
+            })
+          )
+          .subscribe();
+        break;
+      case 'response-set':
+        this.resposneSetService
+          .downloadFailure({ rows: this.failure })
+          .pipe(
+            tap((data) => {
+              downloadFile(data, 'Response-Set_Failure');
+            })
+          )
+          .subscribe();
+        break;
     }
   }
-
   ngAfterViewChecked(): void {
     this.changeDetectorRef.detectChanges();
   }

@@ -26,7 +26,7 @@
         />
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="name"></mat-label>
           <input
             matInput
@@ -49,7 +49,7 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="locationId"></mat-label>
           <input
             matInput
@@ -71,7 +71,7 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="model"></mat-label>
           <input
             matInput
@@ -81,7 +81,7 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="description"></mat-label>
           <textarea
             matInput
@@ -92,7 +92,7 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="parent"></mat-label>
           <mat-select formControlName="parentId">
             <input
@@ -101,11 +101,11 @@
               (keyup)="onKey($event)"
             />
             <div class="scrollable-area">
-            <mat-option
-              [value]="parent.id"
-              *ngFor="let parent of allParentsData"
-              >{{parent.locationId}} {{ parent.name }}</mat-option
-            >
+              <mat-option
+                [value]="parent.id"
+                *ngFor="let parent of allParentsData"
+                >{{ parent.locationId }} {{ parent.name }}</mat-option
+              >
             </div>
           </mat-select>
         </mat-form-field>
