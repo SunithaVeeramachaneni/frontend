@@ -146,7 +146,6 @@ export class ArchivedListComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
-
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   archivedFormsListCount$: Observable<number>;
   nextToken = '';

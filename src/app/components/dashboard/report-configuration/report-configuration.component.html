@@ -14,7 +14,7 @@
             <svg-icon
               matSuffix
               *ngIf="reportNameDisabled"
-              icon="icon-edit-icon"
+              icon="icon-edit-icon-gray"
               (click)="toggleReportInputField()"
               class="report-edit-icon"
             ></svg-icon>
@@ -54,7 +54,7 @@
             matTooltip="Mark as Favorite"
             matTooltipClass=""
           >
-            <svg-icon icon="icon-favorites" class="favorite-icon"></svg-icon>
+            <svg-icon icon="icon-favriotes" class="favorite-icon"></svg-icon>
           </span>
           <span
             *ngIf="reportDetails.report?.isFavorite"

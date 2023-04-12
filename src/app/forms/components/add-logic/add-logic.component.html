@@ -1,4 +1,8 @@
-<div [formGroup]="logicsForm" *ngIf="getLogicsList()">
+<div
+  [formGroup]="logicsForm"
+  *ngIf="getLogicsList()"
+  class="add-logic-container"
+>
   <div formArrayName="logics">
     <mat-tab-group
       [(selectedIndex)]="selectedTabIndex"

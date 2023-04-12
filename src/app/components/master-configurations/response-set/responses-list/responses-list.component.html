@@ -16,12 +16,11 @@
                 autocomplete="off"
                 [formControl]="searchResponseSet"
               />
-              <img
-                [src]="filterIcon"
-                matSuffix
-                alt="Open Filter"
+              <svg-icon
+                icon="icon-filterIcon"
                 class="filter-icon"
-              />
+                matSuffix
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -33,11 +32,10 @@
           ></button>
           <mat-menu #createMenu="matMenu">
             <button mat-menu-item class="menu-buttons" (click)="addManually()">
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>

@@ -43,7 +43,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 })
 export class LocationsListComponent implements OnInit {
   readonly perms = perms;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   allParentsLocations: any[] = [];
   columns: Column[] = [
     {
@@ -480,14 +479,14 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
- getAllLocations() {
-      this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-        this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
-        );
-        this.allParentsLocations = this.parentInformation;
-      });
-    }
+  getAllLocations() {
+    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (location) => location._deleted !== true
+      );
+      this.allParentsLocations = this.parentInformation;
+    });
+  }
   uploadFile(event) {
     const file = event.target.files[0];
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
@@ -497,7 +496,7 @@ export class LocationsListComponent implements OnInit {
       },
       disableClose: true
     });
-   
+
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();

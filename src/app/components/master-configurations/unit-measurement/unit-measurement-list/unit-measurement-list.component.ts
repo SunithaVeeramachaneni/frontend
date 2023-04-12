@@ -218,7 +218,6 @@ export class UnitMeasurementListComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchUom: FormControl;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';

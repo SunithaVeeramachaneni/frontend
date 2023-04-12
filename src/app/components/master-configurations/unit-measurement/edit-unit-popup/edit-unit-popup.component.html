@@ -2,12 +2,7 @@
   <div class="edit-modal-header">
     <h1 class="heading">{{ 'editUOM' | translate }}</h1>
 
-    <img
-      (click)="cancel('cancel')"
-      src="assets/rdf-forms-icons/close.svg"
-      alt="close"
-      class="cancel"
-    />
+    <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
   </div>
 
   <div [formGroup]="unitForm" class="p-10">

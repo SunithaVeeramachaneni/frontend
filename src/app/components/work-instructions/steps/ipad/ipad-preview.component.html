@@ -24,11 +24,7 @@
         </div>
         <div class="dis-flex position header">
           <div class="width-30 header-position header-left">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/cancel.png"
-              alt=""
-              class="icons"
-            />
+            <svg-icon icon="icon-iphone-cancel" class="icons"></svg-icon>
           </div>
           <div class="width-40 header-title">
             Work Instructions
@@ -40,12 +36,12 @@
             >
           </div>
           <div class="width-30 header-position btn-pos">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/search.png"
-              class="icons"
-              alt=""
+            <svg-icon
+              icon="icon-iphone-search"
               class="header-right-icons"
-            />
+              (click)="coverImageuploader.click()"
+              [ngClass]="{ 'disable-click': titleProvided !== true }"
+            ></svg-icon>
           </div>
         </div>
         <div class="dis-flex header-tab-row">
