@@ -99,7 +99,7 @@ export class FormConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantsID: ['']
+      plantsID: ['', Validators.required]
     });
     this.getAllPlantsData();
   }
@@ -178,7 +178,7 @@ export class FormConfigurationModalComponent implements OnInit {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
-          formMetadata: { ...this.headerDataForm.value, plant: plant.name },
+          formMetadata: this.headerDataForm.value,
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })

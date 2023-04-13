@@ -302,6 +302,13 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
+
+  filter = {
+    plant: ''
+  };
+  plants = [];
+  plantsIdNameMap = {};
+
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -431,6 +438,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
+    this.getAllForms();
+    this.getFilter();
   }
 
   getFormsList() {
@@ -442,19 +451,22 @@ export class FormsComponent implements OnInit, OnDestroy {
       formId: this.formId
     };
 
-    return this.raceDynamicFormService.getFormQuestionsFormsList$(obj).pipe(
-      tap(({ scheduledCount, unscheduledCount, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
-        const { scheduled, unscheduled } = this.formsCount;
-        this.formsCount = {
-          ...this.formsCount,
-          scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
-          unscheduled:
-            unscheduledCount !== undefined ? unscheduledCount : unscheduled
-        };
-        this.isLoading$.next(false);
-      })
-    );
+    return this.raceDynamicFormService
+      .getFormQuestionsFormsList$(obj, this.filter)
+      .pipe(
+        tap(({ scheduledCount, unscheduledCount, nextToken }) => {
+          this.nextToken = nextToken !== undefined ? nextToken : null;
+          const { scheduled, unscheduled } = this.formsCount;
+          this.formsCount = {
+            ...this.formsCount,
+            scheduled:
+              scheduledCount !== undefined ? scheduledCount : scheduled,
+            unscheduled:
+              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+          };
+          this.isLoading$.next(false);
+        })
+      );
   }
 
   handleTableEvent = (event): void => {
@@ -751,11 +763,50 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
+  getAllForms() {
+    this.raceDynamicFormService
+      .fetchAllSchedulerForms$()
+      .subscribe((formsList) => {
+        const uniquePlants = formsList.rows
+          .map((item) => {
+            if (item.plantsID) {
+              this.plantsIdNameMap[item.plant] = item.plantsID;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
+          }
+        }
+
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
+      });
+  }
+
   applyFilters(data: any): void {
-    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
 
   resetFilter(): void {
-    this.isPopoverOpen = false;
+    this.filter = {
+      plant: ''
+    };
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
 }

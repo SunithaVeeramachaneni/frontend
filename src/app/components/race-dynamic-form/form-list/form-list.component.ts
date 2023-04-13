@@ -236,7 +236,8 @@ export class FormListComponent implements OnInit {
     status: '',
     modifiedBy: '',
     authoredBy: '',
-    lastModifiedOn: ''
+    lastModifiedOn: '',
+    plant: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -263,6 +264,8 @@ export class FormListComponent implements OnInit {
   lastPublishedBy = [];
   lastPublishedOn = [];
   authoredBy = [];
+  plantsIdNameMap = {};
+  plants = [];
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -589,6 +592,22 @@ export class FormListComponent implements OnInit {
               this.authoredBy.push(item);
             }
           }
+
+          const uniquePlants = formsList.rows
+            .map((item) => {
+              if (item.plantsID) {
+                this.plantsIdNameMap[item.plant] = item.plantsID;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniquePlants) {
+            if (item) {
+              this.plants.push(item);
+            }
+          }
+
           for (const item of this.filterJson) {
             if (item.column === 'status') {
               item.items = this.status;
@@ -596,6 +615,8 @@ export class FormListComponent implements OnInit {
               item.items = this.lastPublishedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
             }
           }
         })
@@ -611,7 +632,11 @@ export class FormListComponent implements OnInit {
 
   applyFilter(data: any) {
     for (const item of data) {
-      this.filter[item.column] = item.value;
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else {
+        this.filter[item.column] = item.value;
+      }
     }
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
@@ -622,7 +647,8 @@ export class FormListComponent implements OnInit {
       status: '',
       modifiedBy: '',
       authoredBy: '',
-      lastModifiedOn: ''
+      lastModifiedOn: '',
+      plant: ''
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });

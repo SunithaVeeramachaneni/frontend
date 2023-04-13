@@ -86,7 +86,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
   assignedTo: string[] = [];
   assigneePosition: any;
@@ -336,6 +337,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   formId: string;
+
+  plants = [];
+  plantsIdNameMap = {};
+
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   initial = {
@@ -475,11 +480,29 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.assignedTo.push(item);
         }
       }
+
+      const uniquePlants = formsList
+        .map((item) => {
+          if (item.plant) {
+            this.plantsIdNameMap[item.plant] = item.plantsID;
+            return item.plant;
+          }
+          return '';
+        })
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniquePlants) {
+        if (item) {
+          this.plants.push(item);
+        }
+      }
+
       for (const item of this.filterJson) {
         if (item.column === 'status') {
           item.items = this.status;
         } else if (item.column === 'assignedTo') {
           item.items = this.assignedTo;
+        } else if (item.column === 'plant') {
+          item.items = this.plants;
         }
       }
     });
@@ -577,7 +600,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantsID = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantsID;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -592,7 +618,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.fetchInspection$.next({ data: 'load' });
   }

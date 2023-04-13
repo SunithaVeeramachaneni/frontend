@@ -28,13 +28,15 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
+          <img
+            [src]="filterIcon"
+            cdkOverlayOrigin
+            #trigger="cdkOverlayOrigin"
+            (click)="isPopoverOpen = !isPopoverOpen"
+            matSuffix
+            alt="Open Filter"
+          />
         </mat-form-field>
-        <img
-          *ngIf="false"
-          [src]="filterIcon"
-          class="common-filter-icon"
-          alt="Open Filter"
-        />
       </span>
     </div>
 
@@ -57,4 +59,22 @@
       </div>
     </div>
   </div>
+
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilter($event)"
+      (reset)="resetFilter()"
+    ></app-filter>
+  </ng-template>
 </div>

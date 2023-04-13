@@ -103,6 +103,7 @@ export class RaceDynamicFormService {
 
   getFormQuestionsFormsList$(
     queryParams: FormQueryParam,
+    filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ) {
     const { fetchType, ...rest } = queryParams;
@@ -115,13 +116,17 @@ export class RaceDynamicFormService {
       if (isSearch) {
         rest.nextToken = '';
       }
+      let queryParamaters;
+      if (filterData) {
+        queryParamaters = { ...rest, plantsID: filterData.plant };
+      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
           environment.rdfApiUrl,
           'forms/schedule-forms',
           { displayToast, failureResponse },
-          rest
+          queryParamaters
         )
         .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
     } else {
@@ -168,6 +173,10 @@ export class RaceDynamicFormService {
     params.set(
       'lastModifiedOn',
       filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
+    );
+    params.set(
+      'plantsID',
+      filterData && filterData.plant ? filterData.plant : ''
     );
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
@@ -794,6 +803,39 @@ export class RaceDynamicFormService {
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
       .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
   };
+  fetchAllArchivedForms$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', LIST_LENGTH.toString());
+    params.set('nextToken', '');
+    params.set('fetchType', 'load');
+    params.set('isArchived', 'true');
+    params.set('modifiedBy', '');
+    params.set('formStatus', '');
+    params.set('authoredBy', '');
+    params.set('lastModifiedOn', '');
+    return this.appService
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+  };
+  fetchAllSchedulerForms$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', LIST_LENGTH.toString());
+    params.set('nextToken', '');
+    params.set('fetchType', 'load');
+    params.set('isArchived', 'false');
+    params.set('modifiedBy', '');
+    params.set('formStatus', '');
+    params.set('authoredBy', '');
+    params.set('lastModifiedOn', '');
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        'forms/schedule-forms?' + params.toString()
+      )
+      .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
+  };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
@@ -803,6 +845,13 @@ export class RaceDynamicFormService {
     return this.appService._getLocal(
       '',
       'assets/json/forms-inspection-filter.json',
+      info
+    );
+  }
+  getArchivedFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/rdf-archived-filter.json',
       info
     );
   }

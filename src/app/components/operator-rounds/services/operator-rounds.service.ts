@@ -209,13 +209,13 @@ export class OperatorRoundsService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.nextToken !== null)
     ) {
-      let queryParamaters;
-      if (filterData) {
-        queryParamaters = { ...rest, plantsID: filterData.plant };
-      }
       const isSearch = fetchType === 'search';
       if (isSearch) {
         rest.nextToken = '';
+      }
+      let queryParamaters;
+      if (filterData) {
+        queryParamaters = { ...rest, plantsID: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -725,6 +725,22 @@ export class OperatorRoundsService {
       );
   };
 
+  fetchAllArchivedPlansList$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('searchTerm', '');
+    params.set('limit', '2000000');
+    params.set('nextToken', '');
+    params.set('fetchType', '');
+    params.set('formStatus', 'All');
+    params.set('isArchived', 'true');
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans?' + params.toString()
+      )
+      .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
+  };
+
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
@@ -743,6 +759,13 @@ export class OperatorRoundsService {
     return this.appService._getLocal(
       '',
       'assets/json/operator-rounds-round-filter.json',
+      info
+    );
+  }
+  getArchivedFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/operator-rounds-archived-filter.json',
       info
     );
   }

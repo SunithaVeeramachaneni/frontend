@@ -183,6 +183,21 @@ export class ArchivedListComponent implements OnInit {
       form: {} as RoundPlan
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: '',
+    scheduleStartDate: '',
+    scheduleEndDate: '',
+    plant: ''
+  };
+  plantsIdNameMap = {};
+  plants = [];
+
   constructor(
     private readonly toast: ToastService,
     public dialog: MatDialog,
@@ -205,6 +220,8 @@ export class ArchivedListComponent implements OnInit {
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
+    this.getFilter();
+    this.getAllArchivedRoundPlans();
   }
 
   getDisplayedForms(): void {
@@ -282,7 +299,8 @@ export class ArchivedListComponent implements OnInit {
           fetchType: this.fetchType
         },
         'All',
-        true
+        true,
+        this.filter
       )
       .pipe(
         mergeMap(({ rows, nextToken }) => {
@@ -342,6 +360,66 @@ export class ArchivedListComponent implements OnInit {
       default:
     }
   };
+
+  getAllArchivedRoundPlans() {
+    this.operatorRoundsService
+      .fetchAllArchivedPlansList$()
+      .subscribe((plansList) => {
+        const uniquePlants = plansList.rows
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+              return `${item.plant.plantId} - ${item.plant.name}`;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
+          }
+        }
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
+      });
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getArchivedFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any) {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      }
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: '',
+      scheduleStartDate: '',
+      scheduleEndDate: '',
+      plant: ''
+    };
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
 
   private onRestoreForm(form: RoundPlan): void {
     this.operatorRoundsService

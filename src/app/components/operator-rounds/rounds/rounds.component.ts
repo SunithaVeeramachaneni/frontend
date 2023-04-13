@@ -624,13 +624,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantsID = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantsID;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
-      } else if (item.column === 'plant') {
-        const plantsID = this.plantsIdNameMap[item.value];
-        this.filter[item.column] = plantsID;
       }
     }
     this.nextToken = '';
