@@ -284,7 +284,8 @@ export class OperatorRoundsService {
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
-        isDeleted: false
+        isDeleted: false,
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
       }
     );
   }
@@ -660,7 +661,8 @@ export class OperatorRoundsService {
                   100
               )
             : 0
-        }%`
+        }%`,
+        roundId: p.roundId
       }));
     return rows;
   }
@@ -732,4 +734,20 @@ export class OperatorRoundsService {
         info
       )
       .pipe(map((response) => (response === null ? round : response)));
+
+  downloadAttachment$ = (
+    roundPlanId: string,
+    roundId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> => {
+    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
+    return this.appService.downloadFile(
+      apiURL,
+      '',
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
+  };
 }

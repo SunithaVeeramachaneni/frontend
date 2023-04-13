@@ -22,6 +22,30 @@
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
   .mat-card {
     box-shadow: none;
+    min-height: 96vh;
+  }
+  .footer {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: -webkit-fill-available;
+    margin: 10px 15px;
+    .viewPDFBtn {
+      width: 50%;
+      margin-right: 10px;
+      background: $blue-main;
+      color: $white;
+    }
+    .downloadPDFBtn {
+      width: 50%;
+      background: $white;
+      border: 1px solid $blue-main;
+      img {
+        margin-right: 5px;
+      }
+    }
   }
 
   .btn-primary-blue {
