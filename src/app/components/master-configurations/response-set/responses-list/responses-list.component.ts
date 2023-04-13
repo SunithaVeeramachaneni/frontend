@@ -14,6 +14,7 @@ import {
   shareReplay
 } from 'rxjs/operators';
 
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -32,6 +33,8 @@ import { UsersService } from 'src/app/components/user-management/services/users.
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { ResponseSetService } from '../services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
+import { MatDialog } from '@angular/material/dialog';
+import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 
 @Component({
   selector: 'app-responses-list',
@@ -205,7 +208,8 @@ export class ResponsesListComponent implements OnInit {
     private responseSetService: ResponseSetService,
     private usersService: UsersService,
     private loginService: LoginService,
-    private toast: ToastService
+    private toast: ToastService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -519,4 +523,45 @@ export class ResponsesListComponent implements OnInit {
       displayActionsColumn: menuActions.length > 0
     };
   };
+
+  uploadFile(event) {
+    const file = event.target.files[0];
+    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+      data: {
+        file,
+        type: 'response-set'
+      },
+      disableClose: true
+    });
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res.data) {
+        this.getResponseSets();
+        this.addEditDeleteResponseSet = true;
+        this.nextToken = '';
+        this.responseSetService.fetchResponses$.next({ data: 'load' });
+        this.responseSetCount$ = this.responseSetService.getResponseSetCount$();
+        this.toast.show({
+          text: 'Response Set  uploaded successfully!',
+          type: 'success'
+        });
+      }
+    });
+  }
+  exportAsXLSX(): void {
+    console.log('tsfile');
+    this.responseSetService
+      .downloadSampleResponseSetTemplate()
+      .pipe(
+        tap((data) => {
+          downloadFile(data, 'Response-Set_Sample_Template');
+        })
+      )
+      .subscribe();
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
 }
