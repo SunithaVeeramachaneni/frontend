@@ -18,6 +18,7 @@ export interface FormMetadata {
   hierarchy?: any;
   plantsID?: string;
   plant: string;
+  pdfTemplateConfiguration: any;
 }
 
 export interface Page {

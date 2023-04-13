@@ -4,6 +4,7 @@ import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
@@ -45,6 +46,12 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           plant,
           _version: formListDynamoDBVersion
         } = form;
+        let pdfBuilderConfiguration = JSON.parse(
+          authoredFormDetail?.pdfBuilderConfiguration
+        );
+        if (!pdfBuilderConfiguration) {
+          pdfBuilderConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
+        }
         const {
           id: authoredFormDetailId,
           counter,

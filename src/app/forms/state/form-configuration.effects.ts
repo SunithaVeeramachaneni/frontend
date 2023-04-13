@@ -6,7 +6,7 @@ import { forkJoin, of } from 'rxjs';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
-  FormConfigurationActions,
+  BuilderConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
@@ -23,7 +23,7 @@ export class FormConfigurationEffects {
 
   createForm$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.createForm),
+      ofType(BuilderConfigurationActions.createForm),
       concatMap((action) =>
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
           map((response) => {
@@ -44,7 +44,7 @@ export class FormConfigurationEffects {
 
   updateForm$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.updateForm),
+      ofType(BuilderConfigurationActions.updateForm),
       concatMap((action) =>
         this.raceDynamicFormService.updateForm$(action).pipe(
           map(() =>
@@ -64,7 +64,7 @@ export class FormConfigurationEffects {
 
   createFormDetail$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.createFormDetail),
+      ofType(BuilderConfigurationActions.createFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
         return this.raceDynamicFormService
@@ -118,7 +118,7 @@ export class FormConfigurationEffects {
 
   updateFormDetail$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.updateFormDetail),
+      ofType(BuilderConfigurationActions.updateFormDetail),
       concatMap((action) => {
         const { authoredFormDetail, ...formDetail } = action;
         return this.raceDynamicFormService
@@ -170,7 +170,7 @@ export class FormConfigurationEffects {
 
   createAuthoredFormDetail$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.createAuthoredFormDetail),
+      ofType(BuilderConfigurationActions.createAuthoredFormDetail),
       concatMap((action) =>
         this.raceDynamicFormService.createAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
@@ -195,7 +195,7 @@ export class FormConfigurationEffects {
 
   updateAuthoredFormDetail$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.updateAuthoredFormDetail),
+      ofType(BuilderConfigurationActions.updateAuthoredFormDetail),
       concatMap((action) =>
         this.raceDynamicFormService.updateAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>

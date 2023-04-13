@@ -46,6 +46,7 @@ import {
   RowLevelActionEvent,
   UserDetails,
   AssigneeDetails,
+  ErrorInfo,
   SelectedAssignee
 } from 'src/app/interfaces';
 import {
@@ -60,6 +61,8 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
@@ -376,6 +379,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private dialog: MatDialog,
     private toastService: ToastService,
     private userService: UsersService,
     private cdrf: ChangeDetectorRef
@@ -569,9 +573,64 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
+  roundsDetailActionHandler(event) {
+    if (event) {
+      const { type } = event;
+      if (type === 'VIEW_PDF') {
+        this.dialog.open(PDFPreviewComponent, {
+          data: {
+            moduleName: 'OPERATOR_ROUNDS',
+            roundId: this.selectedRound.id,
+            selectedForm: this.selectedRound
+          },
+          hasBackdrop: false,
+          disableClose: true,
+          width: '100vw',
+          minWidth: '100vw',
+          height: '100vh'
+        });
+      } else if (type === 'DOWNLOAD_PDF') {
+        this.downloadPDF(this.selectedRound);
+      }
+    } else {
+      this.store.dispatch(FormConfigurationActions.resetPages());
+      this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
+    }
+  }
+
+  downloadPDF(selectedForm) {
+    const roundPlanId = selectedForm.id;
+    const roundId = selectedForm.roundId;
+
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+
+    this.operatorRoundsService
+      .downloadAttachment$(roundPlanId, roundId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          aElement.setAttribute('download', `${fileName}.pdf`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
+        }
+      );
   }
 
   getAllOperatorRounds() {
