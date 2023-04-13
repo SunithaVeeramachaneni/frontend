@@ -120,6 +120,8 @@ export class QuestionComponent implements OnInit {
     return this._subFormId;
   }
 
+  @Input() isPreviewActive;
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
