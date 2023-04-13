@@ -44,10 +44,8 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.title = 'In-Progress';
       this.type = type;
       this.message = `Adding users`;
-      console.log('FormData:', formData);
       const observable = this.userService.uploadExcel(formData);
       observable?.subscribe((result) => {
-        console.log('result:', result);
         if (Object.keys(result).length > 0) {
           this.isSuccess = true;
           this.title = 'All done!';
