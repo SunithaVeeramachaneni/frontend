@@ -5,6 +5,7 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
+      [showPDFDownload]="true"
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
@@ -42,7 +43,6 @@
         [placeholder]="'search' | translate"
         autocomplete="off"
         [formControl]="searchForm"
-        class="pointer"
       />
       <img
         src="assets/maintenance-icons/filterIcon.svg"

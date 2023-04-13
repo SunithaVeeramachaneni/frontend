@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
@@ -53,7 +54,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({
       ...state,
-      formMetadata: { ...action.formMetadata },
+      formMetadata: {
+        ...action.formMetadata,
+        pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+      },
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
     })
@@ -146,6 +150,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         formSaveStatus: action.formSaveStatus
       };
     }
+  ),
+  on(
+    BuilderConfigurationActions.updatePDFBuilderConfiguration,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formMetadata: {
+        ...state.formMetadata,
+        pdfTemplateConfiguration: action.pdfBuilderConfiguration
+      }
+    })
   ),
   on(
     BuilderConfigurationActions.updateIsFormDetailPublished,

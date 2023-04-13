@@ -31,6 +31,7 @@ export interface FormConfigurationState {
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
+  pdfBuilderConfiguration: {},
   counter: 0,
   formStatus: 'Draft',
   authoredFormDetailId: '',
