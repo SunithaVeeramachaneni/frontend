@@ -675,7 +675,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    console.log(dueDate);
     const { inspectionId } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(

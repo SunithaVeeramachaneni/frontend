@@ -8,6 +8,7 @@ import {
   Output
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Observable } from 'rxjs';
 import {
   debounceTime,
@@ -16,25 +17,30 @@ import {
   startWith,
   tap
 } from 'rxjs/operators';
-import { AssigneeDetails, UserDetails } from 'src/app/interfaces';
+import {
+  AssigneeDetails,
+  SelectedAssignee,
+  UserDetails
+} from 'src/app/interfaces';
 
 @Component({
-  selector: 'app-assign-round',
-  templateUrl: './assign-round.component.html',
-  styleUrls: ['./assign-round.component.scss'],
+  selector: 'app-assign-to',
+  templateUrl: './assign-to.component.html',
+  styleUrls: ['./assign-to.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AssignRoundComponent implements OnInit {
+export class AssignToComponent implements OnInit {
   @Input() set assigneeDetails(assigneeDetails: AssigneeDetails) {
     this._assigneeDetails = assigneeDetails;
   }
   get assigneeDetails(): AssigneeDetails {
     return this._assigneeDetails;
   }
-  @Output() selectedAssignee: EventEmitter<UserDetails> =
-    new EventEmitter<UserDetails>();
+  @Output() selectedAssignee: EventEmitter<SelectedAssignee> =
+    new EventEmitter<SelectedAssignee>();
 
   @Input() dropdownPosition;
+  @Input() isMultiple = false;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
@@ -61,7 +67,10 @@ export class AssignRoundComponent implements OnInit {
     );
   }
 
-  selectAssignee(user: UserDetails) {
-    this.selectedAssignee.emit(user);
+  selectAssignee(
+    user: UserDetails,
+    { checked }: MatCheckboxChange = {} as MatCheckboxChange
+  ) {
+    this.selectedAssignee.emit({ user, checked });
   }
 }

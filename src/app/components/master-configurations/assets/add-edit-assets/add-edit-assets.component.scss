@@ -47,6 +47,10 @@
     margin-left: -21px;
   }
 
+  .error-fields {
+    margin-top: 14px;
+  }
+
   .create-btn {
     background-color: $blue-main;
     color: $white;
@@ -113,7 +117,6 @@
   }
 }
 
-
 .searchable-input {
   width: 92%;
   border: 1px solid $border-color;
@@ -122,6 +125,6 @@
   margin: 10px 10px 10px 12px;
 }
 .scrollable-area {
-    max-height: 200px;
-    overflow: auto;
+  max-height: 200px;
+  overflow: auto;
 }

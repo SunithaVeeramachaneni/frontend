@@ -1,4 +1,4 @@
-<div id="assign-rounds">
+<div id="assign-to">
   <mat-card>
     <mat-card-title class="m-0 light-gray dis-flex title">
       <div class="heading" translate>assignedToHeader</div>
@@ -27,6 +27,10 @@
         <div
           mat-menu-item
           class="user-menu-item"
+          [ngClass]="{
+            'jsutify-content': isMultiple,
+            'disable-events': isMultiple
+          }"
           (click)="selectAssignee(user)"
         >
           <img
@@ -38,6 +42,13 @@
             <span class="name">{{ user.firstName }} {{ user.lastName }}</span>
             <span class="email">{{ user.email }}</span>
           </span>
+          <mat-checkbox
+            [checked]="false"
+            *ngIf="isMultiple"
+            (change)="selectAssignee(user, $event)"
+            (click)="$event.stopPropagation()"
+            [ngClass]="{ 'enable-events': isMultiple }"
+          ></mat-checkbox>
         </div>
       </ng-container>
       <div *ngIf="!filteredUsersCount" class="no-results" translate>

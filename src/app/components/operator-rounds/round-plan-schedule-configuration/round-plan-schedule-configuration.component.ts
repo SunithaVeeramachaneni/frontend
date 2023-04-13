@@ -5,7 +5,6 @@ import {
   Component,
   DoCheck,
   EventEmitter,
-  HostListener,
   Input,
   OnInit,
   Output,
@@ -17,6 +16,7 @@ import {
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
   addMonths,
@@ -32,11 +32,12 @@ import {
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
+  SelectedAssignee,
   UserDetails,
   ValidationError
 } from 'src/app/interfaces';
+import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
-import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
 
@@ -59,6 +60,7 @@ export class RoundPlanScheduleConfigurationComponent
   implements OnInit, DoCheck
 {
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
     if (roundPlanDetail) {
@@ -92,7 +94,6 @@ export class RoundPlanScheduleConfigurationComponent
     max: 30
   };
   dropdownPosition: any;
-  openAssignModal = false;
   private _roundPlanDetail: any;
 
   constructor(
@@ -100,7 +101,7 @@ export class RoundPlanScheduleConfigurationComponent
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog,
-    private operatorRoundsService: OperatorRoundsService
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -501,7 +502,7 @@ export class RoundPlanScheduleConfigurationComponent
               ...config,
               assignmentDetails: {
                 ...assignmentDetails,
-                displayValue: this.operatorRoundsService.getUserFullName(
+                displayValue: this.userService.getUserFullName(
                   assignmentDetails.value
                 )
               },
@@ -609,13 +610,13 @@ export class RoundPlanScheduleConfigurationComponent
     });
   }
 
-  selectedAssigneeHandler(event: UserDetails) {
-    const { email: value, firstName, lastName } = event;
+  selectedAssigneeHandler({ user }: SelectedAssignee) {
+    const { email: value, firstName, lastName } = user;
     this.roundPlanSchedulerConfigForm
       .get('assignmentDetails')
       .patchValue({ value, displayValue: `${firstName} ${lastName}` });
     this.roundPlanSchedulerConfigForm.markAsDirty();
-    this.openAssignModal = false;
+    this.trigger.closeMenu();
   }
 
   processValidationErrors(controlName: string): boolean {

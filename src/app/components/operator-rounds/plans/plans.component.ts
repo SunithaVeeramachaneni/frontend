@@ -66,6 +66,7 @@ import {
   ScheduleConfigEvent
 } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-plans',
@@ -371,6 +372,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
+    private userService: UsersService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -833,9 +835,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {
     const { assignmentDetails: { value } = {} } =
       roundPlanScheduleConfiguration;
-    return value
-      ? this.operatorRoundsService.getUserFullName(value)
-      : this.placeHolder;
+    return value ? this.userService.getUserFullName(value) : this.placeHolder;
   }
 
   getFilter() {

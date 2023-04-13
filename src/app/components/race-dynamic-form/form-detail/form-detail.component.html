@@ -61,7 +61,7 @@
                   (click)="scheduleRoundPlanEvent()"
                 ></button>
               </ng-template>
-              <mat-menu #menu="matMenu">
+              <mat-menu #menu="matMenu" backdropClass="custom-dates-menu">
                 <div
                   *ngIf="
                     frequencyDetail.scheduleType === 'byDate';
