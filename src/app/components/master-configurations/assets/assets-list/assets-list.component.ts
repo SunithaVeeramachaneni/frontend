@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -44,25 +45,6 @@ export class AssetsListComponent implements OnInit {
   readonly perms = perms;
   allLocations$: Observable<any>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  samplePlant: any = {
-    _deleted: false,
-    _lastChangedAt: 1679994407082,
-    _version: 1,
-    country: 'Japan',
-    createdAt: '2023-03-28T09:06:47.056Z',
-    createdBy: null,
-    description: null,
-    field: null,
-    id: '858220f4-d4ff-4e40-af1b-c45ba199c009',
-    image: 'assets/master-configurations/default-plant.svg',
-    label: null,
-    name: 'Hiroshima Power Plant',
-    plantId: '5000667',
-    searchTerm: 'hiroshima power plant japan 5000667',
-    state: null,
-    updatedAt: '2023-03-28T09:06:47.056Z',
-    zipCode: '440056'
-  };
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -234,6 +216,15 @@ export class AssetsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
+
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    plant: ''
+  };
+  plantsIdNameMap = {};
+  plants = [];
+
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
@@ -257,6 +248,7 @@ export class AssetsListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.assetsListCount$ = this.assetService.getAssetCount$();
+    this.getFilter();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
@@ -360,12 +352,15 @@ export class AssetsListComponent implements OnInit {
 
   getAssets() {
     return this.assetService
-      .getAssetsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchAssets.value,
-        fetchType: this.fetchType
-      })
+      .getAssetsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchAssets.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.assetsCount$ = of({ count });
@@ -572,6 +567,55 @@ export class AssetsListComponent implements OnInit {
       this.allParentsAssets = allAssets.items.filter(
         (asset) => !asset._deleted
       );
+
+      const uniquePlants = allAssets.items
+        .map((item) => {
+          if (item.plant) {
+            this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+            return `${item.plant.plantId} - ${item.plant.name}`;
+          }
+          return '';
+        })
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      for (const item of uniquePlants) {
+        if (item) {
+          this.plants.push(item);
+        }
+      }
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = this.plants;
+        }
+      }
     });
+  }
+
+  getFilter() {
+    this.assetService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any) {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      }
+    }
+    this.nextToken = '';
+    this.assetService.fetchAssets$.next({ data: 'load' });
+  }
+
+  clearFilters() {
+    this.isPopoverOpen = false;
+    this.filter = {
+      plant: ''
+    };
+    this.assetService.fetchAssets$.next({ data: 'load' });
   }
 }

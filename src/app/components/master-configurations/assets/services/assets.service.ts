@@ -58,12 +58,15 @@ export class AssetsService {
       .pipe(map((res) => res.items.length || 0));
   }
 
-  getAssetsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getAssetsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
@@ -83,6 +86,13 @@ export class AssetsService {
         const filter: GetAssets = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      if (filterData.plant) {
+        params.set('limit', this.MAX_FETCH_LIMIT);
+        let filter = JSON.parse(params.get('plantsID'));
+        filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
 
@@ -172,6 +182,14 @@ export class AssetsService {
       info,
       false,
       body
+    );
+  }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this._appService._getLocal(
+      '',
+      'assets/json/master-configuration-assets-filter.json',
+      info
     );
   }
 

@@ -51,25 +51,6 @@ export class LocationsListComponent implements OnInit {
   readonly perms = perms;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   allParentsLocations: any[] = [];
-  samplePlant: any = {
-    _deleted: false,
-    _lastChangedAt: 1679994407082,
-    _version: 1,
-    country: 'Japan',
-    createdAt: '2023-03-28T09:06:47.056Z',
-    createdBy: null,
-    description: null,
-    field: null,
-    id: '858220f4-d4ff-4e40-af1b-c45ba199c009',
-    image: 'assets/master-configurations/default-plant.svg',
-    label: null,
-    name: 'Hiroshima Power Plant',
-    plantId: '5000667',
-    searchTerm: 'hiroshima power plant japan 5000667',
-    state: null,
-    updatedAt: '2023-03-28T09:06:47.056Z',
-    zipCode: '440056'
-  };
   columns: Column[] = [
     {
       id: 'name',
@@ -256,8 +237,12 @@ export class LocationsListComponent implements OnInit {
   filter = {
     status: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
+
+  plants = [];
+  plantsIdNameMap = {};
 
   constructor(
     private locationService: LocationService,
@@ -300,6 +285,9 @@ export class LocationsListComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.getFilter();
+    this.getAllLocations();
   }
 
   getDisplayedLocations(): void {
@@ -376,10 +364,20 @@ export class LocationsListComponent implements OnInit {
     );
   }
 
+  getFilter() {
+    this.locationService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -394,19 +392,23 @@ export class LocationsListComponent implements OnInit {
     this.filter = {
       status: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
   getLocations() {
     return this.locationService
-      .getLocationsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchLocation.value,
-        fetchType: this.fetchType
-      })
+      .getLocationsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchLocation.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.locationsCount$ = of({ count });
@@ -579,6 +581,28 @@ export class LocationsListComponent implements OnInit {
         (location) => location._deleted !== true
       );
       this.allParentsLocations = this.parentInformation;
+
+      const uniquePlants = allLocations.items
+        .map((item) => {
+          if (item.plant) {
+            this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+            return `${item.plant.plantId} - ${item.plant.name}`;
+          }
+          return '';
+        })
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      for (const item of uniquePlants) {
+        if (item) {
+          this.plants.push(item);
+        }
+      }
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = this.plants;
+        }
+      }
     });
   }
   uploadFile(event) {

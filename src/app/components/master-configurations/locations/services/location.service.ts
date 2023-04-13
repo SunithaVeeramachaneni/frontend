@@ -55,12 +55,15 @@ export class LocationService {
       .pipe(map((res) => res.items.length || 0));
   }
 
-  getLocationsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getLocationsList$(
+    queryParams: {
+      nextToken?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
@@ -79,6 +82,12 @@ export class LocationService {
         const filter: GetLocations = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
+        params.set('filter', JSON.stringify(filter));
+      }
+      if (filterData.plant) {
+        params.set('limit', this.MAX_FETCH_LIMIT);
+        let filter = JSON.parse(params.get('plantsID'));
+        filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
 
@@ -157,6 +166,39 @@ export class LocationService {
     );
   }
 
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'location/upload',
+      form,
+      info
+    );
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'location/download/failure',
+      info,
+      false,
+      body
+    );
+  }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this._appService._getLocal(
+      '',
+      'assets/json/master-configuration-locations-filter.json',
+      info
+    );
+  }
+
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items
@@ -189,31 +231,5 @@ export class LocationService {
       rows,
       nextToken
     };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  uploadExcel(
-    form: FormData,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> {
-    return this._appService._postData(
-      environment.masterConfigApiUrl,
-      'location/upload',
-      form,
-      info
-    );
-  }
-
-  downloadFailure(
-    body: { rows: any },
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> {
-    return this._appService.downloadFile(
-      environment.masterConfigApiUrl,
-      'location/download/failure',
-      info,
-      false,
-      body
-    );
   }
 }
