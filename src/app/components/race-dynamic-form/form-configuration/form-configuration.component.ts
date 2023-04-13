@@ -722,7 +722,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    const dialogRef = this.dialog.open(PDFBuilderComponent, {
+    this.dialog.open(PDFBuilderComponent, {
       data: {
         moduleName: 'RDF'
       },
@@ -731,9 +731,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       width: '100vw',
       minWidth: '100vw',
       height: '100vh'
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      // DO NOTHING...
     });
   };
 }
