@@ -44,14 +44,11 @@ export class LocationService {
       'location/list?' + params.toString()
     );
   };
-  getLocationCount$(): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
+  getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
     return this._appService
-      ._getResp(
-        environment.masterConfigApiUrl,
-        'location/count?' + params.toString()
-      )
+      ._getResp(environment.masterConfigApiUrl, 'location/count', info, {
+        limit: this.MAX_FETCH_LIMIT
+      })
       .pipe(map((res) => res?.count || 0));
   }
 
