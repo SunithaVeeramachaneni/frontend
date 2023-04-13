@@ -29,6 +29,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
@@ -138,7 +139,8 @@ import { AssignToComponent } from './components/schedular/assign/assign.componen
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
-    PdfViewerModule
+    PdfViewerModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     FormWidgetComponent,

@@ -9,7 +9,7 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
-import { environment } from 'src/environments/environment';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-pdf-preview',
@@ -20,8 +20,10 @@ import { environment } from 'src/environments/environment';
 export class PDFPreviewComponent implements OnInit {
   selectedPDFSrc;
   selectedPDFBlob;
+  downloadInProgress = true;
 
   constructor(
+    private readonly toast: ToastService,
     public dialogRef: MatDialogRef<PDFPreviewComponent>,
     private readonly operatorRoundsService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -49,13 +51,19 @@ export class PDFPreviewComponent implements OnInit {
             this.selectedPDFSrc = new Uint8Array(
               fileReader.result as ArrayBuffer
             );
+            this.downloadInProgress = false;
             this.cdrf.detectChanges();
           };
           fileReader.readAsArrayBuffer(blob);
           return;
         },
         (err) => {
-          // this.downloadInProgress = false;
+          this.downloadInProgress = false;
+          this.cdrf.detectChanges();
+          this.toast.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
         }
       );
   }

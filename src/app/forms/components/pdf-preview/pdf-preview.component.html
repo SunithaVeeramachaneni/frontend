@@ -13,8 +13,11 @@
   </div>
   <div class="dialogContainer">
     <div>
-      <pdf-viewer [src]="selectedPDFSrc" [render-text]="true" [original-size]="false" [zoom]="1.5"
-        [zoom-scale]="'page-fit'" class="pdfPreviewContainer"></pdf-viewer>
+      <div class="pdfPreviewContainer" *ngIf="downloadInProgress">
+        <mat-spinner [diameter]="100" [mode]="'indeterminate'" [strokeWidth]="10"></mat-spinner>
+      </div>
+      <pdf-viewer *ngIf="selectedPDFSrc && !downloadInProgress" [src]="selectedPDFSrc" [render-text]="true"
+        [original-size]="false" [zoom]="1.5" [zoom-scale]="'page-fit'" class="pdfPreviewContainer"></pdf-viewer>
     </div>
   </div>
 </div>

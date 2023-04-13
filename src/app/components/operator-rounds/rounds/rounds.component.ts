@@ -604,7 +604,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
           URL.revokeObjectURL(href);
         },
         (err) => {
-          // this.downloadInProgress = false;
+          this.toastService.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
         }
       );
   }
