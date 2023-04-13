@@ -1,0 +1,28 @@
+.save-template-naming-modal {
+  width: 300px;
+  height: 150px;
+}
+
+.title {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.next-btn {
+  text-transform: capitalize;
+  float: right;
+  background: #3d5afe;
+  color: #ffffff;
+}
+
+.cancel-btn {
+  color: #76767b;
+  float: right;
+  background: transparent;
+  margin-right: 10px;
+}
+
+.error-fields {
+  white-space: nowrap;
+  margin-left: -10px;
+}

@@ -5,6 +5,7 @@
   "myForms": "My Forms",
   "forms": "Forms",
   "importBtn": "Import Questions",
+  "saveAsTemplate": "Save As Template",
   "publishBtn": "Publish",
   "backBtn": "Back",
   "setFormDetailsHeading": "Form Details",
@@ -222,5 +223,16 @@
   "advanceRoundsCount": "Forms Count",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
-  "createResponses": "Create Responses"
+  "createResponses": "Create Responses",
+  "templateName": "Template Name",
+  "saveTemplateBtn": "Save",
+  "saveTemplateNamingModalTitle": "Save Template As",
+  "createNewTemplate": "Create New",
+  "newTemplateTitle": "Confirm New Template",
+  "newTemplateMessage": "A new template \"{name}\" will be created and saved.",
+  "overwriteTemplateTitle": "Template {name} already exists!",
+  "overwriteTemplateMessage": "Do you want to overwrite?",
+  "overwriteSaveTemplateBtn": "Yes, Save",
+  "templates": "Templates",
+  "searchTemplates": "Search Templates"
 }

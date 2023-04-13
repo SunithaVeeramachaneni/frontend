@@ -1,12 +1,13 @@
-import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
-/* eslint-disable @typescript-eslint/dot-notation */
-/* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable no-underscore-dangle */
+import {
+  FormMetadata,
+  InspectionDetail,
+  UserDetails,
+  UsersInfoByEmail
+} from 'src/app/interfaces';
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, switchMap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -879,8 +880,8 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
-          },${p.totalTasks > 0
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
+          p.totalTasks > 0
             ? Math.round(
                 (Math.abs(p.totalTasksCompleted / p.totalTasks) +
                   Number.EPSILON) *
@@ -915,13 +916,14 @@ export class RaceDynamicFormService {
       }));
     return rows;
   }
+
   updateInspection$ = (
     inspectionId: string,
     round: InspectionDetail,
     type: 'due-date' | 'assigned-to',
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<InspectionDetail> =>
-    this.appService
+  ): Observable<InspectionDetail> => {
+    return this.appService
       .patchData(
         environment.rdfApiUrl,
         `inspections/${inspectionId}/${type}`,
@@ -929,4 +931,81 @@ export class RaceDynamicFormService {
         info
       )
       .pipe(map((response) => (response === null ? round : response)));
+  };
+
+  fetchAllTemplates$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '0');
+    params.append('skip', '0');
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  fetchTemplateByName$ = (name: string) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '1');
+    params.append('skip', '0');
+    params.append('name', name);
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  fetchTemplateById$ = (id: string) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '1');
+    params.append('skip', '0');
+    params.append('id', id);
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  createTemplate$ = (formMetadata: FormMetadata) => {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/templates/create',
+      {
+        data: formMetadata
+      }
+    );
+  };
+
+  updateTemplate$ = (templateId: string, formMetadata: FormMetadata) => {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/templates/update/${templateId}`,
+      {
+        data: formMetadata
+      }
+    );
+  };
+
+  createAuthoredTemplateDetail$ = (templateId: string, formDetails: any) => {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      `forms/templates/create/authored/${templateId}`,
+      {
+        data: {
+          formStatus: formDetails.formStatus,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter,
+          version: formDetails.authoredFormDetailVersion.toString()
+        }
+      }
+    );
+  };
 }

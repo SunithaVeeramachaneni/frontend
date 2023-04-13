@@ -9,6 +9,9 @@ import { FormContainerComponent } from './form-container/form-container.componen
 import { SubmissionComponent } from './submission/submission.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
+import { TemplateListComponent } from './template-list/template-list.component';
+import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
+import { TemplateResolverService } from './services/template-resolver.service';
 
 const routes: Routes = [
   {
@@ -45,7 +48,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Submissions', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          permissions: [permissions.viewSubmissions]
         }
       },
       {
@@ -54,7 +57,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Archived', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          permissions: [permissions.viewArchivedForms]
         }
       },
       {
@@ -63,7 +66,26 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Scheduler' },
-          permissions: [permissions.viewORPlans]
+          permissions: [permissions.viewFormScheduler]
+        }
+      },
+      {
+        path: 'templates',
+        component: TemplateListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Templates' },
+          permissions: [permissions.viewFormTemplates]
+        }
+      },
+      {
+        path: 'templates/edit/:id',
+        component: TemplateConfigurationComponent,
+        resolve: { form: TemplateResolverService },
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Edit Template', alias: 'formName' },
+          permissions: [permissions.updateFormTemplate]
         }
       }
     ]

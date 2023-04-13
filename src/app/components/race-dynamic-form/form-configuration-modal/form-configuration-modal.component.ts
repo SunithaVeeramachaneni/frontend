@@ -178,7 +178,8 @@ export class FormConfigurationModalComponent implements OnInit {
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,
-            formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+            formLogo: 'assets/rdf-forms-icons/formlogo.svg',
+            isTemplate: false
           }
         })
       );

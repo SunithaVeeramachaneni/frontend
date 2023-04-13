@@ -3,7 +3,7 @@ import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
 import { FormConfigurationState } from '../form-configuration.reducer';
 
 export const createForm = createAction(
-  '[Form Configuration Modal Component] createFrom',
+  '[Form Configuration Modal Component] createForm',
   props<{ formMetadata: FormMetadata }>()
 );
 
@@ -290,4 +290,25 @@ export const initPages = createAction(
 
 export const resetPages = createAction(
   '[Form Configuration Component] resetPages'
+);
+
+export const createTemplate = createAction(
+  '[Template Configuration Modal Component] createTemplate',
+  props<{ formMetadata: FormMetadata }>()
+);
+
+export const updateTemplate = createAction(
+  '[Template Configuration Modal Component] updateTemplate',
+  props<{ formMetadata: FormMetadata }>()
+);
+
+export const createAuthoredTemplateDetail = createAction(
+  '[Template Configuration] createAuthoredFormDetail',
+  props<{
+    formStatus: string;
+    counter: number;
+    pages: Page[];
+    formListId: string;
+    authoredFormDetailVersion: number;
+  }>()
 );

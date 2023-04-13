@@ -3,7 +3,6 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   OnDestroy,
-  ChangeDetectorRef,
   ViewChild,
   ElementRef
 } from '@angular/core';
@@ -14,7 +13,7 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -51,6 +50,7 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -58,25 +58,20 @@ import {
 } from '@angular/cdk/drag-drop';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { MatDialog } from '@angular/material/dialog';
-import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
-import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
-  selector: 'app-form-configuration',
-  templateUrl: './form-configuration.component.html',
-  styleUrls: ['./form-configuration.component.scss'],
+  selector: 'app-template-configuration',
+  templateUrl: './template-configuration.component.html',
+  styleUrls: ['./template-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationComponent implements OnInit, OnDestroy {
+export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
-  selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
@@ -114,9 +109,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
-    private dialog: MatDialog,
     private route: ActivatedRoute,
-    private cdrf: ChangeDetectorRef,
     private formConfigurationService: FormConfigurationService
   ) {}
 
@@ -132,7 +125,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100)
+          Validators.maxLength(100),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ),
       description: [''],
@@ -164,16 +159,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             if (!isEqual(prev, curr)) {
               this.store.dispatch(
-                BuilderConfigurationActions.updateFormMetadata({
+                FormConfigurationActions.updateFormMetadata({
                   formMetadata: curr,
                   ...this.getFormConfigurationStatuses()
                 })
               );
 
               this.store.dispatch(
-                BuilderConfigurationActions.updateForm({
-                  formMetadata: this.formMetadata,
-                  formListDynamoDBVersion: this.formListVersion
+                FormConfigurationActions.updateTemplate({
+                  formMetadata: this.formMetadata
                 })
               );
             }
@@ -184,6 +178,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
+        console.log(formMetadata);
         const { name, description, id, formLogo, formStatus } = formMetadata;
         this.formMetadata = formMetadata;
         this.formConfiguration.patchValue(
@@ -238,105 +233,29 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formStatus,
           counter,
           pages,
-          authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
-          formDetailId,
-          formDetailPublishStatus,
-          formSaveStatus,
-          formListDynamoDBVersion,
-          formDetailDynamoDBVersion,
-          authoredFormDetailDynamoDBVersion
+          formDetailPublishStatus
         } = formDetails;
-        this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
         if (pages.length && formListId) {
-          if (authoredFormDetailId) {
-            if (
-              formSaveStatus !== 'Saved' &&
-              formStatus !== 'Published' &&
-              !isEqual(this.formDetails, formDetails)
-            ) {
-              this.store.dispatch(
-                BuilderConfigurationActions.updateAuthoredFormDetail({
-                  formStatus,
-                  formDetailPublishStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailId,
-                  authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion
-                })
-              );
-            }
-            this.formDetails = formDetails;
-          } else {
-            this.store.dispatch(
-              BuilderConfigurationActions.createAuthoredFormDetail({
-                formStatus,
-                formDetailPublishStatus,
-                formListId,
-                counter,
-                pages,
-                authoredFormDetailVersion
-              })
-            );
-          }
-
-          if (isFormDetailPublished && formDetailId) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updateFormDetail({
-                formMetadata,
-                formListId,
-                pages,
-                formDetailId,
-                formDetailDynamoDBVersion,
-                authoredFormDetail: {
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion,
-                  authoredFormDetailId
-                },
-                formListDynamoDBVersion
-              })
-            );
-          } else if (isFormDetailPublished && !formDetailId) {
-            this.store.dispatch(
-              BuilderConfigurationActions.createFormDetail({
-                formMetadata,
-                formListId,
-                pages,
-                authoredFormDetail: {
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailVersion,
-                  authoredFormDetailDynamoDBVersion,
-                  authoredFormDetailId
-                },
-                formListDynamoDBVersion
-              })
-            );
-          }
+          this.store.dispatch(
+            FormConfigurationActions.createAuthoredTemplateDetail({
+              formStatus,
+              formListId,
+              counter,
+              pages,
+              authoredFormDetailVersion
+            })
+          );
         }
       })
     );
 
-    this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
-      tap((createOrEditForm) => {
-        if (!createOrEditForm) {
-          this.router.navigate(['/forms']);
-        }
-      })
-    );
+    this.createOrEditForm$ = this.store.select(getCreateOrEditForm);
 
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
@@ -349,53 +268,38 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         )
       );
 
-    this.route.data.subscribe((data) => {
-      if (data.form && Object.keys(data.form).length) {
-        this.formConf.counter.setValue(data.form.counter);
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormConfiguration({
-            formConfiguration: data.form
-          })
-        );
-        data.form.pages.forEach((page, index) => {
-          if (index === 0) {
+    combineLatest([this.route.data, this.createOrEditForm$]).subscribe(
+      ([data, createOrEditForm]) => {
+        console.log(createOrEditForm);
+        // if (!createOrEditForm) {
+        //   this.router.navigate(['/forms/templates/']);
+        // }
+        console.log(data.form);
+
+        if (data.form && Object.keys(data.form).length) {
+          this.formConf.counter.setValue(data.form.counter);
+          this.store.dispatch(
+            FormConfigurationActions.updateFormConfiguration({
+              formConfiguration: data.form
+            })
+          );
+          data.form.pages.forEach((page, index) => {
             this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
+              FormConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: false,
-                subFormId: null
+                isOpen: false
               })
             );
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: true,
-                subFormId: null
-              })
-            );
-          } else {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: null
-              })
-            );
-          }
-        });
+          });
+        }
       }
-    });
+    );
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
-        const section = {
-          id: 'S1',
-          name: 'Section',
-          position: 1,
-          isOpen: true
-        };
-        const df = this.formConfigurationService.getDefQues();
-        const questions = new Array(4).fill(0).map((q, index) => {
+        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
+        let df = this.formConfigurationService.getDefQues();
+        let questions = new Array(4).fill(0).map((q, index) => {
           if (index === 0) {
             return { ...df, name: 'Site Conducted' };
           }
@@ -459,21 +363,19 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         break;
       case 'update':
         this.store.dispatch(
-          BuilderConfigurationActions.updatePage({
+          FormConfigurationActions.updatePage({
             page,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          BuilderConfigurationActions.deletePage({
+          FormConfigurationActions.deletePage({
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -498,24 +400,22 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          BuilderConfigurationActions.updateSection({
+          FormConfigurationActions.updateSection({
             section,
             sectionIndex,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          BuilderConfigurationActions.deleteSection({
+          FormConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -539,25 +439,23 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          BuilderConfigurationActions.updateQuestion({
+          FormConfigurationActions.updateQuestion({
             question,
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          BuilderConfigurationActions.deleteQuestion({
+          FormConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -570,12 +468,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   publishFormDetail() {
     this.store.dispatch(
-      BuilderConfigurationActions.updateFormPublishStatus({
+      FormConfigurationActions.updateFormPublishStatus({
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
+      FormConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true
       })
     );
@@ -591,11 +489,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        BuilderConfigurationActions.updatePageSections({
+        FormConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
+          ...this.getFormConfigurationStatuses()
         })
       );
     }
@@ -610,15 +507,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          BuilderConfigurationActions.updateQuestionBySection({
+          FormConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
             }),
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+            ...this.getFormConfigurationStatuses()
           })
         );
       });
@@ -631,15 +527,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
       this.store.dispatch(
-        BuilderConfigurationActions.transferQuestionFromSection({
+        FormConfigurationActions.transferQuestionFromSection({
           questionId,
           currentIndex: event.currentIndex,
           previousIndex: event.previousIndex,
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
           pageIndex,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
+          ...this.getFormConfigurationStatuses()
         })
       );
     }
@@ -685,27 +580,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
-  }
-
-  importQuestions(): void {
-    const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
-      data: {
-        selectedFormData: '',
-        selectedFormName: '',
-        openImportQuestionsSlider: false
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.selectedFormData = result.selectedFormData;
-      this.selectedFormName = result.selectedFormName;
-      this.authoredFormDetail$.subscribe((pagesData) => {
-        this.currentFormData = pagesData;
-      });
-      this.openAppSider$ = of(result.openImportQuestionsSlider);
-      this.cdrf.markForCheck();
-    });
+    // this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
   }
 
   cancelSlider(event) {
@@ -720,24 +595,5 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       questionIndex,
       this.formConf.counter.value
     );
-  }
-
-  goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PDFBuilderComponent, {
-      data: {
-        moduleName: 'RDF'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      width: '100vw',
-      minWidth: '100vw',
-      height: '100vh'
-    });
-  };
-
-  openSaveTemplateDialog() {
-    this.dialog.open(SaveTemplateContainerComponent, {
-      data: this.formDetails
-    });
   }
 }

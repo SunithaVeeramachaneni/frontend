@@ -35,7 +35,7 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 @Component({
-  selector: 'app-report-delete-modal',
+  selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
   styleUrls: ['./add-edit-user-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

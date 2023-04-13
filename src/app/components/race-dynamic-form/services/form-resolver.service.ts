@@ -44,9 +44,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           _version: formListDynamoDBVersion
         } = form;
-        let pdfBuilderConfiguration = JSON.parse(
-          authoredFormDetail?.pdfBuilderConfiguration
-        );
+        let pdfBuilderConfiguration = JSON.parse(form?.pdfBuilderConfiguration);
         if (!pdfBuilderConfiguration) {
           pdfBuilderConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
         }

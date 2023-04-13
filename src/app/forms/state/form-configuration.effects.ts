@@ -7,7 +7,8 @@ import { forkJoin, of } from 'rxjs';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   BuilderConfigurationActions,
-  FormConfigurationApiActions
+  FormConfigurationApiActions,
+  FormConfigurationActions
 } from './actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
@@ -210,6 +211,26 @@ export class FormConfigurationEffects {
                 error
               })
             );
+          })
+        )
+      )
+    )
+  );
+
+  updateTemplate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FormConfigurationActions.updateTemplate),
+      concatMap((action) =>
+        this.raceDynamicFormService.updateForm$(action).pipe(
+          map(() =>
+            FormConfigurationApiActions.updateFormSuccess({
+              formMetadata: action.formMetadata,
+              formSaveStatus: formConfigurationStatus.saved
+            })
+          ),
+          catchError((error) => {
+            this.raceDynamicFormService.handleError(error);
+            return of(FormConfigurationApiActions.updateFormFailure({ error }));
           })
         )
       )

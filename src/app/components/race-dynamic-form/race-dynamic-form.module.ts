@@ -66,6 +66,12 @@ import { InspectionComponent } from './inspection/inspection.component';
 import { environment } from 'src/environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
+import { TemplateListComponent } from './template-list/template-list.component';
+import { SaveTemplateNamingModalComponent } from './save-template-naming-modal/save-template-naming-modal.component';
+import { TemplateConfigurationModalComponent } from './template-configuration-modal/template-configuration-modal.component';
+import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
+import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal/save-template-confirm-modal.component';
+import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -90,7 +96,13 @@ export const customTranslateLoader = (http: HttpClient) =>
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,
-    InspectionComponent
+    InspectionComponent,
+    TemplateListComponent,
+    SaveTemplateNamingModalComponent,
+    TemplateConfigurationModalComponent,
+    TemplateConfigurationComponent,
+    SaveTemplateConfirmModalComponent,
+    SaveTemplateContainerComponent
   ],
   imports: [
     FormsModule,
@@ -152,7 +164,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormConfigurationModalComponent,
     FormConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent
+    AvatarComponent,
+    TemplateConfigurationComponent
   ]
 })
 export class RaceDynamicFormModule {

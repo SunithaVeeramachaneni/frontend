@@ -53,6 +53,7 @@ const {
   raceDynamicForms,
   submissionForms,
   myForms,
+  formsTemplates,
   archivedForms,
   schedularForms,
   operatorRoundPlans,
@@ -151,6 +152,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: myForms.title,
           url: myForms.url,
           permission: myForms.permission
+        },
+        {
+          title: formsTemplates.title,
+          url: formsTemplates.url,
+          permission: formsTemplates.permission
+        },
+        {
+          title: submissionForms.title,
+          url: submissionForms.url,
+          permission: submissionForms.permission
         },
         {
           title: archivedForms.title,

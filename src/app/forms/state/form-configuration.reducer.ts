@@ -28,6 +28,14 @@ export interface FormConfigurationState {
   moduleName: string;
 }
 
+export interface TemplateConfigurationState {
+  formMetadata: any;
+  pages: Page[];
+  counter: number;
+  formStatus: string;
+  authoredFormDetailVersion: number;
+}
+
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
@@ -684,10 +692,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     FormConfigurationActions.updateFormConfiguration,
     BuilderConfigurationActions.updateFormConfiguration,
-    (state, action): FormConfigurationState => ({
-      ...state,
-      ...action.formConfiguration
-    })
+    (state, action): FormConfigurationState => {
+      console.log(state);
+      console.log(action);
+      return {
+        ...state,
+        ...action.formConfiguration
+      };
+    }
   ),
   on(
     FormConfigurationActions.resetFormConfiguration,
