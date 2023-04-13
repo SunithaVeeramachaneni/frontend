@@ -106,8 +106,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ActionsComponent,
     IssuesActionsDetailViewComponent,
     ChartComponent,
-    AssignRoundComponent,
-    ImportTasksSliderComponent
+    AssignRoundComponent
   ],
   imports: [
     FormsModule,

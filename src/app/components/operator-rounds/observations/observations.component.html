@@ -43,11 +43,11 @@
     <mat-tab-group>
       <mat-tab>
         <ng-template mat-tab-label>{{ 'issues' | translate }}</ng-template>
-        <app-issues></app-issues>
+        <app-issues [users$]="users$"></app-issues>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>{{ 'actions' | translate }}</ng-template>
-        <app-actions></app-actions>
+        <app-actions [users$]="users$"></app-actions>
       </mat-tab>
     </mat-tab-group>
   </div>
