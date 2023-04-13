@@ -31,6 +31,7 @@ export class ImportTaskModalComponent implements OnInit {
   fetchType = 'load';
   limit = defaultLimit;
   nextToken = '';
+  nodeId = '';
   roundPlans$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;

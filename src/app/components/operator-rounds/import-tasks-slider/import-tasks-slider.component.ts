@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Inject,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import {
@@ -35,6 +42,7 @@ export class ImportTasksSliderComponent implements OnInit {
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   constructor(
+    // public dialogRef: MatDialogRef<ImportTasksSliderComponent>,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private formService: FormService
@@ -43,9 +51,9 @@ export class ImportTasksSliderComponent implements OnInit {
   ngOnInit(): void {
     this.hierarcyInput$ = of(this.selectedFormNode);
   }
-  // cancel() {
-  //   this.cancelSliderEvent.emit(false);
-  // }
+  cancel() {
+    this.cancelSliderEvent.emit(false);
+  }
   // hierarchyEventHandler(event: any) {
   //   const { hierarchy } = event;
   //   if (!hierarchy || !hierarchy.length) {

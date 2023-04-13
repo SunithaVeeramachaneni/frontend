@@ -701,7 +701,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         selectedFormData: '',
         selectedFormName: '',
         selectedFormNode: '',
-        openImportQuestionsSlider: false
+        openImportQuestionsSlider: false,
+        NodeId: this.selectedNode.uid
       }
     });
 

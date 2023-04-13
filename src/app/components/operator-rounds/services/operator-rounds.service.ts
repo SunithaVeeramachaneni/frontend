@@ -400,7 +400,12 @@ export class OperatorRoundsService {
       }
     );
   }
-
+  getRoundPlanListByNodeId$(NodeId: string) {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `round-plans/${NodeId}`
+    );
+  }
   getAuthoredFormDetailByFormId$(
     formId: string,
     formStatus: string = formConfigurationStatus.draft
