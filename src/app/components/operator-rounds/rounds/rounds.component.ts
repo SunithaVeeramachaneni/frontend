@@ -552,7 +552,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     if (event) {
       const { type } = event;
       if (type === 'VIEW_PDF') {
-        const dialogRef = this.dialog.open(PDFPreviewComponent, {
+        this.dialog.open(PDFPreviewComponent, {
           data: {
             moduleName: 'OPERATOR_ROUNDS',
             roundId: this.selectedRound.id,
@@ -564,10 +564,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           minWidth: '100vw',
           height: '100vh'
         });
-        dialogRef.afterClosed().subscribe((result) => {
-          // DO Nothing...
-        });
-        //
       } else if (type === 'DOWNLOAD_PDF') {
         this.downloadPDF(this.selectedRound);
       }
@@ -582,7 +578,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     const roundId = selectedForm.roundId;
 
     const info: ErrorInfo = {
-      displayToast: true,
+      displayToast: false,
       failureResponse: 'throwError'
     };
 
