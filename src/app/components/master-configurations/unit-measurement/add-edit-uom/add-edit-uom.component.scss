@@ -115,7 +115,7 @@
     background-color: transparent;
     position: relative;
     .edit-icon-img {
-      width: 14px;
+      width: 12px;
     }
   }
 
@@ -168,6 +168,10 @@
       background-color: $gray2-bg;
       color: $gray7;
     }
+  }
+
+  .error-fields {
+    margin-top: 14px;
   }
 
   .unit-type-name {

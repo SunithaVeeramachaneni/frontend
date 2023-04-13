@@ -46,7 +46,8 @@ import {
   RowLevelActionEvent,
   UserDetails,
   AssigneeDetails,
-  ErrorInfo
+  ErrorInfo,
+  SelectedAssignee
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -64,6 +65,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-rounds',
@@ -73,6 +75,7 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -353,6 +356,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
     private toastService: ToastService,
+    private userService: UsersService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -415,16 +419,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),
-            assignedTo: this.operatorRoundsService.getUserFullName(
-              roundDetail.assignedTo
-            )
+            assignedTo: this.userService.getUserFullName(roundDetail.assignedTo)
           }));
         } else {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
               dueDate: new Date(roundDetail.dueDate),
-              assignedTo: this.operatorRoundsService.getUserFullName(
+              assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               )
             }))
@@ -675,8 +677,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
   };
 
-  selectedAssigneeHandler(userDetails: UserDetails) {
-    const { email: assignedTo } = userDetails;
+  selectedAssigneeHandler({ user }: SelectedAssignee) {
+    const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
     this.operatorRoundsService
       .updateRound$(
@@ -691,8 +693,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  assignedTo:
-                    this.operatorRoundsService.getUserFullName(assignedTo),
+                  assignedTo: this.userService.getUserFullName(assignedTo),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1
                 };
@@ -709,6 +710,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.trigger.closeMenu();
   }
 
   onChangeDueDateHandler(dueDate: Date) {
@@ -730,6 +732,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

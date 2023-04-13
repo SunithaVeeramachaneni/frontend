@@ -720,21 +720,6 @@ export class OperatorRoundsService {
     );
   }
 
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
-  getUsersInfo(): UsersInfoByEmail {
-    return this.usersInfoByEmail;
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
-  }
-
   updateRound$ = (
     roundId: string,
     round: RoundDetail,

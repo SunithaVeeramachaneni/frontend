@@ -59,8 +59,8 @@
     <button style="display: none" mat-button [matMenuTriggerFor]="assigneeMenu"
       #assigneeMenuTrigger="matMenuTrigger"></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-round [assigneeDetails]="assigneeDetails" [dropdownPosition]="assigneePosition"
-        (selectedAssignee)="selectedAssigneeHandler($event)"></app-assign-round>
+      <app-assign-to [assigneeDetails]="assigneeDetails" [dropdownPosition]="assigneePosition"
+        (selectedAssignee)="selectedAssigneeHandler($event)"></app-assign-to>
     </mat-menu>
   </ng-container>
 </ng-container>
