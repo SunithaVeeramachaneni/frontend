@@ -749,4 +749,20 @@ export class OperatorRoundsService {
         info
       )
       .pipe(map((response) => (response === null ? round : response)));
+
+  downloadAttachment$ = (
+    roundPlanId: string,
+    roundId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> => {
+    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
+    return this.appService.downloadFile(
+      apiURL,
+      '',
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
+  };
 }

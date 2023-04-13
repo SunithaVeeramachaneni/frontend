@@ -41,14 +41,14 @@
     align-items: center;
     justify-content: center;
     .pdfPreviewContainer {
-      width: 596px;
+      width: 800px !important;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 85vh;
+      height: 85vh !important;
       padding: 10px;
       margin: 10px;
-      background: $white;
+      background: $pdf-view-bg;
       box-shadow: 0px 0px 16.253px $box-shadow;
     }
   }

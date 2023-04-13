@@ -45,7 +45,8 @@ import {
   SelectTab,
   RowLevelActionEvent,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -566,7 +567,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         });
         //
       } else if (type === 'DOWNLOAD_PDF') {
-        this.downloadPDF(this.selectedRound.id);
+        this.downloadPDF(this.selectedRound);
       }
     } else {
       this.store.dispatch(FormConfigurationActions.resetPages());
@@ -574,8 +575,36 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
   }
 
-  downloadPDF(formId) {
-    console.log('downloading pdf.....');
+  downloadPDF(selectedForm) {
+    const roundPlanId = selectedForm.id;
+    const roundId = selectedForm.roundId;
+
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+
+    this.operatorRoundsService
+      .downloadAttachment$(roundPlanId, roundId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          aElement.setAttribute('download', `${fileName}.pdf`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          // this.downloadInProgress = false;
+        }
+      );
   }
 
   getAllOperatorRounds() {
