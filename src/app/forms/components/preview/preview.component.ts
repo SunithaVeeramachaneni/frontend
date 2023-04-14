@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -14,8 +15,7 @@ import {
 import { Observable } from 'rxjs';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { map } from 'rxjs/operators';
-import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { TranslateService } from '@ngx-translate/core';
+import { EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
@@ -24,13 +24,14 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class PreviewComponent implements OnInit, OnChanges {
   @Input() subFormId: any;
+  @Input() moduleType: string;
+  @Output() totalPageCount = new EventEmitter();
 
   @Input()
   pageIndex = 1;
 
   isSectionOpenState = true;
   fieldTypes: any;
-  arrayField = false;
   sliderOptions = {
     value: 0,
     min: 0,
@@ -40,11 +41,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   previewFormData$: Observable<any>;
   previewFormData = [];
 
-  constructor(
-    private store: Store<State>,
-    private imageUtils: ImageUtils,
-    private translate: TranslateService
-  ) {}
+  constructor(private store: Store<State>) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.page && changes.page.currentValue) {
       this.pageIndex = changes.page.currentValue;
@@ -73,39 +70,18 @@ export class PreviewComponent implements OnInit, OnChanges {
                 return { ...page, sections: sectionData };
               });
             }
+            if (pageData) this.totalPageCount.emit(pageData.length);
             return pageData;
           })
         );
     }
   }
 
-  formatLabel(value: number): string {
-    return `${value}`;
-  }
-
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
-  }
-
-  getImageSrc(base64) {
-    return this.imageUtils.getImageSrc(base64);
-  }
-
-  openBottomSheet(): void {
-    this.arrayField = !this.arrayField;
   }
 
   toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
   };
-
-  openURL = (question: any) => {
-    if (question.link.length) {
-      window.open(question.link);
-    }
-  };
-
-  getNoneTag() {
-    return this.translate.instant('noneTag');
-  }
 }

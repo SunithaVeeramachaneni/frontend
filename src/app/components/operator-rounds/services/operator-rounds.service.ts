@@ -132,7 +132,7 @@ export class OperatorRoundsService {
         filterData.status ? filterData.status : formStatus
       );
       params.set('modifiedBy', filterData.modifiedBy);
-      params.set('authoredBy', filterData.authoredBy);
+      params.set('createdBy', filterData.createdBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
       params.set(
         'scheduleStartDate',

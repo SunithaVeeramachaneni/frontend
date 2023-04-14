@@ -1,0 +1,40 @@
+<div *ngIf="question.value.tag.title !== getNoneTag()">
+  <p
+    class="tag-text"
+    [ngClass]="
+      question.value.tag.title === 'Warning'
+        ? 'warning'
+        : question.value.tag.title === 'Danger'
+        ? 'danger'
+        : question.value.tag.title === 'Caution'
+        ? 'caution'
+        : ''
+    "
+  >
+    {{ question.value.tag.title }}
+  </p>
+  <!-- <p class="tag-text" [ngStyle]="{ color: question.value.tag.colour }">
+    {{ question.value.tag.title }}
+  </p> -->
+</div>
+
+<!-- instructions needs unescaped HTML -->
+
+<div [innerHTML]="question.name" class="instruction"></div>
+
+<!-- Instructions Images -->
+<div>
+  <ng-container *ngFor="let image of question.value.images; index as i">
+    <img
+      src="{{ image.objectURL }}"
+      alt="image"
+      class="instruction-image-field"
+      *ngIf="image !== null"
+    />
+  </ng-container>
+</div>
+
+<ng-container *ngIf="question.value.pdf !== null">
+  <app-instruction-pdf-preview [pdf]="question.value.pdf">
+  </app-instruction-pdf-preview>
+</ng-container>
