@@ -135,6 +135,7 @@
   "search": "Search",
   "formDescription": "No Description",
   "use": "Use",
+  "emptyRoundsPlan": "To add the Questions, add a Page first",
   "importQuestions": "Import Questions",
   "new": "Add as new page",
   "existing": "Add to existing page",

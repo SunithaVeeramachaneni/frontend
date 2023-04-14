@@ -1,9 +1,7 @@
-import {
-  FormMetadata,
-  InspectionDetail,
-  UserDetails,
-  UsersInfoByEmail
-} from 'src/app/interfaces';
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
@@ -19,8 +17,12 @@ import {
   LoadEvent,
   SearchEvent,
   TableEvent,
-  Count
+  Count,
+  InspectionDetail,
+  UserDetails,
+  UsersInfoByEmail
 } from './../../../interfaces';
+
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
@@ -158,8 +160,8 @@ export class RaceDynamicFormService {
       filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
-      'authoredBy',
-      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+      'createdBy',
+      filterData && filterData.createdBy ? filterData.createdBy : ''
     );
     params.set(
       'lastModifiedOn',
@@ -238,6 +240,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'pdfTemplateConfiguration'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -245,6 +248,7 @@ export class RaceDynamicFormService {
       formLogo: formListQuery.formLogo,
       description: formListQuery.description,
       formStatus: formListQuery.formStatus,
+      pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
       author: formListQuery.author,
       formType: formListQuery.formType,
       tags: formListQuery.tags,
@@ -802,7 +806,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllRounds$ = () => {
+  fetchAllInspections$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -863,8 +867,8 @@ export class RaceDynamicFormService {
     return this.usersInfoByEmail[email]?.fullName;
   }
 
-  private formatInspections(rounds: any[] = []): any[] {
-    const rows = rounds
+  private formatInspections(inspections: any[] = []): any[] {
+    const rows = inspections
       .sort(
         (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
       )
@@ -919,7 +923,7 @@ export class RaceDynamicFormService {
 
   updateInspection$ = (
     inspectionId: string,
-    round: InspectionDetail,
+    inspectionDetail: InspectionDetail,
     type: 'due-date' | 'assigned-to',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> => {
@@ -927,85 +931,10 @@ export class RaceDynamicFormService {
       .patchData(
         environment.rdfApiUrl,
         `inspections/${inspectionId}/${type}`,
-        round,
+        inspectionDetail,
         info
       )
-      .pipe(map((response) => (response === null ? round : response)));
-  };
-
-  fetchAllTemplates$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '0');
-    params.append('skip', '0');
-
-    return this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
-      )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
-
-  fetchTemplateByName$ = (name: string) => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '1');
-    params.append('skip', '0');
-    params.append('name', name);
-
-    return this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
-      )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
-
-  fetchTemplateById$ = (id: string) => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '1');
-    params.append('skip', '0');
-    params.append('id', id);
-
-    return this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
-      )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
-
-  createTemplate$ = (formMetadata: FormMetadata) => {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/templates/create',
-      {
-        data: formMetadata
-      }
-    );
-  };
-
-  updateTemplate$ = (templateId: string, formMetadata: FormMetadata) => {
-    return this.appService.patchData(
-      environment.rdfApiUrl,
-      `forms/templates/update/${templateId}`,
-      {
-        data: formMetadata
-      }
-    );
-  };
-
-  createAuthoredTemplateDetail$ = (templateId: string, formDetails: any) => {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      `forms/templates/create/authored/${templateId}`,
-      {
-        data: {
-          formStatus: formDetails.formStatus,
-          pages: JSON.stringify(formDetails.pages),
-          counter: formDetails.counter,
-          version: formDetails.authoredFormDetailVersion.toString()
-        }
-      }
-    );
-  };
+      .pipe(
+        map((response) => (response === null ? inspectionDetail : response))
+      );
 }

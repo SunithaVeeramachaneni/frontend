@@ -27,6 +27,7 @@ export const updateFormMetadata = createAction(
     formMetadata: FormMetadata;
     formStatus: string;
     formDetailPublishStatus: string;
+    formListDynamoDBVersion: number;
     formSaveStatus: string;
   }>()
 );
