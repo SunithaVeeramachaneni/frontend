@@ -159,13 +159,23 @@ export class PDFBuilderComponent implements OnInit {
         })
       );
 
-      this.store.dispatch(
-        RoundPlanConfigurationActions.updateRoundPlan({
-          formMetadata: this.formMetadata,
-          formListDynamoDBVersion: this.formListVersion,
-          ...this.getFormConfigurationStatuses()
-        })
-      );
+      if (this.data.moduleName && this.data.moduleName === 'RDF') {
+        this.store.dispatch(
+          BuilderConfigurationActions.updateForm({
+            formMetadata: this.formMetadata,
+            formListDynamoDBVersion: this.formListVersion,
+            ...this.getFormConfigurationStatuses()
+          })
+        );
+      } else {
+        this.store.dispatch(
+          RoundPlanConfigurationActions.updateRoundPlan({
+            formMetadata: this.formMetadata,
+            formListDynamoDBVersion: this.formListVersion,
+            ...this.getFormConfigurationStatuses()
+          })
+        );
+      }
     });
     this.loadPDFBuilderConfig$ = this.store
       .select(getPDFBuilderConfiguration)

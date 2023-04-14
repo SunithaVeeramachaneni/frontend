@@ -240,6 +240,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'pdfTemplateConfiguration'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -247,6 +248,7 @@ export class RaceDynamicFormService {
       formLogo: formListQuery.formLogo,
       description: formListQuery.description,
       formStatus: formListQuery.formStatus,
+      pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
       author: formListQuery.author,
       formType: formListQuery.formType,
       tags: formListQuery.tags,

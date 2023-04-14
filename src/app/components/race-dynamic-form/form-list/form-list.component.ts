@@ -23,7 +23,11 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import {
+  LIST_LENGTH,
+  defaultLimit,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
@@ -227,7 +231,7 @@ export class FormListComponent implements OnInit {
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = defaultLimit;
+  limit = LIST_LENGTH;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
