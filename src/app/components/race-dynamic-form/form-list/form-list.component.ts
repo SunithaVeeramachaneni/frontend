@@ -241,8 +241,7 @@ export class FormListComponent implements OnInit {
     modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
-    plant: '',
-    lastModifiedOn: ''
+    plant: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
