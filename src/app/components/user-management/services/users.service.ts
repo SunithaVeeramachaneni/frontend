@@ -32,10 +32,7 @@ export class UsersService {
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
   userDetails: UserDetails;
   usersInfoByEmail: UsersInfoByEmail;
-
-  fetchUser$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
+  
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {

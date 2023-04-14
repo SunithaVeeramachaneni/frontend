@@ -49,7 +49,7 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
         if (Object.keys(result).length > 0) {
           this.isSuccess = true;
           this.title = 'All done!';
-          this.message = `Adding all ${result?.totalCount} User`;
+          this.message = `Adding all ${result?.totalCount} ${this.type}`;
           this.successCount = result?.successCount;
           this.failedCount = result?.failedCount;
           this.failure = result.failure;

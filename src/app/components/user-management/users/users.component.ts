@@ -156,14 +156,6 @@ export class UsersComponent implements OnInit {
     }
   ];
 
-  addEditCopyDeleteLocations = false;
-  addEditCopyDeleteLocations$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
-      action: null,
-      form: {} as any
-    });
-  nextToken = '';
-
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
   fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -610,16 +602,15 @@ export class UsersComponent implements OnInit {
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
       data: {
         file,
-        type: 'locations'
+        type: 'Users'
       },
       disableClose: true
     });
 
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res.data) {
-        this.addEditCopyDeleteLocations = true;
-        this.nextToken = '';
-        this.usersService.fetchUser$.next({ data: 'load' });
+        this.addEditDeactivateUser = true;
+        this.fetchUsers$.next({data:'load'})
         this.toast.show({
           text: 'User uploaded successfully!',
           type: 'success'
