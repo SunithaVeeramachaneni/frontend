@@ -252,8 +252,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
-        if (pages.length && formListId) {
-          if (authoredFormDetailId) {
+        if (formListId) {
+          if (authoredFormDetailId && authoredFormDetailId.length) {
             if (
               formSaveStatus !== 'Saved' &&
               formStatus !== 'Published' &&

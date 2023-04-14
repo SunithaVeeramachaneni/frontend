@@ -1,6 +1,10 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata } from 'src/app/interfaces';
-import { CreateFormDetail, UpdateAuthoredFormDetail, UpdateFormDetail } from 'src/app/interfaces/master-data-management/forms';
+import {
+  CreateFormDetail,
+  UpdateAuthoredFormDetail,
+  UpdateFormDetail
+} from 'src/app/interfaces/master-data-management/forms';
 import { CreateAuthoredRoundPlanDetail } from 'src/app/interfaces/master-data-management/round-plan';
 
 export const createFormSuccess = createAction(
