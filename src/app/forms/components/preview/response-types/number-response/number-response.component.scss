@@ -1,0 +1,37 @@
+@import '../../../../../../scss/colors.scss';
+
+.number-container {
+  .number-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid $gray3;
+    height: 28px;
+    padding: 0 0.5rem;
+    border-radius: 6px;
+    margin-top: 5px;
+    .number {
+      width: 60%;
+      border: none;
+      &:focus {
+        outline: none;
+      }
+
+      &::placeholder {
+        font-size: 90%;
+      }
+    }
+    .uom-text {
+      font-size: 80%;
+    }
+  }
+  .rangeMetadata {
+    display: flex;
+    width: 60%;
+    justify-content: space-between;
+    padding: 4px 0;
+    .range-text {
+      font-size: 75%;
+    }
+  }
+}
