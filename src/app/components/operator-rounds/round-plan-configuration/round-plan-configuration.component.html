@@ -142,31 +142,26 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-
-      <button
-        mat-raised-button
-        class="publish-btn"
-        (click)="publishFormDetail()"
-        [disabled]="formStatus === 'Published' || isFormDetailPublished"
-      >
+      <button mat-stroked-button class="next-btn">
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
-            class="publish-btn-icon"
-          />
-          <span class="publish" translate="publishBtn"></span>
+          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>
     </div>
   </div>
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
+      <<<<<<< HEAD
       <app-hierarchy-container
         [isPreview]="false"
         (hierarchyEvent)="hierarchyEventHandler($event)"
         [hierarcyInput$]="hierarcyInput$"
       ></app-hierarchy-container>
+      ======
+      <app-hierarchy-container
+        (hierarchyEvent)="hierarchyEventHandler($event)"
+      ></app-hierarchy-container>
+      >>>>>>> 6acd8e3c213f14757c21ba6e771b5ffff6f61c4d
     </div>
     <div
       class="questions-responses-width"

@@ -73,8 +73,10 @@ import { IssuesComponent } from './issues/issues.component';
 import { ActionsComponent } from './actions/actions.component';
 import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
 import { ChartComponent } from './observations/donut-chart/chart.component';
-import { AssignRoundComponent } from './assign-round/assign-round.component';
-import { ImportTasksSliderComponent } from './import-tasks-slider/import-tasks-slider.component';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+import { AssignToComponent } from './assign-to/assign-to.component';
+
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -158,6 +160,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       formConfiguration: formConfigurationReducer,
       hierarchy: hierarchyReducer
     }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
     EffectsModule.forFeature([RoundPlanConfigurationEffects]),
     NgxEchartsModule.forRoot({
       echarts

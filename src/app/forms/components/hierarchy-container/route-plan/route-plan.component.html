@@ -137,6 +137,8 @@
   [cdkDropListConnectedTo]="dropTargetIds"
   (cdkDropListDropped)="drop($event)"
   [cdkDropListSortingDisabled]="true"
+  class="routePlanContainer"
+  cdkScrollable
 >
   <div
     *ngFor="let node of hierarchy"

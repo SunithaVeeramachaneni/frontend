@@ -18,7 +18,7 @@
         src="assets/master-configurations/upload-error.svg"
         *ngIf="isFailure"
         alt="upload-done"
-        class="center mb-5"
+        class="center mb-5 failure"
       />
       <mat-progress-bar
         *ngIf="!isSuccess && !isFailure"
@@ -69,7 +69,11 @@
           {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
         </div>
       </div>
-      <div class="review-text" *ngIf="failedCount > 0" (click)="downloadExcel()">
+      <div
+        class="review-text"
+        *ngIf="failedCount > 0"
+        (click)="downloadExcel()"
+      >
         {{ 'downloadExcel' | translate }}
       </div>
 

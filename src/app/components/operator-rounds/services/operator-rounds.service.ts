@@ -132,7 +132,7 @@ export class OperatorRoundsService {
         filterData.status ? filterData.status : formStatus
       );
       params.set('modifiedBy', filterData.modifiedBy);
-      params.set('authoredBy', filterData.authoredBy);
+      params.set('createdBy', filterData.createdBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
       params.set(
         'scheduleStartDate',
@@ -284,7 +284,8 @@ export class OperatorRoundsService {
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
-        isDeleted: false
+        isDeleted: false,
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
       }
     );
   }
@@ -665,7 +666,8 @@ export class OperatorRoundsService {
                   100
               )
             : 0
-        }%`
+        }%`,
+        roundId: p.roundId
       }));
     return rows;
   }
@@ -737,4 +739,20 @@ export class OperatorRoundsService {
         info
       )
       .pipe(map((response) => (response === null ? round : response)));
+
+  downloadAttachment$ = (
+    roundPlanId: string,
+    roundId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> => {
+    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
+    return this.appService.downloadFile(
+      apiURL,
+      '',
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
+  };
 }
