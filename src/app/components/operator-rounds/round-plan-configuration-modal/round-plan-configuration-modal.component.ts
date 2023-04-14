@@ -30,7 +30,10 @@ import {
   BuilderConfigurationActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
@@ -167,8 +170,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
-            ...this.headerDataForm.value,
-            moduleName: 'rdf'
+            ...this.headerDataForm.value
           },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
@@ -183,6 +185,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
+            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
             formLogo: 'assets/img/svg/rounds-icon.svg'
           }

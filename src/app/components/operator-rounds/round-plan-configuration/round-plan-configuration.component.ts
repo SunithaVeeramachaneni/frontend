@@ -69,6 +69,7 @@ import { FormService } from 'src/app/forms/services/form.service';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
+import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -238,17 +239,18 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             } = current;
 
             if (!isEqual(prev, curr)) {
+              const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: curr,
+                  formMetadata: currentVal,
                   ...this.getFormConfigurationStatuses()
                 })
               );
-
               this.store.dispatch(
-                BuilderConfigurationActions.updateForm({
+                RoundPlanConfigurationActions.updateRoundPlan({
                   formMetadata: this.formMetadata,
-                  formListDynamoDBVersion: this.formListVersion
+                  formListDynamoDBVersion: this.formListVersion,
+                  ...this.getFormConfigurationStatuses()
                 })
               );
             }
@@ -791,4 +793,17 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   trackBySelectedNodeInstances(index: number, el: any): string {
     return el.id;
   }
+
+  goToPDFBuilderConfiguration = () => {
+    this.dialog.open(PDFBuilderComponent, {
+      data: {
+        moduleName: 'OPERATOR_ROUNDS'
+      },
+      hasBackdrop: false,
+      disableClose: true,
+      width: '100vw',
+      minWidth: '100vw',
+      height: '100vh'
+    });
+  };
 }
