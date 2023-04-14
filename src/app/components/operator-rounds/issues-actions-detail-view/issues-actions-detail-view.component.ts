@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { format } from 'date-fns';
@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
+  HistoryResponse,
   SelectedAssignee,
   UpdateIssueOrActionEvent,
   UserDetails
@@ -14,6 +15,7 @@ import {
 import { LoginService } from '../../login/services/login.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
@@ -34,16 +36,18 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     dueDateDisplayValue: '',
     dueDate: '',
     assignedTo: '',
-    raisedBy: ''
+    raisedBy: '',
+    attachments: this.fb.array([])
   });
   priorities = ['High', 'Medium', 'Low'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
   users$: Observable<UserDetails[]>;
-  logHistory$: Observable<History[]>;
+  logHistory$: Observable<HistoryResponse>;
   assigneeDetails: AssigneeDetails;
   updatingDetails = false;
+  userInfo: any;
 
   constructor(
     private fb: FormBuilder,
@@ -51,10 +55,17 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data,
     private observations: RoundPlanObservationsService,
     private loginService: LoginService,
-    private userService: UsersService
+    private userService: UsersService,
+    private sanitizer: DomSanitizer
   ) {}
 
+  getAttachmentsList() {
+    return (this.issuesActionsDetailViewForm.get('attachments') as FormArray)
+      .controls;
+  }
+
   ngOnInit(): void {
+    this.userInfo = this.loginService.getLoggedInUserInfo();
     const { id, type, users$ } = this.data;
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
@@ -75,6 +86,37 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
         `${type}/log-history/sse/${id}`
       )
       .subscribe();
+  }
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
+
+  uploadFile(event): void {
+    let base64: string;
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const file = base64.split(',')[1];
+      const fileData = {
+        name: files[0].name,
+        image: file
+      };
+      const attachments = this.issuesActionsDetailViewForm.get(
+        'attachments'
+      ) as FormArray;
+      attachments.push(this.fb.control(fileData));
+      this.updateIssueOrAction({
+        field: 'attachments',
+        value: this.issuesActionsDetailViewForm.get('attachments').value
+      });
+      this.issuesActionsDetailViewForm.markAsDirty();
+    };
   }
 
   updateDate(
