@@ -1,8 +1,3 @@
-import {
-  InspectionDetail,
-  UserDetails,
-  UsersInfoByEmail
-} from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -22,8 +17,12 @@ import {
   LoadEvent,
   SearchEvent,
   TableEvent,
-  Count
+  Count,
+  InspectionDetail,
+  UserDetails,
+  UsersInfoByEmail
 } from './../../../interfaces';
+
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
@@ -161,8 +160,8 @@ export class RaceDynamicFormService {
       filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
-      'authoredBy',
-      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+      'createdBy',
+      filterData && filterData.createdBy ? filterData.createdBy : ''
     );
     params.set(
       'lastModifiedOn',
@@ -807,7 +806,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllRounds$ = () => {
+  fetchAllInspections$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -868,8 +867,8 @@ export class RaceDynamicFormService {
     return this.usersInfoByEmail[email]?.fullName;
   }
 
-  private formatInspections(rounds: any[] = []): any[] {
-    const rows = rounds
+  private formatInspections(inspections: any[] = []): any[] {
+    const rows = inspections
       .sort(
         (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
       )
@@ -923,7 +922,7 @@ export class RaceDynamicFormService {
   }
   updateInspection$ = (
     inspectionId: string,
-    round: InspectionDetail,
+    inspectionDetail: InspectionDetail,
     type: 'due-date' | 'assigned-to',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> =>
@@ -931,8 +930,10 @@ export class RaceDynamicFormService {
       .patchData(
         environment.rdfApiUrl,
         `inspections/${inspectionId}/${type}`,
-        round,
+        inspectionDetail,
         info
       )
-      .pipe(map((response) => (response === null ? round : response)));
+      .pipe(
+        map((response) => (response === null ? inspectionDetail : response))
+      );
 }
