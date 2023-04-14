@@ -8,7 +8,13 @@ export const createRoundPlan = createAction(
 
 export const updateRoundPlan = createAction(
   '[RoundPlan Configuration] updateRoundPlan',
-  props<{ formMetadata: FormMetadata; formListDynamoDBVersion: number }>()
+  props<{
+    formMetadata: FormMetadata;
+    formListDynamoDBVersion: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const publishRoundPlan = createAction(
