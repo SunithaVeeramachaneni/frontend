@@ -16,6 +16,10 @@
     }
   }
 
+  .common-filter-icon {
+    cursor: pointer;
+  }
+
   ::ng-deep .form-categories .mat-button-toggle {
     margin-right: 10px;
     border-radius: 30px;

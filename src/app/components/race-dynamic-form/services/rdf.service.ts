@@ -1,4 +1,3 @@
-import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -18,8 +17,12 @@ import {
   LoadEvent,
   SearchEvent,
   TableEvent,
-  Count
+  Count,
+  InspectionDetail,
+  UserDetails,
+  UsersInfoByEmail
 } from './../../../interfaces';
+
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
@@ -157,8 +160,8 @@ export class RaceDynamicFormService {
       filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
     );
     params.set(
-      'authoredBy',
-      filterData && filterData.authoredBy ? filterData.authoredBy : ''
+      'createdBy',
+      filterData && filterData.createdBy ? filterData.createdBy : ''
     );
     params.set(
       'lastModifiedOn',
@@ -237,6 +240,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'pdfTemplateConfiguration'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -244,6 +248,7 @@ export class RaceDynamicFormService {
       formLogo: formListQuery.formLogo,
       description: formListQuery.description,
       formStatus: formListQuery.formStatus,
+      pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
       author: formListQuery.author,
       formType: formListQuery.formType,
       tags: formListQuery.tags,
@@ -801,7 +806,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllRounds$ = () => {
+  fetchAllInspections$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
@@ -862,8 +867,8 @@ export class RaceDynamicFormService {
     return this.usersInfoByEmail[email]?.fullName;
   }
 
-  private formatInspections(rounds: any[] = []): any[] {
-    const rows = rounds
+  private formatInspections(inspections: any[] = []): any[] {
+    const rows = inspections
       .sort(
         (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
       )
@@ -879,8 +884,8 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
-          },${p.totalTasks > 0
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
+          p.totalTasks > 0
             ? Math.round(
                 (Math.abs(p.totalTasksCompleted / p.totalTasks) +
                   Number.EPSILON) *
@@ -917,7 +922,7 @@ export class RaceDynamicFormService {
   }
   updateInspection$ = (
     inspectionId: string,
-    round: InspectionDetail,
+    inspectionDetail: InspectionDetail,
     type: 'due-date' | 'assigned-to',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> =>
@@ -925,8 +930,10 @@ export class RaceDynamicFormService {
       .patchData(
         environment.rdfApiUrl,
         `inspections/${inspectionId}/${type}`,
-        round,
+        inspectionDetail,
         info
       )
-      .pipe(map((response) => (response === null ? round : response)));
+      .pipe(
+        map((response) => (response === null ? inspectionDetail : response))
+      );
 }

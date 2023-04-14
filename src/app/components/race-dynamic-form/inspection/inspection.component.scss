@@ -29,13 +29,14 @@
     }
 
     .common-filter-icon {
+      cursor: pointer;
       width: 15px;
       height: 15px;
     }
   }
 }
 
-.rounds-list {
+.inspections-list {
   ::ng-deep .table-column {
     width: 20%;
   }
