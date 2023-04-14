@@ -1,23 +1,23 @@
 [
   {
-    "label": "Status",
+    "label": "Schedule",
     "items": [],
-    "column": "status",
+    "column": "schedule",
     "type": "multiple",
     "value": ""
   },
   {
-    "label": "Inspected By",
+    "label": "Assigned To",
     "items": [],
     "column": "assignedTo",
     "type": "multiple",
     "value": ""
   },
   {
-    "label": "Due Date",
+    "label": "Due date",
     "items": [],
     "column": "dueDate",
-    "type": "date",
+    "type": "daterange",
     "startDate": "",
     "endDate": "",
     "value": ""

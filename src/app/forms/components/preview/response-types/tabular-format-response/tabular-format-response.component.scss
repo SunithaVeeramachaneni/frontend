@@ -1,0 +1,30 @@
+.table-class {
+  width: 97%;
+  border: 1px solid $gray3;
+  margin-top: 7px;
+
+  thead {
+    background-color: $gray1-bg;
+    padding: 5px;
+  }
+  td {
+    padding: 4px;
+    text-align: center;
+  }
+  tbody td {
+    padding: 4px;
+  }
+  .bg-color {
+    background-color: $gray1-bg;
+  }
+  .input-p {
+    width: 80%;
+  }
+}
+.add-new-icon {
+  width: 15px;
+  margin-top: 5px;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}

@@ -23,7 +23,11 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import {
+  LIST_LENGTH,
+  defaultLimit,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
@@ -237,7 +241,8 @@ export class FormListComponent implements OnInit {
     modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
-    plant: ''
+    plant: '',
+    lastModifiedOn: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -249,7 +254,7 @@ export class FormListComponent implements OnInit {
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = defaultLimit;
+  limit = LIST_LENGTH;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -266,6 +271,7 @@ export class FormListComponent implements OnInit {
   authoredBy = [];
   plantsIdNameMap = {};
   plants = [];
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -584,12 +590,12 @@ export class FormListComponent implements OnInit {
               this.lastPublishedBy.push(item);
             }
           }
-          const uniqueAuthoredBy = formsList.rows
+          const uniqueCreatedBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueAuthoredBy) {
+          for (const item of uniqueCreatedBy) {
             if (item) {
-              this.authoredBy.push(item);
+              this.createdBy.push(item);
             }
           }
 
@@ -617,6 +623,8 @@ export class FormListComponent implements OnInit {
               item.items = this.authoredBy;
             } else if (item.column === 'plant') {
               item.items = this.plants;
+            } else if (item.column === 'createdBy') {
+              item.items = this.createdBy;
             }
           }
         })

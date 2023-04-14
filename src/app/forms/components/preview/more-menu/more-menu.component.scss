@@ -1,0 +1,41 @@
+@import '../../../../../scss/colors.scss';
+.bottom-list {
+  z-index: 2;
+  text-align: center;
+  padding: 0;
+  width: 100%;
+  color: $blue2;
+  .bottom-list-option {
+    font-size: 90%;
+    color: $gray13;
+  }
+  .close-bottom-sheet {
+    width: 100%;
+    background-color: $white;
+    border-color: $white;
+    border: none;
+    cursor: pointer;
+    color: $blue2;
+  }
+  .skip-task-list-item {
+    color: $red-main;
+  }
+  .history-bottom-sheet {
+    width: 100%;
+    background-color: $white;
+    border-color: $white;
+    border: none;
+    cursor: pointer;
+    color: $blue2;
+  }
+  hr {
+    background-color: $border-color-gray;
+    border: none;
+    height: 1px;
+  }
+}
+::ng-deep {
+  .mat-bottom-sheet-container {
+    padding: 8px 0px !important;
+  }
+}

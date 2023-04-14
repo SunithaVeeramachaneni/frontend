@@ -84,6 +84,7 @@ export interface RoundPlanDetail extends RoundPlan {
 }
 
 export interface RoundDetail extends RoundPlan {
+  schedule?: string;
   roundId: string;
   roundDetailId: string;
   scheduledType: string;

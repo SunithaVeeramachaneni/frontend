@@ -49,7 +49,7 @@ export class RoundPlanListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
+    createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
     scheduleEndDate: '',
@@ -264,6 +264,7 @@ export class RoundPlanListComponent implements OnInit {
   authoredBy = [];
   plants = [];
   plantsIdNameMap = {};
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -541,7 +542,7 @@ export class RoundPlanListComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index);
         for (const item of uniqueAuthoredBy) {
           if (item) {
-            this.authoredBy.push(item);
+            this.createdBy.push(item);
           }
         }
 
@@ -569,6 +570,8 @@ export class RoundPlanListComponent implements OnInit {
             item.items = this.authoredBy;
           } else if (item.column === 'plant') {
             item.items = this.plants;
+          } else if (item.column === 'createdBy') {
+            item.items = this.createdBy;
           }
         }
       });
@@ -602,7 +605,7 @@ export class RoundPlanListComponent implements OnInit {
     this.filter = {
       status: '',
       modifiedBy: '',
-      authoredBy: '',
+      createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
       scheduleEndDate: '',

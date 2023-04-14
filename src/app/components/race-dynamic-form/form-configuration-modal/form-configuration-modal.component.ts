@@ -26,8 +26,14 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  BuilderConfigurationActions,
+  FormConfigurationActions
+} from 'src/app/forms/state/actions';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
@@ -177,14 +183,14 @@ export class FormConfigurationModalComponent implements OnInit {
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
-        FormConfigurationActions.addFormMetadata({
+        BuilderConfigurationActions.addFormMetadata({
           formMetadata: this.headerDataForm.value,
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })
       );
       this.store.dispatch(
-        FormConfigurationActions.updateCreateOrEditForm({
+        BuilderConfigurationActions.updateCreateOrEditForm({
           createOrEditForm: true
         })
       );
@@ -192,6 +198,7 @@ export class FormConfigurationModalComponent implements OnInit {
         FormConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
+            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }

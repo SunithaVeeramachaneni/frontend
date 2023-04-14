@@ -134,6 +134,7 @@ export class OperatorRoundsService {
       params.set('modifiedBy', filterData.modifiedBy);
       params.set('authoredBy', filterData.authoredBy);
       params.set('plantsID', filterData.plant);
+      params.set('createdBy', filterData.createdBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
       params.set(
         'scheduleStartDate',

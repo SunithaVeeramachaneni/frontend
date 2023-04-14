@@ -63,7 +63,6 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
-
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -74,6 +73,14 @@ import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule
 export class FormsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  filter = {
+    plant: '',
+    schedule: '',
+    assignedTo: '',
+    scheduledAt: ''
+  };
+  assignedTo: string[] = [];
+  schedules: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -303,9 +310,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
 
-  filter = {
-    plant: ''
-  };
   plants = [];
   plantsIdNameMap = {};
 
@@ -395,6 +399,11 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
+          );
+        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -420,6 +429,36 @@ export class FormsComponent implements OnInit, OnDestroy {
           );
         } else {
           filteredForms = forms.data;
+        }
+
+        const uniqueAssignTo = filteredForms
+          ?.map((item) => item?.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        const uniqueSchedules = filteredForms
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item && !this.schedules.includes(item)) {
+              this.schedules.push(item);
+            }
+          });
+        }
+
+        for (const item of uniqueAssignTo) {
+          if (item && !this.assignedTo.includes(item)) {
+            this.assignedTo.push(item);
+          }
+        }
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
         }
         this.dataSource = new MatTableDataSource(filteredForms);
         return { ...forms, data: filteredForms };
@@ -700,14 +739,12 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
-          rounds: form.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
         };
       }
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        rounds: this.placeHolder,
         operator: this.placeHolder
       };
     });
@@ -791,20 +828,39 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(data: any): void {
+    this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
       } else {
         this.filter[item.column] = item.value;
       }
     }
-    this.nextToken = '';
-    this.fetchForms$.next({ data: 'load' });
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.scheduledAt &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchForms$.next({ data: 'load' });
+    }
   }
-
-  resetFilter(): void {
+  clearFilters(): void {
+    this.isPopoverOpen = false;
     this.filter = {
-      plant: ''
+      plant: '',
+      schedule: '',
+      assignedTo: '',
+      scheduledAt: ''
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
