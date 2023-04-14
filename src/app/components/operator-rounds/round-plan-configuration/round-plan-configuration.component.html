@@ -19,7 +19,12 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-plansicon" class="plansicon"></svg-icon>
+      <img
+        src="assets/rdf-forms-icons/plansicon.svg"
+        alt=""
+        width="50"
+        height="50"
+      />
       <input
         hidden
         type="file"
@@ -64,7 +69,11 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
+            <img
+              src="assets/rdf-forms-icons/edit-icon.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
+            />
           </button>
         </a>
         <br />
@@ -133,19 +142,9 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-
-      <button
-        mat-raised-button
-        class="publish-btn"
-        (click)="publishFormDetail()"
-        [disabled]="formStatus === 'Published' || isFormDetailPublished"
-      >
+      <button mat-stroked-button class="next-btn">
         <span>
-          <svg-icon
-            icon="icon-upload-white"
-            class="publish-btn-icon"
-          ></svg-icon>
-          <span class="publish" translate="publishBtn"></span>
+          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>
     </div>

@@ -1,0 +1,722 @@
+<div class="pdfBuilder-dialog" *ngIf="{
+  authoredFormDetail: authoredFormDetail$ | async,
+  formMetadata: formMetadata$ | async,
+  formSaveStatus: formSaveStatus$ | async,
+  formDetailPublishStatus: formDetailPublishStatus$ | async
+} as props">
+  <div class="dialogHead">
+    <button (click)="onCancel()" class="back-btn">
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <span class="back-btn-text" translate="backBtn"></span>
+    </button>
+  </div>
+  <div class="dialogContainer">
+    <div class="left">
+      <h2 class="configHead" translate="configuration" *ngIf="loadPDFBuilderConfig$ | async"></h2>
+      <div class="configOptions" [formGroup]="pdfBuilderConfigurationsForm">
+        <span class="selectAll">
+          <mat-checkbox (change)="toggleSelectAll($event)" [indeterminate]="isSelectAllIndeterminate()">
+            <span translate="selectAll"></span>
+          </mat-checkbox>
+        </span>
+        <div class="group">
+          <span class="groupHead" translate="header"></span>
+          <span class="option">
+            <mat-checkbox formControlName="formId" class="checkbox">
+              <span translate="roundId"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="formTitle" class="checkbox">
+              <span translate="roundTitle"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="subject"></span>
+          <span class="option">
+            <mat-checkbox formControlName="logo" class="checkbox">
+              <span translate="logo"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="questionCompleted" class="checkbox">
+              <span translate="taskCompleted"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="submittedOn" class="checkbox">
+              <span translate="submittedOn"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="submittedBy" class="checkbox">
+              <span translate="submittedBy"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="footer"></span>
+          <span class="option">
+            <mat-checkbox formControlName="pdfGeneratedDate" class="checkbox">
+              <span translate="pdfGeneratedDate"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="customText" class="checkbox">
+              <span translate="customText"></span>
+            </mat-checkbox>
+            <div class="customText">
+              <mat-form-field class="field" appearance="outline">
+                <mat-label translate="label"></mat-label>
+                <input matInput formControlName="customTextLabel" maxlength="25" />
+              </mat-form-field>
+              <mat-form-field class="field" appearance="outline">
+                <mat-label translate="field"></mat-label>
+                <input matInput formControlName="customTextField" maxlength="25" />
+              </mat-form-field>
+            </div>
+          </span>
+        </div>
+        <div class="group">
+          <span class="groupHead" translate="bodyContent"></span>
+          <span class="option">
+            <mat-checkbox formControlName="actions" class="checkbox">
+              <span translate="actions"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="issues" class="checkbox">
+              <span translate="issues"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleQuestionPhotos($event)">
+              <span translate="photos"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option">
+            <mat-checkbox formControlName="questions" class="checkbox" [indeterminate]="areQuestionsIndeterminate()"
+              (change)="toggleAllQuestions($event)">
+              <span translate="tasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-40">
+            <mat-checkbox formControlName="incompleteQuestions" class="checkbox"
+              (change)="toggleIncompleteQuestions($event)">
+              <span translate="incompleteTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-40">
+            <mat-checkbox formControlName="completedQuestions" class="checkbox"
+              [indeterminate]="areCompletedQuestionsIndeterminate()" (change)="toggleCompletedQuestions($event)">
+              <span translate="completedTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-80">
+            <mat-checkbox formControlName="capturedQuestions" class="checkbox"
+              (change)="togglecapturedQuestions($event)">
+              <span translate="capturedTasks"></span>
+            </mat-checkbox>
+          </span>
+          <span class="option m-l-80">
+            <mat-checkbox formControlName="skippedQuestions" class="checkbox" (change)="toggleSkippedQuestions($event)">
+              <span translate="skippedTasks"></span>
+            </mat-checkbox>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="view">
+        <span class="pdf-head" translate="pdfPreviewTxt"></span>
+        <div class="form-status">
+          <div class="save-status" [hidden]="props.formSaveStatus !== formConfigurationStatus.saved ||
+          props.authoredFormDetail.isFormDetailPublished">
+            {{ 'changesSaved' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          props.formSaveStatus !== formConfigurationStatus.saving ||
+          props.authoredFormDetail.isFormDetailPublished
+        ">
+            {{ 'savingChanges' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          formDetailPublishStatus !== formConfigurationStatus.published ||
+          formStatus !== formConfigurationStatus.published
+        ">
+            {{ 'changesPublished' | translate }}
+          </div>
+          <div class="save-status" [hidden]="
+          formDetailPublishStatus !== formConfigurationStatus.publishing ||
+          !props.authoredFormDetail.isFormDetailPublished
+        ">
+            {{ 'publishingChanges' | translate }}
+          </div>
+          <button mat-raised-button class="publish-btn" (click)="publish()"
+            [disabled]="formStatus === 'Published' || props.authoredFormDetail.isFormDetailPublished">
+            <span>
+              <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
+              <span class="publish" translate="publishBtn"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="formMetadata$ | async as formMetadata" class="pdf-container">
+        <!-- ISSUES -->
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
+          <ng-container *ngTemplateOutlet="issuesTemplate; context: { formMetadata:formMetadata }"></ng-container>
+        </div>
+        <!-- ACTIONS -->
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
+          <ng-container *ngTemplateOutlet="actionsTemplate; context: { formMetadata:formMetadata }"></ng-container>
+        </div>
+        <!-- TASKS -->
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('questions').value">
+          <div id="content" #content class="pdfPage">
+            <div class="pageHeader">
+              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
+              <span class="formName"
+                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
+            </div>
+            <div
+              *ngIf="!(pdfBuilderConfigurationsForm.get('issues').value && pdfBuilderConfigurationsForm.get('issues').value)">
+              <div class="pageTitleRow">
+                <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
+                  <img [src]="innovapptiveLogo" class="tablelogo" />
+                </div>
+                <div class="tableHeading-text">
+                  <span class="name">{{formMetadata.name}}</span>
+                  <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
+                </div>
+              </div>
+              <div class="subjectRow"
+                *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('taskCompleted').value">
+                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
+                  Submitted On: 18-03-2023 10:00PM
+                </div>
+                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
+                  Submitted By: Shiva Kumar K
+                </div>
+                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('taskCompleted').value">
+                  Task Completed: 35/35 (100%)
+                </div>
+              </div>
+            </div>
+            <div *ngIf="pdfBuilderConfigurationsForm.get('questions').value" class="issuesRow">
+              <div class="tasksHead">
+                <span>Tasks</span>
+                <span>Total Locations: {{totalLocationsCount}}, Assets: {{totalAssetsCount}}, Tasks:
+                  {{totalQuestionsCount}}
+                </span>
+              </div>
+              <div *ngIf="data.moduleName !== 'RDF'">
+                <div class="actionCell" *ngIf="selectedFlatHierarchy">
+                  <div *ngFor="let node of selectedFlatHierarchy" class="hierarchyNode">
+                    <div class="hierarchyNodeHead">
+                      <div class="nodeLeft">
+                        <span class="nodeTitle">{{node.name}}</span>
+                        <span class="nodeId"> {{ node.type==='asset'? 'Asset': 'Location'}} ID: <span
+                            class="no-bold">{{node.nodeId}} - {{node.id}}</span></span>
+                      </div>
+                      <div class="nodeRight" *ngIf="getPagesOfNode(node.id) | async as totalPages">
+                        Pages: {{totalPages.length}} • Sections: {{ getSectionsCountByNode(totalPages)}} • Tasks:
+                        {{getAllQuestionsCountByNode(totalPages)}}
+                      </div>
+                    </div>
+                    <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">
+                      <ng-container *ngTemplateOutlet="pagesTemplate; context: { pages:pages }"></ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="data.moduleName === 'RDF'">
+                <div class="actionCell">
+                  <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(null) | async as pages">
+                    <ng-container *ngTemplateOutlet="pagesTemplate; context: { pages:pages }"></ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pageFooter">
+              <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #pagesTemplate let-pages="pages">
+  <div *ngFor="let page of pages" class="pageContainer">
+    <div class="nodePageHeader">
+      <span class="nodePageTitle">{{page.name}}</span>
+      <span class="nodePageRight">Sections: {{page.sections.length}} • Tasks:
+        {{page.questions.length}}
+      </span>
+    </div>
+    <div *ngFor="let section of getSectionsWithQuestionsOfPage(page)">
+      <div class="pageSection">
+        <div class="sectionHeadRow">
+          <div class="sectionTitle">
+            {{section.name}}
+          </div>
+          <div class="sectionRight">
+            Tasks: {{section.questions.length}}
+          </div>
+        </div>
+        <div class="sectionQuestionsContainer">
+          <div *ngFor="let question of section.questions" class="questionRow">
+            <app-question-preview [question]="question"
+              [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"></app-question-preview>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+<ng-template #issuesTemplate let-formMetadata="formMetadata">
+  <div id="content" #content class="pdfPage">
+    <div class="pageHeader">
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
+    </div>
+    <div class="pageTitleRow">
+      <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
+        <img [src]="innovapptiveLogo" class="tablelogo" />
+      </div>
+      <div class="tableHeading-text">
+        <span class="name">{{formMetadata.name}}</span>
+        <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
+      </div>
+    </div>
+    <div class="subjectRow"
+      *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('questionCompleted').value">
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
+        Submitted On: 18-03-2023 10:00PM
+      </div>
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
+        Submitted By: Shiva Kumar K
+      </div>
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
+        Task Completed: 35/35 (100%)
+      </div>
+    </div>
+    <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value" class="issuesRow">
+      <div class="issuesHead">
+        <span>Issues</span>
+        <span>Raised:3</span>
+      </div>
+      <div class="issueCell">
+        <div class="issue">
+          <div class="issueHead">
+            <span class="label">Issue:
+            </span>
+            Oil Spillage from DC motor
+          </div>
+          <div class="issueBody">
+            <div class="issueRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Oil spillage found on shop floor due to broken oil drainer.
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="issueRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Category:
+                    </span>
+                    <span class="description"> Safety </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised By:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Notification No:
+                    </span>
+                    <span class="description"> 123456 </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="issue">
+          <div class="issueHead">
+            <span class="label">Issue:
+            </span>
+            Pump - 100987 breakdown, production affected
+          </div>
+          <div class="issueBody">
+            <div class="issueRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Pump - 100987 seal failure due to cavitation and the pump is not functioning.
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="issueRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="issueRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Category:
+                    </span>
+                    <span class="description"> Safety </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised By:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Notification No:
+                    </span>
+                    <span class="description"> 123456 </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <div class="imagesContainer">
+                      <img [src]="image" *ngFor="let image of dummyImages" class="image" />
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pageFooter">
+      <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
+    </div>
+  </div>
+</ng-template>
+<ng-template #actionsTemplate let-formMetadata="formMetadata">
+  <div id="content" #content class="pdfPage">
+    <div class="pageHeader">
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{formMetadata.id}}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{formMetadata.name}}</span>
+    </div>
+    <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
+      <div class="pageTitleRow">
+        <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
+          <img [src]="innovapptiveLogo" class="tablelogo" />
+        </div>
+        <div class="tableHeading-text">
+          <span class="name">{{formMetadata.name}}</span>
+          <span class="discribe">{{formMetadata.description ? formMetadata.description: ''}}</span>
+        </div>
+      </div>
+      <div class="subjectRow"
+        *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value || pdfBuilderConfigurationsForm.get('submittedBy').value || pdfBuilderConfigurationsForm.get('taskCompleted').value">
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
+          Submitted On: 18-03-2023 10:00PM
+        </div>
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
+          Submitted By: Shiva Kumar K
+        </div>
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('taskCompleted').value">
+          Task Completed: 35/35 (100%)
+        </div>
+      </div>
+    </div>
+    <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value" class="issuesRow">
+      <div class="actionsHead">
+        <span>Actions</span>
+        <span>Raised:3</span>
+      </div>
+      <div class="actionCell">
+        <div class="action">
+          <div class="actionHead">
+            <span class="label">Action:
+            </span>
+            Please check the bearings of the motor of Equipment 1667229.
+          </div>
+          <div class="actionBody">
+            <div class="actionRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Bearing of the motor has worn out and needs to be replaced
+              </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="actionRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised by:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="action">
+          <div class="actionHead">
+            <span class="label">Action:
+            </span>
+            Greasing required on the conveyor belt - 2A
+          </div>
+          <div class="actionBody">
+            <div class="actionRow">
+              <span class="label">
+                Description:
+              </span>
+              <span class="description">
+                Belt is not running smoothly and belt speed has been reduced due to low greasing. Please inspect and fix
+                it on priority </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Asset:
+              </span>
+              <span class="description">
+                170442 - Water Pump Water Pump Water Pump Water
+              </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Task:
+              </span>
+              <span class="description"> Check water pressure. </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Value:
+              </span>
+              <span class="description"> 90 </span>
+            </div>
+            <div class="actionRow">
+              <span class="label">
+                Assigned to:
+              </span>
+              <span class="description">
+                John, Krista, Marry, Alexander
+              </span>
+            </div>
+            <div class="actionRow">
+              <table class="w-100">
+                <tr>
+                  <td>
+                    <span class="label">
+                      Priority:
+                    </span>
+                    <span class="description"> High </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Raised by:
+                    </span>
+                    <span class="description"> Aron </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="label">
+                      Due Date:
+                    </span>
+                    <span class="description"> 25 Feb, 2023 </span>
+                  </td>
+                  <td>
+                    <span class="label">
+                      Status:
+                    </span>
+                    <span class="description"> Open </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="pageFooter">
+      <ng-container *ngTemplateOutlet="footerTemplate; context:{footerData:null}"></ng-container>
+    </div>
+  </div>
+</ng-template>
+<ng-template #footerTemplate let-footerData="footerData">
+  <div class="w-33">
+    <span class="generatedDate"
+      *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">{{getCurrentDate()}}</span>
+  </div>
+  <div class="w-33">
+    <span class="poweredBy">Powered By
+      <img [src]="innovapptiveLogo" class="footerLogo" /></span>
+  </div>
+  <div class="w-33">
+    <span class="customText"
+      *ngIf="pdfBuilderConfigurationsForm.get('customText').value && pdfBuilderConfigurationsForm.get('customTextField').value && pdfBuilderConfigurationsForm.get('customTextLabel').value">
+      {{pdfBuilderConfigurationsForm.get('customTextLabel').value}}:{{pdfBuilderConfigurationsForm.get('customTextField').value}}
+    </span>
+  </div>
+</ng-template>

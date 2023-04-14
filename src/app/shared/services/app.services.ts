@@ -8,7 +8,7 @@ import { ErrorInfo } from '../../interfaces';
   providedIn: 'root'
 })
 export class AppService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Will prepare http header data and returns
@@ -48,9 +48,8 @@ export class AppService {
    *
    * @returns string
    */
-  public prepareUrl = (apiUrl: string, urlString: string): string => {
-    return `${apiUrl}${urlString}`;
-  };
+  public prepareUrl = (apiUrl: string, urlString: string): string =>
+    `${apiUrl}${urlString}`;
 
   _getResp(
     apiUrl: string,
@@ -104,7 +103,8 @@ export class AppService {
     urlStr: string,
     info: ErrorInfo = {} as ErrorInfo,
     isGetRequest: boolean = true,
-    data: any = {}
+    data: any = {},
+    customResponseType: string = ''
   ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
@@ -113,10 +113,14 @@ export class AppService {
       failureResponse
     });
 
+    let responseType: any = 'blob' as 'json';
+    if (customResponseType && customResponseType.length) {
+      responseType = customResponseType;
+    }
     if (isGetRequest) {
       return this.http.get<any>(url, {
         ...httpOptions,
-        responseType: 'blob' as 'json'
+        responseType
       });
     }
     return this.http.post<any>(url, data, {

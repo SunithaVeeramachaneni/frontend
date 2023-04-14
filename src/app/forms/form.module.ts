@@ -28,6 +28,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
@@ -59,8 +61,13 @@ import { TagSelectComponent } from './components/field-types/instructions/tag-se
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
 import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
+import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
+import { CdkScrollableModule } from '@angular/cdk/scrolling';
+import { QuestionPreviewComponent } from './components/pdf-builder/question-preview/question-preview.component';
 import { ScheduleSuccessModalComponent } from './components/schedular/schedule-success-modal/schedule-success-modal.component';
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
+import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
+
 import { AssignToComponent } from './components/schedular/assign/assign.component';
 import { SharedModule } from '../shared/shared.module';
 @NgModule({
@@ -88,6 +95,9 @@ import { SharedModule } from '../shared/shared.module';
     AddPageOrSelectExistingPageModalComponent,
     HyperlinkSideDrawerComponent,
     BuilderComponent,
+    PDFBuilderComponent,
+    PDFPreviewComponent,
+    QuestionPreviewComponent,
     HierarchyNodeComponent,
     HierarchyModalComponent,
     HierarchyLocationsListComponent,
@@ -107,6 +117,7 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    CdkScrollableModule,
     MatAutocompleteModule,
     MatIconModule,
     MatMenuModule,
@@ -129,7 +140,9 @@ import { SharedModule } from '../shared/shared.module';
     MatRadioModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
-    MatDatepickerModule
+    MatDatepickerModule,
+    PdfViewerModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     FormWidgetComponent,
@@ -149,6 +162,10 @@ import { SharedModule } from '../shared/shared.module';
     ImportQuestionsSliderComponent,
     GlobalResponseTypeSideDrawerComponent,
     BuilderComponent,
+    PDFBuilderComponent,
+    PDFPreviewComponent,
+    QuestionPreviewComponent,
+    NgxShimmerLoadingModule,
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,

@@ -42,7 +42,7 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
@@ -63,6 +63,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
+import { environment } from 'src/environments/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -137,6 +139,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
     EffectsModule.forFeature([FormConfigurationEffects])
   ],
   exports: [

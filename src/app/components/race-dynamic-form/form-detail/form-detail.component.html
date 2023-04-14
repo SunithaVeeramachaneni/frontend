@@ -282,6 +282,21 @@
         {{ 'editForm' | translate }}
       </button>
     </div>
+    <div class="footer" *ngIf="showPDFDownload">
+      <button
+        mat-raised-button
+        class="viewPDFBtn"
+        translate="viewPDFBtn"
+        (click)="viewPDF()"
+      ></button>
+      <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPDF()">
+        <img
+          src="assets/rdf-forms-icons/picture-as-pdf.svg"
+          alt="picture-as-pdf"
+        />
+        <span translate="download"></span>
+      </button>
+    </div>
   </mat-card>
 
   <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
