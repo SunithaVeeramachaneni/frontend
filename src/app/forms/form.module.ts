@@ -70,6 +70,30 @@ import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.compon
 
 import { AssignToComponent } from './components/schedular/assign/assign.component';
 import { SharedModule } from '../shared/shared.module';
+import { DynamicPreviewResponseTypeLoaderDirective } from './components/preview/directives/dynamic-preview-response-type-loader.directive';
+import { PreviewQuestionComponent } from './components/preview/preview-question/preview-question.component';
+import { ReadOnlyResponseComponent } from './components/preview/response-types/read-only-response/read-only-response.component';
+import { InstructionResponseComponent } from './components/preview/response-types/instruction-response/instruction-response.component';
+import { TextAnswerResponseComponent } from './components/preview/response-types/text-answer-response/text-answer-response.component';
+import { NumberResponseComponent } from './components/preview/response-types/number-response/number-response.component';
+import { ScanResponseComponent } from './components/preview/response-types/scan-response/scan-response.component';
+import { DateTimeResponseComponent } from './components/preview/response-types/date-time-response/date-time-response.component';
+import { HyperlinkResponseComponent } from './components/preview/response-types/hyperlink-response/hyperlink-response.component';
+import { CheckboxResponseComponent } from './components/preview/response-types/checkbox-response/checkbox-response.component';
+import { SignatureResponseComponent } from './components/preview/response-types/signature-response/signature-response.component';
+import { SliderResponseComponent } from './components/preview/response-types/slider-response/slider-response.component';
+import { LocationResponseComponent } from './components/preview/response-types/location-response/location-response.component';
+import { DateRangeResponseComponent } from './components/preview/response-types/date-range-response/date-range-response.component';
+import { DropdownResponseComponent } from './components/preview/response-types/dropdown-response/dropdown-response.component';
+import { ArrayResponseComponent } from './components/preview/response-types/array-response/array-response.component';
+import { VisibleInputResponseComponent } from './components/preview/response-types/visible-input-response/visible-input-response.component';
+import { AttachmentResponseComponent } from './components/preview/response-types/attachment-response/attachment-response.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { HistoryBottomSheetComponent } from './components/preview/history-bottom-sheet/history-bottom-sheet.component';
+import { MoreMenuComponent } from './components/preview/more-menu/more-menu.component';
+
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -77,12 +101,31 @@ import { SharedModule } from '../shared/shared.module';
     SectionComponent,
     QuestionComponent,
     ResponseTypeComponent,
+    ReadOnlyResponseComponent,
+    InstructionResponseComponent,
+    TextAnswerResponseComponent,
+    NumberResponseComponent,
+    ScanResponseComponent,
+    DateTimeResponseComponent,
+    HyperlinkResponseComponent,
+    CheckboxResponseComponent,
+    SignatureResponseComponent,
+    SliderResponseComponent,
+    LocationResponseComponent,
+    DateRangeResponseComponent,
+    DropdownResponseComponent,
+    ArrayResponseComponent,
+    VisibleInputResponseComponent,
+    AttachmentResponseComponent,
+    PreviewQuestionComponent,
     PreviewComponent,
     AddLogicComponent,
     AddFilterComponent,
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
+    HistoryBottomSheetComponent,
+    MoreMenuComponent,
     IphoneComponent,
     ArrayComponent,
     DateComponent,
@@ -110,7 +153,8 @@ import { SharedModule } from '../shared/shared.module';
     InstructionPdfPreviewComponent,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent
+    AssignToComponent,
+    DynamicPreviewResponseTypeLoaderDirective
   ],
   imports: [
     SharedModule,
@@ -126,11 +170,14 @@ import { SharedModule } from '../shared/shared.module';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatBottomSheetModule,
+    MatListModule,
     MatIconModule,
     MatCardModule,
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
+    MatSidenavModule,
     MatCheckboxModule,
     MatButtonToggleModule,
     MatRadioModule,

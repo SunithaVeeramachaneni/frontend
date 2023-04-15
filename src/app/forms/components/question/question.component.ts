@@ -352,7 +352,7 @@ export class QuestionComponent implements OnInit {
   }
 
   uomChanged(event) {
-    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+    this.questionForm.get('unitOfMeasurement').setValue(event.symbol);
     this.unitMenuTrigger.closeMenu();
   }
 

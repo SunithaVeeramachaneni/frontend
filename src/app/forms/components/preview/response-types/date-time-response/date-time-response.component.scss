@@ -1,0 +1,35 @@
+@import '../../../../../../scss/colors.scss';
+
+.text-answer {
+  width: 93%;
+  border: 1px solid $gray3;
+  height: 28px;
+  padding-left: 0.5rem;
+  border-radius: 6px;
+  margin-top: 5px;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    font-size: 90%;
+  }
+}
+
+input[type='datetime-local']::-webkit-inner-spin-button,
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  background: url('/assets/preview/Date_Time.svg') no-repeat left;
+  background-size: 12px;
+  margin-right: 2px;
+}
+
+input[type='date']::-webkit-inner-spin-button,
+input[type='date']::-webkit-calendar-picker-indicator {
+  margin-right: 2px;
+}
+
+input[type='time']::-webkit-inner-spin-button,
+input[type='time']::-webkit-calendar-picker-indicator {
+  margin-right: 2px;
+}
