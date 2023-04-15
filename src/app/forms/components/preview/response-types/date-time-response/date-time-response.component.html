@@ -1,0 +1,21 @@
+<div>
+  <input
+    type="datetime-local"
+    class="text-answer"
+    [placeholder]="'enter' | translate"
+    *ngIf="question.value.date && question.value.time"
+  />
+  <input
+    type="date"
+    class="text-answer"
+    [placeholder]="'enter' | translate"
+    *ngIf="question.value.date && !question.value.time"
+  />
+
+  <input
+    type="time"
+    class="text-answer"
+    [placeholder]="'enter' | translate"
+    *ngIf="!question.value.date && question.value.time"
+  />
+</div>
