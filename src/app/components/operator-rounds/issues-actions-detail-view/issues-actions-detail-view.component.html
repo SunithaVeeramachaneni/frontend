@@ -18,9 +18,99 @@
   <div class="dis-flex form-content">
     <div
       class="width-60 chat-div"
-      *ngIf="logHistory$ | async; else historyLoading"
+      *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
-      <div class="chat-panel"></div>
+      <div class="chat-panel">
+        <ng-container *ngFor="let chatdata of logHistory.rows; let i = index">
+          <div
+            class="dis-flex"
+            [ngClass]="{
+              'text-align-right': chatdata.username === userInfo.email
+            }"
+          >
+            <ng-container *ngIf="chatdata.type === 'Object'">
+              <div class="issue-created">
+                <ng-container *ngIf="i === 0">
+                  <span class="main-heading">New Action Created</span><br />
+                  <span class="data">
+                    <span class="sub-headings">Issue:</span>
+                    {{ chatdata.message.TITLE }}
+                  </span>
+                  <br />
+                  <span class="data">
+                    <span class="sub-headings">Description:</span>
+                    {{ chatdata.message.DESCRIPTION }}
+                  </span>
+                  <br />
+                  <span class="data">
+                    <span class="sub-headings">Assigned to:</span>
+                    {{ chatdata.message.ASSIGNEE }}
+                  </span>
+                  <br />
+                  <span class="data">
+                    <span class="sub-headings">Created by:</span>
+                    {{ chatdata.username }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngIf="i !== 0">
+                  <ng-container *ngIf="chatdata.message.STATUS">
+                    <span class="data">
+                      <span class="sub-headings">Issue Status Updated to:</span>
+                      {{ chatdata.message.STATUS }}
+                      <br />
+                      <span class="sub-headings">Comments:</span> The issue was
+                      resolved by Scott
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="chatdata.message.ASSIGNEE">
+                    <span class="data">
+                      <span class="sub-headings">"Assigned to" Added:</span>
+                      {{ chatdata.message.ASSIGNEE }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="chatdata.message.ERPNOTIF">
+                    <span class="data">
+                      <span class="sub-headings"
+                        >ERP Notification Updated to:</span
+                      >
+                      {{ chatdata.message.ERPNOTIF }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="chatdata.message.PRIORITY">
+                    <span class="data">
+                      <span class="sub-headings">Priority Updated to:</span>
+                      {{ chatdata.message.PRIORITY }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="chatdata.message.DUEDATE">
+                    <span class="data">
+                      <span class="sub-headings">DueDate Updated to:</span>
+                      {{ chatdata.message.DUEDATE }}
+                    </span>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="chatdata.type === 'Message'">
+              <div class="message-created"></div>
+            </ng-container>
+
+            <ng-container *ngIf="chatdata.type === 'Media'">
+              <div class="media-created"></div>
+            </ng-container>
+          </div>
+          <div
+            class="time"
+            [ngClass]="{
+              'text-align-right': chatdata.username === userInfo.email
+            }"
+          >
+            {{ chatdata.createdAt }}
+          </div>
+        </ng-container>
+      </div>
       <div class="custom-form-field-white-color footer">
         <mat-form-field appearance="outline" class="width-90 margin">
           <input type="text" matInput placeholder="Type" />
@@ -29,8 +119,16 @@
             alt="add attachment"
             matSuffix
             class="add-attachment-icon"
+            (click)="fileInput.click()"
           />
         </mat-form-field>
+        <input
+          hidden
+          type="file"
+          accept="image/x-png,image/jpeg"
+          #fileInput
+          (change)="uploadFile($event)"
+        />
         <img
           src="assets/rdf-forms-icons/send-message.svg"
           alt="send message"
@@ -49,8 +147,16 @@
               alt="add attachment"
               matSuffix
               class="add-attachment-icon"
+              (click)="fileInput.click()"
             />
           </mat-form-field>
+          <input
+            hidden
+            type="file"
+            accept="image/x-png,image/jpeg"
+            #fileInput
+            (change)="uploadFile($event)"
+          />
           <img
             src="assets/rdf-forms-icons/send-message.svg"
             alt="send message"
@@ -227,9 +333,19 @@
 
       <div class="right-div p-5-0">
         <div class="titles" translate="attachment"></div>
-        <div class="values">3</div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('attachments').value.length }}
+        </div>
       </div>
-      <hr class="line" />
+      <div formArrayName="attachments" class="attachments-container">
+        <div *ngFor="let att of getAttachmentsList(); let i = index">
+          <img
+            [src]="getImageSrc(att.value.image)"
+            alt="images"
+            class="attachments"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </div>

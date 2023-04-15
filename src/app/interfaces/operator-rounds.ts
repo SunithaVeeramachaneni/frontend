@@ -182,6 +182,11 @@ export interface History {
   type: 'Object' | 'Media' | 'Message';
 }
 
+export interface HistoryResponse {
+  rows: History[];
+  nextToken: string | null;
+}
+
 export interface UpdateIssueOrActionEvent {
   field: string;
   value: string;
