@@ -37,11 +37,10 @@
               class="menu-buttons"
               *appCheckUserHasPermission="[perms.importLocations]"
             >
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
+              <svg-icon
+                icon="icon-upload-from-excel"
                 class="menu-icons"
-              />
+              ></svg-icon>
               <span translate="uploadExcel"></span>
             </button>
             <button mat-menu-item class="menu-buttons" (click)="addManually()">
@@ -63,11 +62,10 @@
           </button>
           <mat-menu #moreMenu="matMenu">
             <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
+              <svg-icon
+                icon="icon-upload-from-excel"
                 class="menu-icons"
-              />
+              ></svg-icon>
               <span translate="downloadTemplate"></span>
             </button>
           </mat-menu>
