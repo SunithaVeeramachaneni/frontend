@@ -40,7 +40,6 @@
           *ngFor="let assign of displayedAssigneeList"
           [value]="assign"
         >
-          <!-- <svg-icon icon="icon-assignIcon" class="assign-btn-icon"></svg-icon> -->
           <img
             [hidden]="!getImageSrc(assign.image)"
             [attr.src]="getImageSrc(assign.image)"

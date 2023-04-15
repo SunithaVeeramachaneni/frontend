@@ -6,12 +6,10 @@
     </div>
     <div>
       <p class="m-0" translate="image"></p>
-      <p>
-        <svg-icon
-          icon="icon-default-plant"
-          class="image"
-          *ngIf="!plantImage?.length"
-        ></svg-icon>
+      <p class="image-container">
+        <span class="img-border" *ngIf="!plantImage?.length">
+          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        </span>
 
         <img
           [src]="plantImage"

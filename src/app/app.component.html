@@ -17,18 +17,16 @@
     (mouseleave)="closeMenuOnMouseLeave()"
   >
     <div class="logo-img">
-      <img
-        src="{{ bigInnovaIcon }}"
+      <svg-icon
+        icon="icon-innova-big"
         [hidden]="!menuOpenClose"
         class="innov-big-img"
-        alt="Innovapptive Logo"
-      />
-      <img
-        src="{{ smallInnovaIcon }}"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-innova-small"
         [hidden]="menuOpenClose"
-        class="innov-small-img"
-        alt="Innovapptive Logo"
-      />
+        class="innova-small-img"
+      ></svg-icon>
     </div>
     <div class="sidebar-menu-items">
       <mat-nav-list

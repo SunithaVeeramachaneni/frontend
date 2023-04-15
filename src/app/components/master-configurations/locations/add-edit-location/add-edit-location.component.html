@@ -6,13 +6,12 @@
     </div>
     <div>
       <p class="m-0" translate="image"></p>
-      <p>
-        <img
-          [src]="locationIcon"
-          alt="Image Placeholder"
-          class="image"
-          *ngIf="locationImage === ''"
-        />
+
+      <p class="image-container">
+        <span class="img-border" *ngIf="locationImage === ''">
+          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        </span>
+
         <img
           [src]="locationImage"
           alt="Image"

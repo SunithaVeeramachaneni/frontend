@@ -7,11 +7,10 @@
     <div>
       <p class="m-0" translate="image"></p>
       <p class="image-container">
-        <svg-icon
-          *ngIf="assetImage === ''"
-          icon="icon-image-placeholder"
-          class="image"
-        ></svg-icon>
+        <span class="img-border" *ngIf="assetImage === ''">
+          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        </span>
+
         <img
           [src]="assetImage"
           alt="Image"

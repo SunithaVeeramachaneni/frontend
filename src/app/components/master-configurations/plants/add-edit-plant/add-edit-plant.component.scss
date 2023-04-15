@@ -33,18 +33,28 @@
     font-weight: 500;
   }
 
+  .image-container {
+    margin: 20px 0 40px 0;
+  }
+
   .image {
-    height: 100px;
-    width: 100px;
+    height: 35px;
+    width: 50px;
     position: relative;
-    left: -21px;
+    top: 12px;
+  }
+
+  .img-border {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 30px 15px;
   }
 
   .image-contain {
-    border-radius: 8px;
-    width: 90px;
-    height: 90px;
-    margin-left: -21px;
+    height: 75px;
+    width: 75px;
+    position: relative;
+    left: -2px;
   }
 
   .create-btn {
