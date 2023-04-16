@@ -235,8 +235,6 @@ export class FormListComponent implements OnInit {
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
-  //filterIcon = 'icon-filterIcon';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: GetFormList = null;
@@ -538,34 +536,6 @@ export class FormListComponent implements OnInit {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
-  }
-
-  private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllForms() {
     this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
     this.formsList$
