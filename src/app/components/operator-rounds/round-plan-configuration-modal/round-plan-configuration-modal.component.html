@@ -160,12 +160,15 @@
           </mat-form-field>
         </div>
 
-        <quill-material
-          [ngClass]="{
-            'display-toolbar': true
-          }"
-        >
-        </quill-material>
+        <mat-form-field placeholder="Type Question" class="width-100">
+          <quill-material
+            [ngClass]="{
+              'display-toolbar': true
+            }"
+            formControlName="notesAttachment"
+          >
+          </quill-material>
+        </mat-form-field>
       </div>
     </div>
   </div>
