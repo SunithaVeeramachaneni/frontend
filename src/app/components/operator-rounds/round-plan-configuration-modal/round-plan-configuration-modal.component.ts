@@ -92,7 +92,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items;
+      this.allPlantsData = plants.items || [];
     });
   }
 

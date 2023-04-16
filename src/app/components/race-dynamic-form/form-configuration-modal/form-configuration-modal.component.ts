@@ -112,7 +112,7 @@ export class FormConfigurationModalComponent implements OnInit {
 
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlantsData = plants.items;
+      this.allPlantsData = plants.items || [];
     });
   }
 
@@ -175,10 +175,6 @@ export class FormConfigurationModalComponent implements OnInit {
         // do nothing
       });
     }
-
-    const plant = this.allPlantsData.find(
-      (p) => p.id === this.headerDataForm.get('plantsID').value
-    );
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();

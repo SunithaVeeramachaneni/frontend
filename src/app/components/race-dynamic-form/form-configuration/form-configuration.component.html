@@ -88,7 +88,7 @@
           </a>
           <span
             ><span class="plant">{{ 'plant' | translate }}:</span>
-            {{ ' ' + plant }}</span
+            {{ ' ' + formMetadata.plant }}</span
           >
         </div>
       </div>
@@ -145,7 +145,6 @@
             src="assets/work-instructions-icons/svg/upload-white.png"
             class="publish-btn-icon"
           />
-          <span class="publish" translate="publishBtn"></span>
           <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>

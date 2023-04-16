@@ -78,7 +78,6 @@ export class FormConfigurationEffects {
             formListDynamoDBVersion: action.formListDynamoDBVersion
           })
           .pipe(
-            tap((response) => console.log(response)),
             mergeMap((response) =>
               forkJoin([
                 this.raceDynamicFormService.updateAuthoredFormDetail$({

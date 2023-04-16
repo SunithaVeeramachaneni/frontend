@@ -270,8 +270,8 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllPlants() {
     this.plantService.fetchAllPlants$().subscribe((allPlants) => {
-      this.allPlantsData = allPlants.items;
-      this.plantInformation = allPlants.items;
+      this.allPlantsData = allPlants.items || [];
+      this.plantInformation = allPlants.items || [];
     });
   }
 

@@ -104,7 +104,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   currentFormData: any;
   errors: ValidationError = {};
   formDetails: any;
-  plant = '';
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -184,7 +183,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        this.plant = formMetadata?.plant || '';
         const { name, description, id, formLogo, formStatus } = formMetadata;
         this.formMetadata = formMetadata;
         this.formConfiguration.patchValue(

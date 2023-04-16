@@ -596,7 +596,6 @@ export class RoundPlanListComponent implements OnInit {
         this.filter[item.column] = item.value;
       }
     }
-    console.log(this.filter);
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }

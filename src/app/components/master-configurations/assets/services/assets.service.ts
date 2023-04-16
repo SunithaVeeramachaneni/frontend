@@ -53,9 +53,9 @@ export class AssetsService {
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
-        'asset/list?' + params.toString()
+        'asset/count?' + params.toString()
       )
-      .pipe(map((res) => res.items.length || 0));
+      .pipe(map((res) => res.count || 0));
   }
 
   getAssetsList$(

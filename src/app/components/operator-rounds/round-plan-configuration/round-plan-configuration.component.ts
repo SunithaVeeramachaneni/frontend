@@ -130,7 +130,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   createOrEditForm: boolean;
 
   isPreviewActive = false;
-  plant = '';
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -177,7 +176,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        this.plant = formMetadata?.plant || '';
         if (Object.keys(formMetadata).length) {
           const { name, description, id, formLogo, formStatus } = formMetadata;
           this.formMetadata = formMetadata;
