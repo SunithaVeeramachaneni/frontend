@@ -1,11 +1,7 @@
 <div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
-  <div
-    [ngClass]="
-      moduleType === 'forms' ? 'current-time' : 'current-time-operator-rounds'
-    "
-  >
+  <span class="current-time">
     {{ currentTime }}
-  </div>
+  </span>
   <div class="iphone-header">
     <img src="/assets/preview/Back_Page.svg" alt="previous_arrow" />
     <p class="form-heading" matTooltip="{{ formMetadata.name }}">
