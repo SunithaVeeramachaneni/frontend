@@ -140,7 +140,6 @@
   .form {
     height: calc(100vh - 150px);
     overflow-y: auto;
-    margin-top: 0.6rem;
   }
 }
 
@@ -195,10 +194,14 @@
 
 .questions-responses-width {
   width: 85%;
+  overflow-y: auto;
 }
 
 .iphone-width {
   width: 15%;
+}
+.m-t-20 {
+  margin-top: 20px;
 }
 
 @media (min-width: 1900px) and (max-width: 2100px) {

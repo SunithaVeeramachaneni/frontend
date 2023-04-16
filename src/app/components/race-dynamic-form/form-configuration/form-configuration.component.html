@@ -62,7 +62,15 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
+            <<<<<<< HEAD
             <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
+            =======
+            <img
+              src="assets/rdf-forms-icons/edit-icon.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
+            />
+            >>>>>>> 06e2cffbb11fe846413405c87f22c1474c678e70
           </button>
         </a>
         <br />
@@ -105,6 +113,7 @@
           formStatus !== formConfigurationStatus.published
         "
       >
+        " >
         {{ 'changesPublished' | translate }}
       </div>
       <div
@@ -114,8 +123,15 @@
           !isFormDetailPublished
         "
       >
+        " >
         {{ 'publishingChanges' | translate }}
       </div>
+      <button
+        mat-stroked-button
+        class="import-btn"
+        translate="importBtn"
+        (click)="importQuestions()"
+      ></button>
       <button
         mat-stroked-button
         class="import-btn"
@@ -143,8 +159,12 @@
         [selectedNode]="selectedNode"
         [counter]="formConfiguration.get('counter').value"
       ></app-builder>
+      <app-builder
+        [selectedNode]="selectedNode"
+        [counter]="formConfiguration.get('counter').value"
+      ></app-builder>
     </div>
-    <div class="iphone-width">
+    <div class="iphone-width m-t-20">
       <app-iphone [moduleType]="'forms'" [subFormId]="''"></app-iphone>
     </div>
   </div>
@@ -152,6 +172,12 @@
 
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
     <app-import-questions-slider
       [selectedFormName]="selectedFormName"
       [selectedFormData]="selectedFormData"

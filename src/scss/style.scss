@@ -623,8 +623,29 @@ button.mat-menu-item {
 }
 
 .preview-menu {
-  position: fixed;
-  top: 504px;
+  position: absolute;
+  top: 514px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: $white;
+  box-shadow: none;
+}
+
+.preview-backdrop {
+  position: absolute;
+  top: 163px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-history-menu {
+  position: absolute;
+  top: 265px;
   right: 65px;
   width: 240px;
   border-radius: 24px;
@@ -644,16 +665,6 @@ button.mat-menu-item {
   box-shadow: none;
 }
 
-.preview-backdrop {
-  position: fixed;
-  top: 154px;
-  left: calc(100vw - 305px);
-  width: 240px;
-  height: 496px;
-  border-radius: 24px;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
 .preview-backdrop-operator-rounds {
   position: fixed;
   top: 192px;
@@ -662,17 +673,6 @@ button.mat-menu-item {
   height: 496px;
   border-radius: 24px;
   background-color: rgba(0, 0, 0, 0.5);
-}
-
-.preview-history-menu {
-  position: fixed;
-  top: 265px;
-  right: 65px;
-  width: 240px;
-  border-radius: 24px;
-  border: none;
-  background-color: $white;
-  box-shadow: none;
 }
 
 .preview-history-menu-operator-rounds {
@@ -686,78 +686,98 @@ button.mat-menu-item {
   box-shadow: none;
 }
 
-.preview-history-backdrop {
-  position: fixed;
-  top: 154px;
-  left: calc(100vw - 305px);
-  width: 240px;
-  height: 496px;
-  border-radius: 24px;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
 @media (min-width: 1280px) and (max-width: 1400px) {
   .preview-menu {
-    top: 424px;
-    right: 105px;
+    top: 436px;
   }
   .preview-backdrop {
-    top: 152px;
-    left: calc(100vw - 326px);
+    top: 162px;
+    left: calc(100vw - 285px);
     height: 436px;
     width: 220px;
   }
   .preview-history-menu {
-    top: 184px;
-    right: 105px;
+    top: 198px;
+    right: 64px;
     width: 220px;
   }
   .preview-menu-operator-rounds {
-    top: 464px;
-    right: 92px;
+    top: 468px;
+    right: 64px;
   }
   .preview-backdrop-operator-rounds {
-    top: 188px;
-    left: calc(100vw - 312px);
+    top: 192px;
+    left: calc(100vw - 285px);
     height: 436px;
     width: 220px;
   }
   .preview-history-menu-operator-rounds {
     top: 230px;
-    right: 92px;
+    right: 64px;
     width: 220px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1200px) {
+@media (min-width: 1080px) and (max-width: 1240px) {
   .preview-menu {
-    top: 416px;
-    right: 50px;
+    top: 417px;
+    right: 69px;
   }
   .preview-backdrop {
     top: 164px;
-    left: calc(100vw - 271px);
-    height: 436px;
+    left: calc(100vw - 309px);
+    height: 406px;
+  }
+  .preview-history-menu {
+    top: 192px;
+    right: 69px;
+    width: 220px;
+  }
+  .preview-menu-operator-rounds {
+    top: 467px;
+    right: 62px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 193px;
+    left: calc(100vw - 303px);
+    height: 440px;
+  }
+  .preview-history-menu-operator-rounds {
+    top: 244px;
+    right: 62px;
+    width: 220px;
+  }
+}
+
+@media (min-width: 760px) and (max-width: 1040px) {
+  .preview-menu {
+    top: 417px;
+    right: 30px;
+  }
+  .preview-backdrop {
+    top: 162px;
+    left: calc(100vw - 249px);
+    height: 406px;
     width: 220px;
   }
   .preview-history-menu {
     top: 192px;
-    right: 51px;
+    right: 26px;
     width: 220px;
   }
   .preview-menu-operator-rounds {
     top: 464px;
-    right: 36px;
+    right: 22px;
   }
   .preview-backdrop-operator-rounds {
     top: 190px;
-    left: calc(100vw - 257px);
+    left: calc(100vw - 242px);
     height: 440px;
     width: 220px;
   }
   .preview-history-menu-operator-rounds {
     top: 244px;
-    right: 36px;
+    right: 22px;
     width: 220px;
   }
 }
