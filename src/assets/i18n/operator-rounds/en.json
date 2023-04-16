@@ -238,5 +238,6 @@
   "publishPlanTitle": "Alert",
   "publishPlanBody": "Plan cannot be published with blank tasks",
   "publishWithoutTaskButton": "Publish without Blank Tasks",
-  "createResponses": "Create Responses"
+  "createResponses": "Create Responses",
+  "save": "Save"
 }

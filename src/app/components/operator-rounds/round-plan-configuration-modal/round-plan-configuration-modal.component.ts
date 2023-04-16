@@ -19,7 +19,9 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators
+  Validators,
+  FormArray,
+  Form
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
@@ -32,6 +34,7 @@ import {
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -53,10 +56,16 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   allTags: string[] = [];
   originalTags: string[] = [];
-
+  name: string;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
+
+  dropDownIsOpen = false;
+  modalIsOpen = false;
+  attachment: any;
+
+  form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -65,7 +74,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    public dialog: MatDialog
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -98,7 +108,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+
+      notes_attachment: ['', [Validators.maxLength(250)]]
     });
   }
 
@@ -211,4 +223,24 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
     return !touched || this.errors[controlName] === null ? false : true;
   }
+
+  // addnew = () => {
+  //   const add = this.form.get('') as FormArray;
+  //   add.push(
+  //     this.fb.group({
+  //       Label: [],
+  //       Value: []
+  //     })
+  //   );
+  // };
+
+  instructionsFileUploadHandler = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
+  };
 }
