@@ -44,6 +44,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { AuthConfigService } from './auth-config.service';
 import { EffectsModule } from '@ngrx/effects';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 registerLocaleData(localeEn, 'en');
 
@@ -109,7 +110,8 @@ export const customTranslateLoader = (http: HttpClient) =>
       provide: HTTP_INTERCEPTORS,
       useClass: HttpRequestInterceptor,
       multi: true
-    }
+    },
+    NgxImageCompressService
   ],
   bootstrap: [AppComponent]
 })
