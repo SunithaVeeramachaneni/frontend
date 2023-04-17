@@ -16,7 +16,7 @@
   <div class="list-view">
     <div class="main-container">
       <mat-tab-group animationDuration="0ms">
-        <mat-tab [label]="'Responses' | translate">
+        <mat-tab [label]="'responseHeading' | translate">
           <div class="first-tab">
             <div class="response-container">
               <div
@@ -46,7 +46,7 @@
         </mat-tab>
         <mat-tab [label]="'Picklist' | translate">
           <div class="picklist-scroll">
-            <p class="orange-color" translate="Multiple Choice"></p>
+            <p class="orange-color" translate="MultipleChoice"></p>
             <div class="multiple-responses">
               <ng-container
                 *ngIf="
@@ -176,7 +176,7 @@
             </div>
           </div>
         </mat-tab>
-        <!-- <mat-tab [label]="'Masterdata' | translate">
+        <!-- <mat-tab [label]="'masterData' | translate">
           <div class="masterdata-container">
             <div *ngFor="let response of masterData">
               <div
