@@ -1,7 +1,11 @@
-<div class="create-form-main" [formGroup]="formConfiguration" [ngClass]="{
+<div
+  class="create-form-main"
+  [formGroup]="formConfiguration"
+  [ngClass]="{
     'disable-form-interactions':
       formDetailPublishStatus === formConfigurationStatus.publishing
-  }" *ngIf="{
+  }"
+  *ngIf="{
     formMetadata: formMetadata$ | async,
     authoredFormDetail: authoredFormDetail$ | async,
     createOrEditForm: createOrEditForm$ | async,
@@ -9,72 +13,134 @@
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async,
     questionCounter: questionCounter$ | async
-  } as props">
+  } as props"
+>
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img src="assets/rdf-forms-icons/formlogo.svg" alt="" width="50" height="50" />
-      <input hidden type="file" #formImageuploader accept="image/x-png,image/jpeg"
-        (change)="uploadFormImageFile($event)" />
+      <img
+        src="assets/rdf-forms-icons/formlogo.svg"
+        alt=""
+        width="50"
+        height="50"
+      />
+      <input
+        hidden
+        type="file"
+        #formImageuploader
+        accept="image/x-png,image/jpeg"
+        (change)="uploadFormImageFile($event)"
+      />
       <div class="width-90">
-        <a matTooltip="{{ formConfiguration.get('name').value }}" class="dis-inline">
+        <a
+          matTooltip="{{ formConfiguration.get('name').value }}"
+          class="dis-inline"
+        >
           <a class="width-90">
-            <input #name type="text" [size]="name.value !== '' ? getSize(name.value) : 20" class="form_title_input"
-              formControlName="name" autofocus="true" autocomplete="off"
+            <input
+              #name
+              type="text"
+              [size]="name.value !== '' ? getSize(name.value) : 20"
+              class="form_title_input"
+              formControlName="name"
+              autofocus="true"
+              autocomplete="off"
               (keyup.enter)="formConfiguration.get('name').disable()"
-              (blur)="formConfiguration.get('name').disable()" />
+              (blur)="formConfiguration.get('name').disable()"
+            />
 
-            <mat-error *ngIf="processValidationErrors('name')" class="error-fields">
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="error-fields"
+            >
               {{
-              errors.name.name
-              | translate
-              : {
-              name: 'name' | translate,
-              length: errors.name.length
-              }
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: errors.name.length
+                      }
               }}
             </mat-error>
           </a>
-          <button (click)="editFormName()" class="edit-icon" *ngIf="formConfiguration.get('name').disabled === true">
-            <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" class="edit-icon-img" />
+          <button
+            (click)="editFormName()"
+            class="edit-icon"
+            *ngIf="formConfiguration.get('name').disabled === true"
+          >
+            <img
+              src="assets/rdf-forms-icons/edit-icon.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
+            />
           </button>
         </a>
         <br />
         <a matTooltip="{{ formConfiguration.get('description').value }}">
-          <input type="text" class="form_description_input" placeholder="{{ 'addFormDesc' | translate }}"
-            formControlName="description" autofocus="true" autocomplete="off" />
+          <input
+            type="text"
+            class="form_description_input"
+            placeholder="{{ 'addFormDesc' | translate }}"
+            formControlName="description"
+            autofocus="true"
+            autocomplete="off"
+          />
         </a>
       </div>
     </div>
     <div class="dis-flex width-45 justify-content-end">
-      <div class="save-status" [hidden]="
+      <div
+        class="save-status"
+        [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saved ||
           formStatus !== formConfigurationStatus.draft ||
           isFormDetailPublished
-        ">
+        "
+      >
         {{ 'changesSaved' | translate }}
       </div>
-      <div class="save-status" [hidden]="
+      <div
+        class="save-status"
+        [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saving ||
           isFormDetailPublished
-        ">
+        "
+      >
         {{ 'savingChanges' | translate }}
       </div>
-      <div class="save-status" [hidden]="
+      <div
+        class="save-status"
+        [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.published ||
           formStatus !== formConfigurationStatus.published
-        ">
+        "
+      >
         {{ 'changesPublished' | translate }}
       </div>
-      <div class="save-status" [hidden]="
+      <div
+        class="save-status"
+        [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.publishing ||
           !isFormDetailPublished
-        ">
+        "
+      >
         {{ 'publishingChanges' | translate }}
       </div>
-      <button mat-stroked-button class="import-btn" translate="importBtn" (click)="importQuestions()"></button>
+      <button
+        mat-stroked-button
+        class="import-btn"
+        translate="importBtn"
+        (click)="importQuestions()"
+      ></button>
 
       <button mat-stroked-button class="next-btn">
         <span>
+          <img
+            alt="upload"
+            src="assets/work-instructions-icons/svg/upload-white.png"
+            class="publish-btn-icon"
+          />
+          <span class="publish" translate="publishBtn"></span>
+
           <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>
@@ -82,17 +148,24 @@
   </div>
   <div class="dis-flex form">
     <div class="questions-responses-width">
-      <app-builder [selectedNode]="selectedNode" [counter]="formConfiguration.get('counter').value"></app-builder>
+      <app-builder
+        [selectedNode]="selectedNode"
+        [counter]="formConfiguration.get('counter').value"
+      ></app-builder>
     </div>
-    <div class="iphone-width">
-      <app-iphone [subFormId]="''"></app-iphone>
+    <div class="iphone-width m-t-20">
+      <app-iphone [moduleType]="'forms'" [subFormId]="''"></app-iphone>
     </div>
   </div>
 </div>
 
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
-    <app-import-questions-slider [selectedFormName]="selectedFormName" [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData" (cancelSliderEvent)="cancelSlider($event)"></app-import-questions-slider>
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>

@@ -164,6 +164,8 @@
 
   .form {
     height: calc(100vh - 150px);
+    overflow-y: auto;
+    margin-top: 0.6rem;
   }
 }
 
@@ -232,7 +234,6 @@
 .questions-responses-width {
   width: 85%;
   overflow-y: auto;
-  padding: 10px 15px;
 }
 
 .iphone-width {
@@ -456,4 +457,6 @@
   background-color: $blue-primary;
   border-color: $blue-primary;
   color: $white;
+  display: flex;
+  align-items: center;
 }
