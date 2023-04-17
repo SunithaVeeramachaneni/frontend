@@ -151,17 +151,11 @@
   </div>
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
-      <<<<<<< HEAD
       <app-hierarchy-container
         [isPreview]="false"
         (hierarchyEvent)="hierarchyEventHandler($event)"
         [hierarcyInput$]="hierarcyInput$"
       ></app-hierarchy-container>
-      ======
-      <app-hierarchy-container
-        (hierarchyEvent)="hierarchyEventHandler($event)"
-      ></app-hierarchy-container>
-      >>>>>>> 6acd8e3c213f14757c21ba6e771b5ffff6f61c4d
     </div>
     <div
       class="questions-responses-width"
@@ -238,7 +232,7 @@
   </div>
 </div>
 
-<div *ngIf="openAppSider$ | async as openAppSider">
+<!-- <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
     <app-import-tasks-slider
       [selectedFormName]="selectedFormName"
@@ -247,7 +241,7 @@
       (cancelSliderEvent)="cancelSlider($event)"
     ></app-import-tasks-slider>
   </div>
-</div>
+</div> -->
 
 <ng-template #loadingSelectedNode>
   <div class="p-15">

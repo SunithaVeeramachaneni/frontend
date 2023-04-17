@@ -401,11 +401,12 @@ export class OperatorRoundsService {
       }
     );
   }
-  getRoundPlanListByNodeId$(NodeId: string) {
-    return this.appService._getResp(
+  getRoundPlanListByNodeId$(nodeId: string) {
+    const x = this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      `round-plans/${NodeId}`
+      `round-plans/node/${nodeId}`
     );
+    return x;
   }
   getAuthoredFormDetailByFormId$(
     formId: string,

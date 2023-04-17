@@ -1,8 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { combineLatest, Observable, of } from 'rxjs';
+import { ImportTasksSliderComponent } from '../import-tasks-slider/import-tasks-slider.component';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -12,6 +14,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
+import { cloneDeep } from 'lodash-es';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { defaultLimit } from 'src/app/app.constants';
 import {
@@ -31,20 +34,23 @@ export class ImportTaskModalComponent implements OnInit {
   fetchType = 'load';
   limit = defaultLimit;
   nextToken = '';
-  nodeId = '';
+  // NodeId = '';
   roundPlans$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
   ghostLoading = new Array(7).fill(0).map((v, i) => i);
   selectedRoundPlan;
   selectedItem;
+  openImportTasksSlider;
+
   disableSelectBtn = true;
 
   constructor(
     public dialogRef: MatDialogRef<ImportTaskModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private operatorRoundsService: OperatorRoundsService,
-    private store: Store<State>
+    private store: Store<State>,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -114,29 +120,45 @@ export class ImportTaskModalComponent implements OnInit {
   };
 
   getForms() {
-    return this.operatorRoundsService
-      .getFormsList$(
-        {
-          nextToken: this.nextToken,
-          limit: this.limit,
-          searchKey: this.searchRoundPlan.value,
-          fetchType: this.fetchType
-        },
-        'All'
-      )
+    const x = this.operatorRoundsService
+      // .getFormsList$(
+      //   {
+      //     nextToken: this.nextToken,
+      //     limit: this.limit,
+      //     searchKey: this.searchRoundPlan.value,
+      //     fetchType: this.fetchType
+      //   },
+      //   'All'
+      // )
+      .getRoundPlanListByNodeId$(this.data.NodeId)
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          this.nextToken = nextToken;
-          return of(rows);
+        map((response) => {
+          console.log(response);
+          // console.log(of(rows));
+          return response;
         })
       );
+    return x;
   }
 
   selectFormElement = () => {
-    this.data.selectedFormNode = this.selectedRoundPlan.node;
-    this.data.selectedFormData = this.selectedRoundPlan.filteredForm;
-    this.data.openImportQuestionsSlider = true;
-    this.dialogRef.close(this.data);
+    this.openImportTasksSlider = true;
+    const selectedRoundPlanData = JSON.parse(
+      JSON.stringify(this.selectedRoundPlan)
+    );
+    // this.data.selectedFormNode = selectedRoundPlanData.node;
+    // this.data.selectedFormData = selectedRoundPlanData.filteredForm;
+    // console.log(this.data);
+    // selectedRoundPlanData.openImportQuestionsSlider = true;
+    const dialogRef = this.dialog.open(ImportTasksSliderComponent, {
+      data: {
+        selectedFormData: selectedRoundPlanData.filteredForm,
+        selectedFormName: selectedRoundPlanData.formName,
+        selectedFormNode: selectedRoundPlanData.node,
+        formId: selectedRoundPlanData.formId
+      }
+    });
+    // this.dialogRef.close(selectedRoundPlanData);
   };
 
   selectListItem(form, index) {
@@ -146,12 +168,14 @@ export class ImportTaskModalComponent implements OnInit {
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
         map((authoredFormDetail) => {
-          this.data.selectedFormName = form.name;
-          const filteredForm = JSON.parse(authoredFormDetail.subForms);
+          // const subForms = authoredFormDetal;
+          const formName = form.name;
+          const filteredForm = authoredFormDetail.subForms;
           const node = JSON.parse(authoredFormDetail.hierarchy);
           let x = {
             filteredForm,
-            node
+            node,
+            formName
           };
           return x;
           // const pageData = filteredForm.map((page) => {
@@ -172,7 +196,7 @@ export class ImportTaskModalComponent implements OnInit {
       .subscribe((response) => {
         this.selectedRoundPlan = response;
         this.disableSelectBtn = false;
-        console.log(this.selectedRoundPlan.filteredForm);
+        // console.log(this.selectedRoundPlan.node);
       });
   }
 }

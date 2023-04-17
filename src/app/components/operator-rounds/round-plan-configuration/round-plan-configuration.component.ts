@@ -700,24 +700,19 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   importTasks = () => {
     const dialogRef = this.dialog.open(ImportTaskModalComponent, {
       data: {
-        selectedFormData: '',
-        selectedFormName: '',
-        selectedFormNode: '',
-        openImportQuestionsSlider: false,
         NodeId: this.selectedNode.uid
       }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      this.selectedFormData = result.selectedFormData;
-      this.selectedFormNode = result.selectedFormNode;
-      this.selectedFormName = result.selectedFormName;
-      this.authoredFormDetail$.subscribe((pagesData) => {
-        this.currentFormData = pagesData;
-      });
-      this.openAppSider$ = of(result.openImportQuestionsSlider);
-      this.cdrf.markForCheck();
-    });
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   this.selectedFormNode = result.node;
+    //   this.selectedFormName = result.formName;
+    //   this.authoredFormDetail$.subscribe((pagesData) => {
+    //     this.currentFormData = pagesData;
+    //   });
+    //   this.openAppSider$ = of(result.openImportQuestionsSlider);
+    //   this.cdrf.markForCheck();
+    // });
   };
 
   cancelSlider(event) {

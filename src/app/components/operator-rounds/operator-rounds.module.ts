@@ -75,6 +75,7 @@ import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/i
 import { ChartComponent } from './observations/donut-chart/chart.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
+import { ImportTasksSliderComponent } from './import-tasks-slider/import-tasks-slider.component';
 import { AssignToComponent } from './assign-to/assign-to.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -108,7 +109,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ActionsComponent,
     IssuesActionsDetailViewComponent,
     ChartComponent,
-    AssignRoundComponent
+    ImportTasksSliderComponent
+    // AssignRoundComponent
   ],
   imports: [
     FormsModule,

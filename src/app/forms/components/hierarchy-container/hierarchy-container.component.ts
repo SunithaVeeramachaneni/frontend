@@ -6,7 +6,8 @@ import {
   EventEmitter,
   Output,
   ChangeDetectorRef,
-  Inject
+  Inject,
+  Input
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import {
