@@ -176,11 +176,15 @@ export class FormConfigurationModalComponent implements OnInit {
       });
     }
 
+    const plant = this.allPlantsData.find(
+      (p) => p.id === this.headerDataForm.get('plantsID').value
+    );
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value,
+          formMetadata: { ...this.headerDataForm.value, plant: plant.name },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })
