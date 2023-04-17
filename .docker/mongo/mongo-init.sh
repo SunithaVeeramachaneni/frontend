@@ -191,4 +191,92 @@ db.reportcategories.insertMany([{
       'Transactions and Modules'
     ]
   }]);
+
+# Default Quick Responses
+db.datasets.insertMany([
+  {
+    name: 'quickResponses',
+    type: 'quickResponses',
+    isMultiColumn: false,
+    values: [
+      {
+        color: '#7AF019',
+        title: 'Yes'
+      },
+      {
+        color: '#EA1F1F',
+        title: 'No'
+      }
+    ],
+    createdBy: 'dev@innovapptive.com'
+  },
+  {
+    name: 'quickResponses',
+    type: 'quickResponses',
+    isMultiColumn: false,
+    values: [
+      {
+        color: '#1DAF41',
+        title: 'Good'
+      },
+      {
+        color: '#F09124',
+        title: 'Fair'
+      },
+      {
+        color: '#F00505',
+        title: 'Poor'
+      }
+    ],
+    createdBy: 'dev@innovapptive.com'
+  },
+  {
+    name: 'quickResponses',
+    type: 'quickResponses',
+    isMultiColumn: false,
+    values: [
+      {
+        color: '#07A25E',
+        title: 'Safe'
+      },
+      {
+        color: '#EA0606',
+        title: 'At Risk'
+      }
+    ],
+    createdBy: 'dev@innovapptive.com'
+  },
+  {
+    name: 'quickResponses',
+    type: 'quickResponses',
+    isMultiColumn: false,
+    values: [
+      {
+        color: '#1FAC0C',
+        title: 'Pass'
+      },
+      {
+        color: '#E40C0C',
+        title: 'Fail'
+      }
+    ],
+    createdBy: 'dev@innovapptive.com'
+  },
+  {
+    name: 'quickResponses',
+    type: 'quickResponses',
+    isMultiColumn: false,
+    values: [
+      {
+        color: '#08AA41',
+        title: 'Compliant'
+      },
+      {
+        color: '#DD0E0E',
+        title: 'Non-Compliant'
+      }
+    ],
+    createdBy: 'dev@innovapptive.com'
+  }
+])
 EOF

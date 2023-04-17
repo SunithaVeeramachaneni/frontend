@@ -104,6 +104,11 @@ export const routingUrls = {
     title: 'Dashboard',
     permission: permissions.viewDashboards
   },
+  myDashboard: {
+    url: '/dashboard',
+    title: 'My Dashboard',
+    permission: permissions.viewDashboards
+  },
   reports: {
     url: '/dashboard/reports',
     title: 'Reports',
@@ -120,6 +125,11 @@ export const routingUrls = {
     permission: permissions.viewSparePartsControlCenter
   },
   workInstructions: {
+    url: '/work-instructions',
+    title: 'Work Instructions',
+    permission: permissions.viewWorkInstructions
+  },
+  workInstructionsHome: {
     url: '/work-instructions',
     title: 'Work Instructions Authoring',
     permission: permissions.viewWorkInstructions
@@ -152,6 +162,11 @@ export const routingUrls = {
   userManagement: {
     url: '/user-management',
     title: 'User Management',
+    permission: permissions.viewUsers
+  },
+  activeUsers: {
+    url: '/user-management',
+    title: 'Active Users',
     permission: permissions.viewUsers
   },
   rolesPermissions: {
@@ -290,6 +305,28 @@ export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';
+
+export const DEFAULT_PDF_BUILDER_CONFIG = {
+  formId: true,
+  formTitle: true,
+  subject: true,
+  logo: true,
+  questionCompleted: true,
+  submittedOn: true,
+  submittedBy: true,
+  pdfGeneratedDate: true,
+  customText: true,
+  customTextLabel: '',
+  customTextField: '',
+  actions: true,
+  issues: true,
+  questions: true,
+  incompleteQuestions: true,
+  completedQuestions: true,
+  capturedQuestions: true,
+  photos: true,
+  skippedQuestions: true
+};
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';
