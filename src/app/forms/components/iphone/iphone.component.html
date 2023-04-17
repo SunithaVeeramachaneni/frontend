@@ -32,7 +32,7 @@
   </div>
   <div
     class="iphone-preview"
-    [ngClass]="moduleType === 'operator-rounds' ? 'iphone-preview-height' : ''"
+    [ngClass]="moduleType === 'operator-rounds' ? 'iphone-preview-operator-rounds' : ''"
   >
     <app-preview
       (totalPageCount)="changePageCount($event)"
@@ -41,7 +41,7 @@
       [moduleType]="moduleType"
     ></app-preview>
   </div>
-  <div class="iphone-footer" *ngIf="totalPages">
+  <div class="iphone-footer" [ngClass]="moduleType === 'operator-rounds' ? 'iphone-footer-operator-rounds' : ''" *ngIf="totalPages">
     <button
       class="previous-page"
       (click)="prevPage()"

@@ -74,19 +74,19 @@
 }
 
 .iphone-preview {
-  height: 415px;
+  height: 413px;
   overflow-x: hidden;
   overflow-y: scroll;
   margin-right: 15px;
   margin-left: 15px;
 }
 
-.iphone-preview-height {
+.iphone-preview-operator-rounds {
   height: 390px;
 }
 
 .iphone-footer {
-  margin: 0px 16px;
+  margin: 4px 16px;
   height: 30px;
   font-size: 85%;
   display: flex;
@@ -139,6 +139,10 @@
   }
 }
 
+.iphone-footer-operator-rounds {
+  margin: 5px 16px;
+}
+
 // media queries
 
 @media (min-width: 1280px) and (max-width: 1400px) {
@@ -152,15 +156,15 @@
   }
 
   .iphone-preview {
-    height: 347px;
+    height: 346px;
   }
 
-  .iphone-preview-height {
+  .iphone-preview-operator-rounds {
     height: 323px;
   }
 
   .iphone-footer {
-    margin-left: 30px;
+    margin-left: 16px;
   }
 
   .asset-navigation-container {
@@ -189,11 +193,15 @@
   }
 
   .iphone-preview {
-    height: 372px;
+    height: 373px;
+  }
+
+  .iphone-preview-operator-rounds {
+    height: 350px;
   }
 
   .iphone-footer {
-    margin-left: 25px;
+    margin-left: 16px;
   }
 
   .asset-navigation-container {

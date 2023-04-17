@@ -36,7 +36,9 @@ export class IphoneComponent implements OnInit {
 
   changePageCount(pages) {
     this.totalPages = Number(pages);
-    this.currentPage = 1;
+    if(!(this.currentPage >= 1 && this.currentPage <= this.totalPages)) {
+      this.currentPage = 1;
+    }
   }
 
   ngOnInit(): void {
@@ -48,8 +50,8 @@ export class IphoneComponent implements OnInit {
 
     this.pagesCount$ = this.store.select(getPagesCount(this.subFormId));
     this.pagesCount$.subscribe((res) => {
-      this.totalPages = res;
-      this.currentPage = Math.min(this.currentPage, this.totalPages);
+        this.totalPages = res;
+        this.currentPage = Math.min(this.currentPage, this.totalPages);
     });
 
     this.getTime();
