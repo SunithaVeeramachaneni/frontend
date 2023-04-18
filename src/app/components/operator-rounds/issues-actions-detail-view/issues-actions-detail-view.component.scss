@@ -125,6 +125,7 @@
           padding: 10px;
           width: 40%;
           margin: 10px;
+          color: $white;
         }
 
         .media-created {
@@ -163,6 +164,7 @@
       .send-message {
         position: relative;
         top: 10px;
+        cursor: pointer;
       }
     }
 
@@ -173,6 +175,15 @@
       .right-div {
         display: flex;
         justify-content: space-between;
+
+        .create-erp-notification {
+          background-color: $blue-main;
+          color: $white;
+          width: 102px;
+          height: 34px;
+          font-size: 115%;
+          line-height: 143%;
+        }
       }
 
       .p-5-0 {

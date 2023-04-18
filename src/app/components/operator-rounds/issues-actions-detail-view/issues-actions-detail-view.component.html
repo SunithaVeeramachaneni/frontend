@@ -21,99 +21,106 @@
       *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
       <div class="chat-panel">
-        <ng-container *ngFor="let chatdata of logHistory.rows; let i = index">
+        <ng-container *ngFor="let history of logHistory.rows; let i = index">
           <div
             class="dis-flex"
             [ngClass]="{
-              'text-align-right': chatdata.username === userInfo.email
+              'text-align-right': history.username === userInfo.email
             }"
           >
-            <ng-container *ngIf="chatdata.type === 'Object'">
+            <ng-container *ngIf="history.type === 'Object'">
               <div class="issue-created">
                 <ng-container *ngIf="i === 0">
                   <span class="main-heading">New Action Created</span><br />
                   <span class="data">
                     <span class="sub-headings">Issue:</span>
-                    {{ chatdata.message.TITLE }}
+                    {{ history.message.TITLE }}
                   </span>
                   <br />
                   <span class="data">
                     <span class="sub-headings">Description:</span>
-                    {{ chatdata.message.DESCRIPTION }}
+                    {{ history.message.DESCRIPTION }}
                   </span>
                   <br />
                   <span class="data">
                     <span class="sub-headings">Assigned to:</span>
-                    {{ chatdata.message.ASSIGNEE }}
+                    {{ history.message.ASSIGNEE }}
                   </span>
                   <br />
                   <span class="data">
                     <span class="sub-headings">Created by:</span>
-                    {{ chatdata.username }}
+                    {{ history.username }}
                   </span>
                 </ng-container>
 
                 <ng-container *ngIf="i !== 0">
-                  <ng-container *ngIf="chatdata.message.STATUS">
+                  <ng-container *ngIf="history.message.STATUS">
                     <span class="data">
                       <span class="sub-headings">Issue Status Updated to:</span>
-                      {{ chatdata.message.STATUS }}
+                      {{ history.message.STATUS }}
                       <br />
                       <span class="sub-headings">Comments:</span> The issue was
                       resolved by Scott
                     </span>
                   </ng-container>
-                  <ng-container *ngIf="chatdata.message.ASSIGNEE">
+                  <ng-container *ngIf="history.message.ASSIGNEE">
                     <span class="data">
                       <span class="sub-headings">"Assigned to" Added:</span>
-                      {{ chatdata.message.ASSIGNEE }}
+                      {{ history.message.ASSIGNEE }}
                     </span>
                   </ng-container>
-                  <ng-container *ngIf="chatdata.message.ERPNOTIF">
+                  <ng-container *ngIf="history.message.ERPNOTIF">
                     <span class="data">
                       <span class="sub-headings"
                         >ERP Notification Updated to:</span
                       >
-                      {{ chatdata.message.ERPNOTIF }}
+                      {{ history.message.ERPNOTIF }}
                     </span>
                   </ng-container>
-                  <ng-container *ngIf="chatdata.message.PRIORITY">
+                  <ng-container *ngIf="history.message.PRIORITY">
                     <span class="data">
                       <span class="sub-headings">Priority Updated to:</span>
-                      {{ chatdata.message.PRIORITY }}
+                      {{ history.message.PRIORITY }}
                     </span>
                   </ng-container>
-                  <ng-container *ngIf="chatdata.message.DUEDATE">
+                  <ng-container *ngIf="history.message.DUEDATE">
                     <span class="data">
                       <span class="sub-headings">DueDate Updated to:</span>
-                      {{ chatdata.message.DUEDATE }}
+                      {{ history.message.DUEDATE }}
                     </span>
                   </ng-container>
                 </ng-container>
               </div>
             </ng-container>
 
-            <ng-container *ngIf="chatdata.type === 'Message'">
-              <div class="message-created"></div>
+            <ng-container *ngIf="history.type === 'Message'">
+              <div class="message-created">{{ history.message }}</div>
             </ng-container>
 
-            <ng-container *ngIf="chatdata.type === 'Media'">
-              <div class="media-created"></div>
+            <ng-container *ngIf="history.type === 'Media'">
+              <div class="media-created">
+                <img [src]="getS3Url(history.message)" alt="Log History" />
+              </div>
             </ng-container>
           </div>
           <div
             class="time"
             [ngClass]="{
-              'text-align-right': chatdata.username === userInfo.email
+              'text-align-right': history.username === userInfo.email
             }"
           >
-            {{ chatdata.createdAt }}
+            {{ history.createdAt }}
           </div>
         </ng-container>
       </div>
       <div class="custom-form-field-white-color footer">
         <mat-form-field appearance="outline" class="width-90 margin">
-          <input type="text" matInput placeholder="Type" />
+          <input
+            type="text"
+            matInput
+            placeholder="Type"
+            formControlName="message"
+          />
           <img
             src="assets/rdf-forms-icons/add-attachment-icon.svg"
             alt="add attachment"
@@ -125,14 +132,16 @@
         <input
           hidden
           type="file"
-          accept="image/x-png,image/jpeg"
+          accept="image/x-png,image/jpeg,,image/jpg"
           #fileInput
           (change)="uploadFile($event)"
+          (click)="resetFile($event)"
         />
         <img
           src="assets/rdf-forms-icons/send-message.svg"
           alt="send message"
           class="send-message"
+          (click)="createIssueOrActionHistory()"
         />
       </div>
     </div>
@@ -318,7 +327,9 @@
       <div class="right-div p-5-0">
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
-          <button mat-raised-button color="primary">Create</button>
+          <button mat-raised-button class="create-erp-notification">
+            Create
+          </button>
         </div>
       </div>
       <hr class="line" />

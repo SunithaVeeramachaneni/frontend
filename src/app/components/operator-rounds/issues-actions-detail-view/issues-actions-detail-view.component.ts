@@ -3,19 +3,21 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
+  History,
   HistoryResponse,
   SelectedAssignee,
   UpdateIssueOrActionEvent,
   UserDetails
 } from 'src/app/interfaces';
-import { LoginService } from '../../login/services/login.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LoginService } from '../../login/services/login.service';
+import { TenantService } from '../../tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
@@ -37,7 +39,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     dueDate: '',
     assignedTo: '',
     raisedBy: '',
-    attachments: this.fb.array([])
+    attachments: this.fb.array([]),
+    message: ''
   });
   priorities = ['High', 'Medium', 'Low'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
@@ -48,6 +51,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   assigneeDetails: AssigneeDetails;
   updatingDetails = false;
   userInfo: any;
+  s3BaseUrl: string;
+  logHistory: History[];
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +61,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     private observations: RoundPlanObservationsService,
     private loginService: LoginService,
     private userService: UsersService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private tenantService: TenantService
   ) {}
 
   getAttachmentsList() {
@@ -65,6 +71,10 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const {
+      s3Details: { bucket, region }
+    } = this.tenantService.getTenantInfo();
+    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     const { id, type, users$ } = this.data;
     this.users$ = users$.pipe(
@@ -76,14 +86,16 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
       dueDateDisplayValue: format(new Date(this.data.dueDate), 'dd MMM yyyy')
     });
     this.minDate = new Date(this.data.createdAt);
-    this.logHistory$ = this.observations.getIssueOrActionLogHistory$(
-      id,
-      type,
-      {}
-    );
+    this.logHistory$ = this.observations
+      .getIssueOrActionLogHistory$(id, type, {})
+      .pipe(
+        tap((logHistory) => {
+          this.logHistory = logHistory.rows;
+        })
+      );
     this.observations
       .onCreateIssueOrActionLogHistoryEventSource(
-        `${type}/log-history/sse/${id}`
+        `${type}/${id}/log-history/sse`
       )
       .subscribe();
   }
@@ -107,15 +119,25 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
         name: files[0].name,
         image: file
       };
-      const attachments = this.issuesActionsDetailViewForm.get(
-        'attachments'
-      ) as FormArray;
-      attachments.push(this.fb.control(fileData));
-      this.updateIssueOrAction({
-        field: 'attachments',
-        value: this.issuesActionsDetailViewForm.get('attachments').value
-      });
-      this.issuesActionsDetailViewForm.markAsDirty();
+
+      const attachmentsForm = new FormData();
+      attachmentsForm.append('file', files[0]);
+      const { id, type } = this.data;
+
+      this.observations
+        .uploadIssueOrActionLogHistoryAttachment$(id, attachmentsForm, type)
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              const attachments = this.issuesActionsDetailViewForm.get(
+                'attachments'
+              ) as FormArray;
+              attachments.push(this.fb.control(fileData));
+              this.issuesActionsDetailViewForm.markAsDirty();
+            }
+          })
+        )
+        .subscribe();
     };
   }
 
@@ -170,12 +192,11 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
           id,
           issueData: updatedIssueData,
           actionData: updatedActionData,
+          assignedTo: this.issuesActionsDetailViewForm.get('assignedTo').value,
           issueOrActionDBVersion,
           history: {
             type: 'Object',
-            message: JSON.stringify({ [field.toUpperCase()]: value }),
-            [`${type}slistID`]: id,
-            username: this.loginService.getLoggedInEmail()
+            message: JSON.stringify({ [field.toUpperCase()]: value })
           }
         },
         type
@@ -233,6 +254,9 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
                   field.FIELDDESC ? `,${assignee}` : `${assignee}`
                 }`;
               }
+              this.issuesActionsDetailViewForm.patchValue({
+                assignedTo: field.FIELDDESC
+              });
             }
           });
         });
@@ -243,6 +267,40 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
     this.updateIssueOrAction({ field: 'assignee', value: user.email, checked });
+  }
+
+  createIssueOrActionHistory() {
+    const message = this.issuesActionsDetailViewForm.get('message').value;
+    if (!message.trim()) {
+      return;
+    }
+    const { id, type } = this.data;
+    this.observations
+      .createIssueOrActionLogHistory$(
+        id,
+        {
+          type: 'Message',
+          message
+        },
+        type
+      )
+      .pipe(
+        tap((history) => {
+          if (Object.keys(history).length) {
+            this.issuesActionsDetailViewForm.patchValue({ message: '' });
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
+
+  getS3Url(filePath: string) {
+    return `${this.s3BaseUrl}${filePath}`;
   }
 
   ngOnDestroy(): void {

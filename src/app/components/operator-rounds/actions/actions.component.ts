@@ -506,21 +506,23 @@ export class ActionsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
-      const { id, status, priority, dueDate, assignedTo } = resp.data;
-      this.initial.data = this.dataSource.data.map((data) => {
-        if (data.id === id) {
-          return {
-            ...data,
-            status,
-            priority,
-            dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
-            assignedTo
-          };
-        }
-        return data;
-      });
-      this.dataSource = new MatTableDataSource(this.initial.data);
-      this.cdrf.detectChanges();
+      if (resp && Object.keys(resp).length) {
+        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        this.initial.data = this.dataSource.data.map((data) => {
+          if (data.id === id) {
+            return {
+              ...data,
+              status,
+              priority,
+              dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+              assignedTo
+            };
+          }
+          return data;
+        });
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        this.cdrf.detectChanges();
+      }
     });
   }
 
