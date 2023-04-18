@@ -120,7 +120,7 @@ export class ImportTaskModalComponent implements OnInit {
   };
 
   getForms() {
-    const x = this.operatorRoundsService
+    const formList = this.operatorRoundsService
       // .getFormsList$(
       //   {
       //     nextToken: this.nextToken,
@@ -133,12 +133,10 @@ export class ImportTaskModalComponent implements OnInit {
       .getRoundPlanListByNodeId$(this.data.NodeId)
       .pipe(
         map((response) => {
-          console.log(response);
-          // console.log(of(rows));
           return response;
         })
       );
-    return x;
+    return formList;
   }
 
   selectFormElement = () => {
@@ -168,16 +166,13 @@ export class ImportTaskModalComponent implements OnInit {
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
         map((authoredFormDetail) => {
-          // const subForms = authoredFormDetal;
           const formName = form.name;
           const filteredForm = authoredFormDetail.subForms;
-          const node = JSON.parse(authoredFormDetail.hierarchy);
-          let x = {
+          let formDetails = {
             filteredForm,
-            node,
             formName
           };
-          return x;
+          return formDetails;
           // const pageData = filteredForm.map((page) => {
           //   sectionData = page.sections.map((section) => {
           //     const questionsArray = [];
@@ -196,7 +191,6 @@ export class ImportTaskModalComponent implements OnInit {
       .subscribe((response) => {
         this.selectedRoundPlan = response;
         this.disableSelectBtn = false;
-        // console.log(this.selectedRoundPlan.node);
       });
   }
 }

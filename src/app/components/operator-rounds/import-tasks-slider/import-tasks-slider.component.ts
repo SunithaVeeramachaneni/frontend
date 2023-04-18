@@ -48,9 +48,6 @@ export class ImportTasksSliderComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ImportTasksSliderComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private store: Store<State>,
-    private operatorRoundsService: OperatorRoundsService,
-    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -61,28 +58,9 @@ export class ImportTasksSliderComponent implements OnInit {
     });
     this.selectedFormName = this.data.selectedFormName;
     this.selectedFormData = JSON.stringify(this.data.selectedFormData);
-
-    // this.selectedFormNode = this.data.selectedFormNode;
-    // console.log(this.selectedFormData);
-    // this.selectedFormName = this.data.selectedFormName;
   }
   useForm() {}
   cancel() {
     this.cancelSliderEvent.emit(false);
   }
-  // hierarchyEventHandler(event: any) {
-  //   const { hierarchy } = event;
-  //   this.store.dispatch(
-  //     HierarchyActions.updateSelectedHierarchyList({
-  //       selectedHierarchy: hierarchy || []
-  //     })
-  //   );
-  //   if (!hierarchy || !hierarchy.length) {
-  //     this.operatorRoundsService.setSelectedNode(null);
-  //     this.formService.setSelectedHierarchyList([]);
-  //   } else {
-  //     this.operatorRoundsService.setSelectedNode(hierarchy[0]);
-  //     this.formService.setSelectedHierarchyList(hierarchy);
-  //   }
-  // }
 }

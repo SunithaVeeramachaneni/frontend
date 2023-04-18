@@ -41,7 +41,6 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.selectedFormData);
     for (const item of this.selectedFormData) {
       if (item) {
         item.isOpen = false;
