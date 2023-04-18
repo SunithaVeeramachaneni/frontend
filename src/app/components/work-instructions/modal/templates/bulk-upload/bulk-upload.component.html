@@ -3,42 +3,25 @@
     Building your Work Instructions...
   </h3>
   <h3 *ngIf="loadResults" class="building-wi">All done!</h3>
-  <!-- <svg-icon
-    *ngIf="!loadResults"
-    icon="icon-illustration_bulkupload"
-    class="illustration_bulkupload"
-  ></svg-icon> -->
+
   <img
     *ngIf="!loadResults"
     class="illustration_bulkupload"
     src="assets/work-instructions-icons/svg/illustration_bulkupload.svg"
     alt="Bulk Upload"
   />
-  <!-- <svg-icon
+  <svg-icon
     *ngIf="loadResults && isUploadSuccess()"
     icon="icon-illustration_bulkupload_success"
     class="illustration_bulkupload_success"
-  ></svg-icon> -->
+  ></svg-icon>
 
-  <img
-    *ngIf="loadResults && isUploadSuccess()"
-    class="illustration_bulkupload_success"
-    src="assets/work-instructions-icons/svg/illustration_bulkupload_success.svg"
-    alt="Bulk Upload Success"
-  />
-
-  <!-- <svg-icon
+  <svg-icon
     *ngIf="loadResults && !isUploadSuccess()"
     icon="icon-illustration_bulkupload_failure"
     class="illustration_bulkupload_success"
-  ></svg-icon> -->
+  ></svg-icon>
 
-  <img
-    *ngIf="loadResults && !isUploadSuccess()"
-    class="illustration_bulkupload_success"
-    src="assets/work-instructions-icons/svg/illustration_bulkupload_failure.svg"
-    alt="Bulk Upload Failure"
-  />
   <br />
   <mat-progress-bar
     *ngIf="!loadResults"
