@@ -1,3 +1,5 @@
+import { UserDetails } from './user';
+
 export interface RoundPlanScheduleConfiguration {
   id?: string;
   roundPlanId: string;
@@ -7,15 +9,23 @@ export interface RoundPlanScheduleConfiguration {
   daysOfWeek: number[];
   monthlyDaysOfWeek: MonthlyDaysOfWeek[];
   scheduleEndType: string;
+  endDatePicker: Date;
   scheduleEndOn: string;
   scheduleEndOccurrences: number;
   startDate: string;
   endDate: string;
   scheduleByDates: ScheduleByDate[];
   scheduledTill?: string;
+  assignmentDetails: AssignmentDetail;
+  advanceRoundsCount: number;
   startDatePicker?: Date;
-  endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
+}
+
+export interface AssignmentDetail {
+  type: string;
+  value: string;
+  displayValue: string;
 }
 
 export interface ScheduleByDate {
@@ -33,7 +43,7 @@ export interface RoundPlanScheduleConfigurationObj {
 
 export interface RoundPlanSuccessModalData {
   roundPlanName: string;
-  mode: 'update' | 'create';
+  mode: 'create' | 'update';
 }
 
 export interface RoundPlan {
@@ -67,16 +77,23 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
-  operator: string;
 }
 
 export interface RoundDetail extends RoundPlan {
+  schedule?: string;
+  roundId: string;
+  roundDetailId: string;
   scheduledType: string;
-  dueDate: string;
+  dueDate: string | Date;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
+  createdBy: string;
+  status: string;
   locationAndAssetTasksCompleted: number;
+  assignedTo: string;
+  roundDBVersion: number;
+  roundDetailDBVersion: number;
 }
 
 export interface RoundPlanDetailResponse {
@@ -136,4 +153,42 @@ export interface SelectTab {
   queryParams: {
     id: string;
   };
+}
+
+export interface AssigneeDetails {
+  users: UserDetails[];
+}
+
+export interface IssueOrAction {
+  id: string;
+  status?: string;
+  priority?: string;
+  dueDate?: string;
+  assignee?: string;
+  issueData?: string;
+  actionData?: string;
+  issueOrActionDBVersion: number;
+  history: History;
+}
+
+export interface History {
+  [key: string]: string; // issuelistID || actionlistID
+  id?: string;
+  message: string;
+  username: string;
+  createdAt?: string;
+  createdBy?: string;
+  assignedTo?: string;
+  type: 'Object' | 'Media' | 'Message';
+}
+
+export interface UpdateIssueOrActionEvent {
+  field: string;
+  value: string;
+  checked?: boolean;
+}
+
+export interface SelectedAssignee {
+  user: UserDetails;
+  checked: boolean;
 }

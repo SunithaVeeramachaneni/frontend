@@ -13,10 +13,22 @@
   right: 50px;
 }
 
+.current-time {
+  position: relative;
+  top: 22px;
+  left: 30px;
+  font-size: 75%;
+  font-weight: 500;
+}
+
 .iphone-header {
   background-color: $white;
   text-align: center;
-  margin: 40px 15px 0 16px;
+  margin: 27px 15px 0 16px;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .form-heading {
     font-size: 100%;
@@ -28,53 +40,102 @@
     white-space: nowrap;
   }
 
-  .form-description {
-    font-size: 85%;
-    margin: 0px;
-    width: 90%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    white-space: nowrap;
+  .iphone-more {
+    height: 30px;
+  }
+}
+
+.asset-navigation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $asset-nav-preview-bg;
+  width: 86%;
+  margin-left: 15px;
+  padding: 4px;
+
+  .asset-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+    .asset-name {
+      white-space: nowrap;
+      margin: 0 16px;
+      max-width: 42%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .more {
+    width: 24px;
   }
 }
 
 .iphone-preview {
-  height: 390px;
+  height: 415px;
   overflow-x: hidden;
   overflow-y: scroll;
   margin-right: 15px;
   margin-left: 15px;
 }
 
+.iphone-preview-height {
+  height: 390px;
+}
+
 .iphone-footer {
-  margin-top: 20px;
-  margin-left: 25px;
-
-  .page-count {
-    position: relative;
-    top: 7px;
-    left: 2px;
-  }
-  .btn-next {
-    background: $blue-main;
-    color: $white;
+  margin: 0px 16px;
+  height: 30px;
+  font-size: 85%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .previous-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
     border: none;
-    width: 70px;
-    border-radius: 5px;
-    float: right;
-    margin-right: 25px;
-    height: 30px;
+    background-color: transparent;
+    .back-page-svg {
+      height: 20px;
+    }
+    .text-previous {
+      padding: 6px 0;
+    }
+    :hover {
+      cursor: pointer;
+    }
   }
-
-  .btn-previous {
-    height: 30px;
+  .next-page {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    .front-page-svg {
+      rotate: 180deg;
+      height: 20px;
+    }
+    .text-next {
+      padding: 6px 0;
+    }
+    :hover {
+      cursor: pointer;
+    }
+  }
+  .page-count {
     color: $blue-main;
     border: none;
-    width: 70px;
     background-color: transparent;
-    float: right;
-    margin-right: 10px;
+  }
+  .btn-save {
+    color: $blue-main;
+    border: none;
+    background-color: transparent;
   }
 }
 
@@ -87,16 +148,23 @@
   }
 
   .iphone-header {
-    margin: 35px 15px 0 15px;
+    margin: 22px 15px 0 15px;
   }
 
   .iphone-preview {
-    height: 330px;
+    height: 347px;
+  }
+
+  .iphone-preview-height {
+    height: 323px;
   }
 
   .iphone-footer {
-    margin-top: 11px;
-    margin-left: 25px;
+    margin-left: 30px;
+  }
+
+  .asset-navigation-container {
+    width: 85%;
   }
 }
 
@@ -117,15 +185,18 @@
   }
 
   .iphone-header {
-    margin: 35px 15px 0 15px;
+    margin: 22px 15px 0 15px;
   }
 
   .iphone-preview {
-    height: 350px;
+    height: 372px;
   }
 
   .iphone-footer {
-    margin-top: 18px;
     margin-left: 25px;
+  }
+
+  .asset-navigation-container {
+    width: 85%;
   }
 }

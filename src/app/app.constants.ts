@@ -70,6 +70,8 @@ export const permissions = Object.freeze({
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+  viewFormScheduler: 'VIEW_FORM_SCHEDULER',
+  scheduleInspection: 'SCHEDULE_FORM',
 
   viewORPlans: 'VIEW_OR_PLANS',
   createORPlan: 'CREATE_OR_PLAN',
@@ -87,13 +89,24 @@ export const permissions = Object.freeze({
   createUnitOfMeasurement: 'CREATE_UNIT_OF_MEASUREMENT',
   updateUnitOfMeasurement: 'UPDATE_UNIT_OF_MEASUREMENT',
   deleteUnitOfMeasurement: 'DELETE_UNIT_OF_MEASUREMENT',
-  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT'
+  importUnitOfMeasurement: 'IMPORT_UNIT_OF_MEASUREMENT',
+
+  viewGlobalResponses: 'VIEW_GLOBAL_RESPONSES',
+  createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
+  updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
+  deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
 });
 
 export const routingUrls = {
   dashboard: {
     url: '/dashboard',
     title: 'Dashboard',
+    permission: permissions.viewDashboards
+  },
+  myDashboard: {
+    url: '/dashboard',
+    title: 'My Dashboard',
     permission: permissions.viewDashboards
   },
   reports: {
@@ -112,6 +125,11 @@ export const routingUrls = {
     permission: permissions.viewSparePartsControlCenter
   },
   workInstructions: {
+    url: '/work-instructions',
+    title: 'Work Instructions',
+    permission: permissions.viewWorkInstructions
+  },
+  workInstructionsHome: {
     url: '/work-instructions',
     title: 'Work Instructions Authoring',
     permission: permissions.viewWorkInstructions
@@ -144,6 +162,11 @@ export const routingUrls = {
   userManagement: {
     url: '/user-management',
     title: 'User Management',
+    permission: permissions.viewUsers
+  },
+  activeUsers: {
+    url: '/user-management',
+    title: 'Active Users',
     permission: permissions.viewUsers
   },
   rolesPermissions: {
@@ -187,6 +210,12 @@ export const routingUrls = {
     permission: permissions.viewArchivedForms
   },
 
+  schedularForms: {
+    url: '/forms/scheduler/0',
+    title: 'Scheduler',
+    permission: permissions.viewFormScheduler
+  },
+
   operatorRoundPlans: {
     url: '/operator-rounds',
     title: 'Operator Rounds',
@@ -215,10 +244,15 @@ export const routingUrls = {
   masterConfiguration: {
     url: '/master-configuration',
     title: 'Master Configuration',
-    permission: permissions.viewLocations
+    permission: permissions.viewPlants
+  },
+  plants: {
+    url: '/master-configuration',
+    title: 'Plants',
+    permission: permissions.viewPlants
   },
   locations: {
-    url: '/master-configuration',
+    url: '/master-configuration/locations',
     title: 'Locations',
     permission: permissions.viewLocations
   },
@@ -232,10 +266,10 @@ export const routingUrls = {
     title: 'Unit of Measurement',
     permission: permissions.viewUnitOfMeasurement
   },
-  plants: {
-    url: '/master-configuration/plants',
-    title: 'Plants',
-    permission: permissions.viewPlants
+  globalResponse: {
+    url: '/master-configuration/global-response',
+    title: 'Global Response Set',
+    permission: permissions.viewGlobalResponses
   }
 };
 export const formConfigurationStatus = Object.freeze({
@@ -270,3 +304,29 @@ export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
+export const dateFormat = 'MMM dd, yy';
+
+export const DEFAULT_PDF_BUILDER_CONFIG = {
+  formId: true,
+  formTitle: true,
+  subject: true,
+  logo: true,
+  questionCompleted: true,
+  submittedOn: true,
+  submittedBy: true,
+  pdfGeneratedDate: true,
+  customText: true,
+  customTextLabel: '',
+  customTextField: '',
+  actions: true,
+  issues: true,
+  questions: true,
+  incompleteQuestions: true,
+  completedQuestions: true,
+  capturedQuestions: true,
+  photos: true,
+  skippedQuestions: true
+};
+export const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+export const EXCEL_EXTENSION = '.xlsx';

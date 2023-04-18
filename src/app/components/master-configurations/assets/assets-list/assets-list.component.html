@@ -6,6 +6,21 @@
           <h2 class="heading" translate="assets"></h2>
         </div>
         <div>
+          <span
+            class="no-of-asset"
+            *ngIf="assetsListCount$ | async as totalCount"
+          >
+            <span class="asset-count">
+              {{ totalCount }}
+            </span>
+            <span class="asset-text">{{
+              'assets'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span>
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -16,7 +31,12 @@
                 autocomplete="off"
                 [formControl]="searchAssets"
               />
-              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+              <img
+                [src]="filterIcon"
+                matSuffix
+                alt="Open Filter"
+                class="filter-icon"
+              />
             </mat-form-field>
           </span>
 

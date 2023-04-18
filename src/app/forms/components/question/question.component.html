@@ -62,11 +62,7 @@
             </button>
             <br />
 
-            <button
-              class="delete-btn"
-              (click)="deleteQuestion($event)"
-              [disabled]="props.sectionQuestionsCount === 1"
-            >
+            <button class="delete-btn" (click)="deleteQuestion($event)">
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"
                 alt="delete questions"
@@ -75,6 +71,7 @@
             </button>
           </div>
         </div>
+
         <span class="divider">|</span>
         <div class="width-30">
           <app-response-type-button
@@ -92,6 +89,7 @@
               (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
               [question]="question"
+              [isPreviewActive]="isPreviewActive"
             ></app-response-type>
           </ng-container>
         </div>
@@ -104,6 +102,7 @@
           />
         </div>
       </div>
+      <hr class="question-line" *ngIf="!isAskQuestion" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input
@@ -239,8 +238,8 @@
                         class="uomOption"
                         (click)="uomChanged(uom)"
                       >
-                        <span class="uomSymbol">{{ uom.code }}</span>
-                        <span class="uomTitle">{{ uom.title }}</span>
+                        <span class="uomSymbol">{{ uom.symbol }}</span>
+                        <span class="uomTitle">{{ uom.description }}</span>
                       </span>
                     </div>
                   </ng-template>

@@ -36,16 +36,19 @@ import { SseService } from './shared/services/sse.service';
 
 const {
   dashboard,
+  myDashboard,
   reports,
   spareParts,
   maintenance,
   workInstructions,
+  workInstructionsHome,
   drafts,
   favorites,
   recents,
   published,
   files,
   userManagement,
+  activeUsers,
   rolesPermissions,
   inActiveTenants,
   inActiveUsers,
@@ -54,6 +57,7 @@ const {
   submissionForms,
   myForms,
   archivedForms,
+  schedularForms,
   operatorRoundPlans,
   myRoundPlans,
   roundPlanScheduler,
@@ -62,6 +66,7 @@ const {
   assets,
   unitOfMeasurement,
   plants,
+  globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations
 } = routingUrls;
@@ -82,6 +87,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: dashboard.permission,
       subPages: [
+        {
+          title: myDashboard.title,
+          url: myDashboard.url,
+          permission: dashboard.permission
+        },
         {
           title: reports.title,
           url: reports.url,
@@ -106,6 +116,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: userManagement.permission,
       subPages: [
+        {
+          title: activeUsers.title,
+          url: activeUsers.url,
+          permission: activeUsers.permission
+        },
         {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
@@ -151,14 +166,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myForms.permission
         },
         {
-          title: submissionForms.title,
-          url: submissionForms.url,
-          permission: submissionForms.permission
-        },
-        {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
+        },
+        {
+          title: schedularForms.title,
+          url: schedularForms.url,
+          permission: schedularForms.permission
         }
       ]
     },
@@ -200,6 +215,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permission: workInstructions.permission,
       subPages: [
         {
+          title: workInstructionsHome.title,
+          url: workInstructionsHome.url,
+          permission: workInstructionsHome.permission
+        },
+        {
           title: favorites.title,
           url: favorites.url,
           permission: favorites.permission
@@ -236,6 +256,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       disable: false,
       subPages: [
         {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
+        },
+        {
           title: locations.title,
           url: locations.url,
           permission: locations.permission
@@ -251,9 +276,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: unitOfMeasurement.permission
         },
         {
-          title: plants.title,
-          url: plants.url,
-          permission: plants.permission
+          title: globalResponse.title,
+          url: globalResponse.url,
+          permission: globalResponse.permission
         }
       ]
     }
@@ -272,6 +297,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  isMenuOpenOnItemClick = true;
   hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
@@ -624,16 +650,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   openMenuOnMouseEnter() {
-    clearTimeout(this.hoverMenuTimer);
-    this.hoverMenuTimer = setTimeout(() => {
-      this.menuOpenClose = true;
-    }, 250);
+    if (!this.isMenuOpenOnItemClick) {
+      clearTimeout(this.hoverMenuTimer);
+      this.hoverMenuTimer = setTimeout(() => {
+        this.menuOpenClose = true;
+        this.isMenuOpenOnItemClick = true;
+      }, 250);
+    }
   }
 
   closeMenuOnMouseLeave() {
     clearTimeout(this.hoverMenuTimer);
     this.hoverMenuTimer = setTimeout(() => {
       this.menuOpenClose = false;
+      this.isMenuOpenOnItemClick = false;
     }, 250);
   }
 }

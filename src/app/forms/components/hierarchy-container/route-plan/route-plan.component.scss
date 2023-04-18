@@ -105,6 +105,7 @@
   color: $blue-main;
   .expandCollapseBtn {
     cursor: pointer;
+    padding: 2%;
   }
   .rotate-270 {
     transform: rotate(270deg);
@@ -143,8 +144,8 @@
 }
 .nodeCount {
   background: $active-blue;
-  min-width: 30px;
-  height: 30px;
+  min-width: 25px;
+  height: 25px;
   border-radius: 15px;
   display: flex;
   align-items: center;
@@ -156,4 +157,8 @@
 .nodeCountInvert {
   background: $white;
   color: $active-blue;
+}
+.routePlanContainer {
+  height: 65vh;
+  overflow: auto;
 }

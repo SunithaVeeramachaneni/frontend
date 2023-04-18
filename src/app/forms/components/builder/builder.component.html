@@ -135,6 +135,7 @@
                               [questionIndex]="questionIndex"
                               (questionEvent)="questionEventHandler($event)"
                               [selectedNodeId]="selectedNode.id"
+                              [isPreviewActive]="isPreviewActive"
                             ></app-question>
                           </div>
                         </ng-container>
@@ -144,9 +145,72 @@
                 </div>
               </div>
             </ng-container>
+            <ng-container
+              *ngIf="isEmptyPage[pageIndex]"
+              class="emptyPageContainer"
+            >
+              <div class="floating-btns">
+                <button
+                  class="questions-btn"
+                  (click)="
+                    addQuestion(
+                      pageIndex,
+                      sectionIds[pageIndex][0],
+                      0,
+                      selectedNode.id
+                    )
+                  "
+                >
+                  <img
+                    src="assets/rdf-forms-icons/add-question.svg"
+                    alt="add questions"
+                  />
+                  <p class="questions-delete-btn-text" translate="question"></p>
+                </button>
+                <br />
+
+                <button class="delete-btn">
+                  <img
+                    src="assets/rdf-forms-icons/delete-question.svg"
+                    alt="delete questions"
+                  />
+                  <p class="questions-delete-btn-text" translate="delete"></p>
+                </button>
+              </div>
+              <button class="add-section-btn" (click)="addSection(pageIndex)">
+                <img
+                  src="assets/rdf-forms-icons/add-section.svg"
+                  alt="add section"
+                  class="add-section-btn-icon"
+                />
+                {{ 'addSection' | translate }}
+              </button>
+            </ng-container>
           </div>
         </ng-container>
       </app-page>
     </ng-container>
+  </div>
+  <div
+    *ngIf="isEmptyPlan"
+    [ngClass]="{
+      emptyRoutePlanContainer: !isPreviewActive,
+      emptyRoutePlanContainerWithPreview: isPreviewActive
+    }"
+  >
+    <div>
+      <img src="assets/img/svg/add-page.svg" alt="add page" />
+    </div>
+    <div class="empty-text" translate="emptyRoundsPlan"></div>
+    <div>
+      <button class="add-page-btn" (click)="addPage()">
+        <img
+          src="assets/rdf-forms-icons/add-page.svg"
+          alt="add page"
+          class="add-page-btn-icon"
+        />
+        {{ 'addPage' | translate }}
+      </button>
+    </div>
   </div>
 </div>

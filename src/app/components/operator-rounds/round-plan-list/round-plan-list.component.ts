@@ -49,7 +49,7 @@ export class RoundPlanListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
+    createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
     scheduleEndDate: ''
@@ -167,7 +167,7 @@ export class RoundPlanListComponent implements OnInit {
     },
     {
       id: 'author',
-      displayName: 'Owner',
+      displayName: 'Created By',
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
@@ -235,6 +235,10 @@ export class RoundPlanListComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   infiniteScrollEnabled = true;
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -350,8 +354,9 @@ export class RoundPlanListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Round Plan archive successfully!',
               type: 'success'
             });
           } else {
@@ -476,16 +481,6 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllOperatorRounds() {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
@@ -503,16 +498,16 @@ export class RoundPlanListComponent implements OnInit {
           .filter((value, index, self) => self.indexOf(value) === index);
         for (const item of uniqueAuthoredBy) {
           if (item) {
-            this.authoredBy.push(item);
+            this.createdBy.push(item);
           }
         }
         for (const item of this.filterJson) {
-          if (item['column'] == 'status') {
+          if (item.column === 'status') {
             item.items = this.status;
-          } else if (item['column'] == 'modifiedBy') {
+          } else if (item.column === 'modifiedBy') {
             item.items = this.lastPublishedBy;
-          } else if (item['column'] == 'authoredBy') {
-            item.items = this.authoredBy;
+          } else if (item.column === 'createdBy') {
+            item.items = this.createdBy;
           }
         }
       });
@@ -526,13 +521,14 @@ export class RoundPlanListComponent implements OnInit {
 
   applyFilter(data: any) {
     for (const item of data) {
-      if (item.type == 'daterange') {
+      if (item.type === 'daterange') {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else {
         this.filter[item.column] = item.value;
       }
     }
+    this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
 
@@ -540,11 +536,18 @@ export class RoundPlanListComponent implements OnInit {
     this.filter = {
       status: '',
       modifiedBy: '',
-      authoredBy: '',
+      createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
       scheduleEndDate: ''
     };
+    this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+
+  private showFormDetail(row: RoundPlan): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }

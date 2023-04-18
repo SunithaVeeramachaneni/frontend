@@ -50,7 +50,7 @@
   }
 
   .response-list {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     height: 45px;
   }
 
@@ -200,8 +200,8 @@
           color: inherit !important;
           padding: 5px 0px;
           margin-left: 35px;
-          overflow:hidden; 
-          resize:none;
+          overflow: hidden;
+          resize: none;
         }
       }
     }
@@ -215,6 +215,27 @@
     .note {
       background: $note-bg;
       // color: $white;
+    }
+  }
+
+  ::ng-deep {
+    .mat-radio-outer-circle {
+      border-color: $radio-button-unchecked !important;
+    }
+    .mat-radio-inner-circle {
+      background-color: $white !important;
+    }
+    .mat-radio-checked .mat-radio-outer-circle {
+      background-color: $radio-button-checked !important;
+      border-color: $radio-button-checked !important;
+    }
+    .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+      background-color: $radio-button-checked;
+    }
+    &.mat-radio-button.mat-radio-disabled.mat-radio-checked
+      .mat-radio-outer-circle {
+      background-color: $radio-button-unchecked !important;
+      border-color: $radio-button-unchecked !important;
     }
   }
 }

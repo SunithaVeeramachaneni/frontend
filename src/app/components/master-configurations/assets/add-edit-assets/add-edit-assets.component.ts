@@ -15,7 +15,6 @@ import {
   Validators
 } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
@@ -29,8 +28,11 @@ import { AssetsService } from '../services/assets.service';
 export class AddEditAssetsComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   private assetEditData = null;
+  allLocationsData: any = [];
+  allAssetsData: any  = [];
+  parentType: any = 'location';
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
     if (this.assetEditData === null) {
@@ -50,9 +52,10 @@ export class AddEditAssetsComponent implements OnInit {
         assetsId: this.assetEditData.assetsId,
         model: this.assetEditData.model,
         description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType,
+        parentType: this.assetEditData.parentType == 'LOCATION' ? 'location' :'asset',
         parentId: this.assetEditData.parentId
       };
+      this.parentType = this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -98,12 +101,18 @@ export class AddEditAssetsComponent implements OnInit {
       parentType: 'location',
       parentId: ''
     });
-
+    this.getAllLocations();
+    this.getAllAssets();
     this.assetForm.get('parentType').valueChanges.subscribe((value) => {
       this.assetForm.get('parentId').setValue('');
+      this.parentType = value;
       if (value === 'location') {
+        this.parentInformation = this.allLocationsData;
+        this.allParentsData = this.allLocationsData;
         this.getAllLocations();
       } else if (value === 'asset') {
+        this.parentInformation = this.allAssetsData;
+        this.allParentsData = this.allAssetsData;
         this.getAllAssets();
       }
     });
@@ -150,7 +159,7 @@ export class AddEditAssetsComponent implements OnInit {
   search(value: string) {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter((parent) =>
-      parent.name.toLowerCase().startsWith(searchValue)
+      parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
     );
   }
 
@@ -162,17 +171,19 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.parentInformation = allLocations.items;
-      this.allParentsData = this.parentInformation;
+      this.allLocationsData = allLocations.items;
+      this.parentInformation = this.allLocationsData;
+      this.allParentsData = this.allLocationsData;
     });
   }
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.parentInformation = allAssets.items.filter(
+      this.allAssetsData = allAssets.items.filter(
         (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
       );
-      this.allParentsData = this.parentInformation;
+      this.parentInformation = this.allAssetsData;
+      this.allParentsData = this.allAssetsData;
     });
   }
 

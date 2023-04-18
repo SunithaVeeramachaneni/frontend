@@ -12,7 +12,7 @@
 
 html * {
   font-family: 'Roboto', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .modal {
@@ -167,7 +167,7 @@ li.breadcrumb-item.active span {
 
   .ql-toolbar.ql-snow {
     position: absolute;
-    top: -29px !important;
+    top: -51px !important;
     background: white;
     z-index: 1;
     right: 20px !important;
@@ -246,8 +246,8 @@ textarea.mat-input-element {
 
 .mat-form-field-appearance-outline .mat-form-field-flex {
   padding: 0 0.75em 0 0.75em !important;
-  margin-top: 0px !important;
-  margin-bottom: 10px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   position: relative;
 }
 
@@ -357,6 +357,8 @@ textarea.mat-input-element {
 button.mat-menu-item {
   width: 100%;
   font-size: 100%;
+  line-height: 35px;
+  height: 35px;
 }
 
 .mat-menu-content {
@@ -563,11 +565,11 @@ button.mat-menu-item {
 
 .custom-form-field-white-color {
   .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.6em 0px !important;
+    padding: 0.3em 0px 0.6em 0px !important;
   }
 
   .mat-form-field-label-wrapper {
-    top: -1.5em;
+    top: -1.3em;
   }
 
   .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
@@ -582,12 +584,12 @@ button.mat-menu-item {
   }
 
   .mat-select-arrow {
-    margin-top: 10px !important;
+    margin-top: 5px !important;
   }
 }
 
 .tableMain tr.mat-header-row {
-  height: 42px;
+  height: 48px;
 }
 
 .mat-tab-label .mat-tab-label-content {
@@ -618,4 +620,173 @@ button.mat-menu-item {
 .round-plan-schedule-success-modal {
   background-color: $black;
   opacity: 0.6;
+}
+
+.preview-menu {
+  position: absolute;
+  top: 514px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: $white;
+  box-shadow: none;
+}
+
+.preview-backdrop {
+  position: absolute;
+  top: 163px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-history-menu {
+  position: absolute;
+  top: 265px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: $white;
+  box-shadow: none;
+}
+
+.preview-menu-operator-rounds {
+  position: fixed;
+  top: 542px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: $white;
+  box-shadow: none;
+}
+
+.preview-backdrop-operator-rounds {
+  position: fixed;
+  top: 192px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-history-menu-operator-rounds {
+  position: fixed;
+  top: 300px;
+  right: 65px;
+  width: 240px;
+  border-radius: 24px;
+  border: none;
+  background-color: $white;
+  box-shadow: none;
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .preview-menu {
+    top: 436px;
+  }
+  .preview-backdrop {
+    top: 162px;
+    left: calc(100vw - 285px);
+    height: 436px;
+    width: 220px;
+  }
+  .preview-history-menu {
+    top: 198px;
+    right: 64px;
+    width: 220px;
+  }
+  .preview-menu-operator-rounds {
+    top: 468px;
+    right: 64px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 192px;
+    left: calc(100vw - 285px);
+    height: 436px;
+    width: 220px;
+  }
+  .preview-history-menu-operator-rounds {
+    top: 230px;
+    right: 64px;
+    width: 220px;
+  }
+}
+
+@media (min-width: 1080px) and (max-width: 1240px) {
+  .preview-menu {
+    top: 417px;
+    right: 69px;
+  }
+  .preview-backdrop {
+    top: 164px;
+    left: calc(100vw - 309px);
+    height: 406px;
+  }
+  .preview-history-menu {
+    top: 192px;
+    right: 69px;
+    width: 220px;
+  }
+  .preview-menu-operator-rounds {
+    top: 467px;
+    right: 62px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 193px;
+    left: calc(100vw - 303px);
+    height: 440px;
+  }
+  .preview-history-menu-operator-rounds {
+    top: 244px;
+    right: 62px;
+    width: 220px;
+  }
+}
+
+@media (min-width: 760px) and (max-width: 1040px) {
+  .preview-menu {
+    top: 417px;
+    right: 30px;
+  }
+  .preview-backdrop {
+    top: 162px;
+    left: calc(100vw - 249px);
+    height: 406px;
+    width: 220px;
+  }
+  .preview-history-menu {
+    top: 192px;
+    right: 26px;
+    width: 220px;
+  }
+  .preview-menu-operator-rounds {
+    top: 464px;
+    right: 22px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 190px;
+    left: calc(100vw - 242px);
+    height: 440px;
+    width: 220px;
+  }
+  .preview-history-menu-operator-rounds {
+    top: 244px;
+    right: 22px;
+    width: 220px;
+  }
+}
+
+@media (max-width: 960px) {
+  .preview-backdrop {
+    width: 0;
+  }
+  .preview-backdrop-operator-rounds {
+    width: 0;
+  }
 }

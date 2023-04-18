@@ -16,6 +16,7 @@ export interface FormMetadata {
   tags: string[];
   searchTerm: string;
   hierarchy?: any;
+  pdfTemplateConfiguration: any;
 }
 
 export interface Page {

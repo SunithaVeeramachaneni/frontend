@@ -1,5 +1,12 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,6 +14,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   combineLatest,
@@ -25,18 +33,20 @@ import {
   tap
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
-import { GetFormListQuery } from 'src/app/API.service';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
+  AssigneeDetails,
   CellClickActionEvent,
   LoadEvent,
   Permission,
   RowLevelActionEvent,
   SearchEvent,
   TableEvent,
+  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
@@ -49,10 +59,19 @@ import { RoundPlanObservationsService } from '../services/round-plan-observation
   animations: [slideInOut]
 })
 export class ActionsComponent implements OnInit {
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
+  assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
       id: 'title',
-      displayName: 'Name',
+      displayName: 'Title',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -67,7 +86,8 @@ export class ActionsComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        width: '280px',
+        color: '#212121'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -108,7 +128,7 @@ export class ActionsComponent implements OnInit {
     },
     {
       id: 'plant',
-      displayName: 'Plan',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 3,
@@ -125,7 +145,7 @@ export class ActionsComponent implements OnInit {
       groupable: true,
       titleStyle: {},
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -159,7 +179,7 @@ export class ActionsComponent implements OnInit {
         borderRadius: '12px'
       },
       subtitleStyle: {},
-      hasPreTextImage: true,
+      hasPreTextImage: false,
       hasPostTextImage: false,
       hasConditionalStyles: true
     },
@@ -218,14 +238,17 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        display: 'inline-block',
+        width: 'max-content'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'assignee',
-      displayName: 'Assignee',
+      id: 'assignedTo',
+      displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -284,22 +307,30 @@ export class ActionsComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
-      High: {
-        color: '#ff4033'
+      high: {
+        color: '#FF3B30'
       },
-      Medium: {
-        color: '#ffab46'
+      medium: {
+        color: '#FF9500'
       },
-      Low: {
-        color: '#98989a'
+      low: {
+        color: ' #8A8A8C'
       },
-      'To-do': {
+      'to-do': {
         'background-color': '#fde2e1',
         color: '#b76262'
       },
-      'In Progress': {
-        'background-color': '#c0d7fd',
-        color: '#3865b6'
+      open: {
+        'background-color': '#fde2e1',
+        color: '#b76262'
+      },
+      resolved: {
+        'background-color': '#EEFFF1',
+        color: '#2C9E53'
+      },
+      'in-progress': {
+        'background-color': '#FFEAC9',
+        color: '#a5570e'
       }
     }
   };
@@ -321,14 +352,16 @@ export class ActionsComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedData = null;
-  zIndexDelay = 0;
+  initial: any;
+  isModalOpened = false;
   readonly perms = perms;
+  private _users$: Observable<UserDetails[]>;
 
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -375,7 +408,7 @@ export class ActionsComponent implements OnInit {
       })
     );
 
-    const initial = {
+    this.initial = {
       columns: this.columns,
       data: []
     };
@@ -389,13 +422,17 @@ export class ActionsComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 20px)'
           };
-          initial.data = rows;
+          this.initial.data = rows;
         } else {
-          initial.data = initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(scrollData);
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
+        this.skip = this.initial.data.length;
+        this.initial.data.map((item) => {
+          item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
+          return item;
+        });
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
   }
@@ -453,14 +490,37 @@ export class ActionsComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  openModal(row: GetFormListQuery): void {
-    this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: row,
+  openModal(row: GetFormList): void {
+    if (this.isModalOpened) {
+      return;
+    }
+    this.isModalOpened = true;
+    const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
+      data: { ...row, users$: this.users$ },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
+    });
+
+    dialogRef.afterClosed().subscribe((resp) => {
+      this.isModalOpened = false;
+      const { id, status, priority, dueDate, assignedTo } = resp.data;
+      this.initial.data = this.dataSource.data.map((data) => {
+        if (data.id === id) {
+          return {
+            ...data,
+            status,
+            priority,
+            dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+            assignedTo
+          };
+        }
+        return data;
+      });
+      this.dataSource = new MatTableDataSource(this.initial.data);
+      this.cdrf.detectChanges();
     });
   }
 

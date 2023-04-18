@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -33,6 +32,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { slideInOut } from 'src/app/animations';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-locations-list',
@@ -225,7 +225,7 @@ export class LocationsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    //this.locationsListCount$ = this.locationService.getFormsListCount$();
+    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.getDisplayedLocations();
     this.locationsCount$ = combineLatest([
       this.locationsCount$,
@@ -372,6 +372,7 @@ export class LocationsListComponent implements OnInit {
         });
       }
     }
+    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -444,6 +445,7 @@ export class LocationsListComponent implements OnInit {
         form: data
       });
     });
+    this.locationsListCount$ = this.locationService.getLocationCount$();
   }
 
   addManually() {
@@ -451,7 +453,7 @@ export class LocationsListComponent implements OnInit {
     this.locationEditData = null;
   }
 
-  showLocationDetail(row: GetFormListQuery): void {
+  showLocationDetail(row: GetFormList): void {
     this.selectedLocation = row;
     this.openLocationDetailedView = 'in';
   }
@@ -478,7 +480,14 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
-
+ getAllLocations() {
+      this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+        this.parentInformation = allLocations.items.filter(
+          (location) => location._deleted !== true
+        );
+        this.allParentsLocations = this.parentInformation;
+      });
+    }
   uploadFile(event) {
     const file = event.target.files[0];
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
@@ -488,12 +497,14 @@ export class LocationsListComponent implements OnInit {
       },
       disableClose: true
     });
-
+   
     deleteReportRef.afterClosed().subscribe((res) => {
-      this.addEditCopyDeleteLocations = true;
-      this.nextToken = '';
-      this.locationService.fetchLocations$.next({ data: 'load' });
-      if (res === 'close') {
+      if (res.data) {
+        this.getAllLocations();
+        this.addEditCopyDeleteLocations = true;
+        this.nextToken = '';
+        this.locationService.fetchLocations$.next({ data: 'load' });
+        this.locationsListCount$ = this.locationService.getLocationCount$();
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'

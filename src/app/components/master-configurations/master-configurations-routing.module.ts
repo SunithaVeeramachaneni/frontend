@@ -6,7 +6,8 @@ import { AssetsListComponent } from './assets/assets-list/assets-list.component'
 
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
-import { PlantListComponent } from './plants/plant-list/plant-list.component';
+import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
+import { LocationsListComponent } from './locations/locations-list/locations-list.component';
 const routes: Routes = [
   {
     path: '',
@@ -14,15 +15,24 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Master Configurations' },
-      permissions: [permissions.viewLocations]
+      permissions: [permissions.viewPlants]
     },
     children: [
+      {
+        path: 'locations',
+        component: LocationsListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Locations' },
+          permissions: [permissions.viewLocations]
+        }
+      },
       {
         path: 'assets',
         component: AssetsListComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Asssets' },
+          breadcrumb: { label: 'Assets' },
           permissions: [permissions.viewAssets]
         }
       },
@@ -37,12 +47,12 @@ const routes: Routes = [
       },
 
       {
-        path: 'plants',
-        component: PlantListComponent,
+        path: 'global-response',
+        component: ResponsesListComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Plants' },
-          permissions: [permissions.viewPlants]
+          breadcrumb: { label: 'Global Response Set' },
+          permissions: [permissions.viewGlobalResponses]
         }
       }
     ]

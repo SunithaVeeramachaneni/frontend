@@ -6,8 +6,10 @@ import {
 } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SelectTab } from 'src/app/interfaces';
+import { Observable } from 'rxjs';
+import { SelectTab, UserDetails } from 'src/app/interfaces';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-scheduler',
@@ -18,11 +20,13 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 export class SchedulerComponent implements OnInit, OnDestroy {
   tabIndex: number;
   roundPlanId: string;
+  users$: Observable<UserDetails[]>;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +34,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
       this.tabIndex = tabIndex;
     });
     this.headerService.setHeaderTitle('Scheduler');
+    this.users$ = this.userService.getUsersInfo$();
   }
 
   getSelectedIndex(): number {

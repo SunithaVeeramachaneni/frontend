@@ -1,0 +1,121 @@
+<div class="search-container">
+  <div id="openviewtab">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="closeFormHandler()"
+      [selectedForm]="formDetail"
+      [moduleName]="'RDF'"
+      [hidden]="hideFormDetail"
+      (formDetailAction)="formDetailActionHandler()"
+      (scheduleRoundPlan)="openScheduleConfigHandler($event)"
+      [formStatus]="formConfigurationStatus.published"
+      [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"
+    ></app-form-detail>
+  </div>
+  <ng-container *ngIf="users$ | async">
+    <app-schedule-configuration
+      [@slideInOut]="scheduleConfigState"
+      [formDetail]="scheduleFormDetail"
+      [hidden]="hideScheduleConfig"
+      [moduleName]="'RDF'"
+      [assigneeDetails]="assigneeDetails"
+      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
+      (scheduleConfig)="scheduleConfigHandler($event)"
+      (viewForms)="viewFormsHandler($event)"
+    ></app-schedule-configuration>
+  </ng-container>
+
+  <span class="custom-form-field-gray-color form-categories">
+    <mat-button-toggle-group
+      name="forms"
+      aria-label="Forms"
+      [formControl]="formCategory"
+    >
+      <mat-button-toggle value="all"
+        >{{
+          'all'
+            | translate
+              : {
+                  count: this.formsCount.scheduled + this.formsCount.unscheduled
+                }
+        }}
+      </mat-button-toggle>
+      <mat-button-toggle value="scheduled"
+        >{{
+          'scheduled'
+            | translate
+              : {
+                  count: this.formsCount.scheduled
+                }
+        }}
+      </mat-button-toggle>
+      <mat-button-toggle value="unscheduled">{{
+        'unscheduled'
+          | translate
+            : {
+                count: this.formsCount.unscheduled
+              }
+      }}</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field appearance="outline" class="search">
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
+      <img
+        src="assets/maintenance-icons/filterIcon.svg"
+        matSuffix
+        cdkOverlayOrigin
+        class="common-filter-icon"
+        alt="Open Filter"
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
+      />
+    </mat-form-field>
+  </span>
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilters($event)"
+      (reset)="clearFilters()"
+    ></app-filter>
+  </ng-template>
+</div>
+<ng-container *ngIf="userInfo$ | async">
+  <div *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false">
+    <cwp-dynamictable
+      [ngClass]="{
+        'remove-zindex': zIndexDelay === 400 || zIndexScheduleDelay === 400
+      }"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="padding-lr-20">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</ng-container>

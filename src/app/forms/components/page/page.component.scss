@@ -7,7 +7,7 @@
     background: $white;
     border-radius: 10px 10px 0px 0px;
     margin-top: 12px;
-    padding: 5px 7px 12px 7px;
+    padding: 5px 7px 5px 7px;
     border-top-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
@@ -24,19 +24,22 @@
       color: $black;
     }
 
+    input[type='text']:focus {
+      outline: none;
+      caret-color: $black;
+    }
+
     .form_page_name_input {
       border: none;
       background: none;
       font-size: 110%;
       font-weight: 500;
       color: $black;
-      max-width: 80%;
+      max-width: 50%;
       display: inline-block;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      position: relative;
-      top: 3px;
     }
 
     .page-name {
@@ -49,23 +52,17 @@
       border: none;
       background-color: $white;
 
-      .edit-icon-img {
-        position: relative;
-        top: 2px;
-        width: 14px;
-        left: -10px;
+      .page-edit-icon {
+        width: 11px;
+        margin-bottom: 5px;
+        margin-left: -40px;
       }
     }
-    .page-edit-icon {
-      width: 14px;
-      margin-bottom: 6px;
-    }
+
     .more-icon {
       border: none;
       background-color: $white;
       float: right;
-      position: relative;
-      top: 5px;
     }
   }
 
@@ -103,7 +100,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  top: 7px;
   .pageTaskCount {
-    margin-top: 5px;
+    font-size: 100%;
   }
 }

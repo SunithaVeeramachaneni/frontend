@@ -47,6 +47,17 @@ export class AssetsService {
     );
   };
 
+  getAssetCount$(): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.MAX_FETCH_LIMIT);
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'asset/count?' + params.toString()
+      )
+      .pipe(map((res) => res?.count || 0));
+  }
+
   getAssetsList$(queryParams: {
     nextToken?: string;
     limit: number;
@@ -147,6 +158,19 @@ export class AssetsService {
       info,
       true,
       {}
+    );
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'assets/download/failure',
+      info,
+      false,
+      body
     );
   }
 

@@ -1,4 +1,4 @@
-<div class="list-view">
+<div class="scheduler-list-view">
   <div class="main-container">
     <mat-tab-group
       animationDuration="0ms"
@@ -6,10 +6,16 @@
       (selectedTabChange)="onTabChange($event)"
     >
       <mat-tab [label]="'plans' | translate">
-        <app-plans (selectTab)="selectTabHandler($event)"></app-plans>
+        <app-plans
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-plans>
       </mat-tab>
       <mat-tab [label]="'rounds' | translate">
-        <app-rounds (selectTab)="selectTabHandler($event)"></app-rounds>
+        <app-rounds
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-rounds>
       </mat-tab>
     </mat-tab-group>
   </div>

@@ -1,11 +1,7 @@
-<div
-  class="create-form-main"
-  [formGroup]="formConfiguration"
-  [ngClass]="{
+<div class="create-form-main" [formGroup]="formConfiguration" [ngClass]="{
     'disable-form-interactions':
       formDetailPublishStatus === formConfigurationStatus.publishing
-  }"
-  *ngIf="{
+  }" *ngIf="{
     formMetadata: formMetadata$ | async,
     authoredFormDetail: authoredFormDetail$ | async,
     isDataResolved: isDataResolved$ | async,
@@ -15,249 +11,150 @@
     questionCounter: questionCounter$ | async,
     selectedNodeObj: selectedNode$ | async,
     hierarchyMode: hierarchyMode$ | async
-  } as props"
->
+  } as props">
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img
-        src="assets/rdf-forms-icons/formlogo.svg"
-        alt=""
-        width="50"
-        height="50"
-      />
-      <input
-        hidden
-        type="file"
-        #formImageuploader
-        accept="image/x-png,image/jpeg"
-        (change)="uploadFormImageFile($event)"
-      />
+      <img src="assets/rdf-forms-icons/plansicon.svg" alt="" width="50" height="50" />
+      <input hidden type="file" #formImageuploader accept="image/x-png,image/jpeg"
+        (change)="uploadFormImageFile($event)" />
       <div class="width-90">
-        <a
-          matTooltip="{{ formConfiguration.get('name').value }}"
-          class="dis-inline"
-        >
+        <a matTooltip="{{ formConfiguration.get('name').value }}" class="dis-inline">
           <a class="width-90">
-            <input
-              #name
-              type="text"
-              [size]="name.value !== '' ? getSize(name.value) : 20"
-              class="form_title_input"
-              formControlName="name"
-              autofocus="true"
-              autocomplete="off"
+            <input #name type="text" [size]="name.value !== '' ? getSize(name.value) : 20" class="form_title_input"
+              formControlName="name" autofocus="true" autocomplete="off"
               (keyup.enter)="formConfiguration.get('name').disable()"
-              (blur)="formConfiguration.get('name').disable()"
-            />
+              (blur)="formConfiguration.get('name').disable()" />
 
-            <mat-error
-              *ngIf="processValidationErrors('name')"
-              class="error-fields"
-            >
+            <mat-error *ngIf="processValidationErrors('name')" class="error-fields">
               {{
-                errors.name.name
-                  | translate
-                    : {
-                        name: 'name' | translate,
-                        length: errors.name.length
-                      }
+              errors.name.name
+              | translate
+              : {
+              name: 'name' | translate,
+              length: errors.name.length
+              }
               }}
             </mat-error>
           </a>
-          <button
-            (click)="editFormName()"
-            class="edit-icon"
-            *ngIf="formConfiguration.get('name').disabled === true"
-          >
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
+          <button (click)="editFormName()" class="edit-icon" *ngIf="formConfiguration.get('name').disabled === true">
+            <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" class="edit-icon-img" />
           </button>
         </a>
         <br />
         <a matTooltip="{{ formConfiguration.get('description').value }}">
-          <input
-            type="text"
-            class="form_description_input"
-            placeholder="{{ 'addFormDesc' | translate }}"
-            formControlName="description"
-            autofocus="true"
-            autocomplete="off"
-          />
+          <input type="text" class="form_description_input" placeholder="{{ 'addFormDesc' | translate }}"
+            formControlName="description" autofocus="true" autocomplete="off" />
         </a>
       </div>
     </div>
     <div class="dis-flex width-45 justify-content-end">
-      <div
-        class="save-status"
-        [hidden]="
+      <div class="save-status" [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saved ||
           formStatus !== formConfigurationStatus.draft ||
           isFormDetailPublished
-        "
-      >
+        ">
         {{ 'changesSaved' | translate }}
       </div>
-      <div
-        class="save-status"
-        [hidden]="
+      <div class="save-status" [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saving ||
           isFormDetailPublished
-        "
-      >
+        ">
         {{ 'savingChanges' | translate }}
       </div>
-      <div
-        class="save-status"
-        [hidden]="
+      <div class="save-status" [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.published ||
           formStatus !== formConfigurationStatus.published
-        "
-      >
+        ">
         {{ 'changesPublished' | translate }}
       </div>
-      <div
-        class="save-status"
-        [hidden]="
+      <div class="save-status" [hidden]="
           formDetailPublishStatus !== formConfigurationStatus.publishing ||
           !isFormDetailPublished
-        "
-      >
+        ">
         {{ 'publishingChanges' | translate }}
       </div>
 
-      <button
-        mat-stroked-button
-        class="preview-btn"
-        (click)="togglePreview()"
-        [ngClass]="{ 'preview-btn-active': isPreviewActive }"
-      >
+      <button mat-stroked-button class="preview-btn" (click)="togglePreview()"
+        [ngClass]="{ 'preview-btn-active': isPreviewActive }">
         <span>
-          <img
-            [src]="getImage('preview', isPreviewActive)"
-            class="preview-btn-icon"
-          />
-          <span translate="preview"></span>
+          <img [src]="getImage('preview', isPreviewActive)" class="preview-btn-icon" />
+          <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-
-      <button
-        mat-raised-button
-        class="publish-btn"
-        (click)="publishFormDetail()"
-        [disabled]="formStatus === 'Published' || isFormDetailPublished"
-      >
+      <button mat-stroked-button class="next-btn">
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
-            class="publish-btn-icon"
-          />
-          <span class="publish" translate="publishBtn"></span>
+          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>
     </div>
   </div>
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
-      <app-hierarchy-container
-        (hierarchyEvent)="hierarchyEventHandler($event)"
-      ></app-hierarchy-container>
+      <app-hierarchy-container (hierarchyEvent)="hierarchyEventHandler($event)"></app-hierarchy-container>
     </div>
-    <div
-      class="questions-responses-width"
-      *ngIf="selectedNode; else loadingSelectedNode"
-    >
+    <div class="questions-responses-width" *ngIf="selectedNode; else loadingSelectedNode">
       <div *ngIf="props.hierarchyMode === 'asset_hierarchy'">
-        <div
-          *ngFor="
+        <div *ngFor="
             let selectedNodeInstance of selectedNodeInstances;
             let i = index;
             trackBy: trackBySelectedNodeInstances
-          "
-          class="nodeInstance"
-        >
+          " class="nodeInstance">
           <div class="selectedNode">
-            <span
-              class="selectedNodeTitle"
-              *ngIf="selectedNodeInstances?.length > 1; else singleInstance"
-            >
+            <span class="selectedNodeTitle" *ngIf="selectedNodeInstances?.length > 1; else singleInstance">
               {{
-                'nodeInstance' | translate : { name: selectedNodeInstance.name }
+              'nodeInstance' | translate : { name: selectedNodeInstance.name }
               }}
             </span>
             <ng-template #singleInstance>
               <span class="selectedNodeTitle">
                 {{
-                  'singleInstance'
-                    | translate
-                      : {
-                          name: selectedNodeInstance.name
-                        }
+                'singleInstance'
+                | translate
+                : {
+                name: selectedNodeInstance.name
+                }
                 }}
               </span>
             </ng-template>
-            <button
-              mat-stroked-button
-              class="import-btn"
-              translate="importBtn"
-              (click)="importTasks()"
-            ></button>
+            <button mat-stroked-button class="import-btn" translate="importBtn" (click)="importTasks()"></button>
           </div>
-          <app-builder
-            *ngIf="selectedNodeLoadStatus"
-            [selectedNode]="selectedNodeInstance"
-            [counter]="formConfiguration.get('counter').value"
-          ></app-builder>
+          <app-builder *ngIf="selectedNodeLoadStatus" [selectedNode]="selectedNodeInstance"
+            [isPreviewActive]="isPreviewActive" [counter]="formConfiguration.get('counter').value"></app-builder>
         </div>
       </div>
       <div *ngIf="props.hierarchyMode === 'route_plan'">
         <div class="selectedNode">
           <span class="selectedNodeTitle">
             {{
-              'tasksOfSelectedNode' | translate : { name: selectedNode.name }
+            'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <button
-            mat-stroked-button
-            class="import-btn"
-            translate="importBtn"
-            (click)="importTasks()"
-          ></button>
+          <button mat-stroked-button class="import-btn" translate="importBtn" (click)="importTasks()"></button>
         </div>
-        <app-builder
-          *ngIf="selectedNodeLoadStatus"
-          [selectedNode]="selectedNode"
-          [counter]="formConfiguration.get('counter').value"
-        ></app-builder>
+        <app-builder *ngIf="selectedNodeLoadStatus" [selectedNode]="selectedNode"
+          [counter]="formConfiguration.get('counter').value"></app-builder>
       </div>
     </div>
     <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone [subFormId]="selectedNode?.id"></app-iphone>
+      <app-iphone
+        [moduleType]="'operator-rounds'"
+        [subFormId]="selectedNode?.id"
+        [assetLocationName]="selectedNode?.name"
+      ></app-iphone>
     </div>
   </div>
 </div>
 
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
-    <app-import-questions-slider
-      [selectedFormName]="selectedFormName"
-      [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData"
-      (cancelSliderEvent)="cancelSlider($event)"
-    ></app-import-questions-slider>
+    <app-import-questions-slider [selectedFormName]="selectedFormName" [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData" (cancelSliderEvent)="cancelSlider($event)"></app-import-questions-slider>
   </div>
 </div>
 
 <ng-template #loadingSelectedNode>
   <div class="p-15">
-    <ngx-shimmer-loading
-      [width]="'100%'"
-      [height]="'20px'"
-      *ngFor="let row of [].constructor(10); let i = index"
-    >
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'" *ngFor="let row of [].constructor(10); let i = index">
     </ngx-shimmer-loading>
   </div>
 </ng-template>

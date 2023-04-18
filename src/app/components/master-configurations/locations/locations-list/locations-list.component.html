@@ -6,6 +6,21 @@
           <h2 class="heading" translate="locations"></h2>
         </div>
         <div>
+          <span
+            class="no-of-location"
+            *ngIf="locationsListCount$ | async as totalCount"
+          >
+            <span class="location-count">
+              {{ totalCount }}
+            </span>
+            <span class="location-text">{{
+              'locations'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span>
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -16,7 +31,12 @@
                 autocomplete="off"
                 [formControl]="searchLocation"
               />
-              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+              <img
+                [src]="filterIcon"
+                matSuffix
+                alt="Open Filter"
+                class="filter-icon"
+              />
             </mat-form-field>
           </span>
 
