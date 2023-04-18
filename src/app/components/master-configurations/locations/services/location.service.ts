@@ -53,7 +53,7 @@ export class LocationService {
   }
 
   getLocationsList$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: number;
     searchKey: string;
     fetchType: string;
@@ -61,7 +61,7 @@ export class LocationService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
       const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
@@ -69,8 +69,8 @@ export class LocationService {
       if (!isSearch) {
         params.set('limit', `${queryParams.limit}`);
       }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
+      if (!isSearch && queryParams.next) {
+        params.set('next', queryParams.next);
       }
       if (queryParams.searchKey) {
         const filter: GetLocations = {
@@ -89,7 +89,7 @@ export class LocationService {
       return of({
         count: 0,
         rows: [],
-        nextToken: null
+        next: null
       });
     }
   }
@@ -173,12 +173,12 @@ export class LocationService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 

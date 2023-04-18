@@ -322,15 +322,15 @@ export class LocationsListComponent implements OnInit {
   getLocations() {
     return this.locationService
       .getLocationsList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchLocation.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.locationsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
@@ -480,14 +480,14 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
- getAllLocations() {
-      this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-        this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
-        );
-        this.allParentsLocations = this.parentInformation;
-      });
-    }
+  getAllLocations() {
+    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
+      this.parentInformation = allLocations.items.filter(
+        (location) => location._deleted !== true
+      );
+      this.allParentsLocations = this.parentInformation;
+    });
+  }
   uploadFile(event) {
     const file = event.target.files[0];
     const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
@@ -497,7 +497,7 @@ export class LocationsListComponent implements OnInit {
       },
       disableClose: true
     });
-   
+
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
