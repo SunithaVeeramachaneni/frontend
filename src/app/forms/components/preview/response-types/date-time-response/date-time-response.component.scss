@@ -2,6 +2,8 @@
 
 .text-answer {
   width: 93%;
+  max-width: 93%;
+  min-width: 93%;
   border: 1px solid $gray3;
   height: 28px;
   padding-left: 0.5rem;
