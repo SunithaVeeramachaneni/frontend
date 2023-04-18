@@ -1,9 +1,16 @@
 <div class="search-container">
   <div id="opendetail">
-    <app-form-detail [@slideInOut]="formDetailState" [showPDFDownload]="true" (slideInOut)="onCloseViewDetail()"
-      [selectedForm]="selectedRound" [moduleName]="'OPERATOR_ROUNDS'" [hidden]="hideRoundDetail"
-      [formStatus]="formConfigurationStatus.published" formDetailType="submitted"
-      (formDetailAction)="roundsDetailActionHandler($event)"></app-form-detail>
+    <app-form-detail
+      [@slideInOut]="formDetailState"
+      [showPDFDownload]="true"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedRound"
+      [moduleName]="'OPERATOR_ROUNDS'"
+      [hidden]="hideRoundDetail"
+      [formStatus]="formConfigurationStatus.published"
+      formDetailType="submitted"
+      (formDetailAction)="roundsDetailActionHandler($event)"
+    ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-rounds">
@@ -13,38 +20,74 @@
         </span>
         <span class="rounds-text">{{
           'roundsPlural'
-          | translate
-          : {
-          count: roundsCount || 0
-          }
-          }}</span>
+            | translate
+              : {
+                  count: roundsCount || 0
+                }
+        }}</span>
       </ng-container>
       <ng-template #loadingRounds>
-        <ngx-shimmer-loading class="loading-rounds" [width]="'100%'" [height]="'35px'">
+        <ngx-shimmer-loading
+          class="loading-rounds"
+          [width]="'100%'"
+          [height]="'35px'"
+        >
         </ngx-shimmer-loading>
       </ng-template>
     </span>
     <mat-form-field appearance="outline">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
-      <input matInput type="text" [placeholder]="'search' | translate" autocomplete="off" [formControl]="searchForm" />
-      <img src="assets/maintenance-icons/filterIcon.svg" matSuffix cdkOverlayOrigin class="common-filter-icon"
-        alt="Open Filter" #trigger="cdkOverlayOrigin" (click)="isPopoverOpen = !isPopoverOpen" />
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
+
+      <svg-icon
+        icon="icon-filterIcon"
+        matSuffix
+        cdkOverlayOrigin
+        class="common-filter-icon"
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
+      ></svg-icon>
     </mat-form-field>
   </span>
-  <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOpen]="isPopoverOpen" [cdkConnectedOverlayOrigin]="trigger" cdkConnectedOverlayWidth="400px"
-    (backdropClick)="isPopoverOpen = false">
-    <app-filter [json]="filterJson" (close)="isPopoverOpen = false" (apply)="applyFilters($event)"
-      (reset)="clearFilters()"></app-filter>
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilters($event)"
+      (reset)="clearFilters()"
+    ></app-filter>
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(rounds$ | async) && (isLoading$ | async) === false" class="rounds-list">
-    <cwp-dynamictable [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }" [dataSource]="dataSource"
-      [configOptions]="configOptions" (fetchDataCallback)="handleTableEvent($event)"
-      (cellClickActionHandler)="cellClickActionHandler($event)" (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      (onDateChangeHandler)="onChangeDueDateHandler($event)" class="width-100"></cwp-dynamictable>
+  <div
+    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
+    class="rounds-list"
+  >
+    <cwp-dynamictable
+      [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (onDateChangeHandler)="onChangeDueDateHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
   </div>
 
   <div *ngIf="isLoading$ | async">
@@ -56,11 +99,18 @@
     </div>
   </div>
   <ng-container *ngIf="users$ | async">
-    <button style="display: none" mat-button [matMenuTriggerFor]="assigneeMenu"
-      #assigneeMenuTrigger="matMenuTrigger"></button>
+    <button
+      style="display: none"
+      mat-button
+      [matMenuTriggerFor]="assigneeMenu"
+      #assigneeMenuTrigger="matMenuTrigger"
+    ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-to [assigneeDetails]="assigneeDetails" [dropdownPosition]="assigneePosition"
-        (selectedAssignee)="selectedAssigneeHandler($event)"></app-assign-to>
+      <app-assign-to
+        [assigneeDetails]="assigneeDetails"
+        [dropdownPosition]="assigneePosition"
+        (selectedAssignee)="selectedAssigneeHandler($event)"
+      ></app-assign-to>
     </mat-menu>
   </ng-container>
 </ng-container>

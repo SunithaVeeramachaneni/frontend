@@ -25,16 +25,22 @@
 }
 
 .backward-icon {
-  width: 25px;
-  margin-left: 80px;
-  cursor: pointer;
+  ::ng-deep svg {
+    width: 30px !important;
+    height: 30px !important;
+    margin-left: 80px;
+    cursor: pointer;
+  }
 }
 
 .play-icon {
-  margin-left: auto;
-  margin-right: auto;
-  width: 30px;
-  cursor: pointer;
+  ::ng-deep svg {
+    margin-left: 30px;
+    margin-right: 30px;
+    width: 35px !important;
+    height: 35px !important;
+    cursor: pointer;
+  }
 }
 
 .display {
@@ -42,9 +48,12 @@
 }
 
 .forward-icon {
-  width: 25px;
-  margin-right: 80px;
-  cursor: pointer;
+  ::ng-deep svg {
+    width: 30px !important;
+    height: 30px !important;
+    margin-right: 80px;
+    cursor: pointer;
+  }
 }
 
 .audio-header {

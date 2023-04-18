@@ -97,6 +97,11 @@
   }
 }
 
+.filter-icon {
+  height: 17px !important;
+  width: 17px !important;
+}
+
 @media (min-width: 1705px) and (max-width: 1820px) {
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
