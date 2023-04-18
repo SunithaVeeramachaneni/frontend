@@ -266,6 +266,16 @@ describe('CategoriesComponent', () => {
       expect(
         categoriesEl.querySelector('.categories-header').textContent
       ).toContain('Add Category');
+      expect(
+        categoriesEl
+          .querySelector('div.categories-row-heading>img')
+          .getAttribute('src')
+      ).toContain('categories.svg');
+      expect(
+        categoriesEl
+          .querySelector('button.categories-button>img')
+          .getAttribute('src')
+      ).toContain('addcategory.svg');
     });
 
     it('should render three categories in UI', () => {

@@ -328,7 +328,7 @@ export class AppService {
     return this.http.post<any>(tokenEndPoint, body, httpOptions);
   }
 
-  getQueryString(queryParams: any): string {
+  private getQueryString(queryParams: any): string {
     const queryString = Object.keys(queryParams)
       .map((param) => `${param}=${queryParams[param]}`)
       .join('&');
