@@ -63,6 +63,7 @@
     "ngx-daterangepicker-material": "^6.0.4",
     "ngx-dropzone": "^3.0.0",
     "ngx-echarts": "^7.1.0",
+    "ngx-image-compress": "^13.1.16",
     "ngx-mat-intl-tel-input": "^4.1.0",
     "ngx-order-pipe": "^2.2.0",
     "ngx-pagination": "^5.1.1",
