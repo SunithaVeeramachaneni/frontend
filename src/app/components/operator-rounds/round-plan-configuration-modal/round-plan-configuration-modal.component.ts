@@ -23,7 +23,11 @@ import {
   FormArray,
   Form
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import {
+  InstructionsFile,
+  ValidationError,
+  FormMetadata
+} from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
@@ -35,6 +39,9 @@ import {
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/shared/toast';
+
+import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -64,7 +71,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   dropDownIsOpen = false;
   modalIsOpen = false;
   attachment: any;
-
+  formMetadata: FormMetadata;
+  moduleName: string;
   form: FormGroup;
 
   constructor(
@@ -75,7 +83,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private toast: ToastService,
+
+    private roundplanconfiguarationservice: RoundPlanConfigurationService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -224,17 +235,26 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  // addnew = () => {
-  //   const add = this.form.get('') as FormArray;
-  //   add.push(
-  //     this.fb.group({
-  //       Label: [],
-  //       Value: []
-  //     })
-  //   );
-  // };
+  sendFileToS3(file, params): void {
+    const { originalValue, isImage, index } = params;
+    this.roundplanconfiguarationservice
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
+      .subscribe((event) => {
+        const value: InstructionsFile = {
+          name: file.name,
+          size: file.size,
+          objectKey: event.message.objectKey,
+          objectURL: event.message.objectURL
+        };
+        if (isImage) {
+          originalValue.images[index] = value;
+        } else {
+          originalValue.pdf = value;
+        }
+      });
+  }
 
-  instructionsFileUploadHandler = (event: Event) => {
+  roundplanFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const allowedFileTypes: string[] = [
       'image/jpeg',
@@ -242,5 +262,61 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       'image/png',
       'application/pdf'
     ];
+
+    Array.from(target.files).forEach((file) => {
+      const originalValue = this.headerDataForm.get('value').value;
+      if (allowedFileTypes.indexOf(file.type) === -1) {
+        this.toast.show({
+          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+          type: 'warning'
+        });
+        return;
+      }
+
+      if (file.type === 'application/pdf') {
+        if (originalValue.pdf === null) {
+          this.sendFileToS3(file, {
+            originalValue,
+            isImage: false
+          });
+        }
+      } else {
+        const index = originalValue.images.findIndex((image) => image === null);
+        if (index !== -1) {
+          this.sendFileToS3(file, {
+            originalValue,
+            isImage: true,
+            index
+          });
+        }
+      }
+      console.log(originalValue);
+      console.log(' original value ');
+    });
   };
+
+  instructionsFileDeleteHandler(index: number) {
+    const originalValue = this.headerDataForm.get('value').value;
+    if (index < 3) {
+      this.roundplanconfiguarationservice.deleteFromS3(
+        originalValue.images[index].objectKey
+      );
+      originalValue.images[index] = null;
+      originalValue.images = this.imagesArrayRemoveNullGaps(
+        originalValue.images
+      );
+    } else {
+      this.roundplanconfiguarationservice.deleteFromS3(
+        originalValue.pdf.objectKey
+      );
+      originalValue.pdf = null;
+    }
+    // this.headerDataForm.get('value').setValue(originalValue);
+    // this.instructionsUpdateValue();
+  }
+
+  imagesArrayRemoveNullGaps(images) {
+    const nonNullImages = images.filter((image) => image !== null);
+    return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+  }
 }

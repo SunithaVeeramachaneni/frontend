@@ -150,7 +150,9 @@ import { AssignToComponent } from './components/schedular/assign/assign.componen
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent
+    AssignToComponent,
+    InstructionImageComponent,
+    InstructionPdfComponent
   ]
 })
 export class FormModule {}

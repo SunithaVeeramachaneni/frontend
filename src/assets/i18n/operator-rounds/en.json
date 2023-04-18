@@ -239,5 +239,6 @@
   "publishPlanBody": "Plan cannot be published with blank tasks",
   "publishWithoutTaskButton": "Publish without Blank Tasks",
   "createResponses": "Create Responses",
-  "save": "Save"
+  "save": "Save",
+  "addImagesAndPDFBtn": "Add images or pdf"
 }

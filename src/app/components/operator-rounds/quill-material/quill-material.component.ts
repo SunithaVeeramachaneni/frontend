@@ -29,7 +29,7 @@ const SELECTOR = 'quill-material';
 @Component({
   selector: SELECTOR,
   templateUrl: './quill-material.component.html',
-  styleUrls: ['./quill-material.component.css'],
+  styleUrls: ['./quill-material.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

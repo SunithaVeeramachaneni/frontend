@@ -160,15 +160,76 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field placeholder="Type Question" class="width-100">
-          <quill-material
-            [ngClass]="{
-              'display-toolbar': true
-            }"
-            formControlName="notesAttachment"
+        <p
+          class="form-name-description m-b-0 m-t-20"
+          translate="Notes and Attachments"
+        ></p>
+        <div class="notes_and_Attachment">
+          <mat-form-field
+            placeholder="Notes and Attachments"
+            class="notes_Attachment"
+            class="width-100"
+            appearance="outline"
           >
-          </quill-material>
-        </mat-form-field>
+            <quill-material
+              [ngClass]="{
+                'display-toolbar': true
+              }"
+              formControlName="notes_attachment"
+            >
+            </quill-material>
+          </mat-form-field>
+        </div>
+
+        <div class="addpdf">
+          <div class="dis-flex">
+            <span
+              *ngFor="
+                let image of headerDataForm.get('value').value.images;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-instruction-image
+                [image]="image"
+                [index]="i"
+                (indexEmitter)="instructionsFileDeleteHandler($event)"
+                *ngIf="image !== null"
+              ></app-instruction-image>
+            </span>
+
+            <span *ngIf="headerDataForm.get('value').value.pdf !== null">
+              <app-instruction-pdf
+                [pdf]="headerDataForm.get('value').value.pdf"
+                [index]="'4'"
+                (indexEmitter)="instructionsFileDeleteHandler($event)"
+              >
+              </app-instruction-pdf>
+            </span>
+          </div>
+
+          <br />
+          <input
+            type="file"
+            class="file-upload"
+            accept="image/jpeg,image/jpg,image/png,application/pdf"
+            (change)="roundplanFileUploadHandler($event)"
+            [hidden]="true"
+            #roundplanFileUpload
+          />
+
+          <button
+            mat-button
+            color="primary"
+            class="addLogicBtn"
+            (click)="roundplanFileUpload.click()"
+          >
+            <mat-icon class="icon">link</mat-icon>
+            <span translate="addImagesAndPDFBtn"></span>
+          </button>
+
+          <app-image-preview></app-image-preview>
+        </div>
       </div>
     </div>
   </div>
