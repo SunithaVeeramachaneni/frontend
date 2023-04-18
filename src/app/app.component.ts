@@ -36,16 +36,19 @@ import { SseService } from './shared/services/sse.service';
 
 const {
   dashboard,
+  myDashboard,
   reports,
   spareParts,
   maintenance,
   workInstructions,
+  workInstructionsHome,
   drafts,
   favorites,
   recents,
   published,
   files,
   userManagement,
+  activeUsers,
   rolesPermissions,
   inActiveTenants,
   inActiveUsers,
@@ -86,6 +89,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permission: dashboard.permission,
       subPages: [
         {
+          title: myDashboard.title,
+          url: myDashboard.url,
+          permission: dashboard.permission
+        },
+        {
           title: reports.title,
           url: reports.url,
           permission: reports.permission
@@ -109,6 +117,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: userManagement.permission,
       subPages: [
+        {
+          title: activeUsers.title,
+          url: activeUsers.url,
+          permission: activeUsers.permission
+        },
         {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
@@ -212,6 +225,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: workInstructions.permission,
       subPages: [
+        {
+          title: workInstructionsHome.title,
+          url: workInstructionsHome.url,
+          permission: workInstructionsHome.permission
+        },
         {
           title: favorites.title,
           url: favorites.url,
