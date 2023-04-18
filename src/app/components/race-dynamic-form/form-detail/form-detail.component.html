@@ -1,12 +1,19 @@
-<div id="opendetail" *ngIf="
+<div
+  id="opendetail"
+  *ngIf="
     selectedForm &&
     (selectedFormDetail$ | async) &&
     (isLoading$ | async) === false
-  ">
+  "
+>
   <mat-card>
     <ng-container>
       <div>
-        <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" alt="close" class="pointer" />
+        <svg-icon
+          icon="icon-close"
+          class="cancel-icon"
+          (click)="cancelForm()"
+        ></svg-icon>
         <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
       <ng-container *ngIf="formStatus === formConfigurationStatus.published">
@@ -18,66 +25,98 @@
               </p>
             </div>
             <div class="flex-custom">
-              <h4 class="create-name" *ngIf="selectedForm?.schedule; else schedule">
-                <ng-container *ngIf="
+              <h4
+                class="create-name"
+                *ngIf="selectedForm?.schedule; else schedule"
+              >
+                <ng-container
+                  *ngIf="
                     scheduleConfiguration?.scheduleType !== 'byDate';
                     else byDate
-                  ">
+                  "
+                >
                   {{ selectedForm.schedule }}
-                  <span *ngIf="scheduleConfiguration?.repeatEvery !== 'day'">, {{ 'every' | translate }}
+                  <span *ngIf="scheduleConfiguration?.repeatEvery !== 'day'"
+                    >, {{ 'every' | translate }}
                   </span>
                   {{ frequencyDetail.info | translate }}
                   <a class="link" [matMenuTriggerFor]="menu">{{
                     frequencyDetail.more
-                    }}</a>
+                  }}</a>
                 </ng-container>
                 <ng-template #byDate>
                   {{ selectedForm.schedule }},
                   {{ frequencyDetail.info | date : 'dd MMM yyyy' }}
                   <a class="link" [matMenuTriggerFor]="menu">{{
                     frequencyDetail.more
-                    }}</a>
+                  }}</a>
                 </ng-template>
               </h4>
               <ng-template #schedule>
-                <button mat-button class="schedule-btn" translate="schedule"
-                  (click)="scheduleRoundPlanEvent()"></button>
+                <button
+                  mat-button
+                  class="schedule-btn"
+                  translate="schedule"
+                  (click)="scheduleRoundPlanEvent()"
+                ></button>
               </ng-template>
               <mat-menu #menu="matMenu" backdropClass="custom-dates-menu">
-                <div *ngIf="
+                <div
+                  *ngIf="
                     frequencyDetail.scheduleType === 'byDate';
                     else byFrequency
-                  " class="custom-dates">
+                  "
+                  class="custom-dates"
+                >
                   <p *ngFor="let data of frequencyDetail.data">
                     {{ data.date | date : 'dd MMM yyyy' }}
                   </p>
                 </div>
                 <ng-template #byFrequency>
-                  <mat-button-toggle-group multiple class="week-buttons" *ngIf="frequencyDetail.repeatEvery === 'week'">
-                    <mat-button-toggle *ngFor="
+                  <mat-button-toggle-group
+                    multiple
+                    class="week-buttons"
+                    *ngIf="frequencyDetail.repeatEvery === 'week'"
+                  >
+                    <mat-button-toggle
+                      *ngFor="
                         let dayOfWeek of scheduleConfigs.daysOfWeek;
                         let i = index
-                      " [ngClass]="{
+                      "
+                      [ngClass]="{
                         active: isDayOfWeekSelected(frequencyDetail.data, i)
-                      }" [value]="i">{{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                      }"
+                      [value]="i"
+                      >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
                     </mat-button-toggle>
                   </mat-button-toggle-group>
                   <div *ngIf="frequencyDetail.repeatEvery === 'month'">
-                    <div *ngFor="
+                    <div
+                      *ngFor="
                         let filteredWeek of frequencyDetail.data;
                         let i = index
-                      " class="weeks-of-month">
-                      <div class="row-title" class="m-r-20" [ngClass]="{ 'm-r-36': i === 1 }">
+                      "
+                      class="weeks-of-month"
+                    >
+                      <div
+                        class="row-title"
+                        class="m-r-20"
+                        [ngClass]="{ 'm-r-36': i === 1 }"
+                      >
                         {{ scheduleConfigs.weeksOfMonth[filteredWeek.index] }}
                       </div>
                       <div>
                         <mat-button-toggle-group multiple class="week-buttons">
-                          <mat-button-toggle *ngFor="
+                          <mat-button-toggle
+                            *ngFor="
                               let dayOfWeek of scheduleConfigs.daysOfWeek;
                               let i = index
-                            " [ngClass]="{
+                            "
+                            [ngClass]="{
                               active: isDayOfWeekSelected(filteredWeek.week, i)
-                            }" [value]="i">{{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                            }"
+                            [value]="i"
+                            >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
                           </mat-button-toggle>
                         </mat-button-toggle-group>
                       </div>
@@ -87,7 +126,10 @@
               </mat-menu>
             </div>
           </div>
-          <div class="name-heading" *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'">
+          <div
+            class="name-heading"
+            *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
+          >
             <div>
               <p class="color-gray">
                 {{ 'startEnds' | translate }}
@@ -106,9 +148,9 @@
             <div class="flex-custom">
               <h4 class="create-name">
                 {{
-                selectedForm?.assignedTo
-                ? selectedForm?.assignedTo
-                : placeHolder
+                  selectedForm?.assignedTo
+                    ? selectedForm?.assignedTo
+                    : placeHolder
                 }}
               </h4>
             </div>
@@ -229,37 +271,52 @@
         </div>
       </div>
     </div>
-    <div (click)="onNavigateToDetailPage()" *ngIf="
+    <div
+      (click)="onNavigateToDetailPage()"
+      *ngIf="
         moduleName === 'OPERATOR_ROUNDS' &&
         formStatus !== formConfigurationStatus.published
-      ">
+      "
+    >
       <button mat-raised-button class="w-full btn-primary-blue m-t-20">
         {{ 'editForm' | translate }}
       </button>
     </div>
     <div class="footer" *ngIf="showPDFDownload">
-      <button mat-raised-button class="viewPDFBtn" translate="viewPDFBtn" (click)="viewPDF()"></button>
+      <button
+        mat-raised-button
+        class="viewPDFBtn"
+        translate="viewPDFBtn"
+        (click)="viewPDF()"
+      ></button>
       <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPDF()">
-        <img src="assets/rdf-forms-icons/picture-as-pdf.svg" alt="picture-as-pdf" />
+        <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
         <span translate="download"></span>
       </button>
     </div>
   </mat-card>
 
   <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
-    <div class="question-bg" *ngIf="selectedFormDetail$ | async as selectedFormDetail">
+    <div
+      class="question-bg"
+      *ngIf="selectedFormDetail$ | async as selectedFormDetail"
+    >
       <div>
         <h3 class="question-heading headind-accordian pointer">
           <ng-container>
             {{ defaultFormName }}
             <label [matMenuTriggerFor]="menu">
-              <img src="assets/rdf-forms-icons/arrow-down.svg" alt="arrow-down" />
+              <svg-icon icon="icon-arrow-down" class="arrow-icon"></svg-icon>
             </label>
           </ng-container>
         </h3>
         <mat-menu #menu="matMenu">
-          <button class="btn-range" (click)="openMenu(page)" mat-menu-item
-            *ngFor="let page of selectedFormDetail?.pages; let index = index">
+          <button
+            class="btn-range"
+            (click)="openMenu(page)"
+            mat-menu-item
+            *ngFor="let page of selectedFormDetail?.pages; let index = index"
+          >
             {{ page?.name }} {{ page.position }}
           </button>
         </mat-menu>

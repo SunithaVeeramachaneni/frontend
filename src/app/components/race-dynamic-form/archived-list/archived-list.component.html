@@ -28,14 +28,16 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
-          <img
-            [src]="filterIcon"
+          <svg-icon
             cdkOverlayOrigin
             #trigger="cdkOverlayOrigin"
             (click)="isPopoverOpen = !isPopoverOpen"
             matSuffix
             alt="Open Filter"
-          />
+            icon="icon-filterIcon"
+            class="common-filter-icon"
+            *ngIf="false"
+          ></svg-icon>
         </mat-form-field>
       </span>
     </div>

@@ -1,12 +1,7 @@
 <div id="view-location-slider">
   <mat-card>
     <div>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
     </div>
     <div *ngIf="selectedAsset">
       <p>

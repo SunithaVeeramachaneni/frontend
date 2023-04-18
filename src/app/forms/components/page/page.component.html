@@ -42,11 +42,7 @@
         class="edit-icon"
         *ngIf="pageForm.get('name').disabled === true"
       >
-        <img
-          src="assets/rdf-forms-icons/edit-icon.svg"
-          alt="edit-icon"
-          class="page-edit-icon"
-        />
+        <svg-icon icon="icon-edit-icon" class="page-edit-icon"></svg-icon>
       </button>
     </a>
 
@@ -73,11 +69,7 @@
   </div>
 
   <button class="add-page-btn" (click)="addPage()">
-    <img
-      src="assets/rdf-forms-icons/add-page.svg"
-      alt="add page"
-      class="add-page-btn-icon"
-    />
+    <svg-icon icon="icon-add-page" class="add-page-btn-icon"></svg-icon>
     {{ 'addPage' | translate }}
   </button>
 </div>

@@ -1,23 +1,16 @@
 <div id="add-edit-asset-slider">
   <mat-card [formGroup]="assetForm">
     <div>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+      <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
       <h1 class="heading">{{ assetTitle }}</h1>
     </div>
     <div>
       <p class="m-0" translate="image"></p>
       <p class="image-container">
-        <img
-          src="assets/master-configurations/image-placeholder.svg"
-          alt="Image Placeholder"
-          class="image"
-          *ngIf="assetImage === ''"
-        />
+        <span class="img-border" *ngIf="assetImage === ''">
+          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        </span>
+
         <img
           [src]="assetImage"
           alt="Image"

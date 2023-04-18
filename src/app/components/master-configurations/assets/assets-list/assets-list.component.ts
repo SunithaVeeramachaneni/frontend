@@ -44,7 +44,6 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
   allLocations$: Observable<any>;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   parentInformation;
   allParentsData;
   columns: Column[] = [

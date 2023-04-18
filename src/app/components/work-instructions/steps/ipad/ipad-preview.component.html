@@ -1,9 +1,6 @@
 <div class="ipad-view" *ngIf="!titleProvided">
   <div class="ipad-view-default-content">
-    <img
-      alt="iPad"
-      src="assets/work-instructions-icons/img/default-ipad-content.png"
-    />
+    <svg-icon icon="icon-default-ipad-content"></svg-icon>
     <div class="clearfix"></div>
     <br /><br /><br />
     <p>Enter step details to preview them there</p>
@@ -24,11 +21,7 @@
         </div>
         <div class="dis-flex position header">
           <div class="width-30 header-position header-left">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/cancel.png"
-              alt=""
-              class="icons"
-            />
+            <svg-icon icon="icon-iphone-cancel" class="icons"></svg-icon>
           </div>
           <div class="width-40 header-title">
             Work Instructions
@@ -40,12 +33,12 @@
             >
           </div>
           <div class="width-30 header-position btn-pos">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/search.png"
-              class="icons"
-              alt=""
+            <svg-icon
+              icon="icon-iphone-search"
               class="header-right-icons"
-            />
+              (click)="coverImageuploader.click()"
+              [ngClass]="{ 'disable-click': titleProvided !== true }"
+            ></svg-icon>
           </div>
         </div>
         <div class="dis-flex header-tab-row">
@@ -259,11 +252,7 @@
         </div>
         <div class="dis-flex position header">
           <div class="width-30 header-position header-left">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/cancel.png"
-              alt=""
-              class="icons"
-            />
+            <svg-icon icon="icon-iphone-cancel" class="icons"></svg-icon>
           </div>
           <div class="width-40 header-title">
             Work Instructions
@@ -272,16 +261,11 @@
             >
           </div>
           <div class="width-30 header-position header-right">
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/speaker.png"
-              alt=""
-              class="icons"
-            />
-            <img
-              src="assets/work-instructions-icons/ipad-iphone/warning.png"
-              alt=""
+            <svg-icon icon="icon-speaker" class="icons"></svg-icon>
+            <svg-icon
+              icon="icon-iphone-warning"
               class="icons warning-icon"
-            />
+            ></svg-icon>
           </div>
         </div>
         <div class="width-100 position header-position">
