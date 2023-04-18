@@ -188,6 +188,7 @@ export class ArchivedListComponent implements OnInit {
   filter = {
     status: '',
     modifiedBy: '',
+    createdBy: '',
     authoredBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
@@ -409,6 +410,7 @@ export class ArchivedListComponent implements OnInit {
     this.isPopoverOpen = false;
     this.filter = {
       status: '',
+      createdBy: '',
       modifiedBy: '',
       authoredBy: '',
       lastModifiedOn: '',

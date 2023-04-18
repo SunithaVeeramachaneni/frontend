@@ -56,7 +56,8 @@ export class AddEditAssetsComponent implements OnInit {
         description: this.assetEditData.description,
         parentType:
           this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
-        parentId: this.assetEditData.parentId
+        parentId: this.assetEditData.parentId,
+        plantsID: this.assetEditData.plantsID
       };
       this.parentType =
         this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';

@@ -50,7 +50,8 @@ export class AddEditLocationComponent implements OnInit {
         locationId: this.locEditData.locationId,
         model: this.locEditData.model,
         description: this.locEditData.description,
-        parentId: this.locEditData.parentId
+        parentId: this.locEditData.parentId,
+        plantsID: this.locEditData.plantsID
       };
       this.locationForm.patchValue(locdata);
       this.getAllLocations();
