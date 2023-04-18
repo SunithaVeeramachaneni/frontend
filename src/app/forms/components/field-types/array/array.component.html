@@ -1,10 +1,6 @@
 <span class="array-field">
   <button class="add-sub-fields-btn" (click)="addSubField()">
-    <svg-icon
-      icon="icon-red-cancel"
-      class="close"
-      (click)="triggerDelete()"
-    ></svg-icon>
+    <svg-icon icon="icon-add-column" class="add-sub-fields-icon"></svg-icon>
     <span class="add-sub-fields-text" translate="addSubFields"></span>
   </button>
 
@@ -13,11 +9,7 @@
     *ngFor="let array of arrayFields; let i = index"
   >
     <button class="delete-button width-5" (click)="delete(i)">
-      <svg-icon
-        icon="icon-red-cancel"
-        class="close"
-        (click)="triggerDelete()"
-      ></svg-icon>
+      <svg-icon icon="icon-delete-icon" class="delete-icon"></svg-icon>
     </button>
 
     <div class="width-65 question-input-box">
