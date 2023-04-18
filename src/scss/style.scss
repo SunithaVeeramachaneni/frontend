@@ -633,6 +633,16 @@ button.mat-menu-item {
   box-shadow: none;
 }
 
+.preview-backdrop {
+  position: absolute;
+  top: 163px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .preview-history-menu {
   position: absolute;
   top: 265px;
@@ -655,6 +665,16 @@ button.mat-menu-item {
   box-shadow: none;
 }
 
+.preview-backdrop-operator-rounds {
+  position: fixed;
+  top: 174px;
+  left: calc(100vw - 305px);
+  width: 240px;
+  height: 496px;
+  border-radius: 24px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .preview-history-menu-operator-rounds {
   position: fixed;
   top: 280px;
@@ -670,6 +690,12 @@ button.mat-menu-item {
   .preview-menu {
     top: 436px;
   }
+  .preview-backdrop {
+    top: 162px;
+    left: calc(100vw - 285px);
+    height: 436px;
+    width: 220px;
+  }
   .preview-history-menu {
     top: 198px;
     right: 64px;
@@ -678,6 +704,12 @@ button.mat-menu-item {
   .preview-menu-operator-rounds {
     top: 448px;
     right: 64px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 172px;
+    left: calc(100vw - 285px);
+    height: 436px;
+    width: 220px;
   }
   .preview-history-menu-operator-rounds {
     top: 210px;
@@ -691,6 +723,11 @@ button.mat-menu-item {
     top: 417px;
     right: 69px;
   }
+  .preview-backdrop {
+    top: 164px;
+    left: calc(100vw - 309px);
+    height: 406px;
+  }
   .preview-history-menu {
     top: 192px;
     right: 69px;
@@ -699,6 +736,11 @@ button.mat-menu-item {
   .preview-menu-operator-rounds {
     top: 447px;
     right: 61px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 173px;
+    left: calc(100vw - 301px);
+    height: 440px;
   }
   .preview-history-menu-operator-rounds {
     top: 224px;
@@ -712,6 +754,12 @@ button.mat-menu-item {
     top: 417px;
     right: 28px;
   }
+  .preview-backdrop {
+    top: 162px;
+    left: calc(100vw - 249px);
+    height: 406px;
+    width: 220px;
+  }
   .preview-history-menu {
     top: 192px;
     right: 26px;
@@ -720,6 +768,12 @@ button.mat-menu-item {
   .preview-menu-operator-rounds {
     top: 444px;
     right: 22px;
+  }
+  .preview-backdrop-operator-rounds {
+    top: 171px;
+    left: calc(100vw - 242px);
+    height: 440px;
+    width: 220px;
   }
   .preview-history-menu-operator-rounds {
     top: 224px;
