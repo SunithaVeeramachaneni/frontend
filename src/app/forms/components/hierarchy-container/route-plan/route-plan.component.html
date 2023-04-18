@@ -8,13 +8,12 @@
     >
       <div class="left">
         <div class="dis-flex">
-          <img
+          <svg-icon
+            icon="icon-six-dots"
             *ngIf="hierarchyMode !== 'asset_hierarchy'"
             cdkDragHandle
-            src="assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
             class="question-six-dots"
-          />
+          ></svg-icon>
           <div class="nodeContent" class="nodeContent">
             <img [src]="node.image" />
             <div class="description">

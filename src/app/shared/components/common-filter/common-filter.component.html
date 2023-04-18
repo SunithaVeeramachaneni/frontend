@@ -23,15 +23,15 @@
         class="common-filter-search"
         autocomplete="off"
       />
-      <img
-        src="../../../../assets/maintenance-icons/filterIcon.svg"
+
+      <svg-icon
+        icon="icon-filterIcon"
         matSuffix
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
         (click)="isPopoverOpen = !isPopoverOpen"
         class="common-filter-icon"
-        alt="Open Filter"
-      />
+      ></svg-icon>
     </mat-form-field>
   </span>
 
@@ -59,10 +59,7 @@
           (click)="isPopoverOpen = false"
           aria-label="Close Filter"
         >
-          <img
-            src="../../../../assets/img/svg/cancel-icon.svg"
-            alt="Close Filter"
-          />
+          <svg-icon icon="icon-cancel-icon"></svg-icon>
         </button>
       </div>
       <form #form="ngForm">
@@ -150,10 +147,7 @@
           (click)="isPopoverOpen = false"
           aria-label="Close Filter"
         >
-          <img
-            src="../../../../assets/img/svg/cancel-icon.svg"
-            alt="Close Filter"
-          />
+          <svg-icon icon="icon-cancel-icon"></svg-icon>
         </button>
       </div>
       <div class="filter-form-fields" style="max-height: 350px">
@@ -261,10 +255,7 @@
                     (click)="isfilterTooltipOpen[i] = false"
                     aria-label="Close Filter"
                   >
-                    <img
-                      src="../../../../assets/img/svg/cancel-icon.svg"
-                      alt="Close Filter"
-                    />
+                    <svg-icon icon="icon-cancel-icon"></svg-icon>
                   </button>
                 </div>
                 <div>

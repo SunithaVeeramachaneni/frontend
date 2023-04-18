@@ -109,13 +109,12 @@
               <h5 mat-subheader>Cover Image</h5>
               <mat-divider></mat-divider>
               <div *ngIf="coverImageFiles.length === 0">
-                <img
-                  src="assets/work-instructions-icons/img/brand/doc-placeholder.png"
-                  alt=""
+                <svg-icon
+                  icon="icon-doc-placeholder"
                   class="coverImage"
                   (click)="coverImageuploader.click()"
                   [ngClass]="{ 'disable-click': titleProvided !== true }"
-                />
+                ></svg-icon>
               </div>
               <input
                 hidden
@@ -314,13 +313,12 @@
             <h5 mat-subheader>Cover Image</h5>
             <mat-divider></mat-divider>
             <div *ngIf="coverImageFiles.length === 0">
-              <img
-                src="assets/work-instructions-icons/img/brand/doc-placeholder.png"
-                alt=""
+              <svg-icon
+                icon="icon-doc-placeholder"
                 class="coverImage"
                 (click)="coverImageuploader.click()"
                 [ngClass]="{ 'disable-click': titleProvided !== true }"
-              />
+              ></svg-icon>
             </div>
             <input
               hidden

@@ -54,19 +54,19 @@
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
             <button class="questions-btn" (click)="addQuestion(true, true)">
-              <img
-                src="assets/rdf-forms-icons/add-question.svg"
-                alt="add questions"
-              />
+              <svg-icon
+                icon="icon-add-question"
+                class="question-icon"
+              ></svg-icon>
               <p class="questions-delete-btn-text" translate="question"></p>
             </button>
             <br />
 
             <button class="delete-btn" (click)="deleteQuestion($event)">
-              <img
-                src="assets/rdf-forms-icons/delete-question.svg"
-                alt="delete questions"
-              />
+              <svg-icon
+                icon="icon-delete-question"
+                class="question-icon"
+              ></svg-icon>
               <p class="questions-delete-btn-text" translate="delete"></p>
             </button>
           </div>
@@ -89,16 +89,16 @@
               (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
               [question]="question"
+              [isPreviewActive]="isPreviewActive"
             ></app-response-type>
           </ng-container>
         </div>
         <div *ngIf="isAskQuestion">
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            alt="delete-icon"
+          <svg-icon
+            icon="icon-delete-icon"
             class="delete-icon"
             (click)="deleteQuestion($event)"
-          />
+          ></svg-icon>
         </div>
       </div>
       <hr class="question-line" *ngIf="!isAskQuestion" />

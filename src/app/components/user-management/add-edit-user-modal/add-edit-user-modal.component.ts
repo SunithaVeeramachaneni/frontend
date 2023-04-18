@@ -34,6 +34,7 @@ import { defaultProfile, superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -102,6 +103,7 @@ export class AddEditUserModalComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private usersService: UsersService,
     private http: HttpClient,
+    private imageCompress: NgxImageCompressService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -225,15 +227,26 @@ export class AddEditUserModalComponent implements OnInit {
 
   getBase64(file) {
     const reader = new FileReader();
-    let base64;
     reader.readAsDataURL(file as Blob);
     reader.onloadend = () => {
-      base64 = reader.result as string;
-      const onlybase64 = base64.split(',')[1];
-      this.userForm.patchValue({
-        profileImage: onlybase64
+      const base64 = reader.result as string;
+      this.resizeImage(base64).then((compressedImage) => {
+        const onlybase64 = compressedImage.split(',')[1];
+        this.userForm.patchValue({
+          profileImage: onlybase64
+        });
       });
     };
+  }
+  async resizeImage(imageBase64) {
+    const compressedImage = await this.imageCompress.compressFile(
+      imageBase64,
+      -1,
+      100,
+      100,
+      240
+    );
+    return compressedImage;
   }
   onFileChange(event: any) {
     const { files } = event.target as HTMLInputElement;

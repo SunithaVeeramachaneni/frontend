@@ -30,6 +30,7 @@ export class AddEditPlantComponent implements OnInit {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';
       this.plantButton = 'Create';
+      this.plantImage = '';
       this.plantForm.get('plantId').enable();
     } else {
       this.plantStatus = 'edit';

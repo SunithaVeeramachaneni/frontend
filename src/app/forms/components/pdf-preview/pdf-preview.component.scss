@@ -28,6 +28,21 @@
       position: relative;
       top: -2px;
     }
+
+    .back-arrow {
+      height: 17px;
+      width: 16px;
+      position: relative;
+      top: 2px;
+    }
+
+    .pdf-picture {
+      height: 20px;
+      width: 20px;
+      position: relative;
+      top: 5px;
+      right: 5px;
+    }
     .downloadPDFBtn {
       background: $white;
       border: 1px solid $blue-main;

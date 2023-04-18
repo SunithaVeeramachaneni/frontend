@@ -16,12 +16,11 @@
                 autocomplete="off"
                 [formControl]="searchPlant"
               />
-              <img
-                [src]="filterIcon"
+              <svg-icon
                 matSuffix
-                alt="Open Filter"
+                icon="icon-filterIcon"
                 class="filter-icon"
-              />
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -47,11 +46,11 @@
               class="menu-buttons"
               *appCheckUserHasPermission="[perms.createPlant]"
             >
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                matSuffix
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>

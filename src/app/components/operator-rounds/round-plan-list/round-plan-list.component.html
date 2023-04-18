@@ -24,15 +24,15 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
-          <img
-            [src]="filterIcon"
-            matSuffix
+
+          <svg-icon
+            icon="icon-filterIcon"
             cdkOverlayOrigin
             #trigger="cdkOverlayOrigin"
             (click)="isPopoverOpen = !isPopoverOpen"
-            alt="Open Filter"
+            matSuffix
             class="filter-icon"
-          />
+          ></svg-icon>
         </mat-form-field>
       </span>
     </div>
