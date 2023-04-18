@@ -521,7 +521,7 @@ button.mat-menu-item {
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-  background-color: #637bfe;
+  background-color: #637bfe !important;
 }
 
 .mat-checkbox-checked.mat-accent.mat-checkbox-disabled .mat-checkbox-background,

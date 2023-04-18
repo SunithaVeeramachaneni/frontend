@@ -1,10 +1,6 @@
 <span class="table-field">
   <button class="add-column-btn" (click)="addTab()">
-    <img
-      src="assets/rdf-forms-icons/add-column.svg"
-      alt="add column"
-      class="add-column-icon"
-    />
+    <svg-icon icon="icon-add-column" class="add-column-icon"></svg-icon>
     <span class="add-column-text" translate="addColumn"></span>
   </button>
 
@@ -34,11 +30,7 @@
           [disabled]="tabs.length === 1"
           (click)="removeTab(index)"
         >
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            alt="delete icon"
-            class="delete-icon"
-          />
+          <svg-icon icon="icon-delete-icon" class="delete-icon"></svg-icon>
         </button>
         <span class="labels" translate="columnName"></span>
         <input type="text" name="column" class="input-field" />
