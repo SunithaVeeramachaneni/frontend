@@ -6,7 +6,11 @@
     (change)="onChartVarientChange($event)"
     style="margin: 0 0 7px 0"
   >
-    <mat-button-toggle value="bar_y" [disabled]="report.groupBy?.length === 0">
+    <mat-button-toggle
+      value="bar_y"
+      [disabled]="report.groupBy?.length === 0"
+      matTooltip="Column Chart"
+    >
       <svg-icon
         icon="icon-bar_chart"
         class="chart-icons"
@@ -18,7 +22,11 @@
         *ngIf="f.chartVarient.value === 'bar_y'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle value="bar_x" [disabled]="report.groupBy?.length === 0">
+    <mat-button-toggle
+      value="bar_x"
+      [disabled]="report.groupBy?.length === 0"
+      matTooltip="Bar Chart"
+    >
       <svg-icon
         icon="icon-column_chart"
         class="chart-icons"
@@ -62,7 +70,11 @@
         *ngIf="f.chartVarient.value === 'stacked_bar_x'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle value="line_x" [disabled]="report.groupBy?.length === 0">
+    <mat-button-toggle
+      value="line_x"
+      [disabled]="report.groupBy?.length === 0"
+      matTooltip="Area Chart"
+    >
       <svg-icon
         icon="icon-line_chart"
         class="chart-icons"
@@ -74,7 +86,11 @@
         *ngIf="f.chartVarient.value === 'line_x'"
       ></svg-icon>
     </mat-button-toggle>
-    <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0">
+    <mat-button-toggle
+      value="pie"
+      [disabled]="report.groupBy?.length === 0"
+      matTooltip="Pie Chart"
+    >
       <svg-icon
         icon="icon-pie_chart"
         class="chart-icons"

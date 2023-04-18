@@ -117,7 +117,6 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     TranslateModule.forChild({})
   ],
   exports: [
-    DragDropModule,
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,
@@ -131,7 +130,6 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     BackgroundComponent,
-    QuillMaterialComponent,
     SvgIconComponent
   ],
   providers: [DatePipe]
