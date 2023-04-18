@@ -49,7 +49,6 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { QuillMaterialComponent } from './components/quill-material/quill-material.component';
 import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
@@ -80,7 +79,6 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent,
-    QuillMaterialComponent,
     SvgIconComponent,
     FilterComponent,
     CustomRangePanelComponent,
@@ -117,7 +115,6 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     TranslateModule.forChild({})
   ],
   exports: [
-    DragDropModule,
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,
@@ -131,7 +128,6 @@ import { FilterSidePanelComponent } from './components/filter-side-panel/filter-
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     BackgroundComponent,
-    QuillMaterialComponent,
     SvgIconComponent
   ],
   providers: [DatePipe]

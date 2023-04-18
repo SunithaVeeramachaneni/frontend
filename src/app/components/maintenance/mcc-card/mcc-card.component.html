@@ -1,10 +1,28 @@
-<div class="mcc-card-container">
-  <span *ngIf="userInfo$ | async">
-    <div class="p-l-15 p-r-15">
+<span *ngIf="userInfo$ | async">
+  <div class="p-l-15 p-r-15">
+    <span
+      *ngIf="workOrder.priorityText === 'Very High'"
+      class="very-high-priority"
+      >{{ 'veryHigh' | translate }}</span
+    >
+    <span *ngIf="workOrder.priorityText === 'High'" class="high-priority">{{
+      'high' | translate
+    }}</span>
+    <span *ngIf="workOrder.priorityText === 'Medium'" class="medium-priority">{{
+      'medium' | translate
+    }}</span>
+    <span *ngIf="workOrder.priorityText === 'Low'" class="low-priority">{{
+      'low' | translate
+    }}</span>
+    <span
+      *ngIf="
+        workOrder.status === 'unassigned' || workOrder.status === 'assigned'
+      "
+    >
       <span
-        *ngIf="workOrder.priorityText === 'Very High'"
-        class="very-high-priority"
-        >{{ 'veryHigh' | translate }}</span
+        *ngIf="workOrder.kitStatusText === 'Parts Available'"
+        class="parts-available"
+        >{{ 'partsAvailable' | translate }}</span
       >
       <span
         *ngIf="workOrder.kitStatusText === 'Waiting On Parts'"
@@ -112,9 +130,25 @@
         [height]="'20px'"
         style="position: relative; top: -7px; left: 10px"
       >
-      <span *ngIf="workOrder.priorityText === 'Low'" class="low-priority">{{
-        'low' | translate
-      }}</span>
+      </ngx-shimmer-loading>
+    </div>
+    <div
+      *ngIf="workOrder.technician.length !== 0 && !workOrder.isLoading"
+      class="m-t-10 display-flex"
+      [ngClass]="{
+        cursor:
+          workOrder.status === 'assigned' &&
+          checkUserHasPermission('ASSIGN_WORK_ORDERS')
+      }"
+      (click)="workOrder.status === 'assigned' && onAssignPress(workOrder)"
+    >
+      <img
+        *ngIf="workOrder.status !== 'unassigned'"
+        [hidden]="!getImageSrc(workOrder.technician[0].image)"
+        [attr.src]="getImageSrc(workOrder.technician[0].image)"
+        alt=""
+        class="assign-user-image"
+      />
       <span
         *ngIf="workOrder.status !== 'unassigned'"
         class="inprogress-user-name m-l-7"
@@ -123,145 +157,23 @@
         }"
         >{{ workOrder.technician[0].personName }}</span
       >
-        <span
-          *ngIf="workOrder.kitStatusText === 'Parts Available'"
-          class="parts-available"
-          >{{ 'partsAvailable' | translate }}</span
-        >
-        <span
-          *ngIf="workOrder.kitStatusText === 'Waiting On Parts'"
-          class="waiting-on-parts"
-          >{{ 'waitingOnParts' | translate }}</span
-        >
-        <span
-          *ngIf="workOrder.kitStatusText === 'Kit Ready'"
-          class="kit-ready"
-          >{{ 'kitsReady' | translate }}</span
-        ></span
-      >
-      <br />
-
-      <span class="kit-number">{{ workOrder.headerText }}</span>
-      <span class="display-flex">
-        <svg-icon icon="icon-dataIcon" class="list-icons"></svg-icon>
-        <span class="date-priority-label">{{ workOrder.workCenterInfo }} </span>
-      </span>
-      <span class="display-flex">
-        <svg-icon icon="icon-dateIcon" class="list-icons"></svg-icon>
-        <span class="date-priority-label">{{
-          workOrder.dueDate
-            | date: 'dd-MMM-yyyy':'':translateService.currentLang
-        }}</span>
-      </span>
-      <span
-        *ngIf="
-          workOrder.status === 'unassigned' || workOrder.status === 'assigned'
-        "
-        class="display-flex"
-      >
-        <svg-icon icon="icon-timeIcon" class="list-icons"></svg-icon>
-        <span class="date-priority-label">{{ workOrder.estimatedTime }}</span>
-      </span>
-      <span
-        *ngIf="
-          workOrder.status === 'inProgress' || workOrder.status === 'completed'
-        "
-        class="display-flex"
-      >
-        <svg-icon icon="icon-timeIcon" class="list-icons"></svg-icon>
-        <span class="width-100 display-flex">
-          <span class="date-priority-label">{{
-            'actualTime' | translate: { time: workOrder.actualTime }
-          }}</span>
-          <span class="date-priority-label float-right">{{
-            'plannedTime' | translate: { time: workOrder.estimatedTime }
-          }}</span>
-        </span>
-      </span>
-      <mat-progress-bar
-        *ngIf="
-          workOrder.status === 'inProgress' || workOrder.status === 'completed'
-        "
-        mode="determinate"
-        value="{{ workOrder?.timeProgress * 100 }}"
-        class="progress-bar-class"
-      ></mat-progress-bar>
-      <span
-        *ngIf="
-          workOrder.status === 'inProgress' || workOrder.status === 'completed'
-        "
-        class="display-flex"
-      >
-        <svg-icon icon="icon-operationsIcon" class="list-icons"></svg-icon>
-        <span class="date-priority-label"
-          >{{
-            'operationsStatus'
-              | translate
-                : {
-                    completed: workOrder.operationProgress[0],
-                    total: workOrder.operationProgress[1]
-                  }
-          }}
-        </span>
-      </span>
-
-      <mat-progress-bar
-        *ngIf="
-          workOrder.status === 'inProgress' || workOrder.status === 'completed'
-        "
-        mode="determinate"
-        value="{{ workOrder.operationProgress[2] * 100 }}"
-        class="progress-bar-class"
-      ></mat-progress-bar>
-      <div style="width: 100%" *ngIf="workOrder.isLoading">
-        <ngx-shimmer-loading [shape]="'circle'" [width]="'34px'">
-        </ngx-shimmer-loading>
-        <ngx-shimmer-loading
-          [width]="'80%'"
-          [height]="'20px'"
-          style="position: relative; top: -7px; left: 10px"
-        >
-        </ngx-shimmer-loading>
-      </div>
-      <div
-        *ngIf="workOrder.technician.length !== 0 && !workOrder.isLoading"
-        class="m-t-10 display-flex"
-        [ngClass]="{
-          cursor:
-            workOrder.status === 'assigned' &&
-            checkUserHasPermission('ASSIGN_WORK_ORDERS')
-        }"
-        (click)="workOrder.status === 'assigned' && onAssignPress(workOrder)"
+    </div>
+  </div>
+  <div class="text-align-center">
+    <ng-container *appCheckUserHasPermission="[perms.assignWorkOrders]">
+      <button
+        *ngIf="workOrder.status === 'unassigned'"
+        (click)="onAssignPress(workOrder)"
+        class="assign-btn"
       >
         <img
-          *ngIf="workOrder.status !== 'unassigned'"
-          [hidden]="!getImageSrc(workOrder.technician[0].image)"
-          [attr.src]="getImageSrc(workOrder.technician[0].image)"
-          alt=""
-          class="assign-user-image"
+          src="../../../assets/maintenance-icons/assignIcon.svg"
+          class="assign-btn-icon"
         />
-        <span
-          *ngIf="
-            workOrder.status === 'assigned' || workOrder.status === 'inProgress'
-          "
-          class="inprogress-user-name m-l-7"
-          [ngClass]="{ 'assign-user-name': workOrder.status === 'assigned' }"
-          >{{ workOrder.technician[0].personName }}</span
-        >
-      </div>
-    </div>
-    <div class="text-align-center">
-      <ng-container *appCheckUserHasPermission="[perms.assignWorkOrders]">
-        <button
-          *ngIf="workOrder.status === 'unassigned'"
-          (click)="onAssignPress(workOrder)"
-          class="assign-btn"
-        >
-          <svg-icon icon="icon-assignIcon" class="assign-btn-icon"></svg-icon>
-          <span class="assign-btn-text">{{ 'assign' | translate }}</span>
-        </button>
-      </ng-container>
-    </div>
+        <span class="assign-btn-text">{{ 'assign' | translate }}</span>
+      </button>
+    </ng-container>
+  </div>
 
   <div class="text-align-center">
     <button
@@ -323,27 +235,12 @@
             />
             <span class="width-100">
               <span class="date-priority-label">{{
-                workOrder.workCenterInfo
+                operation.estimatedTime
               }}</span>
-            </span>
-            <span class="display-flex">
-              <svg-icon icon="icon-dateIcon" class="list-icons"></svg-icon>
-              <span class="date-priority-label">{{
-                workOrder.dueDate
-                  | date: 'dd-MMM-yyyy':'':translateService.currentLang
-              }}</span>
-            </span>
-            <span class="display-flex">
-              <svg-icon icon="icon-timeIcon" class="list-icons"></svg-icon>
-              <span class="width-100">
-                <span class="date-priority-label">{{
-                  operation.estimatedTime
-                }}</span>
-              </span>
             </span>
           </span>
-        </li>
-      </div>
-    </span>
-  </span>
-</div>
+        </span>
+      </li>
+    </div>
+  </span></span
+>

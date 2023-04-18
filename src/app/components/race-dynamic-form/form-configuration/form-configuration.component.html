@@ -62,15 +62,7 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <<<<<<< HEAD
             <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
-            =======
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
-            >>>>>>> 06e2cffbb11fe846413405c87f22c1474c678e70
           </button>
         </a>
         <br />
@@ -113,7 +105,6 @@
           formStatus !== formConfigurationStatus.published
         "
       >
-        " >
         {{ 'changesPublished' | translate }}
       </div>
       <div
@@ -123,15 +114,8 @@
           !isFormDetailPublished
         "
       >
-        " >
         {{ 'publishingChanges' | translate }}
       </div>
-      <button
-        mat-stroked-button
-        class="import-btn"
-        translate="importBtn"
-        (click)="importQuestions()"
-      ></button>
       <button
         mat-stroked-button
         class="import-btn"
@@ -141,11 +125,11 @@
 
       <button mat-stroked-button class="next-btn">
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
+          <svg-icon
+            icon="icon-upload-white"
             class="publish-btn-icon"
-          />
+          ></svg-icon>
+
           <span class="publish" translate="publishBtn"></span>
 
           <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>

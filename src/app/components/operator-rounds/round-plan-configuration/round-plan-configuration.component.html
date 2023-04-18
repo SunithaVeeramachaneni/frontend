@@ -19,12 +19,6 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <!-- <img
-        src="assets/rdf-forms-icons/plansicon.svg"
-        alt=""
-        width="50"
-        height="50"
-      /> -->
       <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
       <input
         hidden
@@ -185,12 +179,13 @@
                 }}
               </span>
             </ng-template>
-            <button
+            <!-- will be enabled after implementation -->
+            <!-- <button
               mat-stroked-button
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
-            ></button>
+            ></button> -->
           </div>
           <app-builder
             *ngIf="selectedNodeLoadStatus"

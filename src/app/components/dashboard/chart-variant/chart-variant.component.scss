@@ -42,11 +42,16 @@
   ::ng-deep
     .mat-button-toggle-appearance-standard
     .mat-button-toggle-label-content {
-    line-height: 35px !important;
+    line-height: 52px !important;
   }
 
   ::ng-deep mat-error {
     margin: 5px 0;
+  }
+
+  .chart-icons {
+    width: 25px;
+    height: 25px;
   }
 }
 
