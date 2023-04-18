@@ -1,23 +1,34 @@
 <div class="pdfPreview-dialog">
   <div class="dialogHead">
     <button (click)="onCancel()" class="back-btn">
-      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
       <span class="back-btn-text">
-        {{data.selectedForm.name}}
+        {{ data.selectedForm.name }}
       </span>
     </button>
     <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPdf()">
-      <img src="assets/rdf-forms-icons/picture-as-pdf.svg" alt="picture-as-pdf" />
+      <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
       <span translate="download"></span>
     </button>
   </div>
   <div class="dialogContainer">
     <div>
       <div class="pdfPreviewContainer" *ngIf="downloadInProgress">
-        <mat-spinner [diameter]="100" [mode]="'indeterminate'" [strokeWidth]="10"></mat-spinner>
+        <mat-spinner
+          [diameter]="100"
+          [mode]="'indeterminate'"
+          [strokeWidth]="10"
+        ></mat-spinner>
       </div>
-      <pdf-viewer *ngIf="selectedPDFSrc && !downloadInProgress" [src]="selectedPDFSrc" [render-text]="true"
-        [original-size]="false" [zoom]="1.5" [zoom-scale]="'page-fit'" class="pdfPreviewContainer"></pdf-viewer>
+      <pdf-viewer
+        *ngIf="selectedPDFSrc && !downloadInProgress"
+        [src]="selectedPDFSrc"
+        [render-text]="true"
+        [original-size]="false"
+        [zoom]="1.5"
+        [zoom-scale]="'page-fit'"
+        class="pdfPreviewContainer"
+      ></pdf-viewer>
     </div>
   </div>
 </div>

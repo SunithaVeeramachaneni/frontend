@@ -23,6 +23,14 @@
   float: right;
   margin-right: 15px;
   margin-top: 5px;
+
+  ::ng-deep svg {
+    width: 16px !important;
+    height: 16px !important;
+    background-color: transparent;
+    fill: black !important;
+    // all: inherit;
+  }
 }
 
 .cancel-btn {

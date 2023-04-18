@@ -6,13 +6,12 @@
     [attr.id]="'node-' + node.id"
   >
     <div class="left">
-      <img
-        *ngIf="hierarchyMode !== 'asset_hierarchy'"
+      <svg-icon
+        icon="icon-six-dots"
         cdkDragHandle
-        src="assets/rdf-forms-icons/six-dots.svg"
-        alt="six-dots"
         class="question-six-dots"
-      />
+        *ngIf="hierarchyMode !== 'asset_hierarchy'"
+      ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
         <img [src]="node.image" />
         <div class="description">

@@ -22,7 +22,7 @@ import { defaultCategoryName } from '../../../../../app.constants';
 @Component({
   selector: 'app-bulk-upload',
   templateUrl: './bulk-upload.component.html',
-  styleUrls: ['./bulk-upload.component.css']
+  styleUrls: ['./bulk-upload.component.scss']
 })
 export class BulkUploadComponent implements OnInit, OnDestroy {
   public ins = [];
