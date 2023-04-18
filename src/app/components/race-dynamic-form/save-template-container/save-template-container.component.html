@@ -4,6 +4,7 @@
   </span>
   <app-save-template-naming-modal
     *ngIf="!displayConfirm"
+    [placeholderName]="data.formMetadata.name"
     (templateState)="advanceStep($event)"
   ></app-save-template-naming-modal>
   <app-save-template-confirm-modal

@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  BuilderConfigurationActions,
+  FormConfigurationActions
+} from 'src/app/forms/state/actions';
 import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
@@ -52,18 +55,20 @@ export class FormConfigurationService {
     );
 
     this.store.dispatch(
-      FormConfigurationActions.addPage({
+      BuilderConfigurationActions.addPage({
         page,
         pageIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
 
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: page.questions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }
@@ -86,25 +91,28 @@ export class FormConfigurationService {
       sectionQuestionsList
     );
     this.store.dispatch(
-      FormConfigurationActions.addSections({
+      BuilderConfigurationActions.addSections({
         sections,
         questions,
         pageIndex,
         sectionIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updatePageState({
+      BuilderConfigurationActions.updatePageState({
         pageIndex,
-        isOpen: true
+        isOpen: true,
+        subFormId: null
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: questions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }
@@ -128,19 +136,21 @@ export class FormConfigurationService {
         )
       );
     this.store.dispatch(
-      FormConfigurationActions.addQuestions({
+      BuilderConfigurationActions.addQuestions({
         questions: sectionQuestions,
         pageIndex,
         sectionId,
         questionIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }
@@ -248,7 +258,7 @@ export class FormConfigurationService {
     question: Question
   ) {
     this.store.dispatch(
-      FormConfigurationActions.updateCounter({ counter: questionCounter })
+      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
     );
     return {
       id: `Q${questionCounter}`,

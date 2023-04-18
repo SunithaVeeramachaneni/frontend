@@ -7,10 +7,9 @@
   }"
   *ngIf="{
     formMetadata: formMetadata$ | async,
-    authoredFormDetail: authoredFormDetail$ | async,
+    authoredTemplateDetail: authoredTemplateDetail$ | async,
     createOrEditForm: createOrEditForm$ | async,
     formSaveStatus: formSaveStatus$ | async,
-    formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async,
     questionCounter: questionCounter$ | async
   } as props"
@@ -93,7 +92,7 @@
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saved ||
           formStatus !== formConfigurationStatus.draft ||
-          isFormDetailPublished
+          isTemplatePublishing
         "
       >
         {{ 'changesSaved' | translate }}
@@ -102,27 +101,18 @@
         class="save-status"
         [hidden]="
           props.formSaveStatus !== formConfigurationStatus.saving ||
-          isFormDetailPublished
+          isTemplatePublishing
         "
       >
         {{ 'savingChanges' | translate }}
       </div>
       <div
         class="save-status"
-        [hidden]="
-          formDetailPublishStatus !== formConfigurationStatus.published ||
-          formStatus !== formConfigurationStatus.published
-        "
+        [hidden]="formStatus !== formConfigurationStatus.ready"
       >
         {{ 'changesPublished' | translate }}
       </div>
-      <div
-        class="save-status"
-        [hidden]="
-          formDetailPublishStatus !== formConfigurationStatus.publishing ||
-          !isFormDetailPublished
-        "
-      >
+      <div class="save-status" [hidden]="!isTemplatePublishing">
         {{ 'publishingChanges' | translate }}
       </div>
 
@@ -130,15 +120,12 @@
         mat-raised-button
         class="publish-btn"
         (click)="publishFormDetail()"
-        [disabled]="formStatus === 'Published' || isFormDetailPublished"
+        [disabled]="
+          formStatus === formConfigurationStatus.ready || isTemplatePublishing
+        "
       >
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
-            class="publish-btn-icon"
-          />
-          <span class="publish" translate="publishBtn"></span>
+          <span class="publish" translate="markReady"></span>
         </span>
       </button>
     </div>
@@ -288,16 +275,5 @@
     <div class="iphone-width">
       <app-iphone [subFormId]="''"></app-iphone>
     </div>
-  </div>
-</div>
-
-<div *ngIf="openAppSider$ | async as openAppSider">
-  <div *ngIf="openAppSider">
-    <app-import-questions-slider
-      [selectedFormName]="selectedFormName"
-      [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData"
-      (cancelSliderEvent)="cancelSlider($event)"
-    ></app-import-questions-slider>
   </div>
 </div>

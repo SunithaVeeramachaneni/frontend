@@ -253,6 +253,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
+
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
             if (
@@ -388,41 +389,53 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
-        const section = {
-          id: 'S1',
-          name: 'Section',
-          position: 1,
-          isOpen: true
-        };
-        const df = this.formConfigurationService.getDefQues();
-        const questions = new Array(4).fill(0).map((q, index) => {
-          if (index === 0) {
-            return { ...df, name: 'Site Conducted' };
-          }
-          if (index === 1) {
-            return {
-              ...df,
-              name: 'Conducted On',
-              fieldType: 'DT',
-              date: true,
-              time: true
-            };
-          }
-          if (index === 2) {
-            return { ...df, name: 'Performed By' };
-          }
-          if (index === 3) {
-            return { ...df, name: 'Location', fieldType: 'GAL' };
-          }
-        });
-        this.formConfigurationService.addPage(
-          0,
-          1,
-          4,
-          this.sectionIndexes,
-          this.formConf.counter.value,
-          [{ section, questions }]
-        );
+        if (window.history.state.selectedTemplate) {
+          this.store.dispatch(
+            BuilderConfigurationActions.replacePagesAndCounter({
+              pages: JSON.parse(
+                window.history.state.selectedTemplate
+                  .authoredFormTemplateDetails[0].pages
+              ),
+              counter: window.history.state.selectedTemplate.counter
+            })
+          );
+        } else {
+          const section = {
+            id: 'S1',
+            name: 'Section',
+            position: 1,
+            isOpen: true
+          };
+          const df = this.formConfigurationService.getDefQues();
+          const questions = new Array(4).fill(0).map((q, index) => {
+            if (index === 0) {
+              return { ...df, name: 'Site Conducted' };
+            }
+            if (index === 1) {
+              return {
+                ...df,
+                name: 'Conducted On',
+                fieldType: 'DT',
+                date: true,
+                time: true
+              };
+            }
+            if (index === 2) {
+              return { ...df, name: 'Performed By' };
+            }
+            if (index === 3) {
+              return { ...df, name: 'Location', fieldType: 'GAL' };
+            }
+          });
+          this.formConfigurationService.addPage(
+            0,
+            1,
+            4,
+            this.sectionIndexes,
+            this.formConf.counter.value,
+            [{ section, questions }]
+          );
+        }
       }
     });
   }

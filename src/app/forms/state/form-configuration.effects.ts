@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 
-import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
+import {
+  map,
+  catchError,
+  concatMap,
+  mergeMap,
+  tap,
+  switchMap
+} from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   BuilderConfigurationActions,
-  FormConfigurationApiActions,
-  FormConfigurationActions
+  FormConfigurationApiActions
 } from './actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
@@ -219,20 +225,83 @@ export class FormConfigurationEffects {
 
   updateTemplate$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(FormConfigurationActions.updateTemplate),
+      ofType(BuilderConfigurationActions.updateTemplate),
       concatMap((action) =>
-        this.raceDynamicFormService.updateForm$(action).pipe(
-          map(() =>
-            FormConfigurationApiActions.updateFormSuccess({
-              formMetadata: action.formMetadata,
-              formSaveStatus: formConfigurationStatus.saved
+        this.raceDynamicFormService
+          .updateTemplate$(action.formMetadata.id, action.formMetadata)
+          .pipe(
+            map(() =>
+              FormConfigurationApiActions.updateFormSuccess({
+                formMetadata: action.formMetadata,
+                formSaveStatus: formConfigurationStatus.saved
+              })
+            ),
+            catchError((error) => {
+              this.raceDynamicFormService.handleError(error);
+              return of(
+                FormConfigurationApiActions.updateFormFailure({ error })
+              );
             })
-          ),
-          catchError((error) => {
-            this.raceDynamicFormService.handleError(error);
-            return of(FormConfigurationApiActions.updateFormFailure({ error }));
-          })
-        )
+          )
+      )
+    )
+  );
+
+  publishTemplate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BuilderConfigurationActions.publishTemplate),
+      concatMap((action) =>
+        this.raceDynamicFormService
+          .createAuthoredTemplateDetail$(action.formMetadata.id, action.data)
+          .pipe(
+            switchMap(() => {
+              return this.raceDynamicFormService.updateTemplate$(
+                action.formMetadata.id,
+                {
+                  publishedDate: new Date().toISOString()
+                }
+              );
+            }),
+            map(() =>
+              FormConfigurationApiActions.updateFormSuccess({
+                formMetadata: action.formMetadata,
+                formSaveStatus: formConfigurationStatus.saved
+              })
+            ),
+            catchError((error) => {
+              this.raceDynamicFormService.handleError(error);
+              return of(
+                FormConfigurationApiActions.updateFormFailure({ error })
+              );
+            })
+          )
+      )
+    )
+  );
+
+  createAuthoredTemplateDetail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BuilderConfigurationActions.createAuthoredTemplateDetail),
+      concatMap((action) =>
+        this.raceDynamicFormService
+          .createAuthoredTemplateDetail$(action.templateId, action)
+          .pipe(
+            map((authoredFormDetail) =>
+              FormConfigurationApiActions.createAuthoredFromDetailSuccess({
+                authoredFormDetail,
+                formSaveStatus: formConfigurationStatus.saved,
+                isFormCreated: true
+              })
+            ),
+            catchError((error) => {
+              this.raceDynamicFormService.handleError(error);
+              return of(
+                FormConfigurationApiActions.createAuthoredFromDetailFailure({
+                  error
+                })
+              );
+            })
+          )
       )
     )
   );

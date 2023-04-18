@@ -8,18 +8,15 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CellClickActionEvent, FormTableUpdate } from 'src/app/interfaces';
-import { ToastService } from 'src/app/shared/toast';
+import { CellClickActionEvent } from 'src/app/interfaces';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
-import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
+import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-template-list',
@@ -29,10 +26,9 @@ import { TranslateService } from '@ngx-translate/core';
   animations: [slideInOut]
 })
 export class TemplateListComponent implements OnInit {
-  public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
-  status: any[] = ['Draft', 'Published'];
+  status: any[] = ['Draft', 'Ready'];
   filterJson: any[] = [];
   columns: Column[] = [
     {
@@ -221,30 +217,32 @@ export class TemplateListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
-    lastModifiedOn: ''
+    createdBy: ''
   };
   dataSource: MatTableDataSource<any>;
   allTemplates: [];
+  displayedTemplates: any[];
   templatesCount$: Observable<number>;
-  searchForm: FormControl;
+  searchTemplate: FormControl;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((_, i) => i);
-  selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  lastPublishedBy = [];
+  createdBy = [];
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private usersService: UsersService,
     private headerService: HeaderService,
     private translateService: TranslateService,
     private router: Router,
-    private readonly store: Store<State>
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.searchForm = new FormControl('');
+    this.searchTemplate = new FormControl('');
     this.headerService.setHeaderTitle(
       this.translateService.instant('templates')
     );
@@ -256,29 +254,28 @@ export class TemplateListComponent implements OnInit {
           return {
             ...item,
             author: this.usersService.getUserFullName(item.author),
-            lastPublishedBy: this.usersService.getUserFullName(item.author)
+            lastPublishedBy: this.usersService.getUserFullName(
+              item.lastPublishedBy
+            )
           };
         });
-        this.dataSource = new MatTableDataSource(this.allTemplates);
+        this.displayedTemplates = this.allTemplates;
+        this.dataSource = new MatTableDataSource(this.displayedTemplates);
         this.isLoading$.next(false);
+
+        this.initializeFilter();
       });
     });
 
-    this.searchForm.valueChanges
+    this.searchTemplate.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap((res) => {
-          this.isLoading$.next(true);
-          const filteredTemplates = this.allTemplates.filter((item: any) =>
-            item.name.toLocaleLowerCase().startsWith(res.toLocaleLowerCase())
-          );
-          this.dataSource.data = filteredTemplates;
-          this.isLoading$.next(false);
+          this.applySearchAndFilter(res);
         })
       )
       .subscribe(() => this.isLoading$.next(false));
-    this.getFilter();
 
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -287,16 +284,8 @@ export class TemplateListComponent implements OnInit {
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
-      case 'name':
-      case 'description':
-      case 'author':
-      case 'formStatus':
-      case 'lastPublishedBy':
-      case 'publishedDate':
-      case 'responses':
-        this.showTemplateDetail(row);
-        break;
       default:
+        break;
     }
   };
 
@@ -308,10 +297,6 @@ export class TemplateListComponent implements OnInit {
 
       default:
     }
-  };
-
-  handleTableEvent = (event): void => {
-    this.raceDynamicFormService.fetchForms$.next(event);
   };
 
   configOptionsChangeHandler = (event): void => {};
@@ -328,45 +313,90 @@ export class TemplateListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  onCloseViewDetail() {
-    this.selectedForm = null;
-    this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
-  }
-
-  formDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate(['/forms/templates/edit', this.selectedForm.id]);
-  }
-
-  private showTemplateDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
-
-  getFilter() {
+  initializeFilter() {
     this.raceDynamicFormService.getFilter().subscribe((res) => {
       this.filterJson = res;
+
+      const uniqueLastPublishedBy = this.allTemplates
+        .map((item: any) => item.lastPublishedBy)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueLastPublishedBy) {
+        if (item) {
+          this.lastPublishedBy.push(item);
+        }
+      }
+      const uniqueCreatedBy = this.allTemplates
+        .map((item: any) => item.author)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      for (const item of uniqueCreatedBy) {
+        if (item) {
+          this.createdBy.push(item);
+        }
+      }
+      for (const item of this.filterJson) {
+        if (item.column === 'status') {
+          item.items = this.status;
+        } else if (item.column === 'modifiedBy') {
+          item.items = this.lastPublishedBy;
+        } else if (item.column === 'createdBy') {
+          item.items = this.createdBy;
+        }
+      }
     });
   }
 
-  applyFilter(data: any) {
+  applySearchAndFilter(searchTerm: string) {
+    this.isLoading$.next(true);
+    this.displayedTemplates = this.allTemplates
+      .filter((item: any) =>
+        item.name.toLocaleLowerCase().startsWith(searchTerm.toLocaleLowerCase())
+      )
+      .filter((item: any) => {
+        if (
+          this.filter['status'] !== '' &&
+          this.filter['status'] !== item.formStatus
+        ) {
+          return false;
+        } else if (
+          this.filter['modifiedBy'] !== '' &&
+          this.filter['modifiedBy'].indexOf(item.lastPublishedBy) === -1
+        ) {
+          return false;
+        } else if (
+          this.filter['createdBy'] !== '' &&
+          this.filter['createdBy'].indexOf(item.author) === -1
+        ) {
+          return false;
+        }
+        return true;
+      });
+    this.dataSource.data = this.displayedTemplates;
+    this.isLoading$.next(false);
+  }
+
+  updateFilter(data: any) {
     for (const item of data) {
       this.filter[item.column] = item.value;
     }
+    this.applySearchAndFilter(this.searchTemplate.value);
   }
 
   resetFilter() {
     this.filter = {
       status: '',
       modifiedBy: '',
-      authoredBy: '',
-      lastModifiedOn: ''
+      createdBy: ''
     };
+    this.applySearchAndFilter(this.searchTemplate.value);
+  }
+
+  openCreateTemplateModal() {
+    this.dialog.open(TemplateConfigurationModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
   }
 }

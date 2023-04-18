@@ -22,7 +22,7 @@
             type="text"
             [placeholder]="'searchTemplates' | translate"
             autocomplete="off"
-            [formControl]="searchForm"
+            [formControl]="searchTemplate"
           />
           <img
             [src]="filterIcon"
@@ -35,8 +35,9 @@
         </mat-form-field>
         <button
           mat-raised-button
-          translate="createNewTemplate"
+          translate="createNew"
           class="create-new-btn"
+          (click)="openCreateTemplateModal()"
         ></button>
       </span>
     </div>
@@ -45,7 +46,6 @@
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
-        (fetchDataCallback)="handleTableEvent($event)"
         (rowLevelActionHandler)="rowLevelActionHandler($event)"
         (onConfigOptionsChange)="configOptionsChangeHandler($event)"
         (cellClickActionHandler)="cellClickActionHandler($event)"
@@ -53,15 +53,6 @@
       ></cwp-dynamictable>
     </div>
   </div>
-
-  <ng-container *ngIf="menuState">
-    <app-form-detail
-      [@slideInOut]="menuState"
-      (slideInOut)="onCloseViewDetail()"
-      [selectedForm]="selectedForm"
-      (formDetailAction)="formDetailActionHandler($event)"
-    ></app-form-detail>
-  </ng-container>
 
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
@@ -85,7 +76,7 @@
     <app-filter
       [json]="filterJson"
       (close)="isPopoverOpen = false"
-      (apply)="applyFilter($event)"
+      (apply)="updateFilter($event)"
       (reset)="resetFilter()"
     ></app-filter>
   </ng-template>

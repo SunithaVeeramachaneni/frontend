@@ -4,10 +4,11 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent
@@ -26,10 +27,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
-import {
-  BuilderConfigurationActions,
-  FormConfigurationActions
-} from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
   formConfigurationStatus
@@ -68,7 +66,8 @@ export class FormConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -103,6 +102,14 @@ export class FormConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags]
     });
+
+    if (this.data) {
+      this.headerDataForm.patchValue({
+        name: this.data.name,
+        description: this.data.description
+      });
+      this.headerDataForm.markAsDirty();
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -180,17 +187,29 @@ export class FormConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        FormConfigurationActions.createForm({
+        BuilderConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
-            formLogo: 'assets/rdf-forms-icons/formlogo.svg',
-            isTemplate: false
+            formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }
         })
       );
-      this.router.navigate(['/forms/create']);
+      // increment formUsageCount
+      if (this.data) {
+        this.rdfService
+          .updateTemplate$(this.data.id, {
+            formsUsageCount: this.data.formsUsageCount + 1
+          })
+          .subscribe((_) => {
+            this.router.navigate(['/forms/create'], {
+              state: { selectedTemplate: this.data }
+            });
+          });
+      } else {
+        this.router.navigate(['/forms/create']);
+      }
       this.dialogRef.close();
     }
   }

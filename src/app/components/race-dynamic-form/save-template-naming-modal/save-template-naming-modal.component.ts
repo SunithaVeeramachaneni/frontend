@@ -4,7 +4,6 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-save-template-naming-modal',
@@ -12,6 +11,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   styleUrls: ['./save-template-naming-modal.component.scss']
 })
 export class SaveTemplateNamingModalComponent implements OnInit {
+  @Input() placeholderName: string;
   @Output() templateState: EventEmitter<any> = new EventEmitter<any>();
 
   saveTemplateForm = this.fb.group({
@@ -30,7 +30,12 @@ export class SaveTemplateNamingModalComponent implements OnInit {
     private rdfService: RaceDynamicFormService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.saveTemplateForm.patchValue({
+      templateName: `Template - ${this.placeholderName}`
+    });
+    this.saveTemplateForm.markAsDirty();
+  }
 
   processValidationErrors(): boolean {
     const touched = this.saveTemplateForm.get('templateName').touched;

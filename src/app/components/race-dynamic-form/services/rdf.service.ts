@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap, switchMap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -20,7 +20,8 @@ import {
   Count,
   InspectionDetail,
   UserDetails,
-  UsersInfoByEmail
+  UsersInfoByEmail,
+  FormMetadata
 } from './../../../interfaces';
 
 import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
@@ -937,4 +938,80 @@ export class RaceDynamicFormService {
       .pipe(
         map((response) => (response === null ? inspectionDetail : response))
       );
+  };
+
+  fetchAllTemplates$ = () => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '0');
+    params.append('skip', '0');
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  fetchTemplateByName$ = (name: string) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '1');
+    params.append('skip', '0');
+    params.append('name', name);
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  fetchTemplateById$ = (id: string) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.append('limit', '1');
+    params.append('skip', '0');
+    params.append('id', id);
+
+    return this.appService
+      ._getResp(
+        environment.rdfApiUrl,
+        `forms/templates/list?${params.toString()}`
+      )
+      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
+  };
+
+  createTemplate$ = (formMetadata: FormMetadata) => {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/templates/create',
+      {
+        data: formMetadata
+      }
+    );
+  };
+
+  updateTemplate$ = (templateId: string, formMetadata: any) => {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/templates/update/${templateId}`,
+      {
+        data: formMetadata
+      }
+    );
+  };
+
+  createAuthoredTemplateDetail$ = (templateId: string, formDetails: any) => {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      `forms/templates/create/authored/${templateId}`,
+      {
+        data: {
+          formStatus: formDetails.formStatus,
+          pages: JSON.stringify(formDetails.pages),
+          counter: formDetails.counter
+        }
+      }
+    );
+  };
 }

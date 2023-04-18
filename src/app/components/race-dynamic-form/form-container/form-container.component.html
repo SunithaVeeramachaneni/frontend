@@ -1,7 +1,7 @@
-<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="template-list">
   <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
     <div class="dis-flex container-padding">
-      <button class="widgets" (click)="openFormCreationModal()">
+      <button class="widgets" [matMenuTriggerFor]="menu">
         <img
           src="assets/rdf-forms-icons/add-form.svg"
           alt="Create"
@@ -10,6 +10,14 @@
         />
         <span class="widgets-title" translate="createForm"></span>
       </button>
+      <mat-menu #menu="matMenu" backdropClass="template-list">
+        <button mat-menu-item (click)="openCreateFromTemplateModal()">
+          {{ 'createFromTemplate' | translate }}
+        </button>
+        <button mat-menu-item (click)="openFormCreationModal()">
+          {{ 'createNew' | translate }}
+        </button>
+      </mat-menu>
       <button class="widgets" [disabled]="true">
         <img
           src="assets/rdf-forms-icons/import-excel.svg"

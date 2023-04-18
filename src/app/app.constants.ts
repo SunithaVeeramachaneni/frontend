@@ -340,3 +340,57 @@ export const DEFAULT_PDF_BUILDER_CONFIG = {
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';
+export const DEFAULT_TEMPLATE_PAGES = [
+  {
+    name: 'Page',
+    position: 1,
+    isOpen: true,
+    sections: [
+      {
+        id: 'S1',
+        name: 'Section',
+        position: 1,
+        isOpen: true,
+        questions: [
+          {
+            id: 'Q1',
+            sectionId: 'S1',
+            name: '',
+            fieldType: 'TF',
+            position: 1,
+            required: false,
+            enableHistory: false,
+            multi: false,
+            value: 'TF',
+            isPublished: false,
+            isPublishedTillSave: false,
+            isOpen: true,
+            isResponseTypeModalOpen: false,
+            unitOfMeasurement: 'None',
+            rangeMetadata: {}
+          }
+        ]
+      }
+    ],
+    questions: [
+      {
+        id: 'Q1',
+        sectionId: 'S1',
+        name: '',
+        fieldType: 'NF',
+        position: 1,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: '',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      }
+    ],
+    logics: []
+  }
+];

@@ -239,14 +239,20 @@
   "maxTxt": "Max",
   "column": "Column",
   "templateName": "Template Name",
+  "templateDescription": "Template Description",
   "saveTemplateBtn": "Save",
   "saveTemplateNamingModalTitle": "Save Template As",
-  "createNewTemplate": "Create New",
+  "createNew": "Create New",
   "newTemplateTitle": "Confirm New Template",
   "newTemplateMessage": "A new template \"{name}\" will be created and saved.",
   "overwriteTemplateTitle": "Template {name} already exists!",
   "overwriteTemplateMessage": "Do you want to overwrite?",
   "overwriteSaveTemplateBtn": "Yes, Save",
   "templates": "Templates",
-  "searchTemplates": "Search Templates"
+  "searchTemplates": "Search Templates",
+  "markReady": "Mark Ready",
+  "createFromTemplate": "Choose From Template",
+  "selectTemplate": "Select Template",
+  "templateDetailsHeading": "Template Details",
+  "templateDescription": "Template Description"
 }
