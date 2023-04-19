@@ -139,6 +139,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
+
       notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
   }
@@ -255,19 +256,21 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   sendFileToS3(file, params): void {
     const { originalValue, isImage, index } = params;
-    this.roundplanconfiguarationservice.uploadToS3$(file).subscribe((event) => {
-      const value: InstructionsFile = {
-        name: file.name,
-        size: file.size,
-        objectKey: event.message.objectKey,
-        objectURL: event.message.objectURL
-      };
-      if (isImage) {
-        originalValue.images[index] = value;
-      } else {
-        originalValue.pdf = value;
-      }
-    });
+    this.roundplanconfiguarationservice
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
+      .subscribe((event) => {
+        const value: InstructionsFile = {
+          name: file.name,
+          size: file.size,
+          objectKey: event.message.objectKey,
+          objectURL: event.message.objectURL
+        };
+        if (isImage) {
+          originalValue.images[index] = value;
+        } else {
+          originalValue.pdf = value;
+        }
+      });
   }
 
   roundplanFileUploadHandler = (event: Event) => {
