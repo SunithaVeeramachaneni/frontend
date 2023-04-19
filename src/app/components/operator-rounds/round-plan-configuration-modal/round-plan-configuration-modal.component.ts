@@ -40,7 +40,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
-
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
 
 @Component({
@@ -104,6 +104,25 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
 
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      console.log('text:', control.value);
+      const textWithoutBulletPoints = control.value
+        .replace('<p>', '')
+        .replace('</p>', '')
+        .replace('<ul>', '')
+        .replace('</ul>', '')
+        .replace('<li>', '')
+        .replace('</li>', '')
+        .replace('<ol>', '')
+        .replace('</ol>', '');
+      if (textWithoutBulletPoints.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
+  }
+
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
@@ -121,7 +140,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
 
-      notes_attachment: ['', [Validators.maxLength(250)]]
+      notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
   }
 

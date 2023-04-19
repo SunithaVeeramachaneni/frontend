@@ -9,12 +9,39 @@ import {
   SectionQuestions
 } from 'src/app/interfaces';
 import { State } from '../state/builder/builder-state.selectors';
+import { Observable } from 'rxjs';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoundPlanConfigurationService {
-  constructor(private store: Store<State>) {}
+  constructor(private store: Store<State>, private _appService: AppService) {}
+
+  uploadToS3$(roundplanmedia: string, file: Blob): Observable<any> {
+    const roundplandata = new FormData();
+    roundplandata.append('roundplanmedia', roundplanmedia);
+    roundplandata.append('file', file);
+
+    return this._appService._postData(
+      environment.rdfApiUrl,
+      'roundplan_upload',
+      roundplandata
+    );
+  }
+
+  deleteFromS3(objectKey: string): void {
+    const params = new URLSearchParams();
+    params.append('objectKey', encodeURIComponent(objectKey));
+
+    this._appService
+      ._removeData(
+        environment.rdfApiUrl,
+        `forms/instructions_delete?${params.toString()}`
+      )
+      .subscribe();
+  }
 
   addPage(
     pageIndex: number,
