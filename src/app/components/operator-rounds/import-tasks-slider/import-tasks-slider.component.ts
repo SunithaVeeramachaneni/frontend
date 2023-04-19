@@ -33,11 +33,6 @@ import { FormService } from 'src/app/forms/services/form.service';
   styleUrls: ['./import-tasks-slider.component.scss']
 })
 export class ImportTasksSliderComponent implements OnInit {
-  // @Input() selectedFormName$;
-  // @Input() selectedFormData$;
-  // @Input() selectedFormNode$;
-  // @Input() currentFormData$;
-
   hierarcyInput$: Observable<any>;
   selectedFormName;
   selectedFormData;
@@ -47,15 +42,11 @@ export class ImportTasksSliderComponent implements OnInit {
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   constructor(
     public dialogRef: MatDialogRef<ImportTasksSliderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   ngOnInit(): void {
     this.hierarcyInput$ = of(this.data.selectedFormNode);
-    let subFormIds = [];
-    this.data.selectedFormNode.forEach((item) => {
-      subFormIds.push(item.id);
-    });
     this.selectedFormName = this.data.selectedFormName;
     this.selectedFormData = JSON.stringify(this.data.selectedFormData);
   }

@@ -144,19 +144,13 @@ export class ImportTaskModalComponent implements OnInit {
     const selectedRoundPlanData = JSON.parse(
       JSON.stringify(this.selectedRoundPlan)
     );
-    // this.data.selectedFormNode = selectedRoundPlanData.node;
-    // this.data.selectedFormData = selectedRoundPlanData.filteredForm;
-    // console.log(this.data);
-    // selectedRoundPlanData.openImportQuestionsSlider = true;
     const dialogRef = this.dialog.open(ImportTasksSliderComponent, {
       data: {
         selectedFormData: selectedRoundPlanData.filteredForm,
         selectedFormName: selectedRoundPlanData.formName,
-        selectedFormNode: selectedRoundPlanData.node,
-        formId: selectedRoundPlanData.formId
+        selectedFormNode: selectedRoundPlanData.node
       }
     });
-    // this.dialogRef.close(selectedRoundPlanData);
   };
 
   selectListItem(form, index) {
@@ -166,11 +160,14 @@ export class ImportTaskModalComponent implements OnInit {
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
         map((authoredFormDetail) => {
+          console.log(authoredFormDetail);
           const formName = form.name;
+          const node = JSON.parse(authoredFormDetail.hierarchy);
           const filteredForm = authoredFormDetail.subForms;
           let formDetails = {
             filteredForm,
-            formName
+            formName,
+            node
           };
           return formDetails;
           // const pageData = filteredForm.map((page) => {
