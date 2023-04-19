@@ -39,6 +39,7 @@ export class HierarchyAssetsListComponent implements OnInit {
   public locationsCount: number;
   public assetsCount: number;
   public closeIcon = 'assets/img/svg/cancel-icon.svg';
+  public searchedNode;
 
   constructor(
     private assetHierarchyUtil: AssetHierarchyUtil,
@@ -92,6 +93,8 @@ export class HierarchyAssetsListComponent implements OnInit {
         node.uid,
         tempHierarchyList
       );
+
+      this.searchedNode = node.uid;
     }
   }
 
@@ -110,7 +113,7 @@ export class HierarchyAssetsListComponent implements OnInit {
         node?.nodeDescription.toLowerCase().includes(searchInput)
     );
 
-    return this.filteredList || [];
+    return this.filteredList.length ? this.filteredList : ['No Data'];
   };
 
   clearSearchResults() {

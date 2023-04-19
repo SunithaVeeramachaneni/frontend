@@ -55,6 +55,8 @@ export class HierarchyNodeComponent implements OnInit {
     this.viewMode = type;
   }
 
+  @Input() searchedUid;
+
   public selectionMode: string;
   public masterData: HierarchyEntity;
   public isParentCheckedData = {

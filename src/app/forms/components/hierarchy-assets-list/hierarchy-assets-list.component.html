@@ -31,6 +31,11 @@
             *ngFor="let option of filteredOptions$ | async"
             [value]="option"
             class="searchResultOption"
+            [ngStyle]="{
+              height: option === 'No Data' ? '0' : '65px',
+              'padding-top': option === 'No Data' ? '0' : '20px',
+              'padding-bottom': option === 'No Data' ? '0' : '20px'
+            }"
           >
             <div class="nodeContent">
               <img [src]="option.image" />
@@ -69,6 +74,7 @@
           [selectedList]="selectedHierarchyList"
           (checkboxToggleHandler)="handleHierarchyElementChange($event)"
           [mode]="'selectAssets'"
+          [searchedUid]="searchedNode"
         ></app-hierarchy-node>
       </div>
     </div>
