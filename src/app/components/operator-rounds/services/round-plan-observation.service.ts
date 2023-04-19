@@ -23,7 +23,7 @@ export class RoundPlanObservationsService {
   ) {}
 
   getObservations$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: any;
     searchKey: string;
     type: string;
@@ -31,7 +31,7 @@ export class RoundPlanObservationsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('type', queryParams?.type);
     return this.appService
       ._getResp(
@@ -70,7 +70,7 @@ export class RoundPlanObservationsService {
     type: string,
     queryParams: {
       limit?: number;
-      nextToken?: string;
+      next?: string;
     },
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<History[]> {
@@ -157,7 +157,7 @@ export class RoundPlanObservationsService {
     });
     return {
       rows,
-      nextToken: resp?.nextToken,
+      next: resp?.next,
       count: resp?.count
     };
   }

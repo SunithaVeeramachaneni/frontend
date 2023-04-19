@@ -253,7 +253,7 @@ export class ArchivedListComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -262,8 +262,8 @@ export class ArchivedListComponent implements OnInit {
         true
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ rows, next }) => {
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
