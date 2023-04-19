@@ -91,8 +91,6 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { HistoryBottomSheetComponent } from './components/preview/history-bottom-sheet/history-bottom-sheet.component';
-import { MoreMenuComponent } from './components/preview/more-menu/more-menu.component';
 
 @NgModule({
   declarations: [
@@ -124,8 +122,6 @@ import { MoreMenuComponent } from './components/preview/more-menu/more-menu.comp
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
-    HistoryBottomSheetComponent,
-    MoreMenuComponent,
     IphoneComponent,
     ArrayComponent,
     DateComponent,

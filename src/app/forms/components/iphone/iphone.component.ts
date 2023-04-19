@@ -31,6 +31,9 @@ export class IphoneComponent implements OnInit {
   currentPage = 1;
   totalPages = 0;
   currentTime;
+  isOpenBottomSheet = false;
+  isHistoryVisible = false;
+  isOpenHistoryBottomSheet = false;
 
   constructor(private store: Store<State>) {}
 
@@ -72,5 +75,23 @@ export class IphoneComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+  openBottomSheet(isOpenBottomSheet) {
+    this.isOpenBottomSheet = isOpenBottomSheet.isOpen;
+    this.isHistoryVisible = isOpenBottomSheet.isHistoryVisible;
+  }
+
+  closeBottomSheet() {
+    this.isOpenBottomSheet = false;
+  }
+
+  openHistoryBottomSheet() {
+    this.closeBottomSheet();
+    this.isOpenHistoryBottomSheet = true;
+  }
+
+  closeHistoryBottomSheet() {
+    this.isOpenHistoryBottomSheet = false;
   }
 }
