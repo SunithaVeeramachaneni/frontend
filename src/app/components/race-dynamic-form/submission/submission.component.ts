@@ -239,8 +239,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   limit = defaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'out';

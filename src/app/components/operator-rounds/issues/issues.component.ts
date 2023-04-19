@@ -325,7 +325,7 @@ export class IssuesComponent implements OnInit {
       }
     }
   };
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+
   dataSource: MatTableDataSource<any>;
   issues$: Observable<{
     columns: Column[];

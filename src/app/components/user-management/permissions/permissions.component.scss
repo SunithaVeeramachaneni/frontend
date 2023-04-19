@@ -55,10 +55,14 @@
   margin-left: 5px;
 }
 
-.arrow-icons {
+.arrow-icon {
   position: relative;
   top: 2px;
   cursor: pointer;
+  ::ng-deep svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
 }
 
 .permissions-body {

@@ -40,7 +40,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 })
 export class PlantListComponent implements OnInit {
   readonly perms = perms;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   userInfo$: Observable<UserInfo>;
 
   columns: Column[] = [

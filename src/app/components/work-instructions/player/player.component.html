@@ -21,29 +21,28 @@
     </mat-card-header>
     <mat-card-content>
       <div class="display">
-        <img
-          (click)="player.rewind(10)"
-          src="assets/work-instructions-icons/svg/backward10sec.svg"
+        <svg-icon
+          icon="icon-backward10sec"
           class="backward-icon"
-        />
-        <img
-          (click)="play()"
-          src="assets/work-instructions-icons/svg/play_icon.svg"
+          (click)="player.rewind(10)"
+        ></svg-icon>
+        <svg-icon
+          icon="icon-play_icon"
           class="play-icon"
+          (click)="play()"
           [hidden]="this.playerStatus === 'play'"
-        />
-
-        <img
-          (click)="pause()"
-          src="assets/work-instructions-icons/svg/pause_icon.svg"
+        ></svg-icon>
+        <svg-icon
+          icon="icon-pause_icon"
           class="play-icon"
           [hidden]="this.playerStatus === 'pause'"
-        />
-        <img
-          (click)="player.forward(10)"
-          src="assets/work-instructions-icons/svg/forward10sec.svg"
+          (click)="pause()"
+        ></svg-icon>
+        <svg-icon
+          icon="icon-forward10sec"
           class="forward-icon"
-        />
+          (click)="player.forward(10)"
+        ></svg-icon>
       </div>
 
       <plyr

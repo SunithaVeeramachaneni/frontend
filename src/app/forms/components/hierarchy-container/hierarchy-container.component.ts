@@ -59,8 +59,6 @@ export class HierarchyContainerComponent implements OnInit {
   allAssets$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
 
-  closeIcon = 'assets/rdf-forms-icons/close.svg';
-
   masterHierarchyList = [];
 
   filteredHierarchyList = [];

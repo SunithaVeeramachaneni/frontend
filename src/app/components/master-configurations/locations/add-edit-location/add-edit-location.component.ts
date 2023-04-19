@@ -33,11 +33,15 @@ export class AddEditLocationComponent implements OnInit {
       this.locationStatus = 'add';
       this.locationTitle = 'Create Location';
       this.locationButton = 'Create';
+      this.locationImage = '';
     } else {
       this.locationStatus = 'edit';
       this.locationTitle = 'Edit Location';
       this.locationButton = 'Update';
-      this.locationImage = this.locEditData && this.locEditData.image ? this.locEditData.image : this.locationIcon;
+      this.locationImage =
+        this.locEditData && this.locEditData.image
+          ? this.locEditData.image
+          : '';
       const locdata = {
         id: this.locEditData.id,
         image: this.locEditData.image,
@@ -55,14 +59,12 @@ export class AddEditLocationComponent implements OnInit {
     return this.locEditData;
   }
 
-  locationIcon = 'assets/rdf-forms-icons/locationIcon.svg';
-
   errors: ValidationError = {};
   locationForm: FormGroup;
   locations$: Observable<any>;
   locationStatus;
   locationTitle;
-  locationImage = this.locationIcon;
+  locationImage = '';
   locationButton;
 
   parentInformation;
@@ -135,8 +137,9 @@ export class AddEditLocationComponent implements OnInit {
 
   search(value: string) {
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter((parent) =>
-      parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+    return this.parentInformation.filter(
+      (parent) =>
+        parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
     );
   }
 

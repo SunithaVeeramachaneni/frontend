@@ -43,7 +43,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 })
 export class LocationsListComponent implements OnInit {
   readonly perms = perms;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   allParentsLocations: any[] = [];
   columns: Column[] = [
     {
