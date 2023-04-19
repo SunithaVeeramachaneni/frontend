@@ -764,8 +764,5 @@ export class ReportConfigurationComponent implements OnInit {
     }
   };
 
-  getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/dashboard-icons/${imageName}_active.svg`
-      : `assets/dashboard-icons/${imageName}.svg`;
+ 
 }

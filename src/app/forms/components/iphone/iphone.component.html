@@ -7,28 +7,29 @@
     <p class="form-heading" matTooltip="{{ formMetadata.name }}">
       {{ formMetadata.name }}
     </p>
-    <img
+    <svg-icon
       *ngIf="moduleType === 'operator-rounds'"
-      src="/assets/preview/Scan_Asset.svg"
-      alt="scan"
-    />
-    <img
+      icon="icon-Scan_Asset"
+      class="scan-asset"
+    ></svg-icon>
+    <svg-icon
       *ngIf="moduleType === 'forms'"
       class="iphone-more"
-      src="/assets/preview/More.svg"
-      alt="more"
-    />
+      icon="icon-More"
+    ></svg-icon>
   </div>
   <div
     *ngIf="moduleType === 'operator-rounds'"
     class="asset-navigation-container"
   >
     <div class="asset-navigation">
-      <img src="/assets/preview/Arrow_Backward.svg" alt="previous_arrow" />
+      <svg-icon icon="icon-Arrow_Backward" class="backward-arrow"></svg-icon>
       <div class="asset-name">{{ assetLocationName }}</div>
-      <img src="/assets/preview/Arrow_Forward.svg" alt="next_arrow" />
+
+      <svg-icon icon="icon-Arrow_Forward" class="backward-arrow"></svg-icon>
     </div>
-    <img src="/assets/preview/More.svg" alt="more" class="more" />
+
+    <svg-icon class="more" icon="icon-More"></svg-icon>
   </div>
   <div
     class="iphone-preview"
@@ -47,11 +48,16 @@
       (click)="prevPage()"
       [style.visibility]="currentPage !== 1 ? 'visible' : 'hidden'"
     >
-      <img
+      <!-- <img
         src="/assets/preview/Back_Page.svg"
         alt="front-page"
         class="back-page-svg"
-      />
+      /> -->
+      <svg-icon
+        class="back-page-svg"
+        icon="icon-Back_Page"
+        class="back-page-svg"
+      ></svg-icon>
       <div class="text-previous">
         <span translate="page"></span> {{ currentPage - 1 }}
       </div>
@@ -70,11 +76,16 @@
       <div class="text-next">
         <span translate="page"></span> {{ currentPage + 1 }}
       </div>
-      <img
+      <!-- <img
         src="/assets/preview/Back_Page.svg"
         alt="front-page"
         class="front-page-svg"
-      />
+      /> -->
+      <svg-icon
+        class="front-page-svg"
+        icon="icon-Back_Page"
+        class="front-page-svg"
+      ></svg-icon>
     </button>
   </div>
 </div>

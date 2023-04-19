@@ -17,7 +17,7 @@ export class ResponseTypeButtonComponent implements OnInit {
   ngOnInit(): void {}
 
   getFieldTypeImage(type) {
-    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
+    return type ? `icon-${type}` : null;
   }
 
   getFieldTypeDescription(type) {

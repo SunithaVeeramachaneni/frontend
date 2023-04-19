@@ -32,14 +32,6 @@
             *appCheckUserHasPermission="[perms.createPlant, perms.importPlants]"
           ></button>
           <mat-menu #createMenu="matMenu">
-            <!-- <button mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
-              <span translate="uploadExcel"></span>
-            </button> -->
             <button
               mat-menu-item
               (click)="addManually()"
@@ -55,24 +47,6 @@
             </button>
           </mat-menu>
 
-          <!-- <button
-            mat-raised-button
-            [matMenuTriggerFor]="moreMenu"
-            class="more-btn"
-            *appCheckUserHasPermission="[perms.importLocations]"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #moreMenu="matMenu">
-          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
-              <span translate="downloadTemplate"></span>
-            </button>
-          </mat-menu> -->
           <input id="upload" hidden type="file" />
         </div>
       </div>
