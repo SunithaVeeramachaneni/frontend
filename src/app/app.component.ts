@@ -592,9 +592,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/sidebar-icons/${imageName}-white.svg`
-      : `assets/sidebar-icons/${imageName}-gray.svg`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
+ 
 
   selectedListElement(title) {
     this.menuOpenClose = false;

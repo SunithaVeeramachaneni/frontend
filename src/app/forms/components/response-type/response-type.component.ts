@@ -145,7 +145,7 @@ export class ResponseTypeComponent implements OnInit {
   }
 
   getFieldTypeImage(type) {
-    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
+    return type ? `icon-${type}` : null;
   }
 
   selectFieldType(fieldType) {

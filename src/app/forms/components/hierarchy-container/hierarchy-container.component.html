@@ -25,12 +25,11 @@
           activeBtn: hierarchyMode === 'asset_hierarchy'
         }"
       >
-        <img
-          [src]="
-            getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')
-          "
-          class="toggle-btn-icon"
-        />
+       
+        <svg-icon
+        [icon]="getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')"
+        class="toggle-btn-icon"
+      ></svg-icon>
       </mat-button-toggle>
       <mat-button-toggle
         value="route_plan"
@@ -39,10 +38,10 @@
           activeBtn: hierarchyMode === 'route_plan'
         }"
       >
-        <img
-          [src]="getImage('round-plan', hierarchyMode === 'route_plan')"
+        <svg-icon
+          [icon]="getImage('round-plan', hierarchyMode === 'route_plan')"
           class="toggle-btn-icon"
-        />
+        ></svg-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
     <span *ngIf="hierarchy.length">

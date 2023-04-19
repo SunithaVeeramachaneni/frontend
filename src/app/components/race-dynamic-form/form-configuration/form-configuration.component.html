@@ -130,26 +130,16 @@
         (click)="openSaveTemplateDialog()"
       ></button>
 
-      <button mat-stroked-button class="next-btn">
-        <span>
-          <svg-icon
-            icon="icon-upload-white"
-            class="publish-btn-icon"
-          ></svg-icon>
-
-          <span class="publish" translate="publishBtn"></span>
-
-          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
-        </span>
-      </button>
+      <button
+        mat-stroked-button
+        class="next-btn"
+        translate="next"
+        (click)="goToPDFBuilderConfiguration()"
+      ></button>
     </div>
   </div>
   <div class="dis-flex form">
     <div class="questions-responses-width">
-      <app-builder
-        [selectedNode]="selectedNode"
-        [counter]="formConfiguration.get('counter').value"
-      ></app-builder>
       <app-builder
         [selectedNode]="selectedNode"
         [counter]="formConfiguration.get('counter').value"
