@@ -1,11 +1,11 @@
 <div id="openSlider">
   <mat-card>
     <div>
-      <img
-        class="close-img"
+      <svg-icon
+        icon="icon-back-close"
         (click)="cancelForm()"
-        src="assets/rdf-forms-icons/close.svg"
-      />
+        class="close-img"
+      ></svg-icon>
       <br />
       <button class="view-report-btn" (click)="navigateView()">
         {{ 'viewReport' | translate }}

@@ -1,132 +1,134 @@
 @import '../../../../scss/colors.scss';
 
-.tabContent {
-  display: flex;
-  padding: 5px 10px;
-  background: $white;
-  flex-direction: column;
-}
+.add-logic-container {
+  .tabContent {
+    display: flex;
+    padding: 5px 10px;
+    background: $white;
+    flex-direction: column;
+  }
 
-.logicValue {
-  margin: 0px 5px;
-  line-height: 1.5;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  border: 1px solid $gray3;
-  padding: 0px 15px;
-  background: $white;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: initial;
-  max-width: 100px;
-  width: inherit;
-}
-
-.logicCondition {
-  display: flex;
-  align-items: center;
-  align-content: center;
-  margin-left: 6px;
-  padding: 0px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: initial;
-  background: none !important;
-  border: none !important;
-  text-decoration: underline !important;
-  color: $blue !important;
-  -webkit-appearance: none !important;
-  padding: 0px !important;
-  max-width: 100px;
-}
-
-.action {
-  margin: 0px 5px;
-  border: 1px solid $white3;
-  border-radius: 6px;
-  padding: 0px 5px;
-  background: $white3;
-}
-.expression {
-  width: 250px;
-  font-size: xx-small;
-}
-
-.logicAskQuestions {
-  width: 100%;
-  background: $white;
-  padding: 5px;
-  .askQuestion {
+  .logicValue {
+    margin: 0px 5px;
+    line-height: 1.5;
     display: flex;
     align-items: center;
-    align-items: center;
-    border-radius: 5px;
-    margin: 5px 0px;
-    border: 1px solid $border-color;
+    align-content: center;
+    border: 1px solid $gray3;
+    padding: 0px 15px;
     background: $white;
-    .questionContainer {
-      width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: initial;
+    max-width: 100px;
+    width: inherit;
+  }
+
+  .logicCondition {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    margin-left: 6px;
+    padding: 0px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: initial;
+    background: none !important;
+    border: none !important;
+    text-decoration: underline !important;
+    color: $blue !important;
+    -webkit-appearance: none !important;
+    padding: 0px !important;
+    max-width: 100px;
+  }
+
+  .action {
+    margin: 0px 5px;
+    border: 1px solid $white3;
+    border-radius: 6px;
+    padding: 0px 5px;
+    background: $white3;
+  }
+  .expression {
+    width: 250px;
+    font-size: xx-small;
+  }
+
+  .logicAskQuestions {
+    width: 100%;
+    background: $white;
+    padding: 5px;
+    .askQuestion {
+      display: flex;
+      align-items: center;
+      align-items: center;
+      border-radius: 5px;
+      margin: 5px 0px;
+      border: 1px solid $border-color;
+      background: $white;
+      .questionContainer {
+        width: 100%;
+      }
     }
   }
-}
 
-.logicRow {
-  // background: rgba(0, 0, 0, 0.12);
-  border-radius: 5px;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
-.six-dots {
-  position: relative;
-  top: 3px;
-  cursor: move;
-}
-
-.mandateAction {
-  display: flex;
-  align-items: center;
-  align-content: center;
-  margin-left: 15px;
-  border: 1px solid $border-color-gray;
-  padding: 4px 15px;
-  background: $gray6;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.actionBtn {
-  color: $blue-main;
-  text-decoration: underline;
-}
-.logicOperator {
-  padding: 5px;
-}
-
-.delete-icon {
-  background: $white;
-  height: 25px;
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-  width: 20px;
-}
-.logicActionMenuItem {
-  line-height: 0.5 !important;
-  height: 35px !important;
-  &:hover {
-    background: $blue3-hover !important;
+  .logicRow {
+    // background: rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
   }
-}
 
-.mat-tab-labels :last-child.mat-tab-label {
-  min-width: 0;
-  padding: 0 12px;
-  color: $blue;
-  opacity: unset;
-}
-.m-l-m30 {
-  margin-left: -30px;
+  .six-dots {
+    position: relative;
+    top: 3px;
+    cursor: move;
+  }
+
+  .mandateAction {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    margin-left: 15px;
+    border: 1px solid $border-color-gray;
+    padding: 4px 15px;
+    background: $gray6;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .actionBtn {
+    color: $blue-main;
+    text-decoration: underline;
+  }
+  .logicOperator {
+    padding: 5px;
+  }
+
+  .delete-icon {
+    background: $white;
+    height: 25px;
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    width: 20px;
+  }
+  .logicActionMenuItem {
+    line-height: 0.5 !important;
+    height: 35px !important;
+    &:hover {
+      background: $blue3-hover !important;
+    }
+  }
+
+  .mat-tab-labels :last-child.mat-tab-label {
+    min-width: 0;
+    padding: 0 12px;
+    color: $blue;
+    opacity: unset;
+  }
+  .m-l-m30 {
+    margin-left: -30px;
+  }
 }

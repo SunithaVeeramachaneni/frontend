@@ -31,7 +31,7 @@ export class AddEditAssetsComponent implements OnInit {
   allLocations$: Observable<any>;
   private assetEditData = null;
   allLocationsData: any = [];
-  allAssetsData: any  = [];
+  allAssetsData: any = [];
   parentType: any = 'location';
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
@@ -39,6 +39,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
+      this.assetImage = '';
       this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';
@@ -52,10 +53,12 @@ export class AddEditAssetsComponent implements OnInit {
         assetsId: this.assetEditData.assetsId,
         model: this.assetEditData.model,
         description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType == 'LOCATION' ? 'location' :'asset',
+        parentType:
+          this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
         parentId: this.assetEditData.parentId
       };
-      this.parentType = this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
+      this.parentType =
+        this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -70,13 +73,12 @@ export class AddEditAssetsComponent implements OnInit {
   get assetsEditData() {
     return this.assetEditData;
   }
-  assetIcon = 'assets/rdf-forms-icons/asset-icon.svg';
   errors: ValidationError = {};
   assetForm: FormGroup;
 
   assetStatus;
   assetTitle;
-  assetImage = 'assets/rdf-forms-icons/asset-icon.svg';
+  assetImage = '';
 
   assetButton;
 
@@ -158,8 +160,9 @@ export class AddEditAssetsComponent implements OnInit {
 
   search(value: string) {
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter((parent) =>
-      parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+    return this.parentInformation.filter(
+      (parent) =>
+        parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
     );
   }
 

@@ -31,6 +31,10 @@
 
   .cancel {
     cursor: pointer;
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 8px;
   }
 
   .add-edit-header {

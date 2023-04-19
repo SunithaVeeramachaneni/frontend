@@ -45,16 +45,31 @@
 
 .assign-btn-icon {
   width: 15px;
+  ::ng-deep svg {
+    width: 16px !important;
+    height: 16px !important;
+    position: relative;
+    top: 2px;
+  }
 }
 
 .assign-btn-text {
   padding-left: 5px;
   color: #000000;
   font-size: 80%;
+  position: relative;
+  top: -2px;
 }
 
 .list-icons {
   width: 18px;
+
+  ::ng-deep svg {
+    width: 16px !important;
+    height: 16px !important;
+    position: relative;
+    top: 2px;
+  }
 }
 
 .display-flex {
@@ -209,7 +224,7 @@
 }
 
 .assign-user-image {
-  width: 46px;
+  width: 36px;
   height: 36px;
   border-radius: 50%;
 }
