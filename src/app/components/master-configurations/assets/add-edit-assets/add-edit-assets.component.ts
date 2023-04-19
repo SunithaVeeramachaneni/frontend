@@ -60,7 +60,7 @@ export class AddEditAssetsComponent implements OnInit {
         plantsID: this.assetEditData.plantsID
       };
       this.parentType =
-        this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
+        this.assetEditData.parentType === 'LOCATION' ? 'location' : 'asset';
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -187,9 +187,7 @@ export class AddEditAssetsComponent implements OnInit {
 
   create() {
     if (this.assetStatus === 'add') {
-      this.assetForm
-        .get('image')
-        .setValue('assets/master-configurations/asset-icon.svg');
+      this.assetForm.get('image').setValue('');
       this.assetService.createAssets$(this.assetForm.value).subscribe((res) => {
         this.createdAssetsData.emit({
           status: this.assetStatus,
@@ -240,7 +238,7 @@ export class AddEditAssetsComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+        parent.name && parent.name.toLowerCase().indexOf(searchValue) !== -1
     );
   }
 

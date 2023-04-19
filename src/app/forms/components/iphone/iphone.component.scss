@@ -39,10 +39,16 @@
     display: inline-block;
     white-space: nowrap;
   }
+}
 
-  .iphone-more {
-    height: 30px;
-  }
+.scan-asset {
+  height: 18px;
+  width: 18px;
+}
+
+.backward-arrow {
+  height: 18px;
+  width: 18px;
 }
 
 .asset-navigation-container {
@@ -68,9 +74,12 @@
       text-overflow: ellipsis;
     }
   }
-  .more {
-    width: 24px;
-  }
+ 
+}
+
+.iphone-more {
+  height: 20px;
+  width: 20px;
 }
 
 .iphone-preview {

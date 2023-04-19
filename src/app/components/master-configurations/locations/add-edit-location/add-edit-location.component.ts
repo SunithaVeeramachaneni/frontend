@@ -142,9 +142,7 @@ export class AddEditLocationComponent implements OnInit {
 
   create() {
     if (this.locationStatus === 'add') {
-      this.locationForm
-        .get('image')
-        .setValue('assets/master-configurations/locationIcon.svg');
+      this.locationForm.get('image').setValue('');
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
@@ -195,7 +193,7 @@ export class AddEditLocationComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+        parent.name && parent.name.toLowerCase().indexOf(searchValue) !== -1
     );
   }
 
