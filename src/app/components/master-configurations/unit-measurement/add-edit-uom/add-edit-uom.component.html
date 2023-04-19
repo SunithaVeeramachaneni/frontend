@@ -2,12 +2,7 @@
   <mat-card>
     <div class="add-edit-header">
       <h1 *ngIf="!unitEditData" class="heading" translate="createUnit"></h1>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
     </div>
     <div class="p-10 add-edit-content">
       <p
@@ -92,20 +87,12 @@
           <p *ngIf="isEditMeasurement" class="unit-type-name">
             {{ unitType }}
             <button class="edit-icon" (click)="editMeasurement()">
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
+              <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
             </button>
           </p>
         </div>
         <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            class="list-icons"
-            alt="delete-icon"
-          />
+          <svg-icon icon="icon-delete-icon" class="list-icons"></svg-icon>
         </span>
       </div>
 
@@ -174,11 +161,7 @@
       </div>
 
       <span *ngIf="unitType" (click)="addNewUmo()" class="add-more-btn">
-        <img
-          src="assets/img/add-new.svg"
-          alt="add-more-icon"
-          class="add-more-icon"
-        />
+        <svg-icon icon="icon-add-new" class="add-more-icon"></svg-icon>
         <label translate="addMore"></label>
       </span>
     </div>

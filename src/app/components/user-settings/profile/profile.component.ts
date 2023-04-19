@@ -13,6 +13,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { LoginService } from '../../login/services/login.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -36,7 +37,8 @@ export class ProfileComponent implements OnInit {
     private toast: ToastService,
     private imageUtils: ImageUtils,
     public dialog: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private imageCompress: NgxImageCompressService
   ) {}
 
   ngOnInit(): void {
@@ -120,14 +122,27 @@ export class ProfileComponent implements OnInit {
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
       base64 = reader.result as string;
-      const profileImage = base64.split(',')[1];
-      this.profileForm.patchValue({
-        profileImage
+      this.resizeImage(base64).then((compressedImage) => {
+        const profileImage = compressedImage.split(',')[1];
+        this.profileForm.patchValue({
+          profileImage
+        });
+        this.profileImage = this.imageUtils.getImageSrc(profileImage);
       });
-      this.profileImage = this.imageUtils.getImageSrc(profileImage);
       this.profileForm.get('profileImage').markAsDirty();
       this.disableRemoveProfile = false;
     };
+  }
+
+  async resizeImage(imageBase64) {
+    const compressedImage = await this.imageCompress.compressFile(
+      imageBase64,
+      -1,
+      100,
+      100,
+      240
+    );
+    return compressedImage;
   }
 
   removePhoto() {

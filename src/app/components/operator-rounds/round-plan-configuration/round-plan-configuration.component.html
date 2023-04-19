@@ -19,12 +19,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img
-        src="assets/rdf-forms-icons/plansicon.svg"
-        alt=""
-        width="50"
-        height="50"
-      />
+      <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
       <input
         hidden
         type="file"
@@ -69,11 +64,7 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
+            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
           </button>
         </a>
         <br />
@@ -227,7 +218,11 @@
       </div>
     </div>
     <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone [subFormId]="selectedNode?.id"></app-iphone>
+      <app-iphone
+        [moduleType]="'operator-rounds'"
+        [subFormId]="selectedNode?.id"
+        [assetLocationName]="selectedNode?.name"
+      ></app-iphone>
     </div>
   </div>
 </div>

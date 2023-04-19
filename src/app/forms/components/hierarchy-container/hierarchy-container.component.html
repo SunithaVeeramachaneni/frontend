@@ -92,14 +92,14 @@
           </mat-option>
         </mat-optgroup>
       </mat-autocomplete>
-      <img
-        [src]="closeIcon"
+
+      <svg-icon
+        icon="icon-close"
         matSuffix
-        alt="close"
         *ngIf="searchHierarchyKey.value.length"
         class="closeIcon"
         (click)="clearSearchResults()"
-      />
+      ></svg-icon>
     </mat-form-field>
   </span>
   <div

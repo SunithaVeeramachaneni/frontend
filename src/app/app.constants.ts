@@ -104,6 +104,11 @@ export const routingUrls = {
     title: 'Dashboard',
     permission: permissions.viewDashboards
   },
+  myDashboard: {
+    url: '/dashboard',
+    title: 'My Dashboard',
+    permission: permissions.viewDashboards
+  },
   reports: {
     url: '/dashboard/reports',
     title: 'Reports',
@@ -120,6 +125,11 @@ export const routingUrls = {
     permission: permissions.viewSparePartsControlCenter
   },
   workInstructions: {
+    url: '/work-instructions',
+    title: 'Work Instructions',
+    permission: permissions.viewWorkInstructions
+  },
+  workInstructionsHome: {
     url: '/work-instructions',
     title: 'Work Instructions Authoring',
     permission: permissions.viewWorkInstructions
@@ -152,6 +162,11 @@ export const routingUrls = {
   userManagement: {
     url: '/user-management',
     title: 'User Management',
+    permission: permissions.viewUsers
+  },
+  activeUsers: {
+    url: '/user-management',
+    title: 'Active Users',
     permission: permissions.viewUsers
   },
   rolesPermissions: {
@@ -285,8 +300,6 @@ export const superAdminIcon =
 export const superAdminText = 'Super Admin';
 export const userRolePermissions = 'UserRolePermissions';
 export const defaultProfile = 'assets/user-management-icons/Vector.png';
-export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
-export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';

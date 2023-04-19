@@ -22,6 +22,7 @@ export class ResponseTypeComponent implements OnInit {
   @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
   @Output() responseTypeCloseEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
+  @Input() isPreviewActive;
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;

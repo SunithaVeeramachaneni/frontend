@@ -1,4 +1,11 @@
-<div class="response-type-modal" [hidden]="isGlobalResponseOpen">
+<div
+  class="response-type-modal"
+  [hidden]="isGlobalResponseOpen"
+  [ngClass]="{
+    'position-left': isPreviewActive === true,
+    'position-right': isPreviewActive === false
+  }"
+>
   <div class="modal-heading">
     <h3 class="response-heading" translate="chooseResponses"></h3>
     <mat-icon (click)="toggleResponseTypeModal($event)" class="cancel-icon">
@@ -9,23 +16,25 @@
   <div class="list-view">
     <div class="main-container">
       <mat-tab-group animationDuration="0ms">
-        <mat-tab [label]="'Responses' | translate">
-          <div class="response-container">
-            <div
-              *ngFor="let fieldType of fieldTypes"
-              (click)="selectFieldType(fieldType)"
-              class="response-field-types"
-              [ngClass]="{
-                active: fieldType.type === question.fieldType
-              }"
-            >
-              <img
-                [src]="getFieldTypeImage(fieldType.type)"
-                class="response-type-icons"
-              />&nbsp;
-              <span class="response-type-description">
-                {{ fieldType.description }}
-              </span>
+        <mat-tab [label]="'responseHeading' | translate">
+          <div class="first-tab">
+            <div class="response-container">
+              <div
+                *ngFor="let fieldType of fieldTypes"
+                (click)="selectFieldType(fieldType)"
+                class="response-field-types"
+                [ngClass]="{
+                  active: fieldType.type === question.fieldType
+                }"
+              >
+                <img
+                  [src]="getFieldTypeImage(fieldType.type)"
+                  class="response-type-icons"
+                />&nbsp;
+                <span class="response-type-description">
+                  {{ fieldType.description }}
+                </span>
+              </div>
             </div>
           </div>
           <div *ngIf="question.fieldType === 'RT'">
@@ -37,6 +46,7 @@
         </mat-tab>
         <mat-tab [label]="'Picklist' | translate">
           <div class="picklist-scroll">
+            <p class="orange-color" translate="multipleChoice"></p>
             <div class="multiple-responses">
               <ng-container
                 *ngIf="
@@ -90,11 +100,10 @@
                     class="editBtn"
                     (click)="handleResponses(resp)"
                   >
-                    <img
-                      src="assets/rdf-forms-icons/edit-icon.svg"
-                      alt="edit-icon"
-                      class="edit-icon-img"
-                    />
+                    <svg-icon
+                      icon="icon-edit-icon"
+                      class="edit-icon-img mcq-edit"
+                    ></svg-icon>
                   </button>
                 </div>
               </ng-container>
@@ -107,10 +116,7 @@
                 </div>
               </ng-template>
               <button class="add-new-btn" (click)="handleResponses()">
-                <img
-                  class="add-more-icon"
-                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
-                />
+                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
                 <span translate="addMore"></span>
               </button>
             </div>
@@ -137,23 +143,19 @@
                     mat-flat-button
                     (click)="handleEditGlobalResponse(response)"
                   >
-                    <img
-                      src="assets/rdf-forms-icons/edit-icon.svg"
-                      alt="edit-icon"
+                    <svg-icon
+                      icon="icon-edit-icon"
                       class="edit-icon-img"
-                    />
+                    ></svg-icon>
                   </button>
                 </mat-chip-list>
               </div>
 
               <button
                 class="add-new-btn add-btn-margin"
-                (click)="handleResponses()"
+                (click)="handleGlobalResponsesToggle()"
               >
-                <img
-                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
-                  class="add-more-icon"
-                />
+                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
                 <span translate="addMore"></span>
               </button>
             </div>
@@ -166,7 +168,21 @@
             </div>
           </div>
         </mat-tab>
-        <!-- <mat-tab [label]="'Masterdata' | translate" disabled></mat-tab> -->
+        <!-- will be implemented later -->
+        <!-- <mat-tab [label]="'masterData' | translate">
+          <div class="masterdata-container">
+            <div *ngFor="let response of masterData">
+              <div
+                class="p-5 cursor-pointer"
+                (click)="openGlobalMasterDataSlider(response)"
+              >
+                <span class="response">{{ response }}</span>
+                <mat-icon class="arrow">keyboard_arrow_right</mat-icon>
+              </div>
+              <hr class="line" />
+            </div>
+          </div>
+        </mat-tab> -->
       </mat-tab-group>
     </div>
   </div>
