@@ -161,7 +161,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
     section.questions.forEach((t) => (t.checked = checked));
   }
 
-  fewSectionComplete(section, page) {
+  checkedSectionCount(section, page) {
     const checkedCount = section.questions.filter((p) => p.checked).length;
     const countOfPageChecked = page.sections.filter((p) => p.checked).length;
 

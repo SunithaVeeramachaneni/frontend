@@ -41,7 +41,7 @@
           {{ page.name }} {{ page.position }}
         </p>
         <div *ngIf="page.isOpen === true">
-          <div *ngFor="let section of page.sections">
+          <div *ngFor="let section of page.sections; let i = index">
             <p class="section-div">
               <mat-icon
                 (click)="toggleIsOpen(section)"
@@ -59,7 +59,7 @@
               </mat-icon>
               <mat-checkbox
                 [checked]="section.checked"
-                [indeterminate]="fewSectionComplete(section, page)"
+                [indeterminate]="checkedSectionCount(section, page)"
                 (change)="setAllSectionChecked($event.checked, section)"
               >
               </mat-checkbox>
