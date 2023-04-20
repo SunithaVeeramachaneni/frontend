@@ -42,7 +42,6 @@ export class ResponseTypeComponent implements OnInit {
   });
   formId: string;
   masterData = ['Plants', 'Locations', 'Assets'];
-
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
@@ -154,7 +153,7 @@ export class ResponseTypeComponent implements OnInit {
     if (fieldType.type === 'RT') {
       this.formService.setsliderOpenState(true);
     }
-    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
+    this.responseTypeCloseEvent.emit(true);
   }
 
   handleMCQRepsonseSelection = (responseType, response) => {
@@ -181,11 +180,11 @@ export class ResponseTypeComponent implements OnInit {
     );
   };
   closeResponseType() {
-    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
+    this.responseTypeCloseEvent.emit(true);
   }
 
   toggleResponseTypeModal(value) {
-    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
+    this.responseTypeCloseEvent.emit(true);
   }
 
   handleResponses(response = {}) {
@@ -195,7 +194,7 @@ export class ResponseTypeComponent implements OnInit {
         isOpen: true,
         response
       });
-      this.responseTypeCloseEvent.emit({ closeResponseModal: true });
+      this.responseTypeCloseEvent.emit(true);
     }
   }
 
@@ -232,9 +231,6 @@ export class ResponseTypeComponent implements OnInit {
   quickResponseTypeHandler(event) {}
 
   openGlobalMasterDataSlider(res) {
-    this.responseTypeCloseEvent.emit({
-      closeResponseModal: true,
-      openMasterDataSlider: true
-    });
+    this.responseTypeCloseEvent.emit(true);
   }
 }
