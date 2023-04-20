@@ -148,6 +148,19 @@
   }
 }
 
+.previous-arrow{
+  height: 20px;
+  width: 20px
+}
+
+.more{
+  height: 25px;
+    width: 25px;
+    position: relative;
+    right: 6px;
+    top: 3px;
+}
+
 // media queries
 
 @media (min-width: 1280px) and (max-width: 1400px) {
