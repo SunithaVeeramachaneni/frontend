@@ -69,15 +69,10 @@ export class AssetsService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.next) {
-        params.set('next', queryParams.next);
-      }
+      params.set('limit', `${queryParams.limit}`);
+      params.set('next', queryParams.next);
 
       if (queryParams.searchKey) {
         const filter: GetAssets = {

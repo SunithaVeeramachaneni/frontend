@@ -70,7 +70,6 @@ export class ResponseSetService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
       params.set('limit', `${queryParams.limit}`);
