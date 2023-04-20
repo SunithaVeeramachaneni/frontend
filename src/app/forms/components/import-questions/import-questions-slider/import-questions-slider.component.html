@@ -1,5 +1,6 @@
 <div
-  [ngClass]="{ importQuestions: title === 'forms' }"
+  class="import-questions"
+  [ngClass]="{ 'enable-import-questions': title === 'forms' }"
   *ngIf="{
     sectionIndexes: sectionIndexes$ | async,
     pagesCount: pagesCount$ | async,
@@ -8,13 +9,13 @@
 >
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div class="slider-heading" translate>Import Questions</div>
+      <div class="slider-heading">{{ 'importQuestions' | translate }}</div>
     </mat-card-title>
     <mat-card-content>
       <div class="form-name">
         {{ selectedFormName }}
       </div>
-      <div *ngFor="let page of selectedFormData; let i = index">
+      <div *ngFor="let page of selectedFormData">
         <p>
           <mat-icon
             (click)="toggleIsOpen(page)"
@@ -40,7 +41,7 @@
           {{ page.name }} {{ page.position }}
         </p>
         <div *ngIf="page.isOpen === true">
-          <div *ngFor="let section of page.sections; let j = index">
+          <div *ngFor="let section of page.sections">
             <p class="section-div">
               <mat-icon
                 (click)="toggleIsOpen(section)"
@@ -80,22 +81,20 @@
         </div>
       </div>
     </mat-card-content>
-    <div *ngIf="isFooter">
-      <div class="import-form-footer">
-        <button
-          mat-stroked-button
-          class="cancel-button"
-          (click)="cancel()"
-          translate="cancel"
-        ></button>
-        <button
-          mat-raised-button
-          color="primary"
-          class="use-button"
-          (click)="useForm()"
-          translate="use"
-        ></button>
-      </div>
+    <div *ngIf="isFooter" class="import-form-footer">
+      <button
+        mat-stroked-button
+        class="cancel-button"
+        (click)="cancel()"
+        translate="cancel"
+      ></button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="use-button"
+        (click)="useForm()"
+        translate="use"
+      ></button>
     </div>
   </mat-card>
 </div>

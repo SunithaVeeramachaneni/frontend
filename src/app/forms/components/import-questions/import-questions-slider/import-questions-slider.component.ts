@@ -42,16 +42,16 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    for (const item of this.selectedFormData) {
+    this.selectedFormData.forEach((item) => {
       if (item) {
         item.isOpen = false;
-        for (const sec of item.sections) {
-          if (sec) {
-            sec.isOpen = false;
+        item.sections.forEach((section) => {
+          if (section) {
+            section.isOpen = false;
           }
-        }
+        });
       }
-    }
+    });
 
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes)
