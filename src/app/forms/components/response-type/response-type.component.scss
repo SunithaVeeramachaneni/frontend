@@ -1,14 +1,21 @@
 @import '../../../../scss/colors.scss';
 
+.position-left {
+  right: calc(100vh - 220px);
+}
+
+.position-right {
+  right: 40px;
+}
 .response-type-modal {
   height: calc(100vh - 180px);
   max-height: 380px;
   border-radius: 4px;
-  width: 360px;
+  width: 330px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
   position: fixed;
   top: 130px;
-  background: #ffffff;
+  background: $white;
   z-index: 1000;
 
   .modal-heading {
@@ -43,7 +50,7 @@
   }
 
   ::ng-deep .mat-tab-label {
-    min-width: 120px !important;
+    min-width: 163px !important;
     padding: 0 !important;
   }
 
@@ -86,6 +93,7 @@
     justify-content: flex-start;
     flex-wrap: wrap;
     padding-top: 5px;
+    cursor: pointer;
 
     ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
       margin: 0 !important;
@@ -108,11 +116,13 @@
     width: 20px;
     height: 20px;
     padding: 8px 0px 0px 15px;
+    position: relative;
+    top: 7px;
   }
 
   .response-type-description {
     position: relative;
-    top: -7px;
+    top: 1px;
     font-weight: 500;
     opacity: 0.8;
     font-size: 100%;
@@ -200,8 +210,14 @@
 }
 
 .edit-icon-img {
-  padding: 10px;
   height: 14px;
+  width: 15px;
+}
+
+.mcq-edit {
+  padding: 5px;
+  position: relative;
+  top: 8px;
 }
 
 .global-resp {

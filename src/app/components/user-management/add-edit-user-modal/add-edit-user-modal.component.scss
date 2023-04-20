@@ -24,8 +24,11 @@
   position: absolute;
   left: 52%;
   top: 30%;
-  width: 30px;
   cursor: pointer;
+  ::ng-deep svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
 }
 
 .user-profile-img {
@@ -34,6 +37,15 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
+}
+
+.permissions-cancel-icon {
+  position: relative;
+  right: 12px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
 }
 
 .custom-mat-form-field-white-color {

@@ -29,13 +29,14 @@
     }
 
     .common-filter-icon {
+      cursor: pointer;
       width: 15px;
       height: 15px;
     }
   }
 }
 
-.rounds-list {
+.inspections-list {
   ::ng-deep .table-column {
     width: 20%;
   }
@@ -94,6 +95,11 @@
     top: 175px !important;
     left: 915px !important;
   }
+}
+
+.filter-icon {
+  height: 17px !important;
+  width: 17px !important;
 }
 
 @media (min-width: 1705px) and (max-width: 1820px) {

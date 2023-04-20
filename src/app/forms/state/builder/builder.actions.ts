@@ -30,6 +30,12 @@ export const updateFormMetadata = createAction(
     formSaveStatus: string;
   }>()
 );
+export const updatePDFBuilderConfiguration = createAction(
+  '[Builder Configuration] updatePDFBuilderConfiguration',
+  props<{
+    pdfBuilderConfiguration: any;
+  }>()
+);
 
 export const createFormDetail = createAction(
   '[Builder Configuration] createFormDetail',
@@ -77,6 +83,7 @@ export const updateAuthoredFormDetail = createAction(
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailDynamoDBVersion: number;
+    authoredFormDetailVersion: number;
   }>()
 );
 

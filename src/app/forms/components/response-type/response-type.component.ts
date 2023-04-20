@@ -20,7 +20,9 @@ export class ResponseTypeComponent implements OnInit {
   @Input() question;
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
-  @Output() responseTypeCloseEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() responseTypeCloseEvent: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+  @Input() isPreviewActive;
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
@@ -144,7 +146,7 @@ export class ResponseTypeComponent implements OnInit {
   }
 
   getFieldTypeImage(type) {
-    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
+    return type ? `icon-${type}` : null;
   }
 
   selectFieldType(fieldType) {

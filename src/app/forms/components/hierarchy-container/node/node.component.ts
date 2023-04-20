@@ -33,8 +33,6 @@ export class NodeComponent implements OnInit {
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
-
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   selectedNode: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;

@@ -5,10 +5,11 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'OPERATOR_ROUNDS'"
-      [hidden]="hideRoundDetail"
+      [showPDFDownload]="true"
+      [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
-      (formDetailAction)="roundsDetailActionHandler()"
+      (formDetailAction)="formsDetailActionHandler()"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
@@ -43,15 +44,15 @@
         autocomplete="off"
         [formControl]="searchForm"
       />
-      <img
-        src="assets/maintenance-icons/filterIcon.svg"
-        matSuffix
+
+      <svg-icon
+        icon="icon-filterIcon"
         cdkOverlayOrigin
-        class="common-filter-icon"
-        alt="Open Filter"
         #trigger="cdkOverlayOrigin"
         (click)="isPopoverOpen = !isPopoverOpen"
-      />
+        matSuffix
+        class="filter-icon"
+      ></svg-icon>
     </mat-form-field>
   </span>
   <ng-template
@@ -74,8 +75,8 @@
 </div>
 <ng-container *ngIf="userInfo$ | async">
   <div
-    *ngIf="(rounds$ | async) && (isLoading$ | async) === false"
-    class="rounds-list"
+    *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
+    class="inspections-list"
   >
     <cwp-dynamictable
       [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }"

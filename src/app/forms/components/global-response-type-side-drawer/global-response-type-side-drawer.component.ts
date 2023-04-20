@@ -76,7 +76,6 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       description: new FormControl(''),
       responses: this.fb.array([])
     });
-
     this.responseForm.valueChanges
       .pipe(
         pairwise(),

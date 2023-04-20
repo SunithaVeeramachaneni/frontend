@@ -7,7 +7,7 @@
 >
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
-      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
     </button>
     <h4 class="heading">
       <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
@@ -24,18 +24,15 @@
       <div class="custom-form-field-white-color footer">
         <mat-form-field appearance="outline" class="width-90 margin">
           <input type="text" matInput placeholder="Type" />
-          <img
-            src="assets/rdf-forms-icons/add-attachment-icon.svg"
-            alt="add attachment"
+
+          <svg-icon
+            icon="icon-add-attachment-icon"
             matSuffix
             class="add-attachment-icon"
-          />
+          ></svg-icon>
         </mat-form-field>
-        <img
-          src="assets/rdf-forms-icons/send-message.svg"
-          alt="send message"
-          class="send-message"
-        />
+
+        <svg-icon icon="icon-send-message" class="send-message"></svg-icon>
       </div>
     </div>
     <ng-template #historyLoading>
@@ -44,18 +41,15 @@
         <div class="custom-form-field-white-color footer">
           <mat-form-field appearance="outline" class="width-90 margin">
             <input type="text" matInput placeholder="Type" />
-            <img
-              src="assets/rdf-forms-icons/add-attachment-icon.svg"
-              alt="add attachment"
+
+            <svg-icon
+              icon="icon-add-attachment-icon"
               matSuffix
               class="add-attachment-icon"
-            />
+            ></svg-icon>
           </mat-form-field>
-          <img
-            src="assets/rdf-forms-icons/send-message.svg"
-            alt="send message"
-            class="send-message"
-          />
+
+          <svg-icon icon="icon-send-message" class="send-message"></svg-icon>
         </div>
       </div>
     </ng-template>

@@ -51,14 +51,13 @@
           </mat-option>
         </mat-optgroup>
       </mat-autocomplete>
-      <img
-        [src]="closeIcon"
+      <svg-icon
+        icon="icon-closeIcon"
         matSuffix
-        alt="close"
         *ngIf="searchMasterData.value.length"
         class="closeIcon"
         (click)="clearSearchResults()"
-      />
+      ></svg-icon>
     </mat-form-field>
   </span>
 
