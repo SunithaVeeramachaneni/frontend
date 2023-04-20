@@ -3,7 +3,8 @@
     {{ currentTime }}
   </span>
   <div class="iphone-header">
-    <img src="/assets/preview/Back_Page.svg" alt="previous_arrow" />
+
+    <svg-icon icon="icon-Back_Page" class="previous-arrow" ></svg-icon>
     <p class="form-heading" matTooltip="{{ formMetadata.name }}">
       {{ formMetadata.name }}
     </p>
@@ -49,11 +50,6 @@
       (click)="prevPage()"
       [style.visibility]="currentPage !== 1 ? 'visible' : 'hidden'"
     >
-      <!-- <img
-        src="/assets/preview/Back_Page.svg"
-        alt="front-page"
-        class="back-page-svg"
-      /> -->
       <svg-icon
         class="back-page-svg"
         icon="icon-Back_Page"
@@ -77,11 +73,6 @@
       <div class="text-next">
         <span translate="page"></span> {{ currentPage + 1 }}
       </div>
-      <!-- <img
-        src="/assets/preview/Back_Page.svg"
-        alt="front-page"
-        class="front-page-svg"
-      /> -->
       <svg-icon
         class="front-page-svg"
         icon="icon-Back_Page"

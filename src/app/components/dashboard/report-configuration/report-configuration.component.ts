@@ -764,5 +764,4 @@ export class ReportConfigurationComponent implements OnInit {
     }
   };
 
- 
 }
