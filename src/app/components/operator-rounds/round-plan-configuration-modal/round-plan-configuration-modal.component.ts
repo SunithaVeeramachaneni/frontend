@@ -42,6 +42,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
+import { RoundPlanFile } from 'src/app/interfaces/master-data-management/round-plan';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -74,7 +75,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   formMetadata: FormMetadata;
   moduleName: string;
   form: FormGroup;
-
+  options: any = [];
+  selectedOption: string;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -139,9 +141,18 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-
+      value: [''],
       notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
+
+    this.roundplanconfiguarationservice
+      .fetchPlant()
+      .subscribe((plants: any) => {
+        console.log('plant:', plants);
+        plants.items.forEach((plant) => {
+          this.options.push(plant.name);
+        });
+      });
   }
 
   add(event: MatChipInputEvent): void {
@@ -256,24 +267,43 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   sendFileToS3(file, params): void {
     const { originalValue, isImage, index } = params;
-    this.roundplanconfiguarationservice
-      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
-      .subscribe((event) => {
-        const value: InstructionsFile = {
-          name: file.name,
-          size: file.size,
-          objectKey: event.message.objectKey,
-          objectURL: event.message.objectURL
-        };
-        if (isImage) {
-          originalValue.images[index] = value;
-        } else {
-          originalValue.pdf = value;
-        }
-      });
+    console.log('sendFile to S3', file);
+    this.roundplanconfiguarationservice.uploadToS3$(file).subscribe((event) => {
+      const value: RoundPlanFile = {
+        name: file.name,
+        size: file.size
+        // objectKey: event.message.objectKey,
+        // objectURL: event.message.objectURL
+      };
+      // if (isImage) {
+      //   originalValue.images[index] = value;
+      // } else {
+      //   originalValue.pdf = value;
+      // }
+    });
   }
 
   roundplanFileUploadHandler = (event: Event) => {
+    let base64: string;
+    console.log('event:', event.target);
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const image = base64.split(',')[1];
+      const value = {
+        name: files[0].name,
+        size: (files[0].size / 1024).toFixed(2),
+        base64: image,
+        pdf: false,
+        isImage: true,
+        index: 0
+      };
+      console.log('value:', value);
+      this.headerDataForm.get('value').setValue(value);
+    };
+
     const target = event.target as HTMLInputElement;
     const allowedFileTypes: string[] = [
       'image/jpeg',
@@ -282,8 +312,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       'application/pdf'
     ];
 
-    Array.from(target.files).forEach((file) => {
-      const originalValue = this.headerDataForm.get('value').value;
+    const files1 = Array.from(target.files);
+    const originalValue = this.headerDataForm.get('value');
+    let imageIndex = 0;
+    for (const file of files1) {
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
@@ -291,51 +323,61 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         });
         return;
       }
-
-      if (file.type === 'application/pdf') {
-        if (originalValue.pdf === null) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: false
-          });
-        }
-      } else {
-        const index = originalValue.images.findIndex((image) => image === null);
-        if (index !== -1) {
-          this.sendFileToS3(file, {
-            originalValue,
-            isImage: true,
-            index
-          });
-        }
-      }
-      console.log(originalValue);
-      console.log(' original value ');
-    });
-  };
-
-  instructionsFileDeleteHandler(index: number) {
-    const originalValue = this.headerDataForm.get('value').value;
-    if (index < 3) {
-      this.roundplanconfiguarationservice.deleteFromS3(
-        originalValue.images[index].objectKey
-      );
-      originalValue.images[index] = null;
-      originalValue.images = this.imagesArrayRemoveNullGaps(
-        originalValue.images
-      );
-    } else {
-      this.roundplanconfiguarationservice.deleteFromS3(
-        originalValue.pdf.objectKey
-      );
-      originalValue.pdf = null;
+      // console.log('value:', value);
+      // console.log(file + 'file');
+      // console.log(originalValue + ':originalvalue');
+      const isImage = true;
+      this.sendFileToS3(file, {
+        originalValue,
+        isImage,
+        imageIndex
+      });
+      // if (file.type === 'application/pdf') {
+      //   if (originalValue.pdf === null) {
+      //     this.sendFileToS3(file, {
+      //       originalValue,
+      //       isImage: false
+      //     });
+      //   }
+      // } else {
+      //   const index = originalValue.images.findIndex(
+      //     (imageFile) => imageFile === null
+      //   );
+      //   if (index !== -1) {
+      //     this.sendFileToS3(file, {
+      //       originalValue,
+      //       isImage: true,
+      //       index
+      //     });
+      //   }
+      // }
+      imageIndex++;
     }
-    // this.headerDataForm.get('value').setValue(originalValue);
-    // this.instructionsUpdateValue();
-  }
+    // console.log(originalValue);
 
-  imagesArrayRemoveNullGaps(images) {
-    const nonNullImages = images.filter((image) => image !== null);
-    return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
-  }
+    // instructionsFileDeleteHandler(index: number): {
+    //   const originalValue = this.headerDataForm.get('value').value;
+    //   if (index < 3) {
+    //     this.roundplanconfiguarationservice.deleteFromS3(
+    //       originalValue.images[index].objectKey
+    //     );
+    //     originalValue.images[index] = null;
+    //     originalValue.images = this.imagesArrayRemoveNullGaps(
+    //       originalValue.images
+    //     );
+    //   } else {
+    //     this.roundplanconfiguarationservice.deleteFromS3(
+    //       originalValue.pdf.objectKey
+    //     );
+    //     originalValue.pdf = null;
+    //   }
+    //   // this.headerDataForm.get('value').setValue(originalValue);
+    //   // this.instructionsUpdateValue();
+    // }
+
+    // imagesArrayRemoveNullGaps(images) {
+    //   const nonNullImages = images.filter((image) => image !== null);
+    //   return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+    // }
+  };
 }

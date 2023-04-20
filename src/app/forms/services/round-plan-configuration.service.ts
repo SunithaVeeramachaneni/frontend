@@ -19,14 +19,14 @@ import { environment } from 'src/environments/environment';
 export class RoundPlanConfigurationService {
   constructor(private store: Store<State>, private _appService: AppService) {}
 
-  uploadToS3$(roundplanmedia: string, file: Blob): Observable<any> {
+  uploadToS3$(file: Blob): Observable<any> {
     const roundplandata = new FormData();
-    roundplandata.append('roundplanmedia', roundplanmedia);
+    // roundplandata.append('roundplanmedia', roundplanmedia);
     roundplandata.append('file', file);
 
     return this._appService._postData(
-      environment.rdfApiUrl,
-      'roundplan_upload',
+      environment.operatorRoundsApiUrl,
+      'round-plan/imageAndPdfUpload',
       roundplandata
     );
   }
@@ -160,6 +160,13 @@ export class RoundPlanConfigurationService {
         isResponseTypeModalOpen: false,
         subFormId
       })
+    );
+  }
+
+  fetchPlant() {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'plants/list'
     );
   }
 
