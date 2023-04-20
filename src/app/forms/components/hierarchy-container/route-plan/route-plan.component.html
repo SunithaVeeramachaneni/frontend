@@ -15,7 +15,12 @@
             class="question-six-dots"
           ></svg-icon>
           <div class="nodeContent" class="nodeContent">
-            <img [src]="node.image" />
+            <svg-icon
+          [icon]="
+            node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'
+          "
+          class="node-icon"
+        ></svg-icon>
             <div class="description">
               <span class="title">{{ node.name }}</span>
               <span class="subTitle">

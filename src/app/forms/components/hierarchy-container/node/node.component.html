@@ -13,7 +13,10 @@
         *ngIf="hierarchyMode !== 'asset_hierarchy'"
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
-        <img [src]="node.image" />
+        <svg-icon
+          [icon]="node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'"
+          class="node-icon"
+        ></svg-icon>
         <div class="description">
           <span class="title">{{ node.name }}</span>
           <span class="subTitle">
