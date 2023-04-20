@@ -90,4 +90,8 @@ export class FormService {
       )
       .subscribe();
   }
+
+  getTable(): Observable<any[]> {
+    return this._appService._getResp('http://localhost:3000/', 'tables');
+  }
 }
