@@ -44,7 +44,6 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class ResponsesListComponent implements OnInit {
   readonly perms = perms;
-  public filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   public userInfo$: Observable<UserInfo>;
 
   public allResponseSets: any[] = [];

@@ -211,10 +211,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     this.setAxisNames();
   };
 
-  getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/dashboard-icons/${imageName}_active.svg`
-      : `assets/dashboard-icons/${imageName}.svg`;
 
   setAxisNames = () => {
     this.isStacked = false;

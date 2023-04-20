@@ -49,16 +49,14 @@
                 routerLinkActive="active"
                 (click)="selectedListElement(menuitem.title)"
               >
-                <img
-                  [src]="
-                    getImage(
-                      menuitem.imageName,
-                      selectedMenu === menuitem.title
-                    )
-                  "
-                  class="sidebar-icons"
-                  [alt]="menuitem.title"
-                />
+              <svg-icon
+                [icon]=" getImage(
+                  menuitem.imageName,
+                  selectedMenu === menuitem.title
+                )
+              "
+              class="sidebar-icons"
+              ></svg-icon>
                 <span class="menu-title" *ngIf="menuOpenClose">
                   {{ menuitem.title }}
                 </span>

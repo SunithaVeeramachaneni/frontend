@@ -27,10 +27,10 @@
                   active: fieldType.type === question.fieldType
                 }"
               >
-                <img
-                  [src]="getFieldTypeImage(fieldType.type)"
+                <svg-icon
+                  [icon]="getFieldTypeImage(fieldType.type)"
                   class="response-type-icons"
-                />&nbsp;
+                ></svg-icon>&nbsp;
                 <span class="response-type-description">
                   {{ fieldType.description }}
                 </span>
