@@ -75,10 +75,12 @@
   </div>
 
   <ng-template #nonMCQFields>
-    <img
-      [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
-      class="response-type-icons"
-    />&nbsp;
+    <svg-icon
+                  [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
+                  class="response-type-icons"
+                ></svg-icon>
+    
+    &nbsp;
     <span class="response-type-text">
       {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
     </span>

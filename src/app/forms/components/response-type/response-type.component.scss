@@ -116,11 +116,13 @@
     width: 20px;
     height: 20px;
     padding: 8px 0px 0px 15px;
+    position: relative;
+    top: 7px;
   }
 
   .response-type-description {
     position: relative;
-    top: -7px;
+    top: 1px;
     font-weight: 500;
     opacity: 0.8;
     font-size: 100%;

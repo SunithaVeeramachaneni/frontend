@@ -334,7 +334,6 @@ export class ActionsComponent implements OnInit {
       }
     }
   };
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   dataSource: MatTableDataSource<any>;
   actions$: Observable<{
     columns: Column[];

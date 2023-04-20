@@ -126,10 +126,10 @@
         [ngClass]="{ 'preview-btn-active': isPreviewActive }"
       >
         <span>
-          <img
-            [src]="getImage('preview', isPreviewActive)"
+          <svg-icon
+            [icon]="getImage('preview', isPreviewActive)"
             class="preview-btn-icon"
-          />
+          ></svg-icon>
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
@@ -202,12 +202,13 @@
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <button
+          <!-- will be enabled after implementation -->
+          <!-- <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
-          ></button>
+          ></button> -->
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"
@@ -216,8 +217,8 @@
         ></app-builder>
       </div>
     </div>
-    <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone
+    <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
+      <app-iphone *ngIf="selectedNode?.id"
         [moduleType]="'operator-rounds'"
         [subFormId]="selectedNode?.id"
         [assetLocationName]="selectedNode?.name"
