@@ -191,10 +191,9 @@
           >
             <div class="messageHead">
               <span class="titleRow">
-                <img
-                  class="titleRowIcon"
-                  [src]="getImage(rangeMetadataForm.get('minAction').value)"
-                />
+                <svg-icon class="titleRowIcon"
+                [icon]="getImage(rangeMetadataForm.get('minAction').value)">
+                   </svg-icon>
                 <span class="title">
                   {{ rangeMetadataForm.get('minAction').value }}
                 </span>
@@ -261,12 +260,9 @@
           >
             <div class="messageHead">
               <span class="titleRow">
-                <img
-                  class="titleRowIcon"
-                  [src]="getImage(rangeMetadataForm.get('maxAction').value)"
-                />
-                <!-- <mat-icon >warning</mat-icon
-                > -->
+                <svg-icon   class="titleRowIcon"
+                [icon]="getImage(rangeMetadataForm.get('maxAction').value)">
+                 </svg-icon>
                 <span class="title">{{
                   rangeMetadataForm.get('maxAction').value
                 }}</span>

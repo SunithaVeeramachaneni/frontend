@@ -5,6 +5,11 @@
   user-select: none;
 }
 
+.back-arrow {
+  height: 17px;
+  width: 17px;
+}
+
 .form-header-modal {
   background: $white;
   overflow: hidden;
@@ -155,6 +160,8 @@
       .add-attachment-icon {
         color: $blue-main;
         cursor: pointer;
+        height: 20px;
+        width: 20px;
       }
 
       .margin {
@@ -165,6 +172,8 @@
         position: relative;
         top: 10px;
         cursor: pointer;
+        height: 20px;
+        width: 20px;
       }
     }
 
