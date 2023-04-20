@@ -109,8 +109,8 @@ export class HierarchyAssetsListComponent implements OnInit {
 
     this.filteredList = this.selectedLocationHierarchyFlatList.filter(
       (node) =>
-        node.name.toLowerCase().includes(searchInput) ||
-        node?.nodeDescription.toLowerCase().includes(searchInput)
+        node.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+        node?.nodeDescription.toLowerCase().includes(searchInput.toLowerCase())
     );
 
     return this.filteredList.length ? this.filteredList : ['No Data'];
