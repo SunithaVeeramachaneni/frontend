@@ -523,12 +523,20 @@ export class RdfService {
       const evidenceQuestion = logic.askEvidence;
       if (evidenceQuestion && evidenceQuestion.length) {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} NE EMPTY OR ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        if (question.fieldType === 'CB') {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        } else {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} NE EMPTY OR ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        }
         globalIndex = globalIndex + 1;
         if (isEmpty) {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
         } else {
-          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          if (question.fieldType === 'CB') {
+            expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
         }
         validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
       }
