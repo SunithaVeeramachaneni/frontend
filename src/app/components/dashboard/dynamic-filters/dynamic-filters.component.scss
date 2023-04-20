@@ -7,6 +7,12 @@
     padding: 0;
   }
 }
+.filter-cancel-icon {
+  ::ng-deep svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
 
 .datepicker {
   z-index: 1100 !important;

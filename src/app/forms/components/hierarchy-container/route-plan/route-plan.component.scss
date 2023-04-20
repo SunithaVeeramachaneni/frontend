@@ -128,10 +128,12 @@
   color: $white;
 }
 .question-six-dots {
+  height: 15px;
+  width: 15px;
   position: relative;
-  width: 10px;
+  top: 13px;
   cursor: move;
-  margin-right: 10px;
+  right: 2px;
 }
 
 .noMarginLeft {
