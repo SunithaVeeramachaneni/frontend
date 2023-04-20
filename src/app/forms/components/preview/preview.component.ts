@@ -26,6 +26,7 @@ export class PreviewComponent implements OnInit, OnChanges {
   @Input() subFormId: any;
   @Input() moduleType: string;
   @Output() totalPageCount = new EventEmitter();
+  @Output() isOpenBottomSheet = new EventEmitter();
 
   @Input()
   pageIndex = 1;
@@ -84,4 +85,8 @@ export class PreviewComponent implements OnInit, OnChanges {
   toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
   };
+
+  openBottomSheet(isOpenBottomSheet) {
+    this.isOpenBottomSheet.emit(isOpenBottomSheet);
+  }
 }
