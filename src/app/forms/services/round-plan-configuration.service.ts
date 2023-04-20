@@ -223,6 +223,8 @@ export class RoundPlanConfigurationService {
     };
   }
 
+
+
   private getSection(sectionIndex: number, section: Section) {
     return {
       id: `S${sectionIndex}`,
@@ -261,4 +263,5 @@ export class RoundPlanConfigurationService {
         : ({} as NumberRangeMetadata)
     };
   }
+  
 }
