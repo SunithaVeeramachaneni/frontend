@@ -22,17 +22,17 @@
 
   .graphics-left {
     position: absolute;
-    bottom: 0;
     left: 0;
-    height: 520px;
-    width: 700px;
+    height: 500px;
+    width: 645px;
+    bottom: -75px;
   }
 
   .graphics-right {
-    position: relative;
-    left: 67%;
-    height: 530px;
-    width: 520px;
-    top: 30px;
+    position: absolute;
+    right: 0;
+    height: 515px;
+    width: 507px;
+    bottom: -9px;
   }
 }
