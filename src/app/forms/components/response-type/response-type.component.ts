@@ -41,7 +41,7 @@ export class ResponseTypeComponent implements OnInit {
     response: {}
   });
   formId: string;
-
+  masterData = ['Plants', 'Locations', 'Assets', 'Tables'];
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
