@@ -22,7 +22,7 @@
       }
     }
     .uom-text {
-      font-size: 80%;
+      font-size: 85%;
     }
   }
   .rangeMetadata {
@@ -31,7 +31,10 @@
     justify-content: space-between;
     padding: 4px 0;
     .range-text {
-      font-size: 75%;
+      font-size: 80%;
+      .range-text-label {
+        font-size: 100%;
+      }
     }
   }
 }

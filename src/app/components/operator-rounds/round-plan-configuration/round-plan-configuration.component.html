@@ -231,8 +231,8 @@
         ></app-builder>
       </div>
     </div>
-    <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone
+    <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
+      <app-iphone *ngIf="selectedNode?.id"
         [moduleType]="'operator-rounds'"
         [subFormId]="selectedNode?.id"
         [assetLocationName]="selectedNode?.name"
