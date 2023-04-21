@@ -17,17 +17,22 @@
     position: absolute;
     right: 20px;
     top: 55px;
+    height: 55px;
   }
 
   .graphics-left {
     position: absolute;
-    bottom: 0;
     left: 0;
+    height: 500px;
+    width: 645px;
+    bottom: -75px;
   }
 
   .graphics-right {
     position: absolute;
-    bottom: 0;
     right: 0;
+    height: 515px;
+    width: 507px;
+    bottom: -9px;
   }
 }

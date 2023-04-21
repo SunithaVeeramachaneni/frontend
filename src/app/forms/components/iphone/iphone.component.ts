@@ -31,12 +31,17 @@ export class IphoneComponent implements OnInit {
   currentPage = 1;
   totalPages = 0;
   currentTime;
+  isOpenBottomSheet = false;
+  isHistoryVisible = false;
+  isOpenHistoryBottomSheet = false;
 
   constructor(private store: Store<State>) {}
 
   changePageCount(pages) {
     this.totalPages = Number(pages);
-    this.currentPage = 1;
+    if(!(this.currentPage >= 1 && this.currentPage <= this.totalPages)) {
+      this.currentPage = 1;
+    }
   }
 
   ngOnInit(): void {
@@ -48,8 +53,8 @@ export class IphoneComponent implements OnInit {
 
     this.pagesCount$ = this.store.select(getPagesCount(this.subFormId));
     this.pagesCount$.subscribe((res) => {
-      this.totalPages = res;
-      this.currentPage = Math.min(this.currentPage, this.totalPages);
+        this.totalPages = res;
+        this.currentPage = Math.min(this.currentPage, this.totalPages);
     });
 
     this.getTime();
@@ -70,5 +75,23 @@ export class IphoneComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
+  }
+
+  openBottomSheet(isOpenBottomSheet) {
+    this.isOpenBottomSheet = isOpenBottomSheet.isOpen;
+    this.isHistoryVisible = isOpenBottomSheet.isHistoryVisible;
+  }
+
+  closeBottomSheet() {
+    this.isOpenBottomSheet = false;
+  }
+
+  openHistoryBottomSheet() {
+    this.closeBottomSheet();
+    this.isOpenHistoryBottomSheet = true;
+  }
+
+  closeHistoryBottomSheet() {
+    this.isOpenHistoryBottomSheet = false;
   }
 }

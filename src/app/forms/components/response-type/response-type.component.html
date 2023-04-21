@@ -27,10 +27,10 @@
                   active: fieldType.type === question.fieldType
                 }"
               >
-                <img
-                  [src]="getFieldTypeImage(fieldType.type)"
+                <svg-icon
+                  [icon]="getFieldTypeImage(fieldType.type)"
                   class="response-type-icons"
-                />&nbsp;
+                ></svg-icon>&nbsp;
                 <span class="response-type-description">
                   {{ fieldType.description }}
                 </span>
@@ -100,11 +100,10 @@
                     class="editBtn"
                     (click)="handleResponses(resp)"
                   >
-                    <img
-                      src="assets/rdf-forms-icons/edit-icon.svg"
-                      alt="edit-icon"
-                      class="edit-icon-img"
-                    />
+                    <svg-icon
+                      icon="icon-edit-icon"
+                      class="edit-icon-img mcq-edit"
+                    ></svg-icon>
                   </button>
                 </div>
               </ng-container>
@@ -117,10 +116,7 @@
                 </div>
               </ng-template>
               <button class="add-new-btn" (click)="handleResponses()">
-                <img
-                  class="add-more-icon"
-                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
-                />
+                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
                 <span translate="addMore"></span>
               </button>
             </div>
@@ -147,11 +143,10 @@
                     mat-flat-button
                     (click)="handleEditGlobalResponse(response)"
                   >
-                    <img
-                      src="assets/rdf-forms-icons/edit-icon.svg"
-                      alt="edit-icon"
+                    <svg-icon
+                      icon="icon-edit-icon"
                       class="edit-icon-img"
-                    />
+                    ></svg-icon>
                   </button>
                 </mat-chip-list>
               </div>
@@ -160,10 +155,7 @@
                 class="add-new-btn add-btn-margin"
                 (click)="handleGlobalResponsesToggle()"
               >
-                <img
-                  src="assets/rdf-forms-icons/fieldType-icons/add-more.svg"
-                  class="add-more-icon"
-                />
+                <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
                 <span translate="addMore"></span>
               </button>
             </div>

@@ -261,6 +261,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-    return `../../../../assets/rdf-forms-icons/${action.toLowerCase()}.svg`;
+    return `icon-${action.toLowerCase()}}`;
   }
 }

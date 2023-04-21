@@ -10,10 +10,7 @@
   <div class="image-upload">
     <img [src]="profileImage" class="user-profile-img" />
     <label for="file-input">
-      <img
-        src="assets//user-management-icons/upload.svg"
-        class="file-upload-icon"
-      />
+      <svg-icon icon="icon-upload-icon-tenant" class="file-upload-icon"></svg-icon>
     </label>
     <input type="hidden" formControlName="profileImageFileName" />
     <input
@@ -174,7 +171,10 @@
                   (click)="isfilterTooltipOpen[i] = false"
                   class="permissions-cancel"
                 >
-                  <img src="assets/img/svg/cancel-icon.svg" />
+                  <svg-icon
+                    icon="icon-cancel"
+                    class="permissions-cancel-icon"
+                  ></svg-icon>
                 </button>
                 <app-permissions
                   [selectedRolePermissions$]="selectedRolePermissions$"

@@ -3,8 +3,10 @@ import {
   ComponentFactoryResolver,
   Input,
   OnInit,
+  Output,
   ViewChild,
-  ViewContainerRef
+  ViewContainerRef,
+  EventEmitter
 } from '@angular/core';
 import { Question } from 'src/app/interfaces';
 import { DynamicPreviewResponseTypeLoaderDirective } from '../directives/dynamic-preview-response-type-loader.directive';
@@ -23,7 +25,6 @@ import { DateRangeResponseComponent } from '../response-types/date-range-respons
 import { AttachmentResponseComponent } from '../response-types/attachment-response/attachment-response.component';
 import { DropdownResponseComponent } from '../response-types/dropdown-response/dropdown-response.component';
 import { VisibleInputResponseComponent } from '../response-types/visible-input-response/visible-input-response.component';
-import { MoreMenuComponent } from '../more-menu/more-menu.component';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 @Component({
@@ -40,6 +41,7 @@ export class PreviewQuestionComponent implements OnInit {
 
   @Input() question: Question;
   @Input() moduleType: string;
+  @Output() isOpenBottomSheet= new EventEmitter();
 
   fieldTypes = new Map();
   fieldTypeRef = [
@@ -61,8 +63,7 @@ export class PreviewQuestionComponent implements OnInit {
   ];
 
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private bottomSheet: MatBottomSheet
+    private componentFactoryResolver: ComponentFactoryResolver
   ) {}
 
   ngOnInit(): void {
@@ -71,23 +72,7 @@ export class PreviewQuestionComponent implements OnInit {
   }
 
   openMoreMenu(): void {
-    this.bottomSheet.open(MoreMenuComponent, {
-      panelClass: `${
-        this.moduleType === 'operator-rounds'
-          ? 'preview-menu-operator-rounds'
-          : 'preview-menu'
-      }`,
-      data: {
-        moduleType: this.moduleType,
-        history: this.question.enableHistory
-      },
-      hasBackdrop: true,
-      backdropClass: `${
-        this.moduleType === 'operator-rounds'
-          ? 'preview-backdrop-operator-rounds'
-          : 'preview-backdrop'
-      }`
-    });
+    this.isOpenBottomSheet.emit({isOpen: true, isHistoryVisible: this.question.enableHistory});
   }
 
   private initializeFieldTypeRef(): void {

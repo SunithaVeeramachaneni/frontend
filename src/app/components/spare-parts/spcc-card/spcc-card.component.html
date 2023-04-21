@@ -2,7 +2,7 @@
   <span class="kit-number">{{ workOrder.workOrderID }}</span
   ><br />
   <span class="display-flex">
-    <img src="../../../assets/spare-parts-icons/date.svg" class="list-icons" />
+    <svg-icon icon="icon-date" class="list-icons"></svg-icon>
     <span class="date-priority-label">{{
       workOrder.dueDate | date: 'd-MMM-yyyy'
     }}</span>
@@ -14,10 +14,7 @@
       (workOrder.statusCode !== '1' || workOrder.statusCode !== '2')
     "
   >
-    <img
-      src="../../../assets/spare-parts-icons/priority.svg"
-      class="list-icons"
-    />
+    <svg-icon icon="icon-priority" class="list-icons"></svg-icon>
     <span class="date-priority-label">{{ workOrder.priorityStatus }}</span>
   </span>
   <span>
@@ -26,10 +23,7 @@
       class="date-priority-label"
       *ngIf="workOrder.statusCode === '3'"
     >
-      <img
-        src="../../../assets/spare-parts-icons/parts.svg"
-        class="list-icons"
-      />
+      <svg-icon icon="icon-parts" class="list-icons"></svg-icon>
       <span
         >{{ workOrder.staged }} of {{ workOrder.totItems }} Parts Picked</span
       >
@@ -60,10 +54,10 @@
     class="display-flex m-t-10"
     *ngIf="workOrder.statusCode === '2' || workOrder.statusCode === '3'"
   >
-    <img
-      src="../../../assets/spare-parts-icons/technicianProfile.svg"
-      style="width: 15px"
-    />
+    <svg-icon
+      icon="icon-technicianProfile"
+      class="technician-profile"
+    ></svg-icon>
     <div style="width: 100%" *ngIf="workOrder.isLoading">
       <ngx-shimmer-loading
         [width]="'100%'"
@@ -81,14 +75,11 @@
     class="display-flex"
     *ngIf="workOrder.statusCode === '4' || workOrder.statusCode === '5'"
   >
-    <img src="../../../assets/spare-parts-icons/parts.svg" class="list-icons" />
+    <svg-icon icon="icon-parts" class="list-icons"></svg-icon>
     <span class="date-priority-label">{{ workOrder.totItems }} Parts</span>
   </span>
   <span class="display-flex" *ngIf="workOrder.statusCode === '5'">
-    <img
-      src="../../../assets/spare-parts-icons/pickedup.svg"
-      class="list-icons"
-    />
+    <svg-icon icon="icon-pickedup" class="list-icons"></svg-icon>
     <span class="date-priority-label"
       >Picked up by {{ workOrder.assignee }}</span
     >
@@ -100,10 +91,7 @@
       *appCheckUserHasPermission="[permissions.assignPickList]"
       aria-label="Assign Picklist"
     >
-      <img
-        src="../../../assets/spare-parts-icons/assign.svg"
-        class="assign-picklist-btn-icon"
-      />
+      <svg-icon icon="icon-assign" class="assign-picklist-btn-icon"></svg-icon>
       <span class="assign-picklist-btn-text">{{
         'assignPicklist' | translate
       }}</span>

@@ -29,15 +29,15 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
-          <img
-            [src]="filterIcon"
+
+          <svg-icon
+            icon="icon-filterIcon"
             matSuffix
             cdkOverlayOrigin
-            class="common-filter-icon"
-            alt="Open Filter"
             #trigger="cdkOverlayOrigin"
             (click)="isPopoverOpen = !isPopoverOpen"
-          />
+            class="common-filter-icon"
+          ></svg-icon>
         </mat-form-field>
       </span>
       <ng-template
@@ -59,7 +59,7 @@
               (click)="isPopoverOpen = false"
               aria-label="Close Filter"
             >
-              <img [src]="closeIcon" alt="Close Filter" />
+              <svg-icon icon="icon-cancel-icon"></svg-icon>
             </button>
           </div>
           <div>{{ 'filters' | translate }}</div>
