@@ -62,7 +62,7 @@ export interface RoundPlan {
   location?: string;
   roundType?: string;
   plant?: any;
-  plantsID?: string;
+  plantId?: string;
   formStatus?: string;
   assignee?: string;
   tags?: string[];
@@ -79,7 +79,7 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
-  plantsID?: string;
+  plantId?: string;
   plant?: string;
 }
 

@@ -20,7 +20,7 @@ export type GetFormList = {
   formListFormDetail?: {} | null;
   isDeleted?: boolean | null;
   createdBy?: string | null;
-  plantsID?: string;
+  plantId?: string;
   createdAt: string;
   updatedAt: string;
   _version: number;

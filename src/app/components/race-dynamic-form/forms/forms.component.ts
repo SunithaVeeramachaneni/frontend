@@ -806,8 +806,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe((formsList) => {
         const uniquePlants = formsList.rows
           .map((item) => {
-            if (item.plantsID) {
-              this.plantsIdNameMap[item.plant] = item.plantsID;
+            if (item.plantId) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
               return item.plant;
             }
             return '';

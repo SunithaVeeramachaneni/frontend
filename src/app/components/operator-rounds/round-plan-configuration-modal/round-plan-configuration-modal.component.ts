@@ -112,7 +112,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantsID: ['', Validators.required]
+      plantId: ['', Validators.required]
     });
     this.getAllPlantsData();
   }
@@ -178,7 +178,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
 
     const plant = this.allPlantsData.find(
-      (p) => p.id === this.headerDataForm.get('plantsID').value
+      (p) => p.id === this.headerDataForm.get('plantId').value
     );
 
     if (this.headerDataForm.valid) {

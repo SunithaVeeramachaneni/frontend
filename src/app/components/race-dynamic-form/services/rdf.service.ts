@@ -116,7 +116,7 @@ export class RaceDynamicFormService {
       }
       let queryParamaters;
       if (filterData) {
-        queryParamaters = { ...rest, plantsID: filterData.plant };
+        queryParamaters = { ...rest, plantId: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -173,7 +173,7 @@ export class RaceDynamicFormService {
       filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
     );
     params.set(
-      'plantsID',
+      'plantId',
       filterData && filterData.plant ? filterData.plant : ''
     );
     return this.appService
@@ -249,7 +249,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
-      | 'plantsID'
+      | 'plantId'
       | 'pdfTemplateConfiguration'
     >
   ) {
@@ -263,18 +263,19 @@ export class RaceDynamicFormService {
       formType: formListQuery.formType,
       tags: formListQuery.tags,
       isPublic: formListQuery.isPublic,
-      plantsID: formListQuery.plantsID,
+      plantId: formListQuery.plantId,
       isArchived: false,
       isDeleted: false
     });
   }
 
   updateForm$(formMetaDataDetails) {
+    const { plant, ...formMetadata } = formMetaDataDetails.formMetadata;
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/${formMetaDataDetails?.formMetadata?.id}`,
       {
-        ...formMetaDataDetails.formMetadata,
+        ...formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       }
     );

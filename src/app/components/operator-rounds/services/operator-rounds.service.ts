@@ -133,7 +133,7 @@ export class OperatorRoundsService {
       );
       params.set('modifiedBy', filterData.modifiedBy);
       params.set('authoredBy', filterData.authoredBy);
-      params.set('plantsID', filterData.plant);
+      params.set('plantId', filterData.plant);
       params.set('createdBy', filterData.createdBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
       params.set(
@@ -170,7 +170,7 @@ export class OperatorRoundsService {
       }
       let queryParamaters;
       if (filterData) {
-        queryParamaters = { ...rest, plantsID: filterData.plant };
+        queryParamaters = { ...rest, plantId: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -216,7 +216,7 @@ export class OperatorRoundsService {
       }
       let queryParamaters;
       if (filterData) {
-        queryParamaters = { ...rest, plantsID: filterData.plant };
+        queryParamaters = { ...rest, plantId: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -295,7 +295,7 @@ export class OperatorRoundsService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        plantsID: formListQuery.plantsID,
+        plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
         pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration

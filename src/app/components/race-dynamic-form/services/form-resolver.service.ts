@@ -42,7 +42,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formStatus,
           formType,
           tags,
-          plantsID,
+          plantId,
           plant,
           _version: formListDynamoDBVersion
         } = form;
@@ -72,7 +72,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formStatus,
           formType,
           tags,
-          plantsID,
+          plantId,
           plant: plant.name
         };
         return {

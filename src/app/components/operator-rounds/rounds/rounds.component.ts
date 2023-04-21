@@ -666,7 +666,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       const uniquePlants = formsList
         .map((item) => {
           if (item.plant) {
-            this.plantsIdNameMap[item.plant] = item.plantsID;
+            this.plantsIdNameMap[item.plant] = item.plantId;
             return item.plant;
           }
           return '';
@@ -701,8 +701,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantsID = this.plantsIdNameMap[item.value];
-        this.filter[item.column] = plantsID;
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {

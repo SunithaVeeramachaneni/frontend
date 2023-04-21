@@ -313,7 +313,7 @@ export class ArchivedListComponent implements OnInit {
         }),
         map((data) =>
           data.map((item) => {
-            if (item.plantsID) {
+            if (item.plantId) {
               item = {
                 ...item,
                 plant: `${item.plant.plantId} - ${item.plant.name}`
@@ -396,9 +396,9 @@ export class ArchivedListComponent implements OnInit {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = item.value.split('-')[0].trim();
-        const plantsID = this.plantsIdNameMap[plantId];
-        this.filter[item.column] = plantsID;
+        const id = item.value.split('-')[0].trim();
+        const plantId = this.plantsIdNameMap[id];
+        this.filter[item.column] = plantId;
       }
     }
     this.nextToken = '';

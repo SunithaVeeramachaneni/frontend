@@ -310,7 +310,7 @@ export class ArchivedListComponent implements OnInit {
         }),
         map((data) =>
           data.map((item) => {
-            if (item.plantsID) {
+            if (item.plantId) {
               item = {
                 ...item,
                 plant: item.plant
@@ -370,8 +370,8 @@ export class ArchivedListComponent implements OnInit {
         tap((formsList) => {
           const uniquePlants = formsList.rows
             .map((item) => {
-              if (item.plantsID) {
-                this.plantsIdNameMap[item.plant] = item.plantsID;
+              if (item.plantId) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
                 return item.plant;
               }
               return '';

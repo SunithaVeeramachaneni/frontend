@@ -423,7 +423,7 @@ export class RoundPlanListComponent implements OnInit {
         }),
         map((data) => {
           const rows = data.map((item) => {
-            if (item.plantsID) {
+            if (item.plantId) {
               item = {
                 ...item,
                 plant: `${item.plant.plantId} - ${item.plant.name}`
@@ -449,7 +449,7 @@ export class RoundPlanListComponent implements OnInit {
           id: form?.id,
           isArchived: true,
           name: form?.name,
-          plantsID: form?.plantsID,
+          plantId: form?.plantId,
           description: form?.description,
           isArchivedAt: new Date().toISOString()
         },
@@ -587,9 +587,9 @@ export class RoundPlanListComponent implements OnInit {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
       } else if (item.column === 'plant') {
-        const plantId = item.value.split('-')[0].trim();
-        const plantsID = this.plantsIdNameMap[plantId];
-        this.filter[item.column] = plantsID;
+        const id = item.value.split('-')[0].trim();
+        const plantId = this.plantsIdNameMap[id];
+        this.filter[item.column] = plantId;
       } else {
         this.filter[item.column] = item.value;
       }

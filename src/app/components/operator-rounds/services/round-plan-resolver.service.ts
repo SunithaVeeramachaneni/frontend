@@ -54,7 +54,7 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
-          plantsID,
+          plantId,
           plant,
           _version: formListDynamoDBVersion
         } = form;
@@ -85,7 +85,7 @@ export class RoundPlanResolverService
           formStatus,
           formType,
           tags,
-          plantsID,
+          plantId,
           plant: plant.name,
           pdfTemplateConfiguration
         };
