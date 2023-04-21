@@ -123,13 +123,6 @@
             class="chips-list width-100 form-field"
             appearance="outline"
           >
-            <mat-label>Start Typing to see Tags</mat-label>
-            <mat-select [(value)]="selected">
-              <mat-option>None</mat-option>
-              <mat-option value="option1">Tag 1</mat-option>
-              <mat-option value="option2">Tag 2</mat-option>
-              <mat-option value="option3">Tag 3</mat-option>
-            </mat-select>
             <mat-chip-list #chipList>
               <mat-chip
                 *ngFor="let tag of tags"
@@ -142,6 +135,7 @@
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
               <input
+                [placeholder]="'startTypingTags' | translate"
                 [matChipInputFor]="chipList"
                 [matAutocomplete]="auto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
