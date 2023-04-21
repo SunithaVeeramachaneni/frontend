@@ -46,11 +46,7 @@ export class QuestionPreviewComponent implements OnInit {
     USR: 'User'
   };
 
-  dummyImages = [
-    'assets/rdf-forms-icons/attachment1.svg',
-    'assets/rdf-forms-icons/attachment2.svg',
-    'assets/rdf-forms-icons/attachment3.svg'
-  ];
+  dummyImages = [];
 
   constructor(private imageUtils: ImageUtils) {}
 

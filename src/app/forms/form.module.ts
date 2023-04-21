@@ -69,6 +69,7 @@ import { ScheduleConfigurationComponent } from './components/schedular/schedule-
 import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
 import { AssignToComponent } from './components/schedular/assign/assign.component';
+import { SharedModule } from '../shared/shared.module';
 import { DynamicPreviewResponseTypeLoaderDirective } from './components/preview/directives/dynamic-preview-response-type-loader.directive';
 import { PreviewQuestionComponent } from './components/preview/preview-question/preview-question.component';
 import { ReadOnlyResponseComponent } from './components/preview/response-types/read-only-response/read-only-response.component';
@@ -90,8 +91,6 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { HistoryBottomSheetComponent } from './components/preview/history-bottom-sheet/history-bottom-sheet.component';
-import { MoreMenuComponent } from './components/preview/more-menu/more-menu.component';
 
 @NgModule({
   declarations: [
@@ -123,8 +122,6 @@ import { MoreMenuComponent } from './components/preview/more-menu/more-menu.comp
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
-    HistoryBottomSheetComponent,
-    MoreMenuComponent,
     IphoneComponent,
     ArrayComponent,
     DateComponent,
@@ -156,6 +153,7 @@ import { MoreMenuComponent } from './components/preview/more-menu/more-menu.comp
     DynamicPreviewResponseTypeLoaderDirective
   ],
   imports: [
+    SharedModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,

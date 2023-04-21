@@ -9,12 +9,7 @@ import {
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, mergeMap, take, tap } from 'rxjs/operators';
-import {
-  defaultLanguage,
-  routingUrls,
-  bigInnovaIcon,
-  smallInnovaIcon
-} from './app.constants';
+import { defaultLanguage, routingUrls } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
@@ -79,9 +74,6 @@ const {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
-  bigInnovaIcon = bigInnovaIcon;
-  smallInnovaIcon = smallInnovaIcon;
-  createMoreMasterData = createMore;
   menus = [
     {
       title: dashboard.title,
@@ -601,9 +593,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/sidebar-icons/${imageName}-white.svg`
-      : `assets/sidebar-icons/${imageName}-gray.svg`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
 
   selectedListElement(title) {
     this.menuOpenClose = false;

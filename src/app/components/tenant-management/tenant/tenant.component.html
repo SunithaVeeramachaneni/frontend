@@ -925,7 +925,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <mat-icon> delete </mat-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
@@ -1156,7 +1159,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <mat-icon> delete </mat-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
@@ -2111,16 +2117,10 @@
             <div class="title" translate>dashboard</div>
             <div class="m-r-15 dis-flex right-content">
               <div>
-                <img
-                  src="assets/tenant-management-icons/App_icon.svg"
-                  class="apps-icon"
-                />
+                <svg-icon icon="icon-App_icon" class="apps-icon"></svg-icon>
               </div>
               <div class="user">
-                <img
-                  src="assets/tenant-management-icons/profile.svg"
-                  class="profile"
-                />
+                <svg-icon icon="icon-Profile_Pic" class="profile"></svg-icon>
               </div>
               <div class="without-company-logo" *ngIf="!tenantLogo">
                 <span class="logo-comes-here-text" translate>
