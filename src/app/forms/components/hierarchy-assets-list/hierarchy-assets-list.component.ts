@@ -83,6 +83,12 @@ export class HierarchyAssetsListComponent implements OnInit {
 
   searchResultSelected(event) {
     const node = event.option.value;
+    const el = document.getElementById(`node-${node.id}`);
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
     if (node) {
       setTimeout(() => {
         this.searchMasterData.patchValue(node.name);
