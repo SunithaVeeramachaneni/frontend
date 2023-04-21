@@ -61,5 +61,13 @@
   "response": "Response",
   "addRes": " + Add Response",
   "createResponses": "Create Responses",
-  "editResponses": "Edit Responses"
+  "editResponses": "Edit Responses",
+  "masterDataDetails": "Masterdata Details",
+  "eg.": "eg. Work Center",
+  "tableName": "Table Name",
+  "tableColumn": "Table Column",
+  "typeQuestion": "Type Column name eg.Work Center",
+  "title": "Title",
+  "temporaryId": "Temporary ID *",
+  "editTableColumn": "Edit Table Column"
 }

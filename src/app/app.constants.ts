@@ -270,6 +270,16 @@ export const routingUrls = {
     url: '/master-configuration/global-response',
     title: 'Global Response Set',
     permission: permissions.viewGlobalResponses
+  },
+  createMore: {
+    url: '/master-configuration/create-more',
+    title: 'Create More',
+    permission: permissions.viewLocations //need to set permissions
+  },
+  temporary: {
+    url: '/master-configuration/temporary',
+    title: 'Temporary',
+    permission: permissions.viewLocations //need to set permissions
   }
 };
 export const formConfigurationStatus = Object.freeze({

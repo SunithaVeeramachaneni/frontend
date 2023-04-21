@@ -1,0 +1,149 @@
+@import '../../../../../scss/colors.scss';
+
+.table {
+  border: 1px solid $border-color;
+  width: fit-content;
+  text-align: left;
+  .add-details {
+    width: 500px;
+    height: 90%;
+    margin: 10px auto;
+    padding: 15px;
+    background-color: #ffffff;
+
+    .heading {
+      font-size: 200%;
+      font-weight: 500;
+      color: $black;
+      margin: 5px;
+    }
+
+    .horizontal-line {
+      border: 1px solid $border-color;
+      margin: 20px 0;
+    }
+    .table-name {
+      .sub-heading {
+        font-weight: 500;
+        font-size: 120%;
+        color: $text-color;
+        margin: 15px 5px 0px 5px;
+      }
+      .questionContainer {
+        height: 35px;
+        .question-input {
+          padding: 10px 7px;
+          border: none;
+          margin-left: 5px;
+          width: 90%;
+          position: relative;
+          top: 6px;
+        }
+        .divider {
+          font-size: 200%;
+          color: $border-color;
+          position: relative;
+          top: 7px;
+          margin-right: 20px;
+        }
+        .response {
+          top: -1px;
+        }
+
+        .input-select {
+          position: relative;
+          top: -7px;
+        }
+        ::ng-deep
+          .mat-form-field-appearance-outline
+          .mat-form-field-outline-start,
+        ::ng-deep
+          .mat-form-field-appearance-outline
+          .mat-form-field-outline-end {
+          border: none !important;
+          min-width: 5px;
+        }
+
+        ::ng-deep
+          .mat-form-field-appearance-outline
+          .mat-form-field-outline-gap {
+          border: none;
+        }
+      }
+
+      .tableColumnHeader {
+        font-weight: 500;
+        font-size: 120%;
+        color: $text-color;
+        align-items: center;
+        background: rgba(61, 90, 254, 0.15);
+        padding: 5px;
+      }
+
+      ::ng-deep
+        .mat-form-field-appearance-outline
+        .mat-form-field-outline-start,
+      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-end {
+        border: none !important;
+        min-width: 5px;
+        border-bottom: 1px solid $border-color !important;
+      }
+    }
+
+    .add-new-btn {
+      color: $blue-main;
+      border: none;
+      background: none;
+    }
+  }
+}
+
+.question-div {
+  display: flex;
+  position: relative;
+  top: -10px;
+}
+
+.question-line {
+  margin: 0px;
+  position: relative;
+  top: -8px;
+}
+
+.add-more-icon {
+  position: relative;
+  top: 25px;
+}
+
+.add-more {
+  position: relative;
+  top: 18px;
+  left: 5px;
+}
+
+.cancel-next {
+  position: relative;
+  left: 60%;
+  top: 18px;
+}
+
+.button {
+  border: 1px solid $border-color;
+  border-radius: 0px;
+  padding: 0px 14px;
+  margin: 3px;
+  height: 30px;
+}
+.button-text {
+  padding: 14px;
+  position: relative;
+  margin: -6px;
+  top: -5px;
+  color: $blue;
+}
+.button:hover {
+  background-color: $blue;
+}
+.button-text:hover {
+  color: $white;
+}

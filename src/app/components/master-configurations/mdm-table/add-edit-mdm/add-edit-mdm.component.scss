@@ -1,0 +1,130 @@
+@import '../../../../../scss/colors.scss';
+
+:host {
+  background: $white;
+  color: $white;
+  position: absolute;
+  left: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 450px;
+  min-width: 450px;
+  overflow-y: scroll;
+  z-index: 9999;
+  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
+
+#add-edit-mdm-slider {
+  .mat-card {
+    box-shadow: none;
+  }
+
+  .cancel {
+    cursor: pointer;
+  }
+
+  .heading {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .image-container {
+    margin: 10px 0 5px 0;
+  }
+
+  .image {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .image-contain {
+    border-radius: 8px;
+    width: 90px;
+    height: 90px;
+    margin-left: -21px;
+  }
+
+  .error-fields {
+    margin-top: 14px;
+  }
+
+  .create-btn {
+    background-color: $blue-main;
+    color: $white;
+    float: right;
+  }
+
+  .create-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
+  }
+
+  .cancel-btn {
+    color: $blue-main;
+    border-color: $blue-main;
+    float: right;
+    margin-right: 15px;
+  }
+
+  .parent-type {
+    margin: 10px 5px;
+
+    .m-r-20 {
+      margin-right: 20px;
+    }
+
+    .parent-type-radio {
+      position: relative;
+      top: -2px;
+    }
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 5px 0px 10px 0px !important;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.3em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: $white;
+    border-radius: 4px;
+  }
+
+  ::ng-deep .mat-select-arrow {
+    margin-top: 10px !important;
+  }
+
+  ::ng-deep .mat-radio-outer-circle {
+    height: 16px !important;
+    width: 16px !important;
+    border-color: $light-gray;
+  }
+
+  ::ng-deep .mat-radio-inner-circle {
+    background-color: $light-gray;
+  }
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
+}

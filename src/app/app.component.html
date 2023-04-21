@@ -14,6 +14,9 @@
     }"
     (mouseenter)="openMenuOnMouseEnter()"
     (mouseleave)="closeMenuOnMouseLeave()"
+    [ngClass]="{
+      'hide-sidebar': currentRouteUrl === '/master-configuration/create-more'
+    }"
   >
     <div class="logo-img">
       <img
@@ -142,6 +145,7 @@
       [ngClass]="{
         'hide-content': isUserAuthenticated === false
       }"
+      [hidden]="currentRouteUrl === '/master-configuration/create-more'"
     ></app-header>
 
     <main

@@ -68,7 +68,9 @@ const {
   plants,
   globalResponse,
   roundPlanArchivedForms,
-  roundPlanObservations
+  roundPlanObservations,
+  createMore,
+  temporary
 } = routingUrls;
 
 @Component({
@@ -79,6 +81,7 @@ const {
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   bigInnovaIcon = bigInnovaIcon;
   smallInnovaIcon = smallInnovaIcon;
+  createMoreMasterData = createMore;
   menus = [
     {
       title: dashboard.title,
@@ -276,9 +279,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: unitOfMeasurement.permission
         },
         {
+          title: temporary.title,
+          url: temporary.url,
+          permission: locations.permission //need to added permission
+        },
+        {
           title: globalResponse.title,
           url: globalResponse.url,
           permission: globalResponse.permission
+        },
+        {
+          title: createMore.title,
+          url: createMore.url,
+          permission: locations.permission //need to added permission
         }
       ]
     }

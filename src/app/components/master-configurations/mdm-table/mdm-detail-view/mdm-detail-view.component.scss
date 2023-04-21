@@ -1,0 +1,64 @@
+@import '../../../../../scss/colors.scss';
+
+:host {
+  background: $white;
+  color: $white;
+  position: absolute;
+  left: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 450px;
+  min-width: 450px;
+  overflow-y: scroll;
+  z-index: 9999;
+  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
+
+#view-location-slider {
+  .mat-card {
+    box-shadow: none;
+  }
+
+  .cancel {
+    cursor: pointer;
+  }
+
+  .heading {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .image {
+    border-radius: 8px;
+    width: 90px;
+    height: 57px;
+    margin-bottom: 5px;
+  }
+
+  .horizon-line {
+    border-bottom: 1px solid $border-color;
+    border-top: none;
+  }
+
+  .sub-headings {
+    margin: 5px;
+    color: $light-gray;
+    font-size: 110%;
+    font-weight: 500;
+  }
+
+  .sub-headings-value {
+    margin: 5px;
+    color: $black;
+    font-size: 110%;
+    font-weight: 500;
+  }
+
+  .edit-btn {
+    background-color: $blue-main;
+    color: $white;
+    float: right;
+  }
+}

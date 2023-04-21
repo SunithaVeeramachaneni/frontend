@@ -1,12 +1,13 @@
-<div class="assets-list-view">
-  <ng-container *ngIf="userInfo$ | async">
+<div class="temporary-list-view">
+  <ng-container>
     <div class="main-container">
-      <div class="assets-header">
+      <div class="temporary-header">
         <div>
-          <h2 class="heading" translate="assets"></h2>
+          <h2 class="heading" translate="Temporary"></h2>
         </div>
         <div>
-          <span
+          <!-- ---------------------------------------------------------------------------------------------- -->
+          <!-- <span
             class="no-of-asset"
             *ngIf="assetsListCount$ | async as totalCount"
           >
@@ -20,7 +21,8 @@
                       count: totalCount || 0
                     }
             }}</span>
-          </span>
+          </span> -->
+          <!-- code start from here ---------------------------------------------------------------------------->
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -29,7 +31,6 @@
                 type="text"
                 [placeholder]="'search' | translate"
                 autocomplete="off"
-                [formControl]="searchAssets"
               />
               <img
                 [src]="filterIcon"
@@ -45,14 +46,12 @@
             [matMenuTriggerFor]="createMenu"
             translate="createNew"
             class="create-new-btn"
-            *appCheckUserHasPermission="[perms.createAsset, perms.importAssets]"
           ></button>
           <mat-menu #createMenu="matMenu">
             <button
               mat-menu-item
-              class="menu-buttonsbuttons"
+              class="menu-buttons"
               (click)="uploader.click()"
-              *appCheckUserHasPermission="[perms.importAssets]"
             >
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
@@ -61,12 +60,7 @@
               />
               <span translate="uploadExcel"></span>
             </button>
-            <button
-              mat-menu-item
-              (click)="addManually()"
-              class="menu-buttons"
-              *appCheckUserHasPermission="[perms.createAsset]"
-            >
+            <button mat-menu-item class="menu-buttons" (click)="addManually()">
               <img
                 src="assets/master-configurations/add-manually.svg"
                 alt="add manually"
@@ -80,12 +74,11 @@
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
-            *appCheckUserHasPermission="[perms.importAssets]"
           >
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #moreMenu="matMenu">
-            <button mat-menu-item (click)="exportAsXLSX()" class="menu-buttons">
+            <button mat-menu-item class="menu-buttons">
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
                 alt="Excel"
@@ -93,56 +86,35 @@
               />
               <span translate="downloadTemplate"></span>
             </button>
+            <button mat-menu-item class="menu-buttons">
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="Excel"
+                class="menu-icons"
+              />
+              <span translate="editTableColumn"></span>
+            </button>
           </mat-menu>
-          <input
-            id="upload"
-            hidden
-            type="file"
-            #uploader
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
-            (change)="uploadFile($event)"
-            (click)="resetFile($event)"
-          />
         </div>
       </div>
-
-      <div *ngIf="(assets$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
     </div>
+
+    <!-- code ends here ---------------------------------------------------------------------------->
 
     <ng-container *ngIf="assetsAddOrEditOpenState">
-      <app-add-edit-assets
+      <app-add-edit-mdm
         [@slideInOut]="assetsAddOrEditOpenState"
         (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
-        [assetsEditData]="assetsEditData"
-        (createdAssetsData)="addOrUpdateAssets($event)"
-      ></app-add-edit-assets>
+      ></app-add-edit-mdm>
     </ng-container>
 
-    <ng-container *ngIf="openAssetsDetailedView">
-      <app-assets-detail-view
+    <!-- <ng-container *ngIf="openAssetsDetailedView">
+      <app-mdm-detail-view
         [@slideInOut]="openAssetsDetailedView"
         (slideInOut)="onCloseAssetsDetailedView($event)"
-        [selectedAsset]="selectedAsset"
-      ></app-assets-detail-view>
-    </ng-container>
+      ></app-mdm-detail-view>
+    </ng-container> -->
 
-    <div *ngIf="isLoading$ | async">
-      <div class="ghost-loading">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
-        </div>
-      </div>
-    </div>
+    <!-- ---------------------------------------------------------------------------------- -->
   </ng-container>
 </div>

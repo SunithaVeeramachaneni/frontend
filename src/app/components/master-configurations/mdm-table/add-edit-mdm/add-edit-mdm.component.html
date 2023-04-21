@@ -1,0 +1,79 @@
+<div id="add-edit-mdm-slider">
+  <mat-card>
+    <div>
+      <img
+        (click)="cancel()"
+        src="assets/rdf-forms-icons/close.svg"
+        alt="close"
+        class="cancel"
+      />
+      <h1 class="heading">Temporary</h1>
+    </div>
+    <div>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="name"></mat-label>
+          <input
+            matInput
+            [placeholder]="'name' | translate"
+            formControlName="name"
+          />
+        </mat-form-field>
+      </p>
+
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="temporaryId"></mat-label>
+          <input
+            matInput
+            [placeholder]="'temporaryId' | translate"
+            formControlName="temporaryId"
+          />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="model"></mat-label>
+          <input
+            matInput
+            [placeholder]="'model' | translate"
+            formControlName="model"
+            autocomplete="off"
+          />
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-0">
+          <mat-label translate="description"></mat-label>
+          <textarea
+            matInput
+            [placeholder]="'description' | translate"
+            formControlName="description"
+          >
+          </textarea>
+        </mat-form-field>
+      </p>
+
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="parent"></mat-label>
+          <mat-select formControlName="parentId">
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+            />
+          </mat-select>
+        </mat-form-field>
+      </p>
+
+      <button mat-raised-button class="create-btn" type="submit">button</button>
+      <button
+        mat-stroked-button
+        class="cancel-btn"
+        type="button"
+        (click)="cancel()"
+        translate="cancelBtn"
+      ></button>
+    </div>
+  </mat-card>
+</div>
