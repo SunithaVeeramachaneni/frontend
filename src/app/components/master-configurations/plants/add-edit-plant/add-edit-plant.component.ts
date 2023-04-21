@@ -86,9 +86,7 @@ export class AddEditPlantComponent implements OnInit {
 
   create() {
     if (this.plantStatus === 'add') {
-      this.plantForm
-        .get('image')
-        .setValue('assets/master-configurations/default-plant.svg');
+      this.plantForm.get('image').setValue('');
       const { id, ...payload } = this.plantForm.value;
       this.plantService.createPlant$(payload).subscribe((res) => {
         this.createdPlantData.emit({

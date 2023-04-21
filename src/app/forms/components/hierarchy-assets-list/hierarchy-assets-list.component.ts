@@ -38,7 +38,6 @@ export class HierarchyAssetsListComponent implements OnInit {
   public filteredOptions$: Observable<any>;
   public locationsCount: number;
   public assetsCount: number;
-  public closeIcon = 'assets/img/svg/cancel-icon.svg';
   public searchedNode;
 
   constructor(

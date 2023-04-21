@@ -30,11 +30,11 @@
 }
 
 .master-data-image {
-  width: 15px;
   height: 15px;
-  border-radius: 8px;
-  padding: 7px;
-  margin-top: 2px;
+  width: 15px;
+  position: relative;
+  top: 4px;
+  padding: 5px;
 
   .selection-mode {
     background: '#f0f0f0';
