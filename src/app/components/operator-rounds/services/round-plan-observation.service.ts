@@ -131,7 +131,9 @@ export class RoundPlanObservationsService {
           },
           condition: true
         },
-        dueDate: format(new Date(item.DUEDATE), 'dd MMM, yyyy'),
+        dueDate: item?.DUEDATE
+          ? format(new Date(item?.DUEDATE), 'dd MMM, yyyy')
+          : '',
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,
