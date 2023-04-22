@@ -16,6 +16,7 @@ import {
 import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -79,8 +80,14 @@ export class AddEditLocationComponent implements OnInit {
   ngOnInit(): void {
     this.locationForm = this.fb.group({
       image: '',
-      name: new FormControl('', [Validators.required]),
-      locationId: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace
+      ]),
+      locationId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace
+      ]),
       model: '',
       description: '',
       parentId: ''

@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -96,8 +97,14 @@ export class AddEditAssetsComponent implements OnInit {
   ngOnInit(): void {
     this.assetForm = this.fb.group({
       image: '',
-      name: new FormControl('', [Validators.required]),
-      assetsId: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace
+      ]),
+      assetsId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace
+      ]),
       model: '',
       description: '',
       parentType: 'location',
