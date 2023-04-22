@@ -85,6 +85,12 @@
         }
       }
 
+      .error-fields {
+        white-space: nowrap;
+        margin-top: 15px;
+        margin-left: -10px;
+      }
+
       .tags {
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 20px 0 0 0 !important;

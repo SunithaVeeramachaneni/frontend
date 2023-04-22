@@ -13,7 +13,7 @@ export class SaveTemplateContainerComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    private data: any,
+    public data: any,
     private dialogRef: MatDialogRef<SaveTemplateContainerComponent>
   ) {}
 

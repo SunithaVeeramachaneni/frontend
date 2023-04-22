@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -132,6 +132,24 @@ export class RaceDynamicFormService {
     return this.appService._getLocal(
       '',
       'assets/json/rdf-form-filter.json',
+      info
+    );
+  }
+
+  getTemplateFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/template-filter.json',
+      info
+    );
+  }
+
+  getCreateFromTemplateFilter(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> {
+    return this.appService._getLocal(
+      '',
+      'assets/json/create-from-template-filter.json',
       info
     );
   }
@@ -941,42 +959,45 @@ export class RaceDynamicFormService {
   };
 
   fetchAllTemplates$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '0');
-    params.append('skip', '0');
-
     return this.appService
       ._getResp(
         environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
+        'forms/templates/list',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: 0,
+          skip: 0
+        }
       )
       .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
   };
 
   fetchTemplateByName$ = (name: string) => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '1');
-    params.append('skip', '0');
-    params.append('name', name);
-
     return this.appService
       ._getResp(
         environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
+        'forms/templates/list',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: 1,
+          skip: 0,
+          name
+        }
       )
       .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
   };
 
   fetchTemplateById$ = (id: string) => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.append('limit', '1');
-    params.append('skip', '0');
-    params.append('id', id);
-
     return this.appService
       ._getResp(
         environment.rdfApiUrl,
-        `forms/templates/list?${params.toString()}`
+        'forms/templates/list',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: 1,
+          skip: 0,
+          id
+        }
       )
       .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
   };
@@ -985,16 +1006,6 @@ export class RaceDynamicFormService {
     return this.appService._postData(
       environment.rdfApiUrl,
       'forms/templates/create',
-      {
-        data: formMetadata
-      }
-    );
-  };
-
-  updateTemplate$ = (templateId: string, formMetadata: any) => {
-    return this.appService.patchData(
-      environment.rdfApiUrl,
-      `forms/templates/update/${templateId}`,
       {
         data: formMetadata
       }
@@ -1012,6 +1023,23 @@ export class RaceDynamicFormService {
           counter: formDetails.counter
         }
       }
+    );
+  };
+
+  updateTemplate$ = (templateId: string, formMetadata: any) => {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/templates/update/${templateId}`,
+      {
+        data: formMetadata
+      }
+    );
+  };
+
+  deleteTemplate$ = (templateId: string) => {
+    return this.appService._removeData(
+      environment.rdfApiUrl,
+      `forms/templates/delete/${templateId}`
     );
   };
 }

@@ -4,10 +4,11 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent
@@ -30,6 +31,7 @@ import {
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
 
 @Component({
   selector: 'app-template-configuration-modal',
@@ -62,7 +64,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<TemplateConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA)
+    private data: any
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -89,7 +93,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
           Validators.minLength(3),
           Validators.maxLength(100),
           WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
+          WhiteSpaceValidator.trimWhiteSpace,
+          DuplicateNameValidator.duplicateNameValidator(
+            this.data.map((item) => item.name)
+          )
         ]
       ],
       description: [''],
@@ -156,9 +163,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
         type: 'tags',
         values: newTags
       };
-      this.rdfService.createTags$(dataSet).subscribe((response) => {
-        // do nothing
-      });
+      this.rdfService.createTags$(dataSet).subscribe();
     }
 
     if (this.headerDataForm.valid) {
@@ -177,7 +182,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
               counter: 1
             })
             .subscribe(() => {
-              this.router.navigate(['/forms/templates/edit', template.id]);
+              this.router.navigate(['/forms/templates/edit', template.id], {
+                state: { allTemplates: this.data }
+              });
               this.dialogRef.close();
             });
         });

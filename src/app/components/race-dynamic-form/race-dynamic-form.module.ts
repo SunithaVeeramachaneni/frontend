@@ -74,6 +74,7 @@ import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal
 import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
 import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
+import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -106,7 +107,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SaveTemplateConfirmModalComponent,
     SaveTemplateContainerComponent,
     CreateFromTemplateModalComponent,
-    TemplateContainerComponent
+    TemplateContainerComponent,
+    EditTemplateNameModalComponent
   ],
   imports: [
     FormsModule,

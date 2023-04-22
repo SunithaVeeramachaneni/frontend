@@ -19,4 +19,10 @@
       (templateId ? 'overwriteSaveTemplateBtn' : 'saveTemplateBtn') | translate
     }}
   </button>
+  <button
+    mat-stroked-button
+    class="cancel-btn"
+    translate="cancel"
+    (click)="this.closeModal.emit(false)"
+  ></button>
 </div>

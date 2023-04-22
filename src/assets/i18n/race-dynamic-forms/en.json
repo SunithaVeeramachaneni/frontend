@@ -245,7 +245,7 @@
   "createNew": "Create New",
   "newTemplateTitle": "Confirm New Template",
   "newTemplateMessage": "A new template \"{name}\" will be created and saved.",
-  "overwriteTemplateTitle": "Template {name} already exists!",
+  "overwriteTemplateTitle": "Template \"{name}\" already exists!",
   "overwriteTemplateMessage": "Do you want to overwrite?",
   "overwriteSaveTemplateBtn": "Yes, Save",
   "templates": "Templates",
@@ -254,5 +254,5 @@
   "createFromTemplate": "Choose From Template",
   "selectTemplate": "Select Template",
   "templateDetailsHeading": "Template Details",
-  "templateDescription": "Template Description"
+  "exists": "A template with this name already exists, please choose another name"
 }

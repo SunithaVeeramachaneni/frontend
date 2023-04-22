@@ -19,7 +19,7 @@ export class SaveTemplateNamingModalComponent implements OnInit {
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(100),
-      Validators.pattern('^[a-zA-Z0-9 ]+$'),
+      Validators.pattern('^[a-zA-Z0-9 -]+$'),
       WhiteSpaceValidator.whiteSpace,
       WhiteSpaceValidator.trimWhiteSpace
     ])

@@ -62,6 +62,10 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
+import { MatDialog } from '@angular/material/dialog';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
 
 @Component({
   selector: 'app-template-configuration',
@@ -94,6 +98,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   errors: ValidationError = {};
   formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
+  private allTemplates: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -103,17 +108,15 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     private breadcrumbService: BreadcrumbService,
     private router: Router,
     private route: ActivatedRoute,
-    private formConfigurationService: FormConfigurationService
+    private formConfigurationService: FormConfigurationService,
+    private dialog: MatDialog,
+    private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
-      formLogo: [''],
-      name: new FormControl(
-        {
-          value: '',
-          disabled: true
-        },
+      formLogo: [
+        '',
         [
           Validators.required,
           Validators.minLength(3),
@@ -121,12 +124,32 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
-      ),
+      ],
+      name: new FormControl({
+        value: '',
+        disabled: true
+      }),
       description: [''],
       counter: [0],
       formStatus: [formConfigurationStatus.draft]
     });
 
+    // if accessed from list screen, allTemplates will be in router state
+    // otherwise, we have to make the network call ourselves
+    if (window.history.state.allTemplates) {
+      // waiting for the store to catchup before filtering
+      setTimeout(() => {
+        this.allTemplates = window.history.state.allTemplates.filter(
+          (item) => item.id !== this.formDetails.formMetadata.id
+        );
+      }, 1000);
+    } else {
+      this.raceDynamicFormService.fetchAllTemplates$().subscribe((res) => {
+        this.allTemplates = res.rows.filter(
+          (item) => item.id !== this.formDetails.formMetadata.id
+        );
+      });
+    }
     this.responseSetService.fetchAllGlobalResponses$().subscribe();
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
@@ -151,18 +174,59 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             } = current;
 
             if (!isEqual(prev, curr)) {
-              this.store.dispatch(
-                BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: curr,
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
+              if (
+                prev.name !== curr.name &&
+                this.allTemplates
+                  .map((item) => item.name)
+                  .indexOf(curr.name) !== -1
+              ) {
+                const oldTemplateId = this.allTemplates.find(
+                  (item) =>
+                    item.name === this.formConfiguration.get('name').value
+                ).id;
+                const templateName = this.formConfiguration.get('name').value;
+                const dialogRef = this.dialog.open(
+                  EditTemplateNameModalComponent,
+                  {
+                    data: {
+                      templateId: oldTemplateId,
+                      templateName: templateName
+                    }
+                  }
+                );
+                dialogRef.afterClosed().subscribe((res) => {
+                  if (res) {
+                    this.allTemplates = this.allTemplates.filter(
+                      (item) => item.id !== oldTemplateId
+                    );
+                    this.store.dispatch(
+                      BuilderConfigurationActions.updateFormMetadata({
+                        formMetadata: curr,
+                        ...this.getDraftFormConfigurationStatuses()
+                      })
+                    );
 
-              this.store.dispatch(
-                BuilderConfigurationActions.updateTemplate({
-                  formMetadata: this.formMetadata
-                })
-              );
+                    this.store.dispatch(
+                      BuilderConfigurationActions.updateTemplate({
+                        formMetadata: this.formMetadata
+                      })
+                    );
+                  }
+                });
+              } else {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: curr,
+                    ...this.getDraftFormConfigurationStatuses()
+                  })
+                );
+
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateTemplate({
+                    formMetadata: this.formMetadata
+                  })
+                );
+              }
             }
           }
         })
@@ -209,14 +273,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
-    this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
-      tap((isFormCreated) => {
-        if (isFormCreated) {
-          // This will cause some delay in redirection post creation of fresh form. This is only added here to reduce multiple form creations in development process
-          // this.router.navigate(['/forms/edit', this.formConf.id.value]);
-        }
-      })
-    );
 
     this.authoredTemplateDetail$ = this.store.select(getFormDetails).pipe(
       tap((formDetails) => {
@@ -309,41 +365,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         });
       }
     });
-
-    this.route.params.subscribe((params) => {
-      if (!params.id) {
-        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
-        let df = this.formConfigurationService.getDefQues();
-        let questions = new Array(4).fill(0).map((q, index) => {
-          if (index === 0) {
-            return { ...df, name: 'Site Conducted' };
-          }
-          if (index === 1) {
-            return {
-              ...df,
-              name: 'Conducted On',
-              fieldType: 'DT',
-              date: true,
-              time: true
-            };
-          }
-          if (index === 2) {
-            return { ...df, name: 'Performed By' };
-          }
-          if (index === 3) {
-            return { ...df, name: 'Location', fieldType: 'GAL' };
-          }
-        });
-        this.formConfigurationService.addPage(
-          0,
-          1,
-          4,
-          this.sectionIndexes,
-          this.formConf.counter.value,
-          [{ section, questions }]
-        );
-      }
-    });
   }
 
   editFormName() {
@@ -381,7 +402,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           BuilderConfigurationActions.updatePage({
             page,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -391,7 +412,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -421,7 +442,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             section,
             sectionIndex,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -433,7 +454,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             sectionIndex,
             sectionId: section.id,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -463,7 +484,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -475,7 +496,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -508,7 +529,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         BuilderConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses(),
+          ...this.getDraftFormConfigurationStatuses(),
           subFormId: null
         })
       );
@@ -531,7 +552,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             }),
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses(),
+            ...this.getDraftFormConfigurationStatuses(),
             subFormId: null
           })
         );
@@ -552,7 +573,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
           pageIndex,
-          ...this.getFormConfigurationStatuses(),
+          ...this.getDraftFormConfigurationStatuses(),
           subFormId: null
         })
       );
@@ -575,7 +596,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     return pageSections;
   }
 
-  getFormConfigurationStatuses() {
+  getDraftFormConfigurationStatuses() {
     return {
       formStatus: formConfigurationStatus.draft,
       formDetailPublishStatus: formConfigurationStatus.draft,

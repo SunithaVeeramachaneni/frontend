@@ -1,12 +1,5 @@
 [
   {
-    "label": "Status",
-    "items": [],
-    "column": "status",
-    "type": "select",
-    "value": ""
-  },
-  {
     "label": "Modified By",
     "items": [],
     "column": "modifiedBy",

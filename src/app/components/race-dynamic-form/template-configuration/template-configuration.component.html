@@ -1,10 +1,6 @@
 <div
   class="create-form-main"
   [formGroup]="formConfiguration"
-  [ngClass]="{
-    'disable-form-interactions':
-      formDetailPublishStatus === formConfigurationStatus.publishing
-  }"
   *ngIf="{
     formMetadata: formMetadata$ | async,
     authoredTemplateDetail: authoredTemplateDetail$ | async,
@@ -16,12 +12,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img
-        src="assets/rdf-forms-icons/formlogo.svg"
-        alt=""
-        width="50"
-        height="50"
-      />
+      <svg-icon icon="icon-formlogo" class="form-logo"></svg-icon>
       <input
         hidden
         type="file"
@@ -66,11 +57,7 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
+            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
           </button>
         </a>
         <br />
@@ -148,12 +135,11 @@
                 <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
                   <div class="dis-flex" cdkDrag>
                     <div class="section-drag-handler">
-                      <img
+                      <svg-icon
                         cdkDragHandle
-                        src="assets/rdf-forms-icons/six-dots-white.svg"
-                        alt="six-dots"
+                        icon="icon-six-dots-white"
                         class="section-six-dots"
-                      />
+                      ></svg-icon>
                     </div>
 
                     <app-section
@@ -210,10 +196,7 @@
                                   )
                                 "
                               >
-                                <img
-                                  src="assets/rdf-forms-icons/add-question.svg"
-                                  alt="add questions"
-                                />
+                                <svg-icon icon="icon-add-question"></svg-icon>
                                 <p
                                   class="questions-delete-btn-text"
                                   translate="question"
@@ -241,12 +224,11 @@
                               }"
                             >
                               <div class="question-drag-handler">
-                                <img
+                                <svg-icon
                                   cdkDragHandle
-                                  src="assets/rdf-forms-icons/six-dots.svg"
-                                  alt="six-dots"
+                                  icon="icon-six-dots"
                                   class="question-six-dots"
-                                />
+                                ></svg-icon>
                               </div>
 
                               <app-question

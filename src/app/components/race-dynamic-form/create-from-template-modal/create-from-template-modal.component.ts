@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { UsersService } from '../../user-management/services/users.service';
+import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-create-from-template-modal',
@@ -44,15 +45,17 @@ export class CreateFromTemplateModalComponent implements OnInit {
   ngOnInit(): void {
     this.usersService.getUsersInfo$().subscribe((_) => {
       this.raceDynamicFormService.fetchAllTemplates$().subscribe((res) => {
-        this.allTemplates = res.rows.map((item) => {
-          return {
-            ...item,
-            author: this.usersService.getUserFullName(item.author),
-            lastPublishedBy: this.usersService.getUserFullName(
-              item.lastPublishedBy
-            )
-          };
-        });
+        this.allTemplates = res.rows
+          .filter((item) => item.formStatus === formConfigurationStatus.ready)
+          .map((item) => {
+            return {
+              ...item,
+              author: this.usersService.getUserFullName(item.author),
+              lastPublishedBy: this.usersService.getUserFullName(
+                item.lastPublishedBy
+              )
+            };
+          });
         this.displayedTemplates = this.allTemplates;
         this.initializeFilter();
         this.templateLoadingFinished = true;
@@ -81,35 +84,35 @@ export class CreateFromTemplateModalComponent implements OnInit {
   }
 
   initializeFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => {
-      this.filterJson = res;
+    this.raceDynamicFormService
+      .getCreateFromTemplateFilter()
+      .subscribe((res) => {
+        this.filterJson = res;
 
-      const uniqueLastPublishedBy = this.allTemplates
-        .map((item: any) => item.lastPublishedBy)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueLastPublishedBy) {
-        if (item) {
-          this.lastPublishedBy.push(item);
+        const uniqueLastPublishedBy = this.allTemplates
+          .map((item: any) => item.lastPublishedBy)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueLastPublishedBy) {
+          if (item) {
+            this.lastPublishedBy.push(item);
+          }
         }
-      }
-      const uniqueCreatedBy = this.allTemplates
-        .map((item: any) => item.author)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueCreatedBy) {
-        if (item) {
-          this.createdBy.push(item);
+        const uniqueCreatedBy = this.allTemplates
+          .map((item: any) => item.author)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniqueCreatedBy) {
+          if (item) {
+            this.createdBy.push(item);
+          }
         }
-      }
-      for (const item of this.filterJson) {
-        if (item.column === 'status') {
-          item.items = this.status;
-        } else if (item.column === 'modifiedBy') {
-          item.items = this.lastPublishedBy;
-        } else if (item.column === 'createdBy') {
-          item.items = this.createdBy;
+        for (const item of this.filterJson) {
+          if (item.column === 'modifiedBy') {
+            item.items = this.lastPublishedBy;
+          } else if (item.column === 'createdBy') {
+            item.items = this.createdBy;
+          }
         }
-      }
-    });
+      });
   }
 
   applySearchAndFilter(searchTerm: string) {

@@ -17,6 +17,8 @@ export class SaveTemplateConfirmModalComponent implements OnInit {
   ngOnInit(): void {}
 
   save() {
+    // ensuring all references to existing formdata are cut
+    this.templateData = JSON.parse(JSON.stringify(this.templateData));
     this.templateData.formMetadata.name = this.templateName;
     // for this flow, the form needs to always be marked as Ready/Published.
     this.templateData.formMetadata.formStatus = formConfigurationStatus.ready;

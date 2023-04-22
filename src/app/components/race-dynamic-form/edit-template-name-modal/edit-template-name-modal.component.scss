@@ -1,7 +1,16 @@
 @import '../../../../scss/colors.scss';
 
-.save-template-confirm-modal {
-  height: 80px;
+.edit-template-name-modal {
+  width: 450px;
+  height: 90px;
+  padding: 10px;
+  background: $white;
+  border-radius: 4px;
+}
+
+.dialog-close-btn {
+  float: right;
+  cursor: pointer;
 }
 
 .title {

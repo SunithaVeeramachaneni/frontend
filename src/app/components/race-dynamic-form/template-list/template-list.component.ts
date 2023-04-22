@@ -17,6 +17,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-template-list',
@@ -224,13 +225,12 @@ export class TemplateListComponent implements OnInit {
   displayedTemplates: any[];
   templatesCount$: Observable<number>;
   searchTemplate: FormControl;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((_, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   lastPublishedBy = [];
   createdBy = [];
+  readonly permissions = permissions;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -282,7 +282,7 @@ export class TemplateListComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId, row } = event;
+    const { columnId } = event;
     switch (columnId) {
       default:
         break;
@@ -292,7 +292,11 @@ export class TemplateListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'edit':
-        this.router.navigate(['/forms/templates/edit', data.id]);
+        this.router.navigate(['/forms/templates/edit', data.id], {
+          state: {
+            templateNamesList: this.allTemplates
+          }
+        });
         break;
 
       default:
@@ -314,7 +318,7 @@ export class TemplateListComponent implements OnInit {
   }
 
   initializeFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => {
+    this.raceDynamicFormService.getTemplateFilter().subscribe((res) => {
       this.filterJson = res;
 
       const uniqueLastPublishedBy = this.allTemplates
@@ -396,7 +400,8 @@ export class TemplateListComponent implements OnInit {
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
-      panelClass: 'full-screen-modal'
+      panelClass: 'full-screen-modal',
+      data: this.allTemplates
     });
   }
 }

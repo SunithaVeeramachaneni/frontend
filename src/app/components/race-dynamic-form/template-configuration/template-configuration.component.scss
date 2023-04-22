@@ -1,10 +1,5 @@
 @import '../../../../scss/colors.scss';
 
-.disable-form-interactions {
-  pointer-events: none;
-  user-select: none;
-}
-
 .create-form-main {
   overflow: hidden;
   position: relative;
@@ -40,11 +35,17 @@
     left: -10px;
     .edit-icon-img {
       width: 12px;
+      height: 12px;
     }
   }
 
   .dis-inline {
     display: inline;
+  }
+
+  .form-logo {
+    width: 50px;
+    height: 50px;
   }
 
   .error-fields {
@@ -77,26 +78,11 @@
     font-size: 100%;
   }
 
-  .import-btn {
-    width: 160px;
-    height: 36px;
-    border: 1px solid $blue-primary;
-    color: $blue-primary;
-    margin: 12px 0 0 12px;
-    border-radius: 8px;
-  }
-
   .save-status {
     padding-top: 22px;
     font-weight: 500;
     font-size: 100%;
     line-height: 20px;
-  }
-
-  .import-btn:disabled {
-    border-color: $border-color;
-    background-color: $border-color;
-    color: $light-gray;
   }
 
   .publish-btn {
@@ -110,12 +96,6 @@
 
   .publish-btn:disabled {
     background-color: $disabled-color;
-  }
-
-  .publish-btn-icon {
-    position: relative;
-    top: 2px;
-    left: -3px;
   }
 
   .publish {
@@ -150,6 +130,7 @@
       position: relative;
       top: 13px;
       width: 9px;
+      height: 9px;
       cursor: move;
     }
   }
@@ -164,6 +145,7 @@
     top: 28px;
     left: 92px;
     width: 10px;
+    height: 10px;
     cursor: move;
   }
 }

@@ -24,20 +24,21 @@
             autocomplete="off"
             [formControl]="searchTemplate"
           />
-          <img
-            [src]="filterIcon"
+          <svg-icon
+            icon="icon-filterIcon"
+            class="filter-icon"
             cdkOverlayOrigin
             #trigger="cdkOverlayOrigin"
             (click)="isPopoverOpen = !isPopoverOpen"
             matSuffix
-            alt="Open Filter"
-          />
+          ></svg-icon>
         </mat-form-field>
         <button
           mat-raised-button
           translate="createNew"
           class="create-new-btn"
           (click)="openCreateTemplateModal()"
+          *appCheckUserHasPermission="[permissions.createFormTemplate]"
         ></button>
       </span>
     </div>
