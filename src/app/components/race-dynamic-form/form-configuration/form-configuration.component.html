@@ -123,7 +123,12 @@
         (click)="importQuestions()"
       ></button>
 
-      <button mat-stroked-button class="next-btn"  translate="next" (click)="goToPDFBuilderConfiguration()"></button>
+      <button
+        mat-stroked-button
+        class="next-btn"
+        translate="next"
+        (click)="goToPDFBuilderConfiguration()"
+      ></button>
     </div>
   </div>
   <div class="dis-flex form">
@@ -141,12 +146,6 @@
 
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
-    <app-import-questions-slider
-      [selectedFormName]="selectedFormName"
-      [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData"
-      (cancelSliderEvent)="cancelSlider($event)"
-    ></app-import-questions-slider>
     <app-import-questions-slider
       [selectedFormName]="selectedFormName"
       [selectedFormData]="selectedFormData"

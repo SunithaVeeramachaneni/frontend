@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  BuilderConfigurationActions
+} from 'src/app/forms/state/actions';
 import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
@@ -40,7 +43,8 @@ export class FormConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[] = []
+    sectionQuestionsList: SectionQuestions[] = [],
+    subFormId?: string
   ) {
     const page = this.getPageObject(
       pageIndex,
@@ -52,7 +56,8 @@ export class FormConfigurationService {
     );
 
     this.store.dispatch(
-      FormConfigurationActions.addPage({
+      BuilderConfigurationActions.addPage({
+        subFormId,
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses()
@@ -75,7 +80,8 @@ export class FormConfigurationService {
     sectionIndex: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[] = []
+    sectionQuestionsList: SectionQuestions[] = [],
+    subFormId?: string
   ) {
     const { sections, questions } = this.getSectionsObject(
       pageIndex,
@@ -86,12 +92,13 @@ export class FormConfigurationService {
       sectionQuestionsList
     );
     this.store.dispatch(
-      FormConfigurationActions.addSections({
+      BuilderConfigurationActions.addSections({
         sections,
         questions,
         pageIndex,
         sectionIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId
       })
     );
     this.store.dispatch(
