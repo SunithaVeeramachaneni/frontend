@@ -82,13 +82,13 @@ export class AddEditPlantComponent implements OnInit {
       ]),
       country: new FormControl('', [
         Validators.required,
-        WhiteSpaceValidator.whiteSpace
+        WhiteSpaceValidator.trimWhiteSpace
       ]),
       zipCode: new FormControl('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(6),
-        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace,
         Validators.pattern(numericRegex)
       ]),
       state: '',
