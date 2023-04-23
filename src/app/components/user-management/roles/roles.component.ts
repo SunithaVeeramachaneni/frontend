@@ -391,7 +391,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         permissionIds.push(pers);
         this.copyRole({
           ...this.selectedRole,
-          permissionIds: permissionIds[0]
+          permissionIds: permissionIds[0].map(
+            (permissionDetail) => permissionDetail.id
+          )
         });
       });
   }
