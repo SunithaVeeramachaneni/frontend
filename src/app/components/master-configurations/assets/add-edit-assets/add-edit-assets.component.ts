@@ -97,10 +97,12 @@ export class AddEditAssetsComponent implements OnInit {
       image: '',
       name: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       assetsId: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
