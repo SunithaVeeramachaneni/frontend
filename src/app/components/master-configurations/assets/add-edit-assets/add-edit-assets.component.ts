@@ -160,7 +160,10 @@ export class AddEditAssetsComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) !== -1
+        (parent.name &&
+          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (parent.locationId &&
+          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
