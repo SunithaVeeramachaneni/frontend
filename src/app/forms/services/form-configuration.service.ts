@@ -251,7 +251,7 @@ export class FormConfigurationService {
     question: Question
   ) {
     this.store.dispatch(
-      FormConfigurationActions.updateCounter({ counter: questionCounter })
+      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
     );
     return {
       id: `Q${questionCounter}`,

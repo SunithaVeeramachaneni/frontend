@@ -155,6 +155,34 @@ export class AddEditLocationComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit('out');
+    this.resetForm();
+  }
+
+  resetForm() {
+    if (!this.locEditData) {
+      this.locationStatus = 'add';
+      this.locationTitle = 'Create Location';
+      this.locationButton = 'Create';
+      this.locationImage = '';
+    } else {
+      this.locationStatus = 'edit';
+      this.locationTitle = 'Edit Location';
+      this.locationButton = 'Update';
+      this.locationImage =
+        this.locEditData && this.locEditData.image
+          ? this.locEditData.image
+          : '';
+      const locdata = {
+        id: this.locEditData.id,
+        image: this.locEditData.image,
+        name: this.locEditData.name,
+        locationId: this.locEditData.locationId,
+        model: this.locEditData.model,
+        description: this.locEditData.description,
+        parentId: this.locEditData.parentId
+      };
+      this.locationForm.patchValue(locdata);
+    }
   }
 
   processValidationErrors(controlName: string): boolean {
