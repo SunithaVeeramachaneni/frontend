@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -67,16 +68,28 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
+    const numericRegex = /^[0-9]+$/;
     this.plantForm = this.fb.group({
       id: '',
       image: '',
-      name: new FormControl('', [Validators.required]),
-      plantId: new FormControl('', [Validators.required]),
-      country: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      plantId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      country: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       zipCode: new FormControl('', [
         Validators.required,
         Validators.minLength(6),
-        Validators.maxLength(6)
+        Validators.maxLength(6),
+        WhiteSpaceValidator.trimWhiteSpace,
+        Validators.pattern(numericRegex)
       ]),
       state: '',
       label: '',
