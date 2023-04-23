@@ -43,8 +43,7 @@ export class FormConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[] = [],
-    subFormId?: string
+    sectionQuestionsList: SectionQuestions[] = []
   ) {
     const page = this.getPageObject(
       pageIndex,
@@ -57,7 +56,6 @@ export class FormConfigurationService {
 
     this.store.dispatch(
       BuilderConfigurationActions.addPage({
-        subFormId,
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses()
@@ -80,8 +78,7 @@ export class FormConfigurationService {
     sectionIndex: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[] = [],
-    subFormId?: string
+    sectionQuestionsList: SectionQuestions[] = []
   ) {
     const { sections, questions } = this.getSectionsObject(
       pageIndex,
@@ -97,8 +94,7 @@ export class FormConfigurationService {
         questions,
         pageIndex,
         sectionIndex,
-        ...this.getFormConfigurationStatuses(),
-        subFormId
+        ...this.getFormConfigurationStatuses()
       })
     );
     this.store.dispatch(
