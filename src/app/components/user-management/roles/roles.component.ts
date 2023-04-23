@@ -108,7 +108,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     public dialog: MatDialog,
     private toast: ToastService,
     private headerService: HeaderService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.searchRole = new FormControl('');
