@@ -64,11 +64,13 @@ export class NodeComponent implements OnInit {
       this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
         count = c;
       });
+      setTimeout(() => this.cdrf.detectChanges(), 250);
       return count;
     } else {
       this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
         count = c;
       });
+      setTimeout(() => this.cdrf.detectChanges(), 250);
       return count;
     }
   }

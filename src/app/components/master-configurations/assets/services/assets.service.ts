@@ -184,7 +184,10 @@ export class AssetsService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            image: p?.image,
+            image:
+              p?.image.length > 0
+                ? p?.image
+                : 'assets/master-configurations/asset-icon.svg',
             style: {
               width: '40px',
               height: '40px',

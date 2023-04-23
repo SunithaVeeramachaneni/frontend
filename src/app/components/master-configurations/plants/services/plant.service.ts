@@ -134,7 +134,10 @@ export class PlantService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            image: p?.image,
+            image:
+              p?.image.length > 0
+                ? p?.image
+                : 'assets/master-configurations/default-plant.svg',
             style: {
               width: '40px',
               height: '40px',

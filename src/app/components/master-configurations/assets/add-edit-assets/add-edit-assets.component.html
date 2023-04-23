@@ -7,8 +7,8 @@
     <div>
       <p class="m-0" translate="image"></p>
       <p class="image-container">
-        <span class="img-border" *ngIf="assetImage === ''">
-          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        <span *ngIf="assetImage === ''">
+          <svg-icon icon="icon-asset-icon" class="image-contain"></svg-icon>
         </span>
 
         <img
