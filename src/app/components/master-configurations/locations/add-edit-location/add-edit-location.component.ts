@@ -143,7 +143,6 @@ export class AddEditLocationComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit('out');
-    this.locationForm.reset();
   }
 
   processValidationErrors(controlName: string): boolean {

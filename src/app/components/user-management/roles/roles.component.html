@@ -112,6 +112,7 @@
               <mat-menu #submenu="matMenu">
                 <button
                   mat-menu-item
+                  [disabled]="role.name === superAdminText"
                   (click)="copyRole(role)"
                   translate="copyBtn"
                   *appCheckUserHasPermission="[perms.copyRole]"
