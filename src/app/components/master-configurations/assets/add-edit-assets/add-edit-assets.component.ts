@@ -166,7 +166,6 @@ export class AddEditAssetsComponent implements OnInit {
 
   cancel() {
     this.slideInOut.emit('out');
-    this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
   }
 
