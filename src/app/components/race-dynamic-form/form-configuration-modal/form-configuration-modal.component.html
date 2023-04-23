@@ -47,7 +47,10 @@
               [placeholder]="'formName' | translate"
               formControlName="name"
             />
-            <mat-error *ngIf="processValidationErrors('name')" class="m-5">
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="m-5 error-fields"
+            >
               {{
                 errors.name.name
                   | translate

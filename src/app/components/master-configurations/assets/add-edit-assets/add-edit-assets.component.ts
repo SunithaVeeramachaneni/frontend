@@ -59,8 +59,7 @@ export class AddEditAssetsComponent implements OnInit {
         parentId: this.assetEditData.parentId,
         plantsID: this.assetEditData.plantsID
       };
-      this.parentType =
-        this.assetEditData.parentType === 'LOCATION' ? 'location' : 'asset';
+      this.parentType = this.assetEditData.parentType?.toLowerCase();
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -238,13 +237,15 @@ export class AddEditAssetsComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) !== -1
+        (parent.name &&
+          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (parent.locationId &&
+          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   cancel() {
     this.slideInOut.emit('out');
-    this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
     this.allParentsData = this.allLocationsData;
   }

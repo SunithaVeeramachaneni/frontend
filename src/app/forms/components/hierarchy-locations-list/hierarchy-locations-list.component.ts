@@ -61,7 +61,11 @@ export class HierarchyLocationsListComponent implements OnInit {
         distinctUntilChanged(),
         map((searchInput: string) => {
           this.searchFilterItems = this.allItems.filter(
-            (item: HierarchyEntity) => item.name.includes(searchInput.trim())
+            (item: HierarchyEntity) =>
+              item.name
+                .toLowerCase()
+                .trim()
+                .includes(searchInput.toLowerCase().trim())
           );
         })
       )

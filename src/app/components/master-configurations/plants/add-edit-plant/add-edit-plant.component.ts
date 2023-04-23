@@ -115,7 +115,6 @@ export class AddEditPlantComponent implements OnInit {
   }
   cancel() {
     this.slideInOut.emit('out');
-    this.plantForm.reset();
   }
   processValidationErrors(controlName: string): boolean {
     const touched = this.plantForm.get(controlName).touched;

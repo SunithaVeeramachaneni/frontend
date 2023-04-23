@@ -154,12 +154,8 @@
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
     <app-import-questions-slider
-      [selectedFormName]="selectedFormName"
-      [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData"
-      (cancelSliderEvent)="cancelSlider($event)"
-    ></app-import-questions-slider>
-    <app-import-questions-slider
+      [title]="'forms'"
+      [isFooter]="true"
       [selectedFormName]="selectedFormName"
       [selectedFormData]="selectedFormData"
       [currentFormData]="currentFormData"
