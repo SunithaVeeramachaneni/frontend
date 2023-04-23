@@ -68,6 +68,7 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
+    const numericRegex = /^[0-9]+$/;
     this.plantForm = this.fb.group({
       id: '',
       image: '',
@@ -87,7 +88,8 @@ export class AddEditPlantComponent implements OnInit {
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(6),
-        WhiteSpaceValidator.whiteSpace
+        WhiteSpaceValidator.whiteSpace,
+        Validators.pattern(numericRegex)
       ]),
       state: '',
       label: '',
