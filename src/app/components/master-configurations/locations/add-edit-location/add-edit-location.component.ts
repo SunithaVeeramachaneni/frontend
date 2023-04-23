@@ -203,7 +203,6 @@ export class AddEditLocationComponent implements OnInit {
   cancel() {
     this.slideInOut.emit('out');
     this.allParentsData = this.parentInformation;
-    this.locationForm.reset();
   }
 
   processValidationErrors(controlName: string): boolean {
