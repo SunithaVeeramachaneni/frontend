@@ -77,7 +77,11 @@ export class FormListComponent implements OnInit {
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        display: 'block',
+        'white-space': 'wrap',
+        'overflow-wrap': 'break-word',
+        'max-width': '350px'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -414,6 +418,7 @@ export class FormListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
               text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
