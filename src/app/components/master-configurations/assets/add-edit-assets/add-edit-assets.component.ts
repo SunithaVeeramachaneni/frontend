@@ -53,10 +53,10 @@ export class AddEditAssetsComponent implements OnInit {
         assetsId: this.assetEditData.assetsId,
         model: this.assetEditData.model,
         description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType.toLowerCase(),
+        parentType: this.assetEditData.parentType?.toLowerCase(),
         parentId: this.assetEditData.parentId
       };
-      this.parentType = this.assetEditData.parentType.toLowerCase();
+      this.parentType = this.assetEditData.parentType?.toLowerCase();
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -158,13 +158,15 @@ export class AddEditAssetsComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) !== -1
+        (parent.name &&
+          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (parent.locationId &&
+          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   cancel() {
     this.slideInOut.emit('out');
-    this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
   }
 
