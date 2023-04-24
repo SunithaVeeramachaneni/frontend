@@ -9,12 +9,11 @@
   <mat-card>
     <ng-container>
       <div>
-        <img
+        <svg-icon
+          icon="icon-close"
+          class="cancel-icon"
           (click)="cancelForm()"
-          src="assets/rdf-forms-icons/close.svg"
-          alt="close"
-          class="pointer"
-        />
+        ></svg-icon>
         <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
       <ng-container *ngIf="formStatus === formConfigurationStatus.published">
@@ -61,7 +60,7 @@
                   (click)="scheduleRoundPlanEvent()"
                 ></button>
               </ng-template>
-              <mat-menu #menu="matMenu">
+              <mat-menu #menu="matMenu" backdropClass="custom-dates-menu">
                 <div
                   *ngIf="
                     frequencyDetail.scheduleType === 'byDate';
@@ -283,6 +282,18 @@
         {{ 'editForm' | translate }}
       </button>
     </div>
+    <div class="footer" *ngIf="showPDFDownload">
+      <button
+        mat-raised-button
+        class="viewPDFBtn"
+        translate="viewPDFBtn"
+        (click)="viewPDF()"
+      ></button>
+      <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPDF()">
+        <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
+        <span translate="download"></span>
+      </button>
+    </div>
   </mat-card>
 
   <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
@@ -295,10 +306,7 @@
           <ng-container>
             {{ defaultFormName }}
             <label [matMenuTriggerFor]="menu">
-              <img
-                src="assets/rdf-forms-icons/arrow-down.svg"
-                alt="arrow-down"
-              />
+              <svg-icon icon="icon-arrow-down" class="arrow-icon"></svg-icon>
             </label>
           </ng-container>
         </h3>

@@ -7,7 +7,7 @@
     background: $white;
     border-radius: 10px 10px 0px 0px;
     margin-top: 12px;
-    padding: 5px 7px 12px 7px;
+    padding: 5px 7px 5px 7px;
     border-top-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
@@ -53,11 +53,8 @@
       background-color: $white;
 
       .page-edit-icon {
-        position: relative;
+        height: 15px;
         width: 14px;
-        margin-bottom: 5px;
-        margin-left: -40px;
-        top: -2px;
       }
     }
 
@@ -65,8 +62,6 @@
       border: none;
       background-color: $white;
       float: right;
-      position: relative;
-      top: 5px;
     }
   }
 
@@ -84,6 +79,8 @@
     .add-page-btn-icon {
       position: relative;
       top: 2px;
+      height: 13px;
+      width: 13px;
     }
   }
 
@@ -107,7 +104,6 @@
   position: relative;
   top: 7px;
   .pageTaskCount {
-    font-size: 16px;
-    margin-top: 5px;
+    font-size: 100%;
   }
 }

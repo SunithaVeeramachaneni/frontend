@@ -2,12 +2,7 @@
   <mat-card>
     <div class="add-edit-header">
       <h1 *ngIf="!unitEditData" class="heading" translate="createUnit"></h1>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
     </div>
     <div class="p-10 add-edit-content">
       <p
@@ -16,7 +11,7 @@
       >
         <mat-form-field
           appearance="outline"
-          class="unit-measurement"
+          class="unit-measurement m-b-10"
           *ngIf="unitType !== 'addNew'"
         >
           <mat-label translate="unitOfMeasurement"></mat-label>
@@ -40,7 +35,7 @@
             </mat-option>
           </mat-select>
           <mat-error
-            class="m-l-5 m-t-2 text-red"
+            class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="!unitType && isSubmittedForm"
           >
             {{ 'selectmsg' | translate | uppercase }}
@@ -51,11 +46,11 @@
         class="display-flex custom-form-field-white-color"
         *ngIf="unitType === 'addNew'"
       >
-        <mat-form-field appearance="outline" class="newUnitType">
+        <mat-form-field appearance="outline" class="newUnitType m-b-10">
           <mat-label translate="unit_type"></mat-label>
           <input matInput [(ngModel)]="newUnitType" required />
           <mat-error
-            class="m-l-5 m-t-2 text-red"
+            class="m-l-5 m-t-2 text-red error-fields"
             *ngIf="unitType === 'addNew' && newUnitType === ''"
           >
             {{ 'unitTypeError' | translate }}
@@ -74,7 +69,7 @@
               [size]="
                 measurement?.value !== '' ? getSize(measurement?.value) : 20
               "
-              class="form_title_input"
+              class="form_title_input m-b-10"
               [(ngModel)]="unitType"
               autofocus="true"
               autocomplete="off"
@@ -83,7 +78,7 @@
               required
             />
             <mat-error
-              class="m-l-5 m-t-2 text-red"
+              class="m-l-5 m-t-2 text-red error-fields"
               *ngIf="!isEditMeasurement && unitType === ''"
             >
               {{ 'unitTypeError' | translate }}
@@ -92,20 +87,12 @@
           <p *ngIf="isEditMeasurement" class="unit-type-name">
             {{ unitType }}
             <button class="edit-icon" (click)="editMeasurement()">
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
+              <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
             </button>
           </p>
         </div>
         <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            class="list-icons"
-            alt="delete-icon"
-          />
+          <svg-icon icon="icon-delete-icon" class="list-icons"></svg-icon>
         </span>
       </div>
 
@@ -126,7 +113,10 @@
           *ngFor="let item of unitMeasurementFormControl; let i = index"
         >
           <div [formGroupName]="i">
-            <mat-form-field appearance="outline" class="m-l-5 description">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-5 description m-b-10"
+            >
               <input
                 matInput
                 formControlName="description"
@@ -146,7 +136,7 @@
                 }}
               </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="m-l-5 symbol">
+            <mat-form-field appearance="outline" class="m-l-5 symbol m-b-10">
               <input
                 matInput
                 formControlName="symbol"
@@ -171,11 +161,7 @@
       </div>
 
       <span *ngIf="unitType" (click)="addNewUmo()" class="add-more-btn">
-        <img
-          src="assets/img/add-new.svg"
-          alt="add-more-icon"
-          class="add-more-icon"
-        />
+        <svg-icon icon="icon-add-new" class="add-more-icon"></svg-icon>
         <label translate="addMore"></label>
       </span>
     </div>

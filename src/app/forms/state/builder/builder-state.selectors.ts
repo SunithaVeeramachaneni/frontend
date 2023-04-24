@@ -22,6 +22,11 @@ export const getFormMetadata = createSelector(
   (state) => state.formMetadata
 );
 
+export const getPDFBuilderConfiguration = createSelector(
+  selectFormConfigurationState,
+  (state) => state.formMetadata.pdfTemplateConfiguration
+);
+
 export const getPages = createSelector(
   selectFormConfigurationState,
   (state) => state.pages
@@ -103,6 +108,25 @@ export const getSubFormPages = (subFormId) =>
       key = `${key}_${subFormId}`;
     }
     return state[key];
+  });
+
+export const getTotalTasksCountByHierarchy = (subFormIds) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let count = 0;
+    let allPages = [];
+    subFormIds.forEach((subFormId) => {
+      let key = 'pages';
+      if (subFormId) {
+        key = `${key}_${subFormId}`;
+      }
+      if (state[key]) {
+        allPages = [...allPages, ...state[key]];
+      }
+    });
+    allPages.forEach((page) => {
+      count = count + page.questions?.length;
+    });
+    return count;
   });
 
 export const getPage = (pageIndex: number, subFormId: string) =>

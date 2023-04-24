@@ -5,7 +5,8 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Inject
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import {
@@ -38,6 +39,7 @@ import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-d
 import { BuilderConfigurationActions } from '../../state/actions';
 import { HierarchyActions } from '../../state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -57,8 +59,6 @@ export class HierarchyContainerComponent implements OnInit {
   allAssets$: Observable<any>;
   formMetadata$: Observable<FormMetadata>;
 
-  closeIcon = 'assets/rdf-forms-icons/close.svg';
-
   masterHierarchyList = [];
 
   filteredHierarchyList = [];
@@ -74,6 +74,7 @@ export class HierarchyContainerComponent implements OnInit {
   filteredList = [];
 
   constructor(
+    @Inject(DOCUMENT) document: Document,
     private operatorRoundsService: OperatorRoundsService,
     private locationService: LocationService,
     private assetService: AssetsService,
@@ -185,6 +186,12 @@ export class HierarchyContainerComponent implements OnInit {
 
   searchResultSelected(event) {
     const node = event.option.value;
+    const el = document.getElementById(`node-${node.id}`);
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
     if (node) {
       setTimeout(() => {
         this.searchHierarchyKey.patchValue(node.name);
@@ -363,9 +370,7 @@ export class HierarchyContainerComponent implements OnInit {
       });
   };
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/rdf-forms-icons/${imageName}-white.svg`
-      : `assets/rdf-forms-icons/${imageName}-gray.svg`;
+  active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
 
   toggleHierarchyMode(event) {
     this.hierarchyMode = event.value;

@@ -20,6 +20,13 @@
         position: relative;
         top: -2px;
       }
+
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
     }
   }
 
@@ -83,6 +90,9 @@
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
           padding: 6px 0px 13px 0 !important;
         }
+        .error-fields {
+          margin-top: 14px;
+        }
       }
 
       .tags {
@@ -97,11 +107,13 @@
 
       .next-btn {
         float: right;
+        margin-top: 10px;
       }
 
       .skip-btn {
         float: right;
         margin-right: 15px;
+        margin-top: 10px;
       }
     }
   }

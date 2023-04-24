@@ -22,7 +22,6 @@ import {
   providedIn: 'root'
 })
 export class LocationService {
-  
   locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -45,13 +44,12 @@ export class LocationService {
       'location/list?' + params.toString()
     );
   };
-  getLocationCount$(): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'location/list?' + params.toString()
-    ).pipe(map((res) => res.items.length || 0));
+  getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
+    return this._appService
+      ._getResp(environment.masterConfigApiUrl, 'location/count', info, {
+        limit: this.MAX_FETCH_LIMIT
+      })
+      .pipe(map((res) => res?.count || 0));
   }
 
   getLocationsList$(queryParams: {
@@ -197,8 +195,10 @@ export class LocationService {
     );
   }
 
- 
-  downloadFailure(body: { rows: any; }, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
       'location/download/failure',

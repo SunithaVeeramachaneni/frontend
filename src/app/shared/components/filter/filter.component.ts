@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
 
 @Component({
@@ -39,6 +47,12 @@ export class FilterComponent implements OnInit, OnChanges {
   resetFilter() {
     for (const item of this.json) {
       item.value = '';
+      if (item?.hasOwnProperty('startDate')) {
+        item.startDate = '';
+      }
+      if (item?.hasOwnProperty('endDate')) {
+        item.endDate = '';
+      }
       if (item.itemValue) {
         item.itemValue = '';
       }

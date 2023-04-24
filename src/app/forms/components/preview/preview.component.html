@@ -4,6 +4,13 @@
     class="pages"
     [ngClass]="{ active: pageIndex === i + 1 }"
   >
+    <div class="page-header">
+      <div class="page-name">{{ page.name }}</div>
+      <div class="task-progress-bar">
+        0/{{ page.sections.length }} <span class="filledTxt" translate="filled"></span>
+      </div>
+      <hr />
+    </div>
     <div *ngFor="let section of page.sections" class="preview-content">
       <div class="section-header">
         <mat-icon
@@ -22,331 +29,23 @@
         </mat-icon>
 
         <span class="section-name">{{ section.name }}</span>
-        <span class="section-count">{{ section.questions.length }}</span>
+        <span class="section-count">0/{{ section.questions.length }}</span>
       </div>
 
       <div *ngIf="isSectionOpenState === true">
         <div id="preview" *ngFor="let question of section.questions">
-          <div class="field-types">
-            <div class="each-fieldtype">
-              <p
-                class="question-name"
-                *ngIf="
-                  question.fieldType !== 'ARD' && question.fieldType !== 'INST'
-                "
-              >
-                {{
-                  (question.name ? question.name : 'typeQuestion') | translate
-                }}
-              </p>
-
-              <!-- read only  -->
-              <h3 class="read-only-field" *ngIf="question.fieldType === 'LF'">
-                {{ question.value }}
-              </h3>
-
-              <!-- Instruction-->
-
-              <div
-                *ngIf="question.fieldType === 'INST'"
-                class="instruction-field"
-              >
-                <div *ngIf="question.value.tag.title !== getNoneTag()">
-                  <p class="tag-text">
-                    {{ question.value.tag.title }}
-                  </p>
-                </div>
-
-                <!-- instructions needs unescaped HTML -->
-
-                <div [innerHTML]="question.name" class="instruction"></div>
-
-                <!-- Instructions Images -->
-                <div>
-                  <ng-container
-                    *ngFor="let image of question.value.images; index as i"
-                  >
-                    <img
-                      src="{{ image.objectURL }}"
-                      alt="image"
-                      class="instruction-image-field"
-                      *ngIf="image !== null"
-                    />
-                  </ng-container>
-                </div>
-
-                <ng-container *ngIf="question.value.pdf !== null">
-                  <app-instruction-pdf-preview [pdf]="question.value.pdf">
-                  </app-instruction-pdf-preview>
-                </ng-container>
-              </div>
-
-              <!-- text answer  -->
-              <input
-                type="text"
-                class="text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'TF' && question.value === 'TF'"
-              />
-
-              <!-- long text answer  -->
-              <textarea
-                class="long-text-answer"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'TF' && question.value === 'LTV'"
-              ></textarea>
-
-              <!-- number  -->
-              <input
-                type="number"
-                class="number"
-                [placeholder]="'enter' | translate"
-                *ngIf="question.fieldType === 'NF'"
-              />
-
-              <!-- scan  -->
-              <div class="dis-flex" *ngIf="question.fieldType === 'SF'">
-                <input
-                  type="text"
-                  class="text-answer"
-                  [placeholder]="'choose' | translate"
-                />
-                <img
-                  src="assets/rdf-forms-icons/scan-bg.svg"
-                  class="scan-icon"
-                />
-              </div>
-
-              <!-- date and time -->
-              <div *ngIf="question.fieldType === 'DT'">
-                <input
-                  type="date"
-                  class="text-answer"
-                  [placeholder]="'enter' | translate"
-                  *ngIf="question.value.date"
-                />
-
-                <input
-                  type="time"
-                  class="text-answer"
-                  [placeholder]="'enter' | translate"
-                  *ngIf="question.value.time"
-                />
-              </div>
-
-              <!-- Hyperlink  -->
-              <div *ngIf="question.fieldType === 'HL'">
-                <span
-                  class="hyperlink"
-                  (click)="openURL(question.value)"
-                  *ngIf="
-                    question.value && question.value?.link;
-                    else addUrlBlock
-                  "
-                  >{{
-                    question.value.title?.length
-                      ? question.value.title
-                      : question.value.link
-                  }}</span
-                >
-                <ng-template #addUrlBlock>
-                  <span translate="addLinkBtn" class="add-link"></span>
-                </ng-template>
-              </div>
-
-              <!-- checkbox  -->
-              <mat-checkbox
-                class="checkbox"
-                *ngIf="question.fieldType === 'CB'"
-              ></mat-checkbox>
-
-              <!-- signature  -->
-              <div *ngIf="question.fieldType === 'SGF'">
-                <input
-                  type="text"
-                  class="text-answer"
-                  [placeholder]="'enter' | translate"
-                />
-                <img
-                  src="assets/rdf-forms-icons/signature.svg"
-                  class="signature-icon"
-                />
-              </div>
-
-              <!-- slider  -->
-              <div class="slider-form" *ngIf="question.fieldType === 'RT'">
-                <span class="slider-values">{{ question.value.min }}</span>
-                <mat-slider
-                  [max]="question.value.max"
-                  [min]="question.value.min"
-                  [step]="question.value.increment"
-                  [(ngModel)]="question.value.value"
-                  [ngModelOptions]="{ standalone: true }"
-                  color="primary"
-                  class="slider"
-                  showTickMarks
-                  discrete
-                  [displayWith]="formatLabel"
-                >
-                  <input matSliderThumb />
-                </mat-slider>
-                <span class="slider-values">{{ question.value.max }}</span>
-              </div>
-
-              <!-- location  -->
-              <div *ngIf="question.fieldType === 'GAL'">
-                <input
-                  type="text"
-                  class="text-answer"
-                  [placeholder]="'enter' | translate"
-                />
-                <img
-                  src="assets/rdf-forms-icons/location.svg"
-                  class="signature-icon"
-                />
-              </div>
-
-              <!-- attachment -->
-              <button class="attachment" *ngIf="question.fieldType === 'ATT'">
-                <img src="assets/rdf-forms-icons/attach-icon.svg" />
-                <span translate="addAtt"></span>
-              </button>
-
-              <!-- Date Range -->
-              <div class="dis-flex" *ngIf="question.fieldType === 'DFR'">
-                <input
-                  type="date"
-                  class="text-answer"
-                  [placeholder]="'from' | translate"
-                />
-                <span class="date-range-hypion">-</span>
-                <input
-                  type="date"
-                  class="text-answer"
-                  [placeholder]="'to' | translate"
-                />
-              </div>
-
-              <!-- Insert Image -->
-              <div *ngIf="question.fieldType === 'IMG'">
-                <img
-                  [src]="getImageSrc(question.value.base64)"
-                  *ngIf="question.value?.base64"
-                  alt="image"
-                  class="image-field"
-                />
-              </div>
-
-              <!-- Dropdown -->
-              <div
-                *ngIf="
-                  question.fieldType === 'DD' && question.value.value.length > 4
-                "
-              >
-                <mat-form-field appearance="outline" class="dropdown">
-                  <mat-select
-                    [multiple]="question.multi"
-                    [placeholder]="'enter' | translate"
-                  >
-                    <mat-option
-                      *ngFor="let value of question.value.value"
-                      [value]="value.title"
-                      [ngStyle]="{ color: value.color }"
-                    >
-                      {{ value.title }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <!-- Dropdown -->
-              <div
-                *ngIf="
-                  question.fieldType === 'DD' &&
-                  question.value.value.length <= 4
-                "
-              >
-                <mat-button-toggle-group>
-                  <mat-button-toggle
-                    *ngFor="let question of question.value.value"
-                    [value]="question.title"
-                    [ngStyle]="{
-                      color: question.color
-                    }"
-                  >
-                    {{ question.title }}
-                  </mat-button-toggle>
-                </mat-button-toggle-group>
-              </div>
-
-              <!-- Visible Input -->
-              <div *ngIf="question.fieldType === 'VI'">
-                <mat-button-toggle-group>
-                  <mat-button-toggle
-                    *ngFor="let question of question.value.value"
-                    [value]="question.title"
-                    [ngStyle]="{
-                      color: question.color
-                    }"
-                  >
-                    {{ question.title }}
-                  </mat-button-toggle>
-                </mat-button-toggle-group>
-              </div>
-
-              <!-- Tabular  -->
-              <div *ngIf="question.fieldType === 'TAF'">
-                <table class="table-class">
-                  <thead>
-                    <tr>
-                      <td></td>
-                      <td>Column 1</td>
-                      <td>Column 2</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="bg-color">1</td>
-                      <td><input type="text" class="input-p" /></td>
-                      <td><input type="text" class="input-p" /></td>
-                    </tr>
-                    <tr>
-                      <td class="bg-color">2</td>
-                      <td><input type="text" class="input-p" /></td>
-                      <td><input type="text" class="input-p" /></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div class="add-new-button">
-                  <img src="assets/img/add-new.svg" class="add-new-icon" />
-                  <label>Add new</label>
-                </div>
-              </div>
-
-              <!-- Array-->
-              <div *ngIf="question.fieldType === 'ARD'">
-                <label>
-                  <img
-                    class="img-array"
-                    (click)="openBottomSheet()"
-                    src="assets/rdf-forms-icons/array-arrow.svg"
-                  />
-                </label>
-                <span class="array-heading">
-                  {{
-                    (question.name ? question.name : 'typeQuestion') | translate
-                  }}
-                </span>
-
-                <div class="add-new-button">
-                  <img src="assets/img/add-new.svg" class="add-new-icon" />
-                  <label>Add new</label>
-                </div>
-              </div>
-            </div>
-          </div>
+          <app-preview-question
+            [moduleType]="moduleType"
+            [question]="question"
+            (isOpenBottomSheet)="openBottomSheet($event)"
+          ></app-preview-question>
         </div>
       </div>
     </div>
+    <button
+      *ngIf="pageIndex === pageData.length && page.sections.length !== 0"
+      class="submit-button"
+      translate="submit"
+    ></button>
   </div>
 </div>

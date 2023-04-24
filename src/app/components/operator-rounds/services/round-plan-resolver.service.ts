@@ -2,8 +2,9 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -55,7 +56,12 @@ export class RoundPlanResolverService
           tags,
           _version: formListDynamoDBVersion
         } = form;
-
+        let pdfTemplateConfiguration = JSON.parse(
+          form?.pdfTemplateConfiguration
+        );
+        if (!pdfTemplateConfiguration) {
+          pdfTemplateConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
+        }
         const {
           id: authoredFormDetailId,
           counter,
@@ -76,7 +82,8 @@ export class RoundPlanResolverService
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          pdfTemplateConfiguration
         };
 
         const subFormsMap = JSON.parse(subForms);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { map, catchError, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,7 +15,8 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails
+  UserDetails,
+  ErrorInfo
 } from '../../../../interfaces';
 
 @Injectable({
@@ -34,6 +35,18 @@ export class ResponseSetService {
   private maxLimit = '1000000';
 
   constructor(private _appService: AppService) {}
+
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'response-set/upload',
+      form,
+      info
+    );
+  }
 
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
@@ -129,6 +142,29 @@ export class ResponseSetService {
     }, {});
   }
 
+  downloadSampleResponseSetTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    console.log('service');
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/sample-template',
+      info,
+      true,
+      {}
+    );
+  }
+  getResponseSetCount$(): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.maxLimit);
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'response-set/list?' + params.toString()
+      )
+      .pipe(map((res) => res.items.length || 0));
+  }
+
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
   }
@@ -165,5 +201,18 @@ export class ResponseSetService {
       rows,
       nextToken
     };
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/failure',
+      info,
+      false,
+      body
+    );
   }
 }

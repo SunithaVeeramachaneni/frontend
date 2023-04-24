@@ -12,7 +12,7 @@
 
 html * {
   font-family: 'Roboto', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .modal {
@@ -167,7 +167,7 @@ li.breadcrumb-item.active span {
 
   .ql-toolbar.ql-snow {
     position: absolute;
-    top: -29px !important;
+    top: -51px !important;
     background: white;
     z-index: 1;
     right: 20px !important;
@@ -246,8 +246,8 @@ textarea.mat-input-element {
 
 .mat-form-field-appearance-outline .mat-form-field-flex {
   padding: 0 0.75em 0 0.75em !important;
-  margin-top: 0px !important;
-  margin-bottom: 10px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   position: relative;
 }
 
@@ -357,6 +357,8 @@ textarea.mat-input-element {
 button.mat-menu-item {
   width: 100%;
   font-size: 100%;
+  line-height: 35px;
+  height: 35px;
 }
 
 .mat-menu-content {
@@ -519,7 +521,7 @@ button.mat-menu-item {
 
 .mat-checkbox-checked.mat-accent .mat-checkbox-background,
 .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-  background-color: #637bfe;
+  background-color: #637bfe !important;
 }
 
 .mat-checkbox-checked.mat-accent.mat-checkbox-disabled .mat-checkbox-background,
@@ -563,11 +565,11 @@ button.mat-menu-item {
 
 .custom-form-field-white-color {
   .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.6em 0px !important;
+    padding: 0.3em 0px 0.6em 0px !important;
   }
 
   .mat-form-field-label-wrapper {
-    top: -1.5em;
+    top: -1.3em;
   }
 
   .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
@@ -582,13 +584,12 @@ button.mat-menu-item {
   }
 
   .mat-select-arrow {
-    margin-top: 10px !important;
+    margin-top: 5px !important;
   }
 }
 
 .tableMain tr.mat-header-row {
   height: 48px;
-  
 }
 
 .mat-tab-label .mat-tab-label-content {

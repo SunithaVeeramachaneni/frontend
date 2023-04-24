@@ -31,6 +31,7 @@ export interface FormConfigurationState {
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
+  pdfBuilderConfiguration: {},
   counter: 0,
   formStatus: 'Draft',
   authoredFormDetailId: '',
@@ -216,6 +217,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updatePage,
+    BuilderConfigurationActions.updatePage,
     (state, action): FormConfigurationState => {
       const updatedPageIdx = state.pages.findIndex(
         (page) => page.position === action.pageIndex + 1

@@ -1,0 +1,41 @@
+@import '../../../../../../scss/colors.scss';
+
+.tag-text {
+  padding: 8px 12px;
+  border-radius: 16px;
+  width: fit-content;
+  margin: 0 0 4px 0;
+}
+
+.warning {
+  background-color: $warning-bg;
+  color: $warning-text;
+}
+
+.danger {
+  background-color: $danger-bg;
+  color: $danger-text;
+}
+
+.caution {
+  background-color: $caution-bg;
+  color: $caution-text;
+}
+
+.instruction {
+  font-size: 95%;
+  font-weight: 500;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+.instruction ol li {
+  list-style-type: auto;
+}
+
+.instruction-image-field {
+  width: 56px;
+  margin: 3px;
+  height: 56px;
+  border-radius: 8px;
+}
