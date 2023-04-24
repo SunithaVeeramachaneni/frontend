@@ -133,6 +133,50 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'validThrough',
+      displayName: 'Valid Through',
+      type: 'date',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plantId',
+      displayName: 'plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'createdAt',
       displayName: 'Created At',
       type: 'date',
@@ -610,7 +654,7 @@ export class UsersComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.addEditDeactivateUser = true;
-        this.fetchUsers$.next({data:'load'})
+        this.fetchUsers$.next({ data: 'load' });
         this.toast.show({
           text: 'User uploaded successfully!',
           type: 'success'
