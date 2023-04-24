@@ -59,6 +59,10 @@
 }
 .toggle-btn-icon {
   margin-top: -20px;
+  height: 17px;
+  width: 17px;
+  position: relative;
+  top: -5px;
 }
 .toggle-btn-group {
   padding: 0px;
@@ -104,6 +108,8 @@ img {
 }
 .closeIcon {
   cursor: pointer;
+  height: 12px;
+  width: 12px;
 }
 .addIcon {
   margin-top: -3px;

@@ -45,8 +45,8 @@
                 [checked]="selectedRoleIDList.includes(role.id)"></mat-checkbox>
               <span class="role-name" matTooltip="{{ role.name }}" [ngClass]="{ 'text-red': role.name.length > 100 }">
                 {{ role.name }}
-                <img src="assets/user-management-icons/super-admin-icon.svg" alt="super admin" class="super-admin-icon"
-                  *ngIf="role.name === superAdminText" />
+                <svg-icon icon="icon-super-admin-icon" *ngIf="role.name === superAdminText"
+                  class="super-admin-icon"></svg-icon>
               </span>
 
               <span class="role-count">
@@ -58,8 +58,8 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item (click)="copyRole(role)" translate="copyBtn"
-                  *appCheckUserHasPermission="[perms.copyRole]"></button>
+                <button mat-menu-item [disabled]="role.name === superAdminText" (click)="copyRole(role)"
+                  translate="copyBtn" *appCheckUserHasPermission="[perms.copyRole]"></button>
                 <ng-container *appCheckUserHasPermission="[perms.deleteRole]">
                   <button mat-menu-item *ngIf="role.name !== superAdminText" (click)="deleteRole(role)">
                     <span class="text-red-color" translate="deleteBtn"></span>

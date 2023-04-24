@@ -16,12 +16,11 @@
                 autocomplete="off"
                 [formControl]="searchPlant"
               />
-              <img
-                [src]="filterIcon"
+              <svg-icon
                 matSuffix
-                alt="Open Filter"
+                icon="icon-filterIcon"
                 class="filter-icon"
-              />
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -33,47 +32,21 @@
             *appCheckUserHasPermission="[perms.createPlant, perms.importPlants]"
           ></button>
           <mat-menu #createMenu="matMenu">
-            <!-- <button mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
-              <span translate="uploadExcel"></span>
-            </button> -->
             <button
               mat-menu-item
               (click)="addManually()"
               class="menu-buttons"
               *appCheckUserHasPermission="[perms.createPlant]"
             >
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                matSuffix
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>
 
-          <!-- <button
-            mat-raised-button
-            [matMenuTriggerFor]="moreMenu"
-            class="more-btn"
-            *appCheckUserHasPermission="[perms.importLocations]"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #moreMenu="matMenu">
-          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
-              <span translate="downloadTemplate"></span>
-            </button>
-          </mat-menu> -->
           <input id="upload" hidden type="file" />
         </div>
       </div>

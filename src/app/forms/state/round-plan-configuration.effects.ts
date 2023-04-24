@@ -94,7 +94,8 @@ export class RoundPlanConfigurationEffects {
                   pages: JSON.stringify(authoredFormDetail.pages),
                   subForms, // Handle subforms form round-plan config,
                   hierarchy
-                }
+                },
+                isEdit: this.operatorRoundsService.isEdit
               })
               .pipe(
                 map((createAuthoredFormDetail) =>

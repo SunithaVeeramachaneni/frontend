@@ -325,7 +325,7 @@ export class IssuesComponent implements OnInit {
       }
     }
   };
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+
   dataSource: MatTableDataSource<any>;
   issues$: Observable<{
     columns: Column[];
@@ -423,15 +423,15 @@ export class IssuesComponent implements OnInit {
 
   getIssuesList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
       type: 'issue'
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken, count }) => {
-        this.nextToken = nextToken;
+      mergeMap(({ rows, next, count }) => {
+        this.nextToken = next;
         this.isLoading$.next(false);
         this.issuesCount$ = of(count);
         return of(rows as any[]);
