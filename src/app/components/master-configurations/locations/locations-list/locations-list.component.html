@@ -6,6 +6,18 @@
           <h2 class="heading" translate="locations"></h2>
         </div>
         <div>
+          <span class="no-of-location" *ngIf="locationsListCount$ | async as totalCount">
+            <span class="location-count">
+              {{ totalCount }}
+            </span>
+            <span class="location-text">{{
+              'locations'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span>
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -31,7 +43,7 @@
             ]"
           ></button>
           <mat-menu #createMenu="matMenu">
-            <!-- <button
+            <button
               mat-menu-item
               (click)="uploader.click()"
               class="menu-buttons"
@@ -43,7 +55,7 @@
                 class="menu-icons"
               />
               <span translate="uploadExcel"></span>
-            </button> -->
+            </button>
             <button
               mat-menu-item
               (click)="addManually()"
@@ -59,7 +71,7 @@
             </button>
           </mat-menu>
 
-          <!-- <button
+          <button
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
@@ -68,7 +80,7 @@
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #moreMenu="matMenu">
-          <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
+            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
               <img
                 src="assets/master-configurations/upload-from-excel.svg"
                 alt="Excel"
@@ -76,7 +88,7 @@
               />
               <span translate="downloadTemplate"></span>
             </button>
-          </mat-menu> -->
+          </mat-menu>
           <input
             id="upload"
             hidden

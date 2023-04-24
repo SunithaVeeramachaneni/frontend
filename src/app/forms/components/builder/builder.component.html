@@ -1,0 +1,215 @@
+<div *ngIf="selectedNode">
+  <div
+    *ngIf="{
+      pageIndexes: pageIndexes$ | async,
+      subFormPages: subFormPages$ | async,
+      questionCounter: questionCounter$ | async
+    } as props"
+  >
+    <ng-container *ngFor="let pageIndex of props.pageIndexes">
+      <app-page
+        [pageIndex]="pageIndex"
+        (pageEvent)="pageEventHandler($event)"
+        cdkDropListGroup
+        [selectedNodeId]="selectedNode.id"
+      >
+        <ng-container *ngIf="sectionIds$ | async as sectionIds">
+          <div
+            cdkDropList
+            (cdkDropListDropped)="
+              dropSection($event, pageIndex, selectedNode.id)
+            "
+            [cdkDropListData]="getSectionsOfPage(pageIndex)"
+          >
+            <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
+              <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
+                <div class="dis-flex" cdkDrag>
+                  <div class="section-drag-handler">
+                    <img
+                      cdkDragHandle
+                      src="assets/rdf-forms-icons/six-dots-white.svg"
+                      alt="six-dots"
+                      class="section-six-dots"
+                    />
+                  </div>
+
+                  <app-section
+                    class="sectionContainer"
+                    [pageIndex]="pageIndex"
+                    [sectionIndex]="sectionIndex"
+                    [sectionId]="sectionIds[pageIndex][sectionIndex]"
+                    (sectionEvent)="sectionEventHandler($event)"
+                    [selectedNodeId]="selectedNode.id"
+                  >
+                    <div
+                      class="sectionMinimumDragArea"
+                      cdkDropList
+                      id="{{ sectionIds[pageIndex][sectionIndex] }}"
+                      [cdkDropListConnectedTo]="sectionIds[pageIndex]"
+                      (cdkDropListDropped)="
+                        drop(
+                          $event,
+                          pageIndex,
+                          sectionIds[pageIndex][sectionIndex],
+                          selectedNode.id
+                        )
+                      "
+                      [cdkDropListData]="
+                        getQuestionsOfSection(
+                          pageIndex,
+                          sectionIds[pageIndex][sectionIndex]
+                        )
+                      "
+                      [id]="sectionIds[pageIndex][sectionIndex]"
+                    >
+                      <ng-container *ngIf="questionIds$ | async as questionIds">
+                        <div
+                          *ngIf="
+                            getQuestionsOfSection(
+                              pageIndex,
+                              sectionIds[pageIndex][sectionIndex]
+                            ).length === 0
+                          "
+                        >
+                          <span
+                            class="sectionEmpty"
+                            translate="sectionEmptyMessage"
+                          >
+                          </span>
+                          <div class="floating-btns empty-section">
+                            <button
+                              class="questions-btn"
+                              (click)="
+                                addQuestion(
+                                  pageIndex,
+                                  sectionIds[pageIndex][sectionIndex],
+                                  0,
+                                  selectedNode.id
+                                )
+                              "
+                            >
+                              <img
+                                src="assets/rdf-forms-icons/add-question.svg"
+                                alt="add questions"
+                              />
+                              <p
+                                class="questions-delete-btn-text"
+                                translate="question"
+                              ></p>
+                            </button>
+                          </div>
+                        </div>
+                        <ng-container
+                          *ngFor="
+                            let questionId of questionIds[pageIndex][
+                              sectionIds[pageIndex][sectionIndex]
+                            ];
+                            let questionIndex = index
+                          "
+                        >
+                          <div
+                            cdkDrag
+                            class="questionContainer"
+                            [ngClass]="{
+                              'highlight-bg':
+                                getQuestionsOfSection(
+                                  pageIndex,
+                                  sectionIds[pageIndex][sectionIndex]
+                                )[questionIndex].isOpen === true
+                            }"
+                          >
+                            <div class="question-drag-handler">
+                              <img
+                                cdkDragHandle
+                                src="assets/rdf-forms-icons/six-dots.svg"
+                                alt="six-dots"
+                                class="question-six-dots"
+                              />
+                            </div>
+
+                            <app-question
+                              class="question"
+                              [pageIndex]="pageIndex"
+                              [sectionId]="sectionIds[pageIndex][sectionIndex]"
+                              [questionId]="questionId"
+                              [questionIndex]="questionIndex"
+                              (questionEvent)="questionEventHandler($event)"
+                              [selectedNodeId]="selectedNode.id"
+                            ></app-question>
+                          </div>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </app-section>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container
+              *ngIf="isEmptyPage[pageIndex]"
+              class="emptyPageContainer"
+            >
+              <div class="floating-btns">
+                <button
+                  class="questions-btn"
+                  (click)="
+                    addQuestion(
+                      pageIndex,
+                      sectionIds[pageIndex][0],
+                      0,
+                      selectedNode.id
+                    )
+                  "
+                >
+                  <img
+                    src="assets/rdf-forms-icons/add-question.svg"
+                    alt="add questions"
+                  />
+                  <p class="questions-delete-btn-text" translate="question"></p>
+                </button>
+                <br />
+
+                <button class="delete-btn">
+                  <img
+                    src="assets/rdf-forms-icons/delete-question.svg"
+                    alt="delete questions"
+                  />
+                  <p class="questions-delete-btn-text" translate="delete"></p>
+                </button>
+              </div>
+              <button class="add-section-btn" (click)="addSection(pageIndex)">
+                <img
+                  src="assets/rdf-forms-icons/add-section.svg"
+                  alt="add section"
+                  class="add-section-btn-icon"
+                />
+                {{ 'addSection' | translate }}
+              </button>
+            </ng-container>
+          </div>
+        </ng-container>
+      </app-page>
+    </ng-container>
+  </div>
+  <div
+    *ngIf="isEmptyPlan"
+    [ngClass]="{
+      emptyRoutePlanContainer: !isPreviewActive,
+      emptyRoutePlanContainerWithPreview: isPreviewActive
+    }"
+  >
+    <div>
+      <img src="assets/img/svg/add-page.svg" alt="add page" />
+    </div>
+    <div class="empty-text" translate="emptyRoundsPlan"></div>
+    <div>
+      <button class="add-page-btn" (click)="addPage()">
+        <img
+          src="assets/rdf-forms-icons/add-page.svg"
+          alt="add page"
+          class="add-page-btn-icon"
+        />
+        {{ 'addPage' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

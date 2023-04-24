@@ -2,35 +2,60 @@
 
 .search-container {
   position: fixed;
-  top: 80px;
+  top: 74px;
   right: 10px;
   z-index: 100;
 
   .search {
     margin-top: 5px;
     margin-right: 14px;
+  }
 
-    .no-of-forms {
-      margin-right: 10px;
-    }
+  ::ng-deep .plan-categories .mat-button-toggle {
+    margin-right: 10px;
+    border-radius: 30px;
+    align-items: center;
+    height: 20px;
+    padding: 8px 18px;
+    background: $blue8;
+    border: none;
+  }
 
-    .forms-count {
-      font-weight: 500;
-      font-size: 110%;
-      color: $gray-bg;
-    }
+  ::ng-deep .plan-categories .mat-button-toggle-group-appearance-standard {
+    border: none;
+  }
 
-    .forms-text {
-      font-weight: 500;
-      font-size: 110%;
-      color: $gray1;
-      margin-left: 5px;
-    }
+  ::ng-deep
+    .plan-categories
+    .mat-button-toggle-group-appearance-standard
+    .mat-button-toggle-label-content {
+    line-height: 24px;
+    font-size: 90%;
+    font-weight: 600;
+    font-style: normal;
+    color: $blue-main;
+  }
+
+  ::ng-deep
+    .plan-categories
+    .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+    background: $blue-main;
+  }
+
+  ::ng-deep
+    .plan-categories
+    .mat-button-toggle-checked.mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    color: $white;
+  }
+
+  ::ng-deep .plan-categories .mat-button-toggle .mat-button-toggle-ripple {
+    border-radius: 30px;
   }
 }
 
 ::ng-deep .remove-zindex th {
-  z-index: 0 !important;
+  z-index: 2 !important;
 }
 
 .plans-list {
@@ -41,4 +66,15 @@
 
 .padding-lr-20 {
   padding: 0 20px;
+}
+
+.plans-loading {
+  width: 27%;
+  height: 32px;
+  border-radius: 5px;
+  position: relative;
+  float: right;
+  right: 280px;
+  margin-top: -35px;
+  top: 43px;
 }

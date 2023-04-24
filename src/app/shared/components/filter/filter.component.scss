@@ -1,0 +1,130 @@
+@import '../../../../scss/colors.scss';
+.filter-report-modal {
+  margin: 10px 0px 15px 0px;
+  background: $white;
+  border: 1px solid $grey;
+  border-radius: 4px;
+  position: relative;
+  top: 10px;
+  width: 330px;
+  right: -80px;
+  max-height: 340px;
+  min-height: 280px;
+}
+
+.filter-input-modal {
+  width: 270px;
+  height: auto;
+  max-height: 300px;
+  border: 1px solid $grey;
+  border-radius: 8px;
+  background-color: $white;
+  padding: 20px;
+  position: relative;
+  left: 112px;
+  top: 15px;
+}
+
+.filter-header {
+  padding: 20px 20px 0px 20px;
+}
+
+.filter-modal-heading {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 110%;
+  line-height: 150%;
+  align-items: center;
+  letter-spacing: 0.15px;
+  color: $black;
+}
+
+.filter-modal-cancel {
+  color: $light-gray;
+  float: right;
+  background-color: $white;
+  border: none;
+  cursor: pointer;
+}
+::ng-deep
+  .filter-report-modal
+  .mat-list-base
+  .mat-list-item
+  .mat-list-item-content {
+  padding: 0 !important;
+}
+
+.reset-filters-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 120%;
+  line-height: 150%;
+  letter-spacing: 0.15px;
+  position: relative;
+  top: 5px;
+  right: 5px;
+  float: right;
+  border: none;
+}
+
+.apply-filters-btn {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 120%;
+  letter-spacing: 0.15px;
+  float: right;
+  border-radius: 4px;
+  margin-right: 30px;
+  margin-bottom: 15px;
+  border: none;
+  background-color: $blue-main;
+  color: $white;
+}
+.date-picker-wrap {
+  display: flex;
+}
+.arrow-toggle .mat-icon-button {
+  width: 20px;
+  height: 20px;
+  line-height: 16px;
+}
+.date-picker {
+  .mat-icon {
+    width: 20px;
+    height: 20px;
+    line-height: 16px;
+  }
+}
+mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.filter-modal {
+  margin: 10px 0px 15px 0px;
+  background: $white;
+  border: 1px solid $grey;
+  border-radius: 4px;
+  width: 350px;
+  position: fixed;
+  right: 20px;
+}
+.filter-form-fields {
+  max-height: 230px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+  padding: 0px 20px;
+}
+.mat-field {
+  width: 100%;
+}
+.schedule-wrap {
+  display: flex;
+  justify-content: space-between;
+  .width50 {
+    width: 47%;
+  }
+  .width100 {
+    width: 100%;
+  }
+}

@@ -12,6 +12,13 @@
     width: 55px;
   }
 
+  .question-line {
+    border: 1px solid $border-color;
+    margin: 0px 0px 0px -23px;
+    position: relative;
+    top: 2px;
+  }
+
   .questions-btn {
     background-color: $white;
     border: none;
@@ -49,12 +56,21 @@
   }
 
   .questions-div {
-    border-bottom: 1px solid $border-color;
-    height: 40px;
-
     .question-input-box {
       margin-top: 7px;
-      margin-bottom: 5px;
+    }
+
+    .rtf-input-box {
+      height: auto !important;
+    }
+
+    ::ng-deep .mat-form-field-appearance-outline.mat-form-field-disabled,
+    ::ng-deep .mat-form-field-outline {
+      opacity: 0;
+    }
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 0 !important;
     }
   }
 
@@ -91,8 +107,9 @@
 
     .questionActionsRow {
       display: flex;
-      align-items: center;
+      align-items: left;
       .addLogicBtn {
+        margin-left: -23px;
         color: $blue-main;
         font-weight: 400;
         .icon {
@@ -101,6 +118,7 @@
           margin-top: -5px;
         }
       }
+
       .action {
         padding: 0px 15px;
         display: flex;
@@ -136,6 +154,10 @@
   .required-checkbox {
     margin: 0 8px 0 0px;
   }
+}
+
+.enableHistory-checkbox {
+  margin: 0 8px 0 0px;
 }
 
 .uomBtn {
@@ -180,10 +202,9 @@
     .uomSymbol {
       font-weight: 600;
     }
-    .uomTitle {
-    }
   }
 }
+
 .rangeBtn {
   cursor: pointer;
   margin-left: 5px;

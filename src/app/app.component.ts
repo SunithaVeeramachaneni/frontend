@@ -54,14 +54,18 @@ const {
   submissionForms,
   myForms,
   archivedForms,
+  schedularForms,
   operatorRoundPlans,
   myRoundPlans,
-  roundPlanSubmissions,
+  roundPlanScheduler,
   masterConfiguration,
   locations,
   assets,
   unitOfMeasurement,
-  roundPlanArchivedForms
+  plants,
+  globalResponse,
+  roundPlanArchivedForms,
+  roundPlanObservations
 } = routingUrls;
 
 @Component({
@@ -149,14 +153,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myForms.permission
         },
         {
-          title: submissionForms.title,
-          url: submissionForms.url,
-          permission: submissionForms.permission
-        },
-        {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
+        },
+        {
+          title: schedularForms.title,
+          url: schedularForms.url,
+          permission: schedularForms.permission
         }
       ]
     },
@@ -174,14 +178,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myRoundPlans.permission
         },
         {
-          title: roundPlanSubmissions.title,
-          url: roundPlanSubmissions.url,
-          permission: roundPlanSubmissions.permission
+          title: roundPlanScheduler.title,
+          url: roundPlanScheduler.url,
+          permission: roundPlanScheduler.permission
         },
         {
           title: roundPlanArchivedForms.title,
           url: roundPlanArchivedForms.url,
           permission: roundPlanArchivedForms.permission
+        },
+        {
+          title: roundPlanObservations.title,
+          url: roundPlanObservations.url,
+          permission: roundPlanObservations.permission
         }
       ]
     },
@@ -229,6 +238,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       disable: false,
       subPages: [
         {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
+        },
+        {
           title: locations.title,
           url: locations.url,
           permission: locations.permission
@@ -242,6 +256,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: unitOfMeasurement.title,
           url: unitOfMeasurement.url,
           permission: unitOfMeasurement.permission
+        },
+        {
+          title: globalResponse.title,
+          url: globalResponse.url,
+          permission: globalResponse.permission
         }
       ]
     }
@@ -260,6 +279,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  isMenuOpenOnItemClick = true;
   hoverMenuTimer: any;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
@@ -435,18 +455,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   registerServerSentEvents(userInfo, ref) {
+    const { tenantId, collaborationType } = this.tenantService.getTenantInfo();
     let userID;
-    if (userInfo.collaborationType === 'slack') {
+    if (collaborationType === 'slack') {
       if (userInfo.slackDetail && userInfo.slackDetail.slackID) {
         userID = userInfo.slackDetail.slackID;
       }
-    } else if (userInfo.collaborationType === 'msteams') {
+    } else if (collaborationType === 'msteams') {
       userID = userInfo.email;
     }
 
     // COLLABORATION CHAT SSE
     if (userID) {
-      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
+      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
         collaborationSSEUrl,
         null
@@ -611,16 +632,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   openMenuOnMouseEnter() {
-    clearTimeout(this.hoverMenuTimer);
-    this.hoverMenuTimer = setTimeout(() => {
-      this.menuOpenClose = true;
-    }, 250);
+    if (!this.isMenuOpenOnItemClick) {
+      clearTimeout(this.hoverMenuTimer);
+      this.hoverMenuTimer = setTimeout(() => {
+        this.menuOpenClose = true;
+        this.isMenuOpenOnItemClick = true;
+      }, 250);
+    }
   }
 
   closeMenuOnMouseLeave() {
     clearTimeout(this.hoverMenuTimer);
     this.hoverMenuTimer = setTimeout(() => {
       this.menuOpenClose = false;
+      this.isMenuOpenOnItemClick = false;
     }, 250);
   }
 }

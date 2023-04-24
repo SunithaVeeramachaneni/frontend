@@ -5,6 +5,10 @@ export const fieldTypesMock = {
       description: 'Read Only Field'
     },
     {
+      type: 'INST',
+      description: 'Instructions'
+    },
+    {
       type: 'TF',
       description: 'Text Answer'
     },
@@ -38,7 +42,7 @@ export const fieldTypesMock = {
     },
     {
       type: 'ATT',
-      description: 'Attachments'
+      description: 'Photo'
     },
     {
       type: 'VI',
@@ -85,192 +89,192 @@ export const fieldTypesMock = {
 
 export const unitOfMeasurementsMock = [
   {
-    title: 'metre',
+    description: 'metre',
     symbol: 'm',
     code: 'm'
   },
   {
-    title: 'centimetre',
+    description: 'centimetre',
     symbol: 'cm',
     code: 'cm'
   },
   {
-    title: 'millimetre',
+    description: 'millimetre',
     symbol: 'mm',
     code: 'mm'
   },
   {
-    title: 'kilometre',
+    description: 'kilometre',
     symbol: 'km',
     code: 'km'
   },
   {
-    title: 'nanometre',
+    description: 'nanometre',
     symbol: 'nm',
     code: 'nm'
   },
   {
-    title: 'micrometre (micron)',
+    description: 'micrometre (micron)',
     symbol: 'µm',
     code: 'µm'
   },
   {
-    title: 'litre',
+    description: 'litre',
     symbol: 'l',
     code: 'l'
   },
   {
-    title: 'millilitre',
+    description: 'millilitre',
     symbol: 'ml',
     code: 'ml'
   },
   {
-    title: 'kilolitre',
+    description: 'kilolitre',
     symbol: 'kl',
     code: 'kl'
   },
   {
-    title: 'Celsius',
+    description: 'Celsius',
     symbol: '°C',
     code: '°C'
   },
   {
-    title: 'Kelvin',
+    description: 'Kelvin',
     symbol: 'K',
     code: 'K'
   },
   {
-    title: 'Fahrenheit',
+    description: 'Fahrenheit',
     symbol: '°F',
     code: '°F'
   },
   {
-    title: 'kilogram',
+    description: 'kilogram',
     symbol: 'kg',
     code: 'kg'
   },
   {
-    title: 'gram',
+    description: 'gram',
     symbol: 'gm',
     code: 'gm'
   },
   {
-    title: 'milligram',
+    description: 'milligram',
     symbol: 'mg',
     code: 'mg'
   },
   {
-    title: 'foot',
+    description: 'foot',
     symbol: 'ft',
     code: 'ft'
   },
   {
-    title: 'inch',
+    description: 'inch',
     symbol: 'in',
     code: 'in'
   },
   {
-    title: 'yard',
+    description: 'yard',
     symbol: 'yd',
     code: 'yd'
   },
   {
-    title: 'mile',
+    description: 'mile',
     symbol: 'mi',
     code: 'mi'
   },
   {
-    title: 'millilitre per second',
+    description: 'millilitre per second',
     symbol: 'ml/s',
     code: 'ml/s'
   },
   {
-    title: 'litre per minute',
+    description: 'litre per minute',
     symbol: 'l/min',
     code: 'l/min'
   },
   {
-    title: 'litre per second',
+    description: 'litre per second',
     symbol: 'l/s',
     code: 'l/s'
   },
   {
-    title: 'Fluid ounce',
+    description: 'Fluid ounce',
     symbol: 'fl. oz.',
     code: 'fl. oz.'
   },
   {
-    title: 'Gallon',
+    description: 'Gallon',
     symbol: 'gal',
     code: 'gal'
   },
   {
-    title: 'radian',
+    description: 'radian',
     symbol: 'rad',
     code: 'rad'
   },
   {
-    title: 'Second',
+    description: 'Second',
     symbol: 'sec',
     code: 'sec'
   },
   {
-    title: 'Minute',
+    description: 'Minute',
     symbol: 'min',
     code: 'min'
   },
   {
-    title: 'Hour',
+    description: 'Hour',
     symbol: 'hr',
     code: 'hr'
   },
   {
-    title: 'Day',
+    description: 'Day',
     symbol: 'day',
     code: 'day'
   },
   {
-    title: 'Week',
+    description: 'Week',
     symbol: 'wk',
     code: 'wk'
   },
   {
-    title: 'Month',
+    description: 'Month',
     symbol: 'mon',
     code: 'mon'
   },
   {
-    title: 'Year',
+    description: 'Year',
     symbol: 'yr',
     code: 'yr'
   },
   {
-    title: 'millipascal',
+    description: 'millipascal',
     symbol: 'mPa',
     code: 'mPa'
   },
   {
-    title: 'pascal',
+    description: 'pascal',
     symbol: 'Pa',
     code: 'Pa'
   },
   {
-    title: 'kilopascal',
+    description: 'kilopascal',
     symbol: 'kPa',
     code: 'kPa'
   },
   {
-    title: 'kilogram per litre',
+    description: 'kilogram per litre',
     symbol: 'kg/L',
     code: 'kg/L'
   },
   {
-    title: 'gram per litre',
+    description: 'gram per litre',
     symbol: 'g/l',
     code: 'g/l'
   },
   {
-    title: 'kilograms per cubic metre',
+    description: 'kilograms per cubic metre',
     symbol: 'kg/m3',
     code: 'kg/m3'
   }

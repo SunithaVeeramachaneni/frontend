@@ -26,7 +26,6 @@ import {
 import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
@@ -34,6 +33,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-form-list',
@@ -45,7 +45,9 @@ import { slideInOut } from 'src/app/animations';
 export class FormListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
-
+  isPopoverOpen = false;
+  status: any[] = ['Draft', 'Published'];
+  filterJson: any[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -76,35 +78,13 @@ export class FormListComponent implements OnInit {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
-      id: 'author',
-      displayName: 'Owner',
-      type: 'number',
-      controlType: 'string',
-      isMultiValued: true,
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
+    
     {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -141,7 +121,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -163,7 +143,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -176,6 +156,29 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'author',
+      displayName: 'Created By',
+      type: 'number',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -208,26 +211,31 @@ export class FormListComponent implements OnInit {
       }
     }
   };
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    authoredBy: '',
+    lastModifiedOn: ''
+  };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
   formsCount$: Observable<Count>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as GetFormList
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -251,7 +259,10 @@ export class FormListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+
+    this.getAllForms();
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -286,7 +297,7 @@ export class FormListComponent implements OnInit {
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
+  onCopyFormMetaData(form: GetFormList): void {
     if (!form.id) {
       return;
     }
@@ -360,7 +371,7 @@ export class FormListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
@@ -398,7 +409,7 @@ export class FormListComponent implements OnInit {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
             });
           } else {
@@ -415,12 +426,16 @@ export class FormListComponent implements OnInit {
 
   getForms() {
     return this.raceDynamicFormService
-      .getFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        this.filter
+      )
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
@@ -436,7 +451,7 @@ export class FormListComponent implements OnInit {
       );
   }
 
-  openArchiveModal(form: GetFormListQuery): void {
+  openArchiveModal(form: GetFormList): void {
     this.raceDynamicFormService
       .updateForm$({
         formMetadata: {
@@ -452,7 +467,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form: form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
@@ -516,8 +531,8 @@ export class FormListComponent implements OnInit {
   }
 
   private generateCopyFormName(
-    form: GetFormListQuery,
-    rows: GetFormListQuery[]
+    form: GetFormList,
+    rows: GetFormList[]
   ) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
@@ -537,9 +552,72 @@ export class FormListComponent implements OnInit {
     return null;
   }
 
-  private showFormDetail(row: GetFormListQuery): void {
+  private showFormDetail(row: GetFormList): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  getAllForms() {
+    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
+    this.formsList$
+      .pipe(
+        tap((formsList) => {
+          const uniqueLastPublishedBy = formsList.rows
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueLastPublishedBy) {
+            if (item) {
+              this.lastPublishedBy.push(item);
+            }
+          }
+          const uniqueAuthoredBy = formsList.rows
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueAuthoredBy) {
+            if (item) {
+              this.authoredBy.push(item);
+            }
+          }
+          for (const item of this.filterJson) {
+            if (item['column'] == 'status') {
+              item.items = this.status;
+            } else if (item['column'] == 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item['column'] == 'authoredBy') {
+              item.items = this.authoredBy;
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  getFilter() {
+    this.raceDynamicFormService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      this.filter[item.column] = item.value;
+    }
+    this.nextToken = '';
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: ''
+    };
+    this.nextToken = '';
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }

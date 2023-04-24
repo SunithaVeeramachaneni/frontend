@@ -49,7 +49,8 @@
         class="list-icons"
       />
       <span class="date-priority-label">{{
-        workOrder.dueDate | date: 'dd-MMM-yyyy':'':translateService.currentLang
+        workOrder.dueDate
+          | date : 'dd-MMM-yyyy' : '' : translateService.currentLang
       }}</span>
     </span>
     <span
@@ -76,10 +77,10 @@
       />
       <span class="width-100 display-flex">
         <span class="date-priority-label">{{
-          'actualTime' | translate: { time: workOrder.actualTime }
+          'actualTime' | translate : { time: workOrder.actualTime }
         }}</span>
         <span class="date-priority-label float-right">{{
-          'plannedTime' | translate: { time: workOrder.estimatedTime }
+          'plannedTime' | translate : { time: workOrder.estimatedTime }
         }}</span>
       </span>
     </span>
@@ -149,11 +150,11 @@
         class="assign-user-image"
       />
       <span
-        *ngIf="
-          workOrder.status === 'assigned' || workOrder.status === 'inProgress'
-        "
+        *ngIf="workOrder.status !== 'unassigned'"
         class="inprogress-user-name m-l-7"
-        [ngClass]="{ 'assign-user-name': workOrder.status === 'assigned' }"
+        [ngClass]="{
+          'assign-user-name': workOrder.status !== 'unassigned'
+        }"
         >{{ workOrder.technician[0].personName }}</span
       >
     </div>
@@ -183,7 +184,7 @@
       <mat-icon class="down-up-arrow">keyboard_arrow_down</mat-icon>
       {{
         'showOperations'
-          | translate: { noOfOperations: workOrder.operations.length }
+          | translate : { noOfOperations: workOrder.operations.length }
       }}
     </button>
     <button
@@ -194,7 +195,7 @@
       <mat-icon class="down-up-arrow">keyboard_arrow_up</mat-icon>
       {{
         'hideOperations'
-          | translate: { noOfOperations: workOrder.operations.length }
+          | translate : { noOfOperations: workOrder.operations.length }
       }}
     </button>
   </div>
@@ -224,7 +225,7 @@
             />
             <span class="date-priority-label">{{
               workOrder.dueDate
-                | date: 'dd-MMM-yyyy':'':translateService.currentLang
+                | date : 'dd-MMM-yyyy' : '' : translateService.currentLang
             }}</span>
           </span>
           <span class="display-flex">

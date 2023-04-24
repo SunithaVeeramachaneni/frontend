@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery, ListLocationsQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -32,6 +31,8 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -41,7 +42,7 @@ import { slideInOut } from 'src/app/animations';
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<ListLocationsQuery>;
+  allLocations$: Observable<any>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   parentInformation;
   allParentsData;
@@ -191,12 +192,12 @@ export class AssetsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
-
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
     private locationService: LocationService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -213,7 +214,7 @@ export class AssetsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    //this.assetsListCount$ = this.assetService.getFormsListCount$();
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
@@ -308,6 +309,7 @@ export class AssetsListComponent implements OnInit {
           }
         }
         this.skip = initial.data.length;
+        this.assetsListCount$ = this.assetService.getAssetCount$();
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -367,6 +369,7 @@ export class AssetsListComponent implements OnInit {
         });
       }
     }
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
@@ -427,6 +430,7 @@ export class AssetsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
+      this.assetsListCount$ = this.assetService.getAssetCount$();
     });
   }
 
@@ -435,7 +439,7 @@ export class AssetsListComponent implements OnInit {
     this.assetsEditData = null;
   }
 
-  showAssetDetail(row: GetFormListQuery): void {
+  showAssetDetail(row: any): void {
     this.selectedAsset = row;
     this.openAssetsDetailedView = 'in';
   }
@@ -465,38 +469,27 @@ export class AssetsListComponent implements OnInit {
 
   uploadFile(event) {
     const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    this.assetService.uploadExcel(formData).subscribe((resp) => {
-      if (resp.status === 200) {
-        for (const item of resp.data) {
-          if (item.parentType.toLowerCase() === 'location') {
-            const parent = this.allParentsLocations.find(
-              (d) => d.locationId === item.parentId
-            );
-            if (parent) {
-              item.parentStatus = true;
-              item.parentId = parent.id;
-            } else {
-              item.parentId = '';
-            }
-          } else {
-            const parent = this.allParentsAssets.find(
-              (d) => d.assetsId === item.parentId
-            );
-            if (parent) {
-              item.parentId = parent.id;
-            } else {
-              item.parentId = '';
-            }
-          }
-          this.assetService.createAssets$(item).subscribe((res) => {
-            this.addOrUpdateAssets({
-              status: 'add',
-              data: res
-            });
+    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+      data: {
+        file,
+        type: 'assets'
+      },
+      disableClose: true
+    });
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res.data) {
+        this.getAllLocations();
+        this.getAllAssets();
+        this.addEditCopyDeleteAssets = true;
+        this.nextToken = '';
+        this.assetsListCount$ = this.assetService.getAssetCount$();
+        this.assetService.fetchAssets$.next({ data: 'load' });
+          this.toast.show({
+            text: 'Asset uploaded successfully!',
+            type: 'success'
           });
-        }
+        
       }
     });
   }

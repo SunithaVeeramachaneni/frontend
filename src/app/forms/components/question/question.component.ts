@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -30,23 +31,30 @@ import {
 import {
   QuestionEvent,
   Question,
-  NumberRangeMetadata
+  NumberRangeMetadata,
+  FormMetadata,
+  InstructionsFile
 } from 'src/app/interfaces';
 import {
   getQuestionByID,
   getSectionQuestionsCount,
   State,
-  getQuestionLogics
-} from 'src/app/forms/state';
+  getQuestionLogics,
+  getFormMetadata,
+  getModuleName
+} from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 import { isEqual } from 'lodash-es';
-import { FormConfigurationActions } from '../../state/actions';
+import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
-
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
+import { ToastService } from 'src/app/shared/toast';
+import { TranslateService } from '@ngx-translate/core';
+import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -60,6 +68,8 @@ export class QuestionComponent implements OnInit {
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+
+  @Input() selectedNodeId: any;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -94,8 +104,26 @@ export class QuestionComponent implements OnInit {
     return this._isAskQuestion;
   }
 
+  @Input() set questionName(questionName: string) {
+    this._questionName = questionName;
+  }
+
+  get questionName() {
+    return this._questionName;
+  }
+
+  @Input() set subFormId(subFormId: string) {
+    this._subFormId = subFormId;
+  }
+
+  get subFormId() {
+    return this._subFormId;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
+  formMetadata: FormMetadata;
+  moduleName: string;
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -111,12 +139,13 @@ export class QuestionComponent implements OnInit {
     'TAF',
     'ARD',
     'DT',
-    'HL'
+    'HL',
+    'INST'
   ];
 
-  unitOfMeasurementsAvailable = [];
-
+  unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
+  fetchUnitOfMeasurement: Observable<any>;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -125,6 +154,7 @@ export class QuestionComponent implements OnInit {
     fieldType: 'TF',
     position: '',
     required: false,
+    enableHistory: false,
     multi: false,
     value: 'TF',
     isPublished: false,
@@ -141,20 +171,28 @@ export class QuestionComponent implements OnInit {
   addQuestionClicked: boolean;
   isHyperLinkOpen = false;
   formId: string;
+  isINSTFieldChanged = false;
+  instructionTagColours = {};
 
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
   private _questionIndex: number;
   private _isAskQuestion: boolean;
+  private _questionName: string;
+  private _subFormId: string;
 
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
-    private rdfService: RaceDynamicFormService,
-    private route: ActivatedRoute
+    private responseSetService: ResponseSetService,
+    private operatorRoundsService: OperatorRoundsService,
+    private route: ActivatedRoute,
+    private toast: ToastService,
+    private translate: TranslateService,
+    private unitServiceOfMeasurement: UnitMeasurementService
   ) {}
 
   ngOnInit(): void {
@@ -162,13 +200,37 @@ export class QuestionComponent implements OnInit {
       this.formId = params.id;
     });
 
-    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+    this.operatorRoundsService.formCreatedUpdated$.subscribe((data) => {
       if (data.id) {
         this.formId = data.id;
       }
     });
 
-    this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
+    this.store
+      .select(getFormMetadata)
+      .subscribe((event) => (this.formMetadata = event));
+    this.store
+      .select(getModuleName)
+      .subscribe((event) => (this.moduleName = event));
+
+    this.unitServiceOfMeasurement
+      .getUnitOfMeasurementList$({
+        nextToken: '',
+        limit: 10000,
+        searchKey: '',
+        fetchType: 'load'
+      })
+      .subscribe((data) => {
+        this.unitOfMeasurementsAvailable = data.rows;
+        this.unitOfMeasurementsAvailable =
+          this.unitOfMeasurementsAvailable.filter(
+            (value, index, array) =>
+              index ===
+                array.findIndex(
+                  (item) => item.description === value.description
+                ) && value.isActive === true
+          );
+      });
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -181,6 +243,15 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF'
     );
+
+    // isAskQuestion true set question id and section id
+    if (this.isAskQuestion) {
+      this.questionForm.get('id').setValue(this.questionId);
+      this.questionForm.get('sectionId').setValue(this.sectionId);
+      this.questionForm.get('name').setValue(this.questionName);
+      this.selectedNodeId = this.subFormId;
+    }
+
     this.questionForm.valueChanges
       .pipe(
         startWith({}),
@@ -195,20 +266,43 @@ export class QuestionComponent implements OnInit {
             ...curr
           } = current;
           if (!isEqual(prev, curr)) {
-            this.questionEvent.emit({
-              pageIndex: this.pageIndex,
-              sectionId: this.sectionId,
-              question: this.questionForm.value,
-              questionIndex: this.questionIndex,
-              type: 'update'
-            });
+            const { value: prevValue } = prev;
+            const { value: currValue } = curr;
+            if (
+              current.fieldType === 'INST' &&
+              prevValue !== undefined &&
+              isEqual(prevValue, currValue)
+            ) {
+              this.isINSTFieldChanged = true;
+            } else {
+              if (
+                currValue?.type === 'globalResponse' ||
+                prevValue?.type === 'globalResponse'
+              )
+                this.handleGlobalResponseRefCount(prevValue, currValue);
+
+              this.questionEvent.emit({
+                pageIndex: this.pageIndex,
+                sectionId: this.sectionId,
+                question: this.questionForm.value,
+                questionIndex: this.questionIndex,
+                type: 'update'
+              });
+            }
           }
         })
       )
       .subscribe();
 
     this.question$ = this.store
-      .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
+      .select(
+        getQuestionByID(
+          this.pageIndex,
+          this.sectionId,
+          this.questionId,
+          this.selectedNodeId
+        )
+      )
       .pipe(
         tap((question) => {
           if (question) {
@@ -216,12 +310,18 @@ export class QuestionComponent implements OnInit {
               question.isOpen &&
               !isEqual(question.isOpen, this.question?.isOpen)
             ) {
-              timer(0).subscribe(() => this.name.nativeElement.focus());
+              if (question.fieldType !== 'INST') {
+                timer(0).subscribe(() => this.name.nativeElement.focus());
+              }
             } else if (!question.isOpen) {
               if (this.isAskQuestion) {
-                timer(0).subscribe(() => this.name.nativeElement.focus());
+                if (question.fieldType !== 'INST') {
+                  timer(0).subscribe(() => this.name.nativeElement.focus());
+                }
               } else {
-                timer(0).subscribe(() => this.name.nativeElement.blur());
+                if (question.fieldType !== 'INST') {
+                  timer(0).subscribe(() => this.name.nativeElement.blur());
+                }
               }
             }
             this.question = question;
@@ -233,8 +333,18 @@ export class QuestionComponent implements OnInit {
       );
 
     this.sectionQuestionsCount$ = this.store.select(
-      getSectionQuestionsCount(this.pageIndex, this.sectionId)
+      getSectionQuestionsCount(
+        this.pageIndex,
+        this.sectionId,
+        this.selectedNodeId
+      )
     );
+
+    this.instructionTagColours[this.translate.instant('cautionTag')] =
+      '#D27B16';
+    this.instructionTagColours[this.translate.instant('warningTag')] =
+      '#FF3D00';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
   }
 
   getRangeMetadata() {
@@ -252,7 +362,7 @@ export class QuestionComponent implements OnInit {
     this.unitOfMeasurements = [...unitOfMeasurementsMock];
     this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
       (option) =>
-        option.title.toLowerCase().startsWith(filter) ||
+        option.description.toLowerCase().startsWith(filter) ||
         option.code.toLowerCase().startsWith(filter) ||
         option.symbol.toLowerCase().startsWith(filter)
     );
@@ -304,6 +414,11 @@ export class QuestionComponent implements OnInit {
       this.questionForm.get('id').value
     );
 
+    // removing HTML tags that Quill material component puts in name field for non INST types.
+    if (this.questionForm.get('fieldType').value === 'INST') {
+      const originalName = this.questionForm.get('name').value;
+      this.questionForm.get('name').setValue(this.stripHTMLTags(originalName));
+    }
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
@@ -333,10 +448,36 @@ export class QuestionComponent implements OnInit {
       case 'IMG':
         this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
         break;
+      case 'INST':
+        const instructionsValue = {
+          tag: {
+            title: this.translate.instant('noneTag'),
+            colour: null
+          },
+          images: [null, null, null],
+          pdf: null
+        };
+        this.questionForm.get('value').setValue(instructionsValue);
+        break;
       default:
       // do nothing
     }
   }
+
+  handleGlobalResponseRefCount = (prev, curr) => {
+    if (
+      prev?.type === 'globalResponse' &&
+      curr?.type === 'globalResponse' &&
+      prev.id !== curr.id
+    ) {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+      this.updateResponseSet(curr, 'selected').subscribe();
+    } else if (prev?.type === 'globalResponse') {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+    } else if (curr?.type === 'globalResponse') {
+      this.updateResponseSet(curr, 'selected').subscribe();
+    }
+  };
 
   sliderOpen() {
     this.formService.setsliderOpenState(true);
@@ -378,6 +519,18 @@ export class QuestionComponent implements OnInit {
     return this.imageUtils.getImageSrc(base64);
   }
 
+  updateResponseSet = (responseSet, actionType) =>
+    this.responseSetService.updateResponseSet$({
+      id: responseSet?.id,
+      name: responseSet?.name,
+      description: responseSet?.description,
+      isMultiColumn: responseSet?.isMultiColumn,
+      refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
+      values: JSON.stringify(responseSet?.value),
+      createdBy: responseSet?.createdBy,
+      version: responseSet?._version
+    });
+
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
       this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
@@ -388,12 +541,13 @@ export class QuestionComponent implements OnInit {
     if (this.questionForm.get('isOpen').value !== isOpen) {
       if (!this.ignoreUpdateIsOpen) {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionState({
+          BuilderConfigurationActions.updateQuestionState({
             questionId: this.questionId,
             isOpen,
             isResponseTypeModalOpen: this.questionForm.get(
               'isResponseTypeModalOpen'
-            ).value
+            ).value,
+            subFormId: this.selectedNodeId
           })
         );
       }
@@ -413,11 +567,13 @@ export class QuestionComponent implements OnInit {
       .setValue(!responseTypeClosed, { emitEvent: false });
   }
   setQuestionValue(event) {
-    this.questionForm.get('value').setValue(event, { emitEvent: false });
+    this.questionForm.get('value').setValue(event);
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
-    return this.store.select(getQuestionLogics(pageIndex, questionId));
+    return this.store.select(
+      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
+    );
   }
 
   addLogicToQuestion(pageIndex: number, questionId: string) {
@@ -425,7 +581,8 @@ export class QuestionComponent implements OnInit {
       AddLogicActions.addLogicToQuestion({
         pageIndex,
         questionId,
-        logic: this.constructLogic(pageIndex, questionId)
+        logic: this.constructLogic(pageIndex, questionId),
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -434,7 +591,8 @@ export class QuestionComponent implements OnInit {
     this.store.dispatch(
       AddLogicActions.removeLogicsOfQuestion({
         pageIndex,
-        questionId
+        questionId,
+        subFormId: this.selectedNodeId
       })
     );
   }
@@ -448,6 +606,8 @@ export class QuestionComponent implements OnInit {
       operand1: '',
       operand2: '',
       action: '',
+      mandateAttachment: false,
+      raiseIssue: false,
       logicTitle: '',
       expression: '',
       questions: [],
@@ -464,7 +624,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.addLogicToQuestion({
             pageIndex,
             questionId,
-            logic: this.constructLogic(pageIndex, questionId)
+            logic: this.constructLogic(pageIndex, questionId),
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -473,7 +634,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.updateQuestionLogic({
             questionId,
             pageIndex,
-            logic: event.logic
+            logic: event.logic,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -482,7 +644,8 @@ export class QuestionComponent implements OnInit {
           AddLogicActions.deleteQuestionLogic({
             questionId,
             pageIndex,
-            logicId: event.logicId
+            logicId: event.logicId,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -494,6 +657,7 @@ export class QuestionComponent implements OnInit {
           fieldType: 'TF',
           position: 0,
           required: false,
+          enableHistory: false,
           multi: false,
           value: 'TF',
           isPublished: false,
@@ -507,7 +671,8 @@ export class QuestionComponent implements OnInit {
             pageIndex: event.pageIndex,
             logicIndex: event.logicIndex,
             logicId: event.logic.id,
-            question: newQuestion
+            question: newQuestion,
+            subFormId: this.selectedNodeId
           })
         );
         break;
@@ -517,14 +682,16 @@ export class QuestionComponent implements OnInit {
     switch (event.eventType) {
       case 'quickResponsesAdd':
         const createDataset = {
-          formId: this.formId,
+          formId: event.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses'
         };
-        this.rdfService.createDataSet$(createDataset).subscribe((response) => {
-          // do nothing
-        });
+        this.operatorRoundsService
+          .createDataSet$(createDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
         break;
 
       case 'quickResponseUpdate':
@@ -535,7 +702,7 @@ export class QuestionComponent implements OnInit {
           name: 'quickResponses',
           id: event.data.id
         };
-        this.rdfService
+        this.operatorRoundsService
           .updateDataSet$(event.data.id, updateDataset)
           .subscribe((response) => {
             // do nothing
@@ -559,4 +726,127 @@ export class QuestionComponent implements OnInit {
     this.questionForm.get('value').setValue(event);
     this.isHyperLinkOpen = !this.isHyperLinkOpen;
   };
+
+  instructionsFileUploadHandler = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
+
+    Array.from(target.files).forEach((file) => {
+      const originalValue = this.questionForm.get('value').value;
+      if (allowedFileTypes.indexOf(file.type) === -1) {
+        this.toast.show({
+          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+          type: 'warning'
+        });
+        return;
+      }
+
+      if (file.type === 'application/pdf') {
+        if (originalValue.pdf === null) {
+          this.sendFileToS3(file, {
+            originalValue,
+            isImage: false
+          });
+        } else {
+          this.toast.show({
+            text: 'Only 1 PDF can be attached to an instruction.',
+            type: 'warning'
+          });
+        }
+      } else {
+        const index = originalValue.images.findIndex((image) => image === null);
+        if (index !== -1) {
+          this.sendFileToS3(file, {
+            originalValue,
+            isImage: true,
+            index
+          });
+        } else {
+          this.toast.show({
+            text: 'Only upto 3 images can be attached to an instruction.',
+            type: 'warning'
+          });
+        }
+      }
+    });
+  };
+
+  sendFileToS3(file, params): void {
+    const { originalValue, isImage, index } = params;
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, file)
+      .subscribe((event) => {
+        const value: InstructionsFile = {
+          name: file.name,
+          size: file.size,
+          objectKey: event.message.objectKey,
+          objectURL: event.message.objectURL
+        };
+        if (isImage) {
+          originalValue.images[index] = value;
+        } else {
+          originalValue.pdf = value;
+        }
+        this.instructionsUpdateValue();
+        this.questionForm.get('value').setValue(originalValue);
+      });
+  }
+
+  handleEditorFocus(focus: boolean) {
+    if (!focus && this.isINSTFieldChanged) {
+      this.instructionsUpdateValue();
+      this.isINSTFieldChanged = false;
+    }
+  }
+
+  instructionsUpdateValue() {
+    this.questionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionId: this.sectionId,
+      question: this.questionForm.value,
+      questionIndex: this.questionIndex,
+      type: 'update'
+    });
+  }
+
+  updateInstructionTag(event: string) {
+    const originalValue = this.questionForm.get('value').value;
+    originalValue.tag = {
+      title: event,
+      colour: this.instructionTagColours[event]
+    };
+    this.questionForm.get('value').setValue(originalValue);
+    this.instructionsUpdateValue();
+  }
+
+  stripHTMLTags(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  }
+
+  instructionsFileDeleteHandler(index: number) {
+    const originalValue = this.questionForm.get('value').value;
+    if (index < 3) {
+      this.formService.deleteFromS3(originalValue.images[index].objectKey);
+      originalValue.images[index] = null;
+      originalValue.images = this.imagesArrayRemoveNullGaps(
+        originalValue.images
+      );
+    } else {
+      this.formService.deleteFromS3(originalValue.pdf.objectKey);
+      originalValue.pdf = null;
+    }
+    this.questionForm.get('value').setValue(originalValue);
+    this.instructionsUpdateValue();
+  }
+
+  imagesArrayRemoveNullGaps(images) {
+    const nonNullImages = images.filter((image) => image !== null);
+    return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+  }
 }

@@ -235,7 +235,7 @@
               <mat-button-toggle
                 matTooltip="Save"
                 class="save-button"
-                [disabled]="!reportDetails.report"
+                [disabled]="!reportDetails.report || disabledSaveButton"
                 (click)="
                   !!reportDetails.report && saveReport({ saveAs: false })
                 "
@@ -252,7 +252,7 @@
               <mat-button-toggle
                 matTooltip="Save"
                 class="save-button"
-                [disabled]="!reportDetails.report"
+                [disabled]="!reportDetails.report || disabledSaveButton"
                 (click)="
                   !!reportDetails.report && saveReport({ saveAs: false })
                 "
@@ -261,7 +261,7 @@
               </mat-button-toggle>
               <mat-button-toggle
                 *ngIf="reportDetails.report?.id"
-                [disabled]="!reportDetails.report"
+                [disabled]="!reportDetails.report || disabledSaveButton"
                 [matMenuTriggerFor]="menu"
                 class="save-button-arrow"
                 aria-label="Save As"
@@ -274,7 +274,7 @@
             <button
               mat-menu-item
               matTooltip="Save As"
-              [disabled]="!reportDetails.report"
+              [disabled]="!reportDetails.report || disabledSaveButton"
               (click)="!!reportDetails.report && openSaveAsDialog()"
               aria-label="Save As"
             >
