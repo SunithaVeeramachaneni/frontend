@@ -16,6 +16,7 @@ import {
 import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-location',
@@ -79,8 +80,16 @@ export class AddEditLocationComponent implements OnInit {
   ngOnInit(): void {
     this.locationForm = this.fb.group({
       image: '',
-      name: new FormControl('', [Validators.required]),
-      locationId: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      locationId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       model: '',
       description: '',
       parentId: ''
@@ -99,9 +108,7 @@ export class AddEditLocationComponent implements OnInit {
 
   create() {
     if (this.locationStatus === 'add') {
-      this.locationForm
-        .get('image')
-        .setValue('assets/master-configurations/locationIcon.svg');
+      this.locationForm.get('image').setValue('');
       this.locationService
         .createLocation$(this.locationForm.value)
         .subscribe((res) => {
@@ -139,13 +146,43 @@ export class AddEditLocationComponent implements OnInit {
     const searchValue = value.toLowerCase();
     return this.parentInformation.filter(
       (parent) =>
-        parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+        (parent.name &&
+          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (parent.locationId &&
+          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   cancel() {
     this.slideInOut.emit('out');
-    this.locationForm.reset();
+    this.resetForm();
+  }
+
+  resetForm() {
+    if (!this.locEditData) {
+      this.locationStatus = 'add';
+      this.locationTitle = 'Create Location';
+      this.locationButton = 'Create';
+      this.locationImage = '';
+    } else {
+      this.locationStatus = 'edit';
+      this.locationTitle = 'Edit Location';
+      this.locationButton = 'Update';
+      this.locationImage =
+        this.locEditData && this.locEditData.image
+          ? this.locEditData.image
+          : '';
+      const locdata = {
+        id: this.locEditData.id,
+        image: this.locEditData.image,
+        name: this.locEditData.name,
+        locationId: this.locEditData.locationId,
+        model: this.locEditData.model,
+        description: this.locEditData.description,
+        parentId: this.locEditData.parentId
+      };
+      this.locationForm.patchValue(locdata);
+    }
   }
 
   processValidationErrors(controlName: string): boolean {

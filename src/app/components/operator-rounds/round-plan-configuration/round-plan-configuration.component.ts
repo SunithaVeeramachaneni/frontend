@@ -468,9 +468,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/rdf-forms-icons/${imageName}-white.svg`
-      : `assets/rdf-forms-icons/${imageName}-blue.svg`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-blue`;
 
   togglePreview() {
     this.isPreviewActive = !this.isPreviewActive;

@@ -216,6 +216,7 @@ export class HierarchyContainerComponent implements OnInit {
     this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
       count = c;
     });
+    setTimeout(() => this.cdrf.detectChanges(), 0);
     return count;
   }
 
@@ -370,9 +371,7 @@ export class HierarchyContainerComponent implements OnInit {
       });
   };
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/rdf-forms-icons/${imageName}-white.svg`
-      : `assets/rdf-forms-icons/${imageName}-gray.svg`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
 
   toggleHierarchyMode(event) {
     this.hierarchyMode = event.value;

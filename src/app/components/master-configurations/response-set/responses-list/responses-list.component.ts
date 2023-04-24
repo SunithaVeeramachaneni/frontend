@@ -44,7 +44,6 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class ResponsesListComponent implements OnInit {
   readonly perms = perms;
-  public filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   public userInfo$: Observable<UserInfo>;
 
   public allResponseSets: any[] = [];
@@ -372,15 +371,15 @@ export class ResponsesListComponent implements OnInit {
   getResponseSets() {
     return this.responseSetService
       .fetchResponseSetList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchResponseSet.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.responseSetCount$ = of(count);
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
