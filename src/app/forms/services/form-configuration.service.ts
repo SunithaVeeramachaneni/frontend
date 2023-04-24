@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import {
-  BuilderConfigurationActions,
-  FormConfigurationActions
-} from 'src/app/forms/state/actions';
-import { QuestionComponent } from '../components/question/question.component';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   NumberRangeMetadata,
   Question,

@@ -130,7 +130,7 @@ export const removeSubFormInstances = createAction(
 export const addPage = createAction(
   '[Builder Configuration] addPage',
   props<{
-    subFormId: string;
+    subFormId?: string;
     page: Page;
     pageIndex: number;
     formStatus: string;
@@ -179,7 +179,7 @@ export const addSections = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 

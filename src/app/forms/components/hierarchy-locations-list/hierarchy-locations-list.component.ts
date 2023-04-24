@@ -63,8 +63,9 @@ export class HierarchyLocationsListComponent implements OnInit {
           this.searchFilterItems = this.allItems.filter(
             (item: HierarchyEntity) =>
               item.name
-                .toLocaleLowerCase()
-                .includes(searchInput.trim().toLocaleLowerCase())
+                .toLowerCase()
+                .trim()
+                .includes(searchInput.toLowerCase().trim())
           );
         })
       )

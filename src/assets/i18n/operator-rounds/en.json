@@ -258,7 +258,7 @@
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "noSearchResultsFound": "No search results found",
-  "importTasks": "Import Tasks",
+  "importQuestions": "Import Questions",
   "use": "Use",
   "emptyRoundsPlan": "To add the Tasks, add a Page first",
   "publishPlanTitle": "Alert",

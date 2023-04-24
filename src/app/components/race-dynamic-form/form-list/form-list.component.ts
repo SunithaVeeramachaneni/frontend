@@ -73,7 +73,11 @@ export class FormListComponent implements OnInit {
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        display: 'block',
+        'white-space': 'wrap',
+        'overflow-wrap': 'break-word',
+        'max-width': '350px'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -410,6 +414,7 @@ export class FormListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
               text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
@@ -430,7 +435,7 @@ export class FormListComponent implements OnInit {
     return this.raceDynamicFormService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -439,9 +444,9 @@ export class FormListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.formsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
