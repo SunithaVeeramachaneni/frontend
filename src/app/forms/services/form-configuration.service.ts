@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  BuilderConfigurationActions
+} from 'src/app/forms/state/actions';
 import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
@@ -52,7 +55,7 @@ export class FormConfigurationService {
     );
 
     this.store.dispatch(
-      FormConfigurationActions.addPage({
+      BuilderConfigurationActions.addPage({
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses()
@@ -86,7 +89,7 @@ export class FormConfigurationService {
       sectionQuestionsList
     );
     this.store.dispatch(
-      FormConfigurationActions.addSections({
+      BuilderConfigurationActions.addSections({
         sections,
         questions,
         pageIndex,
@@ -248,7 +251,7 @@ export class FormConfigurationService {
     question: Question
   ) {
     this.store.dispatch(
-      FormConfigurationActions.updateCounter({ counter: questionCounter })
+      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
     );
     return {
       id: `Q${questionCounter}`,
