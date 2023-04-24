@@ -349,7 +349,8 @@ export class OperatorRoundsService {
         authoredFormDetail: {
           ...roundPlanDetails.authoredFormDetail,
           flatHierarchy
-        }
+        },
+        isEdit: location?.pathname?.startsWith('/operator-rounds/edit/')
       }
     );
   }
