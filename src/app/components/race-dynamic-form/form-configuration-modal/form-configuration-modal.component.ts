@@ -21,7 +21,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { FormUploadFile, ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
@@ -29,7 +29,7 @@ import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
-
+import { ToastService } from 'src/app/shared/toast';
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
@@ -50,10 +50,11 @@ export class FormConfigurationModalComponent implements OnInit {
 
   allTags: string[] = [];
   originalTags: string[] = [];
-
+  selectedOption: string;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
+  options: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -62,7 +63,8 @@ export class FormConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private toast: ToastService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -205,4 +207,120 @@ export class FormConfigurationModalComponent implements OnInit {
     }
     return !touched || this.errors[controlName] === null ? false : true;
   }
+
+  sendFileToS3(file, params): void {
+    const { originalValue, isImage, index } = params;
+    console.log('sendFile to S3', file);
+    this.rdfService.uploadToS3$(file).subscribe((event) => {
+      const value: FormUploadFile = {
+        name: file.name,
+        size: file.size
+        // objectKey: event.message.objectKey,
+        // objectURL: event.message.objectURL
+      };
+      // if (isImage) {
+      //   originalValue.images[index] = value;
+      // } else {
+      //   originalValue.pdf = value;
+      // }
+    });
+  }
+
+  formplanFileUploadHandler = (event: Event) => {
+    let base64: string;
+    console.log('event:', event.target);
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const image = base64.split(',')[1];
+      const value = {
+        name: files[0].name,
+        size: (files[0].size / 1024).toFixed(2),
+        base64: image,
+        pdf: false,
+        isImage: true,
+        index: 0
+      };
+      console.log('value:', value);
+      this.headerDataForm.get('value').setValue(value);
+    };
+
+    const target = event.target as HTMLInputElement;
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
+
+    const files1 = Array.from(target.files);
+    const originalValue = this.headerDataForm.get('value');
+    let imageIndex = 0;
+    for (const file of files1) {
+      if (allowedFileTypes.indexOf(file.type) === -1) {
+        this.toast.show({
+          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+          type: 'warning'
+        });
+        return;
+      }
+      // console.log('value:', value);
+      // console.log(file + 'file');
+      // console.log(originalValue + ':originalvalue');
+      const isImage = true;
+      this.sendFileToS3(file, {
+        originalValue,
+        isImage,
+        imageIndex
+      });
+      // if (file.type === 'application/pdf') {
+      //   if (originalValue.pdf === null) {
+      //     this.sendFileToS3(file, {
+      //       originalValue,
+      //       isImage: false
+      //     });
+      //   }
+      // } else {
+      //   const index = originalValue.images.findIndex(
+      //     (imageFile) => imageFile === null
+      //   );
+      //   if (index !== -1) {
+      //     this.sendFileToS3(file, {
+      //       originalValue,
+      //       isImage: true,
+      //       index
+      //     });
+      //   }
+      // }
+      imageIndex++;
+    }
+    // console.log(originalValue);
+
+    // instructionsFileDeleteHandler(index: number): {
+    //   const originalValue = this.headerDataForm.get('value').value;
+    //   if (index < 3) {
+    //     this.roundplanconfiguarationservice.deleteFromS3(
+    //       originalValue.images[index].objectKey
+    //     );
+    //     originalValue.images[index] = null;
+    //     originalValue.images = this.imagesArrayRemoveNullGaps(
+    //       originalValue.images
+    //     );
+    //   } else {
+    //     this.roundplanconfiguarationservice.deleteFromS3(
+    //       originalValue.pdf.objectKey
+    //     );
+    //     originalValue.pdf = null;
+    //   }
+    //   // this.headerDataForm.get('value').setValue(originalValue);
+    //   // this.instructionsUpdateValue();
+    // }
+
+    // imagesArrayRemoveNullGaps(images) {
+    //   const nonNullImages = images.filter((image) => image !== null);
+    //   return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+    // }
+  };
 }

@@ -188,7 +188,7 @@
 
   .mat-dialog-actions {
     margin-bottom: 0.2px;
-    margin-left: 1270px;
+    margin-left: 970px;
   }
 
   .buttons {
@@ -209,5 +209,9 @@
     margin-left: 80px;
     background-color: $black;
     color: $white;
+  }
+
+  .mat-error {
+    margin-top: 9px;
   }
 }

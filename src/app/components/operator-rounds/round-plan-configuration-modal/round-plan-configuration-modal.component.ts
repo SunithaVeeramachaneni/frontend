@@ -88,7 +88,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     public dialog: MatDialog,
     private toast: ToastService,
 
-    private roundplanconfiguarationservice: RoundPlanConfigurationService
+    private roundPlanConfigurationService: RoundPlanConfigurationService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -145,14 +145,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
 
-    this.roundplanconfiguarationservice
-      .fetchPlant()
-      .subscribe((plants: any) => {
-        console.log('plant:', plants);
-        plants.items.forEach((plant) => {
-          this.options.push(plant.name);
-        });
+    this.roundPlanConfigurationService.fetchPlant().subscribe((plants: any) => {
+      console.log('plant:', plants);
+      plants.items.forEach((plant) => {
+        this.options.push(plant.name);
+        console.log(plant.name + 'plantname');
       });
+    });
   }
 
   add(event: MatChipInputEvent): void {
@@ -268,7 +267,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   sendFileToS3(file, params): void {
     const { originalValue, isImage, index } = params;
     console.log('sendFile to S3', file);
-    this.roundplanconfiguarationservice.uploadToS3$(file).subscribe((event) => {
+    this.roundPlanConfigurationService.uploadToS3$(file).subscribe((event) => {
       const value: RoundPlanFile = {
         name: file.name,
         size: file.size

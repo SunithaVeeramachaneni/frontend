@@ -1,4 +1,9 @@
-import { InspectionDetail, RoundDetail, UserDetails, UsersInfoByEmail } from 'src/app/interfaces';
+import {
+  InspectionDetail,
+  RoundDetail,
+  UserDetails,
+  UsersInfoByEmail
+} from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -33,6 +38,7 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
+  [x: string]: any;
   private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
 
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -48,6 +54,12 @@ export class RaceDynamicFormService {
     private translate: TranslateService
   ) {}
 
+  fetchPlant() {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'plants/list'
+    );
+  }
   setFormCreatedUpdated(data: any) {
     this.formCreatedUpdatedSubject.next(data);
   }
@@ -877,8 +889,8 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
-        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks
-          },${p.totalTasks > 0
+        tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
+          p.totalTasks > 0
             ? Math.round(
                 (Math.abs(p.totalTasksCompleted / p.totalTasks) +
                   Number.EPSILON) *

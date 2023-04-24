@@ -5,6 +5,28 @@
       <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
+
+  <div mat-dialog-actions class="buttons">
+    <button
+      mat-stroked-button
+      type="button"
+      color="primary"
+      class="skip-btn"
+      (click)="onCancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      mat-raised-button
+      type="submit"
+      color="primary"
+      class="next-btn"
+      (click)="next()"
+      [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+      translate="Save and Go Next"
+    ></button>
+  </div>
+  <hr class="horizontal-line" />
+
   <div class="dis-flex form-content">
     <div class="width-5 bg-white"></div>
     <div class="width-95">
@@ -65,6 +87,22 @@
               formControlName="description"
             />
           </mat-form-field>
+
+          <div class="plant">
+            <p class="form-name-description m-b-0 m-t-20" translate="Plant"></p>
+            <mat-form-field
+              class="chips-list width-100 form-field"
+              appearance="outline"
+            >
+              <mat-label>Select Plant</mat-label>
+
+              <mat-select [(value)]="selectedOption">
+                <mat-option *ngFor="let option of options" [value]="option">{{
+                  option
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
         <div class="tags">
           <p class="form-name-description m-b-0" translate="tags"></p>
@@ -105,7 +143,61 @@
           </mat-form-field>
         </div>
 
-        <button
+        <p
+          class="form-name-description m-b-0 m-t-20"
+          translate="Notes and Attachments"
+        ></p>
+        <div class="notes_and_Attachment">
+          <mat-form-field
+            placeholder="Notes and Attachments"
+            class="notes_Attachment"
+            class="width-100"
+            appearance="outline"
+          >
+            <quill-material
+              [ngClass]="{
+                'display-toolbar': true
+              }"
+              formControlName="notes_attachment"
+            >
+            </quill-material>
+          </mat-form-field>
+        </div>
+
+        <div class="addpdf">
+          <div class="dis-flex">
+            <!-- <span *ngIf="headerDataForm.get('value').value.pdf !== null">
+              <app-instruction-pdf
+                [pdf]="headerDataForm.get('value').value.pdf"
+                [index]="'4'"
+                (indexEmitter)="instructionsFileDeleteHandler($event)"
+              >
+              </app-instruction-pdf>
+            </span> -->
+          </div>
+
+          <br />
+          <input
+            type="file"
+            class="file-upload"
+            accept="image/jpeg,image/jpg,image/png,application/pdf"
+            (change)="formplanFileUploadHandler($event)"
+            [hidden]="true"
+            #formFileUpload
+          />
+
+          <button
+            mat-button
+            color="primary"
+            class="addLogicBtn"
+            (click)="formFileUpload.click()"
+          >
+            <mat-icon class="icon">link</mat-icon>
+            <span translate="addImagesAndPDFBtn"></span>
+          </button>
+        </div>
+
+        <!-- <button
           mat-raised-button
           type="submit"
           color="primary"
@@ -121,7 +213,7 @@
           class="skip-btn"
           (click)="onCancel()"
           translate="cancelBtn"
-        ></button>
+        ></button> -->
       </div>
     </div>
   </div>

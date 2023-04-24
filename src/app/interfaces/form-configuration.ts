@@ -96,3 +96,7 @@ export interface InstructionsFile {
   objectKey: string;
   objectURL: string;
 }
+export interface FormUploadFile {
+  name: string;
+  size: number;
+}
