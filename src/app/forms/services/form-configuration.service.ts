@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  BuilderConfigurationActions
+} from 'src/app/forms/state/actions';
+import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
   Question,
@@ -14,6 +18,23 @@ import { State } from '../state';
   providedIn: 'root'
 })
 export class FormConfigurationService {
+  private defField = {
+    id: '',
+    sectionId: '',
+    name: '',
+    fieldType: 'TF',
+    position: 0,
+    required: false,
+    enableHistory: false,
+    multi: false,
+    value: 'TF',
+    isPublished: false,
+    isPublishedTillSave: false,
+    isOpen: false,
+    isResponseTypeModalOpen: false,
+    unitOfMeasurement: 'None',
+    rangeMetadata: {} as NumberRangeMetadata
+  };
   constructor(private store: Store<State>) {}
 
   addPage(
@@ -34,7 +55,7 @@ export class FormConfigurationService {
     );
 
     this.store.dispatch(
-      FormConfigurationActions.addPage({
+      BuilderConfigurationActions.addPage({
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses()
@@ -68,7 +89,7 @@ export class FormConfigurationService {
       sectionQuestionsList
     );
     this.store.dispatch(
-      FormConfigurationActions.addSections({
+      BuilderConfigurationActions.addSections({
         sections,
         questions,
         pageIndex,
@@ -191,7 +212,7 @@ export class FormConfigurationService {
           sliceStart +
             (sectionQuestionsList[sectionIndex]?.questions
               ? sectionQuestionsList[sectionIndex]?.questions?.length
-              : 1)
+              : addQuestions)
         )
         .map((q, questionIndex) =>
           this.getQuestion(
@@ -230,7 +251,7 @@ export class FormConfigurationService {
     question: Question
   ) {
     this.store.dispatch(
-      FormConfigurationActions.updateCounter({ counter: questionCounter })
+      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
     );
     return {
       id: `Q${questionCounter}`,
@@ -251,5 +272,8 @@ export class FormConfigurationService {
         ? question.rangeMetadata
         : ({} as NumberRangeMetadata)
     };
+  }
+  getDefQues() {
+    return this.defField;
   }
 }

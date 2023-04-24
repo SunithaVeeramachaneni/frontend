@@ -47,10 +47,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
+  @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
   @Input() set scheduleConfiguration(
-    scheduleConfiguration: RoundPlanScheduleConfiguration
+    scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
     if (scheduleConfiguration) {
       this._scheduleConfiguration = scheduleConfiguration;
@@ -163,6 +164,12 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   onNavigateToDetailPage() {
     this.formDetailAction.emit({ type: 'edit' });
+  }
+  viewPDF() {
+    this.formDetailAction.emit({ type: 'VIEW_PDF' });
+  }
+  downloadPDF() {
+    this.formDetailAction.emit({ type: 'DOWNLOAD_PDF' });
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,127 @@
+@import '../../../../scss/colors.scss';
+
+.search-container {
+  position: fixed;
+  top: 78px;
+  right: 10px;
+  z-index: 100;
+
+  .search {
+    margin-right: 14px;
+    position: relative;
+    top: 4px;
+
+    .no-of-inspections {
+      margin-right: 10px;
+    }
+
+    .inspections-count {
+      font-weight: 500;
+      font-size: 110%;
+      color: $gray-bg;
+    }
+
+    .inspections-text {
+      font-weight: 500;
+      font-size: 110%;
+      color: $gray1;
+      margin-left: 5px;
+    }
+
+    .common-filter-icon {
+      cursor: pointer;
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
+
+.inspections-list {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+}
+
+::ng-deep .remove-zindex th {
+  z-index: 0 !important;
+}
+
+.padding-lr-20 {
+  padding: 0 20px;
+}
+
+.loading-inspections {
+  position: absolute;
+  width: 40%;
+  height: 35px;
+  border-radius: 5px;
+  right: 270px;
+  top: 6px;
+}
+
+::ng-deep .assign-menu-list + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  left: 915px;
+}
+
+@media (min-width: 1090px) and (max-width: 1240px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 172px !important;
+    left: 495px !important;
+  }
+}
+
+@media (min-width: 1240px) and (max-width: 1365px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 641px !important;
+  }
+}
+
+@media (min-width: 1365px) and (max-width: 1515px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 765px !important;
+  }
+}
+
+@media (min-width: 1515px) and (max-width: 1705px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 915px !important;
+  }
+}
+
+.filter-icon {
+  height: 17px !important;
+  width: 17px !important;
+}
+
+@media (min-width: 1705px) and (max-width: 1820px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1106px !important;
+  }
+}
+
+@media (min-width: 1820px) and (max-width: 2049px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1220px !important;
+  }
+}
+
+@media (min-width: 2049px) and (max-width: 2735px) {
+  ::ng-deep .assign-menu-list + * .mat-menu-panel {
+    position: relative;
+    top: 175px !important;
+    left: 1450px !important;
+  }
+}

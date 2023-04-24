@@ -925,7 +925,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <mat-icon> delete </mat-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
@@ -1156,7 +1159,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <mat-icon> delete </mat-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
@@ -2048,6 +2054,24 @@
             </mat-error>
           </p>
         </div>
+
+        <div>
+          <p class="sub-headings" translate>configs</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>configs</mat-label>
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                [placeholder]="'configs' | translate"
+                formControlName="configurations"
+              ></textarea>
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('configurations')">
+              {{ 'required' | translate : { name: 'configs' | translate } }}
+            </mat-error>
+          </p>
+        </div>
       </div>
       <div [hidden]="selectedID.value !== 6">
         <div class="assets">
@@ -2093,16 +2117,10 @@
             <div class="title" translate>dashboard</div>
             <div class="m-r-15 dis-flex right-content">
               <div>
-                <img
-                  src="assets/tenant-management-icons/App_icon.svg"
-                  class="apps-icon"
-                />
+                <svg-icon icon="icon-App_icon" class="apps-icon"></svg-icon>
               </div>
               <div class="user">
-                <img
-                  src="assets/tenant-management-icons/profile.svg"
-                  class="profile"
-                />
+                <svg-icon icon="icon-Profile_Pic" class="profile"></svg-icon>
               </div>
               <div class="without-company-logo" *ngIf="!tenantLogo">
                 <span class="logo-comes-here-text" translate>

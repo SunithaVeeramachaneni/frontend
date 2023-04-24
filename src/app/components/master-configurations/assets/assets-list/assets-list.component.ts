@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery, ListLocationsQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -43,8 +42,7 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<ListLocationsQuery>;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  allLocations$: Observable<any>;
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -193,7 +191,6 @@ export class AssetsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
-
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
@@ -216,6 +213,7 @@ export class AssetsListComponent implements OnInit {
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
@@ -310,6 +308,7 @@ export class AssetsListComponent implements OnInit {
           }
         }
         this.skip = initial.data.length;
+        this.assetsListCount$ = this.assetService.getAssetCount$();
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -369,6 +368,7 @@ export class AssetsListComponent implements OnInit {
         });
       }
     }
+    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
@@ -429,6 +429,7 @@ export class AssetsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
+      this.assetsListCount$ = this.assetService.getAssetCount$();
     });
   }
 
@@ -437,7 +438,7 @@ export class AssetsListComponent implements OnInit {
     this.assetsEditData = null;
   }
 
-  showAssetDetail(row: GetFormListQuery): void {
+  showAssetDetail(row: any): void {
     this.selectedAsset = row;
     this.openAssetsDetailedView = 'in';
   }
@@ -476,10 +477,13 @@ export class AssetsListComponent implements OnInit {
     });
 
     deleteReportRef.afterClosed().subscribe((res) => {
-      this.addEditCopyDeleteAssets = true;
-      this.nextToken = '';
-      this.assetService.fetchAssets$.next({ data: 'load' });
-      if (res === 'close') {
+      if (res.data) {
+        this.getAllLocations();
+        this.getAllAssets();
+        this.addEditCopyDeleteAssets = true;
+        this.nextToken = '';
+        this.assetsListCount$ = this.assetService.getAssetCount$();
+        this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',
           type: 'success'

@@ -1,4 +1,8 @@
-<div [formGroup]="logicsForm" *ngIf="getLogicsList()">
+<div
+  [formGroup]="logicsForm"
+  *ngIf="getLogicsList()"
+  class="add-logic-container"
+>
   <div formArrayName="logics">
     <mat-tab-group
       [(selectedIndex)]="selectedTabIndex"
@@ -16,12 +20,11 @@
       >
         <div class="tabContent" [formGroupName]="i">
           <div class="logicRow">
-            <img
-              src="assets/rdf-forms-icons/delete-icon.svg"
-              alt="delete-icon"
+            <svg-icon
+              icon="icon-delete-icon"
               class="delete-icon"
               (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
-            />
+            ></svg-icon>
             <input type="hidden" formControlName="id" />
             <input type="hidden" formControlName="logicTitle" />
             <input type="hidden" formControlName="expression" />
@@ -111,7 +114,7 @@
             <span
               *ngIf="logic.value.mandateAttachment"
               class="mandateAction"
-              translate="mandateAttachment"
+              translate="askEvidence"
             >
             </span>
             <span
@@ -175,7 +178,7 @@
                 (click)="
                   mandateAttachment('mandate_attachment', i, logic.value)
                 "
-                translate="mandateAttachment"
+                translate="askEvidence"
               ></button>
               <button
                 class="logicActionMenuItem"
@@ -200,20 +203,16 @@
               "
             >
               <div class="askQuestion">
-                <!-- <img
-                  cdkDragHandle
-                  src="assets/rdf-forms-icons/six-dots.svg"
-                  alt="six-dots"
-                  class="m-l-10 six-dots"
-                /> -->
                 <div class="questionContainer">
                   <app-question
                     class="question"
                     [pageIndex]="pageIndex"
                     [questionId]="questionObj.id"
                     [sectionId]="questionObj.sectionId"
+                    [questionName]="questionObj.name"
                     [questionIndex]="questionIndex"
                     [isAskQuestion]="true"
+                    [subFormId]="selectedNodeId"
                     (questionEvent)="
                       askQuestionEventHandler($event, logic.value, i)
                     "

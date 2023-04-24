@@ -51,9 +51,10 @@ import { AddLogicActions } from '../../state/actions';
 import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
-
+import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -103,6 +104,24 @@ export class QuestionComponent implements OnInit {
     return this._isAskQuestion;
   }
 
+  @Input() set questionName(questionName: string) {
+    this._questionName = questionName;
+  }
+
+  get questionName() {
+    return this._questionName;
+  }
+
+  @Input() set subFormId(subFormId: string) {
+    this._subFormId = subFormId;
+  }
+
+  get subFormId() {
+    return this._subFormId;
+  }
+
+  @Input() isPreviewActive;
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -126,9 +145,9 @@ export class QuestionComponent implements OnInit {
     'INST'
   ];
 
-  unitOfMeasurementsAvailable = [];
-
+  unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
+  fetchUnitOfMeasurement: Observable<any>;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -162,16 +181,20 @@ export class QuestionComponent implements OnInit {
   private _sectionId: string;
   private _questionIndex: number;
   private _isAskQuestion: boolean;
+  private _questionName: string;
+  private _subFormId: string;
 
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
+    private responseSetService: ResponseSetService,
     private operatorRoundsService: OperatorRoundsService,
     private route: ActivatedRoute,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private unitServiceOfMeasurement: UnitMeasurementService
   ) {}
 
   ngOnInit(): void {
@@ -192,7 +215,24 @@ export class QuestionComponent implements OnInit {
       .select(getModuleName)
       .subscribe((event) => (this.moduleName = event));
 
-    this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
+    this.unitServiceOfMeasurement
+      .getUnitOfMeasurementList$({
+        nextToken: '',
+        limit: 10000,
+        searchKey: '',
+        fetchType: 'load'
+      })
+      .subscribe((data) => {
+        this.unitOfMeasurementsAvailable = data.rows;
+        this.unitOfMeasurementsAvailable =
+          this.unitOfMeasurementsAvailable.filter(
+            (value, index, array) =>
+              index ===
+                array.findIndex(
+                  (item) => item.description === value.description
+                ) && value.isActive === true
+          );
+      });
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -205,6 +245,15 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF'
     );
+
+    // isAskQuestion true set question id and section id
+    if (this.isAskQuestion) {
+      this.questionForm.get('id').setValue(this.questionId);
+      this.questionForm.get('sectionId').setValue(this.sectionId);
+      this.questionForm.get('name').setValue(this.questionName);
+      this.selectedNodeId = this.subFormId;
+    }
+
     this.questionForm.valueChanges
       .pipe(
         startWith({}),
@@ -212,26 +261,28 @@ export class QuestionComponent implements OnInit {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const {
-            isOpen,
-            isResponseTypeModalOpen,
-            value: prevValue,
-            ...prev
-          } = previous;
+          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
           const {
             isOpen: currIsOpen,
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
-            value: currValue,
             ...curr
           } = current;
           if (!isEqual(prev, curr)) {
+            const { value: prevValue } = prev;
+            const { value: currValue } = curr;
             if (
-              this.questionForm.get('fieldType').value === 'INST' &&
+              current.fieldType === 'INST' &&
               prevValue !== undefined &&
               isEqual(prevValue, currValue)
             ) {
               this.isINSTFieldChanged = true;
             } else {
+              if (
+                currValue?.type === 'globalResponse' ||
+                prevValue?.type === 'globalResponse'
+              )
+                this.handleGlobalResponseRefCount(prevValue, currValue);
+
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
                 sectionId: this.sectionId,
@@ -292,10 +343,10 @@ export class QuestionComponent implements OnInit {
     );
 
     this.instructionTagColours[this.translate.instant('cautionTag')] =
-      '#FEF3C7';
+      '#D27B16';
     this.instructionTagColours[this.translate.instant('warningTag')] =
-      '#FF5C00';
-    this.instructionTagColours[this.translate.instant('dangerTag')] = '#991B1B';
+      '#FF3D00';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
   }
 
   getRangeMetadata() {
@@ -303,7 +354,7 @@ export class QuestionComponent implements OnInit {
   }
 
   uomChanged(event) {
-    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+    this.questionForm.get('unitOfMeasurement').setValue(event.symbol);
     this.unitMenuTrigger.closeMenu();
   }
 
@@ -313,7 +364,7 @@ export class QuestionComponent implements OnInit {
     this.unitOfMeasurements = [...unitOfMeasurementsMock];
     this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
       (option) =>
-        option.title.toLowerCase().startsWith(filter) ||
+        option.description.toLowerCase().startsWith(filter) ||
         option.code.toLowerCase().startsWith(filter) ||
         option.symbol.toLowerCase().startsWith(filter)
     );
@@ -415,6 +466,21 @@ export class QuestionComponent implements OnInit {
     }
   }
 
+  handleGlobalResponseRefCount = (prev, curr) => {
+    if (
+      prev?.type === 'globalResponse' &&
+      curr?.type === 'globalResponse' &&
+      prev.id !== curr.id
+    ) {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+      this.updateResponseSet(curr, 'selected').subscribe();
+    } else if (prev?.type === 'globalResponse') {
+      this.updateResponseSet(prev, 'deselected').subscribe();
+    } else if (curr?.type === 'globalResponse') {
+      this.updateResponseSet(curr, 'selected').subscribe();
+    }
+  };
+
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
@@ -455,6 +521,18 @@ export class QuestionComponent implements OnInit {
     return this.imageUtils.getImageSrc(base64);
   }
 
+  updateResponseSet = (responseSet, actionType) =>
+    this.responseSetService.updateResponseSet$({
+      id: responseSet?.id,
+      name: responseSet?.name,
+      description: responseSet?.description,
+      isMultiColumn: responseSet?.isMultiColumn,
+      refCount: responseSet?.refCount + (actionType === 'deselected' ? -1 : 1),
+      values: JSON.stringify(responseSet?.value),
+      createdBy: responseSet?.createdBy,
+      version: responseSet?._version
+    });
+
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
       this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
@@ -491,7 +569,7 @@ export class QuestionComponent implements OnInit {
       .setValue(!responseTypeClosed, { emitEvent: false });
   }
   setQuestionValue(event) {
-    this.questionForm.get('value').setValue(event, { emitEvent: false });
+    this.questionForm.get('value').setValue(event);
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
@@ -606,7 +684,7 @@ export class QuestionComponent implements OnInit {
     switch (event.eventType) {
       case 'quickResponsesAdd':
         const createDataset = {
-          formId: this.formId,
+          formId: event.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses'
@@ -653,7 +731,7 @@ export class QuestionComponent implements OnInit {
 
   instructionsFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    const allowedFileTypes: String[] = [
+    const allowedFileTypes: string[] = [
       'image/jpeg',
       'image/jpg',
       'image/png',
@@ -749,7 +827,7 @@ export class QuestionComponent implements OnInit {
   }
 
   stripHTMLTags(html) {
-    let doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || '';
   }
 

@@ -24,7 +24,6 @@ import {
 import { FormService } from '../../services/form.service';
 import { ToastService } from 'src/app/shared/toast';
 
-
 @Component({
   selector: 'app-response-type-side-drawer',
   templateUrl: './response-type-side-drawer.component.html',
@@ -68,7 +67,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     private formService: FormService,
     private fb: FormBuilder,
     private cdrf: ChangeDetectorRef,
-    private readonly toast: ToastService,
+    private readonly toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -174,7 +173,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     this.responses.push(
       this.fb.group({
         title: '',
-        color: ''
+        color: '',
+        backgroundColor: ''
       })
     );
   };
@@ -194,9 +194,20 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       data: this.responseForm.getRawValue(),
       formId: this.formId
     });
+
     this.multipleChoiceOpenState = false;
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
+
+  applyBGColor(ev, response) {
+    const color = ev.target.value;
+    const r = parseInt(color.substr(1, 2), 16);
+    const g = parseInt(color.substr(3, 2), 16);
+    const b = parseInt(color.substr(5, 2), 16);
+    const opacity = 0.2;
+    const bgColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    response.patchValue({ backgroundColor: bgColor });
+  }
 
   keytab(event) {
     const element = event.srcElement.nextElementSibling;
@@ -226,7 +237,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   };
 
   submitRangeSelection = () => {
-    if(this.rangeMetadataForm.value?.min > this.rangeMetadataForm.value?.max ){
+    if (this.rangeMetadataForm.value?.min > this.rangeMetadataForm.value?.max) {
       this.toast.show({
         text: 'The upper limit cannot be lower than the lower limit',
         type: 'warning'
@@ -250,6 +261,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-    return `../../../../assets/rdf-forms-icons/${action.toLowerCase()}.svg`;
+    return `icon-${action.toLowerCase()}}`;
   }
 }

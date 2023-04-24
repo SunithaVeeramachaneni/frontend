@@ -30,6 +30,12 @@ export const updateFormMetadata = createAction(
     formSaveStatus: string;
   }>()
 );
+export const updatePDFBuilderConfiguration = createAction(
+  '[Builder Configuration] updatePDFBuilderConfiguration',
+  props<{
+    pdfBuilderConfiguration: any;
+  }>()
+);
 
 export const createFormDetail = createAction(
   '[Builder Configuration] createFormDetail',
@@ -77,6 +83,7 @@ export const updateAuthoredFormDetail = createAction(
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailDynamoDBVersion: number;
+    authoredFormDetailVersion: number;
   }>()
 );
 
@@ -123,7 +130,7 @@ export const removeSubFormInstances = createAction(
 export const addPage = createAction(
   '[Builder Configuration] addPage',
   props<{
-    subFormId: string;
+    subFormId?: string;
     page: Page;
     pageIndex: number;
     formStatus: string;
@@ -172,7 +179,7 @@ export const addSections = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 

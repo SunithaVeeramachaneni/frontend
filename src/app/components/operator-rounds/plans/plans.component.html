@@ -1,7 +1,7 @@
 <div class="search-container">
-  <div id="openviewtab">
+  <div id="opendetail">
     <app-form-detail
-      [@slideInOut]="menuState"
+      [@slideInOut]="formDetailState"
       (slideInOut)="closeRoundPlanHandler()"
       [selectedForm]="roundPlanDetail"
       [moduleName]="'OPERATOR_ROUNDS'"
@@ -14,14 +14,16 @@
       "
     ></app-form-detail>
   </div>
-  <app-round-plan-schedule-configuration
-    [@slideInOut]="scheduleConfigState"
-    [roundPlanDetail]="scheduleRoundPlanDetail"
-    [hidden]="hideScheduleConfig"
-    (scheduleConfigState)="closeScheduleConfigHandler($event)"
-    (scheduleConfig)="scheduleConfigHandler($event)"
-    (viewRounds)="viewRoundsHandler($event)"
-  ></app-round-plan-schedule-configuration>
+  <ng-container *ngIf="users$ | async">
+    <app-round-plan-schedule-configuration
+      [@slideInOut]="scheduleConfigState"
+      [roundPlanDetail]="scheduleRoundPlanDetail"
+      [hidden]="hideScheduleConfig"
+      [assigneeDetails]="assigneeDetails"
+      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
+      (scheduleConfig)="scheduleConfigHandler($event)"
+    ></app-round-plan-schedule-configuration>
+  </ng-container>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group
       name="plans"
@@ -65,15 +67,14 @@
         autocomplete="off"
         [formControl]="searchForm"
       />
-      <img
-        src="assets/maintenance-icons/filterIcon.svg"
+      <svg-icon
+        icon="icon-filterIcon"
+        class="common-filter-icon"
         matSuffix
         cdkOverlayOrigin
-        class="common-filter-icon"
-        alt="Open Filter"
         #trigger="cdkOverlayOrigin"
         (click)="isPopoverOpen = !isPopoverOpen"
-      />
+      ></svg-icon>
     </mat-form-field>
   </span>
   <ng-template

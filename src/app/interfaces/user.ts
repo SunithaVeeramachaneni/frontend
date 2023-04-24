@@ -45,3 +45,11 @@ export interface UserTable {
   columns: Column[];
   data: UserDetails[];
 }
+
+export interface UsersInfoByEmail {
+  [key: string]: Info;
+}
+
+export interface Info {
+  fullName: string;
+}

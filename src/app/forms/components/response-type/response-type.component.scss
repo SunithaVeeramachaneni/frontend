@@ -1,44 +1,81 @@
 @import '../../../../scss/colors.scss';
 
+.position-left {
+  right: calc(100vh - 220px);
+}
+
+.position-right {
+  right: 40px;
+}
 .response-type-modal {
-  height: calc(100vh - 130px);
-  width: 500px;
-  border: 1px solid;
+  height: calc(100vh - 180px);
+  max-height: 380px;
+  border-radius: 4px;
+  width: 330px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
   position: fixed;
-  left: 50%;
-  top: 90px;
+  top: 130px;
   background: $white;
   z-index: 1000;
 
   .modal-heading {
     margin: 15px 10px 5px 10px;
+    display: flex;
+    justify-content: space-between;
   }
 
   .cancel-icon {
     cursor: pointer;
     font-size: 150%;
+    color: $dark-gray;
+    position: relative;
+    top: -3px;
+  }
+  .search {
+    width: 100%;
+
+    .icon {
+      position: relative;
+    }
+  }
+
+  .search-width {
+    width: 94%;
+    margin: 10px 10px 0px;
+  }
+
+  .width-100 {
+    border: none;
+    padding: 5px 5px;
+  }
+
+  ::ng-deep .mat-tab-label {
+    min-width: 163px !important;
+    padding: 0 !important;
   }
 
   .response-heading {
     position: relative;
-    top: -7px;
     left: 5px;
+    margin: 0;
   }
 
   .orange-color {
-    color: $orange-text;
+    color: $gray1;
+    margin: 10px 0px 10px 15px;
+    font-size: 120%;
   }
 
   .content {
-    height: calc(100vh - 175px);
+    height: 74%;
     overflow-y: scroll;
     padding: 0 15px;
   }
 
   .response-field-types {
-    padding: 10px 0 5px 10px;
-    margin: 5px 0;
-    cursor: pointer;
+    height: 35px;
+    box-sizing: border-box;
+    max-width: 45%;
   }
 
   .response-field-types:hover,
@@ -46,14 +83,46 @@
     background-color: $hover-bg2;
   }
 
+  .first-tab {
+    overflow-y: auto;
+    height: calc(100vh - 280px);
+  }
+
+  .response-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding-top: 5px;
+    cursor: pointer;
+
+    ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+      margin: 0 !important;
+    }
+
+    ::ng-deep .mat-chip.mat-standard-chip {
+      background-color: transparent !important;
+    }
+
+    ::ng-deep .mat-chip.mat-standard-chip::after {
+      background-color: transparent !important;
+    }
+  }
+
+  .response-container > div {
+    flex: 50%;
+  }
+
   .response-type-icons {
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
+    padding: 8px 0px 0px 15px;
+    position: relative;
+    top: 7px;
   }
 
   .response-type-description {
     position: relative;
-    top: -2px;
+    top: 1px;
     font-weight: 500;
     opacity: 0.8;
     font-size: 100%;
@@ -63,18 +132,27 @@
     color: $blue-main;
     border: none;
     background: none;
-    padding: 10px;
+  }
+
+  .add-btn-margin {
+    position: relative;
+    top: -15px;
+    left: -15px;
   }
 
   .height-50 {
     height: 50%;
   }
 }
+.main-conatiner {
+  ::ng-deep .mat-tab-label {
+    min-width: 123px;
+  }
+}
 
 .quick-response {
   ::ng-deep .mat-button-wrapper {
     display: flex;
-    width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -82,8 +160,29 @@
   }
 
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
-    margin: 12px 5px 5px 5px !important;
+    margin: 12px 10px 5px 5px !important;
   }
+}
+
+.picklist-scroll {
+  overflow-y: auto;
+  height: calc(100vh - 275px);
+  max-height: 280px;
+  overflow-x: hidden;
+}
+
+.add-more-icon {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 3px;
+  right: 5px;
+  margin-left: 10px;
+  margin-top: 7px;
+}
+
+.multiple-responses {
+  margin: 5px 7px;
 }
 
 .h-36 {
@@ -102,7 +201,59 @@
   font-weight: 400;
 }
 .editBtn {
-  float: right;
   min-width: 10px;
   padding: 0;
+}
+
+::ng-deep .global-resp .mat-standard-chip {
+  padding: 0 !important;
+}
+
+.edit-icon-img {
+  height: 14px;
+  width: 15px;
+}
+
+.mcq-edit {
+  padding: 5px;
+  position: relative;
+  top: 8px;
+}
+
+.global-resp {
+  margin-left: 25px;
+}
+
+.masterdata-container {
+  padding-top: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: calc(100vh - 305px);
+  max-height: 265px;
+
+  .p-5 {
+    padding: 5px;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .response {
+    font-size: 100%;
+    font-weight: 500;
+    padding-left: 10px;
+  }
+
+  .arrow {
+    float: right;
+    font-size: 170%;
+    position: relative;
+    top: -2px;
+  }
+
+  .line {
+    border-bottom: 1px solid $border-color;
+    border-top: none;
+  }
 }

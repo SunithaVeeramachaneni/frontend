@@ -12,10 +12,9 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { ListLocationsQuery } from 'src/app/API.service';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -32,6 +31,7 @@ export class AddEditPlantComponent implements OnInit {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';
       this.plantButton = 'Create';
+      this.plantImage = '';
       this.plantForm.get('plantId').enable();
     } else {
       this.plantStatus = 'edit';
@@ -68,16 +68,28 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
+    const numericRegex = /^[0-9]+$/;
     this.plantForm = this.fb.group({
       id: '',
       image: '',
-      name: new FormControl('', [Validators.required]),
-      plantId: new FormControl('', [Validators.required]),
-      country: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      plantId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      country: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       zipCode: new FormControl('', [
         Validators.required,
         Validators.minLength(6),
-        Validators.maxLength(6)
+        Validators.maxLength(6),
+        WhiteSpaceValidator.trimWhiteSpace,
+        Validators.pattern(numericRegex)
       ]),
       state: '',
       label: '',
@@ -87,9 +99,7 @@ export class AddEditPlantComponent implements OnInit {
 
   create() {
     if (this.plantStatus === 'add') {
-      this.plantForm
-        .get('image')
-        .setValue('assets/master-configurations/default-plant.svg');
+      this.plantForm.get('image').setValue('');
       const { id, ...payload } = this.plantForm.value;
       this.plantService.createPlant$(payload).subscribe((res) => {
         this.createdPlantData.emit({
@@ -118,8 +128,36 @@ export class AddEditPlantComponent implements OnInit {
   }
   cancel() {
     this.slideInOut.emit('out');
-    this.plantForm.reset();
+    this.resetForm();
   }
+
+  resetForm() {
+    if (this.plantsEditData === null) {
+      this.plantStatus = 'add';
+      this.plantTitle = 'Create Plant';
+      this.plantButton = 'Create';
+      this.plantImage = '';
+      this.plantForm.get('plantId').enable();
+    } else {
+      this.plantStatus = 'edit';
+      this.plantTitle = 'Edit Plant';
+      this.plantButton = 'Update';
+      this.plantImage = this.plantsEditData.image;
+      const plantdata = {
+        id: this.plantsEditData.id,
+        image: this.plantsEditData.image,
+        name: this.plantsEditData.name,
+        plantId: this.plantsEditData.plantId,
+        country: this.plantsEditData.country,
+        state: this.plantsEditData.state,
+        zipCode: this.plantsEditData.zipCode,
+        label: this.plantEditData.label,
+        field: this.plantEditData.field
+      };
+      this.plantForm.patchValue(plantdata);
+    }
+  }
+
   processValidationErrors(controlName: string): boolean {
     const touched = this.plantForm.get(controlName).touched;
     const errors = this.plantForm.get(controlName).errors;

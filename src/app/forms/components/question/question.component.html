@@ -54,27 +54,24 @@
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
             <button class="questions-btn" (click)="addQuestion(true, true)">
-              <img
-                src="assets/rdf-forms-icons/add-question.svg"
-                alt="add questions"
-              />
+              <svg-icon
+                icon="icon-add-question"
+                class="question-icon"
+              ></svg-icon>
               <p class="questions-delete-btn-text" translate="question"></p>
             </button>
             <br />
 
-            <button
-              class="delete-btn"
-              (click)="deleteQuestion($event)"
-              [disabled]="props.sectionQuestionsCount === 1"
-            >
-              <img
-                src="assets/rdf-forms-icons/delete-question.svg"
-                alt="delete questions"
-              />
+            <button class="delete-btn" (click)="deleteQuestion($event)">
+              <svg-icon
+                icon="icon-delete-question"
+                class="question-icon"
+              ></svg-icon>
               <p class="questions-delete-btn-text" translate="delete"></p>
             </button>
           </div>
         </div>
+
         <span class="divider">|</span>
         <div class="width-30">
           <app-response-type-button
@@ -92,18 +89,19 @@
               (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
               [question]="question"
+              [isPreviewActive]="isPreviewActive"
             ></app-response-type>
           </ng-container>
         </div>
         <div *ngIf="isAskQuestion">
-          <img
-            src="assets/rdf-forms-icons/delete-icon.svg"
-            alt="delete-icon"
+          <svg-icon
+            icon="icon-delete-icon"
             class="delete-icon"
             (click)="deleteQuestion($event)"
-          />
+          ></svg-icon>
         </div>
       </div>
+      <hr class="question-line" *ngIf="!isAskQuestion" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input
@@ -239,8 +237,8 @@
                         class="uomOption"
                         (click)="uomChanged(uom)"
                       >
-                        <span class="uomSymbol">{{ uom.code }}</span>
-                        <span class="uomTitle">{{ uom.title }}</span>
+                        <span class="uomSymbol">{{ uom.symbol }}</span>
+                        <span class="uomTitle">{{ uom.description }}</span>
                       </span>
                     </div>
                   </ng-template>

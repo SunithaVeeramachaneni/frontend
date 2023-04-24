@@ -27,14 +27,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
-  form: GetFormListQuery;
+  form: any;
 }
 
 @Component({
@@ -141,8 +141,6 @@ export class ArchivedListComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   archivedFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'out';
@@ -152,7 +150,7 @@ export class ArchivedListComponent implements OnInit {
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as any
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
@@ -197,7 +195,7 @@ export class ArchivedListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getArchivedList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
@@ -220,17 +218,27 @@ export class ArchivedListComponent implements OnInit {
           initial.data = rows;
         } else {
           if (action === 'restore') {
-            initial.data = initial.data.filter((d) => d.id !== form.id);
+            initial.data = initial.data.filter(
+              (d) => d.id !== form.data.updateFormList.id
+            );
             this.toast.show({
-              text: 'Form restore successfully!',
+              text:
+                'Form "' +
+                form.data.updateFormList.name +
+                '" restore successfully!',
               type: 'success'
             });
             action = null;
           }
           if (action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.id);
+            initial.data = initial.data.filter(
+              (d) => d.id !== form.data.updateFormList.id
+            );
             this.toast.show({
-              text: 'Form delete successfully!',
+              text:
+                'Form "' +
+                form.data.updateFormList.name +
+                '" delete successfully!',
               type: 'success'
             });
             action = null;
@@ -301,7 +309,7 @@ export class ArchivedListComponent implements OnInit {
     }
   };
 
-  private onRestoreForm(form: GetFormListQuery): void {
+  private onRestoreForm(form: any): void {
     this.raceDynamicFormService
       .updateForm$({
         formMetadata: {
@@ -324,7 +332,7 @@ export class ArchivedListComponent implements OnInit {
       });
   }
 
-  private onDeleteForm(form: GetFormListQuery): void {
+  private onDeleteForm(form: any): void {
     const deleteReportRef = this.dialog.open(ArchivedDeleteModalComponent, {
       data: form
     });

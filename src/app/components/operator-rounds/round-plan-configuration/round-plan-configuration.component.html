@@ -19,12 +19,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img
-        src="assets/rdf-forms-icons/formlogo.svg"
-        alt=""
-        width="50"
-        height="50"
-      />
+      <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
       <input
         hidden
         type="file"
@@ -69,11 +64,7 @@
             class="edit-icon"
             *ngIf="formConfiguration.get('name').disabled === true"
           >
-            <img
-              src="assets/rdf-forms-icons/edit-icon.svg"
-              alt="edit-icon"
-              class="edit-icon-img"
-            />
+            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
           </button>
         </a>
         <br />
@@ -135,27 +126,16 @@
         [ngClass]="{ 'preview-btn-active': isPreviewActive }"
       >
         <span>
-          <img
-            [src]="getImage('preview', isPreviewActive)"
+          <svg-icon
+            [icon]="getImage('preview', isPreviewActive)"
             class="preview-btn-icon"
-          />
-          <span translate="preview"></span>
+          ></svg-icon>
+          <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-
-      <button
-        mat-raised-button
-        class="publish-btn"
-        (click)="publishFormDetail()"
-        [disabled]="formStatus === 'Published' || isFormDetailPublished"
-      >
+      <button mat-stroked-button class="next-btn">
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
-            class="publish-btn-icon"
-          />
-          <span class="publish" translate="publishBtn"></span>
+          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
         </span>
       </button>
     </div>
@@ -199,16 +179,18 @@
                 }}
               </span>
             </ng-template>
-            <button
+            <!-- will be enabled after implementation -->
+            <!-- <button
               mat-stroked-button
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
-            ></button>
+            ></button> -->
           </div>
           <app-builder
             *ngIf="selectedNodeLoadStatus"
             [selectedNode]="selectedNodeInstance"
+            [isPreviewActive]="isPreviewActive"
             [counter]="formConfiguration.get('counter').value"
           ></app-builder>
         </div>
@@ -220,12 +202,13 @@
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <button
+          <!-- will be enabled after implementation -->
+          <!-- <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
-          ></button>
+          ></button> -->
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"
@@ -234,8 +217,12 @@
         ></app-builder>
       </div>
     </div>
-    <div class="iphone-width m-t-20" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone [subFormId]="selectedNode?.id"></app-iphone>
+    <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
+      <app-iphone *ngIf="selectedNode?.id"
+        [moduleType]="'operator-rounds'"
+        [subFormId]="selectedNode?.id"
+        [assetLocationName]="selectedNode?.name"
+      ></app-iphone>
     </div>
   </div>
 </div>

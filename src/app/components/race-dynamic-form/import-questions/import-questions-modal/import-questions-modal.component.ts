@@ -16,8 +16,8 @@ import { FormMetadata, TableEvent } from '../../../../interfaces';
 
 import { defaultLimit } from '../../../../app.constants';
 import { RaceDynamicFormService } from '../../services/rdf.service';
-import { GetFormListQuery } from '../../../../API.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 interface SearchEvent {
   data: 'search' | 'load' | 'infiniteScroll';
@@ -89,10 +89,11 @@ export class ImportQuestionsModalComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
+ 
 
     const initial = {
       columns: [],
@@ -103,9 +104,7 @@ export class ImportQuestionsModalComponent implements OnInit {
         if (this.skip === 0) {
           initial.data = rows.filter((row) => row.id !== this.formMetadata.id);
         } else {
-          initial.data = initial.data.concat(
-            scrollData.filter((data) => data.id !== this.formMetadata.id)
-          );
+          initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data.length;

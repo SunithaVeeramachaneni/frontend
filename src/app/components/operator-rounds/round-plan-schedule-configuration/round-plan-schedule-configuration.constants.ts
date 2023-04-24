@@ -1,6 +1,6 @@
 export const scheduleConfigs = Object.freeze({
   scheduleTypes: ['byFrequency', 'byDate'],
-  scheduleEndTypes: ['never', 'on', 'after'],
+  scheduleEndTypes: ['on', 'after'], // ['never', 'on', 'after']
   repeatTypes: ['day', 'week', 'month'],
   daysOfWeek: [
     'sunday',
@@ -11,5 +11,6 @@ export const scheduleConfigs = Object.freeze({
     'friday',
     'saturday'
   ],
-  weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week']
+  weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week'],
+  assignTypes: ['user', 'plant'] // ['user', 'userGroup', 'plant']
 });

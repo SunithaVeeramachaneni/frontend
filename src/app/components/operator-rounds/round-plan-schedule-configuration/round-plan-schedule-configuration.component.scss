@@ -56,7 +56,7 @@
 
       .schedule {
         margin: 20px 0 10px 0;
-        font-size: 120%;
+        font-size: 115%;
         font-weight: 500;
       }
 
@@ -193,12 +193,36 @@
         }
       }
 
+      .schedule-type,
+      .assign-to .radio-group,
       mat-radio-button {
         margin: 10px;
 
         ::ng-deep .mat-radio-label-content {
           font-weight: 500;
-          font-size: 120%;
+          font-size: 115%;
+        }
+      }
+
+      .assign-to,
+      .rounds-count {
+        .title {
+          display: flex;
+          align-items: center;
+          font-weight: 500;
+          line-height: 24px;
+          font-size: 115%;
+        }
+
+        .info {
+          font-size: 85%;
+          font-weight: 400;
+          line-height: 20px;
+          color: $gray-bg;
+        }
+
+        .cursor {
+          cursor: pointer;
         }
       }
 
@@ -253,4 +277,11 @@
       margin-right: 10px;
     }
   }
+}
+
+::ng-deep .assign-menu + * .mat-menu-panel {
+  position: relative;
+  top: 60px;
+  right: 370px;
+  min-width: 340px !important;
 }

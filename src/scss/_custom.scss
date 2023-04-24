@@ -190,8 +190,16 @@
   padding-bottom: 5px;
 }
 
+.p-b-0 {
+  padding-bottom: 0;
+}
+
 .p-t-10 {
   padding-top: 10px;
+}
+
+.p-t-13 {
+  padding-top: 13px;
 }
 
 .m-b-0 {
@@ -234,6 +242,10 @@
   margin-top: 10px;
 }
 
+.m-t-12 {
+  margin-top: 12px;
+}
+
 .m-t-15 {
   margin-top: 15px;
 }
@@ -268,6 +280,10 @@
 
 .width-25 {
   width: 25%;
+}
+
+.width-28 {
+  width: 28%;
 }
 
 .width-30 {
@@ -354,6 +370,10 @@
 
 .dis-flex {
   display: flex;
+}
+
+.align-center {
+  align-items: center;
 }
 
 button {
@@ -751,12 +771,12 @@ body {
 
 .author-dropdown {
   width: 208px;
-  height: 36px;
+  height: 30px;
   border: 1px solid lightgrey;
   border-radius: 4px;
   background-color: white;
   font: inherit;
-  line-height: 1.5em;
+  line-height: 15px;
   padding: 0.5em 3.5em 0.5em 1em;
   margin-top: 10px;
   -webkit-box-sizing: border-box;
@@ -851,4 +871,9 @@ body {
   width: 320px;
   height: 2px;
   margin: 30px 30px;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #637bfe !important;
 }

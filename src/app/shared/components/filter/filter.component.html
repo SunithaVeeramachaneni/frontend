@@ -6,10 +6,7 @@
       (click)="closeFilter()"
       aria-label="Close Filter"
     >
-      <img
-        src="../../../../assets/img/svg/cancel-icon.svg"
-        alt="Close Filter"
-      />
+      <svg-icon icon="icon-cancel-icon" class="filter-cancel"></svg-icon>
     </button>
   </div>
   <div class="filter-form-fields">
@@ -26,21 +23,43 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field
+        *ngIf="item.type === 'multiple'"
+        appearance="outline"
+        class="mat-field"
+      >
+        <mat-label>{{ item.label }}</mat-label>
+        <mat-select multiple [(ngModel)]="item.value" name="showStatus">
+          <mat-option *ngFor="let showdue of item.items" [value]="showdue">
+            {{ showdue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
-        <div [ngClass]="item.itemValue ? 'width50' : 'width100'">
-          <mat-form-field appearance="outline" class="mat-field"> 
+        <div
+          [ngClass]="
+            item.itemValue &&
+            (item.itemValue == 'Daily' ||
+              item.itemValue == 'Monthly' ||
+              item.itemValue == 'Weekly' ||
+              item.itemValue == 'Custom dates')
+              ? 'width50'
+              : 'width100'
+          "
+        >
+          <mat-form-field appearance="outline" class="mat-field">
             <mat-label>{{ item.label }}</mat-label>
             <mat-select [(ngModel)]="item.itemValue" name="showStatus">
-              <mat-option
-                *ngFor="let showdue of item.items"
-                [value]="showdue"
-              >
+              <mat-option *ngFor="let showdue of item.items" [value]="showdue">
                 {{ showdue }}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
-        <div class="width50 date-picker" *ngIf="item.itemValue && item.itemValue === 'Custom dates'">
+        <div
+          class="width50 date-picker"
+          *ngIf="item.itemValue && item.itemValue === 'Custom dates'"
+        >
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Select Date</mat-label>
             <div class="date-picker-wrap">
@@ -58,10 +77,18 @@
             </div>
           </mat-form-field>
         </div>
-        <div class="width50 " *ngIf="item.itemValue && item.itemValue !== 'Custom dates'">
+        <div
+          class="width50"
+          *ngIf="
+            item.itemValue &&
+            (item.itemValue === 'Daily' ||
+              item.itemValue === 'Weekly' ||
+              item.itemValue === 'Monthly')
+          "
+        >
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Enter Schedule</mat-label>
-            <input [(ngModel)]="item.value" type="number" matInput />
+            <input [(ngModel)]="item.itemValue" type="number" matInput />
           </mat-form-field>
         </div>
       </div>
@@ -76,7 +103,6 @@
             [(ngModel)]="item.value"
             readonly=""
             matInput
-            disabled
             [matDatepicker]="picker"
             (click)="picker.open()"
           />

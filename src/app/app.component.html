@@ -1,5 +1,6 @@
 <div class="min-app">
-  <img src="assets/img/svg/small_screen.svg" /><br />
+  <svg-icon icon="icon-small_screen"></svg-icon>
+  <br />
   Please use a tablet or desktop for the best connected worker experience
 </div>
 
@@ -12,12 +13,22 @@
       'hide-content': isUserAuthenticated === false,
       'menu-close': !menuOpenClose
     }"
+    (mouseenter)="openMenuOnMouseEnter()"
+    (mouseleave)="closeMenuOnMouseLeave()"
   >
-    <div
-      class="sidebar-menu-items"
-      (mouseenter)="openMenuOnMouseEnter()"
-      (mouseleave)="closeMenuOnMouseLeave()"
-    >
+    <div class="logo-img">
+      <svg-icon
+        icon="icon-innova-big"
+        [hidden]="!menuOpenClose"
+        class="innov-big-img"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-innova-small"
+        [hidden]="menuOpenClose"
+        class="innova-small-img"
+      ></svg-icon>
+    </div>
+    <div class="sidebar-menu-items">
       <mat-nav-list
         class="menu-item"
         *ngFor="let menuitem of menus; let i = index"
@@ -30,7 +41,6 @@
               title="{{ menuitem.title }}"
               *appCheckUserHasPermission="[menuitem.permission]"
               class="dis-flex"
-              [ngStyle]="{ 'padding-top': i === 0 ? '10px' : '0px' }"
             >
               <a
                 mat-list-item
@@ -39,16 +49,14 @@
                 routerLinkActive="active"
                 (click)="selectedListElement(menuitem.title)"
               >
-                <img
-                  [src]="
-                    getImage(
-                      menuitem.imageName,
-                      selectedMenu === menuitem.title
-                    )
-                  "
-                  class="sidebar-icons"
-                  [alt]="menuitem.title"
-                />
+              <svg-icon
+                [icon]=" getImage(
+                  menuitem.imageName,
+                  selectedMenu === menuitem.title
+                )
+              "
+              class="sidebar-icons"
+              ></svg-icon>
                 <span class="menu-title" *ngIf="menuOpenClose">
                   {{ menuitem.title }}
                 </span>
@@ -67,14 +75,16 @@
                   class="arrow-margin"
                   (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
                 >
-                  <img
-                    src="assets/sidebar-icons/right-arrow.svg"
+                  <svg-icon
+                    icon="icon-right-arrow"
                     [hidden]="menuitem.showSubMenu === true"
-                  />
-                  <img
-                    src="assets/sidebar-icons/down-arrow.svg"
+                    class="icon-arrow"
+                  ></svg-icon>
+                  <svg-icon
+                    icon="icon-down-arrow"
                     [hidden]="menuitem.showSubMenu === false"
-                  />
+                    class="icon-arrow"
+                  ></svg-icon>
                 </a>
               </ng-container>
             </li>
@@ -119,22 +129,11 @@
         </div>
       </mat-nav-list>
     </div>
-    <img
-      src="{{ bigInnovaIcon }}"
-      [hidden]="!menuOpenClose"
-      class="innov-big-img"
-      alt="Innovapptive Logo"
-    />
-    <img
-      src="{{ smallInnovaIcon }}"
-      [hidden]="menuOpenClose"
-      class="innov-small-img"
-      alt="Innovapptive Logo"
-    />
   </mat-sidenav>
 
   <mat-sidenav-content>
     <app-header
+      [menuOpenClose]="menuOpenClose"
       (sideNavToggle)="toggleMenu()"
       (outsideClickTrigger)="closeSideNav()"
       (signOutHandler)="onSignOut()"

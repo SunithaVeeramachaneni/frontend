@@ -89,12 +89,11 @@
                 [ngClass]="{ 'text-red': role.name.length > 100 }"
               >
                 {{ role.name }}
-                <img
-                  src="assets/user-management-icons/super-admin-icon.svg"
-                  alt="super admin"
-                  class="super-admin-icon"
+                <svg-icon
+                  icon="icon-super-admin-icon"
                   *ngIf="role.name === superAdminText"
-                />
+                  class="super-admin-icon"
+                ></svg-icon>
               </span>
 
               <span class="role-count">
@@ -113,6 +112,7 @@
               <mat-menu #submenu="matMenu">
                 <button
                   mat-menu-item
+                  [disabled]="role.name === superAdminText"
                   (click)="copyRole(role)"
                   translate="copyBtn"
                   *appCheckUserHasPermission="[perms.copyRole]"
@@ -148,7 +148,7 @@
         </div>
         <div class="width-70 custom-form-field-white-color">
           <div class="roles-right-panel" *ngIf="this.selectedRole !== null">
-            <form [formGroup]="roleForm" class="dis-flex">
+            <form [formGroup]="roleForm" class="dis-flex m-b-5">
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
                   <mat-label translate="roleName"></mat-label>

@@ -44,6 +44,13 @@ export class LocationService {
       'location/list?' + params.toString()
     );
   };
+  getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
+    return this._appService
+      ._getResp(environment.masterConfigApiUrl, 'location/count', info, {
+        limit: this.MAX_FETCH_LIMIT
+      })
+      .pipe(map((res) => res?.count || 0));
+  }
 
   getLocationsList$(queryParams: {
     nextToken?: string;
@@ -185,6 +192,19 @@ export class LocationService {
       'location/upload',
       form,
       info
+    );
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'location/download/failure',
+      info,
+      false,
+      body
     );
   }
 }

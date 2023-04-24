@@ -6,6 +6,21 @@
           <h2 class="heading" translate="assets"></h2>
         </div>
         <div>
+          <span
+            class="no-of-asset"
+            *ngIf="assetsListCount$ | async as totalCount"
+          >
+            <span class="asset-count">
+              {{ totalCount }}
+            </span>
+            <span class="asset-text">{{
+              'assets'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span>
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -16,7 +31,11 @@
                 autocomplete="off"
                 [formControl]="searchAssets"
               />
-              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+              <svg-icon
+                matSuffix
+                icon="icon-filterIcon"
+                class="filter-icon"
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -34,11 +53,7 @@
               (click)="uploader.click()"
               *appCheckUserHasPermission="[perms.importAssets]"
             >
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
               <span translate="uploadExcel"></span>
             </button>
             <button
@@ -47,11 +62,10 @@
               class="menu-buttons"
               *appCheckUserHasPermission="[perms.createAsset]"
             >
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>
@@ -66,11 +80,11 @@
           </button>
           <mat-menu #moreMenu="matMenu">
             <button mat-menu-item (click)="exportAsXLSX()" class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
+              <svg-icon
+                matSuffix
+                icon="icon-excel1"
                 class="menu-icons"
-              />
+              ></svg-icon>
               <span translate="downloadTemplate"></span>
             </button>
           </mat-menu>

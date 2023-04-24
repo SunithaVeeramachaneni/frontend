@@ -25,12 +25,11 @@
               <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
                 <div class="dis-flex" cdkDrag>
                   <div class="section-drag-handler">
-                    <img
-                      cdkDragHandle
-                      src="assets/rdf-forms-icons/six-dots-white.svg"
-                      alt="six-dots"
+                    <svg-icon
+                      icon="icon-six-dots-white"
                       class="section-six-dots"
-                    />
+                      cdkDragHandle
+                    ></svg-icon>
                   </div>
 
                   <app-section
@@ -88,10 +87,10 @@
                                 )
                               "
                             >
-                              <img
-                                src="assets/rdf-forms-icons/add-question.svg"
-                                alt="add questions"
-                              />
+                              <svg-icon
+                                icon="icon-add-question"
+                                class="add-question-icon"
+                              ></svg-icon>
                               <p
                                 class="questions-delete-btn-text"
                                 translate="question"
@@ -119,12 +118,11 @@
                             }"
                           >
                             <div class="question-drag-handler">
-                              <img
+                              <svg-icon
+                                icon="icon-six-dots"
+                                class="question-six-dots section-dots"
                                 cdkDragHandle
-                                src="assets/rdf-forms-icons/six-dots.svg"
-                                alt="six-dots"
-                                class="question-six-dots"
-                              />
+                              ></svg-icon>
                             </div>
 
                             <app-question
@@ -135,6 +133,7 @@
                               [questionIndex]="questionIndex"
                               (questionEvent)="questionEventHandler($event)"
                               [selectedNodeId]="selectedNode.id"
+                              [isPreviewActive]="isPreviewActive"
                             ></app-question>
                           </div>
                         </ng-container>
@@ -144,9 +143,67 @@
                 </div>
               </div>
             </ng-container>
+            <ng-container
+              *ngIf="isEmptyPage[pageIndex]"
+              class="emptyPageContainer"
+            >
+              <div class="floating-btns">
+                <button
+                  class="questions-btn"
+                  (click)="
+                    addQuestion(
+                      pageIndex,
+                      sectionIds[pageIndex][0],
+                      0,
+                      selectedNode.id
+                    )
+                  "
+                >
+                  <svg-icon
+                    icon="icon-add-question"
+                    class="add-question-icon"
+                  ></svg-icon>
+                  <p class="questions-delete-btn-text" translate="question"></p>
+                </button>
+                <br />
+
+                <button class="delete-btn">
+                  <svg-icon
+                    icon="icon-delete-question"
+                    class="add-question-icon"
+                  ></svg-icon>
+                  <p class="questions-delete-btn-text" translate="delete"></p>
+                </button>
+              </div>
+              <button class="add-section-btn" (click)="addSection(pageIndex)">
+                <svg-icon
+                  icon="icon-add-section"
+                  class="add-section-btn-icon"
+                ></svg-icon>
+                {{ 'addSection' | translate }}
+              </button>
+            </ng-container>
           </div>
         </ng-container>
       </app-page>
     </ng-container>
+  </div>
+  <div
+    *ngIf="isEmptyPlan"
+    [ngClass]="{
+      emptyRoutePlanContainer: !isPreviewActive,
+      emptyRoutePlanContainerWithPreview: isPreviewActive
+    }"
+  >
+    <div>
+      <svg-icon icon="icon-add-page" class="add-page-icon"></svg-icon>
+    </div>
+    <div class="empty-text" translate="emptyRoundsPlan"></div>
+    <div>
+      <button class="add-page-btn" (click)="addPage()">
+        <svg-icon icon="icon-add-page" class="icon-add-page"></svg-icon>
+        {{ 'addPage' | translate }}
+      </button>
+    </div>
   </div>
 </div>

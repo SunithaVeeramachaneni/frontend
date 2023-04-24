@@ -16,7 +16,6 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -31,6 +30,7 @@ import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
@@ -40,7 +40,6 @@ import { slideInOut } from 'src/app/animations';
 })
 export class PlantListComponent implements OnInit {
   readonly perms = perms;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   userInfo$: Observable<UserInfo>;
 
   columns: Column[] = [
@@ -446,7 +445,7 @@ export class PlantListComponent implements OnInit {
     this.plantEditData = null;
   }
 
-  showPlantDetail(row: GetFormListQuery): void {
+  showPlantDetail(row: GetFormList): void {
     this.selectedPlant = row;
     this.openPlantDetailedView = 'in';
   }

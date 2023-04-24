@@ -23,10 +23,13 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
+import {
+  LIST_LENGTH,
+  defaultLimit,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
@@ -34,6 +37,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-form-list',
@@ -73,40 +77,22 @@ export class FormListComponent implements OnInit {
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        display: 'block',
+        'white-space': 'wrap',
+        'overflow-wrap': 'break-word',
+        'max-width': '350px'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-    {
-      id: 'author',
-      displayName: 'Owner',
-      type: 'number',
-      controlType: 'string',
-      isMultiValued: true,
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
+
     {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -143,7 +129,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -165,7 +151,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -178,6 +164,29 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'author',
+      displayName: 'Created By',
+      type: 'number',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -213,7 +222,7 @@ export class FormListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
+    createdBy: '',
     lastModifiedOn: ''
   };
   dataSource: MatTableDataSource<any>;
@@ -222,21 +231,23 @@ export class FormListComponent implements OnInit {
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as GetFormList
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = defaultLimit;
+  limit = LIST_LENGTH;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
+  selectedForm: GetFormList = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -260,10 +271,10 @@ export class FormListComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
-   
+
     this.getAllForms();
     this.getDisplayedForms();
-    
+
     this.formsCount$ = combineLatest([
       this.formsCount$,
       this.formCountUpdate$
@@ -296,7 +307,7 @@ export class FormListComponent implements OnInit {
     }
   };
 
-  onCopyFormMetaData(form: GetFormListQuery): void {
+  onCopyFormMetaData(form: GetFormList): void {
     if (!form.id) {
       return;
     }
@@ -370,7 +381,7 @@ export class FormListComponent implements OnInit {
           this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
@@ -407,8 +418,9 @@ export class FormListComponent implements OnInit {
           }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            form.action = 'add';
             this.toast.show({
-              text: 'Form archive successfully!',
+              text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
             });
           } else {
@@ -450,7 +462,7 @@ export class FormListComponent implements OnInit {
       );
   }
 
-  openArchiveModal(form: GetFormListQuery): void {
+  openArchiveModal(form: GetFormList): void {
     this.raceDynamicFormService
       .updateForm$({
         formMetadata: {
@@ -466,7 +478,7 @@ export class FormListComponent implements OnInit {
       .subscribe((updatedForm) => {
         this.addEditCopyForm$.next({
           action: 'delete',
-          form: updatedForm
+          form
         });
         this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
@@ -529,10 +541,67 @@ export class FormListComponent implements OnInit {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(
-    form: GetFormListQuery,
-    rows: GetFormListQuery[]
-  ) {
+  getAllForms() {
+    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
+    this.formsList$
+      .pipe(
+        tap((formsList) => {
+          const uniqueLastPublishedBy = formsList.rows
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueLastPublishedBy) {
+            if (item) {
+              this.lastPublishedBy.push(item);
+            }
+          }
+          const uniqueCreatedBy = formsList.rows
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniqueCreatedBy) {
+            if (item) {
+              this.createdBy.push(item);
+            }
+          }
+          for (const item of this.filterJson) {
+            if (item.column === 'status') {
+              item.items = this.status;
+            } else if (item.column === 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item.column === 'createdBy') {
+              item.items = this.createdBy;
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  getFilter() {
+    this.raceDynamicFormService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      this.filter[item.column] = item.value;
+    }
+    this.nextToken = '';
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      status: '',
+      modifiedBy: '',
+      createdBy: '',
+      lastModifiedOn: ''
+    };
+    this.nextToken = '';
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
       const regex: RegExp = generateCopyRegex(form?.name);
@@ -551,70 +620,9 @@ export class FormListComponent implements OnInit {
     return null;
   }
 
-  private showFormDetail(row: GetFormListQuery): void {
+  private showFormDetail(row: GetFormList): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
-  }
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
-  getAllForms() {
-    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
-    this.formsList$
-      .pipe(
-        tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.items
-            .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueLastPublishedBy) {
-            if (item) {
-              this.lastPublishedBy.push(item);
-            }
-          }
-          const uniqueAuthoredBy = formsList.items
-            .map((item) => item.author)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueAuthoredBy) {
-            if (item) {
-              this.authoredBy.push(item);
-            }
-          }
-          for (const item of this.filterJson) {
-            if (item['column'] == 'status') {
-              item.items = this.status;
-            } else if (item['column'] == 'modifiedBy') {
-              item.items = this.lastPublishedBy;
-            } else if (item['column'] == 'authoredBy') {
-              item.items = this.authoredBy;
-            }
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  getFilter() {
-    this.raceDynamicFormService.getFilter().subscribe((res) => { 
-      this.filterJson = res;
-    })
-  }
-
-  applyFilter(data: any) {
-    for (const item of data) {
-      this.filter[item.column] = item.value;
-    }
-    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-  }
-
-  resetFilter() {
-    this.filter = {
-      status: '',
-      modifiedBy: '',
-      authoredBy: '',
-      lastModifiedOn: ''
-    };
-    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
   }
 }

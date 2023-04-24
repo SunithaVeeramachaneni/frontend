@@ -32,10 +32,10 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
 @Component({
   selector: 'app-submission',
@@ -44,6 +44,11 @@ import { slideInOut } from 'src/app/animations';
   animations: [slideInOut]
 })
 export class SubmissionComponent implements OnInit, OnDestroy {
+  filter: any = {
+    status: '',
+    modifiedBy: '',
+    lastModifiedOn: ''
+  };
   columns: Column[] = [
     {
       id: 'name',
@@ -234,8 +239,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   limit = defaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'out';
@@ -291,7 +294,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
           this.fetchType = 'infiniteScroll';
           return this.getSubmissionFormsList();
         } else {
-          return of([] as GetFormListQuery[]);
+          return of([] as GetFormList[]);
         }
       })
     );
@@ -334,7 +337,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     };
     const observable = this.isOperatorRounds
       ? this.operatorRoundsService.getSubmissionFormsList$(obj)
-      : this.raceDynamicFormService.getSubmissionFormsList$(obj);
+      : this.raceDynamicFormService.getSubmissionFormsList$(obj, this.filter);
     return observable.pipe(
       mergeMap(({ rows, nextToken }) => {
         this.nextToken = nextToken;

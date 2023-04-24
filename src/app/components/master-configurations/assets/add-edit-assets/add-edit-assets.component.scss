@@ -23,6 +23,8 @@
 
   .cancel {
     cursor: pointer;
+    height: 15px;
+    width: 15px;
   }
 
   .heading {
@@ -31,19 +33,31 @@
   }
 
   .image-container {
-    margin: 10px 0 5px 0;
+    margin: 20px 0 40px 0;
+  }
+
+  .img-border {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 30px 15px;
   }
 
   .image {
-    border: 1px solid $border-color;
-    border-radius: 8px;
-    padding: 20px;
+    height: 35px;
+    width: 50px;
+    position: relative;
+    top: 12px;
   }
 
   .image-contain {
-    border-radius: 8px;
-    width: 90px;
-    height: 90px;
+    height: 75px;
+    width: 75px;
+    position: relative;
+    left: -2px;
+  }
+
+  .error-fields {
+    margin-top: 14px;
   }
 
   .create-btn {
@@ -117,5 +131,9 @@
   border: 1px solid $border-color;
   padding: 5px;
   border-radius: 4px;
-  margin: 10px 10px 5px 12px;
+  margin: 10px 10px 10px 12px;
+}
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
 }

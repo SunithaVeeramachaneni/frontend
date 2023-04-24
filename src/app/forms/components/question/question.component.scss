@@ -3,13 +3,19 @@
 .questions {
   .floating-btns {
     position: relative;
-    left: -90px;
+    left: -95px;
     top: 40px;
     border: 1px solid $border-color;
     border-radius: 7px;
     margin-top: -100px;
     display: block;
     width: 55px;
+  }
+
+  .question-line {
+    border: 1px solid $border-color;
+    margin: 0px 0px 0px -29px;
+    position: relative;
   }
 
   .questions-btn {
@@ -31,13 +37,13 @@
   }
 
   .delete-icon {
-    background: white;
+    background: $white;
     height: 20px;
     position: relative;
-    padding: 10px;
     cursor: pointer;
     width: 20px;
     margin-left: 15px;
+    top: 9px;
   }
 
   .questions-delete-btn-text {
@@ -49,8 +55,6 @@
   }
 
   .questions-div {
-    border-bottom: 1px solid $border-color;
-
     .question-input-box {
       margin-top: 7px;
     }
@@ -70,7 +74,7 @@
   }
 
   .question-input {
-    padding: 7px;
+    padding: 7px 7px 14px 7px;
     border: none;
     margin-left: 5px;
     width: 90%;
@@ -97,13 +101,14 @@
     padding: 10px 0px;
     display: flex;
     flex-direction: column;
-    width: 98%;
+    width: 92.5%;
     justify-content: center;
 
     .questionActionsRow {
       display: flex;
-      align-items: center;
+      align-items: left;
       .addLogicBtn {
+        margin-left: -23px;
         color: $blue-main;
         font-weight: 400;
         .icon {
@@ -164,7 +169,7 @@
   display: flex;
   flex-direction: column;
   // padding: 5px;
-  background: #f8f8f8;
+  background: $white2;
   .searchUOM {
     height: 35px;
     display: flex;
@@ -196,10 +201,9 @@
     .uomSymbol {
       font-weight: 600;
     }
-    .uomTitle {
-    }
   }
 }
+
 .rangeBtn {
   cursor: pointer;
   margin-left: 5px;
@@ -209,4 +213,9 @@
   .rangeValuesNone {
     color: $blue-main;
   }
+}
+
+.question-icon {
+  height: 25px;
+  width: 25px;
 }

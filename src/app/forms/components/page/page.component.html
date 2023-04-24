@@ -28,23 +28,21 @@
         #pageName
         type="text"
         formControlName="name"
+        [size]="getSize(pageForm.get('name').value)"
         class="form_page_name_input"
         placeholder="Untitled Page"
         autocomplete="off"
         (keyup.enter)="pageForm.get('name').disable()"
+        (blur)="pageForm.get('name').disable()"
       />
 
       <button
         mat-icon-button
         (click)="editPage()"
         class="edit-icon"
-        *ngIf="pageForm.get('isOpen').value === true"
+        *ngIf="pageForm.get('name').disabled === true"
       >
-        <img
-          src="assets/rdf-forms-icons/edit-icon.svg"
-          alt="edit-icon"
-          class="page-edit-icon"
-        />
+        <svg-icon icon="icon-edit-icon" class="page-edit-icon"></svg-icon>
       </button>
     </a>
 
@@ -60,12 +58,7 @@
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #pageMenu="matMenu">
-        <button
-          mat-menu-item
-          (click)="deletePage()"
-          class="text-red"
-          [disabled]="props.pagesCount === 1"
-        >
+        <button mat-menu-item (click)="deletePage()" class="text-red">
           <span translate="deletePage"></span>
         </button>
       </mat-menu>
@@ -76,11 +69,7 @@
   </div>
 
   <button class="add-page-btn" (click)="addPage()">
-    <img
-      src="assets/rdf-forms-icons/add-page.svg"
-      alt="add page"
-      class="add-page-btn-icon"
-    />
+    <svg-icon icon="icon-add-page" class="add-page-btn-icon"></svg-icon>
     {{ 'addPage' | translate }}
   </button>
 </div>

@@ -68,7 +68,7 @@
 
 .search-form-field {
   width: 95%;
-  margin: 0px 10px;
+  margin: 0 10px 10px 10px;
   position: relative;
   top: 5px;
 }
@@ -77,14 +77,14 @@
   color: #3d5afe;
   border: 1px solid #bdbdbd;
   float: right;
-  margin: 10px 10px 0 0;
+  margin: 8px 10px 0 0;
 }
 
 .save-role-btn {
   background-color: #3d5afe;
   color: #ffffff;
   float: right;
-  margin: 10px 10px 0 0;
+  margin: 8px 10px 0 0;
   box-shadow: none;
 }
 
@@ -118,6 +118,10 @@
 .super-admin-icon {
   position: relative;
   top: 2px;
+  ::ng-deep svg {
+    height: 15px !important;
+    width: 20px !important;
+  }
 }
 
 .more-items {

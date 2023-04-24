@@ -61,6 +61,7 @@
   margin-left: 45px;
   .expandCollapseBtn {
     cursor: pointer;
+    padding: 2%;
   }
   .rotate-270 {
     transform: rotate(270deg);
@@ -89,9 +90,9 @@
 }
 .nodeCount {
   background: $active-blue;
-  min-width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  min-width: 25px;
+  height: 25px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,3 +104,11 @@
   background: $white;
   color: $active-blue;
 }
+
+.node-icon{
+  height: 30px;
+  width: 30px;
+  position: relative;
+  top: 2px;
+}
+

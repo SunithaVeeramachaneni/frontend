@@ -24,6 +24,8 @@
 
   .cancel {
     cursor: pointer;
+    height: 15px;
+    width: 15px;
   }
 
   .heading {
@@ -31,16 +33,28 @@
     font-weight: 500;
   }
 
+  .image-container {
+    margin: 20px 0 40px 0;
+  }
+
   .image {
+    height: 35px;
+    width: 50px;
+    position: relative;
+    top: 12px;
+  }
+
+  .img-border {
     border: 1px solid $border-color;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px 15px;
   }
 
   .image-contain {
-    border-radius: 8px;
-    width: 90px;
-    height: 90px;
+    height: 75px;
+    width: 75px;
+    position: relative;
+    left: -2px;
   }
 
   .create-btn {
@@ -62,6 +76,10 @@
     float: right;
     margin-right: 15px;
     margin-top: 15px;
+  }
+
+  .error-fields {
+    margin-top: 14px;
   }
 }
 

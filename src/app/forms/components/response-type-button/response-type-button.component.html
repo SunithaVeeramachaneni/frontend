@@ -31,7 +31,14 @@
       <mat-chip
         class="chips"
         [ngStyle]="{
-          color: questionForm.get('value').value?.value[0]?.color
+          color: questionForm.get('value').value?.value[0]?.color,
+          backgroundColor: questionForm.get('value').value?.value[0]
+            .backgroundColor
+            ? questionForm.get('value').value?.value[0]?.backgroundColor
+            : 'rgba(10, 1, 0, 0.2)',
+          borderColor: questionForm.get('value').value?.value[0].backgroundColor
+            ? questionForm.get('value').value?.value[0]?.backgroundColor
+            : 'rgba(10, 1, 0, 0.2)'
         }"
       >
         {{ questionForm.get('value').value?.value[0].title }}
@@ -40,7 +47,14 @@
         *ngIf="questionForm.get('value').value?.value.length >= 2"
         class="chips"
         [ngStyle]="{
-          color: questionForm.get('value').value?.value[1]?.color
+          color: questionForm.get('value').value?.value[1]?.color,
+          backgroundColor: questionForm.get('value').value?.value[1]
+            .backgroundColor
+            ? questionForm.get('value').value?.value[1]?.backgroundColor
+            : 'rgba(10, 1, 0, 0.2)',
+          borderColor: questionForm.get('value').value?.value[1].backgroundColor
+            ? questionForm.get('value').value?.value[1]?.backgroundColor
+            : 'rgba(10, 1, 0, 0.2)'
         }"
       >
         {{ questionForm.get('value').value?.value[1].title }}
@@ -61,22 +75,15 @@
   </div>
 
   <ng-template #nonMCQFields>
-    <img
-      [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
-      class="response-type-icons"
-    />&nbsp;
+    <svg-icon
+                  [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
+                  class="response-type-icons"
+                ></svg-icon>
+    
+    &nbsp;
     <span class="response-type-text">
       {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
     </span>
   </ng-template>
-  <mat-icon
-    class="response-type-btn-arrow"
-    [ngClass]="{
-      'p-t-13':
-        questionForm.get('fieldType').value === 'VI' ||
-        questionForm.get('fieldType').value === 'DD'
-    }"
-  >
-    keyboard_arrow_down
-  </mat-icon>
+  <mat-icon class="response-type-btn-arrow"> keyboard_arrow_down </mat-icon>
 </button>

@@ -1,0 +1,44 @@
+<div class="field-types">
+  <div class="each-fieldtype">
+    <p
+      class="question-name"
+      *ngIf="question.fieldType !== 'ARD' && question.fieldType !== 'INST'"
+    >
+      {{ (question.name ? question.name : 'typeQuestion') | translate }}
+      <span
+        [ngClass]="['required', question.required ? ' required-visible' : '']"
+      >
+        *</span
+      >
+    </p>
+    <ng-template appDynamicPreviewResponseTypeLoader></ng-template>
+  </div>
+  <div class="task-footer">
+    <button
+      *ngIf="question.fieldType !== 'ATT'"
+      mat-button
+      mat-icon-button
+      class="task-icon-button"
+    >
+      <svg-icon icon="icon-Photo" class="options"></svg-icon>
+      <p>Photo</p>
+    </button>
+    <button mat-button mat-icon-button class="task-icon-button">
+      <svg-icon icon="icon-Note" class="options"></svg-icon>
+      <p>Note</p>
+    </button>
+    <button mat-button mat-icon-button class="task-icon-button">
+      <svg-icon icon="icon-Action" class="options"></svg-icon>
+      <p>Action</p>
+    </button>
+    <button
+      mat-button
+      mat-icon-button
+      class="task-icon-button"
+      (click)="openMoreMenu()"
+    >
+      <svg-icon icon="icon-More" class="options"></svg-icon>
+      <p>More</p>
+    </button>
+  </div>
+</div>
