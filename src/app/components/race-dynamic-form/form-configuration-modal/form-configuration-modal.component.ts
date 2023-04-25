@@ -35,6 +35,7 @@ import {
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
@@ -57,6 +58,7 @@ export class FormConfigurationModalComponent implements OnInit {
 
   allTags: string[] = [];
   originalTags: string[] = [];
+  allPlantsData = [];
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -69,7 +71,8 @@ export class FormConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private plantService: PlantService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -104,7 +107,15 @@ export class FormConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      plantId: ['', Validators.required]
+    });
+    this.getAllPlantsData();
+  }
+
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items || [];
     });
   }
 
@@ -168,11 +179,15 @@ export class FormConfigurationModalComponent implements OnInit {
       });
     }
 
+    const plant = this.allPlantsData.find(
+      (p) => p.id === this.headerDataForm.get('plantId').value
+    );
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value,
+          formMetadata: { ...this.headerDataForm.value, plant: plant.name },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })

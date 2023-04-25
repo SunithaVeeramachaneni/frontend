@@ -91,7 +91,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filter = {
     schedule: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -126,11 +127,33 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'locationAssetsCompleted',
       displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -153,7 +176,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -180,7 +203,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -202,7 +225,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -224,7 +247,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -267,7 +290,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -343,6 +366,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   assigneePosition: any;
   initial: any;
+  plants = [];
+  plantsIdNameMap = {};
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -615,36 +640,51 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueAssignTo = formsList
-        ?.map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
+      const objectKeys = Object.keys(formsList);
+      if (objectKeys.length > 0) {
+        const uniqueAssignTo = formsList
+          ?.map((item) => item.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
 
-      const uniqueSchedules = formsList
-        ?.map((item) => item?.schedule)
-        .filter((value, index, self) => self?.indexOf(value) === index);
+        const uniqueSchedules = formsList
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
 
-      if (uniqueSchedules?.length > 0) {
-        uniqueSchedules?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.schedules.push(item);
-          }
-        });
-      }
-
-      if (uniqueAssignTo?.length > 0) {
-        uniqueAssignTo?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.assignedTo.push(item);
-          }
-        });
-      }
-
-      for (const item of this.filterJson) {
-        if (item.column === 'assignedTo') {
-          item.items = this.assignedTo;
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.schedules.push(item);
+            }
+          });
         }
-        if (item.column === 'schedule') {
-          item.items = this.schedules;
+        if (uniqueAssignTo?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.assignedTo.push(item);
+            }
+          });
+        }
+
+        const uniquePlants = formsList
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        this.plants = [...uniquePlants];
+
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          } else if (item['column'] === 'plant') {
+            item.items = this.plants;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
         }
       }
     });
@@ -659,7 +699,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -685,7 +728,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.filter = {
       schedule: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.fetchRounds$.next({ data: 'load' });
   }

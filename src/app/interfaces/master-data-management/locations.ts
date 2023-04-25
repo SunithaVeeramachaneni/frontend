@@ -10,6 +10,7 @@ export interface CreateLocation {
   parentId?: string;
   image?: string;
   searchTerm?: string;
+  plantsID?: string;
 }
 
 export interface DeleteLocation {

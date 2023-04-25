@@ -87,6 +87,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
   filter = {
+    plant: '',
     schedule: '',
     assignedTo: '',
     scheduledAt: ''
@@ -125,11 +126,33 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'locations',
       displayName: 'Location',
       type: 'number',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -151,7 +174,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assets',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -173,7 +196,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Tasks',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -196,7 +219,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -218,7 +241,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Rounds Generated',
       type: 'number',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -240,7 +263,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -262,7 +285,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Start - Ends',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -340,6 +363,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   planCategory: FormControl;
   roundPlanId: string;
+  plants = [];
+  plantsIdNameMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -507,6 +532,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
+
+    this.getAllRoundPlans();
   }
 
   getRoundPlanList() {
@@ -518,21 +545,42 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService
-      .getPlansList$({ ...obj, ...this.filter })
-      .pipe(
-        tap(({ scheduledCount, unscheduledCount, next }) => {
-          this.nextToken = next !== undefined ? next : null;
-          const { scheduled, unscheduled } = this.roundPlanCounts;
-          this.roundPlanCounts = {
-            ...this.roundPlanCounts,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
-          };
-        })
-      );
+    return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
+      tap(({ scheduledCount, unscheduledCount, next }) => {
+        this.nextToken = next !== undefined ? next : null;
+        const { scheduled, unscheduled } = this.roundPlanCounts;
+        this.roundPlanCounts = {
+          ...this.roundPlanCounts,
+          scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
+          unscheduled:
+            unscheduledCount !== undefined ? unscheduledCount : unscheduled
+        };
+      })
+    );
+  }
+
+  getAllRoundPlans() {
+    this.operatorRoundsService.fetchAllPlansList$().subscribe((plansList) => {
+      const objectKeys = Object.keys(plansList);
+
+      if (objectKeys.length > 0) {
+        const uniquePlants = plansList.rows
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        this.plants = [...uniquePlants];
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
+      }
+    });
   }
 
   handleTableEvent = (event): void => {
@@ -840,7 +888,10 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -864,6 +915,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   resetFilter(): void {
     this.isPopoverOpen = false;
     this.filter = {
+      plant: '',
       schedule: '',
       assignedTo: '',
       scheduledAt: ''

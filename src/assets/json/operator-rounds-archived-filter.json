@@ -10,14 +10,14 @@
     "label": "Modified By",
     "items": [],
     "column": "modifiedBy",
-    "type": "multiple",
+    "type": "select",
     "value": ""
   },
   {
-    "label": "Created By",
+    "label": "Authored By",
     "items": [],
-    "column": "createdBy",
-    "type": "multiple",
+    "column": "authoredBy",
+    "type": "select",
     "value": ""
   },
   {
