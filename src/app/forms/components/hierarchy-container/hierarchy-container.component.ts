@@ -216,6 +216,7 @@ export class HierarchyContainerComponent implements OnInit {
     this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
       count = c;
     });
+    setTimeout(() => this.cdrf.detectChanges(), 0);
     return count;
   }
 

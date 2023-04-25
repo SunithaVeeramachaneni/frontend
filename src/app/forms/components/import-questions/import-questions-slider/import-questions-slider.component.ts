@@ -23,6 +23,9 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() selectedFormName;
   @Input() selectedFormData;
   @Input() currentFormData;
+  @Input() isFooter;
+  @Input() title;
+
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
@@ -39,6 +42,17 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.selectedFormData.forEach((item) => {
+      if (item) {
+        item.isOpen = false;
+        item.sections.forEach((section) => {
+          if (section) {
+            section.isOpen = false;
+          }
+        });
+      }
+    });
+
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes)
       .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
@@ -110,6 +124,9 @@ export class ImportQuestionsSliderComponent implements OnInit {
       this.cancelSliderEvent.emit(false);
     });
   }
+  toggleIsOpen(page) {
+    page.isOpen = !page.isOpen;
+  }
 
   cancel() {
     this.cancelSliderEvent.emit(false);
@@ -144,7 +161,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
     section.questions.forEach((t) => (t.checked = checked));
   }
 
-  fewSectionComplete(section, page) {
+  checkedSectionCount(section, page) {
     const checkedCount = section.questions.filter((p) => p.checked).length;
     const countOfPageChecked = page.sections.filter((p) => p.checked).length;
 

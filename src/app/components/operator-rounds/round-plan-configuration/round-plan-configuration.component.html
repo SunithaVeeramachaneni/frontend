@@ -218,7 +218,8 @@
       </div>
     </div>
     <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone *ngIf="selectedNode?.id"
+      <app-iphone
+        *ngIf="selectedNode?.id"
         [moduleType]="'operator-rounds'"
         [subFormId]="selectedNode?.id"
         [assetLocationName]="selectedNode?.name"

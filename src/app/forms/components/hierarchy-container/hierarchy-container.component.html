@@ -25,11 +25,12 @@
           activeBtn: hierarchyMode === 'asset_hierarchy'
         }"
       >
-       
         <svg-icon
-        [icon]="getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')"
-        class="toggle-btn-icon"
-      ></svg-icon>
+          [icon]="
+            getImage('asset-hierarchy', hierarchyMode === 'asset_hierarchy')
+          "
+          class="toggle-btn-icon"
+        ></svg-icon>
       </mat-button-toggle>
       <mat-button-toggle
         value="route_plan"
@@ -44,6 +45,7 @@
         ></svg-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
+
     <span *ngIf="hierarchy.length">
       {{ 'totalTasksCount' | translate : { count: getTotalTasksCount() } }}
     </span>

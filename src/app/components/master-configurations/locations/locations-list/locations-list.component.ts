@@ -250,6 +250,7 @@ export class LocationsListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getLocations();
       })
     );
@@ -321,15 +322,15 @@ export class LocationsListComponent implements OnInit {
   getLocations() {
     return this.locationService
       .getLocationsList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchLocation.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.locationsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
