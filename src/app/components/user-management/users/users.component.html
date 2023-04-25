@@ -22,11 +22,7 @@
 
     <mat-menu menu #addUserMenu="matMenu">
       <button mat-menu-item class="text-black" (click)="uploader.click()">
-        <img
-          src="assets/user-management-icons/upload-from-excel.svg"
-          alt="Excel"
-          class="menu-icons"
-        />
+        <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
         <span translate="Upload Excel"></span>
       </button>
       <button
@@ -35,6 +31,7 @@
         *appCheckUserHasPermission="[perms.createUser]"
         class="text-black"
       >
+        <svg-icon icon="icon-add-manually" class="add-manually-icon"></svg-icon>
         <span translate="addManually"></span>
       </button>
     </mat-menu>
