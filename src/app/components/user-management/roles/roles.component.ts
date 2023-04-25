@@ -170,7 +170,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   isPermissionsChecked(): boolean {
     let permissionsChecked = false;
     this.updatedPermissions.forEach((module) => {
-      if (module.countOfChecked) {
+      if (module.totalActivePermissions) {
         permissionsChecked = true;
       }
     });
