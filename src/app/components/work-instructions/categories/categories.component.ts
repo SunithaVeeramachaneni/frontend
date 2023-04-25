@@ -202,7 +202,7 @@ export class CategoriesComponent
         Drafts_Count: 0,
         Published_Count: 0,
         Cover_Image:
-          'assets/work-instructions-icons/img/brand/category-placeholder.png',
+          'assets/Images/category-placeholder.png',
         Created_At: new Date('2050-01-01').toISOString()
       }
     ];

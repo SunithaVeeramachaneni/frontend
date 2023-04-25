@@ -427,7 +427,7 @@ export class ActionsComponent implements OnInit {
         }
         this.skip = this.initial.data.length;
         this.initial.data.map((item) => {
-          item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
+          item.preTextImage.image = '/assets/Images/actionsIcon.svg';
           return item;
         });
         this.dataSource = new MatTableDataSource(this.initial.data);
