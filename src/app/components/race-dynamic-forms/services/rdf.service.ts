@@ -536,19 +536,20 @@ export class RdfService {
 
       // Ask Evidence;
       const evidenceQuestion = logic.askEvidence;
+      const oppositeOperator = this.getOppositeOperator(logic.operator);
       if (evidenceQuestion && evidenceQuestion.length) {
         globalIndex = globalIndex + 1;
         if (question.fieldType === 'CB') {
-          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
         } else {
-          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} NE EMPTY OR ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
         }
         globalIndex = globalIndex + 1;
         if (isEmpty) {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
         } else {
           if (question.fieldType === 'CB') {
-            expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
           } else {
             expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
           }
@@ -561,7 +562,7 @@ export class RdfService {
       askQuestions = askQuestions.concat(questionsToBeAsked);
       questionsToBeAsked.forEach((q) => {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
       });
 
       // Raise Notification;
@@ -620,5 +621,17 @@ export class RdfService {
     ).documentElement.textContent;
 
     return parsedElement;
+  };
+
+  getOppositeOperator = (operator) => {
+    const oppositeOperatorMap = new Map([
+      ['LE', 'GT'],
+      ['GE', 'LT'],
+      ['LT', 'GE'],
+      ['GT', 'LE'],
+      ['EQ', 'NE'],
+      ['NE', 'EQ']
+    ]);
+    return oppositeOperatorMap.get(operator);
   };
 }
