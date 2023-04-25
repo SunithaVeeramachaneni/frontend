@@ -60,7 +60,7 @@ export class ResponseSetService {
   };
 
   fetchResponseSetList$ = (queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: number;
     searchKey?: string;
     fetchType: string;
@@ -68,17 +68,13 @@ export class ResponseSetService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
-      }
+      params.set('limit', `${queryParams.limit}`);
+
+      params.set('next', queryParams.next);
       if (queryParams.searchKey) {
         const filter = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
@@ -193,12 +189,12 @@ export class ResponseSetService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 

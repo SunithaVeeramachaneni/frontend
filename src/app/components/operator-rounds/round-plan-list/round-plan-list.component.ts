@@ -373,7 +373,7 @@ export class RoundPlanListComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -383,12 +383,12 @@ export class RoundPlanListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
+        mergeMap(({ rows, next }) => {
           // if next token turns null from not null, that means all records have been fetched with the given limit.
-          if (nextToken === null && this.nextToken !== null) {
+          if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;
           }
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),

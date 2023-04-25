@@ -368,7 +368,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             {} as {
               rows: any[];
               count: number;
-              nextToken: string | null;
+              next: string | null;
             }
           );
         }
@@ -439,7 +439,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   getInspectionsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -448,8 +448,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ count, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           this.inspectionsCount =
             count !== undefined ? count : this.inspectionsCount;
           this.isLoading$.next(false);
