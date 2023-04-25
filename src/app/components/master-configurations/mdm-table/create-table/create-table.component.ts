@@ -9,6 +9,7 @@ interface Response {
   styleUrls: ['./create-table.component.scss']
 })
 export class CreateTableComponent implements OnInit {
+  isFav: boolean;
   responses: Response[] = [
     { value: 'text-0', viewValue: 'Text' },
     { value: 'number-1', viewValue: 'Number' },
@@ -16,5 +17,8 @@ export class CreateTableComponent implements OnInit {
   ];
   constructor() {}
 
+  favoriteToggle = () => {
+    this.isFav = !this.isFav;
+  };
   ngOnInit(): void {}
 }

@@ -2,10 +2,14 @@
 
 .table {
   border: 1px solid $border-color;
+
   width: fit-content;
   text-align: left;
+  padding: 16px 29px;
+  margin: 14px 11px;
+  border-radius: 2px;
   .add-details {
-    width: 500px;
+    width: 565px;
     height: 90%;
     margin: 10px auto;
     padding: 15px;
@@ -48,6 +52,27 @@
         }
         .response {
           top: -1px;
+        }
+        .delete-btn {
+          border: none;
+          background-color: white;
+          .delete-icon {
+            display: flex;
+            position: relative;
+            width: 13px;
+            height: 20px;
+            top: 10px;
+            right: -18px;
+          }
+        }
+        .favorite-icon {
+          position: relative;
+          top: 10px;
+          left: 13px;
+          ::ng-deep svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
         }
 
         .input-select {
@@ -103,8 +128,14 @@
   position: relative;
   top: -10px;
 }
+.bottom-border {
+  width: 90%;
+  display: flex;
+  border-bottom: 1px solid $border-color;
+}
 
 .question-line {
+  color: $gray8;
   margin: 0px;
   position: relative;
   top: -8px;
@@ -146,4 +177,8 @@
 }
 .button-text:hover {
   color: $white;
+}
+.icon {
+  position: relative;
+  right: 10px;
 }

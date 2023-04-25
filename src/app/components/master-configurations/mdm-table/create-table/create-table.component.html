@@ -26,34 +26,49 @@
         <!-- <app-question class="question"></app-question> -->
 
         <div class="dis-flex questions-div">
-          <div class="width-70">
-            <input
-              #name
-              autocomplete="off"
-              type="text"
-              [placeholder]="'typeQuestion' | translate"
-              class="width-90 question-input"
-            />
+          <div class="bottom-border">
+            <div class="width-70">
+              <input
+                #name
+                autocomplete="off"
+                type="text"
+                [placeholder]="'typeQuestion' | translate"
+                class="width-90 question-input"
+              />
+            </div>
+
+            <span class="divider">|</span>
+            <!-- dropdown -->
+
+            <mat-form-field appearance="outline" class="response">
+              <mat-select placeholder="Responses" class="input-select">
+                <mat-option
+                  *ngFor="let response of responses"
+                  [value]="response.value"
+                >
+                  {{ response.viewValue }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
+          <div class="icon">
+            <a (click)="favoriteToggle()" class="favorite-toggle width-20">
+              <span *ngIf="!this.isFav">
+                <svg-icon
+                  icon="icon-favriotes"
+                  class="favorite-icon"
+                ></svg-icon>
+              </span>
+              <span *ngIf="this.isFav">
+                <svg-icon icon="icon-fav-fill" class="favorite-icon"></svg-icon>
+              </span>
+            </a>
 
-          <span class="divider">|</span>
-          <!-- dropdown -->
-
-          <mat-form-field appearance="outline" class="response">
-            <mat-select placeholder="Responses" class="input-select">
-              <mat-option
-                *ngFor="let response of responses"
-                [value]="response.value"
-              >
-                {{ response.viewValue }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button>
-            <img src="assets/rdf-forms-icons/close.svg" alt="" />
-          </button>
+            <button class="delete-btn">
+              <svg-icon icon="icon-delete-gray" class="delete-icon"></svg-icon>
+            </button>
+          </div>
         </div>
-        <hr class="question-line" />
       </div>
     </div>
 
