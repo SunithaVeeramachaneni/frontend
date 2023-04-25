@@ -1,8 +1,8 @@
 export const COVER_IMAGES = [
-  'assets/Images/category-placeholder.png',
-  'assets/Images/coverimage1.png',
-  'assets/Images/coverimage2.png',
-  'assets/Images/coverimage3.png',
-  'assets/Images/coverimage4.png',
-  'assets/Images/coverimage5.png',
+  'assets/work-instructions-icons/img/brand/category-placeholder.png',
+  'assets/work-instructions-icons/CoverImages/coverimage1.png',
+  'assets/work-instructions-icons/CoverImages/coverimage2.png',
+  'assets/work-instructions-icons/CoverImages/coverimage3.png',
+  'assets/work-instructions-icons/CoverImages/coverimage4.png',
+  'assets/work-instructions-icons/CoverImages/coverimage5.png',
 ];
