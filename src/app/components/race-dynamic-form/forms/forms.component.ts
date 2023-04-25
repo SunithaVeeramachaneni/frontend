@@ -454,7 +454,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   getFormsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -464,8 +464,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this.raceDynamicFormService
       .getFormQuestionsFormsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ scheduledCount, unscheduledCount, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           const { scheduled, unscheduled } = this.formsCount;
           this.formsCount = {
             ...this.formsCount,

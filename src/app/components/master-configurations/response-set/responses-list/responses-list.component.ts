@@ -265,6 +265,7 @@ export class ResponsesListComponent implements OnInit {
         filter(({ data }) => data === 'load' || data === 'search'),
         switchMap(({ data }) => {
           this.skip = 0;
+          this.nextToken = '';
           this.fetchType = data;
           return this.getResponseSets();
         })
@@ -290,14 +291,9 @@ export class ResponsesListComponent implements OnInit {
       responseSetOnLoadSearch$,
       this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
-      this.allResponseSets$,
       this.users$
     ]).pipe(
-      map(([rows, addEditData, scrollData, allResponseSets, users]) => {
-        const { items: unfilteredResponseSets } = allResponseSets;
-        this.allResponseSets = unfilteredResponseSets.filter(
-          (item) => !item._deleted
-        );
+      map(([rows, addEditData, scrollData, users]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -371,15 +367,15 @@ export class ResponsesListComponent implements OnInit {
   getResponseSets() {
     return this.responseSetService
       .fetchResponseSetList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchResponseSet.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.responseSetCount$ = of(count);
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
