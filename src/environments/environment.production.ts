@@ -4,7 +4,7 @@ export const environment = {
   mccAbapApiUrl: 'https://cbodev.innovapptive.com/mccspccabapapi/',
   spccAbapApiUrl: 'https://cbodev.innovapptive.com/mccspccabapapi/',
   wiApiUrl: 'https://cbodev.innovapptive.com/wiapi/',
-  wiAbapApiUrl: 'https://cbo.innovapptive.com/wiabapapi/',
+  wiAbapApiUrl: 'https://cbodev.innovapptive.com/wiabapapi/',
   userRoleManagementApiUrl:
     'https://cbodev.innovapptive.com/userrolemanagementapi/',
   rdfApiUrl: 'https://cbodev.innovapptive.com/rdfapi/',
