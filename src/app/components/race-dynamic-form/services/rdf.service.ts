@@ -257,9 +257,14 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
+    if (!formMetaDataDetails.formMetadata.id) {
+      return;
+    }
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/${formMetaDataDetails?.formMetadata?.id}`,
+      `forms/${
+        formMetaDataDetails.formMetadata.id
+      }?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
       {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
