@@ -238,5 +238,6 @@
   "minTxt": "Min",
   "maxTxt": "Max",
   "column": "Column",
-  "multipleChoice":"Multiple Choice"
+  "multipleChoice": "Multiple Choice",
+  "create": "Create"
 }

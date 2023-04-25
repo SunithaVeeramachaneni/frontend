@@ -1,11 +1,10 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="plantForm">
-    <div>
+    <div class="top-bar">
       <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
       <h1 class="heading">{{ plantTitle }}</h1>
     </div>
-    <div>
-      <p class="m-0" translate="image"></p>
+    <div class="container-div">
       <p class="image-container">
         <span *ngIf="!plantImage?.length">
           <svg-icon icon="icon-default-plant" class="image-contain"></svg-icon>
@@ -138,27 +137,24 @@
           />
         </mat-form-field>
       </span>
-    <div class="actions-footer">
-
-      <button
+    </div>
+  </mat-card>
+  <div class="actions-footer">
+    <button
       mat-stroked-button
       class="cancel-btn"
       type="button"
       (click)="cancel()"
       translate="cancelBtn"
     ></button>
-        <button
-        mat-raised-button
-        class="create-btn"
-        type="submit"
-        [disabled]="plantForm.invalid"
-        (click)="create()"
-      >
-        {{ plantButton }}
-      </button>
-     
-        
-      </div>
-    </div>
-  </mat-card>
+    <button
+      mat-raised-button
+      class="create-btn"
+      type="submit"
+      [disabled]="plantForm.invalid"
+      (click)="create()"
+    >
+      {{ plantButton }}
+    </button>
+  </div>
 </div>
