@@ -376,11 +376,7 @@ export class ArchivedListComponent implements OnInit {
               return '';
             })
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniquePlants) {
-            if (item) {
-              this.plants.push(item);
-            }
-          }
+          this.plants = [...uniquePlants];
           for (const item of this.filterJson) {
             if (item.column === 'plant') {
               item.items = this.plants;

@@ -725,7 +725,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('roundPlanId', '');
     params.set('status', '');
     params.set('assignedTo', '');
@@ -745,7 +745,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'true');

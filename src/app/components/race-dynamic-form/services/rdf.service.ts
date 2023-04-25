@@ -818,7 +818,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', LIST_LENGTH.toString());
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'true');
     params.set('modifiedBy', '');
@@ -836,7 +836,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', LIST_LENGTH.toString());
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'false');
     params.set('modifiedBy', '');

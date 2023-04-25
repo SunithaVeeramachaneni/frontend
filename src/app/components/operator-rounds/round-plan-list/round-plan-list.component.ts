@@ -532,19 +532,12 @@ export class RoundPlanListComponent implements OnInit {
           const uniqueLastPublishedBy = formsList.rows
             .map((item) => item.lastPublishedBy)
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueLastPublishedBy) {
-            if (item) {
-              this.lastPublishedBy.push(item);
-            }
-          }
+          this.lastPublishedBy = [...uniqueLastPublishedBy];
+
           const uniqueAuthoredBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueAuthoredBy) {
-            if (item) {
-              this.createdBy.push(item);
-            }
-          }
+          this.createdBy = [...uniqueAuthoredBy];
 
           const uniquePlants = formsList.rows
             .map((item) => {
@@ -555,11 +548,7 @@ export class RoundPlanListComponent implements OnInit {
               return '';
             })
             .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniquePlants) {
-            if (item) {
-              this.plants.push(item);
-            }
-          }
+          this.plants = [...uniquePlants];
 
           for (const item of this.filterJson) {
             if (item.column === 'status') {

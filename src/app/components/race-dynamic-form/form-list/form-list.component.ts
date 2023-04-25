@@ -589,19 +589,12 @@ export class FormListComponent implements OnInit {
             const uniqueLastPublishedBy = formsList.rows
               .map((item) => item.lastPublishedBy)
               .filter((value, index, self) => self.indexOf(value) === index);
-            for (const item of uniqueLastPublishedBy) {
-              if (item) {
-                this.lastPublishedBy.push(item);
-              }
-            }
+            this.lastPublishedBy = [...uniqueLastPublishedBy];
+
             const uniqueCreatedBy = formsList.rows
               .map((item) => item.author)
               .filter((value, index, self) => self.indexOf(value) === index);
-            for (const item of uniqueCreatedBy) {
-              if (item) {
-                this.createdBy.push(item);
-              }
-            }
+            this.createdBy = [...uniqueCreatedBy];
 
             const uniquePlants = formsList.rows
               .map((item) => {
@@ -612,11 +605,7 @@ export class FormListComponent implements OnInit {
                 return '';
               })
               .filter((value, index, self) => self.indexOf(value) === index);
-            for (const item of uniquePlants) {
-              if (item) {
-                this.plants.push(item);
-              }
-            }
+            this.plants = [...uniquePlants];
 
             for (const item of this.filterJson) {
               if (item.column === 'status') {
