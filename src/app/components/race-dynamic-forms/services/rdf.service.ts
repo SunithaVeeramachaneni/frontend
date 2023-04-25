@@ -223,6 +223,7 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
+            SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
             UIVALIDATION: notificationInfo[0] ? '' : expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
             BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
