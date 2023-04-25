@@ -236,5 +236,6 @@
   "filled": "Filled",
   "minTxt": "Min",
   "maxTxt": "Max",
-  "column": "Column"
+  "column": "Column",
+  "multipleChoice":"Multiple Choice"
 }

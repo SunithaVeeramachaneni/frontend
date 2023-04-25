@@ -1,15 +1,17 @@
 @import '../../../../scss/colors.scss';
 .filter-report-modal {
   margin: 10px 0px 15px 0px;
-  background: $white;
-  border: 1px solid $grey;
+  background: #ffffff;
+  /* border: 1px solid #808080; */
   border-radius: 4px;
   position: relative;
   top: 10px;
-  width: 330px;
+  width: 315px;
   right: -80px;
   max-height: 340px;
-  min-height: 280px;
+  min-height: 240px;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
 
 .filter-cancel {

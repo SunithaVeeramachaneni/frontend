@@ -77,7 +77,7 @@
       <input type="hidden" formControlName="id" />
 
       <mat-card-content>
-        <div class="width-100" formArrayName="responses">
+        <div class="width-100 response-drop-list" formArrayName="responses" cdkScrollable >
           <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list">
@@ -114,30 +114,33 @@
               </div>
             </div>
           </div>
-        </div>
-        <button
+          <button
           mat-flat-button
           (click)="initResponse()"
           class="add-response"
           translate="addRes"
         ></button>
+        </div>
+        
       </mat-card-content>
     </div>
+  </mat-card>
+
+  <div class="actions-footer">
+    <button
+    mat-stroked-button
+    class="cancel-response-btn"
+    (click)="cancelResponse()"
+    translate="cancel"
+  ></button>
     <button
       mat-raised-button
       (click)="submitResponses()"
-      color="primary"
       class="submit-response-btn"
       [disabled]="isFormNotUpdated === true || responseForm.pristine"
       translate="apply"
     ></button>
-    <button
-      mat-stroked-button
-      class="cancel-response-btn"
-      (click)="cancelResponse()"
-      translate="cancel"
-    ></button>
-  </mat-card>
+  </div>
 </div>
 
 <div class="app-customizer" *ngIf="rangeSelectorOpenState">

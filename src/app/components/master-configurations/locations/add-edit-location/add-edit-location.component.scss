@@ -46,23 +46,32 @@
   .create-btn {
     background-color: $blue-main;
     color: $white;
-    float: right;
+    width: 50%;
   }
 
   .create-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
+    width: 50%;
   }
 
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    float: right;
     margin-right: 15px;
+    width: 50%;
   }
 
   .error-fields {
     margin-top: 14px;
+  }
+
+  .actions-footer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 190px;
+    width: 100%;
   }
 }
 

@@ -122,22 +122,25 @@
         </mat-form-field>
       </p>
 
-      <button
-        mat-raised-button
-        class="create-btn"
-        type="submit"
-        [disabled]="assetForm.invalid"
-        (click)="create()"
-      >
-        {{ assetButton }}
-      </button>
-      <button
+      <div class="actions-footer">
+
+        <button
         mat-stroked-button
         class="cancel-btn"
         type="button"
         (click)="cancel()"
         translate="cancelBtn"
-      ></button>
+       ></button>
+       <button
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        [disabled]="assetForm.invalid"
+        (click)="create()"
+       >
+        {{ assetButton }}
+       </button>
+     </div>
     </div>
   </mat-card>
 </div>

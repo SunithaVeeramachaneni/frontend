@@ -68,7 +68,8 @@
   }
 
   .add-more-icon {
-    width: 15px;
+    height: 20px;
+    width: 20px;
     margin-top: 5px;
     position: relative;
     top: 2px;
@@ -119,7 +120,8 @@
     background-color: transparent;
     position: relative;
     .edit-icon-img {
-      width: 12px;
+      width: 15px;
+      height: 15px;
     }
   }
 
@@ -192,4 +194,9 @@
 .add-icon {
   font-size: 150%;
   margin-right: 0 !important;
+}
+
+.add-more-text{
+  position: relative;
+  top: -3px;
 }

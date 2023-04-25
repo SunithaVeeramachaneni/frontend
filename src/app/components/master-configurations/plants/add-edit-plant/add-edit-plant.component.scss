@@ -49,12 +49,14 @@
     color: $white;
     float: right;
     margin-top: 15px;
+    width: 50%;
   }
 
   .create-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
     margin-top: 15px;
+    width: 50%;
   }
 
   .cancel-btn {
@@ -63,10 +65,19 @@
     float: right;
     margin-right: 15px;
     margin-top: 15px;
+    width: 50%;
   }
 
   .error-fields {
     margin-top: 14px;
+  }
+
+  .actions-footer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 100px;
+    width: 100%;
   }
 }
 

@@ -138,7 +138,16 @@
           />
         </mat-form-field>
       </span>
+    <div class="actions-footer">
+
       <button
+      mat-stroked-button
+      class="cancel-btn"
+      type="button"
+      (click)="cancel()"
+      translate="cancelBtn"
+    ></button>
+        <button
         mat-raised-button
         class="create-btn"
         type="submit"
@@ -147,13 +156,9 @@
       >
         {{ plantButton }}
       </button>
-      <button
-        mat-stroked-button
-        class="cancel-btn"
-        type="button"
-        (click)="cancel()"
-        translate="cancelBtn"
-      ></button>
+     
+        
+      </div>
     </div>
   </mat-card>
 </div>

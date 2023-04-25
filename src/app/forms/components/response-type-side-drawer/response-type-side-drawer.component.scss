@@ -102,12 +102,29 @@
   }
 
   .submit-response-btn {
-    width: 48%;
-    margin-right: 10px;
+    width: 50%;
+    background-color: $blue-main;
+    color: $white;
   }
 
+  .submit-response-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
+  }
+
+
   .cancel-response-btn {
-    width: 48%;
+    width: 46%;
+    margin-right: 10px;
+    color: $blue-main;
+    border-color: $blue-main;
+  }
+
+  .actions-footer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 122px;
   }
 }
 .rangeSelectorFooter {
@@ -183,6 +200,8 @@
           .titleRowIcon {
             margin: 5px;
             font-size: 12pt;
+            height: 20px;
+    width: 20px;
           }
         }
         .editIcon {
@@ -244,4 +263,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px;
+}
+
+.response-drop-list{
+  height: calc(100vh - 315px);
+  overflow-y: auto;
 }

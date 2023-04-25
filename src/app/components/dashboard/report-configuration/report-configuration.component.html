@@ -23,6 +23,7 @@
               *ngIf="reportNameDisabled"
               [value]="reportTitle.value"
               disabled
+              class="report-input"
             />
             <input
               [formControl]="reportTitle"
@@ -197,7 +198,7 @@
           >
             <svg-icon
               *ngIf="showPreview"
-              icon="icon-preview-active"
+              icon="icon-preview_active"
               class="chart-control-icon"
             ></svg-icon>
             <svg-icon
