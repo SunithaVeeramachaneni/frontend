@@ -295,6 +295,7 @@ export class LocationsListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getLocations();
       })
     );

@@ -923,7 +923,7 @@ export class InstructionService {
       EditedBy: user.first_name + ' ' + user.last_name,
       Published: false,
       Cover_Image:
-        'assets/Images/doc-placeholder.png'
+        'assets/work-instructions-icons/img/brand/doc-placeholder.png'
     };
     return this.getAllInstructions(info).pipe(
       mergeMap((instructions) => {
