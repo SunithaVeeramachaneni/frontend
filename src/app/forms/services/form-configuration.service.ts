@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import {
-  FormConfigurationActions,
-  BuilderConfigurationActions
+  BuilderConfigurationActions,
+  FormConfigurationActions
 } from 'src/app/forms/state/actions';
 import { QuestionComponent } from '../components/question/question.component';
 import {
@@ -63,7 +63,7 @@ export class FormConfigurationService {
     );
 
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: page.questions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
@@ -98,13 +98,13 @@ export class FormConfigurationService {
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updatePageState({
+      BuilderConfigurationActions.updatePageState({
         pageIndex,
         isOpen: true
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: questions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
@@ -131,7 +131,7 @@ export class FormConfigurationService {
         )
       );
     this.store.dispatch(
-      FormConfigurationActions.addQuestions({
+      BuilderConfigurationActions.addQuestions({
         questions: sectionQuestions,
         pageIndex,
         sectionId,
@@ -140,7 +140,7 @@ export class FormConfigurationService {
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateQuestionState({
+      BuilderConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
