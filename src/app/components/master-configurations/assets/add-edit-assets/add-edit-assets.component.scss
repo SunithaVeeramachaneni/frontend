@@ -33,7 +33,7 @@
   }
 
   .image-container {
-    margin: 20px 0 40px 0;
+    margin: 20px 0 10px 0;
   }
 
   .image-contain {
@@ -105,11 +105,11 @@
   ::ng-deep .mat-radio-outer-circle {
     height: 16px !important;
     width: 16px !important;
-    border-color: $light-gray;
+    border-color: $blue-main;
   }
 
   ::ng-deep .mat-radio-inner-circle {
-    background-color: $light-gray;
+    background-color: $blue-main;
   }
 }
 

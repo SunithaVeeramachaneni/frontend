@@ -36,7 +36,13 @@
 
 .rounds-list {
   ::ng-deep .table-column {
-    width: 20%;
+    width: 130px;
+  }
+
+
+
+  ::ng-deep .space-between {
+    width: 90px !important;
   }
 
   ::ng-deep .mat-form-field-infix {
