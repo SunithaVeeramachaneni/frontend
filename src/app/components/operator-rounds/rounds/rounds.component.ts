@@ -458,7 +458,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getRoundsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -468,8 +468,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ count, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           this.roundsCount = count !== undefined ? count : this.roundsCount;
           this.isLoading$.next(false);
         })
