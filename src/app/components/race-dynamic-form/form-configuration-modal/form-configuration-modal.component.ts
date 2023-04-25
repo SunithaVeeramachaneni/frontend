@@ -188,7 +188,7 @@ export class FormConfigurationModalComponent implements OnInit {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
-            formLogo: 'assets/Images/formlogo.svg'
+            formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }
         })
       );
