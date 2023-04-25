@@ -28,6 +28,7 @@ export class LocationService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
+  // this fetch limit is limited by DynamoDB's 1 MB query size limit.
   private MAX_FETCH_LIMIT: string = '1000000';
 
   constructor(private _appService: AppService) {}
@@ -155,7 +156,10 @@ export class LocationService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            image: p?.image,
+            image:
+              p?.image.length > 0
+                ? p?.image
+                : 'assets/master-configurations/locationIcon.svg',
             style: {
               width: '40px',
               height: '40px',

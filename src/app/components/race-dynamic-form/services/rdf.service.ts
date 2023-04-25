@@ -257,9 +257,14 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
+    if (!formMetaDataDetails.formMetadata.id) {
+      return;
+    }
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/${formMetaDataDetails?.formMetadata?.id}`,
+      `forms/${
+        formMetaDataDetails.formMetadata.id
+      }?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
       {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
@@ -720,7 +725,7 @@ export class RaceDynamicFormService {
             preTextImage: {
               image: p.formLogo
                 ? p.formLogo
-                : 'assets/rdf-forms-icons/formlogo.svg',
+                : 'assets/Images/formlogo.svg',
               style: {
                 width: '40px',
                 height: '40px',
