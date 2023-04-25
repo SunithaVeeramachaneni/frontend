@@ -88,6 +88,15 @@
             <!-- <mat-icon (click)="removeEvidence(logic)">close</mat-icon> -->
           </span>
           <span
+            *ngIf="
+              logic.value.action && logic.value.action === 'raise_notification'
+            "
+            class="mandateAction"
+          >
+            Raise Notification
+            <!-- <mat-icon (click)="removeEvidence(logic)">close</mat-icon> -->
+          </span>
+          <span
             *ngIf="logic.value.action && logic.value.action === 'ask_questions'"
             class="mandateAction"
             (click)="triggerMenuAction('ask_questions', question, logic, i)"
@@ -125,6 +134,13 @@
               (click)="triggerMenuAction('ask_questions', question, logic, i)"
             >
               Ask Questions
+            </button>
+            <button
+              class="logicActionMenuItem"
+              mat-menu-item
+              (click)="openRaiseNotificationsDialog(question, logic, i)"
+            >
+              Raise Notification
             </button>
           </mat-menu>
           <!-- <input

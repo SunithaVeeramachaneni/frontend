@@ -960,7 +960,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         mandateQuestions: this.fb.array([]),
         hideQuestions: this.fb.array([]),
         validationMessage: [''],
-        askEvidence: ['']
+        askEvidence: [''],
+        raiseNotification: [''],
+        triggerInfo: [''],
+        triggerWhen: ['']
       })
     );
     this.cdrf.detectChanges();

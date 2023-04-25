@@ -51,6 +51,7 @@ import { AddDependencyModalComponent } from './add-dependency-modal/add-dependen
 import { AddFilterComponent } from './add-filter/add-filter.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { TabularDependencyComponent } from './utils/tabular-dependency/tabular-dependency.component';
+import { RaiseNotificationDailogComponent } from './add-logic/raise-notification-dailog/raise-notification-dailog.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -111,7 +112,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ImportQuestionsModalComponent,
     AddDependencyModalComponent,
     AddFilterComponent,
-    TabularDependencyComponent
+    TabularDependencyComponent,
+    RaiseNotificationDailogComponent
   ],
   exports: [],
   entryComponents: []
