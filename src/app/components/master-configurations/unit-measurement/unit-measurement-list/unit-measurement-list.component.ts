@@ -277,6 +277,7 @@ export class UnitMeasurementListComponent implements OnInit {
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
+        this.nextToken = '';
         this.fetchType = data;
         return this.getUnitOfMeasurementList();
       })
