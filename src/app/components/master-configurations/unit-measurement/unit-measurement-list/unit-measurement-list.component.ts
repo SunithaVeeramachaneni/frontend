@@ -218,8 +218,6 @@ export class UnitMeasurementListComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchUom: FormControl;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
@@ -401,15 +399,15 @@ export class UnitMeasurementListComponent implements OnInit {
   getUnitOfMeasurementList() {
     return this.unitMeasurementService
       .getUnitOfMeasurementList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchUom.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.formsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),

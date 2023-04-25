@@ -12,7 +12,7 @@
   } as props">
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <img src="assets/rdf-forms-icons/formlogo.svg" alt="" width="50" height="50" />
+      <svg-icon icon="icon-formlogo" class="form-logo"></svg-icon>
       <input hidden type="file" #formImageuploader accept="image/x-png,image/jpeg"
         (change)="uploadFormImageFile($event)" />
       <div class="width-90">
@@ -35,7 +35,7 @@
             </mat-error>
           </a>
           <button (click)="editFormName()" class="edit-icon" *ngIf="formConfiguration.get('name').disabled === true">
-            <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" class="edit-icon-img" />
+            <svg-icon icon="icon-edit-icon" class="edit-icon-img"></svg-icon>
           </button>
         </a>
         <br />
@@ -73,9 +73,7 @@
       </div>
       <button mat-stroked-button class="import-btn" translate="importBtn" (click)="importQuestions()"></button>
 
-      <button mat-stroked-button class="next-btn">
-        <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
-      </button>
+      <button mat-stroked-button class="next-btn" translate="next" (click)="goToPDFBuilderConfiguration()"></button>
     </div>
   </div>
   <div class="dis-flex form">
@@ -90,7 +88,8 @@
 
 <div *ngIf="openAppSider$ | async as openAppSider">
   <div *ngIf="openAppSider">
-    <app-import-questions-slider [selectedFormName]="selectedFormName" [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData" (cancelSliderEvent)="cancelSlider($event)"></app-import-questions-slider>
+    <app-import-questions-slider [title]="'forms'" [isFooter]="true" [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData" [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"></app-import-questions-slider>
   </div>
 </div>

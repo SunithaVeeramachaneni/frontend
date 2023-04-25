@@ -334,7 +334,6 @@ export class ActionsComponent implements OnInit {
       }
     }
   };
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   dataSource: MatTableDataSource<any>;
   actions$: Observable<{
     columns: Column[];
@@ -439,15 +438,15 @@ export class ActionsComponent implements OnInit {
 
   getActionsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
       type: 'action'
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken, count }) => {
-        this.nextToken = nextToken;
+      mergeMap(({ rows, next, count }) => {
+        this.nextToken = next;
         this.isLoading$.next(false);
         this.actionsCount$ = of(count);
         return of(rows as any[]);

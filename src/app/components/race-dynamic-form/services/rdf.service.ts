@@ -107,12 +107,8 @@ export class RaceDynamicFormService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.nextToken = '';
-      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
@@ -121,7 +117,9 @@ export class RaceDynamicFormService {
           { displayToast, failureResponse },
           rest
         )
-        .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
+        .pipe(
+          map((data) => ({ ...data, rows: this.formatForms(data?.items) }))
+        );
     } else {
       return of({ rows: [] });
     }
@@ -137,7 +135,7 @@ export class RaceDynamicFormService {
 
   getFormsList$(
     queryParams: {
-      nextToken?: string;
+      next?: string;
       limit: number;
       searchKey: string;
       fetchType: string;
@@ -148,7 +146,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit.toString());
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('fetchType', queryParams?.fetchType);
     params.set('isArchived', String(isArchived));
     params.set(
@@ -174,7 +172,7 @@ export class RaceDynamicFormService {
 
   getSubmissionFormsList$(
     queryParams: {
-      nextToken?: string;
+      next?: string;
       limit: number;
       searchKey: string;
       fetchType: string;
@@ -184,7 +182,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit.toString());
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('fetchType', queryParams?.fetchType);
     params.set(
       'formStatus',
@@ -259,9 +257,14 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
+    if (!formMetaDataDetails.formMetadata.id) {
+      return;
+    }
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/${formMetaDataDetails?.formMetadata?.id}`,
+      `forms/${
+        formMetaDataDetails.formMetadata.id
+      }?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
       {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
@@ -693,11 +696,11 @@ export class RaceDynamicFormService {
           isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 
@@ -737,10 +740,10 @@ export class RaceDynamicFormService {
             })
           };
         }) || [];
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     return {
       rows,
-      nextToken
+      next
     };
   }
 
@@ -783,7 +786,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', LIST_LENGTH.toString());
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('fetchType', 'load');
     params.set('isArchived', 'false');
     params.set('modifiedBy', '');
@@ -810,7 +813,7 @@ export class RaceDynamicFormService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('formId', '');
     params.set('status', '');
     params.set('assignedTo', '');
@@ -828,12 +831,8 @@ export class RaceDynamicFormService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.nextToken = '';
-      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
@@ -843,7 +842,7 @@ export class RaceDynamicFormService {
           rest
         )
         .pipe(
-          map((data) => ({ ...data, rows: this.formatInspections(data.rows) }))
+          map((data) => ({ ...data, rows: this.formatInspections(data.items) }))
         );
     } else {
       return of({

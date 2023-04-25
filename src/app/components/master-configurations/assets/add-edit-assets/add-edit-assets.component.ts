@@ -18,6 +18,7 @@ import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -31,7 +32,7 @@ export class AddEditAssetsComponent implements OnInit {
   allLocations$: Observable<any>;
   private assetEditData = null;
   allLocationsData: any = [];
-  allAssetsData: any  = [];
+  allAssetsData: any = [];
   parentType: any = 'location';
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
@@ -39,6 +40,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetStatus = 'add';
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
+      this.assetImage = '';
       this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';
@@ -52,10 +54,10 @@ export class AddEditAssetsComponent implements OnInit {
         assetsId: this.assetEditData.assetsId,
         model: this.assetEditData.model,
         description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType == 'LOCATION' ? 'location' :'asset',
+        parentType: this.assetEditData.parentType?.toLowerCase(),
         parentId: this.assetEditData.parentId
       };
-      this.parentType = this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset';
+      this.parentType = this.assetEditData.parentType?.toLowerCase();
       this.assetForm.patchValue(assdata);
     }
     if (
@@ -70,13 +72,12 @@ export class AddEditAssetsComponent implements OnInit {
   get assetsEditData() {
     return this.assetEditData;
   }
-  assetIcon = 'assets/rdf-forms-icons/asset-icon.svg';
   errors: ValidationError = {};
   assetForm: FormGroup;
 
   assetStatus;
   assetTitle;
-  assetImage = 'assets/rdf-forms-icons/asset-icon.svg';
+  assetImage = '';
 
   assetButton;
 
@@ -94,8 +95,16 @@ export class AddEditAssetsComponent implements OnInit {
   ngOnInit(): void {
     this.assetForm = this.fb.group({
       image: '',
-      name: new FormControl('', [Validators.required]),
-      assetsId: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
+      assetsId: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       model: '',
       description: '',
       parentType: 'location',
@@ -120,9 +129,7 @@ export class AddEditAssetsComponent implements OnInit {
 
   create() {
     if (this.assetStatus === 'add') {
-      this.assetForm
-        .get('image')
-        .setValue('assets/master-configurations/asset-icon.svg');
+      this.assetForm.get('image').setValue('');
       this.assetService.createAssets$(this.assetForm.value).subscribe((res) => {
         this.createdAssetsData.emit({
           status: this.assetStatus,
@@ -158,15 +165,46 @@ export class AddEditAssetsComponent implements OnInit {
 
   search(value: string) {
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter((parent) =>
-      parent.name && parent.name.toLowerCase().indexOf(searchValue) != -1
+    return this.parentInformation.filter(
+      (parent) =>
+        (parent.name &&
+          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (parent.locationId &&
+          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   cancel() {
     this.slideInOut.emit('out');
-    this.assetForm.reset();
     this.assetForm?.get('parentType').setValue('location');
+    this.resetForm();
+  }
+
+  resetForm() {
+    if (this.assetEditData === null) {
+      this.assetStatus = 'add';
+      this.assetTitle = 'Create Asset';
+      this.assetButton = 'Create';
+      this.assetImage = '';
+      this.assetForm?.get('parentType').setValue('location');
+    } else {
+      this.assetStatus = 'edit';
+      this.assetTitle = 'Edit Asset';
+      this.assetButton = 'Update';
+      this.assetImage = this.assetEditData.image;
+      const assetdata = {
+        id: this.assetEditData.id,
+        image: this.assetEditData.image,
+        name: this.assetEditData.name,
+        assetsId: this.assetEditData.assetsId,
+        model: this.assetEditData.model,
+        description: this.assetEditData.description,
+        parentType: this.assetEditData.parentType?.toLowerCase(),
+        parentId: this.assetEditData.parentId
+      };
+      this.parentType = this.assetEditData.parentType?.toLowerCase();
+      this.assetForm.patchValue(assetdata);
+    }
   }
 
   getAllLocations() {
