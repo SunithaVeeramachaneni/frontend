@@ -93,6 +93,7 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option
