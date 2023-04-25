@@ -20,20 +20,18 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 })
 export class CreateFromTemplateModalComponent implements OnInit {
   public searchTemplates: FormControl;
+  public displayedTemplates = [];
+  public templateLoadingFinished = false;
+  public isPopoverOpen = false;
+  public filterJson: any[] = [];
+  private lastPublishedBy = [];
+  private createdBy = [];
   private allTemplates: any[];
-  displayedTemplates = [];
-  templateLoadingFinished = false;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  filterJson: any[] = [];
-  filter: any = {
+  private filter: any = {
     status: '',
     modifiedBy: '',
     createdBy: ''
   };
-  status: any[] = ['Draft', 'Ready'];
-  lastPublishedBy = [];
-  createdBy = [];
-  isPopoverOpen = false;
 
   constructor(
     private dialogRef: MatDialogRef<CreateFromTemplateModalComponent>,
@@ -43,23 +41,21 @@ export class CreateFromTemplateModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.usersService.getUsersInfo$().subscribe((_) => {
+    this.usersService.getUsersInfo$().subscribe(() => {
       this.raceDynamicFormService.fetchAllTemplates$().subscribe((res) => {
         this.allTemplates = res.rows
           .filter((item) => item.formStatus === formConfigurationStatus.ready)
-          .map((item) => {
-            return {
-              ...item,
-              author: this.usersService.getUserFullName(item.author),
-              lastPublishedBy: this.usersService.getUserFullName(
-                item.lastPublishedBy
-              )
-            };
-          });
+          .map((item) => ({
+            ...item,
+            author: this.usersService.getUserFullName(item.author),
+            lastPublishedBy: this.usersService.getUserFullName(
+              item.lastPublishedBy
+            )
+          }));
         this.displayedTemplates = this.allTemplates;
         this.initializeFilter();
         this.templateLoadingFinished = true;
-        this.cdrf.detectChanges();
+        this.cdrf.markForCheck();
       });
     });
 
@@ -89,22 +85,23 @@ export class CreateFromTemplateModalComponent implements OnInit {
       .subscribe((res) => {
         this.filterJson = res;
 
-        const uniqueLastPublishedBy = this.allTemplates
-          .map((item: any) => item.lastPublishedBy)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueLastPublishedBy) {
-          if (item) {
-            this.lastPublishedBy.push(item);
-          }
-        }
-        const uniqueCreatedBy = this.allTemplates
-          .map((item: any) => item.author)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueCreatedBy) {
-          if (item) {
-            this.createdBy.push(item);
-          }
-        }
+        const uniqueLastPublishedBy = Array.from(
+          new Set(
+            this.allTemplates
+              .map((item: any) => item.lastPublishedBy)
+              .filter((item) => item != null)
+          )
+        );
+        this.lastPublishedBy = uniqueLastPublishedBy;
+        const uniqueCreatedBy = Array.from(
+          new Set(
+            this.allTemplates
+              .map((item: any) => item.author)
+              .filter((item) => item != null)
+          )
+        );
+        this.createdBy = uniqueCreatedBy;
+
         for (const item of this.filterJson) {
           if (item.column === 'modifiedBy') {
             item.items = this.lastPublishedBy;
@@ -122,24 +119,24 @@ export class CreateFromTemplateModalComponent implements OnInit {
       )
       .filter((item: any) => {
         if (
-          this.filter['status'] !== '' &&
-          this.filter['status'] !== item.formStatus
+          this.filter.status !== '' &&
+          this.filter.status !== item.formStatus
         ) {
           return false;
         } else if (
-          this.filter['modifiedBy'] !== '' &&
-          this.filter['modifiedBy'].indexOf(item.lastPublishedBy) === -1
+          this.filter.modifiedBy !== '' &&
+          this.filter.modifiedBy.indexOf(item.lastPublishedBy) === -1
         ) {
           return false;
         } else if (
-          this.filter['createdBy'] !== '' &&
-          this.filter['createdBy'].indexOf(item.author) === -1
+          this.filter.createdBy !== '' &&
+          this.filter.createdBy.indexOf(item.author) === -1
         ) {
           return false;
         }
         return true;
       });
-    this.cdrf.detectChanges();
+    this.cdrf.markForCheck();
   }
 
   updateFilter(data: any) {

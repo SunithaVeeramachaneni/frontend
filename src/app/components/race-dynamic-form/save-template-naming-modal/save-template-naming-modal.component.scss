@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .save-template-naming-modal {
   height: 130px;
 }
@@ -10,12 +12,12 @@
 .next-btn {
   text-transform: capitalize;
   float: right;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
 }
 
 .cancel-btn {
-  color: #76767b;
+  color: $gray4;
   float: right;
   background: transparent;
   margin-right: 10px;

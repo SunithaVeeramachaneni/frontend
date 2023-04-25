@@ -18,8 +18,6 @@ export class EditTemplateNameModalComponent implements OnInit {
   ngOnInit(): void {}
 
   save() {
-    // just delete the other template with the clashing name.
-    // the autosave should take care of updating the current template.
     this.rdfService.deleteTemplate$(this.data.templateId).subscribe();
     this.dialogRef.close(true);
   }

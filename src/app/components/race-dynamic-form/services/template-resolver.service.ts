@@ -29,7 +29,6 @@ export class TemplateResolverService {
         );
 
         const {
-          id,
           name,
           description,
           formLogo,

@@ -70,31 +70,6 @@
       padding: 2px;
     }
 
-    .list-item-conatiner {
-      border-bottom: 1px solid $gray8;
-      margin: 0 15px;
-
-      .selected-list-element {
-        list-style-type: none;
-        display: flex;
-        width: 100%;
-        cursor: pointer;
-      }
-
-      .selected-list-element:hover {
-        background: $blue4-hover;
-        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .active {
-        background: $blue4-hover;
-        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
-        border-radius: 5px;
-      }
-    }
-
     .no-records {
       background: $white;
       justify-content: center;
@@ -134,8 +109,9 @@
 .template {
   padding: 4px 0px 4px 0px;
 }
+
 .template:hover {
-  background-color: lightgray;
+  background-color: $gray8;
 }
 
 ::ng-deep .template-modal-popover {

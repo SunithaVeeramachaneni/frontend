@@ -247,18 +247,16 @@ export class TemplateListComponent implements OnInit {
       this.translateService.instant('templates')
     );
 
-    this.usersService.getUsersInfo$().subscribe((_) => {
+    this.usersService.getUsersInfo$().subscribe(() => {
       this.raceDynamicFormService.fetchAllTemplates$().subscribe((res: any) => {
         this.templatesCount$ = of(res.rows.length);
-        this.allTemplates = res.rows.map((item) => {
-          return {
-            ...item,
-            author: this.usersService.getUserFullName(item.author),
-            lastPublishedBy: this.usersService.getUserFullName(
-              item.lastPublishedBy
-            )
-          };
-        });
+        this.allTemplates = res.rows.map((item) => ({
+          ...item,
+          author: this.usersService.getUserFullName(item.author),
+          lastPublishedBy: this.usersService.getUserFullName(
+            item.lastPublishedBy
+          )
+        }));
         this.displayedTemplates = this.allTemplates;
         this.dataSource = new MatTableDataSource(this.displayedTemplates);
         this.isLoading$.next(false);
@@ -321,22 +319,23 @@ export class TemplateListComponent implements OnInit {
     this.raceDynamicFormService.getTemplateFilter().subscribe((res) => {
       this.filterJson = res;
 
-      const uniqueLastPublishedBy = this.allTemplates
-        .map((item: any) => item.lastPublishedBy)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueLastPublishedBy) {
-        if (item) {
-          this.lastPublishedBy.push(item);
-        }
-      }
-      const uniqueCreatedBy = this.allTemplates
-        .map((item: any) => item.author)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueCreatedBy) {
-        if (item) {
-          this.createdBy.push(item);
-        }
-      }
+      const uniqueLastPublishedBy = Array.from(
+        new Set(
+          this.allTemplates
+            .map((item: any) => item.lastPublishedBy)
+            .filter((item) => item != null)
+        )
+      );
+      this.lastPublishedBy = uniqueLastPublishedBy;
+      const uniqueCreatedBy = Array.from(
+        new Set(
+          this.allTemplates
+            .map((item: any) => item.author)
+            .filter((item) => item != null)
+        )
+      );
+      this.createdBy = uniqueCreatedBy;
+
       for (const item of this.filterJson) {
         if (item.column === 'status') {
           item.items = this.status;
@@ -357,18 +356,18 @@ export class TemplateListComponent implements OnInit {
       )
       .filter((item: any) => {
         if (
-          this.filter['status'] !== '' &&
-          this.filter['status'] !== item.formStatus
+          this.filter.status !== '' &&
+          this.filter.status !== item.formStatus
         ) {
           return false;
         } else if (
-          this.filter['modifiedBy'] !== '' &&
-          this.filter['modifiedBy'].indexOf(item.lastPublishedBy) === -1
+          this.filter.modifiedBy !== '' &&
+          this.filter.modifiedBy.indexOf(item.lastPublishedBy) === -1
         ) {
           return false;
         } else if (
-          this.filter['createdBy'] !== '' &&
-          this.filter['createdBy'].indexOf(item.author) === -1
+          this.filter.createdBy !== '' &&
+          this.filter.createdBy.indexOf(item.author) === -1
         ) {
           return false;
         }

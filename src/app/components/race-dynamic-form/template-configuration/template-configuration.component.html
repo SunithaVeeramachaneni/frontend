@@ -30,7 +30,7 @@
               #name
               type="text"
               [size]="name.value !== '' ? getSize(name.value) : 20"
-              class="form_title_input"
+              class="form-title-input"
               formControlName="name"
               autofocus="true"
               autocomplete="off"
@@ -64,7 +64,7 @@
         <a matTooltip="{{ formConfiguration.get('description').value }}">
           <input
             type="text"
-            class="form_description_input"
+            class="form-description-input"
             placeholder="{{ 'addFormDesc' | translate }}"
             formControlName="description"
             autofocus="true"

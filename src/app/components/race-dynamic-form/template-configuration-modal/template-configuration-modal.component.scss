@@ -11,6 +11,13 @@
       border: none;
       background-color: transparent;
 
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
+
       .back-btn-text {
         font-weight: 700;
         font-size: 120%;
@@ -26,7 +33,7 @@
   .form-content {
     height: 100vh;
 
-    .form-detials {
+    .form-details {
       width: 500px;
       height: 90%;
       margin: 10px auto;
@@ -76,7 +83,7 @@
         font-weight: 500;
         font-size: 110%;
         color: $black;
-        margin: 10px 5px;
+        margin: 5px;
       }
 
       .form-name {

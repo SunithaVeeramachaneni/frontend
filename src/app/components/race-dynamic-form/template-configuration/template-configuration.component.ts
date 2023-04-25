@@ -44,7 +44,6 @@ import {
   getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
-  getIsFormCreated,
   getQuestionIds,
   getQuestionCounter,
   State
@@ -62,7 +61,6 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
@@ -115,8 +113,12 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
-      formLogo: [
-        '',
+      formLogo: [''],
+      name: new FormControl(
+        {
+          value: '',
+          disabled: true
+        },
         [
           Validators.required,
           Validators.minLength(3),
@@ -124,11 +126,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
         ]
-      ],
-      name: new FormControl({
-        value: '',
-        disabled: true
-      }),
+      ),
       description: [''],
       counter: [0],
       formStatus: [formConfigurationStatus.draft]
@@ -190,7 +188,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
                   {
                     data: {
                       templateId: oldTemplateId,
-                      templateName: templateName
+                      templateName
                     }
                   }
                 );

@@ -199,13 +199,13 @@ export class FormConfigurationModalComponent implements OnInit {
           }
         })
       );
-      // increment formUsageCount
+
       if (this.data) {
         this.rdfService
           .updateTemplate$(this.data.id, {
             formsUsageCount: this.data.formsUsageCount + 1
           })
-          .subscribe((_) => {
+          .subscribe(() => {
             this.router.navigate(['/forms/create'], {
               state: { selectedTemplate: this.data }
             });

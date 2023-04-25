@@ -186,7 +186,7 @@ export class RaceDynamicFormService {
     );
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
-      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+      .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   }
 
   getSubmissionFormsList$(
@@ -691,7 +691,7 @@ export class RaceDynamicFormService {
       `forms/submission/detail/${submissionId}`
     );
 
-  private formateGetRdfFormsResponse(resp: any) {
+  private formatGetRdfFormsResponse(resp: any) {
     const rows =
       resp.items
         .sort(
@@ -814,7 +814,7 @@ export class RaceDynamicFormService {
     params.set('lastModifiedOn', '');
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
-      .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
+      .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
@@ -944,8 +944,8 @@ export class RaceDynamicFormService {
     inspectionDetail: InspectionDetail,
     type: 'due-date' | 'assigned-to',
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<InspectionDetail> => {
-    return this.appService
+  ): Observable<InspectionDetail> =>
+    this.appService
       .patchData(
         environment.rdfApiUrl,
         `inspections/${inspectionId}/${type}`,
@@ -955,27 +955,25 @@ export class RaceDynamicFormService {
       .pipe(
         map((response) => (response === null ? inspectionDetail : response))
       );
-  };
 
-  fetchAllTemplates$ = () => {
-    return this.appService
+  fetchAllTemplates$ = () =>
+    this.appService
       ._getResp(
         environment.rdfApiUrl,
-        'forms/templates/list',
+        'templates',
         { displayToast: true, failureResponse: {} },
         {
           limit: 0,
           skip: 0
         }
       )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
+      .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  fetchTemplateByName$ = (name: string) => {
-    return this.appService
+  fetchTemplateByName$ = (name: string) =>
+    this.appService
       ._getResp(
         environment.rdfApiUrl,
-        'forms/templates/list',
+        'templates',
         { displayToast: true, failureResponse: {} },
         {
           limit: 1,
@@ -983,41 +981,30 @@ export class RaceDynamicFormService {
           name
         }
       )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
+      .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  fetchTemplateById$ = (id: string) => {
-    return this.appService
+  fetchTemplateById$ = (id: string) =>
+    this.appService
       ._getResp(
         environment.rdfApiUrl,
-        'forms/templates/list',
+        'templates',
         { displayToast: true, failureResponse: {} },
         {
-          limit: 1,
           skip: 0,
           id
         }
       )
-      .pipe(map((data) => this.formateGetRdfFormsResponse({ items: data })));
-  };
+      .pipe(map((data) => this.formatGetRdfFormsResponse({ items: data })));
 
-  createTemplate$ = (formMetadata: FormMetadata) => {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/templates/create',
-      {
-        data: formMetadata
-      }
-    );
-  };
+  createTemplate$ = (templateMetadata: FormMetadata) =>
+    this.appService._postData(environment.rdfApiUrl, 'templates', {
+      data: templateMetadata
+    });
 
-  createAuthoredTemplateDetail$ = (
-    templateId: string,
-    templateMetadata: any
-  ) => {
-    return this.appService._postData(
+  createAuthoredTemplateDetail$ = (templateId: string, templateMetadata: any) =>
+    this.appService._postData(
       environment.rdfApiUrl,
-      `forms/templates/create/authored/${templateId}`,
+      `templates/${templateId}`,
       {
         data: {
           formStatus: templateMetadata.formStatus,
@@ -1026,22 +1013,19 @@ export class RaceDynamicFormService {
         }
       }
     );
-  };
 
-  updateTemplate$ = (templateId: string, templateMetadata: any) => {
-    return this.appService.patchData(
+  updateTemplate$ = (templateId: string, templateMetadata: any) =>
+    this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/templates/update/${templateId}`,
+      `templates/${templateId}`,
       {
         data: templateMetadata
       }
     );
-  };
 
-  deleteTemplate$ = (templateId: string) => {
-    return this.appService._removeData(
+  deleteTemplate$ = (templateId: string) =>
+    this.appService._removeData(
       environment.rdfApiUrl,
-      `forms/templates/delete/${templateId}`
+      `templates/${templateId}`
     );
-  };
 }

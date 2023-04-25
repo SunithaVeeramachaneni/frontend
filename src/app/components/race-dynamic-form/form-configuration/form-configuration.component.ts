@@ -749,7 +749,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   };
 
   openSaveTemplateDialog() {
-    const dialogRef = this.dialog.open(SaveTemplateContainerComponent, {
+    this.dialog.open(SaveTemplateContainerComponent, {
       data: this.formDetails
     });
   }

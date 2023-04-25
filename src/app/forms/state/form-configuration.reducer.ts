@@ -230,7 +230,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const updatedPageIdx = state.pages.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      let newPages = state.pages;
+      const newPages = state.pages;
       newPages[updatedPageIdx] = {
         ...newPages[updatedPageIdx],
         ...action.page
@@ -693,14 +693,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     FormConfigurationActions.updateFormConfiguration,
     BuilderConfigurationActions.updateFormConfiguration,
-    (state, action): FormConfigurationState => {
-      console.log(state);
-      console.log(action);
-      return {
-        ...state,
-        ...action.formConfiguration
-      };
-    }
+    (state, action): FormConfigurationState => ({
+      ...state,
+      ...action.formConfiguration
+    })
   ),
   on(
     FormConfigurationActions.resetFormConfiguration,
