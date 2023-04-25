@@ -16,6 +16,8 @@ export interface FormMetadata {
   tags: string[];
   searchTerm: string;
   hierarchy?: any;
+  plantId?: string;
+  plant: string;
   pdfTemplateConfiguration: any;
 }
 
