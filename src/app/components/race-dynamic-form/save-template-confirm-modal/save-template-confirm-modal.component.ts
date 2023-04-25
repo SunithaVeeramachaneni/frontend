@@ -21,14 +21,15 @@ export class SaveTemplateConfirmModalComponent implements OnInit {
     this.templateData = JSON.parse(JSON.stringify(this.templateData));
     this.templateData.formMetadata.name = this.templateName;
     // for this flow, the form needs to always be marked as Ready/Published.
-    this.templateData.formMetadata.formStatus = formConfigurationStatus.ready;
     this.templateData.formStatus = formConfigurationStatus.ready;
     // if publishedDate is specified but not lastPublishedBy, backend will infer from authInfo.
     this.templateData.formMetadata.publishedDate = new Date().toISOString();
+    // we need to reset formUsageCount to 0 when we overwrite from forms
+    this.templateData.formMetadata.formsUsageCount = 0;
 
     if (this.templateId) {
       this.rdfService
-        .updateTemplate$(this.templateId, this.templateData)
+        .updateTemplate$(this.templateId, this.templateData.formMetadata)
         .subscribe((_) => {
           this.rdfService
             .createAuthoredTemplateDetail$(this.templateId, this.templateData)

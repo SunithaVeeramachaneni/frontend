@@ -752,8 +752,5 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(SaveTemplateContainerComponent, {
       data: this.formDetails
     });
-    dialogRef.afterClosed().subscribe((_) => {
-      console.log(this.formDetails);
-    });
   }
 }

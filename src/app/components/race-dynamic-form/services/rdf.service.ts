@@ -1011,26 +1011,29 @@ export class RaceDynamicFormService {
     );
   };
 
-  createAuthoredTemplateDetail$ = (templateId: string, formDetails: any) => {
+  createAuthoredTemplateDetail$ = (
+    templateId: string,
+    templateMetadata: any
+  ) => {
     return this.appService._postData(
       environment.rdfApiUrl,
       `forms/templates/create/authored/${templateId}`,
       {
         data: {
-          formStatus: formDetails.formStatus,
-          pages: JSON.stringify(formDetails.pages),
-          counter: formDetails.counter
+          formStatus: templateMetadata.formStatus,
+          pages: JSON.stringify(templateMetadata.pages),
+          counter: templateMetadata.counter
         }
       }
     );
   };
 
-  updateTemplate$ = (templateId: string, formMetadata: any) => {
+  updateTemplate$ = (templateId: string, templateMetadata: any) => {
     return this.appService.patchData(
       environment.rdfApiUrl,
       `forms/templates/update/${templateId}`,
       {
-        data: formMetadata
+        data: templateMetadata
       }
     );
   };
