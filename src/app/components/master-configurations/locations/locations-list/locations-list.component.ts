@@ -401,7 +401,7 @@ export class LocationsListComponent implements OnInit {
     return this.locationService
       .getLocationsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchLocation.value,
           fetchType: this.fetchType
@@ -409,9 +409,9 @@ export class LocationsListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.locationsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),

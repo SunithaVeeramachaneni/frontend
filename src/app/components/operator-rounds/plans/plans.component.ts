@@ -538,7 +538,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   getRoundPlanList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -546,8 +546,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     };
 
     return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
-      tap(({ scheduledCount, unscheduledCount, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
+      tap(({ scheduledCount, unscheduledCount, next }) => {
+        this.nextToken = next !== undefined ? next : null;
         const { scheduled, unscheduled } = this.roundPlanCounts;
         this.roundPlanCounts = {
           ...this.roundPlanCounts,

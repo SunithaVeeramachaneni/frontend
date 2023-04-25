@@ -24,7 +24,7 @@ export interface AssetsResponse {
     image?: string;
     createdAt: string;
   } | null>;
-  nextToken?: string;
+  next?: string;
 }
 
 export interface FilterInput {

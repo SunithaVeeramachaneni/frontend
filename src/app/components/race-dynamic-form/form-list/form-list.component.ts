@@ -464,7 +464,7 @@ export class FormListComponent implements OnInit {
     return this.raceDynamicFormService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -473,9 +473,9 @@ export class FormListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.formsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),

@@ -8,16 +8,16 @@
       <p class="m-0" translate="image"></p>
 
       <p class="image-container">
-        <span class="img-border" *ngIf="locationImage === ''">
-          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        <span *ngIf="!locationImage?.length">
+          <svg-icon icon="icon-locationIcon" class="image-contain"></svg-icon>
         </span>
 
-        <img
+        <!-- <img
           [src]="locationImage"
           alt="Image"
           class="image-contain"
           *ngIf="locationImage !== ''"
-        />
+        /> -->
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">

@@ -23,7 +23,7 @@ export interface LocationsResponse {
     image?: string;
     createdAt: string;
   } | null>;
-  nextToken?: string;
+  next?: string;
 }
 
 export interface FilterInput {

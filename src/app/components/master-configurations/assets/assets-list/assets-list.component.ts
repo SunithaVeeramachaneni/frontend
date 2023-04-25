@@ -353,7 +353,7 @@ export class AssetsListComponent implements OnInit {
     return this.assetService
       .getAssetsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchAssets.value,
           fetchType: this.fetchType
@@ -361,9 +361,9 @@ export class AssetsListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.assetsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
