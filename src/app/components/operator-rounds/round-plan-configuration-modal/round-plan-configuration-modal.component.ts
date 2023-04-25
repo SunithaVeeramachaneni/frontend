@@ -35,6 +35,7 @@ import {
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -93,7 +94,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100)
+          Validators.maxLength(100),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       description: [''],

@@ -21,7 +21,7 @@ export class UnitMeasurementService {
   ) {}
 
   getUnitOfMeasurementList$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: any;
     searchKey: string;
     fetchType: string;
@@ -29,12 +29,12 @@ export class UnitMeasurementService {
     if (
       ['load', 'search'].includes(queryParams?.fetchType) ||
       (['infiniteScroll'].includes(queryParams?.fetchType) &&
-        queryParams?.nextToken !== null)
+        queryParams?.next !== null)
     ) {
       const params: URLSearchParams = new URLSearchParams();
       params.set('searchTerm', queryParams?.searchKey);
       params.set('limit', queryParams?.limit);
-      params.set('nextToken', queryParams?.nextToken);
+      params.set('next', queryParams?.next);
       params.set('fetchType', queryParams?.fetchType);
       return this._appService
         ._getResp(
@@ -46,7 +46,7 @@ export class UnitMeasurementService {
       return of({
         count: 0,
         rows: [],
-        nextToken: null
+        next: null
       });
     }
   }
@@ -192,11 +192,11 @@ export class UnitMeasurementService {
         isDefaultText: item?.isDefault ? 'Default' : ''
       }));
     const count = rows?.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 }

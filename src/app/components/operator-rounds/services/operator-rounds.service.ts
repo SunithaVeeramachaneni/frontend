@@ -110,7 +110,7 @@ export class OperatorRoundsService {
 
   getFormsList$(
     queryParams: {
-      nextToken?: string;
+      next?: string;
       limit: any;
       searchKey: string;
       fetchType: string;
@@ -122,7 +122,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('fetchType', queryParams?.fetchType);
     params.set('formStatus', formStatus);
     params.set('isArchived', String(isArchived));
@@ -159,12 +159,8 @@ export class OperatorRoundsService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.nextToken = '';
-      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
@@ -173,7 +169,9 @@ export class OperatorRoundsService {
           { displayToast, failureResponse },
           rest
         )
-        .pipe(map((data) => ({ ...data, rows: this.formatRounds(data.rows) })));
+        .pipe(
+          map((data) => ({ ...data, rows: this.formatRounds(data.items) }))
+        );
     } else {
       return of({
         rows: []
@@ -200,12 +198,8 @@ export class OperatorRoundsService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.nextToken = '';
-      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
@@ -215,7 +209,7 @@ export class OperatorRoundsService {
           rest
         )
         .pipe(
-          map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
+          map((data) => ({ ...data, rows: this.formatRoundPlans(data.items) }))
         );
     } else {
       return of({ rows: [] } as RoundPlanDetailResponse);
@@ -223,7 +217,7 @@ export class OperatorRoundsService {
   }
 
   getSubmissionFormsList$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: any;
     searchKey: string;
     fetchType: string;
@@ -231,7 +225,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('fetchType', queryParams?.fetchType);
     return this.appService
       ._getResp(
@@ -342,6 +336,8 @@ export class OperatorRoundsService {
   }
 
   publishRoundPlan$(roundPlanDetails) {
+    roundPlanDetails.authoredFormDetail.formStatus =
+      roundPlanDetails.form.formStatus;
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       JSON.parse(JSON.stringify(hierarchy)),
@@ -523,11 +519,11 @@ export class OperatorRoundsService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 
@@ -565,10 +561,10 @@ export class OperatorRoundsService {
             })
           };
         }) || [];
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     return {
       rows,
-      nextToken
+      next
     };
   }
 
@@ -671,7 +667,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('fetchType', '');
     params.set('formStatus', 'All');
     params.set('isArchived', 'false');
@@ -687,7 +683,7 @@ export class OperatorRoundsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');
-    params.set('nextToken', '');
+    params.set('next', '');
     params.set('roundPlanId', '');
     params.set('status', '');
     params.set('assignedTo', '');
