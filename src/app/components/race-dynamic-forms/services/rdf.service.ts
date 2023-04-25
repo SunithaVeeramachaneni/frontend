@@ -194,8 +194,12 @@ export class RdfService {
             return null;
           }
 
+          console.log(question);
+
           const { expression, validationMessage, askQuestions } =
             this.getValidationExpression(question, questions);
+
+          const notificationInfo = this.getNotificationInfo(question);
 
           sectionPayloads.push({
             UNIQUEKEY: questionId,
@@ -219,8 +223,17 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            UIVALIDATION: expression, //this.getValidationExpression(question),
+            UIVALIDATION: notificationInfo[0] ? '' : expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
+            BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
+            BOSTATUS: notificationInfo[0] ? 'X' : '',
+            BOCONDITION: notificationInfo ? expression : '',
+            TRIGGERON: notificationInfo[0]
+              ? notificationInfo[0].triggerWhen
+              : '',
+            TRIGGERINFO: notificationInfo[0]
+              ? notificationInfo[0].triggerInfo
+              : '',
             ...this.getProperties(question, id)
           });
 
@@ -291,6 +304,7 @@ export class RdfService {
         })
         .filter((payload) => payload);
       payloads = [...payloads, ...sectionPayloads];
+      console.log(payloads);
     });
     return payloads;
   }
@@ -548,6 +562,13 @@ export class RdfService {
         globalIndex = globalIndex + 1;
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
       });
+
+      // Raise Notification;
+      const notificationQuestion = logic.raiseNotification;
+      if (notificationQuestion && notificationQuestion.length) {
+        globalIndex = globalIndex + 1;
+        expression = `${questionId} ${logic.operator} (V)${logic.operand2}`;
+      }
     });
 
     if (expression[0] === ';') {
@@ -566,8 +587,21 @@ export class RdfService {
         validationMessage.length - 1
       );
     }
+    console.log(expression);
 
     return { expression, validationMessage, askQuestions };
+  }
+
+  getNotificationInfo(question) {
+    let notificationInfo = [];
+    question.logics.forEach((logic) => {
+      const raiseNotification = logic.raiseNotification;
+      if (raiseNotification && raiseNotification.length) {
+        const { triggerInfo, triggerWhen } = logic;
+        notificationInfo.push({ triggerInfo, triggerWhen });
+      }
+    });
+    return notificationInfo;
   }
 
   getValidationMessage(question) {

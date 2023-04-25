@@ -23,6 +23,7 @@ import {
 import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
+import { RaiseNotificationDailogComponent } from './raise-notification-dailog/raise-notification-dailog.component';
 
 @Component({
   selector: 'app-add-logic',
@@ -167,6 +168,33 @@ export class AddLogicComponent implements OnInit, OnChanges {
       logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     }
     this.cdrf.detectChanges();
+  }
+
+  openRaiseNotificationsDialog(question, logic, index) {
+    const dialogRef = this.dialog.open(RaiseNotificationDailogComponent, {
+      restoreFocus: false,
+      disableClose: true,
+      hasBackdrop: false,
+      width: '60%',
+      data: { logic: logic.value, question: question.value }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      const {
+        notification: { triggerInfo, triggerWhen }
+      } = result;
+      logic.value.action = result.type;
+      this.cdrf.detectChanges();
+      logic.patchValue({
+        action: result.type,
+        raiseNotification: `true`,
+        triggerInfo,
+        triggerWhen
+      });
+      logic.value.raiseNotification = `true`;
+      logic.value.triggerInfo = triggerInfo;
+      logic.value.triggerWhen = triggerWhen;
+    });
   }
 
   openSelectQuestionsDialog(question, logic, viewMode = 'MANDATE') {
