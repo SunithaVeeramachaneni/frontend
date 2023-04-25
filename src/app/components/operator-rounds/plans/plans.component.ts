@@ -561,24 +561,28 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   getAllRoundPlans() {
     this.operatorRoundsService.fetchAllPlansList$().subscribe((plansList) => {
-      const uniquePlants = plansList.rows
-        .map((item) => {
-          if (item.plant) {
-            this.plantsIdNameMap[item.plant] = item.plantId;
-            return item.plant;
-          }
-          return '';
-        })
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniquePlants) {
-        if (item) {
-          this.plants.push(item);
-        }
-      }
+      const objectKeys = Object.keys(plansList);
 
-      for (const item of this.filterJson) {
-        if (item.column === 'plant') {
-          item.items = this.plants;
+      if (objectKeys.length > 0) {
+        const uniquePlants = plansList.rows
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
+          }
+        }
+
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
         }
       }
     });

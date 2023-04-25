@@ -804,24 +804,27 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.raceDynamicFormService
       .fetchAllSchedulerForms$()
       .subscribe((formsList) => {
-        const uniquePlants = formsList.rows
-          .map((item) => {
-            if (item.plantId) {
-              this.plantsIdNameMap[item.plant] = item.plantId;
-              return item.plant;
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniquePlants = formsList.rows
+            .map((item) => {
+              if (item.plantId) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniquePlants) {
+            if (item) {
+              this.plants.push(item);
             }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniquePlants) {
-          if (item) {
-            this.plants.push(item);
           }
-        }
 
-        for (const item of this.filterJson) {
-          if (item.column === 'plant') {
-            item.items = this.plants;
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = this.plants;
+            }
           }
         }
       });

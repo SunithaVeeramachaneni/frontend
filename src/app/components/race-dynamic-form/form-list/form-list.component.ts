@@ -584,49 +584,52 @@ export class FormListComponent implements OnInit {
     this.formsList$
       .pipe(
         tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.rows
-            .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueLastPublishedBy) {
-            if (item) {
-              this.lastPublishedBy.push(item);
-            }
-          }
-          const uniqueCreatedBy = formsList.rows
-            .map((item) => item.author)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueCreatedBy) {
-            if (item) {
-              this.createdBy.push(item);
-            }
-          }
-
-          const uniquePlants = formsList.rows
-            .map((item) => {
-              if (item.plantId) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
+          const objectKeys = Object.keys(formsList);
+          if (objectKeys.length > 0) {
+            const uniqueLastPublishedBy = formsList.rows
+              .map((item) => item.lastPublishedBy)
+              .filter((value, index, self) => self.indexOf(value) === index);
+            for (const item of uniqueLastPublishedBy) {
+              if (item) {
+                this.lastPublishedBy.push(item);
               }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniquePlants) {
-            if (item) {
-              this.plants.push(item);
             }
-          }
+            const uniqueCreatedBy = formsList.rows
+              .map((item) => item.author)
+              .filter((value, index, self) => self.indexOf(value) === index);
+            for (const item of uniqueCreatedBy) {
+              if (item) {
+                this.createdBy.push(item);
+              }
+            }
 
-          for (const item of this.filterJson) {
-            if (item.column === 'status') {
-              item.items = this.status;
-            } else if (item.column === 'modifiedBy') {
-              item.items = this.lastPublishedBy;
-            } else if (item.column === 'authoredBy') {
-              item.items = this.authoredBy;
-            } else if (item.column === 'plant') {
-              item.items = this.plants;
-            } else if (item.column === 'createdBy') {
-              item.items = this.createdBy;
+            const uniquePlants = formsList.rows
+              .map((item) => {
+                if (item.plantId) {
+                  this.plantsIdNameMap[item.plant] = item.plantId;
+                  return item.plant;
+                }
+                return '';
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            for (const item of uniquePlants) {
+              if (item) {
+                this.plants.push(item);
+              }
+            }
+
+            for (const item of this.filterJson) {
+              if (item.column === 'status') {
+                item.items = this.status;
+              } else if (item.column === 'modifiedBy') {
+                item.items = this.lastPublishedBy;
+              } else if (item.column === 'authoredBy') {
+                item.items = this.authoredBy;
+              } else if (item.column === 'plant') {
+                item.items = this.plants;
+              } else if (item.column === 'createdBy') {
+                item.items = this.createdBy;
+              }
             }
           }
         })

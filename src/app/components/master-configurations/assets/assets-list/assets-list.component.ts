@@ -552,10 +552,15 @@ export class AssetsListComponent implements OnInit {
     this.allLocations$
       .pipe(
         tap((allLocations) => {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc._deleted !== true
-          );
-          this.allParentsLocations = this.parentInformation;
+          const objectKeys = Object.keys(allLocations);
+          if (objectKeys.length > 0) {
+            this.parentInformation = allLocations.items.filter(
+              (loc) => loc._deleted !== true
+            );
+            this.allParentsLocations = this.parentInformation;
+          } else {
+            this.allParentsLocations = [];
+          }
         })
       )
       .subscribe();
@@ -563,30 +568,35 @@ export class AssetsListComponent implements OnInit {
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allParentsAssets = allAssets.items.filter(
-        (asset) => !asset._deleted
-      );
+      const objectKeys = Object.keys(allAssets);
+      if (objectKeys.length > 0) {
+        this.allParentsAssets = allAssets.items.filter(
+          (asset) => !asset._deleted
+        );
 
-      const uniquePlants = allAssets.items
-        .map((item) => {
-          if (item.plant) {
-            this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-            return `${item.plant.plantId} - ${item.plant.name}`;
+        const uniquePlants = allAssets.items
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+              return `${item.plant.plantId} - ${item.plant.name}`;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
           }
-          return '';
-        })
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-      for (const item of uniquePlants) {
-        if (item) {
-          this.plants.push(item);
         }
-      }
 
-      for (const item of this.filterJson) {
-        if (item.column === 'plant') {
-          item.items = this.plants;
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
         }
+      } else {
+        this.allParentsAssets = [];
       }
     });
   }

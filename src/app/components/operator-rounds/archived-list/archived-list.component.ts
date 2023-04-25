@@ -364,23 +364,27 @@ export class ArchivedListComponent implements OnInit {
     this.operatorRoundsService
       .fetchAllArchivedPlansList$()
       .subscribe((plansList) => {
-        const uniquePlants = plansList.rows
-          .map((item) => {
-            if (item.plant) {
-              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-              return `${item.plant.plantId} - ${item.plant.name}`;
+        const objectKeys = Object.keys(plansList);
+
+        if (objectKeys.length > 0) {
+          const uniquePlants = plansList.rows
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+                return `${item.plant.plantId} - ${item.plant.name}`;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          for (const item of uniquePlants) {
+            if (item) {
+              this.plants.push(item);
             }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniquePlants) {
-          if (item) {
-            this.plants.push(item);
           }
-        }
-        for (const item of this.filterJson) {
-          if (item.column === 'plant') {
-            item.items = this.plants;
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = this.plants;
+            }
           }
         }
       });

@@ -38,12 +38,13 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => {
+  fetchAllAssets$ = (info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/list?' + params.toString()
+      'asset/list?' + params.toString(),
+      { displayToast: true, failureResponse: {} }
     );
   };
 

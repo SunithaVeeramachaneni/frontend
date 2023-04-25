@@ -42,7 +42,8 @@ export class LocationService {
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'location/list?' + params.toString()
+      'location/list?' + params.toString(),
+      { displayToast: true, failureResponse: {} }
     );
   };
   getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {

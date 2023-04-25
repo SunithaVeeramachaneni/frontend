@@ -695,7 +695,8 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plans?' + params.toString()
+        'round-plans?' + params.toString(),
+        { displayToast: true, failureResponse: {} }
       )
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };
@@ -711,7 +712,11 @@ export class OperatorRoundsService {
     params.set('dueDate', '');
 
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'rounds?' + params.toString())
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'rounds?' + params.toString(),
+        { displayToast: true, failureResponse: {} }
+      )
       .pipe(map((res) => this.formatRounds(res.rows)));
   };
 
@@ -726,7 +731,10 @@ export class OperatorRoundsService {
     params.set('dueDate', '');
 
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'round-plans/tasks-rounds')
+      ._getResp(environment.operatorRoundsApiUrl, 'round-plans/tasks-rounds', {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(
         map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
       );
@@ -743,7 +751,8 @@ export class OperatorRoundsService {
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        'round-plans?' + params.toString()
+        'round-plans?' + params.toString(),
+        { displayToast: true, failureResponse: {} }
       )
       .pipe(map((res) => this.formateGetRoundPlanResponse(res)));
   };

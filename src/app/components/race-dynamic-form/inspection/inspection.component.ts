@@ -486,47 +486,52 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   getAllInspections() {
     this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueAssignTo = formsList
-        ?.map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
+      const objectKeys = Object.keys(formsList);
+      if (objectKeys.length > 0) {
+        const uniqueAssignTo = formsList
+          ?.map((item) => item.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
 
-      const uniqueSchedules = formsList
-        ?.map((item) => item?.schedule)
-        .filter((value, index, self) => self?.indexOf(value) === index);
+        if (uniqueAssignTo?.length > 0) {
+          uniqueAssignTo?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.assignedTo.push(item);
+            }
+          });
+        }
 
-      if (uniqueSchedules?.length > 0) {
-        uniqueSchedules?.filter(Boolean).forEach((item) => {
+        const uniqueSchedules = formsList
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.schedules.push(item);
+            }
+          });
+        }
+        const uniquePlants = formsList
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
           if (item) {
-            this.schedules.push(item);
+            this.plants.push(item);
           }
-        });
-      }
-      const uniquePlants = formsList
-        .map((item) => {
-          if (item.plant) {
-            this.plantsIdNameMap[item.plant] = item.plantId;
-            return item.plant;
-          }
-          return '';
-        })
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniquePlants) {
-        if (item) {
-          this.plants.push(item);
         }
-      }
 
-      for (const item of this.filterJson) {
-        if (item.column === 'assignedTo') {
-          item.items = this.assignedTo;
-        } else if (item.column === 'plant') {
-          item.items = this.plants;
-        }
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
             item.items = this.assignedTo;
-          }
-          if (item.column === 'schedule') {
+          } else if (item.column === 'plant') {
+            item.items = this.plants;
+          } else if (item.column === 'schedule') {
             item.items = this.schedules;
           }
         }

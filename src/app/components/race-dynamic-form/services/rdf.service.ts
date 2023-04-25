@@ -805,7 +805,10 @@ export class RaceDynamicFormService {
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
   };
   fetchAllArchivedForms$ = () => {
@@ -820,7 +823,10 @@ export class RaceDynamicFormService {
     params.set('authoredBy', '');
     params.set('lastModifiedOn', '');
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((res) => this.formateGetRdfFormsResponse(res)));
   };
   fetchAllSchedulerForms$ = () => {
@@ -837,7 +843,8 @@ export class RaceDynamicFormService {
     return this.appService
       ._getResp(
         environment.rdfApiUrl,
-        'forms/schedule-forms?' + params.toString()
+        'forms/schedule-forms?' + params.toString(),
+        { displayToast: true, failureResponse: {} }
       )
       .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
   };
@@ -870,7 +877,10 @@ export class RaceDynamicFormService {
     params.set('assignedTo', '');
     params.set('dueDate', '');
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString())
+      ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((res) => this.formatInspections(res.rows)));
   };
 

@@ -640,52 +640,55 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueAssignTo = formsList
-        ?.map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
+      const objectKeys = Object.keys(formsList);
+      if (objectKeys.length > 0) {
+        const uniqueAssignTo = formsList
+          ?.map((item) => item.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
 
-      const uniqueSchedules = formsList
-        ?.map((item) => item?.schedule)
-        .filter((value, index, self) => self?.indexOf(value) === index);
+        const uniqueSchedules = formsList
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
 
-      if (uniqueSchedules?.length > 0) {
-        uniqueSchedules?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.schedules.push(item);
-          }
-        });
-      }
-      if (uniqueAssignTo?.length > 0) {
-        uniqueSchedules?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.assignedTo.push(item);
-          }
-        });
-      }
-
-      const uniquePlants = formsList
-        .map((item) => {
-          if (item.plant) {
-            this.plantsIdNameMap[item.plant] = item.plantId;
-            return item.plant;
-          }
-          return '';
-        })
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniquePlants) {
-        if (item) {
-          this.plants.push(item);
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.schedules.push(item);
+            }
+          });
         }
-      }
-
-      for (const item of this.filterJson) {
-        if (item.column === 'assignedTo') {
-          item.items = this.assignedTo;
-        } else if (item['column'] === 'plant') {
-          item.items = this.plants;
+        if (uniqueAssignTo?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.assignedTo.push(item);
+            }
+          });
         }
-        if (item.column === 'schedule') {
-          item.items = this.schedules;
+
+        const uniquePlants = formsList
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        for (const item of uniquePlants) {
+          if (item) {
+            this.plants.push(item);
+          }
+        }
+
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          } else if (item['column'] === 'plant') {
+            item.items = this.plants;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
         }
       }
     });
