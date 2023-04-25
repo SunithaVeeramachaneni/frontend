@@ -310,7 +310,7 @@
                   class="w-33 f-s-8"
                   *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
                 >
-                  Submitted On: 18-03-2023 10:00PM
+                  Submitted On: 18-03-2023 10:00 PM
                 </div>
                 <div
                   class="w-33 f-s-8"
@@ -324,7 +324,7 @@
                     pdfBuilderConfigurationsForm.get('questionCompleted').value
                   "
                 >
-                  Task Completed: 35/35 (100%)
+                  Tasks Completed : 35/35 (100%)
                 </div>
               </div>
             </div>
@@ -478,7 +478,7 @@
         class="w-33 f-s-8"
         *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
       >
-        Submitted On: 18-03-2023 10:00PM
+        Submitted On: 18-03-2023 10:00 PM
       </div>
       <div
         class="w-33 f-s-8"
@@ -490,7 +490,7 @@
         class="w-33 f-s-8"
         *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value"
       >
-        Task Completed: 35/35 (100%)
+        Tasks Completed: 35/35 (100%)
       </div>
     </div>
     <div
@@ -499,7 +499,7 @@
     >
       <div class="issuesHead">
         <span>Issues</span>
-        <span>Raised:3</span>
+        <span>Raised: 3</span>
       </div>
       <div class="issueCell">
         <div class="issue">
@@ -515,7 +515,7 @@
               </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Asset: </span>
+              <span class="label"> Asset : </span>
               <span class="description">
                 170442 - Water Pump Water Pump Water Pump Water
               </span>
@@ -546,7 +546,7 @@
                 </tr>
                 <tr>
                   <td>
-                    <span class="label"> Due Date: </span>
+                    <span class="label"> Due Date : </span>
                     <span class="description"> 25 Feb, 2023 </span>
                   </td>
                   <td>
@@ -696,7 +696,7 @@
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
         >
-          Submitted On: 18-03-2023 10:00PM
+          Submitted On: 18-03-2023 10:00 PM
         </div>
         <div
           class="w-33 f-s-8"
@@ -708,7 +708,7 @@
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value"
         >
-          Task Completed: 35/35 (100%)
+          Tasks Completed: 35/35 (100%)
         </div>
       </div>
     </div>
@@ -718,7 +718,7 @@
     >
       <div class="actionsHead">
         <span>Actions</span>
-        <span>Raised:3</span>
+        <span>Raised: 3</span>
       </div>
       <div class="actionCell">
         <div class="action">
@@ -734,7 +734,7 @@
               </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Asset: </span>
+              <span class="label"> Asset : </span>
               <span class="description">
                 170442 - Water Pump Water Pump Water Pump Water
               </span>
@@ -851,10 +851,9 @@
       >{{ getCurrentDate() }}</span
     >
   </div>
-  <div class="w-33">
-    <span class="poweredBy"
-      >Powered By <img [src]="innovapptiveLogo" class="footerLogo"
-    /></span>
+  <div class="w-33 poweredBy">
+    <span class="poweredByText">Powered By</span>
+    <svg-icon icon="icon-innova-big" class="footerLogo"></svg-icon>
   </div>
   <div class="w-33">
     <span
@@ -865,9 +864,8 @@
         pdfBuilderConfigurationsForm.get('customTextLabel').value
       "
     >
-      {{ pdfBuilderConfigurationsForm.get('customTextLabel').value }}:{{
-        pdfBuilderConfigurationsForm.get('customTextField').value
-      }}
+      {{ pdfBuilderConfigurationsForm.get('customTextLabel').value }}:
+      {{ pdfBuilderConfigurationsForm.get('customTextField').value }}
     </span>
   </div>
 </ng-template>

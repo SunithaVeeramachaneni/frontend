@@ -336,6 +336,8 @@ export class OperatorRoundsService {
   }
 
   publishRoundPlan$(roundPlanDetails) {
+    roundPlanDetails.authoredFormDetail.formStatus =
+      roundPlanDetails.form.formStatus;
     const { hierarchy } = roundPlanDetails.authoredFormDetail;
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       JSON.parse(JSON.stringify(hierarchy)),
@@ -349,7 +351,8 @@ export class OperatorRoundsService {
         authoredFormDetail: {
           ...roundPlanDetails.authoredFormDetail,
           flatHierarchy
-        }
+        },
+        isEdit: location?.pathname?.startsWith('/operator-rounds/edit/')
       }
     );
   }

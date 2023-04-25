@@ -257,9 +257,12 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
+    if (!formMetaDataDetails.formMetadata.id) {
+      return;
+    }
     return this.appService.patchData(
       environment.rdfApiUrl,
-      `forms/${formMetaDataDetails?.formMetadata?.id}`,
+      `forms/${formMetaDataDetails.formMetadata.id}`,
       {
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
@@ -310,14 +313,18 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
-    return this.appService._postData(environment.rdfApiUrl, 'forms/authored', {
-      formStatus: formDetails.formStatus,
-      formDetailPublishStatus: formDetails.formDetailPublishStatus,
-      formlistID: formDetails.formListId,
-      pages: JSON.stringify(formDetails.pages),
-      counter: formDetails.counter,
-      version: formDetails.authoredFormDetailVersion.toString()
-    });
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      `forms/authored?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
+      {
+        formStatus: formDetails.formStatus,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
+        formlistID: formDetails.formListId,
+        pages: JSON.stringify(formDetails.pages),
+        counter: formDetails.counter,
+        version: formDetails.authoredFormDetailVersion.toString()
+      }
+    );
   }
 
   updateAuthoredFormDetail$(formDetails) {
