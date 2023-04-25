@@ -387,11 +387,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.roleService
       .getRolePermissionsById$(this.selectedRole.id)
       .subscribe((pers) => {
-        const permissionIds = [];
-        permissionIds.push(pers);
+        const permissionIds = pers;
         this.copyRole({
           ...this.selectedRole,
-          permissionIds: permissionIds[0].map(
+          permissionIds: permissionIds.map(
             (permissionDetail) => permissionDetail.id
           )
         });
