@@ -381,7 +381,12 @@ ul {
   display: flex;
   align-items: center;
   font-weight: 500;
-  width: 350px;
+  width: 100%;
+  .poweredByText {
+    width: 175px;
+    position: relative;
+    left: 110px;
+  }
 }
 
 .customText {
@@ -392,9 +397,10 @@ ul {
   justify-content: flex-end;
 }
 .footerLogo {
-  width: 150px;
-  height: 25px;
-  margin-left: 15px;
+  position: relative;
+  right: 12px;
+  height: 165px;
+  width: 205px;
 }
 
 .issuesContainer {
