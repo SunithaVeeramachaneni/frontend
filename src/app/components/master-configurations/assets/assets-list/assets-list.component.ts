@@ -242,6 +242,7 @@ export class AssetsListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getAssets();
       })
     );
