@@ -183,7 +183,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       Category_Name: cat,
       CId: null,
       Cover_Image:
-        'assets/work-instructions-icons/img/brand/category-placeholder.png'
+        'assets/Images/category-placeholder.png'
     };
     return this._instructionSvc.addCategory(
       {
@@ -601,7 +601,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                     : null,
                   Cover_Image: steps[0].Cover_Image
                     ? steps[0].Cover_Image_Name
-                    : 'assets/work-instructions-icons/img/brand/doc-placeholder.png',
+                    : 'assets/Images/doc-placeholder.png',
                   WI_Desc: null,
                   WI_Id: null,
                   WI_Name: steps[0].WorkInstruction.trim(),
