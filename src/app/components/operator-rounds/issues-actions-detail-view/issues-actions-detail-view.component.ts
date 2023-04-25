@@ -1,7 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog
+} from '@angular/material/dialog';
 import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -18,6 +22,7 @@ import { RoundPlanObservationsService } from '../services/round-plan-observation
 import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
@@ -53,6 +58,7 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   userInfo: any;
   s3BaseUrl: string;
   logHistory: History[];
+  filteredMediaType: any;
 
   constructor(
     private fb: FormBuilder,
@@ -62,7 +68,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private userService: UsersService,
     private sanitizer: DomSanitizer,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private dialog: MatDialog
   ) {}
 
   getAttachmentsList() {
@@ -76,12 +83,19 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     } = this.tenantService.getTenantInfo();
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
-    const { id, type, users$ } = this.data;
+    const { id, type, users$, assignedTo } = this.data;
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
+    const assignee = assignedTo.split(',');
+    const formattedAssignee =
+      assignee.length === 1
+        ? [assignee[0]]
+        : [`${assignee[0]} + ${assignee.length - 1} more`];
+
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
+      assignedTo: formattedAssignee,
       dueDate: new Date(this.data.dueDate),
       dueDateDisplayValue: format(new Date(this.data.dueDate), 'dd MMM yyyy')
     });
@@ -91,6 +105,9 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
       .pipe(
         tap((logHistory) => {
           this.logHistory = logHistory.rows;
+          this.filteredMediaType = this.logHistory.filter(
+            (history) => history.type === 'Media'
+          );
         })
       );
     this.observations
@@ -301,6 +318,22 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
 
   getS3Url(filePath: string) {
     return `${this.s3BaseUrl}${filePath}`;
+  }
+
+  openPreviewDialog() {
+    const slideshowImages = [];
+    this.filteredMediaType.forEach((media) => {
+      slideshowImages.push(this.s3BaseUrl + media.message);
+    });
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
   }
 
   ngOnDestroy(): void {

@@ -84,7 +84,7 @@
       border-radius: 7px;
 
       .chat-panel {
-        height: calc(100vh - 160px);
+        height: calc(100vh - 205px);
         overflow-y: auto;
         padding-bottom: 15px;
 
@@ -136,8 +136,14 @@
         .media-created {
           border: 5px solid $border-color;
           border-radius: 4px;
-          width: 40%;
+          width: 300px;
+          height: 280px;
           margin: 10px;
+        }
+
+        .media-image {
+          width: 300px;
+          height: 280px;
         }
 
         .time {
@@ -154,7 +160,6 @@
         border-top: 1px solid rgba(61, 90, 254, 0.5);
         border-bottom-left-radius: 7px;
         border-bottom-right-radius: 7px;
-        height: 55px;
       }
 
       .add-attachment-icon {
@@ -236,6 +241,10 @@
         height: 100px;
         margin-right: 15px;
         margin-bottom: 10px;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
       }
     }
   }
