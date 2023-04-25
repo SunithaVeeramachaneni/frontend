@@ -370,7 +370,7 @@ export class HierarchyContainerComponent implements OnInit {
       });
   };
   getImage = (imageName: string, active: boolean) =>
-  active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
 
   toggleHierarchyMode(event) {
     this.hierarchyMode = event.value;

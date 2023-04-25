@@ -82,12 +82,7 @@ export class HierarchyAssetsListComponent implements OnInit {
 
   searchResultSelected(event) {
     const node = event.option.value;
-    const el = document.getElementById(`node-${node.id}`);
-    el.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-      inline: 'nearest'
-    });
+
     if (node) {
       setTimeout(() => {
         this.searchMasterData.patchValue(node.name);
@@ -98,9 +93,17 @@ export class HierarchyAssetsListComponent implements OnInit {
         node.uid,
         tempHierarchyList
       );
+      this.cdrf.detectChanges();
 
       this.searchedNode = node.uid;
     }
+
+    const el = document.getElementById(`Node-${node.uid}`);
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
   }
 
   getSearchMatchesLabel() {
