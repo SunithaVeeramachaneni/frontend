@@ -49,21 +49,21 @@ export const category1 = {
   Category_Id: 'ighqwdf',
   Category_Name: 'Sample Category1',
   Cover_Image:
-    'assets/work-instructions-icons/img/brand/category-placeholder.png'
+    'assets/Images/category-placeholder.png'
 };
 
 export const category2 = {
   Category_Id: 'dggqwgh',
   Category_Name: 'Sample Category2',
   Cover_Image:
-    'assets/work-instructions-icons/img/brand/category-placeholder.png'
+    'assets/Images/category-placeholder.png'
 };
 
 export const category3 = {
   Category_Id: 'rtyjukl',
   Category_Name: 'Sample Category3',
   Cover_Image:
-    'assets/work-instructions-icons/img/brand/category-placeholder.png'
+    'assets/Images/category-placeholder.png'
 };
 
 export const userDetails = {
@@ -86,7 +86,7 @@ export const inst1Details = {
     '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Spareparts","Position":2,"FieldValue":["Sample Spare Part1"," Sample Spare Part2"]}',
   Tools:
     '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Tools","Position":0,"FieldValue":["Sample Tool1"," Sample Tool2"]}',
-  Cover_Image: 'assets/work-instructions-icons/img/brand/doc-placeholder.png',
+  Cover_Image: 'assets/Images/doc-placeholder.png',
   WI_Desc: null,
   WI_Id: null,
   WI_Name: 'Sample WorkInstruction1',
@@ -140,7 +140,7 @@ export const inst3Details = {
     '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Spareparts","Position":2,"FieldValue":["Sample Spare Part1"," Sample Spare Part2"]}',
   Tools:
     '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Tools","Position":0,"FieldValue":["Sample Tool1"," Sample Tool2"]}',
-  Cover_Image: 'assets/work-instructions-icons/img/brand/doc-placeholder.png',
+  Cover_Image: 'assets/Images/doc-placeholder.png',
   WI_Desc: null,
   WI_Id: null,
   WI_Name: 'Sample WorkInstruction3',
