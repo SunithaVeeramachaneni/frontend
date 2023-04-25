@@ -86,7 +86,6 @@ export class FormListComponent implements OnInit {
       hasPreTextImage: true,
       hasPostTextImage: false
     },
-
     {
       id: 'formStatus',
       displayName: 'Status',
@@ -125,11 +124,33 @@ export class FormListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -151,7 +172,7 @@ export class FormListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -174,7 +195,7 @@ export class FormListComponent implements OnInit {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -222,8 +243,9 @@ export class FormListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    createdBy: '',
-    lastModifiedOn: ''
+    authoredBy: '',
+    lastModifiedOn: '',
+    plant: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -247,6 +269,9 @@ export class FormListComponent implements OnInit {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  authoredBy = [];
+  plantsIdNameMap = {};
+  plants = [];
   createdBy = [];
   constructor(
     private readonly toast: ToastService,
@@ -458,7 +483,20 @@ export class FormListComponent implements OnInit {
           this.formsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: item.plant
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
@@ -546,29 +584,41 @@ export class FormListComponent implements OnInit {
     this.formsList$
       .pipe(
         tap((formsList) => {
-          const uniqueLastPublishedBy = formsList.rows
-            .map((item) => item.lastPublishedBy)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueLastPublishedBy) {
-            if (item) {
-              this.lastPublishedBy.push(item);
-            }
-          }
-          const uniqueCreatedBy = formsList.rows
-            .map((item) => item.author)
-            .filter((value, index, self) => self.indexOf(value) === index);
-          for (const item of uniqueCreatedBy) {
-            if (item) {
-              this.createdBy.push(item);
-            }
-          }
-          for (const item of this.filterJson) {
-            if (item.column === 'status') {
-              item.items = this.status;
-            } else if (item.column === 'modifiedBy') {
-              item.items = this.lastPublishedBy;
-            } else if (item.column === 'createdBy') {
-              item.items = this.createdBy;
+          const objectKeys = Object.keys(formsList);
+          if (objectKeys.length > 0) {
+            const uniqueLastPublishedBy = formsList.rows
+              .map((item) => item.lastPublishedBy)
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.lastPublishedBy = [...uniqueLastPublishedBy];
+
+            const uniqueCreatedBy = formsList.rows
+              .map((item) => item.author)
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.createdBy = [...uniqueCreatedBy];
+
+            const uniquePlants = formsList.rows
+              .map((item) => {
+                if (item.plantId) {
+                  this.plantsIdNameMap[item.plant] = item.plantId;
+                  return item.plant;
+                }
+                return '';
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.plants = [...uniquePlants];
+
+            for (const item of this.filterJson) {
+              if (item.column === 'status') {
+                item.items = this.status;
+              } else if (item.column === 'modifiedBy') {
+                item.items = this.lastPublishedBy;
+              } else if (item.column === 'authoredBy') {
+                item.items = this.authoredBy;
+              } else if (item.column === 'plant') {
+                item.items = this.plants;
+              } else if (item.column === 'createdBy') {
+                item.items = this.createdBy;
+              }
             }
           }
         })
@@ -584,7 +634,11 @@ export class FormListComponent implements OnInit {
 
   applyFilter(data: any) {
     for (const item of data) {
-      this.filter[item.column] = item.value;
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else {
+        this.filter[item.column] = item.value;
+      }
     }
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
@@ -594,11 +648,18 @@ export class FormListComponent implements OnInit {
     this.filter = {
       status: '',
       modifiedBy: '',
-      createdBy: '',
-      lastModifiedOn: ''
+      authoredBy: '',
+      lastModifiedOn: '',
+      plant: ''
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  private showFormDetail(row: GetFormList): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 
   private generateCopyFormName(form: GetFormList, rows: GetFormList[]) {
@@ -618,11 +679,5 @@ export class FormListComponent implements OnInit {
       };
     }
     return null;
-  }
-
-  private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
   }
 }

@@ -68,6 +68,21 @@
               formControlName="description"
             />
           </mat-form-field>
+          <p class="form-name-description" translate="plant"></p>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-select
+              formControlName="plantId"
+              [placeholder]="'plant' | translate"
+            >
+              <div class="scrollable-area">
+                <mat-option
+                  [value]="plant.id"
+                  *ngFor="let plant of allPlantsData"
+                  >{{ plant.plantId }} - {{ plant.name }}</mat-option
+                >
+              </div>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="tags">
           <p class="form-name-description m-b-0" translate="tags"></p>
