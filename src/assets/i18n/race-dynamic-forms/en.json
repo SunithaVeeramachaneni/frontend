@@ -225,6 +225,7 @@
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
   "createResponses": "Create Responses",
+  "plant": "Plant",
   "done": "Done",
   "lastFiveReadingsHeader": "Last 5 readings",
   "whatIsPressureReadingHeader": "What is the pressure reading?",

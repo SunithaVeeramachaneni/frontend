@@ -6,7 +6,6 @@ import {
   catchError,
   concatMap,
   mergeMap,
-  tap,
   switchMap
 } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
@@ -254,14 +253,14 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService
           .createAuthoredTemplateDetail$(action.formMetadata.id, action.data)
           .pipe(
-            switchMap(() => {
-              return this.raceDynamicFormService.updateTemplate$(
+            switchMap(() =>
+              this.raceDynamicFormService.updateTemplate$(
                 action.formMetadata.id,
                 {
                   publishedDate: new Date().toISOString()
                 }
-              );
-            }),
+              )
+            ),
             map(() =>
               FormConfigurationApiActions.updateFormSuccess({
                 formMetadata: action.formMetadata,
