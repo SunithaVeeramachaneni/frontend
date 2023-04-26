@@ -7,17 +7,19 @@
     "value": ""
   },
   {
-    "label": "Modified By",
+    "label": "Inspected By",
     "items": [],
-    "column": "modifiedBy",
-    "type": "multiple",
+    "column": "inspectedBy",
+    "type": "select",
     "value": ""
   },
   {
-    "label": "Created By",
+    "label": "Inspected On ",
     "items": [],
-    "column": "createdBy",
-    "type": "multiple",
+    "column": "inspectedOn",
+    "type": "daterange",
+    "startDate": "",
+    "endDate": "",
     "value": ""
   },
   {

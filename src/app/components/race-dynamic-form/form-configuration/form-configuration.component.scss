@@ -326,6 +326,14 @@
   }
 }
 
+.dis-flex .center {
+  justify-content: space-between;
+  align-items: center;
+
+  .plant {
+    font-weight: 500;
+  }
+}
 .next-btn {
   padding: 0px 20px;
   height: 36px;
