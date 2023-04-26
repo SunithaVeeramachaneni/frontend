@@ -168,7 +168,7 @@ export class OperatorRoundsService {
       if (isSearch) {
         rest.next = '';
       }
-      let queryParamaters;
+      let queryParamaters: any = rest;
       if (filterData) {
         queryParamaters = { ...rest, plantId: filterData.plant };
       }
