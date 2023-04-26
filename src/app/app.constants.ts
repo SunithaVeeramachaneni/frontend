@@ -68,7 +68,9 @@ export const permissions = Object.freeze({
   viewSubmissions: 'VIEW_SUBMISSIONS',
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
-  viewTemplates: 'VIEW_TEMPLATES',
+  viewFormTemplates: 'VIEW_FORM_TEMPLATES',
+  createFormTemplate: 'CREATE_FORM_TEMPLATE',
+  updateFormTemplate: 'UPDATE_FORM_TEMPLATE',
   viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
   viewFormScheduler: 'VIEW_FORM_SCHEDULER',
   scheduleInspection: 'SCHEDULE_FORM',
@@ -81,7 +83,9 @@ export const permissions = Object.freeze({
   shareRounds: 'SHARE_ROUNDS',
   viewScheduler: 'VIEW_SCHEDULER',
   scheduleRoundPlan: 'SCHEDULE_ROUND_PLAN',
-  viewORPTemplates: 'VIEW_OR_TEMPLATES',
+  viewORPTemplates: 'VIEW_ORP_TEMPLATES',
+  createORPTemplate: 'CREATE_ORP_TEMPLATES',
+  updateORPTemplate: 'UPDATE_ORP_TEMPLATES',
   viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
   viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
@@ -199,6 +203,11 @@ export const routingUrls = {
     title: 'My Forms',
     permission: permissions.viewForms
   },
+  formsTemplates: {
+    url: '/forms/templates',
+    title: 'Templates',
+    permission: permissions.viewFormTemplates
+  },
   submissionForms: {
     url: '/forms/submissions',
     title: 'Submissions',
@@ -279,7 +288,8 @@ export const formConfigurationStatus = Object.freeze({
   saved: 'Saved',
   saving: 'Saving',
   standalone: 'Standalone',
-  embedded: 'Embedded'
+  embedded: 'Embedded',
+  ready: 'Ready'
 });
 
 export const HIERARCHY_MODES = Object.freeze({
@@ -329,3 +339,57 @@ export const DEFAULT_PDF_BUILDER_CONFIG = {
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';
+export const DEFAULT_TEMPLATE_PAGES = [
+  {
+    name: 'Page',
+    position: 1,
+    isOpen: true,
+    sections: [
+      {
+        id: 'S1',
+        name: 'Section',
+        position: 1,
+        isOpen: true,
+        questions: [
+          {
+            id: 'Q1',
+            sectionId: 'S1',
+            name: '',
+            fieldType: 'TF',
+            position: 1,
+            required: false,
+            enableHistory: false,
+            multi: false,
+            value: 'TF',
+            isPublished: false,
+            isPublishedTillSave: false,
+            isOpen: true,
+            isResponseTypeModalOpen: false,
+            unitOfMeasurement: 'None',
+            rangeMetadata: {}
+          }
+        ]
+      }
+    ],
+    questions: [
+      {
+        id: 'Q1',
+        sectionId: 'S1',
+        name: '',
+        fieldType: 'NF',
+        position: 1,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: '',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      }
+    ],
+    logics: []
+  }
+];
