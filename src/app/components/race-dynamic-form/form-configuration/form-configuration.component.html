@@ -84,7 +84,7 @@
         </div>
       </div>
     </div>
-    <div class="dis-flex width-45 justify-content-end">
+    <div class="dis-flex width-70 justify-content-end">
       <div
         class="save-status"
         [hidden]="
@@ -127,6 +127,13 @@
         class="import-btn"
         translate="importBtn"
         (click)="importQuestions()"
+      ></button>
+
+      <button
+        mat-stroked-button
+        class="import-btn"
+        translate="saveAsTemplate"
+        (click)="openSaveTemplateDialog()"
       ></button>
 
       <button

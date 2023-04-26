@@ -55,7 +55,8 @@ export class FormConfigurationService {
       BuilderConfigurationActions.addPage({
         page,
         pageIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
 
@@ -63,7 +64,8 @@ export class FormConfigurationService {
       BuilderConfigurationActions.updateQuestionState({
         questionId: page.questions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }
@@ -91,20 +93,23 @@ export class FormConfigurationService {
         questions,
         pageIndex,
         sectionIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
-        isOpen: true
+        isOpen: true,
+        subFormId: null
       })
     );
     this.store.dispatch(
       BuilderConfigurationActions.updateQuestionState({
         questionId: questions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }
@@ -133,14 +138,16 @@ export class FormConfigurationService {
         pageIndex,
         sectionId,
         questionIndex,
-        ...this.getFormConfigurationStatuses()
+        ...this.getFormConfigurationStatuses(),
+        subFormId: null
       })
     );
     this.store.dispatch(
       BuilderConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
-        isResponseTypeModalOpen: false
+        isResponseTypeModalOpen: false,
+        subFormId: null
       })
     );
   }

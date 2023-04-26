@@ -1,0 +1,28 @@
+<div class="save-template-confirm-modal">
+  <span class="title">{{
+    (templateId ? 'overwriteTemplateTitle' : 'newTemplateTitle')
+      | translate : { name: templateName }
+  }}</span>
+  <p>
+    {{
+      (templateId ? 'overwriteTemplateMessage' : 'newTemplateMessage')
+        | translate : { name: templateName }
+    }}
+  </p>
+  <button
+    mat-raised-button
+    class="save-template-btn"
+    type="submit"
+    (click)="save()"
+  >
+    {{
+      (templateId ? 'overwriteSaveTemplateBtn' : 'saveTemplateBtn') | translate
+    }}
+  </button>
+  <button
+    mat-stroked-button
+    class="cancel-btn"
+    translate="cancel"
+    (click)="this.closeModal.emit(false)"
+  ></button>
+</div>
