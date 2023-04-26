@@ -47,8 +47,7 @@ export class PageComponent implements OnInit {
 
   pageForm: FormGroup = this.fb.group({
     name: {
-      value: '',
-      disabled: true
+      value: ''
     },
     position: '',
     isOpen: true
