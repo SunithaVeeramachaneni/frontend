@@ -35,6 +35,11 @@
     caret-color: $light-gray;
   }
 
+  .plans-icon {
+    width: 50px;
+    height: 50px;
+  }
+
   .edit-icon {
     border: none;
     background-color: transparent;
@@ -68,7 +73,7 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    width: 90%;
+    width: 100%;
   }
   .plans-icon {
     height: 50px;
@@ -455,6 +460,15 @@
 }
 .nodeInstance {
   padding-bottom: 25px;
+}
+
+.dis-flex .center {
+  justify-content: space-between;
+  align-items: center;
+
+  .plant {
+    font-weight: 500;
+  }
 }
 .next-btn {
   padding: 0px 20px;

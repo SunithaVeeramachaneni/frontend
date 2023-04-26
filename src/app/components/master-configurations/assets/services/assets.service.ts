@@ -38,12 +38,13 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => {
+  fetchAllAssets$ = (info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/list?' + params.toString()
+      'asset/list?' + params.toString(),
+      { displayToast: true, failureResponse: {} }
     );
   };
 
@@ -55,15 +56,18 @@ export class AssetsService {
         environment.masterConfigApiUrl,
         'asset/count?' + params.toString()
       )
-      .pipe(map((res) => res?.count || 0));
+      .pipe(map((res) => res.count || 0));
   }
 
-  getAssetsList$(queryParams: {
-    next?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getAssetsList$(
+    queryParams: {
+      next?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
@@ -78,6 +82,13 @@ export class AssetsService {
         const filter: GetAssets = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      if (filterData.plant) {
+        params.set('limit', this.MAX_FETCH_LIMIT);
+        let filter = JSON.parse(params.get('plantsID'));
+        filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
 
@@ -106,6 +117,7 @@ export class AssetsService {
       | 'assetsId'
       | 'parentId'
       | 'parentType'
+      | 'plantsID'
     >
   ) {
     return this._appService._postData(
@@ -166,6 +178,14 @@ export class AssetsService {
       info,
       false,
       body
+    );
+  }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this._appService._getLocal(
+      '',
+      'assets/json/master-configuration-assets-filter.json',
+      info
     );
   }
 
