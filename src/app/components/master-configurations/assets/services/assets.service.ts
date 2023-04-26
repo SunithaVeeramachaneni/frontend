@@ -41,6 +41,7 @@ export class AssetsService {
   fetchAllAssets$ = (info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
+    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'asset/list?' + params.toString(),
