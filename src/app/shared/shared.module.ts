@@ -49,6 +49,7 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
 import { MatCardModule } from '@angular/material/card';
@@ -78,6 +79,7 @@ import { SlideshowComponent } from './components/slideshow/slideshow.component';
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent,
+    SvgIconComponent,
     FilterComponent,
     CustomRangePanelComponent,
     FilterSidePanelComponent,
@@ -126,7 +128,8 @@ import { SlideshowComponent } from './components/slideshow/slideshow.component';
     HeaderComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
-    BackgroundComponent
+    BackgroundComponent,
+    SvgIconComponent
   ],
   providers: [DatePipe]
 })

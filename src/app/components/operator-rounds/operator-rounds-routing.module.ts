@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
-import { SubmissionComponent } from './submission/submission.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
@@ -19,7 +18,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       breadcrumb: { label: 'Operator Rounds' },
-      permissions: [permissions.viewForms]
+      permissions: [permissions.viewORPlans]
     },
     children: [
       {
@@ -28,7 +27,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
-          permissions: [permissions.createForm],
+          permissions: [permissions.createORPlan],
           componentMode: 'create'
         }
       },
@@ -38,8 +37,8 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         resolve: { form: RoundPlanResolverService },
         data: {
-          breadcrumb: { label: 'Edit Form', alias: 'formName' },
-          permissions: [permissions.updateForm],
+          breadcrumb: { label: 'Edit Round Plan', alias: 'formName' },
+          permissions: [permissions.updateORPlan],
           componentMode: 'edit'
         }
       },
@@ -49,7 +48,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Scheduler' },
-          permissions: [permissions.viewORPlans]
+          permissions: [permissions.viewScheduler]
         }
       },
       {
@@ -58,7 +57,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'View Form', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          permissions: [permissions.viewORPlans]
         }
       },
       {
@@ -67,7 +66,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Archived', alias: 'formName' },
-          permissions: [permissions.viewForms]
+          permissions: [permissions.viewArchivedORP]
         }
       },
       {
@@ -76,7 +75,7 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Observations' },
-          permissions: [permissions.viewORPlans]
+          permissions: [permissions.viewORObservations]
         }
       }
     ]

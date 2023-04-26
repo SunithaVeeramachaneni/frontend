@@ -1,5 +1,12 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,6 +14,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { format } from 'date-fns';
 import {
   BehaviorSubject,
   combineLatest,
@@ -28,12 +36,14 @@ import { slideInOut } from 'src/app/animations';
 
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
+  AssigneeDetails,
   CellClickActionEvent,
   LoadEvent,
   Permission,
   RowLevelActionEvent,
   SearchEvent,
   TableEvent,
+  UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -49,6 +59,15 @@ import { RoundPlanObservationsService } from '../services/round-plan-observation
   animations: [slideInOut]
 })
 export class IssuesComponent implements OnInit {
+  @Input() set users$(users$: Observable<UserDetails[]>) {
+    this._users$ = users$.pipe(
+      tap((users) => (this.assigneeDetails = { users }))
+    );
+  }
+  get users$(): Observable<UserDetails[]> {
+    return this._users$;
+  }
+  assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
       id: 'title',
@@ -249,7 +268,7 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'assignee',
+      id: 'assignedTo',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
@@ -306,7 +325,7 @@ export class IssuesComponent implements OnInit {
       }
     }
   };
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+
   dataSource: MatTableDataSource<any>;
   issues$: Observable<{
     columns: Column[];
@@ -323,14 +342,17 @@ export class IssuesComponent implements OnInit {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  selectedData = null;
-  zIndexDelay = 0;
   issuesCount$: Observable<number>;
+  initial: any;
+  isModalOpened = false;
   readonly perms = perms;
+  private _users$: Observable<UserDetails[]>;
+
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -377,7 +399,7 @@ export class IssuesComponent implements OnInit {
       })
     );
 
-    const initial = {
+    this.initial = {
       columns: this.columns,
       data: []
     };
@@ -388,28 +410,28 @@ export class IssuesComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(80vh - 240px)'
           };
-          initial.data = rows;
+          this.initial.data = rows;
         } else {
-          initial.data = initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(scrollData);
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
+        this.skip = this.initial.data.length;
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
   }
 
   getIssuesList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
       type: 'issue'
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken, count }) => {
-        this.nextToken = nextToken;
+      mergeMap(({ rows, next, count }) => {
+        this.nextToken = next;
         this.isLoading$.next(false);
         this.issuesCount$ = of(count);
         return of(rows as any[]);
@@ -454,13 +476,36 @@ export class IssuesComponent implements OnInit {
   }
 
   openModal(row: GetFormList): void {
-    this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: row,
+    if (this.isModalOpened) {
+      return;
+    }
+    this.isModalOpened = true;
+    const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
+      data: { ...row, users$: this.users$ },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
+    });
+
+    dialogRef.afterClosed().subscribe((resp) => {
+      this.isModalOpened = false;
+      const { id, status, priority, dueDate, assignedTo } = resp.data;
+      this.initial.data = this.dataSource.data.map((data) => {
+        if (data.id === id) {
+          return {
+            ...data,
+            status,
+            priority,
+            dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+            assignedTo
+          };
+        }
+        return data;
+      });
+      this.dataSource = new MatTableDataSource(this.initial.data);
+      this.cdrf.detectChanges();
     });
   }
 

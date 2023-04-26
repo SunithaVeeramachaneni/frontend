@@ -12,7 +12,7 @@
   overflow-x: hidden;
 }
 .ipad-view {
-  background: url('/assets/work-instructions-icons/img/iPad_big.png') top left
+  background: url('/assets/Images/iPad_big.png') top left
     no-repeat;
   background-size: 100% 100%;
   width: 98%;
@@ -416,7 +416,9 @@
 .header-right-icons {
   position: relative;
   left: -5px;
+  height: 25px;
   width: 25px;
+  margin-right: 5px;
 }
 .header-position {
   position: relative;

@@ -1,0 +1,14 @@
+@import '../../../../scss/colors.scss';
+
+.save-template-container {
+  width: 450px;
+  overflow: hidden;
+  padding: 10px;
+  background: $white;
+  border-radius: 4px;
+}
+
+.dialog-close-btn {
+  float: right;
+  cursor: pointer;
+}

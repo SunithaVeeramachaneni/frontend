@@ -1,7 +1,7 @@
 <div class="form-header-modal" [formGroup]="headerDataForm">
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
-      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
       <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
@@ -69,7 +69,10 @@
               [placeholder]="'formName' | translate"
               formControlName="name"
             />
-            <mat-error *ngIf="processValidationErrors('name')" class="m-5">
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="m-5 error-fields"
+            >
               {{
                 errors.name.name
                   | translate
@@ -86,6 +89,21 @@
               [placeholder]="'addDescription' | translate"
               formControlName="description"
             />
+          </mat-form-field>
+          <p class="form-name-description" translate="plant"></p>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-select
+              formControlName="plantId"
+              [placeholder]="'plant' | translate"
+            >
+              <div class="scrollable-area">
+                <mat-option
+                  [value]="plant.id"
+                  *ngFor="let plant of allPlantsData"
+                  >{{ plant.plantId }} - {{ plant.name }}</mat-option
+                >
+              </div>
+            </mat-select>
           </mat-form-field>
 
           <div class="plant">

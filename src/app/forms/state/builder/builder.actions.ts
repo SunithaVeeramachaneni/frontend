@@ -30,6 +30,12 @@ export const updateFormMetadata = createAction(
     formSaveStatus: string;
   }>()
 );
+export const updatePDFBuilderConfiguration = createAction(
+  '[Builder Configuration] updatePDFBuilderConfiguration',
+  props<{
+    pdfBuilderConfiguration: any;
+  }>()
+);
 
 export const createFormDetail = createAction(
   '[Builder Configuration] createFormDetail',
@@ -77,6 +83,7 @@ export const updateAuthoredFormDetail = createAction(
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailDynamoDBVersion: number;
+    authoredFormDetailVersion: number;
   }>()
 );
 
@@ -123,7 +130,7 @@ export const removeSubFormInstances = createAction(
 export const addPage = createAction(
   '[Builder Configuration] addPage',
   props<{
-    subFormId: string;
+    subFormId?: string;
     page: Page;
     pageIndex: number;
     formStatus: string;
@@ -137,7 +144,7 @@ export const updatePageState = createAction(
   props<{
     pageIndex: number;
     isOpen: boolean;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 export const updatePage = createAction(
@@ -172,7 +179,7 @@ export const addSections = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 
@@ -234,7 +241,7 @@ export const addQuestions = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 
@@ -271,7 +278,7 @@ export const updateQuestionState = createAction(
     questionId: string;
     isOpen: boolean;
     isResponseTypeModalOpen: boolean;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 
@@ -330,4 +337,37 @@ export const initPages = createAction(
 export const resetPages = createAction(
   '[Form Configuration Component] resetPages',
   props<{ subFormId: string }>()
+);
+
+export const createTemplate = createAction(
+  '[Template Configuration Modal Component] createTemplate',
+  props<{ formMetadata: FormMetadata }>()
+);
+
+export const updateTemplate = createAction(
+  '[Template Configuration] updateTemplate',
+  props<{ formMetadata: FormMetadata }>()
+);
+
+export const publishTemplate = createAction(
+  '[Template Configuration] publishTemplate',
+  props<{ formMetadata: FormMetadata; data: any }>()
+);
+
+export const createAuthoredTemplateDetail = createAction(
+  '[Template Configuration] createAuthoredTemplateDetail',
+  props<{
+    formStatus: string;
+    counter: number;
+    pages: Page[];
+    templateId: string;
+  }>()
+);
+
+export const replacePagesAndCounter = createAction(
+  '[Form Configuration Component] replacePagesAndCounter',
+  props<{
+    counter: number;
+    pages: Page[];
+  }>()
 );

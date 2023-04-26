@@ -51,7 +51,6 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -65,6 +64,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
+import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 
 @Component({
   selector: 'app-form-configuration',
@@ -74,6 +76,7 @@ import { ResponseSetService } from '../../master-configurations/response-set/ser
 })
 export class FormConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('name') formName: ElementRef;
+  selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
@@ -161,14 +164,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             if (!isEqual(prev, curr)) {
               this.store.dispatch(
-                FormConfigurationActions.updateFormMetadata({
+                BuilderConfigurationActions.updateFormMetadata({
                   formMetadata: curr,
                   ...this.getFormConfigurationStatuses()
                 })
               );
 
               this.store.dispatch(
-                FormConfigurationActions.updateForm({
+                BuilderConfigurationActions.updateForm({
                   formMetadata: this.formMetadata,
                   formListDynamoDBVersion: this.formListVersion
                 })
@@ -250,15 +253,16 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
-        if (pages.length && formListId) {
-          if (authoredFormDetailId) {
+
+        if (formListId) {
+          if (authoredFormDetailId && authoredFormDetailId.length) {
             if (
               formSaveStatus !== 'Saved' &&
               formStatus !== 'Published' &&
               !isEqual(this.formDetails, formDetails)
             ) {
               this.store.dispatch(
-                FormConfigurationActions.updateAuthoredFormDetail({
+                BuilderConfigurationActions.updateAuthoredFormDetail({
                   formStatus,
                   formDetailPublishStatus,
                   formListId,
@@ -273,7 +277,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             this.formDetails = formDetails;
           } else {
             this.store.dispatch(
-              FormConfigurationActions.createAuthoredFormDetail({
+              BuilderConfigurationActions.createAuthoredFormDetail({
                 formStatus,
                 formDetailPublishStatus,
                 formListId,
@@ -286,7 +290,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
           if (isFormDetailPublished && formDetailId) {
             this.store.dispatch(
-              FormConfigurationActions.updateFormDetail({
+              BuilderConfigurationActions.updateFormDetail({
                 formMetadata,
                 formListId,
                 pages,
@@ -306,7 +310,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             );
           } else if (isFormDetailPublished && !formDetailId) {
             this.store.dispatch(
-              FormConfigurationActions.createFormDetail({
+              BuilderConfigurationActions.createFormDetail({
                 formMetadata,
                 formListId,
                 pages,
@@ -350,29 +354,32 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       if (data.form && Object.keys(data.form).length) {
         this.formConf.counter.setValue(data.form.counter);
         this.store.dispatch(
-          FormConfigurationActions.updateFormConfiguration({
+          BuilderConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form
           })
         );
         data.form.pages.forEach((page, index) => {
           if (index === 0) {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: false
+                isOpen: false,
+                subFormId: null
               })
             );
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: true
+                isOpen: true,
+                subFormId: null
               })
             );
           } else {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              BuilderConfigurationActions.updatePageState({
                 pageIndex: index,
-                isOpen: false
+                isOpen: false,
+                subFormId: null
               })
             );
           }
@@ -382,36 +389,53 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       if (!params.id) {
-        let section = { id: 'S1', name: 'Section', position: 1, isOpen: true };
-        let df = this.formConfigurationService.getDefQues();
-        let questions = new Array(4).fill(0).map((q, index) => {
-          if (index === 0) {
-            return { ...df, name: 'Site Conducted' };
-          }
-          if (index === 1) {
-            return {
-              ...df,
-              name: 'Conducted On',
-              fieldType: 'DT',
-              date: true,
-              time: true
-            };
-          }
-          if (index === 2) {
-            return { ...df, name: 'Performed By' };
-          }
-          if (index === 3) {
-            return { ...df, name: 'Location', fieldType: 'GAL' };
-          }
-        });
-        this.formConfigurationService.addPage(
-          0,
-          1,
-          4,
-          this.sectionIndexes,
-          this.formConf.counter.value,
-          [{ section, questions }]
-        );
+        if (window.history.state.selectedTemplate) {
+          this.store.dispatch(
+            BuilderConfigurationActions.replacePagesAndCounter({
+              pages: JSON.parse(
+                window.history.state.selectedTemplate
+                  .authoredFormTemplateDetails[0].pages
+              ),
+              counter: window.history.state.selectedTemplate.counter
+            })
+          );
+        } else {
+          const section = {
+            id: 'S1',
+            name: 'Section',
+            position: 1,
+            isOpen: true
+          };
+          const df = this.formConfigurationService.getDefQues();
+          const questions = new Array(4).fill(0).map((q, index) => {
+            if (index === 0) {
+              return { ...df, name: 'Site Conducted' };
+            }
+            if (index === 1) {
+              return {
+                ...df,
+                name: 'Conducted On',
+                fieldType: 'DT',
+                date: true,
+                time: true
+              };
+            }
+            if (index === 2) {
+              return { ...df, name: 'Performed By' };
+            }
+            if (index === 3) {
+              return { ...df, name: 'Location', fieldType: 'GAL' };
+            }
+          });
+          this.formConfigurationService.addPage(
+            0,
+            1,
+            4,
+            this.sectionIndexes,
+            this.formConf.counter.value,
+            [{ section, questions }]
+          );
+        }
       }
     });
   }
@@ -448,19 +472,21 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         break;
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updatePage({
+          BuilderConfigurationActions.updatePage({
             page,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deletePage({
+          BuilderConfigurationActions.deletePage({
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
@@ -485,22 +511,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateSection({
+          BuilderConfigurationActions.updateSection({
             section,
             sectionIndex,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteSection({
+          BuilderConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
@@ -524,23 +552,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateQuestion({
+          BuilderConfigurationActions.updateQuestion({
             question,
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteQuestion({
+          BuilderConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
         break;
@@ -553,12 +583,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   publishFormDetail() {
     this.store.dispatch(
-      FormConfigurationActions.updateFormPublishStatus({
+      BuilderConfigurationActions.updateFormPublishStatus({
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateIsFormDetailPublished({
+      BuilderConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true
       })
     );
@@ -574,10 +604,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        FormConfigurationActions.updatePageSections({
+        BuilderConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
         })
       );
     }
@@ -592,14 +623,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionBySection({
+          BuilderConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
             }),
             sectionId,
             pageIndex,
-            ...this.getFormConfigurationStatuses()
+            ...this.getFormConfigurationStatuses(),
+            subFormId: null
           })
         );
       });
@@ -612,14 +644,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
       this.store.dispatch(
-        FormConfigurationActions.transferQuestionFromSection({
+        BuilderConfigurationActions.transferQuestionFromSection({
           questionId,
           currentIndex: event.currentIndex,
           previousIndex: event.previousIndex,
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
           pageIndex,
-          ...this.getFormConfigurationStatuses()
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
         })
       );
     }
@@ -665,7 +698,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
   }
 
   importQuestions(): void {
@@ -700,5 +733,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       questionIndex,
       this.formConf.counter.value
     );
+  }
+
+  goToPDFBuilderConfiguration = () => {
+    this.dialog.open(PDFBuilderComponent, {
+      data: {
+        moduleName: 'RDF'
+      },
+      hasBackdrop: false,
+      disableClose: true,
+      width: '100vw',
+      minWidth: '100vw',
+      height: '100vh'
+    });
+  };
+
+  openSaveTemplateDialog() {
+    this.dialog.open(SaveTemplateContainerComponent, {
+      data: this.formDetails
+    });
   }
 }

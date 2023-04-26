@@ -8,15 +8,19 @@
     >
       <div class="left">
         <div class="dis-flex">
-          <img
+          <svg-icon
+            icon="icon-six-dots"
             *ngIf="hierarchyMode !== 'asset_hierarchy'"
             cdkDragHandle
-            src="assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
             class="question-six-dots"
-          />
+          ></svg-icon>
           <div class="nodeContent" class="nodeContent">
-            <img [src]="node.image" />
+            <svg-icon
+          [icon]="
+            node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'
+          "
+          class="node-icon"
+        ></svg-icon>
             <div class="description">
               <span class="title">{{ node.name }}</span>
               <span class="subTitle">
@@ -137,6 +141,8 @@
   [cdkDropListConnectedTo]="dropTargetIds"
   (cdkDropListDropped)="drop($event)"
   [cdkDropListSortingDisabled]="true"
+  class="routePlanContainer"
+  cdkScrollable
 >
   <div
     *ngFor="let node of hierarchy"

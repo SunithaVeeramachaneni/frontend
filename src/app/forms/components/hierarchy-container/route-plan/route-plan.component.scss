@@ -114,7 +114,7 @@
 .white {
   color: $white;
   &:hover {
-    color: $black;
+    color: $white;
   }
 }
 .displayInlineBlock {
@@ -127,11 +127,19 @@
   background: $active-blue;
   color: $white;
 }
+
+.active:hover{
+  background-color: $hierarchy-active;
+  color:$white;
+}
+
 .question-six-dots {
+  height: 15px;
+  width: 15px;
   position: relative;
-  width: 10px;
+  top: 6px;
   cursor: move;
-  margin-right: 10px;
+  right: 2px;
 }
 
 .noMarginLeft {
@@ -157,4 +165,15 @@
 .nodeCountInvert {
   background: $white;
   color: $active-blue;
+}
+.routePlanContainer {
+  height: 65vh;
+  overflow: auto;
+}
+
+.node-icon{
+  height: 24px;
+  width: 24px;
+  position: relative;
+  top: 2px;
 }

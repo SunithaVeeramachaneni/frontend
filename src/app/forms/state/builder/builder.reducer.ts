@@ -1,5 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
@@ -53,7 +57,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     BuilderConfigurationActions.addFormMetadata,
     (state, action): FormConfigurationState => ({
       ...state,
-      formMetadata: { ...action.formMetadata },
+      formMetadata: {
+        ...action.formMetadata,
+        pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG
+      },
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
     })
@@ -146,6 +153,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         formSaveStatus: action.formSaveStatus
       };
     }
+  ),
+  on(
+    BuilderConfigurationActions.updatePDFBuilderConfiguration,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formMetadata: {
+        ...state.formMetadata,
+        pdfTemplateConfiguration: action.pdfBuilderConfiguration
+      }
+    })
   ),
   on(
     BuilderConfigurationActions.updateIsFormDetailPublished,
@@ -255,8 +272,11 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     BuilderConfigurationActions.updatePage,
     (state, action): FormConfigurationState => {
-      const key = `pages_${action.subFormId}`;
-      const pageToBeUpdated = state[key];
+      let key = 'pages';
+      if (action.subFormId) {
+        key = `${key}_${action.subFormId}`;
+      }
+      const pageToBeUpdated = state[key] || [];
       const idx = pageToBeUpdated.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
@@ -1054,5 +1074,22 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       return { ...state, [key]: [] };
     }
+  ),
+  on(
+    BuilderConfigurationActions.publishTemplate,
+    (state, _): FormConfigurationState => ({
+      ...state,
+      formStatus: formConfigurationStatus.ready,
+      formDetailPublishStatus: formConfigurationStatus.ready,
+      isFormDetailPublished: false
+    })
+  ),
+  on(
+    BuilderConfigurationActions.replacePagesAndCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: action.pages,
+      counter: action.counter
+    })
   )
 );

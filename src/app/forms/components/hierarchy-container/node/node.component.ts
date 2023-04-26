@@ -33,8 +33,6 @@ export class NodeComponent implements OnInit {
   @Output() nodeRemoved: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
-
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   selectedNode: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
@@ -66,11 +64,13 @@ export class NodeComponent implements OnInit {
       this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
         count = c;
       });
+      setTimeout(() => this.cdrf.detectChanges(), 0);
       return count;
     } else {
       this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
         count = c;
       });
+      setTimeout(() => this.cdrf.detectChanges(), 0);
       return count;
     }
   }

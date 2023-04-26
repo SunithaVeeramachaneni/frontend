@@ -36,8 +36,13 @@ import {
   BuilderConfigurationActions,
   RoundPlanConfigurationActions
 } from 'src/app/forms/state/actions';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { AbstractControl, ValidatorFn } from '@angular/forms';
@@ -64,6 +69,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   allTags: string[] = [];
   originalTags: string[] = [];
+
+  allPlantsData = [];
+
   name: string;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -86,6 +94,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
+    private plantService: PlantService,
+    private cdrf: ChangeDetectorRef
     private cdrf: ChangeDetectorRef,
     public dialog: MatDialog,
     private toast: ToastService,
@@ -106,6 +116,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
+  }
+
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items || [];
+    });
   }
 
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
@@ -134,7 +150,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100)
+          Validators.maxLength(100),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       description: [''],
@@ -142,6 +160,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
+      tags: [this.tags],
+      plantId: ['', Validators.required]
       tags: [this.tags],
       value: [''],
       notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
@@ -153,6 +173,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.options.push(plant.name);
       });
     });
+    this.getAllPlantsData();
   }
 
   add(event: MatChipInputEvent): void {
@@ -215,12 +236,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       // });
     }
 
+    const plant = this.allPlantsData.find(
+      (p) => p.id === this.headerDataForm.get('plantId').value
+    );
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
             ...this.headerDataForm.value,
+            plant: plant.name,
             moduleName: 'rdf'
           },
           formDetailPublishStatus: formConfigurationStatus.draft,
@@ -236,6 +262,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
+            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
             formLogo: 'assets/img/svg/rounds-icon.svg'
           }

@@ -70,6 +70,29 @@ export class ArchivedListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'isArchivedAt',
       displayName: 'Archived',
       type: 'timeAgo',
@@ -141,8 +164,6 @@ export class ArchivedListComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   archivedFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'out';
@@ -155,6 +176,15 @@ export class ArchivedListComponent implements OnInit {
       form: {} as any
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    plant: ''
+  };
+  plants = [];
+  plantsIdNameMap = {};
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
@@ -177,6 +207,8 @@ export class ArchivedListComponent implements OnInit {
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
+    this.getFilters();
+    this.getAllArchivedForms();
   }
 
   getDisplayedForms(): void {
@@ -258,23 +290,37 @@ export class ArchivedListComponent implements OnInit {
     return this.raceDynamicFormService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
-        true
+        true,
+        this.filter
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ rows, next }) => {
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: item.plant
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
@@ -310,6 +356,61 @@ export class ArchivedListComponent implements OnInit {
       default:
     }
   };
+
+  getFilters() {
+    this.raceDynamicFormService.getArchivedFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  getAllArchivedForms() {
+    this.raceDynamicFormService
+      .fetchAllArchivedForms$()
+      .pipe(
+        tap((formsList) => {
+          const objectKeys = Object.keys(formsList);
+          if (objectKeys.length > 0) {
+            const uniquePlants = formsList.rows
+              .map((item) => {
+                if (item.plantId) {
+                  this.plantsIdNameMap[item.plant] = item.plantId;
+                  return item.plant;
+                }
+                return '';
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.plants = [...uniquePlants];
+
+            for (const item of this.filterJson) {
+              if (item.column === 'plant') {
+                item.items = this.plants;
+              }
+            }
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  applyFilter(data: any) {
+    for (const item of data) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.filter = {
+      plant: ''
+    };
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
 
   private onRestoreForm(form: any): void {
     this.raceDynamicFormService

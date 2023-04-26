@@ -56,8 +56,7 @@ export class RoundPlanConfigurationEffects {
           map(() =>
             RoundPlanConfigurationApiActions.updateRoundPlanSuccess({
               formMetadata: {
-                ...action.formMetadata,
-                hierarchy: JSON.parse(action.formMetadata.hierarchy)
+                ...action.formMetadata
               },
               formSaveStatus: formConfigurationStatus.saved
             })
@@ -95,7 +94,8 @@ export class RoundPlanConfigurationEffects {
                   pages: JSON.stringify(authoredFormDetail.pages),
                   subForms, // Handle subforms form round-plan config,
                   hierarchy
-                }
+                },
+                isEdit: this.operatorRoundsService.isEdit
               })
               .pipe(
                 map((createAuthoredFormDetail) =>

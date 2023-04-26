@@ -1,23 +1,15 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="plantForm">
-    <div>
-      <img
-        (click)="cancel()"
-        src="assets/rdf-forms-icons/close.svg"
-        alt="close"
-        class="cancel"
-      />
+    <div class="top-bar">
+      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
       <h1 class="heading">{{ plantTitle }}</h1>
     </div>
-    <div>
-      <p class="m-0" translate="image"></p>
-      <p>
-        <img
-          src="assets/master-configurations/image-placeholder.svg"
-          alt="Image Placeholder"
-          class="image"
-          *ngIf="!plantImage?.length"
-        />
+    <div class="container-div">
+      <p class="image-container">
+        <span *ngIf="!plantImage?.length">
+          <svg-icon icon="icon-default-plant" class="image-contain"></svg-icon>
+        </span>
+
         <img
           [src]="plantImage"
           alt="Image"
@@ -145,22 +137,24 @@
           />
         </mat-form-field>
       </span>
-      <button
-        mat-raised-button
-        class="create-btn"
-        type="submit"
-        [disabled]="plantForm.invalid"
-        (click)="create()"
-      >
-        {{ plantButton }}
-      </button>
-      <button
-        mat-stroked-button
-        class="cancel-btn"
-        type="button"
-        (click)="cancel()"
-        translate="cancelBtn"
-      ></button>
     </div>
   </mat-card>
+  <div class="actions-footer">
+    <button
+      mat-stroked-button
+      class="cancel-btn"
+      type="button"
+      (click)="cancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      mat-raised-button
+      class="create-btn"
+      type="submit"
+      [disabled]="plantForm.invalid"
+      (click)="create()"
+    >
+      {{ plantButton }}
+    </button>
+  </div>
 </div>

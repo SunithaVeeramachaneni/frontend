@@ -9,12 +9,7 @@ import {
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, mergeMap, take, tap } from 'rxjs/operators';
-import {
-  defaultLanguage,
-  routingUrls,
-  bigInnovaIcon,
-  smallInnovaIcon
-} from './app.constants';
+import { defaultLanguage, routingUrls } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
@@ -36,16 +31,19 @@ import { SseService } from './shared/services/sse.service';
 
 const {
   dashboard,
+  myDashboard,
   reports,
   spareParts,
   maintenance,
   workInstructions,
+  workInstructionsHome,
   drafts,
   favorites,
   recents,
   published,
   files,
   userManagement,
+  activeUsers,
   rolesPermissions,
   inActiveTenants,
   inActiveUsers,
@@ -53,6 +51,7 @@ const {
   raceDynamicForms,
   submissionForms,
   myForms,
+  formsTemplates,
   archivedForms,
   schedularForms,
   operatorRoundPlans,
@@ -74,8 +73,6 @@ const {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
-  bigInnovaIcon = bigInnovaIcon;
-  smallInnovaIcon = smallInnovaIcon;
   menus = [
     {
       title: dashboard.title,
@@ -84,6 +81,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: dashboard.permission,
       subPages: [
+        {
+          title: myDashboard.title,
+          url: myDashboard.url,
+          permission: dashboard.permission
+        },
         {
           title: reports.title,
           url: reports.url,
@@ -108,6 +110,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: userManagement.permission,
       subPages: [
+        {
+          title: activeUsers.title,
+          url: activeUsers.url,
+          permission: activeUsers.permission
+        },
         {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
@@ -151,6 +158,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: myForms.title,
           url: myForms.url,
           permission: myForms.permission
+        },
+        {
+          title: formsTemplates.title,
+          url: formsTemplates.url,
+          permission: formsTemplates.permission
+        },
+        {
+          title: submissionForms.title,
+          url: submissionForms.url,
+          permission: submissionForms.permission
         },
         {
           title: archivedForms.title,
@@ -201,6 +218,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       showSubMenu: false,
       permission: workInstructions.permission,
       subPages: [
+        {
+          title: workInstructionsHome.title,
+          url: workInstructionsHome.url,
+          permission: workInstructionsHome.permission
+        },
         {
           title: favorites.title,
           url: favorites.url,
@@ -570,9 +592,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/sidebar-icons/${imageName}-white.svg`
-      : `assets/sidebar-icons/${imageName}-gray.svg`;
+    active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
+ 
 
   selectedListElement(title) {
     this.menuOpenClose = false;

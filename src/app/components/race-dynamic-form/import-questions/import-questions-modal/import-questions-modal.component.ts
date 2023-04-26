@@ -93,7 +93,6 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
       })
     );
- 
 
     const initial = {
       columns: [],
@@ -116,14 +115,14 @@ export class ImportQuestionsModalComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getFormsList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ count, rows, next }) => {
+          this.nextToken = next;
           return of(rows);
         })
       );

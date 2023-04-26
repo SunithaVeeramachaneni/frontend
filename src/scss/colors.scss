@@ -22,9 +22,11 @@ $blue4: #eff6ff;
 $active-blue: #37428b;
 $blue5: #1e40af;
 $blue6: #60a5fa;
-$blue7: rgba(61, 90, 254, 0.15);
+$blue7: #3d5afe26;
 $blue8: #eef1fd;
+$blue9: #d2d9ff;
 $white1: #f5f5f5;
+$white2: #f8f8f8;
 $border-color-gray: #e5e5e5;
 $gray: #eeeeee;
 $gray1: #9e9e9e;
@@ -36,8 +38,10 @@ $gray6: #d1dae1;
 $gray7: #888888;
 $gray8: #d3d3d3;
 $gray9: #e5e7eb;
-$gray10: rgba(217, 217, 217, 0.4);
+$gray10: #d9d9d966;
 $gray11: #25282b;
+$gray12: #3b3b3b;
+$gray13: #a8a8a8;
 $gray-shadow: #111;
 $gray-bg: #212121;
 $gray1-bg: #e7ecef;
@@ -59,11 +63,9 @@ $text-color: #212121;
 $orange-text: #e8743b;
 $lavendar: #dbe6ff;
 $delete-response-icon-grey: #545f70;
-
 $warning-bg: #fff59e;
 $alert-bg: #f44336;
 $note-bg: #ececec;
-
 $in-progress-bg: #fef3c7;
 $in-progress-color: #92400e;
 $in-progress-light: #edf7ed;
@@ -71,17 +73,39 @@ $light-orange: #feeceb;
 $submitted-bg: #d1fae5;
 $submitted-color: #065f46;
 $submitted-bg-light: #edf7ed;
-
 $footer-bg-color: #e4e8ff;
-
 $drag-preview-shadow: #00000033;
 $drag-preview-shadow1: #00000024;
 $drag-preview-shadow2: #0000001f;
 $yellow: #ffff00;
 $grey: #808080;
-
 $show-hierarchy-shadow: #00000059;
 $menu-icon-color: #727caf;
+$border-color-vi: #cccccc;
+$photos-bg: #feffe0;
+$image-border: #23282f33;
+$table-head-bg: #3f3a3a;
+$box-shadow: #00000026;
+$box-shadow1: #ccccccc5;
+$issue-bg: #ff3b30;
+$issue-bg-text: #aa2e25;
+$issue-background: #ffd8d6;
+
+$issue-border: #23282f26;
+$action-bg: #5856d6;
+$white4: #eef4f9;
 
 $radio-button-checked: #3d5afe;
 $radio-button-unchecked: #d1d5db;
+
+$asset-nav-preview-bg: #c3cefc;
+
+$danger-text: #991b1b;
+$danger-bg: #fee2e2;
+$caution-text: #92400e;
+$caution-bg: #fef3c7;
+$warning-text: #e31b0c;
+$warning-bg: #fff8ed;
+$pdf-view-bg: #4946462b;
+$node-highlight: #feffdf;
+$hierarchy-active: #4859c7;

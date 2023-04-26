@@ -31,6 +31,9 @@
             *ngFor="let option of filteredOptions$ | async"
             [value]="option"
             class="searchResultOption"
+            [ngClass]="{
+              'node-style': option === 'No Data'
+            }"
           >
             <div class="nodeContent">
               <img [src]="option.image" />
@@ -51,14 +54,13 @@
           </mat-option>
         </mat-optgroup>
       </mat-autocomplete>
-      <img
-        [src]="closeIcon"
+      <svg-icon
+        icon="icon-closeIcon"
         matSuffix
-        alt="close"
         *ngIf="searchMasterData.value.length"
         class="closeIcon"
         (click)="clearSearchResults()"
-      />
+      ></svg-icon>
     </mat-form-field>
   </span>
 
@@ -70,6 +72,7 @@
           [selectedList]="selectedHierarchyList"
           (checkboxToggleHandler)="handleHierarchyElementChange($event)"
           [mode]="'selectAssets'"
+          [searchedUid]="searchedNode"
         ></app-hierarchy-node>
       </div>
     </div>

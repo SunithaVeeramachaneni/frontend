@@ -120,6 +120,8 @@ export class QuestionComponent implements OnInit {
     return this._subFormId;
   }
 
+  @Input() isPreviewActive;
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -215,7 +217,7 @@ export class QuestionComponent implements OnInit {
 
     this.unitServiceOfMeasurement
       .getUnitOfMeasurementList$({
-        nextToken: '',
+        next: '',
         limit: 10000,
         searchKey: '',
         fetchType: 'load'
@@ -352,7 +354,7 @@ export class QuestionComponent implements OnInit {
   }
 
   uomChanged(event) {
-    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+    this.questionForm.get('unitOfMeasurement').setValue(event.symbol);
     this.unitMenuTrigger.closeMenu();
   }
 

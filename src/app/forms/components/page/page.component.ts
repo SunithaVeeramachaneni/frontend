@@ -26,7 +26,6 @@ import {
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { PageEvent, Page } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
-// import { FormConfigurationActions } from '../../state/actions';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -48,8 +47,7 @@ export class PageComponent implements OnInit {
 
   pageForm: FormGroup = this.fb.group({
     name: {
-      value: '',
-      disabled: true
+      value: ''
     },
     position: '',
     isOpen: true

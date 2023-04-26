@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { map, catchError, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
@@ -15,7 +15,8 @@ import {
   CreateResponseSet,
   UpdateResponseSet,
   DeleteResponseSet,
-  UserDetails
+  UserDetails,
+  ErrorInfo
 } from '../../../../interfaces';
 
 @Injectable({
@@ -35,6 +36,18 @@ export class ResponseSetService {
 
   constructor(private _appService: AppService) {}
 
+  uploadExcel(
+    form: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService._postData(
+      environment.masterConfigApiUrl,
+      'response-set/upload',
+      form,
+      info
+    );
+  }
+
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
@@ -47,7 +60,7 @@ export class ResponseSetService {
   };
 
   fetchResponseSetList$ = (queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: number;
     searchKey?: string;
     fetchType: string;
@@ -55,17 +68,13 @@ export class ResponseSetService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
-      }
+      params.set('limit', `${queryParams.limit}`);
+
+      params.set('next', queryParams.next);
       if (queryParams.searchKey) {
         const filter = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
@@ -129,6 +138,29 @@ export class ResponseSetService {
     }, {});
   }
 
+  downloadSampleResponseSetTemplate(
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    console.log('service');
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/sample-template',
+      info,
+      true,
+      {}
+    );
+  }
+  getResponseSetCount$(): Observable<number> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', this.maxLimit);
+    return this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'response-set/list?' + params.toString()
+      )
+      .pipe(map((res) => res.items.length || 0));
+  }
+
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
   }
@@ -158,12 +190,25 @@ export class ResponseSetService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      nextToken
+      next
     };
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/failure',
+      info,
+      false,
+      body
+    );
   }
 }

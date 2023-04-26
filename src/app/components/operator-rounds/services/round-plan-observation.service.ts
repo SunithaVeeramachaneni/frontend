@@ -1,19 +1,29 @@
 /* eslint-disable no-underscore-dangle */
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { format } from 'date-fns';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ErrorInfo, IssueOrAction } from 'src/app/interfaces';
 
 import { AppService } from 'src/app/shared/services/app.services';
+import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
+
+const placeHolder = '_ _';
+const dataPlaceHolder = '--';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoundPlanObservationsService {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private sseService: SseService,
+    private zone: NgZone
+  ) {}
 
   getObservations$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: any;
     searchKey: string;
     type: string;
@@ -21,14 +31,16 @@ export class RoundPlanObservationsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('type', queryParams?.type);
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
         'round-observations?' + params.toString()
       )
-      .pipe(map((res) => this.formateGetObservationResponse(res)));
+      .pipe(
+        map((res) => this.formateGetObservationResponse(res, queryParams.type))
+      );
   }
 
   getObservationChartCounts$(): any {
@@ -38,23 +50,80 @@ export class RoundPlanObservationsService {
     );
   }
 
-  private formateGetObservationResponse(resp) {
+  updateIssueOrAction$ = (
+    issueOrActionId: string,
+    issueOrAction: IssueOrAction,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<IssueOrAction> =>
+    this.appService
+      .patchData(
+        environment.operatorRoundsApiUrl,
+        `${urlString}/${issueOrActionId}`,
+        issueOrAction,
+        info
+      )
+      .pipe(map((response) => (response === null ? issueOrAction : response)));
+
+  getIssueOrActionLogHistory$(
+    issueOrActionId: string,
+    type: string,
+    queryParams: {
+      limit?: number;
+      next?: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<History[]> {
+    return this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `${type}/${issueOrActionId}/log-history`,
+      info,
+      queryParams
+    );
+  }
+
+  onCreateIssueOrActionLogHistoryEventSource(
+    urlString: string
+  ): Observable<History> {
+    return new Observable((observer) => {
+      const eventSource = this.sseService.getEventSourceWithGet(
+        `${environment.operatorRoundsApiUrl}${urlString}`,
+        null
+      );
+      eventSource.stream();
+      eventSource.onmessage = (event) => {
+        this.zone.run(() => {
+          observer.next(JSON.parse(event.data));
+        });
+      };
+      eventSource.onerror = (event) => {
+        this.zone.run(() => {
+          if (event.data) {
+            observer.error(JSON.parse(event.data));
+          }
+        });
+      };
+    });
+  }
+
+  closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
+    this.sseService.closeEventSource();
+  }
+
+  private formateGetObservationResponse(resp, type) {
     const items = resp?.items?.sort(
       (a, b) =>
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
     );
-    const rows = items?.map((item: any) => {
-      const obj = { ...item };
-      obj.dueDate =
-        obj['Due Date and Time'] &&
-        obj['Due Date and Time'] instanceof Date &&
-        !isNaN(obj['Due Date and Time'] as any)
-          ? format(new Date(obj['Due Date and Time']), 'dd MMM, yyyy')
-          : obj['Due Date and Time'].slice(0, 12);
+    const rows = items.map((item) => {
+      const location =
+        item.SWERK?.replace(dataPlaceHolder, placeHolder) || placeHolder;
+      const asset =
+        item.ANLNR?.replace(dataPlaceHolder, placeHolder) || placeHolder;
       return {
-        ...obj,
+        ...item,
         preTextImage: {
-          image: '/assets/maintenance-icons/Issue icon.svg',
+          image: '/assets/maintenance-icons/issue-icon.svg',
           style: {
             width: '40px',
             height: '40px',
@@ -62,25 +131,35 @@ export class RoundPlanObservationsService {
           },
           condition: true
         },
-        title: obj?.Title || '',
-        description: obj?.Description || '',
-        locationAsset: obj?.taskDesciption || '',
-        locationAssetDescription: obj?.Location
-          ? `Location ID: ${obj?.Location || ''}`
-          : obj?.Asset
-          ? `Asset ID: ${obj?.Asset || ''}`
+        dueDate: item?.DUEDATE
+          ? format(new Date(item?.DUEDATE), 'dd MMM, yyyy')
           : '',
-        priority: obj?.Priority || '',
-        status: obj?.Status || '',
-        assignee: obj['Assign to'] || '',
-        createdBy: obj?.createdBy || '',
-        notificationNumber: obj?.notificationNumber || '',
-        plant: obj?.Plant || ''
+        title: item.TITLE,
+        description: item.DESCRIPTION,
+        location,
+        asset,
+        locationAsset: location !== placeHolder ? location : asset,
+        locationAssetDescription:
+          location !== placeHolder
+            ? `Location ID: ${item.SWERK}`
+            : asset !== placeHolder
+            ? `Asset ID: ${item.ANLNR}`
+            : '',
+        priority: item.PRIORITY,
+        status: item.STATUS,
+        plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
+        category: item.CATEGORY || placeHolder,
+        task: item.TASK || placeHolder,
+        round: item.ROUND || placeHolder,
+        raisedBy: item.createdBy,
+        notificationNumber: item.notificationNumber || placeHolder,
+        issueOrActionDBVersion: item._version,
+        type
       };
     });
     return {
       rows,
-      nextToken: resp?.nextToken,
+      next: resp?.next,
       count: resp?.count
     };
   }

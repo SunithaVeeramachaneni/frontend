@@ -49,7 +49,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultLimit,
+  graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -63,7 +63,6 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
-
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -74,6 +73,14 @@ import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule
 export class FormsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  filter = {
+    plant: '',
+    schedule: '',
+    assignedTo: '',
+    scheduledAt: ''
+  };
+  assignedTo: string[] = [];
+  schedules: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -105,11 +112,33 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'questions',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -132,7 +161,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -154,7 +183,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
-      order: 6,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -176,7 +205,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -198,7 +227,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Start - Ends',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -250,7 +279,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLDefaultMaxLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
@@ -280,6 +309,10 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
+
+  plants = [];
+  plantsIdNameMap = {};
+
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -366,6 +399,11 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
+          );
+        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -392,6 +430,36 @@ export class FormsComponent implements OnInit, OnDestroy {
         } else {
           filteredForms = forms.data;
         }
+
+        const uniqueAssignTo = filteredForms
+          ?.map((item) => item?.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        const uniqueSchedules = filteredForms
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item && !this.schedules.includes(item)) {
+              this.schedules.push(item);
+            }
+          });
+        }
+
+        for (const item of uniqueAssignTo) {
+          if (item && !this.assignedTo.includes(item)) {
+            this.assignedTo.push(item);
+          }
+        }
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
+        }
         this.dataSource = new MatTableDataSource(filteredForms);
         return { ...forms, data: filteredForms };
       })
@@ -409,30 +477,35 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
+    this.getAllForms();
+    this.getFilter();
   }
 
   getFormsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       formId: this.formId
     };
 
-    return this.raceDynamicFormService.getFormQuestionsFormsList$(obj).pipe(
-      tap(({ scheduledCount, unscheduledCount, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
-        const { scheduled, unscheduled } = this.formsCount;
-        this.formsCount = {
-          ...this.formsCount,
-          scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
-          unscheduled:
-            unscheduledCount !== undefined ? unscheduledCount : unscheduled
-        };
-        this.isLoading$.next(false);
-      })
-    );
+    return this.raceDynamicFormService
+      .getFormQuestionsFormsList$(obj, this.filter)
+      .pipe(
+        tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.nextToken = next !== undefined ? next : null;
+          const { scheduled, unscheduled } = this.formsCount;
+          this.formsCount = {
+            ...this.formsCount,
+            scheduled:
+              scheduledCount !== undefined ? scheduledCount : scheduled,
+            unscheduled:
+              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+          };
+          this.isLoading$.next(false);
+        })
+      );
   }
 
   handleTableEvent = (event): void => {
@@ -666,14 +739,12 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
-          rounds: form.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
         };
       }
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        rounds: this.placeHolder,
         operator: this.placeHolder
       };
     });
@@ -729,11 +800,68 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
-  applyFilters(data: any): void {
-    this.isPopoverOpen = false;
+  getAllForms() {
+    this.raceDynamicFormService
+      .fetchAllSchedulerForms$()
+      .subscribe((formsList) => {
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniquePlants = formsList.rows
+            .map((item) => {
+              if (item.plantId) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = this.plants;
+            }
+          }
+        }
+      });
   }
 
-  resetFilter(): void {
+  applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        this.filter[item.column] = this.plantsIdNameMap[item.value];
+      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else {
+        this.filter[item.column] = item.value;
+      }
+    }
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.scheduledAt &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchForms$.next({ data: 'load' });
+    }
+  }
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      plant: '',
+      schedule: '',
+      assignedTo: '',
+      scheduledAt: ''
+    };
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
 }

@@ -3,7 +3,7 @@ import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
 import { FormConfigurationState } from '../form-configuration.reducer';
 
 export const createForm = createAction(
-  '[Form Configuration Modal Component] createFrom',
+  '[Form Configuration Modal Component] createForm',
   props<{ formMetadata: FormMetadata }>()
 );
 
@@ -27,6 +27,7 @@ export const updateFormMetadata = createAction(
     formMetadata: FormMetadata;
     formStatus: string;
     formDetailPublishStatus: string;
+    formListDynamoDBVersion: number;
     formSaveStatus: string;
   }>()
 );
@@ -35,6 +36,7 @@ export const createFormDetail = createAction(
   '[Form Configuration] createFormDetail',
   props<{
     formMetadata: FormMetadata;
+    pdfBuilderConfiguration: any;
     pages: Page[];
     formListId: string;
     authoredFormDetail: any;
@@ -47,6 +49,7 @@ export const updateFormDetail = createAction(
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
+    pdfBuilderConfiguration: any;
     formListId: string;
     formDetailId: string;
     authoredFormDetail: any;
@@ -74,6 +77,7 @@ export const updateAuthoredFormDetail = createAction(
     formDetailPublishStatus: string;
     counter: number;
     pages: Page[];
+    pdfBuilderConfiguration: any;
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailVersion: number;

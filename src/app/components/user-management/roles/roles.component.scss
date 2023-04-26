@@ -37,6 +37,8 @@
 }
 
 .roles-text {
+  position: relative;
+  left: -6px;
   font-weight: 500;
   font-size: 110%;
   color: #9e9e9e;
@@ -118,6 +120,10 @@
 .super-admin-icon {
   position: relative;
   top: 2px;
+  ::ng-deep svg {
+    height: 15px !important;
+    width: 20px !important;
+  }
 }
 
 .more-items {

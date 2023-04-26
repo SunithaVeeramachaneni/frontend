@@ -66,6 +66,7 @@ import {
   ScheduleConfigEvent
 } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-plans',
@@ -85,6 +86,14 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   filterJson = [];
+  filter = {
+    plant: '',
+    schedule: '',
+    assignedTo: '',
+    scheduledAt: ''
+  };
+  assignedTo: string[] = [];
+  schedules: string[] = [];
   assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
@@ -117,11 +126,33 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'locations',
       displayName: 'Location',
       type: 'number',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -143,7 +174,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assets',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -165,7 +196,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Tasks',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -188,7 +219,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -210,7 +241,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Rounds Generated',
       type: 'number',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -232,7 +263,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -254,7 +285,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Start - Ends',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -332,6 +363,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   planCategory: FormControl;
   roundPlanId: string;
+  plants = [];
+  plantsIdNameMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -344,6 +377,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
+    private userService: UsersService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -418,6 +452,11 @@ export class PlansComponent implements OnInit, OnDestroy {
             )
           );
         }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
+          );
+        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -444,6 +483,38 @@ export class PlansComponent implements OnInit, OnDestroy {
         } else {
           filteredRoundPlans = roundPlans.data;
         }
+        const uniqueAssignTo = filteredRoundPlans
+          ?.map((item) => item?.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        const uniqueSchedules = filteredRoundPlans
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item && !this.schedules.includes(item)) {
+              this.schedules.push(item);
+            }
+          });
+        }
+
+        if (uniqueAssignTo?.length > 0) {
+          uniqueAssignTo?.filter(Boolean).forEach((item) => {
+            if (item && !this.assignedTo.includes(item) && item !== '_ _') {
+              this.assignedTo.push(item);
+            }
+          });
+        }
+
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
+        }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
         return { ...roundPlans, data: filteredRoundPlans };
       })
@@ -461,20 +532,22 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
+
+    this.getAllRoundPlans();
   }
 
   getRoundPlanList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj).pipe(
-      tap(({ scheduledCount, unscheduledCount, nextToken }) => {
-        this.nextToken = nextToken !== undefined ? nextToken : null;
+    return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
+      tap(({ scheduledCount, unscheduledCount, next }) => {
+        this.nextToken = next !== undefined ? next : null;
         const { scheduled, unscheduled } = this.roundPlanCounts;
         this.roundPlanCounts = {
           ...this.roundPlanCounts,
@@ -484,6 +557,30 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
       })
     );
+  }
+
+  getAllRoundPlans() {
+    this.operatorRoundsService.fetchAllPlansList$().subscribe((plansList) => {
+      const objectKeys = Object.keys(plansList);
+
+      if (objectKeys.length > 0) {
+        const uniquePlants = plansList.rows
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        this.plants = [...uniquePlants];
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
+      }
+    });
   }
 
   handleTableEvent = (event): void => {
@@ -779,9 +876,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {
     const { assignmentDetails: { value } = {} } =
       roundPlanScheduleConfiguration;
-    return value
-      ? this.operatorRoundsService.getUserFullName(value)
-      : this.placeHolder;
+    return value ? this.userService.getUserFullName(value) : this.placeHolder;
   }
 
   getFilter() {
@@ -792,9 +887,40 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId;
+      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.scheduledAt &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchPlans$.next({ data: 'load' });
+    }
   }
 
   resetFilter(): void {
     this.isPopoverOpen = false;
+    this.filter = {
+      plant: '',
+      schedule: '',
+      assignedTo: '',
+      scheduledAt: ''
+    };
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 }

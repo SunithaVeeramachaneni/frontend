@@ -1,31 +1,24 @@
-<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="template-list">
   <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
     <div class="dis-flex container-padding">
-      <button class="widgets" (click)="openFormCreationModal()">
-        <img
-          src="assets/rdf-forms-icons/add-form.svg"
-          alt="Create"
-          width="22"
-          height="22"
-        />
+      <button class="widgets" [matMenuTriggerFor]="menu">
+        <svg-icon icon="icon-add-form" class="add-form-icon"></svg-icon>
         <span class="widgets-title" translate="createForm"></span>
       </button>
+      <mat-menu #menu="matMenu" backdropClass="template-list">
+        <button mat-menu-item (click)="openCreateFromTemplateModal()">
+          {{ 'createFromTemplate' | translate }}
+        </button>
+        <button mat-menu-item (click)="openFormCreationModal(null)">
+          {{ 'createNew' | translate }}
+        </button>
+      </mat-menu>
       <button class="widgets" [disabled]="true">
-        <img
-          src="assets/rdf-forms-icons/import-excel.svg"
-          alt="Import"
-          width="25"
-          height="25"
-        />
+        <svg-icon icon="icon-import-excel" class="import-excel-icon"></svg-icon>
         <span class="widgets-title" translate="importForm"></span>
       </button>
       <button class="widgets" [disabled]="true">
-        <img
-          src="assets/rdf-forms-icons/export-excel.svg"
-          alt="Export"
-          width="25"
-          height="25"
-        />
+        <svg-icon icon="icon-export-excel" class="import-excel-icon"></svg-icon>
         <span class="widgets-title" translate="exportExcel"></span>
       </button>
     </div>

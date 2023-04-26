@@ -16,6 +16,10 @@
     }
   }
 
+  .common-filter-icon {
+    cursor: pointer;
+  }
+
   ::ng-deep .form-categories .mat-button-toggle {
     margin-right: 10px;
     border-radius: 30px;
@@ -70,4 +74,9 @@
 
 .padding-lr-20 {
   padding: 0 20px;
+}
+
+.filter-icon {
+  height: 17px !important;
+  width: 17px !important;
 }

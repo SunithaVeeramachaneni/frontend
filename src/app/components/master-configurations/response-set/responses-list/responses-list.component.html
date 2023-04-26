@@ -16,12 +16,11 @@
                 autocomplete="off"
                 [formControl]="searchResponseSet"
               />
-              <img
-                [src]="filterIcon"
-                matSuffix
-                alt="Open Filter"
+              <svg-icon
+                icon="icon-filterIcon"
                 class="filter-icon"
-              />
+                matSuffix
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -32,34 +31,54 @@
             class="create-new-btn"
           ></button>
           <mat-menu #createMenu="matMenu">
+            <button
+              mat-menu-item
+              (click)="uploader.click()"
+              class="menu-buttons"
+              *appCheckUserHasPermission="[perms.importLocations]"
+            >
+              <svg-icon
+                icon="icon-excel1"
+                class="menu-icons"
+              ></svg-icon>
+              <span translate="uploadExcel"></span>
+            </button>
             <button mat-menu-item class="menu-buttons" (click)="addManually()">
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>
 
-          <!-- <button
+          <button
             mat-raised-button
             [matMenuTriggerFor]="moreMenu"
             class="more-btn"
-            *appCheckUserHasPermission="[perms.importGlobalResponses]"
+            *appCheckUserHasPermission="[perms.importLocations]"
           >
             <mat-icon>more_horiz</mat-icon>
           </button>
-          <mat-menu #moreMenu="matMenu" mat-menu-item class="menu-buttons">
-            <button disabled>
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
+          <mat-menu #moreMenu="matMenu">
+            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
+              <svg-icon
+                icon="icon-upload-from-excel"
                 class="menu-icons"
-              />
+              ></svg-icon>
               <span translate="downloadTemplate"></span>
             </button>
-          </mat-menu> -->
+          </mat-menu>
+
+          <input
+            id="upload"
+            hidden
+            type="file"
+            #uploader
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            (change)="uploadFile($event)"
+            (click)="resetFile($event)"
+          />
         </div>
       </div>
 

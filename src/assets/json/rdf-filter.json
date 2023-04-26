@@ -10,13 +10,20 @@
     "label": "Modified By",
     "items": [],
     "column": "modifiedBy",
-    "type": "select",
+    "type": "multiple",
     "value": ""
   },
   {
-    "label": "Authored By",
+    "label": "Created By",
     "items": [],
-    "column": "authoredBy",
+    "column": "createdBy",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
     "type": "select",
     "value": ""
   }

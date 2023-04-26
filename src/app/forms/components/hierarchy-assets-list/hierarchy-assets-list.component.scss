@@ -110,9 +110,17 @@
   position: relative;
   top: -2px;
   cursor: pointer;
+  height: 15px;
+  width: 15px;
 }
 
 img {
   max-width: 40px;
   max-height: 40px;
+}
+
+.node-style {
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }

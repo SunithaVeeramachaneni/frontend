@@ -45,7 +45,9 @@ import {
   SelectTab,
   RowLevelActionEvent,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  ErrorInfo,
+  SelectedAssignee
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -59,8 +61,11 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-rounds',
@@ -70,6 +75,7 @@ import { ToastService } from 'src/app/shared/toast';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -82,12 +88,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
-    status: '',
+    schedule: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
+  assignedTo: string[] = [];
+  schedules: string[] = [];
   columns: Column[] = [
     {
       id: 'name',
@@ -119,11 +127,33 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'locationAssetsCompleted',
       displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -146,7 +176,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -173,7 +203,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -195,7 +225,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -217,7 +247,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -260,7 +290,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -336,10 +366,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   assigneePosition: any;
   initial: any;
+  plants = [];
+  plantsIdNameMap = {};
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
-  assignedTo: string[] = [];
   private _users$: Observable<UserDetails[]>;
 
   constructor(
@@ -348,7 +379,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private dialog: MatDialog,
     private toastService: ToastService,
+    private userService: UsersService,
     private cdrf: ChangeDetectorRef
   ) {}
 
@@ -411,19 +444,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),
-            assignedTo: this.operatorRoundsService.getUserFullName(
-              roundDetail.assignedTo
-            )
+            assignedTo: this.userService.getUserFullName(roundDetail.assignedTo)
           }));
         } else {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
               dueDate: new Date(roundDetail.dueDate),
-              assignedTo: this.operatorRoundsService.getUserFullName(
+              assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               )
             }))
+          );
+        }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -447,7 +483,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getRoundsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -457,8 +493,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ count, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           this.roundsCount = count !== undefined ? count : this.roundsCount;
           this.isLoading$.next(false);
         })
@@ -542,26 +578,113 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  roundsDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
+  roundsDetailActionHandler(event) {
+    if (event) {
+      const { type } = event;
+      if (type === 'VIEW_PDF') {
+        this.dialog.open(PDFPreviewComponent, {
+          data: {
+            moduleName: 'OPERATOR_ROUNDS',
+            roundId: this.selectedRound.id,
+            selectedForm: this.selectedRound
+          },
+          hasBackdrop: false,
+          disableClose: true,
+          width: '100vw',
+          minWidth: '100vw',
+          height: '100vh'
+        });
+      } else if (type === 'DOWNLOAD_PDF') {
+        this.downloadPDF(this.selectedRound);
+      }
+    } else {
+      this.store.dispatch(FormConfigurationActions.resetPages());
+      this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
+    }
+  }
+
+  downloadPDF(selectedForm) {
+    const roundPlanId = selectedForm.id;
+    const roundId = selectedForm.roundId;
+
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+
+    this.operatorRoundsService
+      .downloadAttachment$(roundPlanId, roundId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          aElement.setAttribute('download', `${fileName}.pdf`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
+        }
+      );
   }
 
   getAllOperatorRounds() {
     this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueInspectedBy = formsList
-        .map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
-      for (const item of uniqueInspectedBy) {
-        if (item) {
-          this.assignedTo.push(item);
+      const objectKeys = Object.keys(formsList);
+      if (objectKeys.length > 0) {
+        const uniqueAssignTo = formsList
+          ?.map((item) => item.assignedTo)
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        const uniqueSchedules = formsList
+          ?.map((item) => item?.schedule)
+          .filter((value, index, self) => self?.indexOf(value) === index);
+
+        if (uniqueSchedules?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.schedules.push(item);
+            }
+          });
         }
-      }
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        } else if (item['column'] === 'assignedTo') {
-          item.items = this.assignedTo;
+        if (uniqueAssignTo?.length > 0) {
+          uniqueSchedules?.filter(Boolean).forEach((item) => {
+            if (item) {
+              this.assignedTo.push(item);
+            }
+          });
+        }
+
+        const uniquePlants = formsList
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant] = item.plantId;
+              return item.plant;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+        this.plants = [...uniquePlants];
+
+        for (const item of this.filterJson) {
+          if (item.column === 'assignedTo') {
+            item.items = this.assignedTo;
+          } else if (item['column'] === 'plant') {
+            item.items = this.plants;
+          }
+          if (item.column === 'schedule') {
+            item.items = this.schedules;
+          }
         }
       }
     });
@@ -570,33 +693,43 @@ export class RoundsComponent implements OnInit, OnDestroy {
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
-      for (const item of this.filterJson) {
-        if (item['column'] === 'status') {
-          item.items = this.status;
-        }
-      }
     });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId;
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    this.nextToken = '';
-    this.fetchRounds$.next({ data: 'load' });
+    if (
+      !this.filter.assignedTo &&
+      !this.filter.dueDate &&
+      this.filter?.schedule?.length > 0
+    ) {
+      this.initial.data = this.dataSource?.data?.filter((d) =>
+        this.filter.schedule.includes(d?.schedule)
+      );
+      this.dataSource = new MatTableDataSource(this.initial.data);
+    } else {
+      this.nextToken = '';
+      this.fetchRounds$.next({ data: 'load' });
+    }
   }
 
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
+      schedule: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -615,8 +748,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
   };
 
-  selectedAssigneeHandler(userDetails: UserDetails) {
-    const { email: assignedTo } = userDetails;
+  selectedAssigneeHandler({ user }: SelectedAssignee) {
+    const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
     this.operatorRoundsService
       .updateRound$(
@@ -631,9 +764,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  assignedTo:
-                    this.operatorRoundsService.getUserFullName(assignedTo),
-                  roundDBVersion: resp.roundDBVersion + 1
+                  assignedTo: this.userService.getUserFullName(assignedTo),
+                  roundDBVersion: resp.roundDBVersion + 1,
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
                 };
               }
               return data;
@@ -648,6 +781,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.trigger.closeMenu();
   }
 
   onChangeDueDateHandler(dueDate: Date) {
@@ -669,7 +803,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
-            this.cdrf.markForCheck();
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

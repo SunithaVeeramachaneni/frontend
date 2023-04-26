@@ -1,8 +1,8 @@
 [
   {
-    "label": "Status",
+    "label": "Schedule",
     "items": [],
-    "column": "status",
+    "column": "schedule",
     "type": "multiple",
     "value": ""
   },
@@ -17,9 +17,16 @@
     "label": "Due date",
     "items": [],
     "column": "dueDate",
-    "type": "date",
+    "type": "daterange",
     "startDate": "",
     "endDate": "",
+    "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
+    "type": "select",
     "value": ""
   }
 ]

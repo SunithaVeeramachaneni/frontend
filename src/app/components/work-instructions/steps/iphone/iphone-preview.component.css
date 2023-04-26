@@ -18,7 +18,7 @@
   top: -5px;
 }
 .iphone-view {
-  background: url('/assets/work-instructions-icons/img/iPhoneX.png') top left
+  background: url('/assets/Images/iPhoneX.png') top left
     no-repeat;
   background-size: 100% 100%;
   width: 300px;
@@ -669,8 +669,8 @@
 
 .home-indicator {
   position: absolute;
-  bottom: 5px;
-  left: 80px;
+  bottom: -70px;
+  right: 4px;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-infix {

@@ -49,10 +49,11 @@ export class RoundPlanListComponent implements OnInit {
   filter: any = {
     status: '',
     modifiedBy: '',
-    authoredBy: '',
+    createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
-    scheduleEndDate: ''
+    scheduleEndDate: '',
+    plant: ''
   };
   columns: Column[] = [
     {
@@ -122,11 +123,33 @@ export class RoundPlanListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -148,7 +171,7 @@ export class RoundPlanListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -171,7 +194,7 @@ export class RoundPlanListComponent implements OnInit {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -227,20 +250,25 @@ export class RoundPlanListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   formsListCount$: Observable<number>;
-  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
-  closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: RoundPlan = null;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   infiniteScrollEnabled = true;
+  formsList$: Observable<any>;
+  lastPublishedBy = [];
+  lastPublishedOn = [];
+  authoredBy = [];
+  plants = [];
+  plantsIdNameMap = {};
+  createdBy = [];
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
@@ -359,7 +387,6 @@ export class RoundPlanListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -371,7 +398,7 @@ export class RoundPlanListComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -381,18 +408,36 @@ export class RoundPlanListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
+        mergeMap(({ rows, next }) => {
           // if next token turns null from not null, that means all records have been fetched with the given limit.
-          if (nextToken === null && this.nextToken !== null) {
+          if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;
           }
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
+        }),
+        map((data) => {
+          const rows = data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: `${item.plant.plantId} - ${item.plant.name}`
+              };
+            } else {
+              // remove if condition after clearing data since plant will be mandatory
+              item = {
+                ...item,
+                plant: ``
+              };
+            }
+            return item;
+          });
+          return rows;
         })
       );
   }
@@ -404,6 +449,7 @@ export class RoundPlanListComponent implements OnInit {
           id: form?.id,
           isArchived: true,
           name: form?.name,
+          plantId: form?.plantId,
           description: form?.description,
           isArchivedAt: new Date().toISOString()
         },
@@ -441,7 +487,7 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => { };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
@@ -477,43 +523,45 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = row;
-    this.menuState = 'in';
-  }
-
-  formsList$: Observable<any>;
-  lastPublishedBy = [];
-  lastPublishedOn = [];
-  authoredBy = [];
   getAllOperatorRounds() {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
       .subscribe((formsList) => {
-        const uniqueLastPublishedBy = formsList.rows
-          .map((item) => item.lastPublishedBy)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueLastPublishedBy) {
-          if (item) {
-            this.lastPublishedBy.push(item);
-          }
-        }
-        const uniqueAuthoredBy = formsList.rows
-          .map((item) => item.author)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueAuthoredBy) {
-          if (item) {
-            this.authoredBy.push(item);
-          }
-        }
-        for (const item of this.filterJson) {
-          if (item['column'] == 'status') {
-            item.items = this.status;
-          } else if (item['column'] == 'modifiedBy') {
-            item.items = this.lastPublishedBy;
-          } else if (item['column'] == 'authoredBy') {
-            item.items = this.authoredBy;
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueLastPublishedBy = formsList.rows
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.lastPublishedBy = [...uniqueLastPublishedBy];
+
+          const uniqueAuthoredBy = formsList.rows
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.createdBy = [...uniqueAuthoredBy];
+
+          const uniquePlants = formsList.rows
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+                return `${item.plant.plantId} - ${item.plant.name}`;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'status') {
+              item.items = this.status;
+            } else if (item.column === 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item.column === 'authoredBy') {
+              item.items = this.authoredBy;
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
+            } else if (item.column === 'createdBy') {
+              item.items = this.createdBy;
+            }
           }
         }
       });
@@ -527,9 +575,13 @@ export class RoundPlanListComponent implements OnInit {
 
   applyFilter(data: any) {
     for (const item of data) {
-      if (item.type == 'daterange') {
+      if (item.type === 'daterange') {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
+      } else if (item.column === 'plant') {
+        const id = item.value.split('-')[0].trim();
+        const plantId = this.plantsIdNameMap[id];
+        this.filter[item.column] = plantId;
       } else {
         this.filter[item.column] = item.value;
       }
@@ -542,12 +594,18 @@ export class RoundPlanListComponent implements OnInit {
     this.filter = {
       status: '',
       modifiedBy: '',
-      authoredBy: '',
+      createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
-      scheduleEndDate: ''
+      scheduleEndDate: '',
+      plant: ''
     };
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+  private showFormDetail(row: RoundPlan): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }

@@ -1,0 +1,26 @@
+@import '../../../../../../scss/colors.scss';
+
+.dropdown {
+  width: 100%;
+}
+
+.mat-button-toggle-group {
+  flex-direction: column;
+  width: 100%;
+  border: none;
+  margin-top: 7px;
+}
+
+.mat-button-toggle {
+  border: 1px solid $gray3;
+  border-radius: 5px;
+  background: $white;
+  margin-bottom: 0.4rem;
+  font-size: 90%;
+  height: 30px;
+  align-items: center;
+}
+
+::ng-deep .mat-button-toggle-label-content {
+  line-height: 32px;
+}

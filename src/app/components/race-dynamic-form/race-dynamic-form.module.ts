@@ -42,7 +42,7 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { formConfigurationReducer } from 'src/app/forms/state/builder/builder.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
@@ -63,7 +63,18 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsComponent } from './forms/forms.component';
 import { InspectionComponent } from './inspection/inspection.component';
+import { environment } from 'src/environments/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { AssignInspectionComponent } from './assign-inspection/assign-inspection.component';
+import { TemplateListComponent } from './template-list/template-list.component';
+import { SaveTemplateNamingModalComponent } from './save-template-naming-modal/save-template-naming-modal.component';
+import { TemplateConfigurationModalComponent } from './template-configuration-modal/template-configuration-modal.component';
+import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
+import { SaveTemplateConfirmModalComponent } from './save-template-confirm-modal/save-template-confirm-modal.component';
+import { SaveTemplateContainerComponent } from './save-template-container/save-template-container.component';
+import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
+import { TemplateContainerComponent } from './template-container/template-container.component';
+import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -88,7 +99,16 @@ export const customTranslateLoader = (http: HttpClient) =>
     ImportQuestionsModalComponent,
     SchedulerComponent,
     FormsComponent,
-    InspectionComponent
+    InspectionComponent,
+    TemplateListComponent,
+    SaveTemplateNamingModalComponent,
+    TemplateConfigurationModalComponent,
+    TemplateConfigurationComponent,
+    SaveTemplateConfirmModalComponent,
+    SaveTemplateContainerComponent,
+    CreateFromTemplateModalComponent,
+    TemplateContainerComponent,
+    EditTemplateNameModalComponent
   ],
   imports: [
     FormsModule,
@@ -137,6 +157,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
     EffectsModule.forFeature([FormConfigurationEffects])
   ],
   exports: [
@@ -149,7 +170,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormConfigurationModalComponent,
     FormConfigurationComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent
+    AvatarComponent,
+    TemplateConfigurationComponent
   ]
 })
 export class RaceDynamicFormModule {

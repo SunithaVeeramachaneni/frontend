@@ -2,24 +2,23 @@
   <div class="upload-modal">
     <div *ngIf="!isReviewed">
       <h1 class="heading">{{ title }}</h1>
-      <img
-        src="assets/master-configurations/upload.svg"
+
+        <img
         *ngIf="!isSuccess && !isFailure"
-        alt="upload-inprogress"
         class="center"
-      />
-      <img
-        src="assets/master-configurations/upload-done.svg"
+        src="assets/Images/illustration_bulkupload.svg"
+   
+  />
+      <svg-icon
+        icon="icon-illustration_bulkupload_success"
         *ngIf="isSuccess"
-        alt="upload-done"
         class="center mb-5"
-      />
-      <img
-        src="assets/master-configurations/upload-error.svg"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-illustration_bulkupload_failure"
         *ngIf="isFailure"
-        alt="upload-done"
         class="center mb-5"
-      />
+      ></svg-icon>
       <mat-progress-bar
         *ngIf="!isSuccess && !isFailure"
         mode="indeterminate"
@@ -55,21 +54,19 @@
     <div *ngIf="isReviewed">
       <div class="success-message">
         <div>
-          <img
-            src="assets/master-configurations/upload-success.svg"
-            alt="upload-icon"
-          />
+          <svg-icon icon="icon-upload-success" class="upload-icon"></svg-icon>
           {{ successCount }} {{ type }} {{ 'successfullyUpload' | translate }}
         </div>
-        <div>
-          <img
-            src="assets/master-configurations/upload-error.svg"
-            alt="upload-icon"
-          />
+        <div> 
+          <svg-icon icon="icon-upload-error" class="upload-icon"></svg-icon>
           {{ failedCount }} {{ type }} {{ 'failedUpload' | translate }}
         </div>
       </div>
-      <div class="review-text" *ngIf="failedCount > 0" (click)="downloadExcel()">
+      <div
+        class="review-text"
+        *ngIf="failedCount > 0"
+        (click)="downloadExcel()"
+      >
         {{ 'downloadExcel' | translate }}
       </div>
 

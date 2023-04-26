@@ -2,14 +2,26 @@
 .filter-report-modal {
   margin: 10px 0px 15px 0px;
   background: $white;
-  border: 1px solid $grey;
+  /* border: 1px solid #808080; */
   border-radius: 4px;
   position: relative;
-  top: 10px;
-  width: 330px;
-  right: -80px;
+  top: 3px;
+  width: 315px;
+  right: -96px;
   max-height: 340px;
-  min-height: 280px;
+  min-height: 270px;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+
+  ::ng-deep .mat-form-field {
+    padding-bottom: 9px;
+  }
+}
+
+.filter-cancel {
+  height: 13px;
+  width: 13px;
 }
 
 .filter-input-modal {
@@ -58,12 +70,11 @@
   font-style: normal;
   font-weight: 500;
   font-size: 120%;
-  line-height: 150%;
   letter-spacing: 0.15px;
-  position: relative;
-  top: 5px;
-  right: 5px;
   float: right;
+  border-radius: 4px;
+  margin-right: 10px;
+  margin-bottom: 15px;
   border: none;
 }
 
@@ -111,7 +122,6 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
 }
 .filter-form-fields {
   max-height: 230px;
-  overflow-y: scroll;
   margin-bottom: 10px;
   padding: 0px 20px;
 }
