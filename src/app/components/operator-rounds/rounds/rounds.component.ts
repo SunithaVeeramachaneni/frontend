@@ -713,7 +713,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
-        this.filter[item.column] = plantId;
+        this.filter[item.column] = plantId ?? '';
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
