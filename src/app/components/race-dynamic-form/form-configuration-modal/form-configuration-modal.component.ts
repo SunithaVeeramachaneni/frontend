@@ -4,10 +4,11 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent
@@ -26,10 +27,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
-import {
-  BuilderConfigurationActions,
-  FormConfigurationActions
-} from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
   formConfigurationStatus
@@ -59,6 +57,7 @@ export class FormConfigurationModalComponent implements OnInit {
   allTags: string[] = [];
   originalTags: string[] = [];
   allPlantsData = [];
+  plantInformation = [];
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -72,7 +71,8 @@ export class FormConfigurationModalComponent implements OnInit {
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
-    private plantService: PlantService
+    private plantService: PlantService,
+    @Inject(MAT_DIALOG_DATA) public data
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -116,7 +116,35 @@ export class FormConfigurationModalComponent implements OnInit {
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
     });
+
+    if (this.data) {
+      this.headerDataForm.patchValue({
+        name: this.data.name,
+        description: this.data.description
+      });
+      this.headerDataForm.markAsDirty();
+    }
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (value) {
+      this.plantInformation = this.searchPlant(value);
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
   }
 
   add(event: MatChipInputEvent): void {
@@ -198,7 +226,7 @@ export class FormConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        FormConfigurationActions.createForm({
+        BuilderConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
@@ -207,7 +235,20 @@ export class FormConfigurationModalComponent implements OnInit {
           }
         })
       );
-      this.router.navigate(['/forms/create']);
+
+      if (this.data) {
+        this.rdfService
+          .updateTemplate$(this.data.id, {
+            formsUsageCount: this.data.formsUsageCount + 1
+          })
+          .subscribe(() => {
+            this.router.navigate(['/forms/create'], {
+              state: { selectedTemplate: this.data }
+            });
+          });
+      } else {
+        this.router.navigate(['/forms/create']);
+      }
       this.dialogRef.close();
     }
   }

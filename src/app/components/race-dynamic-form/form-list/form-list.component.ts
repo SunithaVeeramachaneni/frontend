@@ -23,11 +23,7 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import {
-  LIST_LENGTH,
-  defaultLimit,
-  formConfigurationStatus
-} from 'src/app/app.constants';
+import { LIST_LENGTH, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
@@ -395,6 +391,7 @@ export class FormListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getForms();
       })
     );
