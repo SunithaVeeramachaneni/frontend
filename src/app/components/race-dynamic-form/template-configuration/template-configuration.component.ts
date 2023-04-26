@@ -582,7 +582,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     let sectionQuestions;
     this.store
       .select(getSectionQuestions(pageIndex, sectionIndex))
-      .subscribe((v) => (sectionQuestions = v));
+      .subscribe((questions) => (sectionQuestions = questions));
     return sectionQuestions;
   }
 
@@ -590,7 +590,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     let pageSections;
     this.store
       .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v?.sections));
+      .subscribe((page) => (pageSections = page?.sections));
     return pageSections;
   }
 
