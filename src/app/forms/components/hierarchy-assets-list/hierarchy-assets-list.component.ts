@@ -38,6 +38,7 @@ export class HierarchyAssetsListComponent implements OnInit {
   public filteredOptions$: Observable<any>;
   public locationsCount: number;
   public assetsCount: number;
+  public searchedNode;
 
   constructor(
     private assetHierarchyUtil: AssetHierarchyUtil,
@@ -81,6 +82,7 @@ export class HierarchyAssetsListComponent implements OnInit {
 
   searchResultSelected(event) {
     const node = event.option.value;
+
     if (node) {
       setTimeout(() => {
         this.searchMasterData.patchValue(node.name);
@@ -91,7 +93,17 @@ export class HierarchyAssetsListComponent implements OnInit {
         node.uid,
         tempHierarchyList
       );
+      this.cdrf.detectChanges();
+
+      this.searchedNode = node.uid;
     }
+
+    const searchedElement = document.getElementById(`Node-${node.uid}`);
+    searchedElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest'
+    });
   }
 
   getSearchMatchesLabel() {
@@ -105,11 +117,10 @@ export class HierarchyAssetsListComponent implements OnInit {
 
     this.filteredList = this.selectedLocationHierarchyFlatList.filter(
       (node) =>
-        node.name.toLowerCase().includes(searchInput) ||
-        node?.nodeDescription.toLowerCase().includes(searchInput)
+        node.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+        node?.nodeDescription.toLowerCase().includes(searchInput.toLowerCase())
     );
-
-    return this.filteredList || [];
+    return this.filteredList.length ? this.filteredList : ['No Data'];
   };
 
   clearSearchResults() {
