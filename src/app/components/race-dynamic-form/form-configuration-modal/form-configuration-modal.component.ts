@@ -59,6 +59,7 @@ export class FormConfigurationModalComponent implements OnInit {
   allTags: string[] = [];
   originalTags: string[] = [];
   allPlantsData = [];
+  plantInformation = [];
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -116,7 +117,27 @@ export class FormConfigurationModalComponent implements OnInit {
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
     });
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (value) {
+      this.plantInformation = this.searchPlant(value);
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
   }
 
   add(event: MatChipInputEvent): void {
