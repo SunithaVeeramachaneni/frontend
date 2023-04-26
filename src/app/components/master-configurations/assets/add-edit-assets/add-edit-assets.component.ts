@@ -226,31 +226,55 @@ export class AddEditAssetsComponent implements OnInit {
 
   onKeyPlant(event) {
     const value = event.target.value || '';
-    this.allPlantsData = this.searchPlant(value);
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
   }
 
   onKey(event) {
     const value = event.target.value || '';
-    this.allParentsData = this.searchParent(value);
+    if (!value) {
+      const plantsID = this.assetForm.get('plantsID').value;
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      this.allParentsData = this.searchParent(value);
+    }
   }
 
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
     return this.plantInformation.filter(
       (plant) =>
-        plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   searchParent(value: string) {
+    const plantsID = this.assetForm.get('plantsID').value;
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter(
-      (parent) =>
-        (parent.name &&
-          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (parent.locationId &&
-          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
-    );
+    if (plantsID) {
+      return this.allParentsData.filter(
+        (parent) =>
+          (parent.name &&
+            parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+          (parent.locationId &&
+            parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+      );
+    } else {
+      return this.parentInformation.filter(
+        (parent) =>
+          (parent.name &&
+            parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+          (parent.locationId &&
+            parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+      );
+    }
   }
 
   cancel() {
@@ -289,7 +313,7 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.allLocationsData = allLocations.items;
+      this.allLocationsData = allLocations.items || [];
       this.parentInformation = this.allLocationsData;
       this.allParentsData = this.allLocationsData;
     });
@@ -297,11 +321,17 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allAssetsData = allAssets.items.filter(
-        (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
-      );
-      this.parentInformation = this.allAssetsData;
-      this.allParentsData = this.allAssetsData;
+      if (allAssets.items) {
+        this.allAssetsData = allAssets.items.filter(
+          (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
+        );
+        this.parentInformation = this.allAssetsData;
+        this.allParentsData = this.allAssetsData;
+      } else {
+        this.allAssetsData = [];
+        this.parentInformation = [];
+        this.allParentsData = [];
+      }
     });
   }
 
