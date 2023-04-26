@@ -306,7 +306,8 @@ export class OperatorRoundsService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { hierarchy, ...formMetadata } = formMetaDataDetails.formMetadata;
+    const { hierarchy, plant, moduleName, ...formMetadata } =
+      formMetaDataDetails.formMetadata;
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
