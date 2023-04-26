@@ -144,7 +144,7 @@ export const updatePageState = createAction(
   props<{
     pageIndex: number;
     isOpen: boolean;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 export const updatePage = createAction(
@@ -241,7 +241,7 @@ export const addQuestions = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 
@@ -278,7 +278,7 @@ export const updateQuestionState = createAction(
     questionId: string;
     isOpen: boolean;
     isResponseTypeModalOpen: boolean;
-    subFormId: string;
+    subFormId?: string;
   }>()
 );
 

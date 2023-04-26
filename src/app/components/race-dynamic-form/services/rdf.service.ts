@@ -305,6 +305,22 @@ export class RaceDynamicFormService {
     );
   }
 
+  downloadAttachment$ = (
+    formId: string,
+    inspectionId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> => {
+    const apiURL = `${environment.rdfApiUrl}inspections/${formId}/${inspectionId}`;
+    return this.appService.downloadFile(
+      apiURL,
+      '',
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
+  };
+
   getFormById$(id: string) {
     return this.appService._getRespById(
       environment.rdfApiUrl,

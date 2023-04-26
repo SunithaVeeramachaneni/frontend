@@ -43,7 +43,8 @@ import {
   SelectTab,
   RowLevelActionEvent,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
@@ -60,6 +61,8 @@ import { slideInOut } from 'src/app/animations';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
+import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-inspection',
@@ -352,6 +355,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
+    private dialog: MatDialog,
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute
@@ -614,9 +618,64 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  formsDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+  formsDetailActionHandler(event) {
+    if (event) {
+      const { type } = event;
+      if (type === 'VIEW_PDF') {
+        this.dialog.open(PDFPreviewComponent, {
+          data: {
+            moduleName: 'RDF',
+            roundId: this.selectedForm.id,
+            selectedForm: this.selectedForm
+          },
+          hasBackdrop: false,
+          disableClose: true,
+          width: '100vw',
+          minWidth: '100vw',
+          height: '100vh'
+        });
+      } else if (type === 'DOWNLOAD_PDF') {
+        this.downloadPDF(this.selectedForm);
+      }
+    } else {
+      this.store.dispatch(FormConfigurationActions.resetPages());
+      this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+    }
+  }
+
+  downloadPDF(selectedForm) {
+    const formId = selectedForm.id;
+    const inspectionId = selectedForm.inspectionId;
+
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+
+    this.raceDynamicFormService
+      .downloadAttachment$(formId, inspectionId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          aElement.setAttribute('download', `${fileName}.pdf`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
+        }
+      );
   }
 
   getFilter() {
