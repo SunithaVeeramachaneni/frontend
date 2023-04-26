@@ -49,7 +49,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultLimit,
+  graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -256,7 +256,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLDefaultMaxLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
