@@ -28,6 +28,7 @@ export class LocationService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
+  // this fetch limit is limited by DynamoDB's 1 MB query size limit.
   private MAX_FETCH_LIMIT: string = '1000000';
 
   constructor(private _appService: AppService) {}
@@ -41,7 +42,8 @@ export class LocationService {
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'location/list?' + params.toString()
+      'location/list?' + params.toString(),
+      { displayToast: true, failureResponse: {} }
     );
   };
   getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
@@ -52,30 +54,36 @@ export class LocationService {
       .pipe(map((res) => res?.count || 0));
   }
 
-  getLocationsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getLocationsList$(
+    queryParams: {
+      next?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
-      }
+      params.set('limit', `${queryParams.limit}`);
+
+      params.set('next', queryParams.next);
+
       if (queryParams.searchKey) {
         const filter: GetLocations = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
+        params.set('filter', JSON.stringify(filter));
+      }
+      if (filterData.plant) {
+        params.set('limit', this.MAX_FETCH_LIMIT);
+        let filter = JSON.parse(params.get('plantsID'));
+        filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
 
@@ -89,7 +97,7 @@ export class LocationService {
       return of({
         count: 0,
         rows: [],
-        nextToken: null
+        next: null
       });
     }
   }
@@ -97,7 +105,13 @@ export class LocationService {
   createLocation$(
     formLocationQuery: Pick<
       CreateLocation,
-      'name' | 'image' | 'description' | 'model' | 'locationId' | 'parentId'
+      | 'name'
+      | 'image'
+      | 'description'
+      | 'model'
+      | 'locationId'
+      | 'parentId'
+      | 'plantsID'
     >
   ) {
     return this._appService._postData(
@@ -148,41 +162,6 @@ export class LocationService {
     );
   }
 
-  private formatGraphQLocationResponse(resp: LocationsResponse) {
-    let rows =
-      resp.items
-        .sort(
-          (a, b) =>
-            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-        ?.map((p) => ({
-          ...p,
-          preTextImage: {
-            image: p?.image,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
-            },
-            condition: true
-          },
-          archivedAt: p.createdAt
-            ? formatDistance(new Date(p.createdAt), new Date(), {
-                addSuffix: true
-              })
-            : ''
-        })) || [];
-    const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
-    rows = rows.filter((o: any) => !o._deleted);
-    return {
-      count,
-      rows,
-      nextToken
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   uploadExcel(
     form: FormData,
     info: ErrorInfo = {} as ErrorInfo
@@ -206,5 +185,50 @@ export class LocationService {
       false,
       body
     );
+  }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this._appService._getLocal(
+      '',
+      'assets/json/master-configuration-locations-filter.json',
+      info
+    );
+  }
+
+  private formatGraphQLocationResponse(resp: LocationsResponse) {
+    let rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        ?.map((p) => ({
+          ...p,
+          preTextImage: {
+            image:
+              p?.image.length > 0
+                ? p?.image
+                : 'assets/master-configurations/locationIcon.svg',
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            },
+            condition: true
+          },
+          archivedAt: p.createdAt
+            ? formatDistance(new Date(p.createdAt), new Date(), {
+                addSuffix: true
+              })
+            : ''
+        })) || [];
+    const count = resp?.items.length || 0;
+    const next = resp?.next;
+    rows = rows.filter((o: any) => !o._deleted);
+    return {
+      count,
+      rows,
+      next
+    };
   }
 }

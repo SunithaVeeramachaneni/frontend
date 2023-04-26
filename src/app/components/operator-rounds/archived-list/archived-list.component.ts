@@ -75,12 +75,35 @@ export class ArchivedListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      isMultiValued: true,
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'isArchivedAt',
       displayName: 'Archived',
       type: 'timeAgo',
       controlType: 'string',
       isMultiValued: true,
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -102,7 +125,7 @@ export class ArchivedListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -158,6 +181,22 @@ export class ArchivedListComponent implements OnInit {
       form: {} as RoundPlan
     });
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    status: '',
+    modifiedBy: '',
+    createdBy: '',
+    authoredBy: '',
+    lastModifiedOn: '',
+    scheduleStartDate: '',
+    scheduleEndDate: '',
+    plant: ''
+  };
+  plantsIdNameMap = {};
+  plants = [];
+
   constructor(
     private readonly toast: ToastService,
     public dialog: MatDialog,
@@ -180,6 +219,8 @@ export class ArchivedListComponent implements OnInit {
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
+    this.getFilter();
+    this.getAllArchivedRoundPlans();
   }
 
   getDisplayedForms(): void {
@@ -251,24 +292,38 @@ export class ArchivedListComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
         },
         'All',
-        true
+        true,
+        this.filter
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ rows, next }) => {
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: `${item.plant.plantId} - ${item.plant.name}`
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
@@ -304,6 +359,67 @@ export class ArchivedListComponent implements OnInit {
       default:
     }
   };
+
+  getAllArchivedRoundPlans() {
+    this.operatorRoundsService
+      .fetchAllArchivedPlansList$()
+      .subscribe((plansList) => {
+        const objectKeys = Object.keys(plansList);
+
+        if (objectKeys.length > 0) {
+          const uniquePlants = plansList.rows
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+                return `${item.plant.plantId} - ${item.plant.name}`;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = this.plants;
+            }
+          }
+        }
+      });
+  }
+
+  getFilter() {
+    this.operatorRoundsService.getArchivedFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any) {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const id = item.value.split('-')[0].trim();
+        const plantId = this.plantsIdNameMap[id];
+        this.filter[item.column] = plantId;
+      }
+    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
+
+  resetFilter() {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      createdBy: '',
+      modifiedBy: '',
+      authoredBy: '',
+      lastModifiedOn: '',
+      scheduleStartDate: '',
+      scheduleEndDate: '',
+      plant: ''
+    };
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
+  }
 
   private onRestoreForm(form: RoundPlan): void {
     this.operatorRoundsService

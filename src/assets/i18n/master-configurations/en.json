@@ -41,6 +41,8 @@
   "save": "Save",
   "unitTypeError": "Unit type is required",
   "plants": "Plants",
+  "plant": "Plant",
+  "plantMandatory": "Plant *",
   "plantId": "Plant Id",
   "country": "Country",
   "zipCode": "Zip Code",

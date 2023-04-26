@@ -23,6 +23,7 @@
               *ngIf="reportNameDisabled"
               [value]="reportTitle.value"
               disabled
+              class="report-input"
             />
             <input
               [formControl]="reportTitle"
@@ -197,7 +198,7 @@
           >
             <svg-icon
               *ngIf="showPreview"
-              icon="icon-preview-active"
+              icon="icon-preview_active"
               class="chart-control-icon"
             ></svg-icon>
             <svg-icon
@@ -414,7 +415,7 @@
               <button
                 mat-raised-button
                 color="primary"
-                class="yes-no-btn"
+                class="yes-no-btn done-btn"
                 autofocus="false"
                 mat-dialog-close
                 [disabled]="isChartVariantApplyDisabled"
@@ -426,7 +427,7 @@
               <button
                 mat-button
                 color="primary"
-                class="yes-no-btn"
+                class="yes-no-btn cancel-btn"
                 (click)="isPopoverOpen = false; chartVariantChanges = {}"
                 aria-label="Cancel Chart Variant Changes"
               >

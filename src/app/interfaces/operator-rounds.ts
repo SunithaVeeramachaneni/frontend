@@ -61,6 +61,8 @@ export interface RoundPlan {
   isDeleted?: boolean;
   location?: string;
   roundType?: string;
+  plant?: any;
+  plantId?: string;
   formStatus?: string;
   assignee?: string;
   tags?: string[];
@@ -77,6 +79,8 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
+  plantId?: string;
+  plant?: string;
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -100,18 +104,18 @@ export interface RoundPlanDetailResponse {
   rows: RoundPlanDetail[];
   scheduledCount: number;
   unscheduledCount: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export interface RoundDetailResponse {
   rows: RoundDetail[];
   count: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export type RoundPlanList = {
   items: Array<RoundPlan | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 };
 
@@ -136,12 +140,12 @@ export interface RoundPlanSubmission {
 
 export type RoundPlanSubmissionList = {
   items: Array<RoundPlanSubmission | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 };
 
 export interface RoundPlanQueryParam {
-  nextToken?: string;
+  next?: string;
   limit: number;
   searchTerm: string;
   fetchType: string;
