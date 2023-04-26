@@ -49,6 +49,7 @@ export class AssetsService {
       };
       params.set('filter', JSON.stringify(filter));
     }
+    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'asset/list?' + params.toString(),
