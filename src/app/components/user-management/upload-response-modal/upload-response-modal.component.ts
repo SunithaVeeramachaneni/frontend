@@ -46,14 +46,14 @@ export class UploadResponseModalComponent implements OnInit, AfterViewChecked {
       this.message = `Adding users`;
       const observable = this.userService.uploadExcel(formData);
       observable?.subscribe((result) => {
-        if (Object.keys(result).length > 0) {
+        if (result && Object.keys(result).length > 0) {
           this.isSuccess = true;
           this.title = 'All done!';
           this.message = `Adding all ${result?.totalCount} ${this.type}`;
           this.successCount = result?.successCount;
           this.failedCount = result?.failedCount;
           this.failure = result.failure;
-        } else {
+        } else if (result === null) {
           this.isFailure = true;
           this.title = 'Failure!';
           this.message = `Uploaded file is invalid`;

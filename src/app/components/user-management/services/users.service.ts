@@ -32,7 +32,7 @@ export class UsersService {
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
   userDetails: UserDetails;
   usersInfoByEmail: UsersInfoByEmail;
-  
+
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {

@@ -18,25 +18,15 @@
       class="add-user-btn"
       [matMenuTriggerFor]="addUserMenu"
       translate="addUserBtn"
-      *appCheckUserHasPermission="[perms.createUser, perms.viewUsers]"
+      *appCheckUserHasPermission="[perms.createUser]"
     ></button>
 
     <mat-menu menu #addUserMenu="matMenu">
-      <button
-        mat-menu-item
-        class="text-black"
-        (click)="uploader.click()"
-        *appCheckUserHasPermission="[perms.viewUsers]"
-      >
+      <button mat-menu-item class="text-black" (click)="uploader.click()">
         <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
         <span translate="uploadExcel"></span>
       </button>
-      <button
-        mat-menu-item
-        (click)="openEditAddUserModal()"
-        *appCheckUserHasPermission="[perms.createUser]"
-        class="text-black"
-      >
+      <button mat-menu-item (click)="openEditAddUserModal()" class="text-black">
         <svg-icon icon="icon-add-manually" class="add-manually-icon"></svg-icon>
         <span translate="addManually"></span>
       </button>
