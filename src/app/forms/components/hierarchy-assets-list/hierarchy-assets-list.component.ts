@@ -98,8 +98,8 @@ export class HierarchyAssetsListComponent implements OnInit {
       this.searchedNode = node.uid;
     }
 
-    const el = document.getElementById(`Node-${node.uid}`);
-    el.scrollIntoView({
+    const searchedElement = document.getElementById(`Node-${node.uid}`);
+    searchedElement.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
       inline: 'nearest'
@@ -120,7 +120,6 @@ export class HierarchyAssetsListComponent implements OnInit {
         node.name.toLowerCase().includes(searchInput.toLowerCase()) ||
         node?.nodeDescription.toLowerCase().includes(searchInput.toLowerCase())
     );
-
     return this.filteredList.length ? this.filteredList : ['No Data'];
   };
 

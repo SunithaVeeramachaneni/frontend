@@ -31,10 +31,8 @@
             *ngFor="let option of filteredOptions$ | async"
             [value]="option"
             class="searchResultOption"
-            [ngStyle]="{
-              height: option === 'No Data' ? '0' : '65px',
-              'padding-top': option === 'No Data' ? '0' : '20px',
-              'padding-bottom': option === 'No Data' ? '0' : '20px'
+            [ngClass]="{
+              'node-style': option === 'No Data'
             }"
           >
             <div class="nodeContent">

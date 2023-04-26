@@ -15,14 +15,13 @@
 }
 
 .highlight-bg {
-  background-color: $white;
-  animation-name: example;
+  animation-name: node-higlight-animation;
   animation-duration: 5s;
 }
 
-@keyframes example {
+@keyframes node-higlight-animation {
   from {
-    background-color: #fdffd1;
+    background-color: $node-highlight;
   }
   to {
     background-color: $white;
