@@ -37,9 +37,17 @@ export class LocationService {
     this.locationCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllLocations$ = () => {
+  fetchAllLocations$ = (plantsID = null) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
+    if (plantsID) {
+      const filter = {
+        plantsID: {
+          eq: plantsID
+        }
+      };
+      params.set('filter', JSON.stringify(filter));
+    }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'location/list?' + params.toString(),

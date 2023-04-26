@@ -313,7 +313,7 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.allLocationsData = allLocations.items;
+      this.allLocationsData = allLocations.items || [];
       this.parentInformation = this.allLocationsData;
       this.allParentsData = this.allLocationsData;
     });
@@ -321,11 +321,17 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allAssetsData = allAssets.items.filter(
-        (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
-      );
-      this.parentInformation = this.allAssetsData;
-      this.allParentsData = this.allAssetsData;
+      if (allAssets.items) {
+        this.allAssetsData = allAssets.items.filter(
+          (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
+        );
+        this.parentInformation = this.allAssetsData;
+        this.allParentsData = this.allAssetsData;
+      } else {
+        this.allAssetsData = [];
+        this.parentInformation = [];
+        this.allParentsData = [];
+      }
     });
   }
 
