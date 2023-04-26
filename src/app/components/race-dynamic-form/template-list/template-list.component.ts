@@ -224,7 +224,7 @@ export class TemplateListComponent implements OnInit {
   allTemplates: [];
   displayedTemplates: any[];
   templatesCount$: Observable<number>;
-  searchTemplate: FormControl;
+  searchTemplates: FormControl;
   ghostLoading = new Array(12).fill(0).map((_, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -242,7 +242,7 @@ export class TemplateListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.searchTemplate = new FormControl('');
+    this.searchTemplates = new FormControl('');
     this.headerService.setHeaderTitle(
       this.translateService.instant('templates')
     );
@@ -265,7 +265,7 @@ export class TemplateListComponent implements OnInit {
       });
     });
 
-    this.searchTemplate.valueChanges
+    this.searchTemplates.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
@@ -336,7 +336,7 @@ export class TemplateListComponent implements OnInit {
       );
       this.createdBy = uniqueCreatedBy;
 
-      for (const item of this.filterJson) {
+      this.filterJson.forEach((item) => {
         if (item.column === 'status') {
           item.items = this.status;
         } else if (item.column === 'modifiedBy') {
@@ -344,7 +344,7 @@ export class TemplateListComponent implements OnInit {
         } else if (item.column === 'createdBy') {
           item.items = this.createdBy;
         }
-      }
+      });
     });
   }
 
@@ -378,10 +378,10 @@ export class TemplateListComponent implements OnInit {
   }
 
   updateFilter(data: any) {
-    for (const item of data) {
+    data.forEach((item) => {
       this.filter[item.column] = item.value;
-    }
-    this.applySearchAndFilter(this.searchTemplate.value);
+    });
+    this.applySearchAndFilter(this.searchTemplates.value);
   }
 
   resetFilter() {
@@ -390,7 +390,7 @@ export class TemplateListComponent implements OnInit {
       modifiedBy: '',
       createdBy: ''
     };
-    this.applySearchAndFilter(this.searchTemplate.value);
+    this.applySearchAndFilter(this.searchTemplates.value);
   }
 
   openCreateTemplateModal() {

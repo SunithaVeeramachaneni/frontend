@@ -102,13 +102,13 @@ export class CreateFromTemplateModalComponent implements OnInit {
         );
         this.createdBy = uniqueCreatedBy;
 
-        for (const item of this.filterJson) {
+        this.filterJson.forEach((item) => {
           if (item.column === 'modifiedBy') {
             item.items = this.lastPublishedBy;
           } else if (item.column === 'createdBy') {
             item.items = this.createdBy;
           }
-        }
+        });
       });
   }
 
@@ -140,9 +140,9 @@ export class CreateFromTemplateModalComponent implements OnInit {
   }
 
   updateFilter(data: any) {
-    for (const item of data) {
+    data.forEach((item) => {
       this.filter[item.column] = item.value;
-    }
+    });
     this.applySearchAndFilter(this.searchTemplates.value);
   }
 
