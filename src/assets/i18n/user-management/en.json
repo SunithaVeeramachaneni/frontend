@@ -64,7 +64,7 @@
   "failedUpload": "Responses Failed to upload",
   "successfullyUpload": "Responses Successfully uploaded",
   "downloadTemplate": "Download Template",
-  "addManually":"Add Manually",
-  "uploadExcel":"Upload Excel",
-  "review":"review"
+  "addManually": "Add Manually",
+  "uploadExcel": "Upload Excel",
+  "review": "review"
 }

@@ -582,7 +582,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   getImage = (imageName: string, active: boolean) =>
     active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
- 
 
   selectedListElement(title) {
     this.menuOpenClose = false;

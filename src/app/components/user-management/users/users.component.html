@@ -18,10 +18,16 @@
       class="add-user-btn"
       [matMenuTriggerFor]="addUserMenu"
       translate="addUserBtn"
+      *appCheckUserHasPermission="[perms.createUser, perms.viewUsers]"
     ></button>
 
     <mat-menu menu #addUserMenu="matMenu">
-      <button mat-menu-item class="text-black" (click)="uploader.click()">
+      <button
+        mat-menu-item
+        class="text-black"
+        (click)="uploader.click()"
+        *appCheckUserHasPermission="[perms.viewUsers]"
+      >
         <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
         <span translate="Upload Excel"></span>
       </button>
@@ -78,11 +84,7 @@
         <span translate="deactivate"></span>
       </button>
       <button (click)="downloadTemplate()" mat-menu-item class="menu-buttons">
-        <img
-          src="assets/user-management-icons/upload-from-excel.svg"
-          alt="Excel"
-          class="menu-icons"
-        />
+        <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
         <span translate="downloadTemplate"></span>
       </button>
     </mat-menu>
