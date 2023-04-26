@@ -336,7 +336,9 @@ export class AssetHierarchyUtil {
         ...node,
         isToggledView:
           children.findIndex((item) => item.isParentToBeToggled) > -1,
-        isParentToBeToggled: node.uid === nodeUid,
+        isParentToBeToggled:
+          node.uid === nodeUid ||
+          children.findIndex((item) => item.isParentToBeToggled) > -1,
         children
       });
     });
