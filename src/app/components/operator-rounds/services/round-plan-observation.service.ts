@@ -123,7 +123,7 @@ export class RoundPlanObservationsService {
       return {
         ...item,
         preTextImage: {
-          image: '/assets/Images/issue-icon.svg',
+          image: '/assets/maintenance-icons/issue-icon.svg',
           style: {
             width: '40px',
             height: '40px',

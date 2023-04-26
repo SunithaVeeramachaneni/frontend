@@ -12,12 +12,12 @@
           <svg-icon icon="icon-locationIcon" class="image-contain"></svg-icon>
         </span>
 
-        <!-- <img
+        <img
           [src]="locationImage"
           alt="Image"
           class="image-contain"
           *ngIf="locationImage !== ''"
-        /> -->
+        />
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
@@ -86,9 +86,32 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100 m-b-10">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-label translate="plantMandatory"></mat-label>
+          <mat-select
+            formControlName="plantsID"
+            (valueChange)="onSelectPlant($event)"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyPlant($event)"
+            />
+            <div class="scrollable-area">
+              <mat-option [value]="plant.id" *ngFor="let plant of allPlantsData"
+                >{{ plant.plantId }} - {{ plant.name }}</mat-option
+              >
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100">
           <mat-label translate="parent"></mat-label>
-          <mat-select formControlName="parentId">
+          <mat-select
+            formControlName="parentId"
+            (valueChange)="onSelectLocation($event)"
+          >
             <input
               class="searchable-input"
               [placeholder]="'search' | translate"
