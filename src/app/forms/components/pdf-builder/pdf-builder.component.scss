@@ -410,9 +410,11 @@ ul {
   border: 1px solid $issue-border;
 }
 .issueHead {
-  background: $white1;
+  background: $issue-background;
   padding: 10px;
+  color: $issue-bg-text;
 }
+
 .issueBody {
   padding: 10px;
 }
