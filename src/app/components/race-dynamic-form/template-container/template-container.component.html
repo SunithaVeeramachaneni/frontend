@@ -1,0 +1,6 @@
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.formsTemplates.url">
+    <app-template-list></app-template-list>
+  </div>
+  <router-outlet></router-outlet>
+</div>
