@@ -40,6 +40,7 @@ export class LocationService {
   fetchAllLocations$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
+    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'location/list?' + params.toString(),
