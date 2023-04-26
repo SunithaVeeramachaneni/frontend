@@ -76,6 +76,8 @@ import { ChartComponent } from './observations/donut-chart/chart.component';
 import { AssignRoundComponent } from './assign-round/assign-round.component';
 import { QuillMaterialComponent } from './quill-material/quill-material.component';
 import { ImagePreviewComponent } from './image-preview/image-preview.component';
+import { RoundPlanImagePreviewComponent } from './round-plan-image-preview/round-plan-image-preview.component';
+import { RoundPlanPdfPreviewComponent } from './round-plan-pdf-preview/round-plan-pdf-preview.component';
 //import { InstructionImageComponent } from 'src/app/forms/components/field-types/instructions/instruction-image/instruction-image.component';
 //import { InstructionPdfComponent } from 'src/app/forms/components/field-types/instructions/instruction-pdf/instruction-pdf.component';
 export const customTranslateLoader = (http: HttpClient) =>
@@ -111,7 +113,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     ChartComponent,
     AssignRoundComponent,
     QuillMaterialComponent,
-    ImagePreviewComponent
+    ImagePreviewComponent,
+    RoundPlanImagePreviewComponent,
+    RoundPlanPdfPreviewComponent
     //  InstructionImageComponent,
     //InstructionPdfComponent
   ],

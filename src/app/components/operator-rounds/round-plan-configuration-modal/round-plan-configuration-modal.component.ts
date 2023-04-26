@@ -77,6 +77,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   form: FormGroup;
   options: any = [];
   selectedOption: string;
+  uploadimages: any = [];
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -149,7 +151,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       console.log('plant:', plants);
       plants.items.forEach((plant) => {
         this.options.push(plant.name);
-        console.log(plant.name + 'plantname');
       });
     });
   }
@@ -268,17 +269,26 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     const { originalValue, isImage, index } = params;
     console.log('sendFile to S3', file);
     this.roundPlanConfigurationService.uploadToS3$(file).subscribe((event) => {
+      console.log('event', event);
       const value: RoundPlanFile = {
         name: file.name,
-        size: file.size
-        // objectKey: event.message.objectKey,
-        // objectURL: event.message.objectURL
+        size: file.size,
+        objectKey: event.objectKey,
+        objectURL: event.objectURL
       };
-      // if (isImage) {
-      //   originalValue.images[index] = value;
-      // } else {
-      //   originalValue.pdf = value;
-      // }
+      console.log('roundplanfile', value);
+      const attachmentValue = {
+        images: [],
+        pdf: []
+      };
+      this.headerDataForm.get('value').setValue(attachmentValue);
+
+      if (isImage) {
+        originalValue.images[index] = value;
+      } else {
+        originalValue.pdf[index] = value;
+      }
+      console.log(originalValue.image, 'originalvalue');
     });
   }
 
@@ -290,17 +300,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
       base64 = reader.result as string;
-      const image = base64.split(',')[1];
+      const image = base64;
       const value = {
         name: files[0].name,
         size: (files[0].size / 1024).toFixed(2),
         base64: image,
-        pdf: false,
+        pdf: true,
         isImage: true,
         index: 0
       };
-      console.log('value:', value);
       this.headerDataForm.get('value').setValue(value);
+      console.log('value:', this.headerDataForm.get('value').value);
     };
 
     const target = event.target as HTMLInputElement;
@@ -312,7 +322,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     ];
 
     const files1 = Array.from(target.files);
-    const originalValue = this.headerDataForm.get('value');
+    const originalValue = this.headerDataForm.get('value').value;
     let imageIndex = 0;
     for (const file of files1) {
       if (allowedFileTypes.indexOf(file.type) === -1) {
@@ -326,57 +336,61 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       // console.log(file + 'file');
       // console.log(originalValue + ':originalvalue');
       const isImage = true;
+
       this.sendFileToS3(file, {
         originalValue,
         isImage,
         imageIndex
       });
-      // if (file.type === 'application/pdf') {
-      //   if (originalValue.pdf === null) {
-      //     this.sendFileToS3(file, {
-      //       originalValue,
-      //       isImage: false
-      //     });
-      //   }
-      // } else {
-      //   const index = originalValue.images.findIndex(
-      //     (imageFile) => imageFile === null
-      //   );
-      //   if (index !== -1) {
-      //     this.sendFileToS3(file, {
-      //       originalValue,
-      //       isImage: true,
-      //       index
-      //     });
-      //   }
-      // }
+      if (file.type === 'application/pdf') {
+        // if (originalValue.pdf === null) {
+        this.sendFileToS3(file, {
+          originalValue,
+          isImage: false,
+          pdf: true
+        });
+        // }
+      } else {
+        const index = allowedFileTypes.findIndex(
+          (imageFile) => imageFile === null
+        );
+        if (index !== -1) {
+          this.sendFileToS3(file, {
+            originalValue,
+            isImage: true,
+            index
+          });
+        }
+      }
       imageIndex++;
     }
     // console.log(originalValue);
-
-    // instructionsFileDeleteHandler(index: number): {
-    //   const originalValue = this.headerDataForm.get('value').value;
-    //   if (index < 3) {
-    //     this.roundplanconfiguarationservice.deleteFromS3(
-    //       originalValue.images[index].objectKey
-    //     );
-    //     originalValue.images[index] = null;
-    //     originalValue.images = this.imagesArrayRemoveNullGaps(
-    //       originalValue.images
-    //     );
-    //   } else {
-    //     this.roundplanconfiguarationservice.deleteFromS3(
-    //       originalValue.pdf.objectKey
-    //     );
-    //     originalValue.pdf = null;
-    //   }
-    //   // this.headerDataForm.get('value').setValue(originalValue);
-    //   // this.instructionsUpdateValue();
-    // }
-
-    // imagesArrayRemoveNullGaps(images) {
-    //   const nonNullImages = images.filter((image) => image !== null);
-    //   return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
-    // }
   };
+
+  instructionsFileDeleteHandler() {}
+
+  // instructionsFileDeleteHandler(index: number): {
+  //   const originalValue = this.headerDataForm.get('value').value;
+  //   if (index < 3) {
+  //     this.roundplanconfiguarationservice.deleteFromS3(
+  //       originalValue.images[index].objectKey
+  //     );
+  //     originalValue.images[index] = null;
+  //     originalValue.images = this.imagesArrayRemoveNullGaps(
+  //       originalValue.images
+  //     );
+  //   } else {
+  //     this.roundPlanConfigurationService.deleteFromS3(
+  //       originalValue.pdf.objectKey
+  //     );
+  //     originalValue.pdf = null;
+  //   }
+  //   // this.headerDataForm.get('value').setValue(originalValue);
+  //   // this.instructionsUpdateValue();
+  // }
+
+  // imagesArrayRemoveNullGaps(images :string): {
+  //   const nonNullImages = images.filter((image) => image !== null);
+  //   return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+  // }
 }

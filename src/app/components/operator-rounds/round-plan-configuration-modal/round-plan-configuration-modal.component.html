@@ -96,26 +96,26 @@
         </div>
 
         <!-- STARTED -->
-        <div class="plant">
+        <!-- <div class="plant">
           <p class="form-name-description m-b-0 m-t-20" translate="Plant"></p>
           <mat-form-field
             class="chips-list width-100 form-field"
             appearance="outline"
           >
             <mat-label>Select Plant</mat-label>
-            <!-- <mat-select [(value)]="selected">
+            <mat-select [(value)]="selected">
               <mat-option>None</mat-option>
               <mat-option value="option1">Plant 1</mat-option>
               <mat-option value="option2">Plant 2</mat-option>
               <mat-option value="option3">Plant 3</mat-option>
-            </mat-select> -->
+            </mat-select>
             <mat-select [(value)]="selectedOption">
               <mat-option *ngFor="let option of options" [value]="option">{{
                 option
               }}</mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <div class="tags">
           <p class="form-name-description m-b-0 m-t-20" translate="tags"></p>
@@ -182,14 +182,36 @@
 
         <div class="addpdf">
           <div class="dis-flex">
-            <!-- <span *ngIf="headerDataForm.get('value').value.pdf !== null">
-              <app-instruction-pdf
-                [pdf]="headerDataForm.get('value').value.pdf"
-                [index]="'4'"
-                (indexEmitter)="instructionsFileDeleteHandler($event)"
+            <span
+              *ngFor="
+                let image of headerDataForm.get('value').value.images;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-round-plan-image-preview
+                [image]="image"
+                [index]="i"
+                (indexEmitter)="instructionsFileDeleteHandler()"
+                *ngIf="image !== null"
+              ></app-round-plan-image-preview>
+            </span>
+
+            <!-- <span *ngIf="headerDataForm.get('value').value.image">
+              <app-round-plan-image-preview
+                [image]="headerDataForm.get('value').value"
+                (indexEmitter)="instructionsFileDeleteHandler()"
               >
-              </app-instruction-pdf>
+              </app-round-plan-image-preview>
             </span> -->
+
+            <span *ngIf="headerDataForm.get('value').value.pdf">
+              <app-round-plan-pdf-preview
+                [pdf]="headerDataForm.get('value').value"
+                (indexEmitter)="instructionsFileDeleteHandler()"
+              >
+              </app-round-plan-pdf-preview>
+            </span>
           </div>
 
           <br />
