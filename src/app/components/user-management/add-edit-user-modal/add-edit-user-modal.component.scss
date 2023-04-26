@@ -21,10 +21,10 @@
 }
 
 .file-upload-icon {
-  position: absolute;
-  left: 52%;
-  top: 36%;
+  position: relative;
+  left: 56%;
   cursor: pointer;
+  top: -52px;
   ::ng-deep svg {
     width: 30px !important;
     height: 30px !important;
