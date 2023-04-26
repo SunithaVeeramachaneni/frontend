@@ -36,10 +36,9 @@
 
 .rounds-list {
   ::ng-deep .table-column {
+    min-width: 139px !important;
     width: 130px;
   }
-
-
 
   ::ng-deep .space-between {
     width: 90px !important;
@@ -67,7 +66,7 @@
   }
 
   ::ng-deep .cdk-column-locationAssetsCompleted {
-    width: 210px !important;
+    width: 139px !important;
   }
 }
 
