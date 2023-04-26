@@ -59,7 +59,7 @@
   height: 100%;
 }
 
-.report-input{
+.report-input {
   text-overflow: ellipsis;
 }
 
@@ -299,6 +299,14 @@
 .yes-no-btn {
   float: right;
   margin-right: 10px;
+}
+
+.done-btn {
+  background-color: $radio-button-checked;
+}
+
+.cancel-btn {
+  color: $radio-button-checked;
 }
 
 .m-t-14 {
