@@ -209,7 +209,6 @@
             >
               <app-round-plan-image-preview
                 [image]="image"
-                [index]="i"
                 (indexEmitter)="instructionsFileDeleteHandler()"
                 *ngIf="image !== null"
               ></app-round-plan-image-preview>
@@ -249,7 +248,7 @@
             (click)="roundplanFileUpload.click()"
           >
             <mat-icon class="icon">link</mat-icon>
-            <span translate="addImagesAndPDFBtn"></span>
+            <span translate="_addImagesAndPDFBtn"></span>
           </button>
         </div>
       </div>

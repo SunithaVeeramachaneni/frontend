@@ -279,9 +279,6 @@
   "maxTxt": "Max",
   "column": "Column",
   "viewPDFBtn": "View PDF",
-  "create":"Create"
-  "createResponses": "Create Responses",
-  "save": "Save",
-  "addImagesAndPDFBtn": "Add images or pdf"
+  "create": "Create",
+  "_addImagesAndPDFBtn": "Add images or pdf"
 }
-

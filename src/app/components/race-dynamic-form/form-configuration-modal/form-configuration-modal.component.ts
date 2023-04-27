@@ -74,8 +74,7 @@ export class FormConfigurationModalComponent implements OnInit {
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
     private plantService: PlantService,
-    @Inject(MAT_DIALOG_DATA) public data
-    private cdrf: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data,
     private toast: ToastService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {

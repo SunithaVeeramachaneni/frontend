@@ -1,9 +1,3 @@
-import {
-  InspectionDetail,
-  RoundDetail,
-  UserDetails,
-  UsersInfoByEmail
-} from 'src/app/interfaces';
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */

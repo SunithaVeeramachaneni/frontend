@@ -85,7 +85,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   form: FormGroup;
   options: any = [];
   selectedOption: string;
-  uploadimages: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -95,7 +94,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef
     private cdrf: ChangeDetectorRef,
     public dialog: MatDialog,
     private toast: ToastService,
@@ -161,8 +159,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantId: ['', Validators.required]
-      tags: [this.tags],
+      plantId: ['', Validators.required],
+
       value: [''],
       notes_attachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
@@ -309,13 +307,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         pdf: []
       };
       this.headerDataForm.get('value').setValue(attachmentValue);
+      console.log('attachmentvalue', attachmentValue);
 
       if (isImage) {
         originalValue.images[index] = value;
       } else {
         originalValue.pdf[index] = value;
       }
-      console.log(originalValue.image, 'originalvalue');
+      console.log(originalValue, 'originalvalue');
     });
   }
 

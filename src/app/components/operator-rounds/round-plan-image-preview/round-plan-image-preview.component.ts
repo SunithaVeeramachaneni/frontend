@@ -7,7 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class RoundPlanImagePreviewComponent implements OnInit {
   @Input() image;
-  @Input() index;
+
   @Output() indexEmitter: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() {}
@@ -17,6 +17,6 @@ export class RoundPlanImagePreviewComponent implements OnInit {
   }
 
   triggerDelete() {
-    this.indexEmitter.emit(this.index);
+    this.indexEmitter.emit(this.image.index);
   }
 }
