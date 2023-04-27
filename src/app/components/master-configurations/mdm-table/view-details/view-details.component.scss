@@ -1,6 +1,6 @@
 @import '../../../../../scss/colors.scss';
 
-.temporary-list-view {
+.mdm-table-list-view {
   background-color: $white;
   height: calc(100vh - 85px);
 
@@ -21,7 +21,7 @@
     margin-top: 1%;
   }
 
-  .temporary-header {
+  .mdm-table-header {
     display: flex;
     align-items: center;
     justify-content: space-between;

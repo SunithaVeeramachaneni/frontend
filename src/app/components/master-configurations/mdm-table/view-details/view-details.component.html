@@ -1,9 +1,9 @@
-<div class="temporary-list-view">
+<div class="mdm-table-list-view">
   <ng-container>
     <div class="main-container">
-      <div class="temporary-header">
+      <div class="mdm-table-header">
         <div>
-          <h2 class="heading" translate="Temporary"></h2>
+          <h2 class="heading">{{ tableHeader?.tableName }}</h2>
         </div>
         <div>
           <!-- ---------------------------------------------------------------------------------------------- -->
@@ -32,12 +32,16 @@
                 [placeholder]="'search' | translate"
                 autocomplete="off"
               />
-              <img
-                [src]="filterIcon"
+              <svg-icon
                 matSuffix
+                cdkOverlayOrigin
+                class="common-filter-icon"
                 alt="Open Filter"
+                #trigger="cdkOverlayOrigin"
+                (click)="isPopoverOpen = !isPopoverOpen"
+                icon="icon-filterIcon"
                 class="filter-icon"
-              />
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -48,24 +52,15 @@
             class="create-new-btn"
           ></button>
           <mat-menu #createMenu="matMenu">
-            <button
-              mat-menu-item
-              class="menu-buttons"
-              (click)="uploader.click()"
-            >
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+            <button mat-menu-item class="menu-buttons">
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
               <span translate="uploadExcel"></span>
             </button>
             <button mat-menu-item class="menu-buttons" (click)="addManually()">
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
               <span translate="addManually"></span>
             </button>
           </mat-menu>
@@ -79,24 +74,33 @@
           </button>
           <mat-menu #moreMenu="matMenu">
             <button mat-menu-item class="menu-buttons">
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
               <span translate="downloadTemplate"></span>
             </button>
             <button mat-menu-item class="menu-buttons">
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+              <svg-icon icon="icon-edit-icon" class="menu-icons"></svg-icon>
               <span translate="editTableColumn"></span>
             </button>
           </mat-menu>
         </div>
       </div>
+
+      <cwp-dynamictable
+        *ngIf="columns.length !== 0"
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+      ></cwp-dynamictable>
+      <!-- <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div> -->
     </div>
 
     <!-- code ends here ---------------------------------------------------------------------------->
