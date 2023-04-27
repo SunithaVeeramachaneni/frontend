@@ -223,6 +223,7 @@ export class QuestionComponent implements OnInit {
         fetchType: 'load'
       })
       .subscribe((data) => {
+        this.unitOfMeasurements = data.rows;
         this.unitOfMeasurementsAvailable = data.rows;
         this.unitOfMeasurementsAvailable =
           this.unitOfMeasurementsAvailable.filter(
@@ -361,12 +362,12 @@ export class QuestionComponent implements OnInit {
   onKey(event) {
     const value = event.target.value;
     const filter = value.toLowerCase();
-    this.unitOfMeasurements = [...unitOfMeasurementsMock];
-    this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
+    this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
+    this.unitOfMeasurementsAvailable = this.unitOfMeasurementsAvailable.filter(
       (option) =>
-        option.description.toLowerCase().startsWith(filter) ||
-        option.code.toLowerCase().startsWith(filter) ||
-        option.symbol.toLowerCase().startsWith(filter)
+        option.description?.toLowerCase().startsWith(filter) ||
+        option.code?.toLowerCase().startsWith(filter) ||
+        option.symbol?.toLowerCase().startsWith(filter)
     );
   }
 
