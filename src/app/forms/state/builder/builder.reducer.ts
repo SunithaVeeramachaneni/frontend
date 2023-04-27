@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
-import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
@@ -269,8 +272,11 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     BuilderConfigurationActions.updatePage,
     (state, action): FormConfigurationState => {
-      const key = `pages_${action.subFormId}`;
-      const pageToBeUpdated = state[key];
+      let key = 'pages';
+      if (action.subFormId) {
+        key = `${key}_${action.subFormId}`;
+      }
+      const pageToBeUpdated = state[key] || [];
       const idx = pageToBeUpdated.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
@@ -1068,5 +1074,22 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       return { ...state, [key]: [] };
     }
+  ),
+  on(
+    BuilderConfigurationActions.publishTemplate,
+    (state, _): FormConfigurationState => ({
+      ...state,
+      formStatus: formConfigurationStatus.ready,
+      formDetailPublishStatus: formConfigurationStatus.ready,
+      isFormDetailPublished: false
+    })
+  ),
+  on(
+    BuilderConfigurationActions.replacePagesAndCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: action.pages,
+      counter: action.counter
+    })
   )
 );

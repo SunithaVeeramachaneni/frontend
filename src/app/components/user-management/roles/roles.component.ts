@@ -108,7 +108,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     public dialog: MatDialog,
     private toast: ToastService,
     private headerService: HeaderService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.searchRole = new FormControl('');
@@ -170,7 +170,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   isPermissionsChecked(): boolean {
     let permissionsChecked = false;
     this.updatedPermissions.forEach((module) => {
-      if (module.countOfChecked) {
+      if (module.totalActivePermissions) {
         permissionsChecked = true;
       }
     });
@@ -386,12 +386,12 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   copyRoleClickHandler() {
     this.roleService
       .getRolePermissionsById$(this.selectedRole.id)
-      .subscribe((pers) => {
-        const permissionIds = [];
-        permissionIds.push(pers);
+      .subscribe((permissions) => {
         this.copyRole({
           ...this.selectedRole,
-          permissionIds: permissionIds[0]
+          permissionIds: permissions.map(
+            (permissionDetail) => permissionDetail.id
+          )
         });
       });
   }

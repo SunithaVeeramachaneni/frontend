@@ -47,7 +47,10 @@
               [placeholder]="'formName' | translate"
               formControlName="name"
             />
-            <mat-error *ngIf="processValidationErrors('name')" class="m-5">
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="m-5 error-fields"
+            >
               {{
                 errors.name.name
                   | translate
@@ -64,6 +67,26 @@
               [placeholder]="'addDescription' | translate"
               formControlName="description"
             />
+          </mat-form-field>
+          <p class="form-name-description" translate="plant"></p>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-select
+              formControlName="plantId"
+              [placeholder]="'plant' | translate"
+            >
+              <input
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKeyPlant($event)"
+              />
+              <div class="scrollable-area">
+                <mat-option
+                  [value]="plant.id"
+                  *ngFor="let plant of plantInformation"
+                  >{{ plant.plantId }} - {{ plant.name }}</mat-option
+                >
+              </div>
+            </mat-select>
           </mat-form-field>
         </div>
         <div class="tags">

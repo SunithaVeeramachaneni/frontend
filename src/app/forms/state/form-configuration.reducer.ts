@@ -28,6 +28,14 @@ export interface FormConfigurationState {
   moduleName: string;
 }
 
+export interface TemplateConfigurationState {
+  formMetadata: any;
+  pages: Page[];
+  counter: number;
+  formStatus: string;
+  authoredFormDetailVersion: number;
+}
+
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
@@ -217,11 +225,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationActions.updatePage,
+    BuilderConfigurationActions.updatePage,
     (state, action): FormConfigurationState => {
       const updatedPageIdx = state.pages.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      let newPages = state.pages;
+      const newPages = state.pages;
       newPages[updatedPageIdx] = {
         ...newPages[updatedPageIdx],
         ...action.page

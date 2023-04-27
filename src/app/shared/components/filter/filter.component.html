@@ -39,10 +39,10 @@
         <div
           [ngClass]="
             item.itemValue &&
-            (item.itemValue == 'Daily' ||
-              item.itemValue == 'Monthly' ||
-              item.itemValue == 'Weekly' ||
-              item.itemValue == 'Custom dates')
+            (item.itemValue === 'Daily' ||
+              item.itemValue === 'Monthly' ||
+              item.itemValue === 'Weekly' ||
+              item.itemValue === 'Custom dates')
               ? 'width50'
               : 'width100'
           "
@@ -149,6 +149,7 @@
     type="button"
     [disabled]="checkState()"
     (click)="applyFilter()"
+    (click)="closeFilter()"
     aria-label="Apply Filter"
   >
     Apply

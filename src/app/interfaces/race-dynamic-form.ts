@@ -6,7 +6,7 @@ export interface FormTableUpdate {
 }
 
 export interface InspectionQueryParam {
-  nextToken?: string;
+  next?: string;
   limit: number;
   searchTerm: string;
   fetchType: string;
@@ -47,7 +47,7 @@ export interface Form {
 }
 
 export interface FormQueryParam {
-  nextToken?: string;
+  next?: string;
   limit: number;
   searchTerm: string;
   fetchType: string;
@@ -57,7 +57,7 @@ export interface FormQueryParam {
 export interface InspectionDetailResponse {
   rows: any[];
   count: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export interface ScheduleFormDetail extends Form {
@@ -80,21 +80,21 @@ export interface FormDetail extends Form {
 }
 
 export interface FormsDetailResponse {
-  rows: ScheduleFormDetail[];
+  items: ScheduleFormDetail[];
   scheduledCount: number;
   unscheduledCount: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export interface FormDetailResponse {
-  rows: FormDetail[];
+  items: FormDetail[];
   count: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export type FormList = {
   items: Array<Form | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 };
 
@@ -126,7 +126,6 @@ export interface FormSuccessModalData {
   roundPlanName: string;
   mode: 'update' | 'create';
 }
-
 
 export interface InspectionDetail extends Form {
   inspectionId: string;

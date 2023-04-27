@@ -28,20 +28,19 @@
 }
 
 .favorite-icon {
-  ::ng-deep svg {
-    width: 20px !important;
-    height: 20px !important;
-  }
+  width: 25px !important;
+  height: 20px !important;
+  position: relative;
+  top: -5px;
+  right: 1px;
 }
 
 .dropdown-icon {
   position: relative;
-  top: 5px;
+  top: 4px;
   right: 4px;
-  ::ng-deep svg {
-    width: 15px !important;
-    height: 20px !important;
-  }
+  width: 14px !important;
+  height: 16px !important;
 }
 
 .chart-control-icon {
@@ -58,6 +57,10 @@
   display: flex;
   // justify-content: flex-end;
   height: 100%;
+}
+
+.report-input {
+  text-overflow: ellipsis;
 }
 
 .column1 {
@@ -296,6 +299,14 @@
 .yes-no-btn {
   float: right;
   margin-right: 10px;
+}
+
+.done-btn {
+  background-color: $radio-button-checked;
+}
+
+.cancel-btn {
+  color: $radio-button-checked;
 }
 
 .m-t-14 {
