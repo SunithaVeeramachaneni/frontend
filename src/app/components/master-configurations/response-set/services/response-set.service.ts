@@ -51,6 +51,7 @@ export class ResponseSetService {
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
+    params.set('next', '');
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,

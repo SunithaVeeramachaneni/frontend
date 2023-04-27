@@ -1,0 +1,25 @@
+<div class="edit-template-name-modal">
+  <span class="title">{{
+    'overwriteTemplateTitle' | translate : { name: data.templateName }
+  }}</span>
+  <span class="dialog-close-btn" (click)="close()">
+    <mat-icon class="dialog-close">close</mat-icon>
+  </span>
+  <p>
+    {{ 'overwriteTemplateMessage' | translate : { name: data.templateName } }}
+  </p>
+  <button
+    mat-raised-button
+    class="save-template-btn"
+    type="submit"
+    (click)="save()"
+  >
+    {{ 'overwriteSaveTemplateBtn' | translate }}
+  </button>
+  <button
+    mat-stroked-button
+    class="cancel-btn"
+    translate="cancel"
+    (click)="close()"
+  ></button>
+</div>

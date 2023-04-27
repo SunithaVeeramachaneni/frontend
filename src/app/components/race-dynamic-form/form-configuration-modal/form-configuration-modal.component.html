@@ -74,10 +74,15 @@
               formControlName="plantId"
               [placeholder]="'plant' | translate"
             >
+              <input
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKeyPlant($event)"
+              />
               <div class="scrollable-area">
                 <mat-option
                   [value]="plant.id"
-                  *ngFor="let plant of allPlantsData"
+                  *ngFor="let plant of plantInformation"
                   >{{ plant.plantId }} - {{ plant.name }}</mat-option
                 >
               </div>
