@@ -14,6 +14,7 @@ import { SelectTab, UserDetails } from 'src/app/interfaces';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { routingUrls } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-scheduler',
@@ -38,7 +39,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(({ tabIndex }) => {
       this.tabIndex = tabIndex;
     });
-    this.headerService.setHeaderTitle('Scheduler');
+    this.headerService.setHeaderTitle(routingUrls.schedularForms.title);
     this.users$ = this.userService
       .getUsers$(
         {
