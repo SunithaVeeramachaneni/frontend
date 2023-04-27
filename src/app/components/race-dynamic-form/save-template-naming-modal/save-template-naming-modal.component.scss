@@ -1,0 +1,29 @@
+@import '../../../../scss/colors.scss';
+
+.save-template-naming-modal {
+  height: 130px;
+}
+
+.title {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.next-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+}
+
+.cancel-btn {
+  color: $gray4;
+  float: right;
+  background: transparent;
+  margin-right: 10px;
+}
+
+.error-fields {
+  white-space: nowrap;
+  margin-left: -10px;
+}

@@ -16,6 +16,7 @@ import {
 import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
+import { PlantService } from '../../plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
@@ -50,7 +51,8 @@ export class AddEditLocationComponent implements OnInit {
         locationId: this.locEditData.locationId,
         model: this.locEditData.model,
         description: this.locEditData.description,
-        parentId: this.locEditData.parentId
+        parentId: this.locEditData.parentId,
+        plantsID: this.locEditData.plantsID
       };
       this.locationForm.patchValue(locdata);
       this.getAllLocations();
@@ -69,12 +71,15 @@ export class AddEditLocationComponent implements OnInit {
   locationButton;
 
   parentInformation;
+  plantInformation;
   allParentsData;
+  allPlantsData;
   private locEditData;
 
   constructor(
     private fb: FormBuilder,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -82,17 +87,21 @@ export class AddEditLocationComponent implements OnInit {
       image: '',
       name: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       locationId: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
       description: '',
-      parentId: ''
+      parentId: '',
+      plantsID: new FormControl('', [Validators.required])
     });
     this.getAllLocations();
+    this.getAllPlants();
   }
 
   getAllLocations() {
@@ -102,6 +111,42 @@ export class AddEditLocationComponent implements OnInit {
       );
       this.allParentsData = this.parentInformation;
     });
+  }
+
+  getAllPlants() {
+    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
+      this.allPlantsData = allPlants.items || [];
+      this.plantInformation = allPlants.items || [];
+    });
+  }
+
+  onSelectPlant(event) {
+    const parentId = this.locationForm.get('parentId').value;
+
+    if (parentId) {
+      this.allParentsData = this.parentInformation;
+    } else {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === event
+      );
+    }
+  }
+
+  onSelectLocation(event) {
+    const plantsID = this.locationForm.get('plantsID').value;
+
+    if (plantsID) {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      // set plant value if plant field was not selected first
+      this.allParentsData = this.parentInformation;
+      const location = this.allParentsData.find((d) => d.id === event);
+      if (location.plantsID) {
+        this.locationForm.get('plantsID').setValue(location.plantsID);
+      }
+    }
   }
 
   create() {
@@ -135,24 +180,63 @@ export class AddEditLocationComponent implements OnInit {
     }
   }
 
-  onKey(event) {
+  onKeyPlant(event) {
     const value = event.target.value || '';
-    this.allParentsData = this.search(value);
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
   }
 
-  search(value: string) {
+  onKey(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      const plantsID = this.locationForm.get('plantsID').value;
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      this.allParentsData = this.searchParent(value);
+    }
+  }
+
+  searchPlant(value: string) {
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter(
-      (parent) =>
-        (parent.name &&
-          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (parent.locationId &&
-          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
     );
+  }
+
+  searchParent(value: string) {
+    const plantsID = this.locationForm.get('plantsID').value;
+
+    const searchValue = value.toLowerCase();
+    if (plantsID) {
+      return this.allParentsData.filter(
+        (parent) =>
+          (parent.name &&
+            parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+          (parent.locationId &&
+            parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+      );
+    } else {
+      return this.parentInformation.filter(
+        (parent) =>
+          (parent.name &&
+            parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+          (parent.locationId &&
+            parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+      );
+    }
   }
 
   cancel() {
     this.slideInOut.emit('out');
+    this.allParentsData = this.parentInformation;
     this.resetForm();
   }
 
@@ -179,7 +263,6 @@ export class AddEditLocationComponent implements OnInit {
         description: this.locEditData.description,
         parentId: this.locEditData.parentId
       };
-      this.locationForm.patchValue(locdata);
     }
   }
 
