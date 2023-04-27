@@ -202,15 +202,14 @@ export class OperatorRoundsService {
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundPlanDetailResponse> {
-    const { fetchType, ...rest } = queryParams;
+    const { fetchType } = queryParams;
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
-      let queryParamaters;
+      const queryParamaters = queryParams;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        Object.assign(queryParamaters, { plantId: filterData.plant });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
