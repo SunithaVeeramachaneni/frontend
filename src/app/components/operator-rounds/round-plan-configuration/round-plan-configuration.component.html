@@ -149,6 +149,7 @@
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
       <app-hierarchy-container
+        [plantId]="formMetadata.plantId"
         (hierarchyEvent)="hierarchyEventHandler($event)"
       ></app-hierarchy-container>
     </div>
