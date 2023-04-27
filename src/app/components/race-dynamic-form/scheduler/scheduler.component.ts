@@ -40,29 +40,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
       this.tabIndex = tabIndex;
     });
     this.headerService.setHeaderTitle(routingUrls.schedularForms.title);
-    this.users$ = this.userService
-      .getUsers$(
-        {
-          includeRoles: false,
-          includeSlackDetails: false
-        },
-        { displayToast: true, failureResponse: { rows: [] } }
-      )
-      .pipe(
-        map(({ rows: users }) =>
-          users?.map((user: UserDetails) => ({
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            email: user?.email,
-            profileImage: this.userService.getImageSrc(
-              Buffer.from(user?.profileImage).toString()
-            ),
-            isActive: user?.isActive
-          }))
-        ),
-        shareReplay(1),
-        tap((users) => this.raceDynamicFormService.setUsers(users))
-      );
+    this.users$ = this.userService.getUsersInfo$();
   }
 
   getSelectedIndex(): number {
