@@ -545,18 +545,21 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
-      tap(({ scheduledCount, unscheduledCount, next }) => {
-        this.nextToken = next !== undefined ? next : null;
-        const { scheduled, unscheduled } = this.roundPlanCounts;
-        this.roundPlanCounts = {
-          ...this.roundPlanCounts,
-          scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
-          unscheduled:
-            unscheduledCount !== undefined ? unscheduledCount : unscheduled
-        };
-      })
-    );
+    return this.operatorRoundsService
+      .getPlansList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.nextToken = next;
+          const { scheduled, unscheduled } = this.roundPlanCounts;
+          this.roundPlanCounts = {
+            ...this.roundPlanCounts,
+            scheduled:
+              scheduledCount !== undefined ? scheduledCount : scheduled,
+            unscheduled:
+              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+          };
+        })
+      );
   }
 
   getAllRoundPlans() {

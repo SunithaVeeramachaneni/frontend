@@ -158,7 +158,8 @@ export class UsersService {
     this.getUsers$(
       {
         includeRoles: false,
-        includeSlackDetails: false
+        includeSlackDetails: false,
+        limit: 10000
       },
       { displayToast: true, failureResponse: { rows: [] } }
     ).pipe(

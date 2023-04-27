@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
+  Input,
   ChangeDetectorRef,
   Inject
 } from '@angular/core';
@@ -49,6 +50,7 @@ import { DOCUMENT } from '@angular/common';
 })
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Input() plantId: string;
 
   filteredOptions$: Observable<any[]>;
 
@@ -110,8 +112,8 @@ export class HierarchyContainerComponent implements OnInit {
       })
     );
 
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allAssets$ = this.assetService.fetchAllAssets$();
+    this.allLocations$ = this.locationService.fetchAllLocations$(this.plantId);
+    this.allAssets$ = this.assetService.fetchAllAssets$(this.plantId);
 
     this.masterHierarchyList$ = combineLatest([
       this.allLocations$,

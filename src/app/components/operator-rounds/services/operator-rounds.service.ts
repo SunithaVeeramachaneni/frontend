@@ -212,10 +212,6 @@ export class OperatorRoundsService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.next = '';
-      }
       let queryParamaters;
       if (filterData) {
         queryParamaters = { ...rest, plantId: filterData.plant };
@@ -306,7 +302,8 @@ export class OperatorRoundsService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { hierarchy, ...formMetadata } = formMetaDataDetails.formMetadata;
+    const { hierarchy, plant, moduleName, ...formMetadata } =
+      formMetaDataDetails.formMetadata;
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
