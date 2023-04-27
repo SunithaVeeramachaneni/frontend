@@ -663,7 +663,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             });
           }
           if (uniqueAssignTo?.length > 0) {
-            uniqueSchedules?.filter(Boolean).forEach((item) => {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
               if (item) {
                 this.assignedTo.push(item);
               }

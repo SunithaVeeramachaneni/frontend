@@ -117,7 +117,11 @@ export class RaceDynamicFormService {
       }
       let queryParamaters;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        queryParamaters = {
+          ...rest,
+          plantId: filterData.plant ?? '',
+          plant: filterData.plant ?? ''
+        };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -923,7 +927,7 @@ export class RaceDynamicFormService {
         displayToast: true,
         failureResponse: {}
       })
-      .pipe(map((res) => this.formatInspections(res.rows)));
+      .pipe(map((res) => this.formatInspections(res.items || [])));
   };
 
   getInspectionsList$(

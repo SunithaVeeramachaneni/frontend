@@ -652,7 +652,8 @@ export class OperatorRoundsService {
   private formatRounds(rounds: RoundDetail[] = []): RoundDetail[] {
     const rows = rounds
       .sort(
-        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        (a, b) =>
+          new Date(a?.dueDate).getTime() - new Date(b?.dueDate).getTime()
       )
       .map((p) => ({
         ...p,
@@ -665,7 +666,7 @@ export class OperatorRoundsService {
           },
           condition: true
         },
-        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
@@ -718,7 +719,7 @@ export class OperatorRoundsService {
         'rounds?' + params.toString(),
         { displayToast: true, failureResponse: {} }
       )
-      .pipe(map((res) => this.formatRounds(res.rows)));
+      .pipe(map((res) => this.formatRounds(res?.items || [])));
   };
 
   fetchAllPlansList$ = () => {
