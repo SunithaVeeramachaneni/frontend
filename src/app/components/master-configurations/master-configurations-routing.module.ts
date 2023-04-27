@@ -67,11 +67,10 @@ const routes: Routes = [
         }
       },
       {
-        path: 'temporary',
+        path: ':tableUID',
         component: ViewDetailsComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'temporary' },
           permissions: [permissions.viewLocations]
         }
       }

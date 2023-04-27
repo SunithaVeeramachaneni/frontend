@@ -2,18 +2,26 @@ import { Injectable } from '@angular/core';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { DeleteMDMTable } from 'src/app/interfaces/master-data-management/mdmTable';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MdmTableService {
+  mdmTables$ = new BehaviorSubject<any>({});
+
   constructor(private _appService: AppService) {}
 
-  fetchAllTables$ = () =>
-    this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'masterconfigapi/masterdata/list'
-    );
+  fetchAllTables$ = () => {
+    this._appService
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'masterconfigapi/masterdata/list'
+      )
+      .subscribe((res) => {
+        this.mdmTables$.next(res.items);
+      });
+  };
 
   createTable$ = (data) =>
     this._appService._postData(

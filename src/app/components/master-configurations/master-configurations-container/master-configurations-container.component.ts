@@ -18,9 +18,9 @@ export class MasterConfigurationsContainerComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
+    private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
-    private headerService: HeaderService,
     private mdmTableService: MdmTableService
   ) {}
 
