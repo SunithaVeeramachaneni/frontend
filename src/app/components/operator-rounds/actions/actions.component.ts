@@ -419,17 +419,31 @@ export class ActionsComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(80vh - 300px)'
           };
           this.initial.data = rows;
         } else {
           this.initial.data = this.initial.data.concat(scrollData);
         }
+
+        this.initial.data.map((action) => {
+          if (action.assignedTo !== null) {
+            const assignee = action.assignedTo.split(',');
+            const formattedAssignee =
+              assignee?.length === 1
+                ? assignee[0]
+                : `${assignee[0]} + ${assignee.length - 1} more`;
+            action = { ...action, assignedTo: formattedAssignee };
+          }
+          return action;
+        });
+
         this.skip = this.initial.data.length;
         this.initial.data.map((item) => {
           item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
           return item;
         });
+
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })

@@ -408,15 +408,26 @@ export class IssuesComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 240px)'
+            tableHeight: 'calc(80vh - 300px)'
           };
           this.initial.data = rows;
         } else {
           this.initial.data = this.initial.data.concat(scrollData);
         }
-        this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
-        return this.initial;
+        const issues = this.initial.data?.map((issue) => {
+          if (issue.assignedTo !== null) {
+            const assignee = issue.assignedTo.split(',');
+            const formattedAssignee =
+              assignee?.length === 1
+                ? assignee[0]
+                : `${assignee[0]} + ${assignee.length - 1} more`;
+            issue = { ...issue, assignedTo: formattedAssignee };
+            return issue;
+          }
+        });
+        this.skip = issues.length;
+        this.dataSource = new MatTableDataSource(issues);
+        return issues;
       })
     );
   }

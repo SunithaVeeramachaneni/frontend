@@ -1,4 +1,12 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  DoCheck
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import {
@@ -23,13 +31,17 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
   templateUrl: './issues-actions-detail-view.component.html',
   styleUrls: ['./issues-actions-detail-view.component.scss']
 })
-export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
+export class IssuesActionsDetailViewComponent
+  implements OnInit, OnDestroy, DoCheck
+{
+  @ViewChild('footer') footer: ElementRef;
   issuesActionsDetailViewForm: FormGroup = this.fb.group({
     title: '',
     description: '',
@@ -59,6 +71,7 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   s3BaseUrl: string;
   logHistory: History[];
   filteredMediaType: any;
+  chatPanelHeight;
 
   constructor(
     private fb: FormBuilder,
@@ -69,7 +82,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private sanitizer: DomSanitizer,
     private tenantService: TenantService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   getAttachmentsList() {
@@ -87,15 +101,8 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
-    const assignee = assignedTo.split(',');
-    const formattedAssignee =
-      assignee.length === 1
-        ? [assignee[0]]
-        : [`${assignee[0]} + ${assignee.length - 1} more`];
-
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      assignedTo: formattedAssignee,
       dueDate: new Date(this.data.dueDate),
       dueDateDisplayValue: format(new Date(this.data.dueDate), 'dd MMM yyyy')
     });
@@ -115,6 +122,13 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
         `${type}/${id}/log-history/sse`
       )
       .subscribe();
+
+    this.logHistory$.subscribe(console.log);
+  }
+
+  ngDoCheck() {
+    const height = this.footer?.nativeElement.offsetHeight;
+    this.chatPanelHeight = `calc(100vh - ${height + 105}px)`;
   }
 
   getImageSrc = (source: string) => {
@@ -125,18 +139,10 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   };
 
   uploadFile(event): void {
-    let base64: string;
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
-      base64 = reader.result as string;
-      const file = base64.split(',')[1];
-      const fileData = {
-        name: files[0].name,
-        image: file
-      };
-
       const attachmentsForm = new FormData();
       attachmentsForm.append('file', files[0]);
       const { id, type } = this.data;
@@ -146,10 +152,7 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
         .pipe(
           tap((resp) => {
             if (Object.keys(resp).length) {
-              const attachments = this.issuesActionsDetailViewForm.get(
-                'attachments'
-              ) as FormArray;
-              attachments.push(this.fb.control(fileData));
+              this.filteredMediaType.push(resp);
               this.issuesActionsDetailViewForm.markAsDirty();
             }
           })
@@ -318,6 +321,11 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
 
   getS3Url(filePath: string) {
     return `${this.s3BaseUrl}${filePath}`;
+  }
+
+  navigateToRounds() {
+    this.dialogRef.close();
+    this.router.navigate(['/operator-rounds/scheduler/1']);
   }
 
   openPreviewDialog() {
