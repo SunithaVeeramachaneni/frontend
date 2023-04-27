@@ -111,10 +111,11 @@ export class RaceDynamicFormService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      let queryParamaters;
+      let queryParamaters: any = rest;
       if (filterData) {
         queryParamaters = {
           ...rest,
+          ...filterData,
           plantId: filterData.plant ?? '',
           plant: filterData.plant ?? ''
         };

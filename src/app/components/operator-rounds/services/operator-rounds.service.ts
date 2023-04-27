@@ -212,9 +212,14 @@ export class OperatorRoundsService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      let queryParamaters;
+      let queryParamaters: any = rest;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        queryParamaters = {
+          ...rest,
+          ...filterData,
+          plantId: filterData.plant ?? '',
+          plant: filterData.plant ?? ''
+        };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
