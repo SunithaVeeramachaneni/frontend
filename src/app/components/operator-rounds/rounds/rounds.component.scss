@@ -24,7 +24,7 @@
       font-weight: 500;
       font-size: 110%;
       color: $gray1;
-      margin-left: 5px;
+      margin-left: -1px;
     }
 
     .common-filter-icon {
@@ -36,7 +36,12 @@
 
 .rounds-list {
   ::ng-deep .table-column {
-    width: 20%;
+    min-width: 139px !important;
+    width: 130px;
+  }
+
+  ::ng-deep .space-between {
+    width: 90px !important;
   }
 
   ::ng-deep .mat-form-field-infix {
@@ -61,7 +66,7 @@
   }
 
   ::ng-deep .cdk-column-locationAssetsCompleted {
-    width: 210px !important;
+    width: 139px !important;
   }
 }
 
