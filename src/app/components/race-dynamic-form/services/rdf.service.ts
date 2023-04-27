@@ -105,11 +105,10 @@ export class RaceDynamicFormService {
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    const { fetchType} = queryParams;
+    const { fetchType } = queryParams;
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
       const queryParamaters = queryParams;
       if (filterData) {
