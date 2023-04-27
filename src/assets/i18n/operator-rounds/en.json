@@ -244,7 +244,7 @@
   "photos": "Photos(Issues, Actions, Tasks)",
   "skippedTasks": "Skipped Tasks",
   "tasksCompleted": "Tasks Completed",
-  "pdfPreviewTxt": "PDF View",
+  "pdfPreviewTxt": "PDF setup and preview",
   "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}",
   "user": "User",
   "userGroup": "User Group",
