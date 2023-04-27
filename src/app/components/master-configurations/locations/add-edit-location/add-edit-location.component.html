@@ -1,12 +1,10 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="locationForm">
-    <div>
+    <div class="top-bar">
       <svg-icon (click)="cancel()" icon="icon-close" class="cancel"></svg-icon>
       <h1 class="heading">{{ locationTitle }}</h1>
     </div>
-    <div>
-      <p class="m-0" translate="image"></p>
-
+    <div class="container-div">
       <p class="image-container">
         <span *ngIf="!locationImage?.length">
           <svg-icon icon="icon-locationIcon" class="image-contain"></svg-icon>
@@ -116,6 +114,7 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option
@@ -127,23 +126,24 @@
           </mat-select>
         </mat-form-field>
       </p>
-
-      <button
-        mat-raised-button
-        class="create-btn"
-        type="submit"
-        [disabled]="locationForm.invalid"
-        (click)="create()"
-      >
-        {{ locationButton }}
-      </button>
-      <button
-        mat-stroked-button
-        class="cancel-btn"
-        type="button"
-        (click)="cancel()"
-        translate="cancelBtn"
-      ></button>
     </div>
   </mat-card>
+  <div class="actions-footer">
+    <button
+      mat-stroked-button
+      class="cancel-btn"
+      type="button"
+      (click)="cancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      mat-raised-button
+      class="create-btn"
+      type="submit"
+      [disabled]="locationForm.invalid"
+      (click)="create()"
+    >
+      {{ locationButton }}
+    </button>
+  </div>
 </div>

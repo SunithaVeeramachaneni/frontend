@@ -97,7 +97,7 @@
 
       .tags {
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-          padding: 20px 0 0 0 !important;
+          padding: 17px 0 0 0 !important;
         }
       }
 
@@ -117,4 +117,12 @@
       }
     }
   }
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
 }

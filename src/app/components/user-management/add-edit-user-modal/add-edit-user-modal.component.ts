@@ -36,7 +36,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 @Component({
-  selector: 'app-report-delete-modal',
+  selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
   styleUrls: ['./add-edit-user-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

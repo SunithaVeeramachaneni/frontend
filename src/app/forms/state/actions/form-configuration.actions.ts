@@ -3,7 +3,7 @@ import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
 import { FormConfigurationState } from '../form-configuration.reducer';
 
 export const createForm = createAction(
-  '[Form Configuration Modal Component] createFrom',
+  '[Form Configuration Modal Component] createForm',
   props<{ formMetadata: FormMetadata }>()
 );
 

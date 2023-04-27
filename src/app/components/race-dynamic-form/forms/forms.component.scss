@@ -63,6 +63,13 @@
   }
 }
 
+.forms-list {
+  ::ng-deep .table-buttons {
+    width: 120px !important;
+    height: 30px;
+    line-height: 25px;
+  }
+}
 ::ng-deep .remove-zindex th {
   z-index: 0 !important;
 }

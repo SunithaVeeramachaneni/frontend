@@ -7,6 +7,7 @@
   "plan": "Plan",
   "rounds": "Rounds",
   "importBtn": "Import Tasks",
+  "saveAsTemplate": "Save As Template",
   "publishBtn": "Publish",
   "backBtn": "Back",
   "setFormDetailsHeading": "Plan Details",
@@ -156,11 +157,11 @@
   "searchLocation": "Search Location",
   "selectedLocations": "{count} Location(s) selected",
   "assetsCount": "{count} Asset(s)",
-  "totalAssetsCount": "Assets/Location ({ count })",
+  "totalAssetsCount": "Locations/Assets ({ count })",
   "totalTasksCount": "Tasks ({ count })",
-  "noAssetsOrLocationsFound": "No Assets/Locations found for: { searchKey }",
-  "noAssetsAdded": "You have not added any assets/locations yet",
-  "addAssetsBtn": "Add Assets/Locations",
+  "noAssetsOrLocationsFound": "No Locations/Assets found for: { searchKey }",
+  "noAssetsAdded": "You have not added any Assets/Locations yet",
+  "addAssetsBtn": "Add Locations/Assets",
   "nodeSubTitle": "{nodeType} Id: {nodeId}",
   "nodeChildrenHead": "{assetsCount} Sub-Objects, {tasksCount} Tasks",
   "selectedLocationsAndAssets": "{ locationsCount } location(s), { assetsCount } asset(s) selected",
@@ -277,5 +278,8 @@
   "minTxt": "Min",
   "maxTxt": "Max",
   "column": "Column",
-  "viewPDFBtn": "View PDF"
+  "viewPDFBtn": "View PDF",
+  "create": "Create",
+  "whiteSpace": "{name} is required",
+  "trimWhiteSpace": "{name} must not start or end with spaces"
 }

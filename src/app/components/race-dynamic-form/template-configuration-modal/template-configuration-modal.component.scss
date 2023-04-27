@@ -1,0 +1,123 @@
+@import '../../../../scss/colors.scss';
+
+.form-header-modal {
+  background: $white2;
+
+  .form-toolbar {
+    height: 65px;
+    background-color: $white;
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+
+      .back-arrow {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 1px;
+      }
+
+      .back-btn-text {
+        font-weight: 700;
+        font-size: 120%;
+        letter-spacing: 0.15px;
+        color: $text-color;
+        margin-left: 10px;
+        position: relative;
+        top: -2px;
+      }
+    }
+  }
+
+  .form-content {
+    height: 100vh;
+
+    .form-details {
+      width: 500px;
+      height: 90%;
+      margin: 10px auto;
+      padding: 15px;
+      background-color: $white;
+
+      .heading {
+        font-size: 130%;
+        font-weight: 500;
+        color: $black;
+        margin: 5px;
+      }
+
+      .sub-heading {
+        font-weight: 400;
+        font-size: 110%;
+        color: $text-color;
+        margin: 10px 5px;
+      }
+
+      .margin {
+        margin: 10px 5px;
+      }
+
+      .radio-btn-text {
+        font-weight: 400;
+        font-size: 110%;
+        color: $light-gray;
+        position: relative;
+        top: -2px;
+      }
+
+      .radio-sub-text {
+        font-weight: 400;
+        font-size: 90%;
+        color: $text-color;
+        opacity: 0.8;
+        margin: 0px 28px;
+      }
+
+      .horizontal-line {
+        border: 1px solid $border-color;
+        margin: 20px 0;
+      }
+
+      .form-name-description {
+        font-weight: 500;
+        font-size: 110%;
+        color: $black;
+        margin: 5px;
+      }
+
+      .form-name {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 6px 0px 13px 0 !important;
+        }
+      }
+
+      .error-fields {
+        white-space: nowrap;
+        margin-top: 15px;
+        margin-left: -10px;
+      }
+
+      .tags {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 17px 0 0 0 !important;
+        }
+      }
+
+      .tags-mat-chips {
+        margin: 0 5px !important;
+      }
+
+      .next-btn {
+        float: right;
+        margin-top: 10px;
+      }
+
+      .skip-btn {
+        float: right;
+        margin-right: 15px;
+        margin-top: 10px;
+      }
+    }
+  }
+}
