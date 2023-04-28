@@ -277,7 +277,6 @@ ul {
 }
 
 .pdf-head {
-  width: 88px;
   height: 29px;
   left: 533px;
   top: 90px;
@@ -320,7 +319,7 @@ ul {
   margin-left: 10px;
 }
 .issue {
-  margin: 0px 5px;
+  margin: 5px 5px;
 }
 .issuesHead {
   background: $issue-bg;
@@ -611,4 +610,7 @@ ul {
   font-size: 100%;
   line-height: 20px;
   margin-right: 10px;
+}
+.plant {
+  font-weight: 500;
 }

@@ -84,7 +84,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
   filter = {
+    status: '',
     schedule: '',
     assignedTo: '',
     dueDate: '',
@@ -111,14 +113,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -428,9 +432,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
             dueDate: inspectionDetail.dueDate
               ? new Date(inspectionDetail.dueDate)
               : '',
-            assignedTo: this.raceDynamicFormService.getUserFullName(
-              inspectionDetail.assignedTo
-            )
+            assignedTo: inspectionDetail?.assignedTo
+              ? this.raceDynamicFormService.getUserFullName(
+                  inspectionDetail.assignedTo
+                )
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -490,54 +496,59 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
   }
   getAllInspections() {
-    this.raceDynamicFormService.fetchAllRounds$().subscribe((formsList) => {
-      const objectKeys = Object.keys(formsList);
-      if (objectKeys.length > 0) {
-        const uniqueAssignTo = formsList
-          ?.map((item) => item.assignedTo)
-          .filter((value, index, self) => self.indexOf(value) === index);
+    this.isLoading$.next(true);
+    this.raceDynamicFormService.fetchAllRounds$().subscribe(
+      (formsList) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueAssignTo = formsList
+            ?.map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-        if (uniqueAssignTo?.length > 0) {
-          uniqueAssignTo?.filter(Boolean).forEach((item) => {
-            if (item) {
-              this.assignedTo.push(item);
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.assignedTo.push(item);
+              }
+            });
+          }
+
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
+
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
+              }
+            });
+          }
+          const uniquePlants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'assignedTo') {
+              item.items = this.assignedTo;
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
+            } else if (item.column === 'schedule') {
+              item.items = this.schedules;
             }
-          });
-        }
-
-        const uniqueSchedules = formsList
-          ?.map((item) => item?.schedule)
-          .filter((value, index, self) => self?.indexOf(value) === index);
-
-        if (uniqueSchedules?.length > 0) {
-          uniqueSchedules?.filter(Boolean).forEach((item) => {
-            if (item) {
-              this.schedules.push(item);
-            }
-          });
-        }
-        const uniquePlants = formsList
-          .map((item) => {
-            if (item.plant) {
-              this.plantsIdNameMap[item.plant] = item.plantId;
-              return item.plant;
-            }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-        this.plants = [...uniquePlants];
-
-        for (const item of this.filterJson) {
-          if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
-          } else if (item.column === 'plant') {
-            item.items = this.plants;
-          } else if (item.column === 'schedule') {
-            item.items = this.schedules;
           }
         }
-      }
-    });
+      },
+      () => this.isLoading$.next(true)
+    );
   }
 
   handleTableEvent = (event): void => {
@@ -681,6 +692,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   getFilter() {
     this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
       this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item.column === 'status') {
+          item.items = this.status;
+        }
+      }
     });
   }
 
@@ -689,7 +705,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
-        this.filter[item.column] = plantId;
+        this.filter[item.column] = plantId ?? '';
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
@@ -714,6 +730,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
+      status: '',
       schedule: '',
       assignedTo: '',
       dueDate: '',

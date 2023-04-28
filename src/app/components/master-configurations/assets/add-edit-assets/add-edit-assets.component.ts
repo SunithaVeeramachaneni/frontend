@@ -42,6 +42,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
       this.assetImage = '';
+      this.assetForm?.reset();
       this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';
@@ -49,19 +50,19 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
       const assdata = {
-        id: this.assetEditData.id,
-        image: this.assetEditData.image,
-        name: this.assetEditData.name,
-        assetsId: this.assetEditData.assetsId,
-        model: this.assetEditData.model,
-        description: this.assetEditData.description,
+        id: this.assetEditData?.id,
+        image: this.assetEditData?.image,
+        name: this.assetEditData?.name,
+        assetsId: this.assetEditData?.assetsId,
+        model: this.assetEditData?.model,
+        description: this.assetEditData?.description,
         parentType:
           this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
-        parentId: this.assetEditData.parentId,
-        plantsID: this.assetEditData.plantsID
+        parentId: this.assetEditData?.parentId,
+        plantsID: this.assetEditData?.plantsID
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assdata);
+      this.assetForm?.patchValue(assdata);
     }
     if (
       this.assetEditData === null ||
@@ -122,17 +123,7 @@ export class AddEditAssetsComponent implements OnInit {
     this.getAllAssets();
     this.getAllPlants();
     this.assetForm.get('parentType').valueChanges.subscribe((value) => {
-      this.assetForm.get('parentId').setValue('');
       this.parentType = value;
-      if (value === 'location') {
-        this.parentInformation = this.allLocationsData;
-        this.allParentsData = this.allLocationsData;
-        this.getAllLocations();
-      } else if (value === 'asset') {
-        this.parentInformation = this.allAssetsData;
-        this.allParentsData = this.allAssetsData;
-        this.getAllAssets();
-      }
     });
   }
 
@@ -226,70 +217,88 @@ export class AddEditAssetsComponent implements OnInit {
 
   onKeyPlant(event) {
     const value = event.target.value || '';
-    this.allPlantsData = this.searchPlant(value);
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
   }
 
   onKey(event) {
     const value = event.target.value || '';
-    this.allParentsData = this.searchParent(value);
+    if (!value) {
+      const plantsID = this.assetForm.get('plantsID').value;
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      this.allParentsData = this.searchParent(value);
+    }
   }
 
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
     return this.plantInformation.filter(
       (plant) =>
-        plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
   searchParent(value: string) {
+    const plantsID = this.assetForm.get('plantsID').value;
+    const parentType = this.assetForm.get('parentType').value;
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter(
-      (parent) =>
-        (parent.name &&
-          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (parent.locationId &&
-          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
-    );
+
+    if (parentType === 'location') {
+      if (plantsID) {
+        return this.allParentsData.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.locationId &&
+              parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+      } else {
+        return this.parentInformation.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.locationId &&
+              parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+      }
+    } else {
+      if (plantsID) {
+        return this.allParentsData.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.assetsId &&
+              parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+      } else {
+        return this.parentInformation.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.assetsId &&
+              parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+      }
+    }
   }
 
   cancel() {
     this.slideInOut.emit('out');
     this.assetForm?.get('parentType').setValue('location');
     this.allParentsData = this.allLocationsData;
-    this.resetForm();
-  }
-
-  resetForm() {
-    if (this.assetEditData === null) {
-      this.assetStatus = 'add';
-      this.assetTitle = 'Create Asset';
-      this.assetButton = 'Create';
-      this.assetImage = '';
-      this.assetForm?.get('parentType').setValue('location');
-    } else {
-      this.assetStatus = 'edit';
-      this.assetTitle = 'Edit Asset';
-      this.assetButton = 'Update';
-      this.assetImage = this.assetEditData.image;
-      const assetdata = {
-        id: this.assetEditData.id,
-        image: this.assetEditData.image,
-        name: this.assetEditData.name,
-        assetsId: this.assetEditData.assetsId,
-        model: this.assetEditData.model,
-        description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType?.toLowerCase(),
-        parentId: this.assetEditData.parentId
-      };
-      this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assetdata);
-    }
   }
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.allLocationsData = allLocations.items;
+      this.allLocationsData = allLocations.items || [];
       this.parentInformation = this.allLocationsData;
       this.allParentsData = this.allLocationsData;
     });
@@ -297,11 +306,17 @@ export class AddEditAssetsComponent implements OnInit {
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allAssetsData = allAssets.items.filter(
-        (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
-      );
-      this.parentInformation = this.allAssetsData;
-      this.allParentsData = this.allAssetsData;
+      if (allAssets.items) {
+        this.allAssetsData = allAssets.items.filter(
+          (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
+        );
+        this.parentInformation = this.allAssetsData;
+        this.allParentsData = this.allAssetsData;
+      } else {
+        this.allAssetsData = [];
+        this.parentInformation = [];
+        this.allParentsData = [];
+      }
     });
   }
 
