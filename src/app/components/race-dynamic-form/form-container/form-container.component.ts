@@ -36,7 +36,7 @@ export class FormContainerComponent implements OnInit {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.raceDynamicForms.url) {
-          this.headerService.setHeaderTitle(routingUrls.raceDynamicForms.title);
+          this.headerService.setHeaderTitle(routingUrls.myForms.title);
           this.breadcrumbService.set(routingUrls.raceDynamicForms.url, {
             skip: true
           });

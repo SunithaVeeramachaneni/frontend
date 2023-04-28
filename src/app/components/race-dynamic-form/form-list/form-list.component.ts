@@ -66,7 +66,8 @@ export class FormListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -76,8 +77,8 @@ export class FormListComponent implements OnInit {
         color: 'darkgray',
         display: 'block',
         'white-space': 'wrap',
-        'overflow-wrap': 'break-word',
-        'max-width': '350px'
+        'max-width': '350px',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
