@@ -228,6 +228,13 @@ export class HierarchyContainerComponent implements OnInit {
         node: event
       })
     );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormStatuses({
+        formStatus: formConfigurationStatus.draft,
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
+      })
+    );
   };
 
   removeNodeHandler(event) {

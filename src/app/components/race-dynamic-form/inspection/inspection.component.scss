@@ -40,6 +40,9 @@
   ::ng-deep .table-column {
     width: 20%;
   }
+  ::ng-deep .space-between {
+    width: 90px !important;
+  }
 }
 
 ::ng-deep .remove-zindex th {

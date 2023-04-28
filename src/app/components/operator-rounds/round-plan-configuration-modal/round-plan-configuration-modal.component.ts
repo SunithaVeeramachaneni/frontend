@@ -210,7 +210,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
-            formLogo: 'assets/img/svg/rounds-icon.svg'
+            formLogo: 'assets/img/svg/round-plans-icon.svg'
           }
         })
       );

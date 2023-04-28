@@ -61,6 +61,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
+
+  currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
   pagesCount = 0;
@@ -159,7 +161,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     if (!date) {
       return '';
     }
-    return format(new Date(date), 'dd MMM yyyy - HH:mm a');
+    return format(new Date(date), 'M/d/yy, h:mm a');
   }
 
   onNavigateToDetailPage() {

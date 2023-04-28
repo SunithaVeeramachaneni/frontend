@@ -49,7 +49,6 @@ const {
   inActiveUsers,
   tenantManagement,
   raceDynamicForms,
-  submissionForms,
   myForms,
   formsTemplates,
   archivedForms,
@@ -160,24 +159,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myForms.permission
         },
         {
+          title: schedularForms.title,
+          url: schedularForms.url,
+          permission: schedularForms.permission
+        },
+        {
           title: formsTemplates.title,
           url: formsTemplates.url,
           permission: formsTemplates.permission
         },
         {
-          title: submissionForms.title,
-          url: submissionForms.url,
-          permission: submissionForms.permission
-        },
-        {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
-        },
-        {
-          title: schedularForms.title,
-          url: schedularForms.url,
-          permission: schedularForms.permission
         }
       ]
     },
@@ -593,7 +587,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   getImage = (imageName: string, active: boolean) =>
     active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
- 
 
   selectedListElement(title) {
     this.menuOpenClose = false;

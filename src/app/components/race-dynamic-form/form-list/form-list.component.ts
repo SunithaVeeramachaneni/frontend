@@ -66,7 +66,8 @@ export class FormListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -76,8 +77,8 @@ export class FormListComponent implements OnInit {
         color: 'darkgray',
         display: 'block',
         'white-space': 'wrap',
-        'overflow-wrap': 'break-word',
-        'max-width': '350px'
+        'max-width': '350px',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -360,15 +361,18 @@ export class FormListComponent implements OnInit {
                 authoredFormDetail &&
                 Object.keys(authoredFormDetail).length
               ) {
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
+                this.raceDynamicFormService
+                  .createAuthoredFormDetail$({
+                    formStatus: authoredFormDetail?.formStatus,
+                    formDetailPublishStatus: 'Draft',
+                    formListId: newRecord?.id,
+                    pages: JSON.parse(authoredFormDetail?.pages) ?? '',
+                    counter: authoredFormDetail?.counter,
+                    authoredFormDetailVersion: 1
+                  })
+                  .subscribe(() => (newRecord.publishedDate = ''));
               }
+              newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
                 action: 'copy',
                 form: {

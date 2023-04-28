@@ -87,14 +87,16 @@ export class ActionsComponent implements OnInit {
         'font-weight': '500',
         'font-size': '100%',
         width: '280px',
-        color: '#212121'
+        color: '#212121',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -238,10 +240,7 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        display: 'inline-block',
-        width: 'max-content'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -263,7 +262,9 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -304,7 +305,7 @@ export class ActionsComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh - 390px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
@@ -314,23 +315,23 @@ export class ActionsComponent implements OnInit {
         color: '#FF9500'
       },
       low: {
-        color: ' #8A8A8C'
-      },
-      'to-do': {
-        'background-color': '#fde2e1',
-        color: '#b76262'
+        color: '#8A8A8C'
       },
       open: {
-        'background-color': '#fde2e1',
-        color: '#b76262'
-      },
-      resolved: {
-        'background-color': '#EEFFF1',
-        color: '#2C9E53'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FFEAC9',
-        color: '#a5570e'
+        'background-color': '#FFCC00',
+        color: '#000000'
+      },
+      'to-do': {
+        'background-color': '#F56565',
+        color: '#FFFFFF'
+      },
+      resolved: {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -419,7 +420,7 @@ export class ActionsComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 390px)'
           };
           this.initial.data = rows;
         } else {

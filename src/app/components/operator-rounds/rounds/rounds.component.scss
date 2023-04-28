@@ -24,7 +24,7 @@
       font-weight: 500;
       font-size: 110%;
       color: $gray1;
-      margin-left: 5px;
+      margin-left: -1px;
     }
 
     .common-filter-icon {
@@ -36,7 +36,35 @@
 
 .rounds-list {
   ::ng-deep .table-column {
-    width: 20%;
+    width: 15%;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-locationAssetsCompleted {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-tasksCompleted {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-schedule {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 80px;
+  }
+
+  ::ng-deep .space-between {
+    width: 70px !important;
   }
 
   ::ng-deep .mat-form-field-infix {
@@ -47,21 +75,18 @@
     margin-right: 15px;
   }
 
+  ::ng-deep .dropdown mat-icon {
+    font-size: 195% !important;
+    line-height: 30px !important;
+  }
+
   ::ng-deep .date-picker {
     align-items: center;
   }
 
-  ::ng-deep .date-picker .mat-form-field {
-    position: relative;
-    top: 5px;
-  }
-
   ::ng-deep .date-picker mat-icon {
-    line-height: 35px !important;
-  }
-
-  ::ng-deep .cdk-column-locationAssetsCompleted {
-    width: 210px !important;
+    font-size: 195% !important;
+    line-height: 22px !important;
   }
 }
 
