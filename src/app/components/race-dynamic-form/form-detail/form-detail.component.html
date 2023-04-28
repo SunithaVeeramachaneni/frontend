@@ -250,7 +250,12 @@
         </div>
       </ng-template>
     </ng-container>
-    <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
+    <div
+      *ngIf="
+        moduleName !== 'OPERATOR_ROUNDS' &&
+        formStatus !== formConfigurationStatus.published
+      "
+    >
       <h4>{{ 'preview' | translate }}</h4>
       <div>
         <div class="name-heading">
@@ -296,7 +301,12 @@
     </div>
   </mat-card>
 
-  <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
+  <div
+    *ngIf="
+      moduleName !== 'OPERATOR_ROUNDS' &&
+      formStatus !== formConfigurationStatus.published
+    "
+  >
     <div
       class="question-bg"
       *ngIf="selectedFormDetail$ | async as selectedFormDetail"
