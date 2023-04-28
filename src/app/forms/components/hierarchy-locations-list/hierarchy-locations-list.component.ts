@@ -29,6 +29,8 @@ export class HierarchyLocationsListComponent implements OnInit {
           JSON.stringify(data.filter((item) => item.type === 'location'))
         )
       : ([] as HierarchyEntity[]);
+
+    console.log(this.allItems);
     this.searchFilterItems = this.allItems;
     this.cdrf.markForCheck();
   }
@@ -70,11 +72,6 @@ export class HierarchyLocationsListComponent implements OnInit {
         })
       )
       .subscribe();
-
-    setTimeout(() => {
-      const div = document.getElementById('hidden-click');
-      div.click();
-    }, 1000);
   }
 
   handleNodeToggle = (event: any) => {
@@ -112,9 +109,5 @@ export class HierarchyLocationsListComponent implements OnInit {
 
   submitSelectedLocations = () => {
     this.handleLocationHierarchy.emit(this.selectedItems);
-  };
-
-  checkClick = () => {
-    this.cdrf.markForCheck();
   };
 }
