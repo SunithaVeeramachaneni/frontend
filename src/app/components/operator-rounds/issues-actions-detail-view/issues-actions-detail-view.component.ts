@@ -199,6 +199,12 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     return JSON.stringify(data);
   }
 
+  createNotification() {
+    this.observations
+      .createNotification(this.data)
+      .subscribe((value) => console.log(value));
+  }
+
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
     this.updateIssueOrAction({ field: 'assignee', value: user.email, checked });
   }
