@@ -32,7 +32,7 @@ export class DashboardContainerComponent implements OnInit {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.dashboard.url) {
-          this.headerService.setHeaderTitle(routingUrls.dashboard.title);
+          this.headerService.setHeaderTitle(routingUrls.myDashboard.title);
           this.breadcrumbService.set(routingUrls.dashboard.url, { skip: true });
           this.cdrf.detectChanges();
         } else {

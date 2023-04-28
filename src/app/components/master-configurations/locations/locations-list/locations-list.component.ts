@@ -22,7 +22,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -39,6 +43,8 @@ import { slideInOut } from 'src/app/animations';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-locations-list',
@@ -68,14 +74,16 @@ export class LocationsListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'locationId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -86,9 +94,7 @@ export class LocationsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -98,9 +104,14 @@ export class LocationsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasSubtitle: true,
+      subtitleColumn: 'plantsID',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
@@ -153,9 +164,8 @@ export class LocationsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 5,
-      hasSubtitle: false,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -165,9 +175,13 @@ export class LocationsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      subtitleColumn: 'parentID',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     }
   ];
 
@@ -242,16 +256,23 @@ export class LocationsListComponent implements OnInit {
 
   plants = [];
   plantsIdNameMap = {};
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
 
   constructor(
     private locationService: LocationService,
     private readonly toast: ToastService,
     private loginService: LoginService,
     private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.locations.title))
+    );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
     this.allLocations$ = this.locationService.fetchAllLocations$();
@@ -352,6 +373,7 @@ export class LocationsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentID = parent.locationId;
             } else {
               item.parent = '';
             }
@@ -426,7 +448,8 @@ export class LocationsListComponent implements OnInit {
             if (item.plantsID) {
               item = {
                 ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
+                plant: item?.plant?.name,
+                plantsID: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };
