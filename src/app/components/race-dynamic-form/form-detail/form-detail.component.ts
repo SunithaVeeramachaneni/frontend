@@ -61,6 +61,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
+
+  currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
   pagesCount = 0;

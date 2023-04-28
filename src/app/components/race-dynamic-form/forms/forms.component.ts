@@ -668,7 +668,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
     const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
     return value
-      ? this.raceDynamicFormService.getUserFullName(value)
+      ? this.raceDynamicFormService.getUserFullName(value) ?? ''
       : this.placeHolder;
   }
 
@@ -832,7 +832,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {

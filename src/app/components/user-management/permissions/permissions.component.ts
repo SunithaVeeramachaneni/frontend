@@ -135,8 +135,8 @@ export class PermissionsComponent implements OnChanges {
           });
 
           if (
-            activePermissionCount ===
-              this.newPermissionsArray.permissions.length &&
+            this.newPermissionsArray.totalActivePermissions ===
+              this.newPermissionsArray.totalPermissionsCount &&
             !addingNewRole
           ) {
             this.newPermissionsArray.checked = true;
