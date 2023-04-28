@@ -20,10 +20,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="name"></mat-label>
+          <mat-label translate="nameMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'name' | translate"
+            [placeholder]="'nameMandatory' | translate"
             formControlName="name"
           />
 
@@ -43,10 +43,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="assetsId"></mat-label>
+          <mat-label translate="assetsIdMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'assetsId' | translate"
+            [placeholder]="'assetsIdMandatory' | translate"
             formControlName="assetsId"
           />
           <mat-error
@@ -86,7 +86,11 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field
+          appearance="outline"
+          class="plant-input-field"
+          class="width-100"
+        >
           <mat-label translate="plantMandatory"></mat-label>
           <mat-select
             formControlName="plantsID"
@@ -103,6 +107,18 @@
               >
             </div>
           </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('plantsID')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.plantsID.name
+                | translate
+                  : {
+                      name: 'Plant' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="parent-type">
