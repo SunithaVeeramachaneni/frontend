@@ -361,15 +361,18 @@ export class FormListComponent implements OnInit {
                 authoredFormDetail &&
                 Object.keys(authoredFormDetail).length
               ) {
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
+                this.raceDynamicFormService
+                  .createAuthoredFormDetail$({
+                    formStatus: authoredFormDetail?.formStatus,
+                    formDetailPublishStatus: 'Draft',
+                    formListId: newRecord?.id,
+                    pages: JSON.parse(authoredFormDetail?.pages) ?? '',
+                    counter: authoredFormDetail?.counter,
+                    authoredFormDetailVersion: 1
+                  })
+                  .subscribe(() => {});
               }
+              newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
                 action: 'copy',
                 form: {
