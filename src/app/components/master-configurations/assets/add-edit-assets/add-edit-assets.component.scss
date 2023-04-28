@@ -54,7 +54,7 @@
   }
 
   .image-container {
-    margin: 20px 0 40px 0;
+    margin: 20px 0 10px 0;
   }
 
   .image-contain {
@@ -97,6 +97,21 @@
     .parent-type-radio {
       position: relative;
       top: -2px;
+      ::ng-deep .mat-radio-outer-circle {
+        height: 16px !important;
+        width: 16px !important;
+        border-color: $gray5;
+      }
+      ::ng-deep .mat-radio-inner-circle {
+        background-color: $blue-main;
+      }
+
+      ::ng-deep .mat-radio-checked .mat-radio-outer-circle {
+        border-color: $blue-main;
+      }
+      ::ng-deep .mat-focus-indicator {
+        display: none;
+      }
     }
   }
 
@@ -124,15 +139,6 @@
     margin-top: 10px !important;
   }
 
-  ::ng-deep .mat-radio-outer-circle {
-    height: 16px !important;
-    width: 16px !important;
-    border-color: $light-gray;
-  }
-
-  ::ng-deep .mat-radio-inner-circle {
-    background-color: $light-gray;
-  }
 }
 
 .searchable-input {

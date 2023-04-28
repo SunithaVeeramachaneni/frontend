@@ -17,7 +17,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -34,6 +38,8 @@ import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -64,14 +70,16 @@ export class AssetsListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'assetsId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -223,16 +231,23 @@ export class AssetsListComponent implements OnInit {
   };
   plantsIdNameMap = {};
   plants = [];
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
 
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
     private locationService: LocationService,
     private loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
+    );
     this.assetService.fetchAssets$.next({ data: 'load' });
     this.assetService.fetchAssets$.next({} as TableEvent);
     this.searchAssets = new FormControl('');

@@ -186,11 +186,12 @@
                 }}
               </span>
             </ng-template>
-            <button
+            <!-- <button
               mat-stroked-button
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
+              *ngIf="false"
             ></button>
           </div>
           <app-builder
@@ -209,49 +210,50 @@
             }}
           </span>
           <!-- will be enabled after implementation -->
-          <!-- <button
+            <!-- <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
           ></button> -->
+          </div>
+          <app-builder
+            *ngIf="selectedNodeLoadStatus"
+            [selectedNode]="selectedNode"
+            [counter]="formConfiguration.get('counter').value"
+          ></app-builder>
         </div>
-        <app-builder
-          *ngIf="selectedNodeLoadStatus"
-          [selectedNode]="selectedNode"
-          [counter]="formConfiguration.get('counter').value"
-        ></app-builder>
+      </div>
+      <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
+        <app-iphone
+          *ngIf="selectedNode?.id"
+          [moduleType]="'operator-rounds'"
+          [subFormId]="selectedNode?.id"
+          [assetLocationName]="selectedNode?.name"
+        ></app-iphone>
       </div>
     </div>
-    <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone
-        *ngIf="selectedNode?.id"
-        [moduleType]="'operator-rounds'"
-        [subFormId]="selectedNode?.id"
-        [assetLocationName]="selectedNode?.name"
-      ></app-iphone>
+  </div>
+
+  <div *ngIf="openAppSider$ | async as openAppSider">
+    <div *ngIf="openAppSider">
+      <app-import-questions-slider
+        [selectedFormName]="selectedFormName"
+        [selectedFormData]="selectedFormData"
+        [currentFormData]="currentFormData"
+        (cancelSliderEvent)="cancelSlider($event)"
+      ></app-import-questions-slider>
     </div>
   </div>
-</div>
 
-<div *ngIf="openAppSider$ | async as openAppSider">
-  <div *ngIf="openAppSider">
-    <app-import-questions-slider
-      [selectedFormName]="selectedFormName"
-      [selectedFormData]="selectedFormData"
-      [currentFormData]="currentFormData"
-      (cancelSliderEvent)="cancelSlider($event)"
-    ></app-import-questions-slider>
-  </div>
+  <ng-template #loadingSelectedNode>
+    <div class="p-15">
+      <ngx-shimmer-loading
+        [width]="'100%'"
+        [height]="'20px'"
+        *ngFor="let row of [].constructor(10); let i = index"
+      >
+      </ngx-shimmer-loading>
+    </div>
+  </ng-template>
 </div>
-
-<ng-template #loadingSelectedNode>
-  <div class="p-15">
-    <ngx-shimmer-loading
-      [width]="'100%'"
-      [height]="'20px'"
-      *ngFor="let row of [].constructor(10); let i = index"
-    >
-    </ngx-shimmer-loading>
-  </div>
-</ng-template>
