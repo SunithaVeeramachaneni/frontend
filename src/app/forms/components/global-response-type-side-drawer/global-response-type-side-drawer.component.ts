@@ -31,7 +31,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -50,6 +50,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
   public globalResponse: any;
+  private globalResponseSubscription: Subscription;
 
   @Input() set globalResponseToBeEdited(response: any) {
     this.globalResponse = response ? response : null;
@@ -101,13 +102,23 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     if (this.globalResponse) {
       this.name.patchValue(this.globalResponse.name);
       this.description.patchValue(this.globalResponse.description);
-      JSON.parse(this.globalResponse.values).forEach((item) => {
-        this.responses.push(
-          this.fb.group({
-            title: [item.title, [Validators.required]],
-            color: ''
-          })
-        );
+      const globalresponseValues = JSON.parse(this.globalResponse.values);
+      const reponseTimer = timer(0, 1000);
+      var cnt = 0;
+      this.globalResponseSubscription = reponseTimer.subscribe(() => {
+        const test = globalresponseValues.slice(cnt * 100, (cnt + 1) * 100);
+        test.forEach((item) => {
+          this.responses.push(
+            this.fb.group({
+              title: [item.title, [Validators.required]],
+              color: ''
+            })
+          );
+        });
+        cnt++;
+        if (test.length === 0) {
+          this.globalResponseSubscription.unsubscribe();
+        }
       });
     } else if (!this.globalResponse && !this.isViewMode) this.addResponse(1);
   }
