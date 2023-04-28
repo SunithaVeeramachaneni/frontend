@@ -294,7 +294,7 @@ export class UsersService {
   ): Observable<any> {
     return this.appService.downloadFile(
       environment.userRoleManagementApiUrl,
-      'user/download/uploadFailure',
+      'user/download/upload-failure',
       info,
       false,
       body
