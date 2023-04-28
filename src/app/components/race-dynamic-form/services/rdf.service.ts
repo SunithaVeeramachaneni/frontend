@@ -918,7 +918,7 @@ export class RaceDynamicFormService {
         displayToast: true,
         failureResponse: {}
       })
-      .pipe(map((res) => this.formatInspections(res.rows)));
+      .pipe(map((res) => this.formatInspections(res.items || [])));
   };
 
   getInspectionsList$(
@@ -961,7 +961,7 @@ export class RaceDynamicFormService {
   }
 
   getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
+    return this.usersInfoByEmail ? this.usersInfoByEmail[email]?.fullName : '';
   }
 
   private formatInspections(inspections: any[] = []): any[] {
