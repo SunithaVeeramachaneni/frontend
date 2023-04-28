@@ -26,6 +26,7 @@ import {
   UserTable,
   FormTableUpdate
 } from 'src/app/interfaces';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../services/users.service';
 import {
   defaultLimit,
@@ -156,7 +157,7 @@ export class UsersComponent implements OnInit {
     },
     {
       id: 'plantId',
-      displayName: 'plant',
+      displayName: 'plant Id',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -232,6 +233,7 @@ export class UsersComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   disableDeactivate = false;
   users$: Observable<UserTable>;
+  plantList$: Observable<any>;
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
@@ -255,7 +257,8 @@ export class UsersComponent implements OnInit {
     private roleService: RolesPermissionsService,
     public dialog: MatDialog,
     private toast: ToastService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit() {
@@ -480,7 +483,17 @@ export class UsersComponent implements OnInit {
         }
 
         this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
+        this.plantList$ = this.plantService.fetchAllPlants$();
+
+        this.plantList$.subscribe((plantList) => {
+          initial.data = initial.data.map((obj, index) => {
+            const id = plantList.items
+              .filter((plant) => plant.id === obj.plantId)
+              .map((plant) => plant.plantId);
+            return { ...obj, plantId: id[0] };
+          });
+          this.dataSource = new MatTableDataSource(initial.data);
+        });
         return initial;
       })
     );
