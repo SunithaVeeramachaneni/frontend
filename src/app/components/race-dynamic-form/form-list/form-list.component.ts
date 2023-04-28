@@ -370,7 +370,7 @@ export class FormListComponent implements OnInit {
                     counter: authoredFormDetail?.counter,
                     authoredFormDetailVersion: 1
                   })
-                  .subscribe(() => {});
+                  .subscribe(() => (newRecord.publishedDate = ''));
               }
               newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
