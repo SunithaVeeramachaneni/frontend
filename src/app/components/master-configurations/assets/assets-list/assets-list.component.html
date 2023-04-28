@@ -15,7 +15,7 @@
               *ngIf="assetsListCount$ | async as totalCount"
             >
               <span class="asset-count">
-                {{ totalCount }}
+                {{ totalCount | count }}
               </span>
               <span class="asset-text">{{
                 'assets'
