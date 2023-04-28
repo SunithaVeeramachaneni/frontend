@@ -42,7 +42,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
       this.assetImage = '';
-      this.assetForm.reset();
+      this.assetForm?.reset();
       this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';

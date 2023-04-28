@@ -36,7 +36,7 @@ export class AddEditLocationComponent implements OnInit {
       this.locationTitle = 'Create Location';
       this.locationButton = 'Create';
       this.locationImage = '';
-      this.locationForm.reset();
+      this.locationForm?.reset();
     } else {
       this.locationStatus = 'edit';
       this.locationTitle = 'Edit Location';
