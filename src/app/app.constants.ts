@@ -388,3 +388,5 @@ export const DEFAULT_TEMPLATE_PAGES = [
     logics: []
   }
 ];
+
+export const responseCount = 1000;

@@ -57,7 +57,7 @@ export class AddEditAssetsComponent implements OnInit {
         model: this.assetEditData?.model,
         description: this.assetEditData?.description,
         parentType:
-          this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
+          this.assetEditData.parentType === 'LOCATION' ? 'location' : 'asset',
         parentId: this.assetEditData?.parentId,
         plantsID: this.assetEditData?.plantsID
       };
@@ -117,7 +117,11 @@ export class AddEditAssetsComponent implements OnInit {
       parentType: 'location',
       parentId: '',
       locationId: '',
-      plantsID: new FormControl('', [Validators.required])
+      plantsID: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ])
     });
     this.getAllLocations();
     this.getAllAssets();

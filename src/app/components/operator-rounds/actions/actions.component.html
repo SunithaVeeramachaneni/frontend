@@ -2,7 +2,7 @@
   <span class="custom-form-field-gray-color">
     <span class="no-of-actions" *ngIf="actionsCount$ | async as totalCount">
       <span class="actions-count">
-        {{ totalCount }}
+        {{ totalCount | count }}
       </span>
       <span class="actions-text">{{
         'actions'
