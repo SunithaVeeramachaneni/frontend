@@ -94,9 +94,7 @@ export class LocationsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -106,9 +104,14 @@ export class LocationsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasSubtitle: true,
+      subtitleColumn: 'plantsID',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
@@ -161,9 +164,8 @@ export class LocationsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 5,
-      hasSubtitle: false,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -173,9 +175,13 @@ export class LocationsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      subtitleColumn: 'parentID',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     }
   ];
 
@@ -367,6 +373,7 @@ export class LocationsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentID = parent.locationId;
             } else {
               item.parent = '';
             }
@@ -441,7 +448,8 @@ export class LocationsListComponent implements OnInit {
             if (item.plantsID) {
               item = {
                 ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
+                plant: item?.plant?.name,
+                plantsID: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };
