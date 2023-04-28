@@ -87,14 +87,16 @@ export class ActionsComponent implements OnInit {
         'font-weight': '500',
         'font-size': '100%',
         width: '280px',
-        color: '#212121'
+        color: '#212121',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
