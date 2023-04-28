@@ -239,10 +239,7 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        display: 'inline-block',
-        width: 'max-content'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -252,7 +249,7 @@ export class IssuesComponent implements OnInit {
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -274,7 +271,7 @@ export class IssuesComponent implements OnInit {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -286,7 +283,9 @@ export class IssuesComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -305,25 +304,29 @@ export class IssuesComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh - 390px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#ff4033'
+        color: '#FF3B30'
       },
       medium: {
-        color: '#ffab46'
+        color: '#FF9500'
       },
       low: {
-        color: '#98989a'
+        color: '#8A8A8C'
       },
       open: {
-        'background-color': '#fde2e1',
-        color: '#b76262'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FFEAC9',
-        color: '#a5570e'
+        'background-color': '#FFCC00',
+        color: '#000000'
+      },
+      resolved: {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -410,7 +413,7 @@ export class IssuesComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 240px)'
+            tableHeight: 'calc(100vh - 390px)'
           };
           this.initial.data = rows;
         } else {

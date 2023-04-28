@@ -284,7 +284,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'scheduleDates',
-      displayName: 'Start - Ends',
+      displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
       order: 9,
@@ -551,7 +551,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
         tap(({ scheduledCount, unscheduledCount, next }) => {
-          this.nextToken = next;
+          this.nextToken = next !== undefined ? next : null;
           const { scheduled, unscheduled } = this.roundPlanCounts;
           this.roundPlanCounts = {
             ...this.roundPlanCounts,
