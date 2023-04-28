@@ -30,7 +30,6 @@ export class HierarchyLocationsListComponent implements OnInit {
         )
       : ([] as HierarchyEntity[]);
 
-    console.log(this.allItems);
     this.searchFilterItems = this.allItems;
     this.cdrf.markForCheck();
   }
