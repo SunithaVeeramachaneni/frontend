@@ -722,8 +722,8 @@ export class RaceDynamicFormService {
 
   private formatGetRdfFormsResponse(resp: any) {
     const rows =
-      resp.items
-        .sort(
+      resp?.items
+        ?.sort(
           (a, b) =>
             new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
         )

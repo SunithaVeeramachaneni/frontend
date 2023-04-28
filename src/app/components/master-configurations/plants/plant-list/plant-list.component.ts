@@ -290,24 +290,37 @@ export class PlantListComponent implements OnInit {
       this.addEditCopyDeletePlants$,
       onScrollPlants$
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, { form, action }, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
-        } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
-            this.toast.show({
-              text: 'Plant deleted successfully!',
-              type: 'success'
-            });
-            form.action = 'add';
-          } else {
-            initial.data = initial.data.concat(scrollData);
+        } else if (this.addEditCopyDeletePlants) {
+          switch (action) {
+            case 'delete':
+              initial.data = initial.data.filter((d) => d.id !== form.id);
+              this.toast.show({
+                text: 'Plant deleted successfully!',
+                type: 'success'
+              });
+              break;
+            case 'add':
+              // case 'copy':
+              initial.data = [form, ...initial.data];
+              break;
+            case 'edit':
+              initial.data = [
+                form,
+                ...initial.data.filter((item) => item.id !== form.id)
+              ];
+              break;
+            default:
+            // Do nothing
           }
+        } else {
+          initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data.length;
