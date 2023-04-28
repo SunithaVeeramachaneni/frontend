@@ -194,8 +194,12 @@ export class RdfService {
             return null;
           }
 
+          console.log(question);
+
           const { expression, validationMessage, askQuestions } =
             this.getValidationExpression(question, questions);
+
+          const notificationInfo = this.getNotificationInfo(question);
 
           sectionPayloads.push({
             UNIQUEKEY: questionId,
@@ -219,8 +223,18 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            UIVALIDATION: expression, //this.getValidationExpression(question),
+            SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
+            UIVALIDATION: notificationInfo[0] ? '' : expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
+            BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
+            BOSTATUS: notificationInfo[0] ? 'X' : '',
+            BOCONDITION: notificationInfo ? expression : '',
+            TRIGGERON: notificationInfo[0]
+              ? notificationInfo[0].triggerWhen
+              : '',
+            TRIGGERINFO: notificationInfo[0]
+              ? notificationInfo[0].triggerInfo
+              : '',
             ...this.getProperties(question, id)
           });
 
@@ -291,6 +305,7 @@ export class RdfService {
         })
         .filter((payload) => payload);
       payloads = [...payloads, ...sectionPayloads];
+      console.log(payloads);
     });
     return payloads;
   }
@@ -312,19 +327,19 @@ export class RdfService {
 
   getProperties(question, formId = null) {
     let properties = {};
-    const { fieldType, readOnly } = question;
+    const { fieldType, readOnly, value } = question;
     switch (fieldType) {
       case 'DF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: 'CD'
+          DEFAULTVALUE: value ? 'CD' : ''
         };
         break;
       }
       case 'TIF': {
         properties = {
           ...properties,
-          DEFAULTVALUE: 'CT'
+          DEFAULTVALUE: value ? 'CT' : ''
         };
         break;
       }
@@ -479,6 +494,9 @@ export class RdfService {
     if (!question.logics || !question.logics.length) return expression;
 
     question.logics.forEach((logic) => {
+      if (question.fieldType === 'CB') {
+        logic.operand2 = logic.operand2 === 'true' ? 'X' : '';
+      }
       const isEmpty = !logic.operand2.length;
       const questionId = question.id;
 
@@ -518,14 +536,23 @@ export class RdfService {
 
       // Ask Evidence;
       const evidenceQuestion = logic.askEvidence;
+      const oppositeOperator = this.getOppositeOperator(logic.operator);
       if (evidenceQuestion && evidenceQuestion.length) {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        if (question.fieldType === 'CB') {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        } else {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        }
         globalIndex = globalIndex + 1;
         if (isEmpty) {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
         } else {
-          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          if (question.fieldType === 'CB') {
+            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
         }
         validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
       }
@@ -535,8 +562,15 @@ export class RdfService {
       askQuestions = askQuestions.concat(questionsToBeAsked);
       questionsToBeAsked.forEach((q) => {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
       });
+
+      // Raise Notification;
+      const notificationQuestion = logic.raiseNotification;
+      if (notificationQuestion && notificationQuestion.length) {
+        globalIndex = globalIndex + 1;
+        expression = `${questionId} ${logic.operator} (V)${logic.operand2}`;
+      }
     });
 
     if (expression[0] === ';') {
@@ -555,8 +589,21 @@ export class RdfService {
         validationMessage.length - 1
       );
     }
+    console.log(expression);
 
     return { expression, validationMessage, askQuestions };
+  }
+
+  getNotificationInfo(question) {
+    let notificationInfo = [];
+    question.logics.forEach((logic) => {
+      const raiseNotification = logic.raiseNotification;
+      if (raiseNotification && raiseNotification.length) {
+        const { triggerInfo, triggerWhen } = logic;
+        notificationInfo.push({ triggerInfo, triggerWhen });
+      }
+    });
+    return notificationInfo;
   }
 
   getValidationMessage(question) {
@@ -574,5 +621,17 @@ export class RdfService {
     ).documentElement.textContent;
 
     return parsedElement;
+  };
+
+  getOppositeOperator = (operator) => {
+    const oppositeOperatorMap = new Map([
+      ['LE', 'GT'],
+      ['GE', 'LT'],
+      ['LT', 'GE'],
+      ['GT', 'LE'],
+      ['EQ', 'NE'],
+      ['NE', 'EQ']
+    ]);
+    return oppositeOperatorMap.get(operator);
   };
 }

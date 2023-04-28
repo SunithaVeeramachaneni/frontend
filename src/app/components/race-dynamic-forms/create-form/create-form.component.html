@@ -1077,6 +1077,9 @@
                           <app-add-logic
                             [formId]="formId"
                             [question]="question"
+                            *ngIf="
+                              question.value.logics.length || question.hasLogic
+                            "
                             (onValueChanged)="
                               onValueChanged(section, question, $event)
                             "

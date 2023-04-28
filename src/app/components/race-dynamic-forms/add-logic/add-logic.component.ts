@@ -5,8 +5,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
-  Output
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,13 +23,14 @@ import {
 import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
+import { RaiseNotificationDailogComponent } from './raise-notification-dailog/raise-notification-dailog.component';
 
 @Component({
   selector: 'app-add-logic',
   templateUrl: './add-logic.component.html',
   styleUrls: ['./add-logic.component.scss']
 })
-export class AddLogicComponent implements OnInit {
+export class AddLogicComponent implements OnInit, OnChanges {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -52,6 +55,7 @@ export class AddLogicComponent implements OnInit {
 
   @Input() set question(question: any) {
     question.controls.logics.controls.forEach((logic) => {
+      this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
       if (!logic.value.logicTitle) {
         const logicSymbol = this.fieldOperators.find(
           (op) => op.code === logic.value.operator
@@ -118,6 +122,12 @@ export class AddLogicComponent implements OnInit {
       .subscribe();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    this.fieldOperators =
+      fieldTypeOperatorMapping[changes.question.currentValue.value.fieldType];
+    this.cdrf.detectChanges();
+  }
+
   get logics(): FormArray {
     // eslint-disable-next-line @typescript-eslint/dot-notation
     return this.logicsForm.get('logics') as FormArray;
@@ -158,6 +168,33 @@ export class AddLogicComponent implements OnInit {
       logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     }
     this.cdrf.detectChanges();
+  }
+
+  openRaiseNotificationsDialog(question, logic, index) {
+    const dialogRef = this.dialog.open(RaiseNotificationDailogComponent, {
+      restoreFocus: false,
+      disableClose: true,
+      hasBackdrop: false,
+      width: '60%',
+      data: { logic: logic.value, question: question.value }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      const {
+        notification: { triggerInfo, triggerWhen }
+      } = result;
+      logic.value.action = result.type;
+      this.cdrf.detectChanges();
+      logic.patchValue({
+        action: result.type,
+        raiseNotification: `true`,
+        triggerInfo,
+        triggerWhen
+      });
+      logic.value.raiseNotification = `true`;
+      logic.value.triggerInfo = triggerInfo;
+      logic.value.triggerWhen = triggerWhen;
+    });
   }
 
   openSelectQuestionsDialog(question, logic, viewMode = 'MANDATE') {

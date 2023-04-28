@@ -649,6 +649,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
+    this.cdrf.detectChanges();
   };
 
   handleGlobalDatasetFieldType = (
@@ -959,9 +960,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         mandateQuestions: this.fb.array([]),
         hideQuestions: this.fb.array([]),
         validationMessage: [''],
-        askEvidence: ['']
+        askEvidence: [''],
+        raiseNotification: [''],
+        triggerInfo: [''],
+        triggerWhen: ['']
       })
     );
+    this.cdrf.detectChanges();
   }
 
   initQuestion = (
@@ -1294,6 +1299,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   selectFieldType(fieldType, question, i, j) {
+    question.get('logics').setControl(this.fb.array([]));
     if (fieldType.type === question.get('fieldType').value) {
       return;
     }
@@ -1356,6 +1362,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       default:
       // do nothing
     }
+    this.cdrf.detectChanges();
   }
 
   insertImageHandler(event) {
