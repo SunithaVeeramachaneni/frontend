@@ -46,16 +46,16 @@ export class AddEditLocationComponent implements OnInit {
           ? this.locEditData.image
           : '';
       const locdata = {
-        id: this.locEditData.id,
-        image: this.locEditData.image,
-        name: this.locEditData.name,
-        locationId: this.locEditData.locationId,
-        model: this.locEditData.model,
-        description: this.locEditData.description,
-        parentId: this.locEditData.parentId,
-        plantsID: this.locEditData.plantsID
+        id: this.locEditData?.id,
+        image: this.locEditData?.image,
+        name: this.locEditData?.name,
+        locationId: this.locEditData?.locationId,
+        model: this.locEditData?.model,
+        description: this.locEditData?.description,
+        parentId: this.locEditData?.parentId,
+        plantsID: this.locEditData?.plantsID
       };
-      this.locationForm.patchValue(locdata);
+      this.locationForm?.patchValue(locdata);
       this.getAllLocations();
     }
   }

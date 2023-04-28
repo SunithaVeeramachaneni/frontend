@@ -50,19 +50,19 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
       const assdata = {
-        id: this.assetEditData.id,
-        image: this.assetEditData.image,
-        name: this.assetEditData.name,
-        assetsId: this.assetEditData.assetsId,
-        model: this.assetEditData.model,
-        description: this.assetEditData.description,
+        id: this.assetEditData?.id,
+        image: this.assetEditData?.image,
+        name: this.assetEditData?.name,
+        assetsId: this.assetEditData?.assetsId,
+        model: this.assetEditData?.model,
+        description: this.assetEditData?.description,
         parentType:
           this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
-        parentId: this.assetEditData.parentId,
-        plantsID: this.assetEditData.plantsID
+        parentId: this.assetEditData?.parentId,
+        plantsID: this.assetEditData?.plantsID
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assdata);
+      this.assetForm?.patchValue(assdata);
     }
     if (
       this.assetEditData === null ||
