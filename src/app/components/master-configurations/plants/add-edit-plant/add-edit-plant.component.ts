@@ -99,7 +99,11 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace,
         Validators.pattern(numericRegex)
       ]),
-      state: '',
+      state: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       label: '',
       field: ''
     });
