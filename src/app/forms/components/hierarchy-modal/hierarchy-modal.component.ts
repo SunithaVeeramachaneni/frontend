@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -33,7 +38,8 @@ export class HierarchyModalComponent implements OnInit {
   constructor(
     private locationService: LocationService,
     private assetService: AssetsService,
-    private store: Store<State>
+    private store: Store<State>,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +49,7 @@ export class HierarchyModalComponent implements OnInit {
     this.masterHierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
       map((masterHierarchyList) => {
         this.masterHierarchyList = masterHierarchyList;
+        this.cdrf.detectChanges();
         return masterHierarchyList;
       })
     );
