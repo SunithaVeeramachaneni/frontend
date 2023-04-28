@@ -5,7 +5,7 @@
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="templatesCount$ | async as totalCount">
           <span class="forms-count">
-            {{ totalCount }}
+            {{ totalCount | count }}
           </span>
           <span class="forms-text">{{
             'templates'

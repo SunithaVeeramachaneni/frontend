@@ -1,7 +1,7 @@
 <div *ngIf="userInfo$ | async" class="issues-list">
   <span class="no-of-issues" *ngIf="issuesCount$ | async as totalCount">
     <span class="issues-count">
-      {{ totalCount }}
+      {{ totalCount | count }}
     </span>
     <span class="issues-text">
       {{
