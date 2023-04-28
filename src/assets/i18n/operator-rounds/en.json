@@ -244,7 +244,7 @@
   "photos": "Photos(Issues, Actions, Tasks)",
   "skippedTasks": "Skipped Tasks",
   "tasksCompleted": "Tasks Completed",
-  "pdfPreviewTxt": "PDF View",
+  "pdfPreviewTxt": "PDF setup and preview",
   "roundsPlural": "{count, plural, =0{Round} one{Round} other{Rounds}}",
   "user": "User",
   "userGroup": "User Group",
@@ -294,5 +294,7 @@
   "priorityUpdated": "Priority Updated to: ",
   "dueDateUpdated": "DueDate Updated to: ",
   "createERP": "Create",
-  "create": "Create"
+  "create": "Create",
+  "whiteSpace": "{name} is required",
+  "trimWhiteSpace": "{name} must not start or end with spaces"
 }

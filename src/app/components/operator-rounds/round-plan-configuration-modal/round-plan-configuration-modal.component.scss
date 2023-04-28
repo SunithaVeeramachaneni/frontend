@@ -92,7 +92,7 @@
 
       .tags {
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-          padding: 20px 0 0 0 !important;
+          padding: 17px 0 0 0 !important;
         }
       }
 
@@ -101,11 +101,12 @@
       }
 
       .buttons {
-        padding: 10px 0 15px 0;
+        padding: 20px 0 15px 0;
       }
 
       .skip-btn {
         margin-right: 10px;
+        color: $radio-button-checked;
       }
     }
   }
@@ -117,4 +118,9 @@
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
+}
+
+.next-btn {
+  background-color: $radio-button-checked;
+  border-color: $radio-button-checked;
 }

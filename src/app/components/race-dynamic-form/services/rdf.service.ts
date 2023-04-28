@@ -105,15 +105,14 @@ export class RaceDynamicFormService {
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    const { fetchType, ...rest } = queryParams;
+    const { fetchType } = queryParams;
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
-      let queryParamaters;
+      const queryParamaters = queryParams;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        Object.assign(queryParamaters, { plantId: filterData.plant });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -919,7 +918,7 @@ export class RaceDynamicFormService {
         displayToast: true,
         failureResponse: {}
       })
-      .pipe(map((res) => this.formatInspections(res.rows)));
+      .pipe(map((res) => this.formatInspections(res.items || [])));
   };
 
   getInspectionsList$(
@@ -962,7 +961,7 @@ export class RaceDynamicFormService {
   }
 
   getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
+    return this.usersInfoByEmail ? this.usersInfoByEmail[email]?.fullName : '';
   }
 
   private formatInspections(inspections: any[] = []): any[] {

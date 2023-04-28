@@ -181,8 +181,9 @@
   "capturedTasks": "Captured Questions",
   "photos": "Photos(Issues, Actions, Tasks)",
   "skippedTasks": "Skipped Questions",
+  "tasksCompleted": "Questions Completed",
+  "pdfPreviewTxt": "PDF setup and preview",
   "questionsCompleted": "Questions Completed",
-  "pdfPreviewTxt": "PDF View",
   "issues": "Issues",
   "actions": "Actions",
   "scheduleForm": "Schedule Form",
@@ -257,5 +258,7 @@
   "createFromTemplate": "Choose From Template",
   "selectTemplate": "Select Template",
   "templateDetailsHeading": "Template Details",
-  "exists": "A template with this name already exists, please choose another name"
+  "exists": "A template with this name already exists, please choose another name",
+  "whiteSpace": "{name} is required",
+  "trimWhiteSpace": "{name} must not start or end with spaces"
 }
