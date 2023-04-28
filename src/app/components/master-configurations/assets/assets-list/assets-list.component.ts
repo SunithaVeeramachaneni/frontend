@@ -49,7 +49,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<any>;
+
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -90,9 +90,7 @@ export class AssetsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -102,10 +100,14 @@ export class AssetsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasSubtitle: true,
+      subtitleColumn: 'plantSubId',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
@@ -158,9 +160,9 @@ export class AssetsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 5,
-      hasSubtitle: false,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
+      subtitleColumn: 'parentSubId',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -170,7 +172,10 @@ export class AssetsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     }
@@ -315,7 +320,8 @@ export class AssetsListComponent implements OnInit {
     this.assets$ = combineLatest([
       assetsOnLoadSearch$,
       this.addEditCopyDeleteAssets$,
-      onScrollAssets$
+      onScrollAssets$,
+      this.getAllLocations(),
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
@@ -343,8 +349,10 @@ export class AssetsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentSubId = parent.locationId;
             } else {
               item.parent = '';
+              item.parentSubId = '';
             }
           } else {
             const parent = this.allParentsAssets.find(
@@ -352,8 +360,10 @@ export class AssetsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentSubId = parent.assetsId;
             } else {
               item.parent = '';
+              item.parentSubId = '';
             }
           }
         }
@@ -393,7 +403,9 @@ export class AssetsListComponent implements OnInit {
             if (item.plantsID) {
               item = {
                 ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
+                plant: item?.plant?.name,
+                plantsID: item?.plantsID,
+                plantId: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };
@@ -564,22 +576,19 @@ export class AssetsListComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          const objectKeys = Object.keys(allLocations);
-          if (objectKeys.length > 0) {
-            this.parentInformation = allLocations.items.filter(
-              (loc) => loc._deleted !== true
-            );
-            this.allParentsLocations = this.parentInformation;
-          } else {
-            this.allParentsLocations = [];
-          }
-        })
-      )
-      .subscribe();
+    return this.locationService.fetchAllLocations$().pipe(
+      tap((allLocations) => {
+        const objectKeys = Object.keys(allLocations);
+        if (objectKeys.length > 0) {
+          this.parentInformation = allLocations.items.filter(
+            (loc) => loc._deleted !== true
+          );
+          this.allParentsLocations = this.parentInformation;
+        } else {
+          this.allParentsLocations = [];
+        }
+      })
+    );
   }
 
   getAllAssets() {
