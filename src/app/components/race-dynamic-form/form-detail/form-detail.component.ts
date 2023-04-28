@@ -161,7 +161,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     if (!date) {
       return '';
     }
-    return format(new Date(date), 'dd MMM yyyy - HH:mm a');
+    return format(new Date(date), 'M/d/yy, h:mm a');
   }
 
   onNavigateToDetailPage() {
