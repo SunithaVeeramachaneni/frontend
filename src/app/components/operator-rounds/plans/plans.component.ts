@@ -894,7 +894,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = this.plantsIdNameMap[item.value];
+        const plantId = this.plantsIdNameMap[item.value] ?? '';
         this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
