@@ -49,7 +49,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetTitle = 'Edit Asset';
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
-      const assdata = {
+      const assetData = {
         id: this.assetEditData?.id,
         image: this.assetEditData?.image,
         name: this.assetEditData?.name,
@@ -57,12 +57,12 @@ export class AddEditAssetsComponent implements OnInit {
         model: this.assetEditData?.model,
         description: this.assetEditData?.description,
         parentType:
-          this.assetEditData.parentType == 'LOCATION' ? 'location' : 'asset',
+          this.assetEditData.parentType === 'LOCATION' ? 'location' : 'asset',
         parentId: this.assetEditData?.parentId,
         plantsID: this.assetEditData?.plantsID
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm?.patchValue(assdata);
+      this.assetForm?.patchValue(assetData);
     }
     if (
       this.assetEditData === null ||
