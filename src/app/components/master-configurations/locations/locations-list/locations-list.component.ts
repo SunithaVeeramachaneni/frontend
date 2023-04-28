@@ -107,7 +107,7 @@ export class LocationsListComponent implements OnInit {
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
-      subtitleColumn: 'plantsID',
+      subtitleColumn: 'plantId',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -462,7 +462,8 @@ export class LocationsListComponent implements OnInit {
               item = {
                 ...item,
                 plant: item?.plant?.name,
-                plantsID: item?.plant?.plantId
+                plantsID: item?.plantsID,
+                plantId: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };
