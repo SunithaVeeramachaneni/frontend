@@ -319,6 +319,7 @@ export class PlantListComponent implements OnInit {
             default:
             // Do nothing
           }
+          this.addEditCopyDeletePlants = false;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
