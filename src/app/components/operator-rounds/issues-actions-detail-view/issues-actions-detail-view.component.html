@@ -201,9 +201,9 @@
           </mat-menu>
         </ng-container>
       </div>
-      <hr class="line" />
+      <hr class="line" *ngIf="data.type === 'issue'" />
 
-      <div class="right-div p-5-0">
+      <div class="right-div p-5-0" *ngIf="data.type === 'issue'">
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
           <button
