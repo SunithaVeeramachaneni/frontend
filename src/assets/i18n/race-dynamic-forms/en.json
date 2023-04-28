@@ -182,7 +182,8 @@
   "photos": "Photos(Issues, Actions, Tasks)",
   "skippedTasks": "Skipped Questions",
   "tasksCompleted": "Questions Completed",
-  "pdfPreviewTxt": "PDF View",
+  "pdfPreviewTxt": "PDF setup and preview",
+  "questionsCompleted": "Questions Completed",
   "issues": "Issues",
   "actions": "Actions",
   "scheduleForm": "Schedule Form",
@@ -239,6 +240,8 @@
   "minTxt": "Min",
   "maxTxt": "Max",
   "column": "Column",
+  "multipleChoice": "Multiple Choice",
+  "create": "Create",
   "templateName": "Template Name",
   "templateDescription": "Template Description",
   "saveTemplateBtn": "Save",
@@ -255,5 +258,7 @@
   "createFromTemplate": "Choose From Template",
   "selectTemplate": "Select Template",
   "templateDetailsHeading": "Template Details",
-  "exists": "A template with this name already exists, please choose another name"
+  "exists": "A template with this name already exists, please choose another name",
+  "whiteSpace": "{name} is required",
+  "trimWhiteSpace": "{name} must not start or end with spaces"
 }

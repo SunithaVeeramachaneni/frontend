@@ -33,7 +33,11 @@ import {
   UserInfo,
   UnitOfMeasurement
 } from 'src/app/interfaces';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { UnitMeasurementService } from '../services';
 import { EditUnitPopupComponent } from '../edit-unit-popup/edit-unit-popup.component';
@@ -42,6 +46,8 @@ import { LoadEvent, SearchEvent } from './../../../../interfaces/events';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from './../../../login/services/login.service';
 import { slideInOut } from 'src/app/animations';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'setAsDefault' | 'status' | null;
@@ -75,14 +81,16 @@ export class UnitMeasurementListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#3D5AFE'
+        color: '#3D5AFE',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: '',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -231,15 +239,25 @@ export class UnitMeasurementListComponent implements OnInit {
   unitAddOrEditOpenState = 'out';
   unitEditData: any = null;
   userInfo$: Observable<UserInfo>;
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
   private allUnitData: UnitOfMeasurement[] = [];
+
   constructor(
     private readonly toast: ToastService,
     private readonly unitMeasurementService: UnitMeasurementService,
     public readonly dialog: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() =>
+        this.headerService.setHeaderTitle(routingUrls.unitOfMeasurement.title)
+      )
+    );
     this.fetchUOM$.next({ data: 'load' });
     this.fetchUOM$.next({} as TableEvent);
     this.searchUom = new FormControl('');
