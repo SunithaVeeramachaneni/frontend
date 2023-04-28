@@ -48,7 +48,7 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetTitle = 'Edit Asset';
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
-      const assdata = {
+      const assetdata = {
         id: this.assetEditData.id,
         image: this.assetEditData.image,
         name: this.assetEditData.name,
@@ -61,7 +61,7 @@ export class AddEditAssetsComponent implements OnInit {
         plantsID: this.assetEditData.plantsID
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assdata);
+      this.assetForm.patchValue(assetdata);
     }
     if (
       this.assetEditData === null ||
