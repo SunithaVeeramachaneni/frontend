@@ -104,10 +104,13 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       this.description.patchValue(this.globalResponse.description);
       const globalresponseValues = JSON.parse(this.globalResponse.values);
       const reponseTimer = timer(0, 1000);
-      var cnt = 0;
+      let responseCount = 0;
       this.globalResponseSubscription = reponseTimer.subscribe(() => {
-        const test = globalresponseValues.slice(cnt * 100, (cnt + 1) * 100);
-        test.forEach((item) => {
+        const items = globalresponseValues.slice(
+          responseCount * 100,
+          (responseCount + 1) * 100
+        );
+        items.forEach((item) => {
           this.responses.push(
             this.fb.group({
               title: [item.title, [Validators.required]],
@@ -115,8 +118,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
             })
           );
         });
-        cnt++;
-        if (test.length === 0) {
+        responseCount++;
+        if (items.length === 0) {
           this.globalResponseSubscription.unsubscribe();
         }
       });
