@@ -87,7 +87,7 @@ li.breadcrumb-item.active span {
   padding: 0px;
   cursor: pointer;
   box-sizing: border-box;
-  opacity: 1;
+  opacity: 1 !important;
   text-align: center;
   display: inline-flex;
   justify-content: center;

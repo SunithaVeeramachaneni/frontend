@@ -9,7 +9,7 @@
 }
 .response-type-modal {
   height: calc(100vh - 180px);
-  max-height: 380px;
+  max-height: 555px;
   border-radius: 4px;
   width: 330px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
@@ -66,8 +66,8 @@
     font-size: 120%;
   }
 
-  .global-picklist{
-    margin: 20px 10px 20px 20px
+  .global-picklist {
+    margin: 20px 10px 20px 20px;
   }
 
   .content {
@@ -170,8 +170,8 @@
 
 .picklist-scroll {
   overflow-y: auto;
-  height: calc(100vh - 275px);
-  max-height: 280px;
+  height: calc(100vh - 325px);
+  max-height: 445px;
   overflow-x: hidden;
 }
 
@@ -261,4 +261,3 @@
     border-top: none;
   }
 }
-
