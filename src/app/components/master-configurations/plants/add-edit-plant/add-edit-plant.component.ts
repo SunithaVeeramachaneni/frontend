@@ -139,6 +139,7 @@ export class AddEditPlantComponent implements OnInit {
     }
   }
   cancel() {
+    this.plantForm.reset();
     this.slideInOut.emit('out');
   }
 
