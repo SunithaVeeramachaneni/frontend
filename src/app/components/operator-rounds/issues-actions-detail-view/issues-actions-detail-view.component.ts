@@ -56,6 +56,9 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const { id, type, users$ } = this.data;
+    if (this.data.notificationNumber.split(' ').length > 1) {
+      this.data.notificationNumber = '';
+    }
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
@@ -200,9 +203,9 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
   }
 
   createNotification() {
-    this.observations
-      .createNotification(this.data)
-      .subscribe((value) => console.log(value));
+    this.observations.createNotification(this.data).subscribe((value) => {
+      this.data.notificationNumber = value?.notificationNumber || '';
+    });
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
