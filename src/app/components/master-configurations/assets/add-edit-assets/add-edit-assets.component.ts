@@ -285,7 +285,6 @@ export class AddEditAssetsComponent implements OnInit {
       }
     } else {
       if (plantsID) {
-        console.log(parentType);
         const filteredData = this.allParentsData.filter(
           (parent) =>
             (parent.name &&
