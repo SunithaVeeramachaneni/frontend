@@ -10,6 +10,7 @@
   "uom": "UOM",
   "cancel": "Cancel",
   "apply": "Apply",
+  "pattern": "Zipcode should only contain Numbers, Alphabets and Whitespaces",
   "symbol": "Symbol",
   "unitOfMeasurement": "Unit of Measurement",
   "assets": "Assets",
