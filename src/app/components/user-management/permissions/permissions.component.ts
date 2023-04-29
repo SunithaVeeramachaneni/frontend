@@ -368,22 +368,6 @@ export class PermissionsComponent implements OnChanges {
       module.countOfSubChecked !== 0 &&
       module.countOfSubChecked !== module.permissions.length
     );
-
-    const permissionCheckedCount = module.permissions.filter(
-      (p) => p.checked
-    ).length;
-    let subPermissionsCheckCount = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    module.subPermissions?.forEach((sp: any) => {
-      if (sp.checked) {
-        subPermissionsCheckCount += 1;
-      }
-    });
-
-    return (
-      (permissionCheckedCount > 0 || subPermissionsCheckCount > 0) &&
-      permissionCheckedCount !== module.permissions.length
-    );
   }
 
   setAllChecked(checked: boolean, modulename) {
