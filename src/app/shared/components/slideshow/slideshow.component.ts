@@ -27,9 +27,7 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
-  ngOnInit() {
-    console.log(this.data);
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     const previous = fromEvent(
@@ -63,7 +61,6 @@ export class SlideshowComponent implements AfterViewInit, OnInit {
   }
 
   getNativeElement(element) {
-    console.log(element);
     return element._elementRef.nativeElement;
   }
 

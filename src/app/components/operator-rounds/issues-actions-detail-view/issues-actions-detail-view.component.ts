@@ -122,8 +122,6 @@ export class IssuesActionsDetailViewComponent
         `${type}/${id}/log-history/sse`
       )
       .subscribe();
-
-    this.logHistory$.subscribe(console.log);
   }
 
   ngDoCheck() {
