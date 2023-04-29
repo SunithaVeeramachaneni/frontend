@@ -240,6 +240,7 @@ export class AddEditLocationComponent implements OnInit {
   }
 
   cancel() {
+    this.locationForm.reset();
     this.slideInOut.emit('out');
     this.allParentsData = this.parentInformation;
   }
