@@ -6,6 +6,16 @@
   border-radius: 4px;
 }
 
+.user-date-range {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+
+  .user-date-from {
+    margin-right: 10px;
+  }
+}
+
 .dialog-close-btn {
   float: right;
   cursor: pointer;

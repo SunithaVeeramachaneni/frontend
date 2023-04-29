@@ -76,7 +76,9 @@ export class AddEditUserModalComponent implements OnInit {
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
     profileImageFileName: new FormControl(''),
-    plants: new FormControl([], [this.matSelectValidator()])
+    validFrom: new FormControl('', [Validators.required]),
+    validThrough: new FormControl('', [Validators.required]),
+    plantId: new FormControl('', [this.matSelectValidator()])
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -99,6 +101,9 @@ export class AddEditUserModalComponent implements OnInit {
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
   allPlants: any[];
+
+  minDate: Date;
+  userValidFromDate: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -195,7 +200,17 @@ export class AddEditUserModalComponent implements OnInit {
       this.allPlants = plants.items || [];
     });
 
-    this.userForm.valueChanges.pipe(tap(console.log)).subscribe();
+    this.minDate = new Date();
+    this.userValidFromDate = new Date();
+
+    this.userForm.valueChanges.subscribe((res) => console.log(res));
+  }
+
+  validFromDateChange(validFromDate) {
+    this.userForm.controls['validThrough'].setValue(
+      this.userForm.get('validFrom').value
+    );
+    this.userValidFromDate = validFromDate.value;
   }
 
   getBase64FromImageURI = (uri) => {

@@ -46,7 +46,7 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
-
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -111,6 +111,28 @@ export class UsersComponent implements OnInit {
     {
       id: 'email',
       displayName: 'Email',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plantId',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 3,
@@ -208,7 +230,8 @@ export class UsersComponent implements OnInit {
     private roleService: RolesPermissionsService,
     public dialog: MatDialog,
     private toast: ToastService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit() {
@@ -384,15 +407,17 @@ export class UsersComponent implements OnInit {
     this.users$ = combineLatest([
       usersOnLoadSearch$,
       this.addEditDeactivateUser$,
-      onScrollUsers$
+      onScrollUsers$,
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([users, update, scrollData]) => {
+      map(([users, update, scrollData, plant]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
-          }; // To fix dynamic table height issue post search with no records & then remove search with records
-          initial.data = users;
+          };
+          // To fix dynamic table height issue post search with no records & then remove search with
+          initial.data = this.formatId(users, this.idToPlant(plant));
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
@@ -437,6 +462,23 @@ export class UsersComponent implements OnInit {
         return initial;
       })
     );
+  }
+
+  formatId(users, plantList) {
+    return users.map((user) => {
+      if (user.plantId) {
+        user.plantId = plantList[user.plantId];
+      }
+      return user;
+    });
+  }
+
+  idToPlant(plantList) {
+    const obj = plantList.items.reduce((acc, cur) => {
+      acc[cur.id] = cur.plantId;
+      return acc;
+    }, {});
+    return obj;
   }
 
   getUsers = () =>
@@ -535,7 +577,10 @@ export class UsersComponent implements OnInit {
                   title: '',
                   email: '',
                   isActive: false,
-                  roles: []
+                  roles: [],
+                  validFrom: '',
+                  validThrough: '',
+                  plantId: ''
                 }
               });
               this.toast.show({

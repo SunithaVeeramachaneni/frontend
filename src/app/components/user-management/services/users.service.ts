@@ -207,6 +207,7 @@ export class UsersService {
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
+    console.log('user:', user);
     const createUser = { ...user, roleIds };
     return this.appService._postData(
       environment.userRoleManagementApiUrl,

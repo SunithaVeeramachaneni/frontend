@@ -59,6 +59,10 @@
   "usersAssignedText": " as users are assigned to it.",
   "doYouWantToText": " Do you want to",
   "delete": " delete",
-  "plants": "Plants",
-  "plantsEmpty": "Atleast one plant is required"
+  "plant": "Plant",
+  "plantsEmpty": "Atleast one plant is required",
+  "validFrom": "Valid From",
+  "validThrough": "Valid Through",
+  "validFromInvalid": "Valid from is required",
+  "validThroughInvalid": "Valid through is required"
 }
