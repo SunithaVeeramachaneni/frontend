@@ -168,7 +168,7 @@ export interface IssueOrAction {
   status?: string;
   priority?: string;
   dueDate?: string;
-  assignee?: string;
+  assignedTo?: string;
   issueData?: string;
   actionData?: string;
   issueOrActionDBVersion: number;
@@ -178,12 +178,17 @@ export interface IssueOrAction {
 export interface History {
   [key: string]: string; // issuelistID || actionlistID
   id?: string;
-  message: string;
-  username: string;
+  message: any;
+  username?: string;
   createdAt?: string;
   createdBy?: string;
   assignedTo?: string;
   type: 'Object' | 'Media' | 'Message';
+}
+
+export interface HistoryResponse {
+  rows: History[];
+  nextToken: string | null;
 }
 
 export interface UpdateIssueOrActionEvent {
