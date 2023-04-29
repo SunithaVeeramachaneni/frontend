@@ -258,7 +258,13 @@
                 </span>
               </span>
 
-              <span class="action">
+              <span
+                class="action"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' ||
+                  questionForm.get('fieldType').value === 'RT'
+                "
+              >
                 <mat-checkbox
                   formControlName="enableHistory"
                   class="enableHistory-checkbox"

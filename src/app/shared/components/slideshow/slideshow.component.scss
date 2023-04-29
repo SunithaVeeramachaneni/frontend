@@ -1,0 +1,93 @@
+@import '../../../../scss/colors.scss';
+
+.card-container {
+  .close-btn {
+    background: none;
+    border: none;
+    padding: 10px;
+    position: relative;
+    top: 10px;
+    left: 79%;
+    cursor: pointer;
+  }
+
+  .cancel-icon {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  mat-card {
+    width: 100%;
+    max-width: 900px;
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .slider-images-container {
+    background-color: transparent;
+    margin: 0 auto;
+    padding: 0px;
+  }
+
+  .thumbnail-images-container {
+    display: flex;
+    background-color: transparent;
+    margin: 0 auto;
+    padding: 0px;
+  }
+
+  .slide-wrapper {
+    height: 50vw;
+    max-height: 500px;
+    position: relative;
+    top: 5px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .slide-images {
+    width: auto;
+    max-width: 900px;
+    margin-bottom: 20px;
+  }
+
+  .images {
+    display: flex;
+    width: 810px;
+    overflow-x: auto;
+    justify-content: center;
+  }
+
+  .thumbnail-images {
+    margin: 0 10px;
+  }
+
+  .prev-btn {
+    font-size: 300%;
+    color: $white;
+    cursor: pointer;
+    position: relative;
+    top: 15px;
+    margin-left: 10px;
+  }
+
+  .next-btn {
+    font-size: 300%;
+    color: $white;
+    cursor: pointer;
+    position: relative;
+    top: 15px;
+  }
+}
+
+::ng-deep .slideshow-container {
+  max-width: 100% !important;
+  ::ng-deep .mat-dialog-container {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+::ng-deep .slideshow-backdrop {
+  opacity: 1 !important;
+}

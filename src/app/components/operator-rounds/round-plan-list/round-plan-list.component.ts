@@ -73,14 +73,16 @@ export class RoundPlanListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -425,10 +427,17 @@ export class RoundPlanListComponent implements OnInit {
         map((data) => {
           const rows = data.map((item) => {
             if (item.plantId) {
-              item = {
-                ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
-              };
+              if (item.plant) {
+                item = {
+                  ...item,
+                  plant: `${item.plant?.plantId} - ${item.plant?.name}`
+                };
+              } else {
+                item = {
+                  ...item,
+                  plant: ``
+                };
+              }
             } else {
               // remove if condition after clearing data since plant will be mandatory
               item = {

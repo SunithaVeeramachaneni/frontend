@@ -208,11 +208,6 @@ export const routingUrls = {
     title: 'Templates',
     permission: permissions.viewFormTemplates
   },
-  submissionForms: {
-    url: '/forms/submissions',
-    title: 'Submissions',
-    permission: permissions.viewSubmissions
-  },
   archivedForms: {
     url: '/forms/archived',
     title: 'Archived',
@@ -393,3 +388,5 @@ export const DEFAULT_TEMPLATE_PAGES = [
     logics: []
   }
 ];
+
+export const responseCount = 1000;

@@ -125,12 +125,11 @@ export class ResponseSetService {
       .pipe(map((response) => (response === null ? updatePayload : {})));
   };
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
-    return this._appService._removeData(
+  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
+    this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
-  };
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
@@ -142,7 +141,6 @@ export class ResponseSetService {
   downloadSampleResponseSetTemplate(
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
-    console.log('service');
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
       'response-set/download/sample-template',
@@ -164,6 +162,19 @@ export class ResponseSetService {
 
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/failure',
+      info,
+      false,
+      body
+    );
   }
 
   private formatGraphQLocationResponse(resp) {
@@ -198,18 +209,5 @@ export class ResponseSetService {
       rows,
       next
     };
-  }
-
-  downloadFailure(
-    body: { rows: any },
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> {
-    return this._appService.downloadFile(
-      environment.masterConfigApiUrl,
-      'response-set/download/failure',
-      info,
-      false,
-      body
-    );
   }
 }
