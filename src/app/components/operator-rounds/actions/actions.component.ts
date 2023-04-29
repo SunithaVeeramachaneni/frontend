@@ -426,11 +426,25 @@ export class ActionsComponent implements OnInit {
         } else {
           this.initial.data = this.initial.data.concat(scrollData);
         }
+
+        this.initial.data.map((action) => {
+          if (action.assignedTo !== null) {
+            const assignee = action.assignedTo.split(',');
+            const formattedAssignee =
+              assignee?.length === 1
+                ? assignee[0]
+                : `${assignee[0]} + ${assignee.length - 1} more`;
+            action = { ...action, assignedTo: formattedAssignee };
+          }
+          return action;
+        });
+
         this.skip = this.initial.data.length;
         this.initial.data.map((item) => {
           item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
           return item;
         });
+
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
@@ -506,21 +520,23 @@ export class ActionsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
-      const { id, status, priority, dueDate, assignedTo } = resp.data;
-      this.initial.data = this.dataSource.data.map((data) => {
-        if (data.id === id) {
-          return {
-            ...data,
-            status,
-            priority,
-            dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
-            assignedTo
-          };
-        }
-        return data;
-      });
-      this.dataSource = new MatTableDataSource(this.initial.data);
-      this.cdrf.detectChanges();
+      if (resp && Object.keys(resp).length) {
+        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        this.initial.data = this.dataSource.data.map((data) => {
+          if (data.id === id) {
+            return {
+              ...data,
+              status,
+              priority,
+              dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+              assignedTo
+            };
+          }
+          return data;
+        });
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        this.cdrf.detectChanges();
+      }
     });
   }
 
