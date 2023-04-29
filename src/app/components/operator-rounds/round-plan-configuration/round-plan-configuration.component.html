@@ -139,9 +139,13 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-      <button mat-stroked-button class="next-btn">
+      <button
+        mat-stroked-button
+        class="next-btn"
+        (click)="goToPDFBuilderConfiguration()"
+      >
         <span>
-          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
+          <span translate="next"></span>
         </span>
       </button>
     </div>
