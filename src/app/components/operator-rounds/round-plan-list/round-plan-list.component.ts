@@ -32,6 +32,8 @@ import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
+import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -269,7 +271,8 @@ export class RoundPlanListComponent implements OnInit {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -598,6 +601,16 @@ export class RoundPlanListComponent implements OnInit {
     }
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+
+  openRoundPlanCreationModal() {
+    this.dialog.open(RoundPlanConfigurationModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
   }
 
   resetFilter() {
