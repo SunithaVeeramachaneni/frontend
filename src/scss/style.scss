@@ -87,7 +87,7 @@ li.breadcrumb-item.active span {
   padding: 0px;
   cursor: pointer;
   box-sizing: border-box;
-  opacity: 1;
+  opacity: 1 !important;
   text-align: center;
   display: inline-flex;
   justify-content: center;
@@ -620,4 +620,13 @@ button.mat-menu-item {
 .round-plan-schedule-success-modal {
   background-color: $black;
   opacity: 0.6;
+}
+
+.mat-column-actions {
+  font-size: 100% !important;
+  border-left: 1px solid #eeeeee;
+
+  mat-icon {
+    font-size: 160%;
+  }
 }
