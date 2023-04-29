@@ -431,18 +431,27 @@ export class UsersComponent implements OnInit {
       columns: this.columns,
       data: []
     };
+
     this.users$ = combineLatest([
       usersOnLoadSearch$,
       this.addEditDeactivateUser$,
-      onScrollUsers$
+      onScrollUsers$,
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([users, update, scrollData]) => {
+      map(([users, update, scrollData, plants]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           }; // To fix dynamic table height issue post search with no records & then remove search with records
+
+          initial.data = this.formatIdToPlantId(
+            users,
+            this.formatPlantList(plants)
+          );
+          console.log('data', initial.data);
           initial.data = users;
+          console.log('users:', users);
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
@@ -483,22 +492,50 @@ export class UsersComponent implements OnInit {
         }
 
         this.skip = initial.data.length;
-        this.plantList$ = this.plantService.fetchAllPlants$();
+        /* this.plantList$ = this.plantService.fetchAllPlants$();
 
         this.plantList$.subscribe((plantList) => {
-          initial.data = initial.data.map((obj, index) => {
+          initial.data = initial.data.map((obj) => {
             const id = plantList.items
               .filter((plant) => plant.id === obj.plantId)
               .map((plant) => plant.plantId);
             return { ...obj, plantId: id[0] };
           });
           this.dataSource = new MatTableDataSource(initial.data);
-        });
+        }); */
+        this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
   }
 
+  formatIdToPlantId(users, idToPlantId) {
+    console.log('user', users);
+    users = users.map((user) => {
+      let plantIdString = '';
+      if (user.plantId != null) {
+        console.log('plantId', user.plantId);
+        user.plantId
+          .toString()
+          .split(',')
+          .map((id) => {
+            plantIdString += idToPlantId[id.trim()] + ',';
+          });
+      }
+      user.plantId = plantIdString;
+    });
+    // console.log('user:', users);
+    return users;
+  }
+
+  formatPlantList(plantList) {
+    const obj = plantList.items.reduce((acc, cur) => {
+      acc[cur.id] = cur.plantId;
+      return acc;
+    }, {});
+    console.log(obj);
+    return obj;
+  }
   getUsers = () =>
     this.usersService
       .getUsers$({
