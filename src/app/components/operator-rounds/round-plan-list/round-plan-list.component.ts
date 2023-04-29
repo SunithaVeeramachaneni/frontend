@@ -427,10 +427,17 @@ export class RoundPlanListComponent implements OnInit {
         map((data) => {
           const rows = data.map((item) => {
             if (item.plantId) {
-              item = {
-                ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
-              };
+              if (item.plant) {
+                item = {
+                  ...item,
+                  plant: `${item.plant?.plantId} - ${item.plant?.name}`
+                };
+              } else {
+                item = {
+                  ...item,
+                  plant: ``
+                };
+              }
             } else {
               // remove if condition after clearing data since plant will be mandatory
               item = {

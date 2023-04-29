@@ -33,6 +33,7 @@ import {
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-pdf-builder',
@@ -416,13 +417,7 @@ export class PDFBuilderComponent implements OnInit {
   }
 
   getCurrentDate() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    let mm: any = today.getMonth() + 1;
-    let dd: any = today.getDate();
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-    return dd + '/' + mm + '/' + yyyy;
+    return format(new Date(), 'M/d/yy');
   }
 
   onCancel(): void {

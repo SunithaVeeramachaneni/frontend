@@ -117,6 +117,7 @@
 
   ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
     padding: 5px 0px 10px 0px !important;
+    margin-bottom: 10px;
   }
 
   ::ng-deep .mat-form-field-label-wrapper {
@@ -138,7 +139,6 @@
   ::ng-deep .mat-select-arrow {
     margin-top: 10px !important;
   }
-
 }
 
 .searchable-input {

@@ -19,7 +19,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
+      <svg-icon icon="icon-round-plans-icon" class="plans-icon"></svg-icon>
       <input
         hidden
         type="file"
@@ -191,6 +191,7 @@
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
+              *ngIf="false"
             ></button>
           </div>
           <app-builder
@@ -208,13 +209,13 @@
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <!-- will be enabled after implementation -->
-          <!-- <button
+          <!-- will be enabled after implementation
+             <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
-          ></button> -->
+          ></button>  -->
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"

@@ -107,7 +107,7 @@ export class LocationsListComponent implements OnInit {
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
-      subtitleColumn: 'plantsID',
+      subtitleColumn: 'plantId',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -343,7 +343,7 @@ export class LocationsListComponent implements OnInit {
       onScrollLocations$,
       this.allLocations$
     ]).pipe(
-      map(([rows, form, scrollData, allLocations]) => {
+      map(([rows, { form, action }, scrollData, allLocations]) => {
         const { items: unfilteredParentLocations } = allLocations;
         this.allParentsLocations = unfilteredParentLocations.filter(
           (location) => location._deleted !== true
@@ -354,17 +354,30 @@ export class LocationsListComponent implements OnInit {
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
-        } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
-            this.toast.show({
-              text: 'Location deleted successfully!',
-              type: 'success'
-            });
-            form.action = 'add';
-          } else {
-            initial.data = initial.data.concat(scrollData);
+        } else if (this.addEditCopyDeleteLocations) {
+          switch (action) {
+            case 'delete':
+              initial.data = initial.data.filter((d) => d.id !== form.id);
+              this.toast.show({
+                text: 'Location deleted successfully!',
+                type: 'success'
+              });
+              break;
+            case 'add':
+              initial.data = [form, ...initial.data];
+              break;
+            case 'edit':
+              initial.data = [
+                form,
+                ...initial.data.filter((item) => item.id !== form.id)
+              ];
+              break;
+            default:
+            //Do nothing
           }
+          this.addEditCopyDeleteLocations = false;
+        } else {
+          initial.data = initial.data.concat(scrollData);
         }
         for (const item of initial.data) {
           if (item.parentId) {
@@ -449,7 +462,8 @@ export class LocationsListComponent implements OnInit {
               item = {
                 ...item,
                 plant: item?.plant?.name,
-                plantsID: item?.plant?.plantId
+                plantsID: item?.plantsID,
+                plantId: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };

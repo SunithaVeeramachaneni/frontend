@@ -69,7 +69,7 @@ export class ObservationsComponent implements OnInit {
       {
         name: '',
         type: 'pie',
-        radius: ['40%', '60%'],
+        radius: [25, 40],
         color: [],
         data: [],
         labelLine: {
@@ -90,7 +90,7 @@ export class ObservationsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
-  private statusColors = ['#B76262', '#FFE5BD'];
+  private statusColors = ['#F56565', '#FFCC00'];
 
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
