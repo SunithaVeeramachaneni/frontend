@@ -333,7 +333,7 @@ export class PermissionsComponent implements OnChanges {
         }
       });
       module.subPermissions.forEach((sp) => {
-        sp.forEach((p) => {
+        sp.permissions.forEach((p) => {
           if (p.checked) {
             module.totalActivePermissions += 1;
           }
@@ -345,10 +345,30 @@ export class PermissionsComponent implements OnChanges {
     this.permissionsChange.emit(newPermissions);
   }
 
-  fewComplete(module): boolean {
+  fewComplete(module, moduleType): boolean {
     if (module.permissions == null) {
       return false;
     }
+
+    if (moduleType === 'main') {
+      if (module.totalActivePermissions === module.totalPermissionsCount) {
+        module.countOfChecked = module.totalActivePermissions;
+        module.checked = true;
+        return false;
+      }
+      module.countOfChecked = module.totalActivePermissions;
+      module.checked = false;
+
+      return (
+        module.countOfChecked !== 0 &&
+        module.countOfChecked !== module.permissions.length
+      );
+    }
+    return (
+      module.countOfSubChecked !== 0 &&
+      module.countOfSubChecked !== module.permissions.length
+    );
+
     const permissionCheckedCount = module.permissions.filter(
       (p) => p.checked
     ).length;

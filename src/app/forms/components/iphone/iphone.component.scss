@@ -64,8 +64,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    // width: 85%;
-    flex-grow: 1;
+    width: 85%;
 
     .asset-name {
       white-space: nowrap;
@@ -74,12 +73,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-  }
-  .more {
-    height: 25px;
-    width: 25px;
-    position: relative;
-    top: 2px;
   }
 }
 
@@ -271,6 +264,14 @@
 .previous-arrow {
   height: 20px;
   width: 20px;
+}
+
+.more {
+  height: 25px;
+  width: 25px;
+  position: relative;
+  right: 6px;
+  top: 3px;
 }
 
 // media queries
