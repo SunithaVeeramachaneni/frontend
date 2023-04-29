@@ -20,7 +20,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role, ValidationError } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
   delay,
@@ -95,6 +95,7 @@ export class AddEditUserModalComponent implements OnInit {
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
+  addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private fb: FormBuilder,

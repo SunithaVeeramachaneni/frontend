@@ -366,7 +366,12 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     const newRole = this.createDuplicateRole(this.rolesList, role);
     const postRole = {
       ...newRole,
-      permissionIds: newRole.permissionIds
+      permissionIds: newRole.permissionIds.map((perm) => {
+        if (perm.id) {
+          return perm.id;
+        }
+        return perm;
+      })
     };
     this.roleService.createRole$(postRole).subscribe((resp) => {
       if (Object.keys(resp).length) {
@@ -467,9 +472,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             action: 'edit',
             role: {
               ...updateRoleData,
-              permissionIds: updatedPermissions.filter(
-                (p) => p.checked === true
-              )
+              permissionIds: updateRoleData.permissionIds.map((p, i) => ({
+                ...updatedPermissions[i],
+                checked: true
+              }))
             }
           });
           if (this.filteredRolesList.length) {
@@ -561,10 +567,17 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       this.roleForm.enable({ emitEvent: false });
     }
     this.updatedPermissions = [];
-
+    this.roleFormChanged = { isChanged: true };
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
-        const permissions = roles.find((r) => r.id === role.id)?.permissionIds;
+        const permissions = roles
+          .find((r) => r.id === role.id)
+          ?.permissionIds.map((perm) => {
+            if (perm.id) {
+              return perm.id;
+            }
+            return perm;
+          });
         if (permissions) return permissions; //.map((perm) => perm.id);
       }),
       shareReplay(1)
