@@ -58,5 +58,7 @@
   "cannotBeDeletedText": " cannot be deleted",
   "usersAssignedText": " as users are assigned to it.",
   "doYouWantToText": " Do you want to",
-  "delete": " delete"
+  "delete": " delete",
+  "plants": "Plants",
+  "plantsEmpty": "Atleast one plant is required"
 }

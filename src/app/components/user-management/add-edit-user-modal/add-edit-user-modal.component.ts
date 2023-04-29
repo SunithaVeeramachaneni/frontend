@@ -27,7 +27,8 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
@@ -35,6 +36,7 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -73,7 +75,8 @@ export class AddEditUserModalComponent implements OnInit {
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
-    profileImageFileName: new FormControl('')
+    profileImageFileName: new FormControl(''),
+    plants: new FormControl([], [this.matSelectValidator()])
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -95,6 +98,7 @@ export class AddEditUserModalComponent implements OnInit {
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
+  allPlants: any[];
 
   constructor(
     private fb: FormBuilder,
@@ -105,7 +109,8 @@ export class AddEditUserModalComponent implements OnInit {
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
     @Inject(MAT_DIALOG_DATA)
-    public data: any
+    public data: any,
+    private plantService: PlantService
   ) {}
 
   matSelectValidator(): ValidatorFn {
@@ -185,6 +190,12 @@ export class AddEditUserModalComponent implements OnInit {
       });
       this.userForm.patchValue(userDetails);
     }
+
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlants = plants.items || [];
+    });
+
+    this.userForm.valueChanges.pipe(tap(console.log)).subscribe();
   }
 
   getBase64FromImageURI = (uri) => {
