@@ -67,8 +67,10 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetEditData === null ||
       this.assetEditData.parentType?.toLowerCase() === 'location'
     ) {
+      this.parentInformation = this.allLocationsData;
       this.allParentsData$.next(this.allLocationsData);
     } else if (this.assetEditData.parentType?.toLowerCase() === 'asset') {
+      this.parentInformation = this.allAssetsData;
       this.allParentsData$.next(this.allAssetsData);
     }
   }
@@ -283,6 +285,7 @@ export class AddEditAssetsComponent implements OnInit {
       }
     } else {
       if (plantsID) {
+        console.log(parentType);
         const filteredData = this.allParentsData.filter(
           (parent) =>
             (parent.name &&
