@@ -152,7 +152,7 @@
             <div class="scrollable-area">
               <mat-option
                 [value]="parent.id"
-                *ngFor="let parent of allParentsData"
+                *ngFor="let parent of allParentsData$ | async"
               >
                 {{
                   parentType === 'location'
