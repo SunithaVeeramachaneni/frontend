@@ -4,6 +4,10 @@ import { UserDetails } from 'src/app/interfaces';
 import { UsersService } from '../../user-management/services/users.service';
 
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { tap } from 'rxjs/operators';
+import { routingUrls } from 'src/app/app.constants';
 
 interface IPriority {
   high: number;
@@ -65,7 +69,7 @@ export class ObservationsComponent implements OnInit {
       {
         name: '',
         type: 'pie',
-        radius: ['40%', '60%'],
+        radius: [25, 40],
         color: [],
         data: [],
         labelLine: {
@@ -83,15 +87,26 @@ export class ObservationsComponent implements OnInit {
     actions: {}
   };
   users$: Observable<UserDetails[]>;
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
   private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
-  private statusColors = ['#B76262', '#FFE5BD'];
+  private statusColors = ['#F56565', '#FFCC00'];
 
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
-    private userService: UsersService
+    private userService: UsersService,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() =>
+        this.headerService.setHeaderTitle(
+          routingUrls.roundPlanObservations.title
+        )
+      )
+    );
     this.users$ = this.userService.getUsersInfo$();
     this.roundPlanObservationsService
       .getObservationChartCounts$()

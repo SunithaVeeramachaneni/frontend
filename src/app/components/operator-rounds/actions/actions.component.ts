@@ -50,6 +50,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-actions',
@@ -87,14 +88,16 @@ export class ActionsComponent implements OnInit {
         'font-weight': '500',
         'font-size': '100%',
         width: '280px',
-        color: '#212121'
+        color: '#212121',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -238,10 +241,7 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {
-        display: 'inline-block',
-        width: 'max-content'
-      },
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -263,7 +263,9 @@ export class ActionsComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -304,7 +306,7 @@ export class ActionsComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh - 390px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
@@ -314,23 +316,23 @@ export class ActionsComponent implements OnInit {
         color: '#FF9500'
       },
       low: {
-        color: ' #8A8A8C'
-      },
-      'to-do': {
-        'background-color': '#fde2e1',
-        color: '#b76262'
+        color: '#8A8A8C'
       },
       open: {
-        'background-color': '#fde2e1',
-        color: '#b76262'
-      },
-      resolved: {
-        'background-color': '#EEFFF1',
-        color: '#2C9E53'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FFEAC9',
-        color: '#a5570e'
+        'background-color': '#FFCC00',
+        color: '#000000'
+      },
+      'to-do': {
+        'background-color': '#F56565',
+        color: '#FFFFFF'
+      },
+      resolved: {
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -359,6 +361,7 @@ export class ActionsComponent implements OnInit {
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
+    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -413,23 +416,47 @@ export class ActionsComponent implements OnInit {
     };
     this.actions$ = combineLatest([
       actionsOnLoadSearch$,
-      onScrollActions$
+      onScrollActions$,
+      this.users$
     ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 390px)'
           };
           this.initial.data = rows;
         } else {
           this.initial.data = this.initial.data.concat(scrollData);
         }
+
+        this.initial.data = this.initial.data.map((action) => {
+          if (action.assignedTo !== null) {
+            const assignee = action.assignedTo.split(',');
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
+            const formattedAssignee =
+              assignee?.length === 1
+                ? firstAssignee
+                : `${firstAssignee} + ${assignee.length - 1} more`;
+            action = { ...action, assignedTo: formattedAssignee };
+          }
+          if (action.createdBy.length > 0) {
+            const createdBy = this.userService.getUserFullName(
+              action.createdBy
+            );
+            action = { ...action, createdBy };
+          }
+          return action;
+        });
+
         this.skip = this.initial.data.length;
         this.initial.data.map((item) => {
           item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
           return item;
         });
+
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
@@ -438,15 +465,15 @@ export class ActionsComponent implements OnInit {
 
   getActionsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
       type: 'action'
     };
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, nextToken, count }) => {
-        this.nextToken = nextToken;
+      mergeMap(({ rows, next, count }) => {
+        this.nextToken = next;
         this.isLoading$.next(false);
         this.actionsCount$ = of(count);
         return of(rows as any[]);
@@ -505,21 +532,23 @@ export class ActionsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
-      const { id, status, priority, dueDate, assignedTo } = resp.data;
-      this.initial.data = this.dataSource.data.map((data) => {
-        if (data.id === id) {
-          return {
-            ...data,
-            status,
-            priority,
-            dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
-            assignedTo
-          };
-        }
-        return data;
-      });
-      this.dataSource = new MatTableDataSource(this.initial.data);
-      this.cdrf.detectChanges();
+      if (resp && Object.keys(resp).length) {
+        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        this.initial.data = this.dataSource.data.map((data) => {
+          if (data.id === id) {
+            return {
+              ...data,
+              status,
+              priority,
+              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              assignedTo
+            };
+          }
+          return data;
+        });
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        this.cdrf.detectChanges();
+      }
     });
   }
 

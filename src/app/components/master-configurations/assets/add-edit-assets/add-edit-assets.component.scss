@@ -10,15 +10,40 @@
   bottom: 0;
   width: 450px;
   min-width: 450px;
-  overflow-y: scroll;
   z-index: 9999;
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
 }
 
+.actions-footer {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.top-bar {
+  padding: 16px 16px 0px 16px;
+}
+
+.container-div {
+  padding: 0px 16px;
+  margin-bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 145px);
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin-top: 20px;
+  }
+}
+
 #add-edit-asset-slider {
   .mat-card {
     box-shadow: none;
+    padding: 0px;
   }
 
   .cancel {
@@ -33,20 +58,7 @@
   }
 
   .image-container {
-    margin: 20px 0 40px 0;
-  }
-
-  .img-border {
-    border: 1px solid $border-color;
-    border-radius: 8px;
-    padding: 30px 15px;
-  }
-
-  .image {
-    height: 35px;
-    width: 50px;
-    position: relative;
-    top: 12px;
+    margin: 20px 0 10px 0;
   }
 
   .image-contain {
@@ -63,19 +75,20 @@
   .create-btn {
     background-color: $blue-main;
     color: $white;
-    float: right;
+    width: 48%;
   }
 
   .create-btn:disabled {
     background-color: $gray2-bg;
     color: $gray7;
+    width: 48%;
   }
 
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    float: right;
     margin-right: 15px;
+    width: 48%;
   }
 
   .parent-type {
@@ -88,11 +101,27 @@
     .parent-type-radio {
       position: relative;
       top: -2px;
+      ::ng-deep .mat-radio-outer-circle {
+        height: 16px !important;
+        width: 16px !important;
+        border-color: $gray5;
+      }
+      ::ng-deep .mat-radio-inner-circle {
+        background-color: $blue-main;
+      }
+
+      ::ng-deep .mat-radio-checked .mat-radio-outer-circle {
+        border-color: $blue-main;
+      }
+      ::ng-deep .mat-focus-indicator {
+        display: none;
+      }
     }
   }
 
   ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
     padding: 5px 0px 10px 0px !important;
+    margin-bottom: 10px;
   }
 
   ::ng-deep .mat-form-field-label-wrapper {
@@ -113,16 +142,6 @@
 
   ::ng-deep .mat-select-arrow {
     margin-top: 10px !important;
-  }
-
-  ::ng-deep .mat-radio-outer-circle {
-    height: 16px !important;
-    width: 16px !important;
-    border-color: $light-gray;
-  }
-
-  ::ng-deep .mat-radio-inner-circle {
-    background-color: $light-gray;
   }
 }
 

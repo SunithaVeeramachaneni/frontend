@@ -16,6 +16,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import { MasterConfigurationsRoutingModule } from './master-configurations-routing.module';
 import { MasterConfigurationsContainerComponent } from './master-configurations-container/master-configurations-container.component';
@@ -77,6 +78,7 @@ export const customTranslateLoader = (http: HttpClient) =>
   ],
   imports: [
     FormsModule,
+    OverlayModule,
     ReactiveFormsModule,
     MasterConfigurationsRoutingModule,
     CommonModule,

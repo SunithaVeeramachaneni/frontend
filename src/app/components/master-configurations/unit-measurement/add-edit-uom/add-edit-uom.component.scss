@@ -44,6 +44,10 @@
     border-bottom: 1px solid $border-color;
   }
 
+  .describe {
+    margin-left: 7px;
+  }
+
   .heading {
     font-size: 1.4rem;
     font-weight: 500;
@@ -69,6 +73,7 @@
 
   .add-more-icon {
     width: 15px;
+    height: 15px;
     margin-top: 5px;
     position: relative;
     top: 2px;
@@ -119,7 +124,8 @@
     background-color: transparent;
     position: relative;
     .edit-icon-img {
-      width: 12px;
+      width: 15px;
+      height: 15px;
     }
   }
 
@@ -192,4 +198,9 @@
 .add-icon {
   font-size: 150%;
   margin-right: 0 !important;
+}
+
+.add-more-text {
+  position: relative;
+  top: -3px;
 }

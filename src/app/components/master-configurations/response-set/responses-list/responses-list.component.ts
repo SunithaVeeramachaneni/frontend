@@ -15,7 +15,11 @@ import {
 } from 'rxjs/operators';
 
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Permission,
@@ -35,6 +39,8 @@ import { ResponseSetService } from '../services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-responses-list',
@@ -192,12 +198,15 @@ export class ResponsesListComponent implements OnInit {
   public searchResponseSet: FormControl;
 
   public users$: Observable<UserDetails[]>;
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
   private addEditDeleteResponseSet: boolean;
   private addEditDeleteResponseSet$: BehaviorSubject<any> =
     new BehaviorSubject<any>({
       action: null,
       form: {} as any
     });
+
   private skip = 0;
   private limit = defaultLimit;
   private fetchType = 'load';
@@ -208,10 +217,17 @@ export class ResponsesListComponent implements OnInit {
     private usersService: UsersService,
     private loginService: LoginService,
     private toast: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() =>
+        this.headerService.setHeaderTitle(routingUrls.globalResponse.title)
+      )
+    );
     this.searchResponseSet = new FormControl('');
     this.responseSetService.fetchResponses$.next({ data: 'load' });
     this.responseSetService.fetchResponses$.next({} as TableEvent);
@@ -265,6 +281,7 @@ export class ResponsesListComponent implements OnInit {
         filter(({ data }) => data === 'load' || data === 'search'),
         switchMap(({ data }) => {
           this.skip = 0;
+          this.nextToken = '';
           this.fetchType = data;
           return this.getResponseSets();
         })
@@ -290,14 +307,9 @@ export class ResponsesListComponent implements OnInit {
       responseSetOnLoadSearch$,
       this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
-      this.allResponseSets$,
       this.users$
     ]).pipe(
-      map(([rows, addEditData, scrollData, allResponseSets, users]) => {
-        const { items: unfilteredResponseSets } = allResponseSets;
-        this.allResponseSets = unfilteredResponseSets.filter(
-          (item) => !item._deleted
-        );
+      map(([rows, addEditData, scrollData, users]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -371,15 +383,15 @@ export class ResponsesListComponent implements OnInit {
   getResponseSets() {
     return this.responseSetService
       .fetchResponseSetList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchResponseSet.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.responseSetCount$ = of(count);
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
@@ -548,7 +560,6 @@ export class ResponsesListComponent implements OnInit {
     });
   }
   exportAsXLSX(): void {
-    console.log('tsfile');
     this.responseSetService
       .downloadSampleResponseSetTemplate()
       .pipe(

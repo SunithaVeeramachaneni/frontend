@@ -61,6 +61,8 @@ export interface RoundPlan {
   isDeleted?: boolean;
   location?: string;
   roundType?: string;
+  plant?: any;
+  plantId?: string;
   formStatus?: string;
   assignee?: string;
   tags?: string[];
@@ -77,6 +79,8 @@ export interface RoundPlanDetail extends RoundPlan {
   locations: number;
   assets: number;
   rounds: number;
+  plantId?: string;
+  plant?: string;
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -100,18 +104,18 @@ export interface RoundPlanDetailResponse {
   rows: RoundPlanDetail[];
   scheduledCount: number;
   unscheduledCount: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export interface RoundDetailResponse {
   rows: RoundDetail[];
   count: number;
-  nextToken: string | null;
+  next: string | null;
 }
 
 export type RoundPlanList = {
   items: Array<RoundPlan | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 };
 
@@ -136,12 +140,12 @@ export interface RoundPlanSubmission {
 
 export type RoundPlanSubmissionList = {
   items: Array<RoundPlanSubmission | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 };
 
 export interface RoundPlanQueryParam {
-  nextToken?: string;
+  next?: string;
   limit: number;
   searchTerm: string;
   fetchType: string;
@@ -164,7 +168,7 @@ export interface IssueOrAction {
   status?: string;
   priority?: string;
   dueDate?: string;
-  assignee?: string;
+  assignedTo?: string;
   issueData?: string;
   actionData?: string;
   issueOrActionDBVersion: number;
@@ -174,12 +178,17 @@ export interface IssueOrAction {
 export interface History {
   [key: string]: string; // issuelistID || actionlistID
   id?: string;
-  message: string;
-  username: string;
+  message: any;
+  username?: string;
   createdAt?: string;
   createdBy?: string;
   assignedTo?: string;
   type: 'Object' | 'Media' | 'Message';
+}
+
+export interface HistoryResponse {
+  rows: History[];
+  nextToken: string | null;
 }
 
 export interface UpdateIssueOrActionEvent {

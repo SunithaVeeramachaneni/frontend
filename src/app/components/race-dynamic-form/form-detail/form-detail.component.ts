@@ -61,6 +61,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
+
+  currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
   pagesCount = 0;
@@ -69,6 +71,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   ghostLoading = new Array(19).fill(0).map((_, i) => i);
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
+  pdfButtonDisabled: boolean = false;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -130,6 +133,15 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
+      this.pdfButtonDisabled = false;
+      if (this.selectedForm?.status) {
+        if (
+          this.selectedForm?.status.toLowerCase() === 'open' ||
+          this.selectedForm?.status.toLowerCase() === 'to-do'
+        ) {
+          this.pdfButtonDisabled = true;
+        }
+      }
     }
   }
 
@@ -159,7 +171,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     if (!date) {
       return '';
     }
-    return format(new Date(date), 'dd MMM yyyy - HH:mm a');
+    return format(new Date(date), 'M/d/yy, h:mm a');
   }
 
   onNavigateToDetailPage() {

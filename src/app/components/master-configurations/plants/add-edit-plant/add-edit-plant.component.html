@@ -1,14 +1,13 @@
 <div id="add-edit-slider">
   <mat-card [formGroup]="plantForm">
-    <div>
+    <div class="top-bar">
       <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
       <h1 class="heading">{{ plantTitle }}</h1>
     </div>
-    <div>
-      <p class="m-0" translate="image"></p>
+    <div class="container-div">
       <p class="image-container">
-        <span class="img-border" *ngIf="!plantImage?.length">
-          <svg-icon icon="icon-image-placeholder" class="image"></svg-icon>
+        <span *ngIf="!plantImage?.length">
+          <svg-icon icon="icon-default-plant" class="image-contain"></svg-icon>
         </span>
 
         <img
@@ -20,10 +19,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="name"></mat-label>
+          <mat-label translate="nameMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'name' | translate"
+            [placeholder]="'nameMandatory' | translate"
             formControlName="name"
           />
           <mat-error
@@ -42,10 +41,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="plantId"></mat-label>
+          <mat-label translate="plantIdMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'plantId' | translate"
+            [placeholder]="'plantIdMandatory' | translate"
             formControlName="plantId"
           />
           <mat-error
@@ -64,10 +63,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="country"></mat-label>
+          <mat-label translate="countryMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'country' | translate"
+            [placeholder]="'countryMandatory' | translate"
             formControlName="country"
           />
           <mat-error
@@ -86,10 +85,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="zipCode"></mat-label>
+          <mat-label translate="zipCodeMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'zipCode' | translate"
+            [placeholder]="'zipCodeMandatory' | translate"
             formControlName="zipCode"
           />
           <mat-error
@@ -109,12 +108,24 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="state"></mat-label>
+          <mat-label translate="stateMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'state' | translate"
+            [placeholder]="'stateMandatory' | translate"
             formControlName="state"
           />
+          <mat-error
+            *ngIf="processValidationErrors('state')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.state.name
+                | translate
+                  : {
+                      name: 'state' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-1">
@@ -138,22 +149,24 @@
           />
         </mat-form-field>
       </span>
-      <button
-        mat-raised-button
-        class="create-btn"
-        type="submit"
-        [disabled]="plantForm.invalid"
-        (click)="create()"
-      >
-        {{ plantButton }}
-      </button>
-      <button
-        mat-stroked-button
-        class="cancel-btn"
-        type="button"
-        (click)="cancel()"
-        translate="cancelBtn"
-      ></button>
     </div>
   </mat-card>
+  <div class="actions-footer">
+    <button
+      mat-stroked-button
+      class="cancel-btn"
+      type="button"
+      (click)="cancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      mat-raised-button
+      class="create-btn"
+      type="submit"
+      [disabled]="plantForm.invalid"
+      (click)="create()"
+    >
+      {{ plantButton }}
+    </button>
+  </div>
 </div>

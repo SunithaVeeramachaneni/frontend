@@ -88,10 +88,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
   filter = {
+    status: '',
     schedule: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -113,16 +116,40 @@ export class RoundsComponent implements OnInit, OnDestroy {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -130,7 +157,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -153,7 +180,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -180,7 +207,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -202,7 +229,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -224,7 +251,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -267,7 +294,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
         displayType: 'text'
       },
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -302,20 +329,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': ' #2C9E53',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       open: {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'to-do': {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       }
     }
   };
@@ -343,6 +370,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   assigneePosition: any;
   initial: any;
+  plants = [];
+  plantsIdNameMap = {};
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -458,7 +487,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getRoundsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -468,8 +497,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ count, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           this.roundsCount = count !== undefined ? count : this.roundsCount;
           this.isLoading$.next(false);
         })
@@ -614,52 +643,80 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   getAllOperatorRounds() {
-    this.operatorRoundsService.fetchAllRounds$().subscribe((formsList) => {
-      const uniqueAssignTo = formsList
-        ?.map((item) => item.assignedTo)
-        .filter((value, index, self) => self.indexOf(value) === index);
+    this.isLoading$.next(true);
+    this.operatorRoundsService.fetchAllRounds$().subscribe(
+      (formsList) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueAssignTo = formsList
+            ?.map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-      const uniqueSchedules = formsList
-        ?.map((item) => item?.schedule)
-        .filter((value, index, self) => self?.indexOf(value) === index);
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
 
-      if (uniqueSchedules?.length > 0) {
-        uniqueSchedules?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.schedules.push(item);
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
+              }
+            });
           }
-        });
-      }
-
-      if (uniqueAssignTo?.length > 0) {
-        uniqueAssignTo?.filter(Boolean).forEach((item) => {
-          if (item) {
-            this.assignedTo.push(item);
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.assignedTo.push(item);
+              }
+            });
           }
-        });
-      }
 
-      for (const item of this.filterJson) {
-        if (item.column === 'assignedTo') {
-          item.items = this.assignedTo;
+          const uniquePlants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'assignedTo') {
+              item.items = this.assignedTo;
+            } else if (item['column'] === 'plant') {
+              item.items = this.plants;
+            }
+            if (item.column === 'schedule') {
+              item.items = this.schedules;
+            }
+          }
         }
-        if (item.column === 'schedule') {
-          item.items = this.schedules;
-        }
-      }
-    });
+      },
+      () => this.isLoading$.next(false)
+    );
   }
 
   getFilter() {
     this.operatorRoundsService.getRoundFilter().subscribe((res) => {
       this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item['column'] === 'status') {
+          item.items = this.status;
+        }
+      }
     });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId ?? '';
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -683,9 +740,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
+      status: '',
       schedule: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -707,10 +766,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
+    let { status } = this.selectedRound;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo },
+        { ...this.selectedRound, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -721,6 +782,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
+                  status,
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1
                 };

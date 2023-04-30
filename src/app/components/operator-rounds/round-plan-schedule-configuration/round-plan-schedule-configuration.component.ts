@@ -556,7 +556,7 @@ export class RoundPlanScheduleConfigurationComponent
         value: '',
         displayValue: ''
       },
-      advanceRoundsCount: 0
+      advanceRoundsCount: 1
     });
     this.roundPlanSchedulerConfigForm.markAsDirty();
   }
