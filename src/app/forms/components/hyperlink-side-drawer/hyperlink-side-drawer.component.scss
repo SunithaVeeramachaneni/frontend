@@ -10,6 +10,7 @@
   height: 100vh;
   background-color: $white;
   border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgba(0, 0, 0, 0.46);
 
   ::ng-deep .mat-card {
     box-shadow: none !important;
@@ -51,11 +52,29 @@
 
   .submit-response-btn {
     width: 48%;
-    margin-right: 10px;
+    background-color: $blue-main;
+    color: $white;
+  }
+
+  .submit-response-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
+    width: 48%;
   }
 
   .cancel-response-btn {
-    width: 48%;
+    width: 49%;
+    margin-right: 10px;
+    border: 1px solid $blue-main;
+    color: $blue-main;
+  }
+
+  .width-100 {
+    margin: 15px 0px;
+  }
+
+  .buttons {
+    margin-top: 20px;
   }
 }
 
