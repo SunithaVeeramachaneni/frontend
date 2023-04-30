@@ -73,6 +73,7 @@ export class IssuesActionsDetailViewComponent
   logHistory: History[];
   filteredMediaType: any;
   chatPanelHeight;
+  placeholder = '_ _';
 
   constructor(
     private fb: FormBuilder,
@@ -94,10 +95,12 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { id, type, users$, dueDate } = this.data;
+    const { id, type, users$, dueDate, notificationNumber } = this.data;
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();
+    this.data.notificationNumber =
+      notificationNumber !== this.placeholder ? notificationNumber : '';
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
@@ -288,9 +291,18 @@ export class IssuesActionsDetailViewComponent
   }
 
   createNotification() {
-    if (this.data.category) {
+    if (this.data.category !== this.placeholder) {
       this.observations.createNotification(this.data).subscribe((value) => {
-        this.data.notificationNumber = value?.notificationNumber || '';
+        const { notificationNumber } = value;
+        if (notificationNumber) {
+          this.data.notificationNumber =
+            notificationNumber !== this.placeholder ? notificationNumber : '';
+        } else {
+          this.toastService.show({
+            type: 'warning',
+            text: 'Notification Creation failed'
+          });
+        }
       });
     } else {
       this.toastService.show({

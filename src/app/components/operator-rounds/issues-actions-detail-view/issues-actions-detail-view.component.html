@@ -94,34 +94,34 @@
                     ></span>
                     {{ getUserNameByEmail(history.username) }}
                   </span>
-                  <br *ngIf="data.category" />
-                  <span class="data" *ngIf="data.category">
+                  <br *ngIf="data.category !== placeholder" />
+                  <span class="data" *ngIf="data.category !== placeholder">
                     <span
                       class="sub-headings"
                       translate="categoryCreated"
                     ></span>
                     {{ data.category }}
                   </span>
-                  <br *ngIf="data.round" />
-                  <span class="data" *ngIf="data.round">
+                  <br *ngIf="data.round !== placeholder" />
+                  <span class="data" *ngIf="data.round !== placeholder">
                     <span class="sub-headings" translate="roundCreated"></span>
                     {{ data.round }}
                   </span>
-                  <br *ngIf="data.asset" />
-                  <span class="data" *ngIf="data.asset">
+                  <br *ngIf="data.asset !== placeholder" />
+                  <span class="data" *ngIf="data.asset !== placeholder">
                     <span class="sub-headings" translate="assetCreated"></span>
                     {{ data.asset }}
                   </span>
-                  <br *ngIf="data.location" />
-                  <span class="data" *ngIf="data.location">
+                  <br *ngIf="data.location !== placeholder" />
+                  <span class="data" *ngIf="data.location !== placeholder">
                     <span
                       class="sub-headings"
                       translate="locationCreated"
                     ></span>
                     {{ data.location }}
                   </span>
-                  <br *ngIf="data.plant" />
-                  <span class="data" *ngIf="data.plant">
+                  <br *ngIf="data.plant !== placeholder" />
+                  <span class="data" *ngIf="data.plant !== placeholder">
                     <span class="sub-headings" translate="plantCreated"></span>
                     {{ data.plant }}
                   </span>
