@@ -329,7 +329,7 @@ export class IssuesActionsDetailViewComponent
   }
 
   getS3Url(filePath: string) {
-    return `${this.s3BaseUrl}${filePath}`;
+    return `${this.s3BaseUrl}public/${filePath}`;
   }
 
   navigateToRounds() {

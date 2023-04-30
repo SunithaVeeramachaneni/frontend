@@ -173,6 +173,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
+
     {
       id: 'dueDate',
       displayName: 'Due Date',

@@ -75,17 +75,23 @@
   .more-btn {
     background: $blue-main;
     color: $white;
-    min-width: 50px;
+    min-width: 8px;
     height: 29px;
     position: relative;
     top: -1px;
     right: 2px;
     margin-right: 10px;
     line-height: 20px;
+    max-width: 42px;
   }
 
   .ghost-loading {
     padding: 0 20px;
+  }
+
+  .menu-icon {
+    position: relative;
+    right: 6px;
   }
 }
 

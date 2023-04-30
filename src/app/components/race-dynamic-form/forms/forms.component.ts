@@ -226,7 +226,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     },
     {
       id: 'scheduleDates',
-      displayName: 'Start - Ends',
+      displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
       order: 7,
