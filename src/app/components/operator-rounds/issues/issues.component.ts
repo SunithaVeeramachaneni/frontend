@@ -410,7 +410,11 @@ export class IssuesComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.issues$ = combineLatest([issuesOnLoadSearch$, onScrollIssues$]).pipe(
+    this.issues$ = combineLatest([
+      issuesOnLoadSearch$,
+      onScrollIssues$,
+      this.users$
+    ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -424,10 +428,9 @@ export class IssuesComponent implements OnInit {
         const issues = this.initial.data?.map((issue) => {
           if (issue.assignedTo !== null) {
             const assignee = issue.assignedTo.split(',');
-            const firstAssignee =
-              assignee[0].length > 0
-                ? this.userService.getUserFullName(assignee[0])
-                : '';
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
             const formattedAssignee =
               assignee?.length === 1
                 ? firstAssignee
