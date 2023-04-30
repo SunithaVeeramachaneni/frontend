@@ -14,9 +14,7 @@
               class="no-of-asset"
               *ngIf="assetsListCount$ | async as totalCount"
             >
-              <span class="asset-count">
-                {{ totalCount | count }}
-              </span>
+              <span class="asset-count"> {{ totalCount | count }} &nbsp; </span>
               <span class="asset-text">{{
                 'assets'
                   | translate
@@ -105,7 +103,7 @@
               class="more-btn"
               *appCheckUserHasPermission="[perms.importAssets]"
             >
-              <mat-icon>more_horiz</mat-icon>
+              <mat-icon class="menu-icon">more_horiz</mat-icon>
             </button>
             <mat-menu #moreMenu="matMenu">
               <button

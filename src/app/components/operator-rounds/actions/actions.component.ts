@@ -416,7 +416,8 @@ export class ActionsComponent implements OnInit {
     };
     this.actions$ = combineLatest([
       actionsOnLoadSearch$,
-      onScrollActions$
+      onScrollActions$,
+      this.users$
     ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
@@ -432,10 +433,9 @@ export class ActionsComponent implements OnInit {
         this.initial.data = this.initial.data.map((action) => {
           if (action.assignedTo !== null) {
             const assignee = action.assignedTo.split(',');
-            const firstAssignee =
-              assignee[0].length > 0
-                ? this.userService.getUserFullName(assignee[0])
-                : '';
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
             const formattedAssignee =
               assignee?.length === 1
                 ? firstAssignee
