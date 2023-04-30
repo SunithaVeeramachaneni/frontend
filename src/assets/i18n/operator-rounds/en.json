@@ -299,5 +299,9 @@
   "create": "Create",
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
-  "createNew": "Create New"
+  "createNew": "Create New",
+  "roundCreated": "Round: ",
+  "assetCreated": "Asset: ",
+  "locationCreated": "Location: ",
+  "plantCreated": "Plant: "
 }
