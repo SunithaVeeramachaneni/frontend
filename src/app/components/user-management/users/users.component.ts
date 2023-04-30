@@ -48,6 +48,7 @@ import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { Plant } from 'src/app/interfaces/plant';
+import { format } from 'date-fns';
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -132,11 +133,33 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'validThroughPlaceholder',
+      displayName: 'Valid Through',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'plantIdPlaceholder',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -158,7 +181,7 @@ export class UsersComponent implements OnInit {
       displayName: 'Created At',
       type: 'date',
       controlType: 'string',
-      order: 4,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -443,6 +466,9 @@ export class UsersComponent implements OnInit {
                 if (user) {
                   initial.data = [user, ...initial.data];
                   initial.data[0].plantIdPlaceholder = plantsObj[user.plantId];
+                  initial.data[0].validThroughPlaceholder = this.formatDate(
+                    user.validThrough
+                  );
                 }
                 break;
               case 'deactivate':
@@ -467,6 +493,8 @@ export class UsersComponent implements OnInit {
                     initial.data[index] = user;
                     initial.data[index].plantIdPlaceholder =
                       plantsObj[user.plantId];
+                    initial.data[index].validThroughPlaceholder =
+                      this.formatDate(user.validThrough);
                   }
                 }
             }
@@ -486,11 +514,17 @@ export class UsersComponent implements OnInit {
   formatUsers(users, plants) {
     const plantsObject = this.getPlantsObject(plants);
     return users.map((user) => {
+      user.validThroughPlaceholder = this.formatDate(user.validThrough);
       if (user.plantId) {
         user.plantIdPlaceholder = plantsObject[user.plantId];
       }
       return user;
     });
+  }
+
+  formatDate(validThrough) {
+    if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
+    return validThrough;
   }
 
   getPlantsObject(plants) {
