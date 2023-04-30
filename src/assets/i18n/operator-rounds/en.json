@@ -16,6 +16,7 @@
   "embedded": "Embedded",
   "embeddedSubText": "On Publishing Plan will show in your mWorkorder app",
   "addFormName": "Plan Name",
+  "addFormNameMandatory": "Plan Name *",
   "addFormDescription": "Plan Description",
   "tags": "Tags",
   "nextBtn": "Save & Next",
@@ -249,6 +250,7 @@
   "user": "User",
   "userGroup": "User Group",
   "plant": "Plant",
+  "plantMandatory": "Plant *",
   "assignToInfo": "The assignee will be auto assigned to all the rounds generated, However you can still change from the rounds",
   "advanceRoundsCountInfo": "How many rounds would you like to generate for the first time in advance?",
   "select": "Select",
@@ -296,5 +298,6 @@
   "createERP": "Create",
   "create": "Create",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "createNew": "Create New"
 }

@@ -654,7 +654,7 @@ export class OperatorRoundsService {
       .map((p) => ({
         ...p,
         preTextImage: {
-          image: p.formLogo,
+          image: 'assets/img/svg/rounds-icon.svg',
           style: {
             width: '40px',
             height: '40px',
