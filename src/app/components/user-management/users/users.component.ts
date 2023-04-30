@@ -450,9 +450,7 @@ export class UsersComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
-          // To fix dynamic table height issue post search with no records & then remove search with
           initial.data = this.formatUsers(users, plants);
-          // initial.data = this.formatId(users, this.idToPlant(plant));
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
