@@ -32,6 +32,7 @@ import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
@@ -83,7 +84,8 @@ export class IssuesActionsDetailViewComponent
     private sanitizer: DomSanitizer,
     private tenantService: TenantService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   getAttachmentsList() {
@@ -286,9 +288,16 @@ export class IssuesActionsDetailViewComponent
   }
 
   createNotification() {
-    this.observations.createNotification(this.data).subscribe((value) => {
-      this.data.notificationNumber = value?.notificationNumber || '';
-    });
+    if (this.data.category) {
+      this.observations.createNotification(this.data).subscribe((value) => {
+        this.data.notificationNumber = value?.notificationNumber || '';
+      });
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Category is mandatory for notification creation'
+      });
+    }
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
