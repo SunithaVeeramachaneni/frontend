@@ -407,7 +407,7 @@ export class OperatorRoundsService {
   }
 
   copyRoundPlan$(formId: string) {
-    return this.appService.patchData(
+    return this.appService._postData(
       environment.operatorRoundsApiUrl,
       `round-plans/copy`,
       {
