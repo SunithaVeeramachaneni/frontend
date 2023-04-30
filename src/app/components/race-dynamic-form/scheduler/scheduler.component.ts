@@ -7,13 +7,10 @@ import {
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
-import { Buffer } from 'buffer';
 import { SelectTab, UserDetails } from 'src/app/interfaces';
 
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { UsersService } from '../../user-management/services/users.service';
-import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { routingUrls } from 'src/app/app.constants';
 
 @Component({
@@ -31,8 +28,7 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private headerService: HeaderService,
-    private userService: UsersService,
-    private raceDynamicFormService: RaceDynamicFormService
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
