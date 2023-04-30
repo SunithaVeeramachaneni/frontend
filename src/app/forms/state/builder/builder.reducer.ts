@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
-import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  formConfigurationStatus
+} from 'src/app/app.constants';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
@@ -283,7 +286,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
       return {
         ...state,
-        [key]: pageToBeUpdated,
+        [key]: [...pageToBeUpdated],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -409,7 +412,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        [key]: pages,
+        [key]: [...pages],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -1071,5 +1074,22 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       return { ...state, [key]: [] };
     }
+  ),
+  on(
+    BuilderConfigurationActions.publishTemplate,
+    (state, _): FormConfigurationState => ({
+      ...state,
+      formStatus: formConfigurationStatus.ready,
+      formDetailPublishStatus: formConfigurationStatus.ready,
+      isFormDetailPublished: false
+    })
+  ),
+  on(
+    BuilderConfigurationActions.replacePagesAndCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: action.pages,
+      counter: action.counter
+    })
   )
 );

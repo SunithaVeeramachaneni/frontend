@@ -14,7 +14,7 @@ import {
 } from 'rxjs/operators';
 import { FormMetadata, TableEvent } from '../../../../interfaces';
 
-import { defaultLimit } from '../../../../app.constants';
+import { graphQLDefaultMaxLimit } from '../../../../app.constants';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
@@ -31,7 +31,7 @@ interface SearchEvent {
 export class ImportQuestionsModalComponent implements OnInit {
   searchForm: FormControl;
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultMaxLimit;
   selectedForm;
   selectedItem;
   disableSelectBtn = true;
@@ -78,6 +78,7 @@ export class ImportQuestionsModalComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getForms();
       })
     );
@@ -93,7 +94,6 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
       })
     );
- 
 
     const initial = {
       columns: [],
@@ -116,14 +116,14 @@ export class ImportQuestionsModalComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getFormsList$({
-        nextToken: this.nextToken,
+        next: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value,
         fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ count, rows, next }) => {
+          this.nextToken = next;
           return of(rows);
         })
       );

@@ -3,7 +3,12 @@ import { Injectable, NgZone } from '@angular/core';
 import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ErrorInfo, IssueOrAction } from 'src/app/interfaces';
+import {
+  ErrorInfo,
+  History,
+  HistoryResponse,
+  IssueOrAction
+} from 'src/app/interfaces';
 
 import { AppService } from 'src/app/shared/services/app.services';
 import { SseService } from 'src/app/shared/services/sse.service';
@@ -23,7 +28,7 @@ export class RoundPlanObservationsService {
   ) {}
 
   getObservations$(queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: any;
     searchKey: string;
     type: string;
@@ -31,7 +36,7 @@ export class RoundPlanObservationsService {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
-    params.set('nextToken', queryParams?.nextToken);
+    params.set('next', queryParams?.next);
     params.set('type', queryParams?.type);
     return this.appService
       ._getResp(
@@ -65,21 +70,66 @@ export class RoundPlanObservationsService {
       )
       .pipe(map((response) => (response === null ? issueOrAction : response)));
 
+  createIssueOrActionLogHistory$ = (
+    issueOrActionId: string,
+    history: History,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<IssueOrAction> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `${urlString}/${issueOrActionId}/log-history`,
+      history,
+      info
+    );
+
+  uploadIssueOrActionLogHistoryAttachment$ = (
+    issueOrActionId: string,
+    form: FormData,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<IssueOrAction> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `${urlString}/${issueOrActionId}/upload-attacment`,
+      form,
+      info
+    );
+
   getIssueOrActionLogHistory$(
     issueOrActionId: string,
     type: string,
     queryParams: {
       limit?: number;
-      nextToken?: string;
+      next?: string;
     },
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<History[]> {
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      `${type}/${issueOrActionId}/log-history`,
-      info,
-      queryParams
-    );
+  ): Observable<HistoryResponse> {
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        `${type}/${issueOrActionId}/log-history`,
+        info,
+        queryParams
+      )
+      .pipe(
+        map((history: HistoryResponse) => ({
+          ...history,
+          rows: history.rows.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          )
+        })),
+        map((history: HistoryResponse) => ({
+          ...history,
+          rows: history.rows.map((log) => ({
+            ...log,
+            createdAt: format(new Date(log.createdAt), 'dd MMM yyyy, hh:mm a'),
+            message:
+              log.type === 'Object' ? JSON.parse(log.message) : log.message
+          }))
+        }))
+      );
   }
 
   onCreateIssueOrActionLogHistoryEventSource(
@@ -123,7 +173,7 @@ export class RoundPlanObservationsService {
       return {
         ...item,
         preTextImage: {
-          image: '/assets/maintenance-icons/Issue icon.svg',
+          image: '/assets/maintenance-icons/issue-icon.svg',
           style: {
             width: '40px',
             height: '40px',
@@ -131,7 +181,9 @@ export class RoundPlanObservationsService {
           },
           condition: true
         },
-        dueDate: format(new Date(item.DUEDATE), 'dd MMM, yyyy'),
+        dueDate: item?.DUEDATE
+          ? format(new Date(item?.DUEDATE), 'dd MMM, yyyy')
+          : '',
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,
@@ -157,7 +209,7 @@ export class RoundPlanObservationsService {
     });
     return {
       rows,
-      nextToken: resp?.nextToken,
+      next: resp?.next,
       count: resp?.count
     };
   }

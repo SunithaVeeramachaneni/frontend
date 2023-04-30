@@ -4,12 +4,12 @@
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
-      [moduleName]="'OPERATOR_ROUNDS'"
-      [showPDFDownload]="true"
+      [moduleName]="'RDF'"
+      [showPDFDownload]="false"
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
-      (formDetailAction)="formsDetailActionHandler()"
+      (formDetailAction)="formsDetailActionHandler($event)"
     ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
@@ -17,7 +17,7 @@
       <ng-container
         *ngIf="(isLoading$ | async) === false; else loadingInspections"
       >
-        <span class="inspections-count"> {{ inspectionsCount }} </span>
+        <span class="inspections-count"> {{ inspectionsCount }} &nbsp; </span>
         <span class="inspections-text">{{
           'inspectionPlural'
             | translate

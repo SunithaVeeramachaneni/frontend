@@ -35,6 +35,8 @@ import {
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -57,6 +59,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allTags: string[] = [];
   originalTags: string[] = [];
 
+  allPlantsData = [];
+  plantInformation = [];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -68,6 +73,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
+    private plantService: PlantService,
     private cdrf: ChangeDetectorRef
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -86,6 +92,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
 
+  getAllPlantsData() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
+    });
+  }
+
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
@@ -93,7 +106,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100)
+          Validators.maxLength(100),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       description: [''],
@@ -101,8 +116,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      plantId: ['', Validators.required]
     });
+    this.getAllPlantsData();
   }
 
   add(event: MatChipInputEvent): void {
@@ -165,12 +182,18 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       // });
     }
 
+    const plant = this.allPlantsData.find(
+      (p) => p.id === this.headerDataForm.get('plantId').value
+    );
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
-            ...this.headerDataForm.value
+            ...this.headerDataForm.value,
+            plant: plant.name,
+            moduleName: 'rdf'
           },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
@@ -187,7 +210,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
-            formLogo: 'assets/img/svg/rounds-icon.svg'
+            formLogo: 'assets/img/svg/round-plans-icon.svg'
           }
         })
       );
@@ -198,6 +221,25 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (value) {
+      this.plantInformation = this.searchPlant(value);
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
   }
 
   processValidationErrors(controlName: string): boolean {

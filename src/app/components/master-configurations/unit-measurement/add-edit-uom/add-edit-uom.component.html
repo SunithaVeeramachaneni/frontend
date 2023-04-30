@@ -101,7 +101,7 @@
         class="custom-form-field-white-color"
       >
         <div
-          class="dis-flex m-t-10"
+          class="dis-flex m-t-10 describe"
           *ngIf="unitMeasurementForm?.get('units').value.length"
         >
           <p class="description-heading" translate="description"></p>
@@ -162,7 +162,7 @@
 
       <span *ngIf="unitType" (click)="addNewUmo()" class="add-more-btn">
         <svg-icon icon="icon-add-new" class="add-more-icon"></svg-icon>
-        <label translate="addMore"></label>
+        <label translate="addMore" class="add-more-text"></label>
       </span>
     </div>
     <div class="footer-buttons">

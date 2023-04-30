@@ -14,6 +14,20 @@
   margin-left: 12px;
 }
 
+.highlight-bg {
+  animation-name: node-higlight-animation;
+  animation-duration: 5s;
+}
+
+@keyframes node-higlight-animation {
+  from {
+    background-color: $node-highlight;
+  }
+  to {
+    background-color: $white;
+  }
+}
+
 .master-data-image {
   height: 15px;
   width: 15px;

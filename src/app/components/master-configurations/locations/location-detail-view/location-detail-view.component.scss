@@ -36,7 +36,10 @@
     border-radius: 8px;
     width: 90px;
     height: 57px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    position: relative;
+    right: 30px;
+    top: 9px;
   }
 
   .horizon-line {
@@ -49,6 +52,7 @@
     color: $light-gray;
     font-size: 110%;
     font-weight: 500;
+    margin-top: 25px;
   }
 
   .sub-headings-value {
@@ -56,11 +60,13 @@
     color: $black;
     font-size: 110%;
     font-weight: 500;
+    margin-top: 10px;
   }
 
   .edit-btn {
     background-color: $blue-main;
     color: $white;
     float: right;
+    margin-top: 10px;
   }
 }

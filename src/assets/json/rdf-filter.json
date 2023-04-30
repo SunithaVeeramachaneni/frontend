@@ -19,5 +19,12 @@
     "column": "createdBy",
     "type": "multiple",
     "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
+    "type": "select",
+    "value": ""
   }
 ]

@@ -63,13 +63,27 @@
   }
 }
 
+.forms-list {
+  ::ng-deep .table-column {
+    width: 15%;
+  }
+
+  ::ng-deep .table-buttons {
+    width: 120px !important;
+    height: 30px;
+    line-height: 25px;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-questions {
+    min-width: 50px;
+  }
+}
 ::ng-deep .remove-zindex th {
   z-index: 0 !important;
-}
-
-::ng-deep .table-column {
-  width: 15% !important;
-  max-width: 195px !important;
 }
 
 .padding-lr-20 {
