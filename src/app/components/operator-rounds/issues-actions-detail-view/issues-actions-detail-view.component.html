@@ -94,6 +94,14 @@
                     ></span>
                     {{ getUserNameByEmail(history.username) }}
                   </span>
+                  <br *ngIf="data.category !== '_ _'" />
+                  <span class="data" *ngIf="data.category !== '_ _'">
+                    <span
+                      class="sub-headings"
+                      translate="categoryCreated"
+                    ></span>
+                    {{ data.category }}
+                  </span>
                   <br *ngIf="data.round !== '_ _'" />
                   <span class="data" *ngIf="data.round !== '_ _'">
                     <span class="sub-headings" translate="roundCreated"></span>
