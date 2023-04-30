@@ -9,7 +9,7 @@ no-bump-message: '\+semver:\s?(none|skip)'
 commit-message-incrementing: Enabled
 branches:
   master:
-    regex: master
+    regex: UAT
     mode: ContinuousDeployment
     tag: ''
     increment: Patch
