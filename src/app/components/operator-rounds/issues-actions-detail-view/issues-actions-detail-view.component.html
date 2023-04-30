@@ -94,34 +94,34 @@
                     ></span>
                     {{ getUserNameByEmail(history.username) }}
                   </span>
-                  <br *ngIf="data.category !== '_ _'" />
-                  <span class="data" *ngIf="data.category !== '_ _'">
+                  <br *ngIf="data.category" />
+                  <span class="data" *ngIf="data.category">
                     <span
                       class="sub-headings"
                       translate="categoryCreated"
                     ></span>
                     {{ data.category }}
                   </span>
-                  <br *ngIf="data.round !== '_ _'" />
-                  <span class="data" *ngIf="data.round !== '_ _'">
+                  <br *ngIf="data.round" />
+                  <span class="data" *ngIf="data.round">
                     <span class="sub-headings" translate="roundCreated"></span>
                     {{ data.round }}
                   </span>
-                  <br *ngIf="data.asset !== '_ _'" />
-                  <span class="data" *ngIf="data.asset !== '_ _'">
+                  <br *ngIf="data.asset" />
+                  <span class="data" *ngIf="data.asset">
                     <span class="sub-headings" translate="assetCreated"></span>
                     {{ data.asset }}
                   </span>
-                  <br *ngIf="data.location !== '_ _'" />
-                  <span class="data" *ngIf="data.location !== '_ _'">
+                  <br *ngIf="data.location" />
+                  <span class="data" *ngIf="data.location">
                     <span
                       class="sub-headings"
                       translate="locationCreated"
                     ></span>
                     {{ data.location }}
                   </span>
-                  <br *ngIf="data.plant !== '_ _'" />
-                  <span class="data" *ngIf="data.plant !== '_ _'">
+                  <br *ngIf="data.plant" />
+                  <span class="data" *ngIf="data.plant">
                     <span class="sub-headings" translate="plantCreated"></span>
                     {{ data.plant }}
                   </span>

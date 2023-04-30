@@ -93,9 +93,6 @@ export class IssuesActionsDetailViewComponent
 
   ngOnInit(): void {
     const { id, type, users$, dueDate } = this.data;
-    if (this.data.notificationNumber.split(' ').length > 1) {
-      this.data.notificationNumber = '';
-    }
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();

@@ -14,7 +14,7 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 
-const placeHolder = '_ _';
+const placeHolder = '';
 const dataPlaceHolder = '--';
 
 @Injectable({
