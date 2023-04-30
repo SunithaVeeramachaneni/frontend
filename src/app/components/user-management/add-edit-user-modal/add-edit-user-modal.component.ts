@@ -27,7 +27,8 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
@@ -35,6 +36,7 @@ import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-add-edit-user-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -73,7 +75,10 @@ export class AddEditUserModalComponent implements OnInit {
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
-    profileImageFileName: new FormControl('')
+    profileImageFileName: new FormControl(''),
+    validFrom: new FormControl('', [Validators.required]),
+    validThrough: new FormControl('', [Validators.required]),
+    plantId: new FormControl('', [this.matSelectValidator()])
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -95,6 +100,9 @@ export class AddEditUserModalComponent implements OnInit {
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
+
+  minDate: Date;
+  userValidFromDate: Date;
   addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -106,12 +114,13 @@ export class AddEditUserModalComponent implements OnInit {
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
     @Inject(MAT_DIALOG_DATA)
-    public data: any
+    public data: any,
+    private plantService: PlantService
   ) {}
 
   matSelectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null =>
-      !control.value.length ? { selectOne: { value: control.value } } : null;
+      !control.value?.length ? { selectOne: { value: control.value } } : null;
   }
 
   checkIfUserExistsInIDP(): AsyncValidatorFn {
@@ -186,6 +195,16 @@ export class AddEditUserModalComponent implements OnInit {
       });
       this.userForm.patchValue(userDetails);
     }
+
+    this.minDate = new Date();
+    this.userValidFromDate = new Date();
+  }
+
+  validFromDateChange(validFromDate) {
+    this.userForm.controls['validThrough'].setValue(
+      this.userForm.get('validFrom').value
+    );
+    this.userValidFromDate = validFromDate.value;
   }
 
   getBase64FromImageURI = (uri) => {
