@@ -428,10 +428,9 @@ export class IssuesComponent implements OnInit {
         const issues = this.initial.data?.map((issue) => {
           if (issue.assignedTo !== null) {
             const assignee = issue.assignedTo.split(',');
-            const firstAssignee =
-              assignee[0] && assignee[0].length
-                ? this.userService.getUserFullName(assignee[0])
-                : '';
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
             const formattedAssignee =
               assignee?.length === 1
                 ? firstAssignee
