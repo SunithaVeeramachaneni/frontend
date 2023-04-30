@@ -50,6 +50,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-actions',
@@ -360,6 +361,7 @@ export class ActionsComponent implements OnInit {
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
+    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -414,7 +416,8 @@ export class ActionsComponent implements OnInit {
     };
     this.actions$ = combineLatest([
       actionsOnLoadSearch$,
-      onScrollActions$
+      onScrollActions$,
+      this.users$
     ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
@@ -427,14 +430,23 @@ export class ActionsComponent implements OnInit {
           this.initial.data = this.initial.data.concat(scrollData);
         }
 
-        this.initial.data.map((action) => {
+        this.initial.data = this.initial.data.map((action) => {
           if (action.assignedTo !== null) {
             const assignee = action.assignedTo.split(',');
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
             const formattedAssignee =
               assignee?.length === 1
-                ? assignee[0]
-                : `${assignee[0]} + ${assignee.length - 1} more`;
+                ? firstAssignee
+                : `${firstAssignee} + ${assignee.length - 1} more`;
             action = { ...action, assignedTo: formattedAssignee };
+          }
+          if (action.createdBy.length > 0) {
+            const createdBy = this.userService.getUserFullName(
+              action.createdBy
+            );
+            action = { ...action, createdBy };
           }
           return action;
         });
@@ -528,7 +540,7 @@ export class ActionsComponent implements OnInit {
               ...data,
               status,
               priority,
-              dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
               assignedTo
             };
           }

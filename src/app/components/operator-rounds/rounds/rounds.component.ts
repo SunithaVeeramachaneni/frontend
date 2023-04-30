@@ -766,10 +766,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
+    let { status } = this.selectedRound;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo },
+        { ...this.selectedRound, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -780,6 +782,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
+                  status,
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1
                 };

@@ -69,7 +69,10 @@
         </a>
         <br />
         <div class="dis-flex center">
-          <a matTooltip="{{ formConfiguration.get('description').value }}">
+          <a
+            matTooltip="{{ formConfiguration.get('description').value }}"
+            class="width-62"
+          >
             <input
               type="text"
               class="form_description_input"
@@ -139,9 +142,13 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-      <button mat-stroked-button class="next-btn">
+      <button
+        mat-stroked-button
+        class="next-btn"
+        (click)="goToPDFBuilderConfiguration()"
+      >
         <span>
-          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
+          <span translate="next"></span>
         </span>
       </button>
     </div>

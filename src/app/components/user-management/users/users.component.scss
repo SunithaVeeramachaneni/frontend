@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .main-container {
   background-color: #ffffff;
   ::ng-deep .table-column {
@@ -5,9 +7,21 @@
   }
 }
 
+.heading {
+  font-weight: 700;
+  font-size: 130%;
+  color: $blue-head;
+  margin: 0;
+  padding-left: 20px;
+  position: relative;
+  top: 15px;
+}
+
 .users-header {
   border-bottom: 1px solid #e7e7e7;
   height: 50px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .search {
@@ -17,7 +31,6 @@
 }
 
 .more-users {
-  float: right;
   margin-top: 5px;
 }
 
@@ -26,8 +39,8 @@
 }
 
 .no-of-users {
-  float: right;
-  margin: 18px 10px 0 0;
+  position: relative;
+  top: 3px;
 }
 
 .users-count {
@@ -49,7 +62,7 @@
   background: #3d5afe;
   color: #ffffff;
   float: right;
-  margin: 10px 10px 0 0;
+  margin: 14px 10px 0 21px;
   height: 29px;
   font-weight: normal;
   line-height: normal;

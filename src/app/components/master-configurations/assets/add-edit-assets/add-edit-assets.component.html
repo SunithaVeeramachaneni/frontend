@@ -5,7 +5,6 @@
       <h1 class="heading">{{ assetTitle }}</h1>
     </div>
     <div class="container-div">
-      <p class="m-0" translate="image"></p>
       <p class="image-container">
         <span *ngIf="!assetImage?.length">
           <svg-icon icon="icon-asset-icon" class="image-contain"></svg-icon>
@@ -152,7 +151,7 @@
             <div class="scrollable-area">
               <mat-option
                 [value]="parent.id"
-                *ngFor="let parent of allParentsData"
+                *ngFor="let parent of allParentsData$ | async"
               >
                 {{
                   parentType === 'location'

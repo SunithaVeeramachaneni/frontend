@@ -63,6 +63,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-inspection',
@@ -173,6 +174,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
+
     {
       id: 'dueDate',
       displayName: 'Due Date',
@@ -362,7 +364,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -433,9 +436,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               ? new Date(inspectionDetail.dueDate)
               : '',
             assignedTo: inspectionDetail?.assignedTo
-              ? this.raceDynamicFormService.getUserFullName(
-                  inspectionDetail.assignedTo
-                )
+              ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : ''
           }));
         } else {
@@ -445,7 +446,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               dueDate: inspectionDetail.dueDate
                 ? new Date(inspectionDetail.dueDate)
                 : '',
-              assignedTo: this.raceDynamicFormService.getUserFullName(
+              assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               )
             }))
@@ -757,10 +758,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
     const { inspectionId } = this.selectedForm;
+    let { status } = this.selectedForm;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo },
+        { ...this.selectedForm, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -770,9 +773,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
-                  assignedTo:
-                    this.raceDynamicFormService.getUserFullName(assignedTo),
+                  assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
+                  status,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
                 };
               }
@@ -788,6 +791,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.assigneeMenuTrigger.closeMenu();
   }
 
   onChangeDueDateHandler(dueDate: Date) {
