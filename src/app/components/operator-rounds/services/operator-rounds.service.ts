@@ -45,7 +45,7 @@ export class OperatorRoundsService {
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
-
+  isEdit = location?.pathname?.startsWith('/operator-rounds/edit/');
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
@@ -132,7 +132,7 @@ export class OperatorRoundsService {
         filterData.status ? filterData.status : formStatus
       );
       params.set('modifiedBy', filterData.modifiedBy);
-      params.set('authoredBy', filterData.authoredBy);
+      params.set('createdBy', filterData.createdBy);
       params.set('lastModifiedOn', filterData.lastModifiedOn);
       params.set(
         'scheduleStartDate',
@@ -284,7 +284,8 @@ export class OperatorRoundsService {
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
         isArchived: false,
-        isDeleted: false
+        isDeleted: false,
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
       }
     );
   }
@@ -660,7 +661,8 @@ export class OperatorRoundsService {
                   100
               )
             : 0
-        }%`
+        }%`,
+        roundId: p.roundId
       }));
     return rows;
   }
@@ -718,21 +720,6 @@ export class OperatorRoundsService {
     );
   }
 
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
-  getUsersInfo(): UsersInfoByEmail {
-    return this.usersInfoByEmail;
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
-  }
-
   updateRound$ = (
     roundId: string,
     round: RoundDetail,
@@ -747,4 +734,20 @@ export class OperatorRoundsService {
         info
       )
       .pipe(map((response) => (response === null ? round : response)));
+
+  downloadAttachment$ = (
+    roundPlanId: string,
+    roundId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> => {
+    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
+    return this.appService.downloadFile(
+      apiURL,
+      '',
+      info,
+      true,
+      {},
+      'arraybuffer'
+    );
+  };
 }

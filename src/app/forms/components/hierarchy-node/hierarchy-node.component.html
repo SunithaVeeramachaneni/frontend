@@ -17,15 +17,20 @@
         [disabled]="isAlreadySelected"
       ></mat-checkbox>
 
-      <img
-        [src]="masterData?.image"
+      <svg-icon
+        [icon]="
+          masterData?.type === 'location'
+            ? 'icon-locationIcon'
+            : 'icon-asset-icon'
+        "
         class="master-data-image"
         [ngClass]="{
           'selection-mode': viewMode === false,
           'hierarchy-tail': !masterData.children.length,
           'hierarchy-no-tail': masterData.children.length
         }"
-      />
+       
+      ></svg-icon>
     </div>
     <div
       [ngClass]="{

@@ -1,7 +1,7 @@
 <div class="submission-view">
   <div class="header-penel">
     <div class="header-left">
-      <img (click)="goToBack()" src="assets/rdf-forms-icons/back-arrow.svg" />
+      <svg-icon icon="icon-back-arrow" (click)="goToBack()"></svg-icon>
       <h1 class="slider-heading">{{ data.name }}</h1>
     </div>
     <div class="header-rigth">
@@ -108,11 +108,11 @@
               <p class="each-fields" *ngIf="field.UIFIELDTYPE === 'DT'">
                 <span class="field-label">{{ field.FIELDLABEL }}:</span>
                 <span class="field-values">
-                  <img
-                    src="../../../../assets/rdf-forms-icons/date-time.svg"
-                    alt="date time icon"
+                  <svg-icon
+                    icon="icon-date-time"
                     class="date-time-icon"
-                  />
+                  ></svg-icon>
+
                   {{ field.FIELDVALUE }}
                 </span>
               </p>

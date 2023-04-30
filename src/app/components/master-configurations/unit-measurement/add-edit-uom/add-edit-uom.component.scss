@@ -31,6 +31,10 @@
 
   .cancel {
     cursor: pointer;
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 8px;
   }
 
   .add-edit-header {
@@ -115,7 +119,7 @@
     background-color: transparent;
     position: relative;
     .edit-icon-img {
-      width: 14px;
+      width: 12px;
     }
   }
 
@@ -168,6 +172,10 @@
       background-color: $gray2-bg;
       color: $gray7;
     }
+  }
+
+  .error-fields {
+    margin-top: 14px;
   }
 
   .unit-type-name {

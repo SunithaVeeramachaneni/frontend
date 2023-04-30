@@ -1,0 +1,31 @@
+@import '../../../../../../scss/colors.scss';
+
+div {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid $gray3;
+  border-radius: 8px;
+  margin-top: 4px;
+
+  .text-answer {
+    width: 93%;
+    height: 28px;
+    border: none;
+    margin-left: 6px;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      font-size: 90%;
+    }
+  }
+
+  .signature-icon {
+    height: 18px;
+    width: 18px;
+    position: relative;
+    top: 7px;
+  }
+}

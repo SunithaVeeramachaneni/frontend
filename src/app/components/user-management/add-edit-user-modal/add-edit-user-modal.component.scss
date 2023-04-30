@@ -1,6 +1,5 @@
 .user-modal {
   width: 480px;
-  height: 450px;
   overflow: hidden;
   padding: 20px;
   background: #ffffff;
@@ -24,9 +23,12 @@
 .file-upload-icon {
   position: absolute;
   left: 52%;
-  top: 30%;
-  width: 30px;
+  top: 36%;
   cursor: pointer;
+  ::ng-deep svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
 }
 
 .user-profile-img {
@@ -35,6 +37,15 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
+}
+
+.permissions-cancel-icon {
+  position: relative;
+  right: 12px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
 }
 
 .custom-mat-form-field-white-color {
@@ -104,6 +115,7 @@
 .error-fields {
   white-space: nowrap;
   margin-left: -10px;
+  margin-top: 15px;
 }
 
 ::ng-deep .roles-select .mat-option-text {

@@ -61,6 +61,7 @@
 
   .input-forms {
     border: none;
+    width: 90%;
 
     &:focus {
       border: none;
@@ -95,7 +96,8 @@
     color: $delete-response-icon-grey;
 
     .delete-btn-icon {
-      width: 15px;
+      height: 17px;
+      width: 17px;
     }
   }
   .actions-footer {

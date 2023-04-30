@@ -5,12 +5,8 @@
 }
 .dashboard {
   background: #ffffff;
-  margin: 7px 10px 0 10px;
+  margin: 7px 10px 7px 10px;
   display: flex;
-}
-
-.cust-row-all {
-  margin-bottom: 15px;
 }
 
 .dashboard > div {
@@ -21,9 +17,7 @@
   font-size: 110%;
   font-weight: 500;
   position: relative;
-  top: 15px;
   left: 10px;
-  margin-bottom: 27px;
 }
 
 .more-icon {
@@ -34,6 +28,10 @@
   z-index: 10;
   .more-icon-no-color {
     color: #757575;
+  }
+  ::ng-deep svg {
+    width: 17px !important;
+    height: 17px !important;
   }
 }
 .more-icon-all {
@@ -58,10 +56,9 @@
   border: 1px solid #3d5afe;
   border-radius: 4px;
   background-color: #3d5afe;
-  height: 39px;
-  padding: 0px 14px;
+  padding: 10px 14px;
   float: right;
-  margin-top: 8px;
+  margin-top: 4px;
   cursor: pointer;
 }
 
@@ -154,7 +151,7 @@
 .widgets-count {
   position: relative;
   right: 15px;
-  top: 18px;
+  top: 15px;
   font-size: 110%;
   font-weight: 500;
 }

@@ -16,7 +16,11 @@
                 autocomplete="off"
                 [formControl]="searchUom"
               />
-              <img [src]="filterIcon" matSuffix alt="Open Filter" />
+              <svg-icon
+                matSuffix
+                icon="icon-filterIcon"
+                class="filter-icon"
+              ></svg-icon>
             </mat-form-field>
           </span>
 
@@ -33,11 +37,7 @@
               (click)="uploader?.click()"
               *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
             >
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
               <span translate="uploadExcel"></span>
             </button>
             <button
@@ -46,11 +46,11 @@
               *appCheckUserHasPermission="[perms.createUnitOfMeasurement]"
               class="menu-buttons"
             >
-              <img
-                src="assets/master-configurations/add-manually.svg"
-                alt="add manually"
+              <svg-icon
+                icon="icon-add-manually"
                 class="add-manually-icon"
-              />
+              ></svg-icon>
+
               <span translate="addManually"></span>
             </button>
           </mat-menu>
@@ -69,11 +69,7 @@
               *appCheckUserHasPermission="[perms.importUnitOfMeasurement]"
               (click)="exportAsXLSX()"
             >
-              <img
-                src="assets/master-configurations/upload-from-excel.svg"
-                alt="Excel"
-                class="menu-icons"
-              />
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
               <span translate="downloadTemplate"></span>
             </button>
           </mat-menu>

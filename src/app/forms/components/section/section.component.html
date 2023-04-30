@@ -45,11 +45,10 @@
             class="edit-icon"
             *ngIf="sectionForm.get('name').disabled === true"
           >
-            <img
-              src="assets/rdf-forms-icons/edit-icon-white.svg"
-              alt="edit-icon"
+            <svg-icon
+              icon="icon-edit-icon-white"
               class="edit-icon-img"
-            />
+            ></svg-icon>
           </button>
         </a>
         <div class="sectionHeadRight">
@@ -79,11 +78,10 @@
       </div>
 
       <button class="add-section-btn" (click)="addSection()">
-        <img
-          src="assets/rdf-forms-icons/add-section.svg"
-          alt="add section"
+        <svg-icon
+          icon="icon-add-section"
           class="add-section-btn-icon"
-        />
+        ></svg-icon>
         {{ 'addSection' | translate }}
       </button>
     </div>

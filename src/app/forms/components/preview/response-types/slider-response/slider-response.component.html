@@ -1,0 +1,19 @@
+<div class="slider-form">
+  <span class="slider-values">{{ question.value.min }}</span>
+  <mat-slider
+    [max]="question.value.max"
+    [min]="question.value.min"
+    [step]="question.value.increment"
+    [(ngModel)]="question.value.value"
+    [ngModelOptions]="{ standalone: true }"
+    color="primary"
+    class="slider"
+    showTickMarks
+    thumbLabel
+    discrete
+    [displayWith]="formatLabel"
+  >
+    <input matSliderThumb />
+  </mat-slider>
+  <span class="slider-values">{{ question.value.max }}</span>
+</div>

@@ -1,58 +1,65 @@
-// .configurations-div {
-//   border-right: 1px solid #e5e5e5;
-// }
+@import '../../../../scss/colors.scss';
 
-::ng-deep .configurations-div .mat-button-toggle {
-  margin-right: 5px;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  align-items: center;
-  width: 35px;
-  height: 35px;
-}
+.configurations-div {
+  ::ng-deep
+    .mat-button-toggle-group-appearance-standard
+    .mat-button-toggle
+    + .mat-button-toggle {
+    border-left: 1px solid $border-color;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-group-appearance-standard
-  .mat-button-toggle
-  + .mat-button-toggle {
-  border-left: 1px solid #e5e5e5;
-}
+  ::ng-deep .mat-button-toggle {
+    margin-right: 5px;
+    border: 1px solid $border-color;
+    border-radius: 10px;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+  }
 
-::ng-deep .configurations-div .mat-button-toggle-group-appearance-standard {
-  border: none;
-}
+  ::ng-deep .mat-button-toggle-group-appearance-standard {
+    border: none;
+  }
 
-::ng-deep .configurations-div .mat-button-toggle {
-  background: #ffffff;
-}
+  ::ng-deep .mat-button-toggle {
+    background: $white;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
-  background: #3d5afe;
-}
+  ::ng-deep .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
+    background: $white2;
+  }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
-  background: #f2f2f2;
+  ::ng-deep .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
+    background: $blue-main;
+  }
+
+  ::ng-deep
+    .mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    padding: 0 !important;
+  }
+
+  ::ng-deep
+    .mat-button-toggle-appearance-standard
+    .mat-button-toggle-label-content {
+    line-height: 52px !important;
+  }
+
+  ::ng-deep mat-error {
+    margin: 5px 0;
+  }
+
+  .chart-icons {
+    width: 25px;
+    height: 25px;
+  }
 }
 
 .variants-title {
   font-style: normal;
   font-weight: 500;
   font-size: 120%;
-  color: #000000;
+  color: $black;
   margin-bottom: 5px;
   margin-top: 0px;
-}
-
-.chart-icons {
-  margin-top: -13px;
-  margin-left: -5px;
-}
-
-::ng-deep .configurations-div mat-error {
-  margin: 5px 0;
 }

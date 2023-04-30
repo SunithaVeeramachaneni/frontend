@@ -39,7 +39,7 @@ import { State } from '../../state/instruction.reducer';
 @Component({
   selector: 'app-step-content',
   templateUrl: 'step-content.component.html',
-  styleUrls: ['step-content.component.css']
+  styleUrls: ['step-content.component.scss']
 })
 export class StepContentComponent implements OnInit, OnDestroy {
   @Input() selectedTabIndex;

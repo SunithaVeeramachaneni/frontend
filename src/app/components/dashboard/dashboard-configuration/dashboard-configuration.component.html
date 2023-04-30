@@ -1,7 +1,4 @@
-<div
-  class="dashboard"
-  [ngClass]="dashboardDisplayMode === 'ALL' ? 'cust-row-all' : ''"
->
+<div class="dashboard">
   <mat-form-field
     appearance="outline"
     *ngIf="dashboardDisplayMode !== 'ALL'"
@@ -45,7 +42,7 @@
       </ng-container>
     </mat-select>
   </mat-form-field>
-  <div class="width-60 dis-flex">
+  <div class="width-60 dis-flex align-center">
     <span class="dashboard-title">
       {{ dashboard.name }}
       <span *ngIf="dashboard.isDefault" class="default-chip">Default</span>
@@ -65,7 +62,7 @@
         [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
         aria-label="More Options"
       >
-        <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
+        <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
       </button>
     </ng-container>
 
@@ -150,7 +147,7 @@
             ]"
             aria-label="More Options"
           >
-            <mat-icon>more_horiz</mat-icon>
+            <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
           </button>
           <mat-menu #widgetMenu="matMenu">
             <button
