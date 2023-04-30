@@ -1,26 +1,47 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  Inject,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  DoCheck
+} from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog
+} from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
+  History,
+  HistoryResponse,
   SelectedAssignee,
   UpdateIssueOrActionEvent,
   UserDetails
 } from 'src/app/interfaces';
-import { LoginService } from '../../login/services/login.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { LoginService } from '../../login/services/login.service';
+import { TenantService } from '../../tenant-management/services/tenant.service';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-issues-actions-detail-view',
   templateUrl: './issues-actions-detail-view.component.html',
   styleUrls: ['./issues-actions-detail-view.component.scss']
 })
-export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
+export class IssuesActionsDetailViewComponent
+  implements OnInit, OnDestroy, DoCheck
+{
+  @ViewChild('footer') footer: ElementRef;
   issuesActionsDetailViewForm: FormGroup = this.fb.group({
     title: '',
     description: '',
@@ -34,16 +55,23 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     dueDateDisplayValue: '',
     dueDate: '',
     assignedTo: '',
-    raisedBy: ''
+    raisedBy: '',
+    attachments: this.fb.array([]),
+    message: ''
   });
   priorities = ['High', 'Medium', 'Low'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
   users$: Observable<UserDetails[]>;
-  logHistory$: Observable<History[]>;
+  logHistory$: Observable<HistoryResponse>;
   assigneeDetails: AssigneeDetails;
   updatingDetails = false;
+  userInfo: any;
+  s3BaseUrl: string;
+  logHistory: History[];
+  filteredMediaType: any;
+  chatPanelHeight;
 
   constructor(
     private fb: FormBuilder,
@@ -51,30 +79,86 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data,
     private observations: RoundPlanObservationsService,
     private loginService: LoginService,
-    private userService: UsersService
+    private userService: UsersService,
+    private sanitizer: DomSanitizer,
+    private tenantService: TenantService,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
+  getAttachmentsList() {
+    return (this.issuesActionsDetailViewForm.get('attachments') as FormArray)
+      .controls;
+  }
+
   ngOnInit(): void {
-    const { id, type, users$ } = this.data;
+    const { id, type, users$, dueDate } = this.data;
+    const {
+      s3Details: { bucket, region }
+    } = this.tenantService.getTenantInfo();
+    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
+    this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: new Date(this.data.dueDate),
-      dueDateDisplayValue: format(new Date(this.data.dueDate), 'dd MMM yyyy')
+      dueDate: dueDate ? new Date(dueDate) : '',
+      dueDateDisplayValue: dueDate
+        ? format(new Date(dueDate), 'dd MMM yyyy')
+        : ''
     });
     this.minDate = new Date(this.data.createdAt);
-    this.logHistory$ = this.observations.getIssueOrActionLogHistory$(
-      id,
-      type,
-      {}
-    );
+    this.logHistory$ = this.observations
+      .getIssueOrActionLogHistory$(id, type, {})
+      .pipe(
+        tap((logHistory) => {
+          this.logHistory = logHistory.rows;
+          this.filteredMediaType = this.logHistory.filter(
+            (history) => history.type === 'Media'
+          );
+        })
+      );
     this.observations
       .onCreateIssueOrActionLogHistoryEventSource(
-        `${type}/log-history/sse/${id}`
+        `${type}/${id}/log-history/sse`
       )
       .subscribe();
+  }
+
+  ngDoCheck() {
+    const height = this.footer?.nativeElement.offsetHeight;
+    this.chatPanelHeight = `calc(100vh - ${height + 105}px)`;
+  }
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
+
+  uploadFile(event): void {
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      const attachmentsForm = new FormData();
+      attachmentsForm.append('file', files[0]);
+      const { id, type } = this.data;
+
+      this.observations
+        .uploadIssueOrActionLogHistoryAttachment$(id, attachmentsForm, type)
+        .pipe(
+          tap((resp) => {
+            if (Object.keys(resp).length) {
+              this.filteredMediaType.push(resp);
+              this.issuesActionsDetailViewForm.markAsDirty();
+            }
+          })
+        )
+        .subscribe();
+    };
   }
 
   updateDate(
@@ -128,12 +212,11 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
           id,
           issueData: updatedIssueData,
           actionData: updatedActionData,
+          assignedTo: this.issuesActionsDetailViewForm.get('assignedTo').value,
           issueOrActionDBVersion,
           history: {
             type: 'Object',
-            message: JSON.stringify({ [field.toUpperCase()]: value }),
-            [`${type}slistID`]: id,
-            username: this.loginService.getLoggedInEmail()
+            message: JSON.stringify({ [field.toUpperCase()]: value })
           }
         },
         type
@@ -191,6 +274,9 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
                   field.FIELDDESC ? `,${assignee}` : `${assignee}`
                 }`;
               }
+              this.issuesActionsDetailViewForm.patchValue({
+                assignedTo: field.FIELDDESC
+              });
             }
           });
         });
@@ -201,6 +287,65 @@ export class IssuesActionsDetailViewComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
     this.updateIssueOrAction({ field: 'assignee', value: user.email, checked });
+  }
+
+  createIssueOrActionHistory() {
+    const message = this.issuesActionsDetailViewForm.get('message').value;
+    if (!message.trim()) {
+      return;
+    }
+    const { id, type } = this.data;
+    this.observations
+      .createIssueOrActionLogHistory$(
+        id,
+        {
+          type: 'Message',
+          message
+        },
+        type
+      )
+      .pipe(
+        tap((history) => {
+          if (Object.keys(history).length) {
+            this.issuesActionsDetailViewForm.patchValue({ message: '' });
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
+  }
+
+  getS3Url(filePath: string) {
+    return `${this.s3BaseUrl}public/${filePath}`;
+  }
+
+  navigateToRounds() {
+    this.dialogRef.close();
+    this.router.navigate(['/operator-rounds/scheduler/1']);
+  }
+
+  openPreviewDialog() {
+    const slideshowImages = [];
+    this.filteredMediaType.forEach((media) => {
+      slideshowImages.push(this.s3BaseUrl + media.message);
+    });
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
+  }
+
+  getUserNameByEmail(email) {
+    return this.userService.getUserFullName(email);
   }
 
   ngOnDestroy(): void {

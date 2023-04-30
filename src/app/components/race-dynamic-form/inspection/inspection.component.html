@@ -17,7 +17,7 @@
       <ng-container
         *ngIf="(isLoading$ | async) === false; else loadingInspections"
       >
-        <span class="inspections-count"> {{ inspectionsCount }} </span>
+        <span class="inspections-count"> {{ inspectionsCount }} &nbsp; </span>
         <span class="inspections-text">{{
           'inspectionPlural'
             | translate

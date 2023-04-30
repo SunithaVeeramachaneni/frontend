@@ -48,6 +48,9 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { Plant } from 'src/app/interfaces/plant';
+import { format } from 'date-fns';
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { UploadResponseModalComponent } from '../upload-response-modal/upload-response-modal.component';
 interface UserTableUpdate {
@@ -134,11 +137,99 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'validThroughPlaceholder',
+      displayName: 'Valid Through',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plantIdPlaceholder',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'validThroughPlaceholder',
+      displayName: 'Valid Through',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plantIdPlaceholder',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'validThrough',
       displayName: 'Valid Through',
       type: 'date',
       controlType: 'string',
-      order: 4,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -251,6 +342,8 @@ export class UsersComponent implements OnInit {
   searchUser: FormControl;
   addEditDeactivateUser = false;
   addDeactivateUserCount = false;
+  plantsList: Plant[];
+  isOpenAddEditModal = false;
 
   constructor(
     private usersService: UsersService,
@@ -320,6 +413,8 @@ export class UsersComponent implements OnInit {
   };
 
   openEditAddUserModal(user = {} as UserDetails) {
+    if (this.isOpenAddEditModal) return;
+    this.isOpenAddEditModal = true;
     const openEditAddUserModalRef = this.dialog.open(
       AddEditUserModalComponent,
       {
@@ -327,11 +422,13 @@ export class UsersComponent implements OnInit {
           user,
           roles: this.roles,
           permissionsList$: this.permissionsList$,
-          rolesList$: this.rolesList$
+          rolesList$: this.rolesList$,
+          plantsList: this.plantsList
         }
       }
     );
     openEditAddUserModalRef.afterClosed().subscribe((resp) => {
+      this.isOpenAddEditModal = false;
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService
@@ -436,31 +533,36 @@ export class UsersComponent implements OnInit {
       usersOnLoadSearch$,
       this.addEditDeactivateUser$,
       onScrollUsers$,
-      this.plantService.fetchAllPlants$()
+      this.plantService.fetchAllPlants$().pipe(
+        tap((data) => {
+          this.plantsList = data.items;
+        })
+      )
     ]).pipe(
-      map(([users, update, scrollData, plants]) => {
+      map(([users, update, scrollData, { items: plants }]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
-          }; // To fix dynamic table height issue post search with no records & then remove search with records
-
-          initial.data = this.formatIdToPlantId(
-            users,
-            this.formatPlantList(plants)
-          );
-          console.log('data', initial.data);
-          initial.data = users;
-          console.log('users:', users);
+          };
+          initial.data = this.formatUsers(users, plants);
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
+            const plantsObj = this.getPlantsObject(plants);
             switch (action) {
               case 'add':
                 this.skip += 1;
                 this.addDeactivateUserCount = true;
                 this.userCountUpdate$.next(+1);
                 initial.data = initial.data.concat(scrollData);
+                if (user) {
+                  initial.data = [user, ...initial.data];
+                  initial.data[0].plantIdPlaceholder = plantsObj[user.plantId];
+                  initial.data[0].validThroughPlaceholder = this.formatDate(
+                    user.validThrough
+                  );
+                }
                 break;
               case 'deactivate':
                 this.skip -= 1;
@@ -482,6 +584,10 @@ export class UsersComponent implements OnInit {
                   );
                   if (index > -1) {
                     initial.data[index] = user;
+                    initial.data[index].plantIdPlaceholder =
+                      plantsObj[user.plantId];
+                    initial.data[index].validThroughPlaceholder =
+                      this.formatDate(user.validThrough);
                   }
                 }
             }
@@ -507,6 +613,52 @@ export class UsersComponent implements OnInit {
         return initial;
       })
     );
+  }
+
+  formatUsers(users, plants) {
+    const plantsObject = this.getPlantsObject(plants);
+    return users.map((user) => {
+      user.validThroughPlaceholder = this.formatDate(user.validThrough);
+      if (user.plantId) {
+        user.plantIdPlaceholder = plantsObject[user.plantId];
+      }
+      return user;
+    });
+  }
+
+  formatDate(validThrough) {
+    if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
+    return validThrough;
+  }
+
+  getPlantsObject(plants) {
+    return plants.reduce((acc, cur) => {
+      acc[cur.id] = cur.plantId;
+      return acc;
+    }, {});
+  }
+
+  formatUsers(users, plants) {
+    const plantsObject = this.getPlantsObject(plants);
+    return users.map((user) => {
+      user.validThroughPlaceholder = this.formatDate(user.validThrough);
+      if (user.plantId) {
+        user.plantIdPlaceholder = plantsObject[user.plantId];
+      }
+      return user;
+    });
+  }
+
+  formatDate(validThrough) {
+    if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
+    return validThrough;
+  }
+
+  getPlantsObject(plants) {
+    return plants.reduce((acc, cur) => {
+      acc[cur.id] = cur.plantId;
+      return acc;
+    }, {});
   }
 
   formatIdToPlantId(users, idToPlantId) {
@@ -632,7 +784,10 @@ export class UsersComponent implements OnInit {
                   title: '',
                   email: '',
                   isActive: false,
-                  roles: []
+                  roles: [],
+                  validFrom: '',
+                  validThrough: '',
+                  plantId: ''
                 }
               });
               this.toast.show({

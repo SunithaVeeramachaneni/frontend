@@ -1,6 +1,6 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl" class="template-list">
   <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
-    <div class="dis-flex container-padding">
+    <!-- <div class="dis-flex container-padding">
       <button class="widgets" [matMenuTriggerFor]="menu">
         <svg-icon icon="icon-add-form" class="add-form-icon"></svg-icon>
         <span class="widgets-title" translate="createForm"></span>
@@ -21,7 +21,7 @@
         <svg-icon icon="icon-export-excel" class="import-excel-icon"></svg-icon>
         <span class="widgets-title" translate="exportExcel"></span>
       </button>
-    </div>
+    </div> -->
 
     <app-form-list></app-form-list>
   </ng-container>

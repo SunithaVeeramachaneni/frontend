@@ -329,20 +329,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': ' #2C9E53',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       open: {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'to-do': {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       }
     }
   };
@@ -766,10 +766,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
+    let { status } = this.selectedRound;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo },
+        { ...this.selectedRound, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -780,6 +782,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
+                  status,
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1
                 };

@@ -54,6 +54,7 @@ import { FilterComponent } from './components/filter/filter.component';
 import { CustomRangePanelComponent } from './components/custom-range-panel/custom-range-panel.component';
 import { MatCardModule } from '@angular/material/card';
 import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
+import { SlideshowComponent } from './components/slideshow/slideshow.component';
 import { ResponseCountPipe } from './pipes/response-count.pipe';
 
 @NgModule({
@@ -84,6 +85,7 @@ import { ResponseCountPipe } from './pipes/response-count.pipe';
     FilterComponent,
     CustomRangePanelComponent,
     FilterSidePanelComponent,
+    SlideshowComponent,
     ResponseCountPipe
   ],
   imports: [
