@@ -20,7 +20,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role, ValidationError } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
   delay,
@@ -100,10 +100,10 @@ export class AddEditUserModalComponent implements OnInit {
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
   errors: ValidationError = {};
-  allPlants: any[];
 
   minDate: Date;
   userValidFromDate: Date;
+  addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
@@ -120,7 +120,7 @@ export class AddEditUserModalComponent implements OnInit {
 
   matSelectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null =>
-      !control.value.length ? { selectOne: { value: control.value } } : null;
+      !control.value?.length ? { selectOne: { value: control.value } } : null;
   }
 
   checkIfUserExistsInIDP(): AsyncValidatorFn {
@@ -196,14 +196,8 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue(userDetails);
     }
 
-    this.plantService.fetchAllPlants$().subscribe((plants) => {
-      this.allPlants = plants.items || [];
-    });
-
     this.minDate = new Date();
     this.userValidFromDate = new Date();
-
-    this.userForm.valueChanges.subscribe((res) => console.log(res));
   }
 
   validFromDateChange(validFromDate) {

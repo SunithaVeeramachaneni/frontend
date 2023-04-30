@@ -47,6 +47,7 @@ import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { Plant } from 'src/app/interfaces/plant';
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
   user: UserDetails;
@@ -131,7 +132,7 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'plantId',
+      id: 'plantIdPlaceholder',
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
@@ -224,6 +225,8 @@ export class UsersComponent implements OnInit {
   searchUser: FormControl;
   addEditDeactivateUser = false;
   addDeactivateUserCount = false;
+  plantsList: Plant[];
+  isOpenAddEditModal = false;
 
   constructor(
     private usersService: UsersService,
@@ -293,6 +296,8 @@ export class UsersComponent implements OnInit {
   };
 
   openEditAddUserModal(user = {} as UserDetails) {
+    if (this.isOpenAddEditModal) return;
+    this.isOpenAddEditModal = true;
     const openEditAddUserModalRef = this.dialog.open(
       AddEditUserModalComponent,
       {
@@ -300,11 +305,13 @@ export class UsersComponent implements OnInit {
           user,
           roles: this.roles,
           permissionsList$: this.permissionsList$,
-          rolesList$: this.rolesList$
+          rolesList$: this.rolesList$,
+          plantsList: this.plantsList
         }
       }
     );
     openEditAddUserModalRef.afterClosed().subscribe((resp) => {
+      this.isOpenAddEditModal = false;
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService
@@ -408,25 +415,35 @@ export class UsersComponent implements OnInit {
       usersOnLoadSearch$,
       this.addEditDeactivateUser$,
       onScrollUsers$,
-      this.plantService.fetchAllPlants$()
+      this.plantService.fetchAllPlants$().pipe(
+        tap((data) => {
+          this.plantsList = data.items;
+        })
+      )
     ]).pipe(
-      map(([users, update, scrollData, plant]) => {
+      map(([users, update, scrollData, { items: plants }]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
           // To fix dynamic table height issue post search with no records & then remove search with
-          initial.data = this.formatId(users, this.idToPlant(plant));
+          initial.data = this.formatUsers(users, plants);
+          // initial.data = this.formatId(users, this.idToPlant(plant));
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
+            const plantsObj = this.getPlantsObject(plants);
             switch (action) {
               case 'add':
                 this.skip += 1;
                 this.addDeactivateUserCount = true;
                 this.userCountUpdate$.next(+1);
                 initial.data = initial.data.concat(scrollData);
+                if (user) {
+                  initial.data = [user, ...initial.data];
+                  initial.data[0].plantIdPlaceholder = plantsObj[user.plantId];
+                }
                 break;
               case 'deactivate':
                 this.skip -= 1;
@@ -448,6 +465,8 @@ export class UsersComponent implements OnInit {
                   );
                   if (index > -1) {
                     initial.data[index] = user;
+                    initial.data[index].plantIdPlaceholder =
+                      plantsObj[user.plantId];
                   }
                 }
             }
@@ -464,21 +483,21 @@ export class UsersComponent implements OnInit {
     );
   }
 
-  formatId(users, plantList) {
+  formatUsers(users, plants) {
+    const plantsObject = this.getPlantsObject(plants);
     return users.map((user) => {
       if (user.plantId) {
-        user.plantId = plantList[user.plantId];
+        user.plantIdPlaceholder = plantsObject[user.plantId];
       }
       return user;
     });
   }
 
-  idToPlant(plantList) {
-    const obj = plantList.items.reduce((acc, cur) => {
+  getPlantsObject(plants) {
+    return plants.reduce((acc, cur) => {
       acc[cur.id] = cur.plantId;
       return acc;
     }, {});
-    return obj;
   }
 
   getUsers = () =>

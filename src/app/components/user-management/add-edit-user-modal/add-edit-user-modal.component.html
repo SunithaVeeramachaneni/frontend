@@ -183,6 +183,7 @@
                   [selectedRolePermissions$]="selectedRolePermissions$"
                   [allPermissions$]="permissionsList$"
                   [rolesWithPermissionsInUsers]="userRolePermissions"
+                  [addingRole$]="addingRole$"
                 ></app-permissions>
               </div>
               <div class="dashboard-widgets-list"></div>
@@ -247,12 +248,12 @@
       <mat-label>{{ 'plant' | translate }}</mat-label>
       <mat-select formControlName="plantId">
         <mat-option
-          *ngFor="let plant of allPlants"
+          *ngFor="let plant of data.plantsList"
           [value]="plant.id"
           style="padding-right: 0"
           class="roles-select"
         >
-          <span>{{ plant.name }}</span>
+          <span>{{ plant.plantId }}</span>
         </mat-option>
       </mat-select>
       <mat-error
