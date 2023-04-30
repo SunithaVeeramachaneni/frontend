@@ -101,7 +101,7 @@ export class ArchivedListComponent implements OnInit {
     },
     {
       id: 'isArchivedAt',
-      displayName: 'Archived',
+      displayName: 'Archived On',
       type: 'timeAgo',
       controlType: 'string',
       isMultiValued: true,
