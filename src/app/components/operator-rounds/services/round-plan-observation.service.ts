@@ -3,7 +3,12 @@ import { Injectable, NgZone } from '@angular/core';
 import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ErrorInfo, IssueOrAction } from 'src/app/interfaces';
+import {
+  ErrorInfo,
+  History,
+  HistoryResponse,
+  IssueOrAction
+} from 'src/app/interfaces';
 
 import { AppService } from 'src/app/shared/services/app.services';
 import { SseService } from 'src/app/shared/services/sse.service';
@@ -65,6 +70,32 @@ export class RoundPlanObservationsService {
       )
       .pipe(map((response) => (response === null ? issueOrAction : response)));
 
+  createIssueOrActionLogHistory$ = (
+    issueOrActionId: string,
+    history: History,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<IssueOrAction> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `${urlString}/${issueOrActionId}/log-history`,
+      history,
+      info
+    );
+
+  uploadIssueOrActionLogHistoryAttachment$ = (
+    issueOrActionId: string,
+    form: FormData,
+    urlString: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<IssueOrAction> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `${urlString}/${issueOrActionId}/upload-attacment`,
+      form,
+      info
+    );
+
   getIssueOrActionLogHistory$(
     issueOrActionId: string,
     type: string,
@@ -73,13 +104,32 @@ export class RoundPlanObservationsService {
       next?: string;
     },
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<History[]> {
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      `${type}/${issueOrActionId}/log-history`,
-      info,
-      queryParams
-    );
+  ): Observable<HistoryResponse> {
+    return this.appService
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        `${type}/${issueOrActionId}/log-history`,
+        info,
+        queryParams
+      )
+      .pipe(
+        map((history: HistoryResponse) => ({
+          ...history,
+          rows: history.rows.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          )
+        })),
+        map((history: HistoryResponse) => ({
+          ...history,
+          rows: history.rows.map((log) => ({
+            ...log,
+            createdAt: format(new Date(log.createdAt), 'dd MMM yyyy, hh:mm a'),
+            message:
+              log.type === 'Object' ? JSON.parse(log.message) : log.message
+          }))
+        }))
+      );
   }
 
   onCreateIssueOrActionLogHistoryEventSource(

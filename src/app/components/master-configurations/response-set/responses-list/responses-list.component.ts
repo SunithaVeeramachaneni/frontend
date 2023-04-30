@@ -560,7 +560,6 @@ export class ResponsesListComponent implements OnInit {
     });
   }
   exportAsXLSX(): void {
-    console.log('tsfile');
     this.responseSetService
       .downloadSampleResponseSetTemplate()
       .pipe(

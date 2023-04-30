@@ -13,8 +13,8 @@
   "standalone": "Standalone",
   "embedded": "Embedded",
   "embeddedSubText": "On Publishing form will show in your mWorkorder app",
-  "addFormName": "Add a Form Name",
-  "addFormDescription": " Add a short description to your form",
+  "addFormName": "Form Name",
+  "addFormDescription": "Short Description",
   "tags": "Tags",
   "nextBtn": "Save & Next",
   "nextBtnPreview": "Next",
@@ -260,5 +260,6 @@
   "templateDetailsHeading": "Template Details",
   "exists": "A template with this name already exists, please choose another name",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "selectAnOperator": "Select an Operator"
 }

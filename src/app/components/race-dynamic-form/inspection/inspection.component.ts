@@ -304,20 +304,20 @@ export class InspectionComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': ' #2C9E53',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       open: {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'to-do': {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       }
     }
   };
