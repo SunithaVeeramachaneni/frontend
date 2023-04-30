@@ -303,5 +303,6 @@
   "roundCreated": "Round: ",
   "assetCreated": "Asset: ",
   "locationCreated": "Location: ",
-  "plantCreated": "Plant: "
+  "plantCreated": "Plant: ",
+  "categoryCreated": "Category: "
 }
