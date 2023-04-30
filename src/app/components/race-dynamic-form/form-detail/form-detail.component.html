@@ -331,10 +331,23 @@
         mat-raised-button
         class="viewPDFBtn"
         translate="viewPDFBtn"
+        [disabled]="pdfButtonDisabled"
         (click)="viewPDF()"
       ></button>
-      <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPDF()">
-        <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
+      <button
+        mat-stroked-button
+        class="downloadPDFBtn"
+        [disabled]="pdfButtonDisabled"
+        (click)="downloadPDF()"
+      >
+        <svg-icon
+          icon="{{
+            pdfButtonDisabled
+              ? 'icon-picture-as-pdf-disabled'
+              : 'icon-picture-as-pdf'
+          }}"
+          class="pdf-picture"
+        ></svg-icon>
         <span translate="download"></span>
       </button>
     </div>

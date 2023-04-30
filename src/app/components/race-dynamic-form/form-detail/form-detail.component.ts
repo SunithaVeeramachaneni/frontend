@@ -71,6 +71,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   ghostLoading = new Array(19).fill(0).map((_, i) => i);
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
+  pdfButtonDisabled: boolean = false;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -132,6 +133,15 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
+      this.pdfButtonDisabled = false;
+      if (this.selectedForm?.status) {
+        if (
+          this.selectedForm?.status.toLowerCase() === 'open' ||
+          this.selectedForm?.status.toLowerCase() === 'to-do'
+        ) {
+          this.pdfButtonDisabled = true;
+        }
+      }
     }
   }
 
