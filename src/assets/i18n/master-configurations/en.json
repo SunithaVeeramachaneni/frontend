@@ -48,7 +48,7 @@
   "plant": "Plant",
   "plantMandatory": "Plant *",
   "plantId": "Plant Id",
-  "plantIdMandatory": "plant Id *",
+  "plantIdMandatory": "Plant Id *",
   "country": "Country",
   "countryMandatory": "Country *",
   "zipCode": "Zip Code",
