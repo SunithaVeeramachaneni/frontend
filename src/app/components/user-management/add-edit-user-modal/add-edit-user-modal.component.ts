@@ -196,14 +196,19 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue(userDetails);
     }
 
-    this.minDate = new Date();
+    this.minDate = this.userForm.controls['validFrom'].value || new Date();
     this.userValidFromDate = new Date();
   }
 
   validFromDateChange(validFromDate) {
-    this.userForm.controls['validThrough'].setValue(
-      this.userForm.get('validFrom').value
-    );
+    if (
+      Date.parse(this.userForm.controls['validThrough'].value) <
+      Date.parse(this.userForm.controls['validFrom'].value)
+    ) {
+      this.userForm.controls['validThrough'].setValue(
+        this.userForm.get('validFrom').value
+      );
+    }
     this.userValidFromDate = validFromDate.value;
   }
 
