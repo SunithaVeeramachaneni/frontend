@@ -30,7 +30,7 @@
             <ng-container *ngIf="history.type === 'Object'">
               <ng-container *ngIf="i === 0">
                 <div class="username-top">
-                  {{ history.username }}
+                  {{ getUserNameByEmail(history.username) }}
                 </div>
               </ng-container>
             </ng-container>
@@ -92,7 +92,30 @@
                       class="sub-headings"
                       translate="createdByAction"
                     ></span>
-                    {{ history.username }}
+                    {{ getUserNameByEmail(history.username) }}
+                  </span>
+                  <br *ngIf="data.round !== '_ _'" />
+                  <span class="data" *ngIf="data.round !== '_ _'">
+                    <span class="sub-headings" translate="roundCreated"></span>
+                    {{ data.round }}
+                  </span>
+                  <br *ngIf="data.asset !== '_ _'" />
+                  <span class="data" *ngIf="data.asset !== '_ _'">
+                    <span class="sub-headings" translate="assetCreated"></span>
+                    {{ data.asset }}
+                  </span>
+                  <br *ngIf="data.location !== '_ _'" />
+                  <span class="data" *ngIf="data.location !== '_ _'">
+                    <span
+                      class="sub-headings"
+                      translate="locationCreated"
+                    ></span>
+                    {{ data.location }}
+                  </span>
+                  <br *ngIf="data.plant !== '_ _'" />
+                  <span class="data" *ngIf="data.plant !== '_ _'">
+                    <span class="sub-headings" translate="plantCreated"></span>
+                    {{ data.plant }}
                   </span>
                 </ng-container>
 
@@ -120,7 +143,7 @@
                         class="sub-headings"
                         translate="assigneeAddedTo"
                       ></span>
-                      {{ history.message.ASSIGNEE }}
+                      {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
                   </ng-container>
                   <ng-container *ngIf="history.message.ERPNOTIF">
@@ -503,7 +526,11 @@
       <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
-          {{ this.issuesActionsDetailViewForm.get('raisedBy').value }}
+          {{
+            getUserNameByEmail(
+              this.issuesActionsDetailViewForm.get('raisedBy').value
+            )
+          }}
         </div>
       </div>
       <hr class="line" />

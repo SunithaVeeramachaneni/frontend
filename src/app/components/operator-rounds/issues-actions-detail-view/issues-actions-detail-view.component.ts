@@ -92,7 +92,7 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { id, type, users$ } = this.data;
+    const { id, type, users$, dueDate } = this.data;
     if (this.data.notificationNumber.split(' ').length > 1) {
       this.data.notificationNumber = '';
     }
@@ -106,8 +106,10 @@ export class IssuesActionsDetailViewComponent
     );
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: new Date(this.data.dueDate),
-      dueDateDisplayValue: format(new Date(this.data.dueDate), 'dd MMM yyyy')
+      dueDate: dueDate ? new Date(dueDate) : '',
+      dueDateDisplayValue: dueDate
+        ? format(new Date(dueDate), 'dd MMM yyyy')
+        : ''
     });
     this.minDate = new Date(this.data.createdAt);
     this.logHistory$ = this.observations
@@ -349,6 +351,10 @@ export class IssuesActionsDetailViewComponent
         data: slideshowImages
       });
     }
+  }
+
+  getUserNameByEmail(email) {
+    return this.userService.getUserFullName(email);
   }
 
   ngOnDestroy(): void {
