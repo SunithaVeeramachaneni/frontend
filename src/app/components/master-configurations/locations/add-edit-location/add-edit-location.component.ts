@@ -99,11 +99,7 @@ export class AddEditLocationComponent implements OnInit {
       model: '',
       description: '',
       parentId: '',
-      plantsID: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ])
+      plantsID: new FormControl('', [Validators.required])
     });
     this.getAllLocations();
     this.getAllPlants();

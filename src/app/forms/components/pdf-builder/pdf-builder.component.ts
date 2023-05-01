@@ -34,6 +34,7 @@ import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-pdf-builder',
@@ -101,7 +102,8 @@ export class PDFBuilderComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     public dialogRef: MatDialogRef<PDFBuilderComponent>,
     private loginService: LoginService,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public data,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -214,6 +216,10 @@ export class PDFBuilderComponent implements OnInit {
       this.router.navigate(['/forms']);
       this.dialogRef.close();
     }
+    this.toast.show({
+      text: 'Round Published Successfully',
+      type: 'success'
+    });
   }
 
   toggleSelectAll(event) {

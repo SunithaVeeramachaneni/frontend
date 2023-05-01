@@ -117,12 +117,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantId: [
-        '',
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]
+      plantId: ['', Validators.required]
     });
     this.getAllPlantsData();
   }
