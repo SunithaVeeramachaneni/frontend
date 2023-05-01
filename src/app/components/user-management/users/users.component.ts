@@ -343,6 +343,7 @@ export class UsersComponent implements OnInit {
   addEditDeactivateUser = false;
   addDeactivateUserCount = false;
   plantsList: Plant[];
+  plantsObject = {};
   isOpenAddEditModal = false;
 
   constructor(
@@ -536,20 +537,20 @@ export class UsersComponent implements OnInit {
       this.plantService.fetchAllPlants$().pipe(
         tap((data) => {
           this.plantsList = data.items;
+          this.plantsObject = this.getPlantsObject(this.plantsList);
         })
       )
     ]).pipe(
-      map(([users, update, scrollData, { items: plants }]) => {
+      map(([users, update, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
-          initial.data = this.formatUsers(users, plants);
+          initial.data = this.formatUsers(users);
         } else {
           if (this.addEditDeactivateUser) {
             const { user, action } = update;
-            const plantsObj = this.getPlantsObject(plants);
             switch (action) {
               case 'add':
                 this.skip += 1;
@@ -558,7 +559,8 @@ export class UsersComponent implements OnInit {
                 initial.data = initial.data.concat(scrollData);
                 if (user) {
                   initial.data = [user, ...initial.data];
-                  initial.data[0].plantIdPlaceholder = plantsObj[user.plantId];
+                  initial.data[0].plantIdPlaceholder =
+                    this.plantsObject[user.plantId];
                   initial.data[0].validThroughPlaceholder = this.formatDate(
                     user.validThrough
                   );
@@ -585,7 +587,7 @@ export class UsersComponent implements OnInit {
                   if (index > -1) {
                     initial.data[index] = user;
                     initial.data[index].plantIdPlaceholder =
-                      plantsObj[user.plantId];
+                      this.plantsObject[user.plantId];
                     initial.data[index].validThroughPlaceholder =
                       this.formatDate(user.validThrough);
                   }
@@ -615,12 +617,11 @@ export class UsersComponent implements OnInit {
     );
   }
 
-  formatUsers(users, plants) {
-    const plantsObject = this.getPlantsObject(plants);
+  formatUsers(users) {
     return users.map((user) => {
       user.validThroughPlaceholder = this.formatDate(user.validThrough);
       if (user.plantId) {
-        user.plantIdPlaceholder = plantsObject[user.plantId];
+        user.plantIdPlaceholder = this.plantsObject[user.plantId];
       }
       return user;
     });
