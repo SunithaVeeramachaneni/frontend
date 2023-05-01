@@ -212,14 +212,18 @@ export class PDFBuilderComponent implements OnInit {
     if (this.data.moduleName === 'OPERATOR_ROUNDS') {
       this.router.navigate(['/operator-rounds']);
       this.dialogRef.close();
+      this.toast.show({
+        text: 'Round published successfully',
+        type: 'success'
+      });
     } else {
       this.router.navigate(['/forms']);
       this.dialogRef.close();
+      this.toast.show({
+        text: 'Form published successfully',
+        type: 'success'
+      });
     }
-    this.toast.show({
-      text: 'Round Published Successfully',
-      type: 'success'
-    });
   }
 
   toggleSelectAll(event) {
