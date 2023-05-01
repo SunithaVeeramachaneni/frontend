@@ -429,7 +429,7 @@ export class FormListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {

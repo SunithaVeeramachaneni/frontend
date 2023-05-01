@@ -34,6 +34,8 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -267,12 +269,15 @@ export class RoundPlanListComponent implements OnInit {
   plants = [];
   plantsIdNameMap = {};
   createdBy = [];
+  plantsObject: { [key: string]: PlantsResponse } = {};
+
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -317,15 +322,11 @@ export class RoundPlanListComponent implements OnInit {
     if (!form.id) {
       return;
     }
-    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
-      this.toast.show({
-        text: 'Round Plan copied successfully!',
-        type: 'success'
+    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe((round) => {
+      this.addEditCopyForm$.next({
+        action: 'copy',
+        form: round
       });
-      this.nextToken = '';
-      this.operatorRoundsService.fetchForms$.next({ data: 'load' });
-      this.formsListCount$ =
-        this.operatorRoundsService.getFormsListCount$('All');
     });
   }
 
@@ -359,13 +360,22 @@ export class RoundPlanListComponent implements OnInit {
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
       this.addEditCopyForm$,
-      onScrollForms$
+      onScrollForms$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap(
+          ({ items: plants }) =>
+            (this.plantsObject = plants.reduce((acc, curr) => {
+              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
+              return acc;
+            }, {}))
+        )
+      )
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {
@@ -375,7 +385,20 @@ export class RoundPlanListComponent implements OnInit {
               (d) => d?.id === obj?.oldId
             );
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
-            initial.data.splice(newIdx, 0, obj);
+            initial.data.splice(newIdx, 0, {
+              ...obj,
+              publishedDate: '',
+              preTextImage: {
+                image: obj.formLogo,
+                style: {
+                  width: '40px',
+                  height: '40px',
+                  marginRight: '10px'
+                },
+                condition: true
+              },
+              plant: this.plantsObject[obj.plantId]
+            });
             form.action = 'add';
             this.toast.show({
               text: 'Round Plan copied successfully!',
