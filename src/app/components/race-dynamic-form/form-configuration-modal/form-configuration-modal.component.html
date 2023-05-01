@@ -38,7 +38,7 @@
         <!-- <hr class="horizontal-line" /> -->
 
         <div class="form-name">
-          <p class="form-name-description" translate="addFormName"></p>
+          <p class="form-name-description" translate="addFormNameMandatory"></p>
           <mat-form-field appearance="outline" class="width-100">
             <input
               type="text"
@@ -68,7 +68,7 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p class="form-name-description" translate="plant"></p>
+          <p class="form-name-description" translate="plantMandatory"></p>
           <mat-form-field appearance="outline" class="width-100">
             <mat-select
               formControlName="plantId"
@@ -87,6 +87,18 @@
                 >
               </div>
             </mat-select>
+            <mat-error
+              *ngIf="processValidationErrors('plantId')"
+              class="m-t-5 error-fields"
+            >
+              {{
+                errors.plantId.name
+                  | translate
+                    : {
+                        name: 'Plant' | translate
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="tags">

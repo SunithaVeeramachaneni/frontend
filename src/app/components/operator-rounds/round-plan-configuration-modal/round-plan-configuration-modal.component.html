@@ -94,6 +94,18 @@
                 >
               </div>
             </mat-select>
+            <mat-error
+              *ngIf="processValidationErrors('plantId')"
+              class="m-t-5 error-fields"
+            >
+              {{
+                errors.plantId.name
+                  | translate
+                    : {
+                        name: 'Plant' | translate
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
         </div>
 

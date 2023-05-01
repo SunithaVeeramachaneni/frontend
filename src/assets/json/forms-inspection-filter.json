@@ -21,7 +21,7 @@
     "value": ""
   },
   {
-    "label": "Due date",
+    "label": "Due Date",
     "items": [],
     "column": "dueDate",
     "type": "daterange",
