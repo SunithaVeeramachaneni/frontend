@@ -49,8 +49,8 @@ const {
   inActiveUsers,
   tenantManagement,
   raceDynamicForms,
-  submissionForms,
   myForms,
+  formsTemplates,
   archivedForms,
   schedularForms,
   operatorRoundPlans,
@@ -159,14 +159,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: myForms.permission
         },
         {
-          title: archivedForms.title,
-          url: archivedForms.url,
-          permission: archivedForms.permission
-        },
-        {
           title: schedularForms.title,
           url: schedularForms.url,
           permission: schedularForms.permission
+        },
+        {
+          title: formsTemplates.title,
+          url: formsTemplates.url,
+          permission: formsTemplates.permission
+        },
+        {
+          title: archivedForms.title,
+          url: archivedForms.url,
+          permission: archivedForms.permission
         }
       ]
     },
@@ -477,7 +482,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     // COLLABORATION CHAT SSE
-    if (userID) {
+    const stopCollabSSE = true;
+    if (!stopCollabSSE && userID) {
       const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
         collaborationSSEUrl,
@@ -518,40 +524,44 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     // JITSI AV CALLING SSE
-    const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
-    this.eventSourceJitsi = this.sseService.getEventSourceWithGet(
-      jitsiSseUrl,
-      null
-    );
-    this.eventSourceJitsi.stream();
-    this.eventSourceJitsi.onmessage = (event) => {
-      if (event) {
-        const eventData = JSON.parse(event.data);
-        if (!eventData.isHeartbeat) {
-          if (eventData.eventType === 'INCOMING_CALL') {
-            // If any other AV call is going on, discard the SSE event, else delete the SSE event...
-            const avConfWindowStatus = this.chatService.getAVConfWindowStatus();
-            const acceptCallWindowStatus =
-              this.chatService.getAcceptCallWindowStatus();
-            const isAVConfWindowOpen = avConfWindowStatus.isOpen;
-            const isAcceptCallWindowOpen = acceptCallWindowStatus.isOpen;
-            if (isAVConfWindowOpen || isAcceptCallWindowOpen) {
-              // TODO: If the call is not accepted for 10 consecutive SSE events, reject it gracefully with reason 'USER_BUSY_IN_OTHER_CALL'
-              return;
-            } else {
+    const stopJitsiSSE = true;
+    if (!stopJitsiSSE) {
+      const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
+      this.eventSourceJitsi = this.sseService.getEventSourceWithGet(
+        jitsiSseUrl,
+        null
+      );
+      this.eventSourceJitsi.stream();
+      this.eventSourceJitsi.onmessage = (event) => {
+        if (event) {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            if (eventData.eventType === 'INCOMING_CALL') {
+              // If any other AV call is going on, discard the SSE event, else delete the SSE event...
+              const avConfWindowStatus =
+                this.chatService.getAVConfWindowStatus();
+              const acceptCallWindowStatus =
+                this.chatService.getAcceptCallWindowStatus();
+              const isAVConfWindowOpen = avConfWindowStatus.isOpen;
+              const isAcceptCallWindowOpen = acceptCallWindowStatus.isOpen;
+              if (isAVConfWindowOpen || isAcceptCallWindowOpen) {
+                // TODO: If the call is not accepted for 10 consecutive SSE events, reject it gracefully with reason 'USER_BUSY_IN_OTHER_CALL'
+                return;
+              } else {
+                this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
+                this.chatService.setMeeting(eventData);
+              }
+            } else if (eventData.eventType === 'END_CONFERENCE') {
               this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
-              this.chatService.setMeeting(eventData);
+              this.chatService.endMeeting(eventData);
             }
-          } else if (eventData.eventType === 'END_CONFERENCE') {
-            this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
-            this.chatService.endMeeting(eventData);
           }
         }
-      }
-    };
-    this.eventSourceJitsi.onerror = (event) => {
-      // console.log(event);
-    };
+      };
+      this.eventSourceJitsi.onerror = (event) => {
+        // console.log(event);
+      };
+    }
 
     // USER PRESENCE SSE
     const updateUserPresenceSSEURL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
@@ -582,7 +592,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   getImage = (imageName: string, active: boolean) =>
     active ? `icon-${imageName}-white` : `icon-${imageName}-gray`;
- 
 
   selectedListElement(title) {
     this.menuOpenClose = false;

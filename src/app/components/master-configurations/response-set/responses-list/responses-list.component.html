@@ -1,115 +1,122 @@
-<div class="responses-list-view">
-  <ng-container *ngIf="userInfo$ | async">
-    <div class="main-container">
-      <div class="responses-header">
-        <div>
-          <h2 class="heading" translate="globalMcqHeading"></h2>
-        </div>
-        <div>
-          <span class="custom-form-field-gray-color search">
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'search' | translate"
-                autocomplete="off"
-                [formControl]="searchResponseSet"
-              />
-              <svg-icon
-                icon="icon-filterIcon"
-                class="filter-icon"
-                matSuffix
-              ></svg-icon>
-            </mat-form-field>
-          </span>
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div
+    class="responses-list-view"
+    *ngIf="currentRouteUrl === routingUrls.globalResponse.url"
+  >
+    <ng-container *ngIf="userInfo$ | async">
+      <div class="main-container">
+        <div class="responses-header">
+          <div>
+            <h2 class="heading" translate="globalMcqHeading"></h2>
+          </div>
+          <div>
+            <span class="custom-form-field-gray-color search">
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="'search' | translate"
+                  autocomplete="off"
+                  [formControl]="searchResponseSet"
+                />
+                <svg-icon
+                  icon="icon-filterIcon"
+                  class="filter-icon"
+                  matSuffix
+                ></svg-icon>
+              </mat-form-field>
+            </span>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="createMenu"
-            translate="createNew"
-            class="create-new-btn"
-          ></button>
-          <mat-menu #createMenu="matMenu">
             <button
-              mat-menu-item
-              (click)="uploader.click()"
-              class="menu-buttons"
+              mat-raised-button
+              [matMenuTriggerFor]="createMenu"
+              translate="createNew"
+              class="create-new-btn"
+            ></button>
+            <mat-menu #createMenu="matMenu">
+              <button
+                mat-menu-item
+                (click)="uploader.click()"
+                class="menu-buttons"
+                *appCheckUserHasPermission="[perms.importLocations]"
+              >
+                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+                <span translate="uploadExcel"></span>
+              </button>
+              <button
+                mat-menu-item
+                class="menu-buttons"
+                (click)="addManually()"
+              >
+                <svg-icon
+                  icon="icon-add-manually"
+                  class="add-manually-icon"
+                ></svg-icon>
+                <span translate="createManually"></span>
+              </button>
+            </mat-menu>
+
+            <button
+              mat-raised-button
+              [matMenuTriggerFor]="moreMenu"
+              class="more-btn"
               *appCheckUserHasPermission="[perms.importLocations]"
             >
-              <svg-icon
-                icon="icon-excel1"
-                class="menu-icons"
-              ></svg-icon>
-              <span translate="uploadExcel"></span>
+              <mat-icon class="menu-icon">more_horiz</mat-icon>
             </button>
-            <button mat-menu-item class="menu-buttons" (click)="addManually()">
-              <svg-icon
-                icon="icon-add-manually"
-                class="add-manually-icon"
-              ></svg-icon>
-              <span translate="addManually"></span>
-            </button>
-          </mat-menu>
+            <mat-menu #moreMenu="matMenu">
+              <button
+                (click)="exportAsXLSX()"
+                mat-menu-item
+                class="menu-buttons"
+              >
+                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+                <span translate="downloadTemplate"></span>
+              </button>
+            </mat-menu>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="moreMenu"
-            class="more-btn"
-            *appCheckUserHasPermission="[perms.importLocations]"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #moreMenu="matMenu">
-            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-              <svg-icon
-                icon="icon-upload-from-excel"
-                class="menu-icons"
-              ></svg-icon>
-              <span translate="downloadTemplate"></span>
-            </button>
-          </mat-menu>
-
-          <input
-            id="upload"
-            hidden
-            type="file"
-            #uploader
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            (change)="uploadFile($event)"
-            (click)="resetFile($event)"
-          />
+            <input
+              id="upload"
+              hidden
+              type="file"
+              #uploader
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              (change)="uploadFile($event)"
+              (click)="resetFile($event)"
+            />
+          </div>
         </div>
-      </div>
 
-      <div *ngIf="(responseSets$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
-      <div *ngIf="isGlobalResponseOpen">
-        <app-global-response-type-side-drawer
-          [@slideInOut]="globaResponseAddOrEditOpenState"
-          (slideInOut)="handleSlideState($event)"
-          [globalResponseToBeEdited]="responseToBeEdited"
-          [isControlInViewMode]="isControlModeView"
-          (globalResponseHandler)="handleGlobalResponseChange($event)"
-        ></app-global-response-type-side-drawer>
-      </div>
-      <div *ngIf="isLoading$ | async">
-        <div class="ghost-loading">
-          <div *ngFor="let number of ghostLoading">
-            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-            </ngx-shimmer-loading>
+        <div *ngIf="(responseSets$ | async) && (isLoading$ | async) === false">
+          <cwp-dynamictable
+            [dataSource]="dataSource"
+            [configOptions]="configOptions"
+            (fetchDataCallback)="handleTableEvent($event)"
+            (rowLevelActionHandler)="rowLevelActionHandler($event)"
+            (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+            (cellClickActionHandler)="cellClickActionHandler($event)"
+            class="width-100"
+          ></cwp-dynamictable>
+        </div>
+        <div *ngIf="isGlobalResponseOpen">
+          <app-global-response-type-side-drawer
+            [@slideInOut]="globaResponseAddOrEditOpenState"
+            (slideInOut)="handleSlideState($event)"
+            [globalResponseToBeEdited]="responseToBeEdited"
+            [isControlInViewMode]="isControlModeView"
+            (globalResponseHandler)="handleGlobalResponseChange($event)"
+          ></app-global-response-type-side-drawer>
+        </div>
+        <div *ngIf="isLoading$ | async">
+          <div class="ghost-loading">
+            <div *ngFor="let number of ghostLoading">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+              </ngx-shimmer-loading>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-</div>
+    </ng-container>
+  </div>
+</ng-container>

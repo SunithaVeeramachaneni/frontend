@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+/* eslint-disable no-underscore-dangle */
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -16,7 +22,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -33,6 +43,8 @@ import { slideInOut } from 'src/app/animations';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-locations-list',
@@ -62,24 +74,51 @@ export class LocationsListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'locationId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      showMenuOptions: false,
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasSubtitle: true,
+      subtitleColumn: 'plantId',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
       displayName: 'Description',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -102,7 +141,7 @@ export class LocationsListComponent implements OnInit {
       displayName: 'Model',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -124,10 +163,9 @@ export class LocationsListComponent implements OnInit {
       displayName: 'Parent',
       type: 'string',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
+      order: 5,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -137,9 +175,13 @@ export class LocationsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      subtitleColumn: 'parentID',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     }
   ];
 
@@ -202,14 +244,35 @@ export class LocationsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   parentInformation: any;
 
+  isPopoverOpen = false;
+  filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted'];
+  filter = {
+    status: '',
+    assignedTo: '',
+    dueDate: '',
+    plant: ''
+  };
+
+  plants = [];
+  plantsIdNameMap = {};
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
+
   constructor(
     private locationService: LocationService,
     private readonly toast: ToastService,
     private loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdrf: ChangeDetectorRef,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.locations.title))
+    );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
     this.allLocations$ = this.locationService.fetchAllLocations$();
@@ -242,6 +305,9 @@ export class LocationsListComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.getFilter();
+    this.getAllLocations();
   }
 
   getDisplayedLocations(): void {
@@ -250,6 +316,7 @@ export class LocationsListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getLocations();
       })
     );
@@ -276,7 +343,7 @@ export class LocationsListComponent implements OnInit {
       onScrollLocations$,
       this.allLocations$
     ]).pipe(
-      map(([rows, form, scrollData, allLocations]) => {
+      map(([rows, { form, action }, scrollData, allLocations]) => {
         const { items: unfilteredParentLocations } = allLocations;
         this.allParentsLocations = unfilteredParentLocations.filter(
           (location) => location._deleted !== true
@@ -287,17 +354,30 @@ export class LocationsListComponent implements OnInit {
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
-        } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
-            this.toast.show({
-              text: 'Location deleted successfully!',
-              type: 'success'
-            });
-            form.action = 'add';
-          } else {
-            initial.data = initial.data.concat(scrollData);
+        } else if (this.addEditCopyDeleteLocations) {
+          switch (action) {
+            case 'delete':
+              initial.data = initial.data.filter((d) => d.id !== form.id);
+              this.toast.show({
+                text: 'Location deleted successfully!',
+                type: 'success'
+              });
+              break;
+            case 'add':
+              initial.data = [form, ...initial.data];
+              break;
+            case 'edit':
+              initial.data = [
+                form,
+                ...initial.data.filter((item) => item.id !== form.id)
+              ];
+              break;
+            default:
+            //Do nothing
           }
+          this.addEditCopyDeleteLocations = false;
+        } else {
+          initial.data = initial.data.concat(scrollData);
         }
         for (const item of initial.data) {
           if (item.parentId) {
@@ -306,6 +386,7 @@ export class LocationsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentID = parent.locationId;
             } else {
               item.parent = '';
             }
@@ -318,18 +399,55 @@ export class LocationsListComponent implements OnInit {
     );
   }
 
+  getFilter() {
+    this.locationService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    this.nextToken = '';
+    this.locationService.fetchLocations$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      assignedTo: '',
+      dueDate: '',
+      plant: ''
+    };
+    this.locationService.fetchLocations$.next({ data: 'load' });
+  }
+
   getLocations() {
     return this.locationService
-      .getLocationsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchLocation.value,
-        fetchType: this.fetchType
-      })
+      .getLocationsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchLocation.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.locationsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
@@ -337,7 +455,22 @@ export class LocationsListComponent implements OnInit {
           this.locationsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantsID) {
+              item = {
+                ...item,
+                plant: item?.plant?.name,
+                plantsID: item?.plantsID,
+                plantId: item?.plant?.plantId
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
@@ -481,10 +614,33 @@ export class LocationsListComponent implements OnInit {
   }
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.parentInformation = allLocations.items.filter(
-        (location) => location._deleted !== true
-      );
-      this.allParentsLocations = this.parentInformation;
+      const objectKeys = Object.keys(allLocations);
+      if (objectKeys.length > 0) {
+        this.parentInformation = allLocations.items.filter(
+          (location) => location._deleted !== true
+        );
+        this.allParentsLocations = this.parentInformation;
+
+        const uniquePlants = allLocations.items
+          .map((item) => {
+            if (item.plant) {
+              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+              return `${item.plant.plantId} - ${item.plant.name}`;
+            }
+            return '';
+          })
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        this.plants = [...uniquePlants];
+
+        for (const item of this.filterJson) {
+          if (item.column === 'plant') {
+            item.items = this.plants;
+          }
+        }
+      } else {
+        this.allParentsLocations = [];
+      }
     });
   }
   uploadFile(event) {

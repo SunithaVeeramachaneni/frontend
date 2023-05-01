@@ -51,6 +51,7 @@ export class ResponseSetService {
   fetchAllGlobalResponses$ = () => {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
+    params.set('next', '');
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
@@ -60,7 +61,7 @@ export class ResponseSetService {
   };
 
   fetchResponseSetList$ = (queryParams: {
-    nextToken?: string;
+    next?: string;
     limit: number;
     searchKey?: string;
     fetchType: string;
@@ -68,17 +69,13 @@ export class ResponseSetService {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
-      }
+      params.set('limit', `${queryParams.limit}`);
+
+      params.set('next', queryParams.next);
       if (queryParams.searchKey) {
         const filter = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
@@ -128,12 +125,11 @@ export class ResponseSetService {
       .pipe(map((response) => (response === null ? updatePayload : {})));
   };
 
-  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) => {
-    return this._appService._removeData(
+  deleteResponseSet$ = (deleteResponsePayload: DeleteResponseSet) =>
+    this._appService._removeData(
       environment.masterConfigApiUrl,
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
-  };
 
   setUsers(users: UserDetails[]) {
     this.usersInfoByEmail = users.reduce((acc, curr) => {
@@ -145,7 +141,6 @@ export class ResponseSetService {
   downloadSampleResponseSetTemplate(
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
-    console.log('service');
     return this._appService.downloadFile(
       environment.masterConfigApiUrl,
       'response-set/download/sample-template',
@@ -167,6 +162,19 @@ export class ResponseSetService {
 
   getUserFullName(email: string): string {
     return this.usersInfoByEmail[email]?.fullName;
+  }
+
+  downloadFailure(
+    body: { rows: any },
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.masterConfigApiUrl,
+      'response-set/download/failure',
+      info,
+      false,
+      body
+    );
   }
 
   private formatGraphQLocationResponse(resp) {
@@ -194,25 +202,12 @@ export class ResponseSetService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      nextToken
+      next
     };
-  }
-
-  downloadFailure(
-    body: { rows: any },
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> {
-    return this._appService.downloadFile(
-      environment.masterConfigApiUrl,
-      'response-set/download/failure',
-      info,
-      false,
-      body
-    );
   }
 }
