@@ -31,6 +31,21 @@
     top: 5px;
   }
 
+  .md-response-type-text {
+    white-space: nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 60%;
+    overflow: hidden;
+    position: relative;
+    top: 12px;
+    left: 24px;
+  }
+
+  .blue-text {
+    color: $blue-main;
+  }
+
   .response-type-btn-arrow {
     float: right;
     position: relative;

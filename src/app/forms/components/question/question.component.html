@@ -428,5 +428,7 @@
   <app-master-data-slider
     [@slideInOut]="isMasterDataOpen"
     (slideInOut)="isMasterDataOpen = 'out'"
+    [selectedLabel]="selectedLabel"
+    (selectedMasterData)="processSelectedMasterData($event)"
   ></app-master-data-slider>
 </ng-container>

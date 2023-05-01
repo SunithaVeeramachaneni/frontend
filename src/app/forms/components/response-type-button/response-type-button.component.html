@@ -4,14 +4,16 @@
   [ngClass]="{
     'dis-flex p-t-0':
       questionForm.get('fieldType').value === 'VI' ||
-      questionForm.get('fieldType').value === 'DD',
+      (questionForm.get('fieldType').value === 'DD' &&
+        !questionForm.get('value').value.label),
     border: title === 'table response type'
   }"
 >
   <div
     *ngIf="
       questionForm.get('fieldType').value === 'VI' ||
-        questionForm.get('fieldType').value === 'DD';
+        (questionForm.get('fieldType').value === 'DD' &&
+          !questionForm.get('value').value.label);
       else nonMCQFields
     "
     class="chip-list"
@@ -75,15 +77,37 @@
   </div>
 
   <ng-template #nonMCQFields>
-    <svg-icon
-                  [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
-                  class="response-type-icons"
-                ></svg-icon>
-    
-    &nbsp;
-    <span class="response-type-text">
-      {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
-    </span>
+    <div
+      *ngIf="
+        questionForm.get('fieldType').value !== 'DD';
+        else masterDataResponse
+      "
+    >
+      <svg-icon
+        [icon]="getFieldTypeImage(questionForm.get('fieldType').value)"
+        class="response-type-icons"
+      ></svg-icon>
+
+      &nbsp;
+      <span class="response-type-text">
+        {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
+      </span>
+    </div>
+  </ng-template>
+  <ng-template #masterDataResponse>
+    <div
+      *ngIf="
+        questionForm.get('fieldType').value === 'DD' &&
+        questionForm.get('value').value.label
+      "
+    >
+      <span>
+        <div class="md-response-type-text">
+          {{ questionForm.get('value').value.primaryField[0] }}
+          <span class="blue-text"> &nbsp;+1 </span>
+        </div>
+      </span>
+    </div>
   </ng-template>
   <mat-icon class="response-type-btn-arrow"> keyboard_arrow_down </mat-icon>
 </button>

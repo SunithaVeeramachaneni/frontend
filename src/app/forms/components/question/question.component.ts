@@ -150,6 +150,7 @@ export class QuestionComponent implements OnInit {
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
   fetchUnitOfMeasurement: Observable<any>;
+  selectedLabel: string;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -573,6 +574,7 @@ export class QuestionComponent implements OnInit {
       .setValue(!event.closeResponseModal, { emitEvent: false });
     if (event.openMasterDataSlider) {
       this.isMasterDataOpen = 'in';
+      this.selectedLabel = event.openMasterDataSlider;
     }
   }
   setQuestionValue(event) {
@@ -857,5 +859,11 @@ export class QuestionComponent implements OnInit {
   imagesArrayRemoveNullGaps(images) {
     const nonNullImages = images.filter((image) => image !== null);
     return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+  }
+
+  processSelectedMasterData(event) {
+    console.log(event);
+    this.questionForm.get('fieldType').setValue('DD');
+    this.questionForm.get('value').setValue(event);
   }
 }

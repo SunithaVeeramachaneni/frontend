@@ -296,5 +296,6 @@
   "createERP": "Create",
   "create": "Create",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "globalMasterData": "Global Masterdata"
 }

@@ -20,8 +20,7 @@ export class ResponseTypeComponent implements OnInit {
   @Input() question;
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
-  @Output() responseTypeCloseEvent: EventEmitter<boolean> =
-    new EventEmitter<boolean>();
+  @Output() responseTypeCloseEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() isPreviewActive;
 
   public isMCQResponseOpen = false;
@@ -41,7 +40,7 @@ export class ResponseTypeComponent implements OnInit {
     response: {}
   });
   formId: string;
-  masterData = ['Plants', 'Locations', 'Assets', 'Tables'];
+  masterData = ['Plants', 'Locations', 'Assets'];
 
   constructor(
     private formService: FormService,
@@ -173,6 +172,7 @@ export class ResponseTypeComponent implements OnInit {
             name,
             value: JSON.parse(values),
             description,
+            // eslint-disable-next-line no-underscore-dangle
             version: response._version,
             createdBy: response.createdBy,
             refCount: response.refCount,
@@ -181,11 +181,11 @@ export class ResponseTypeComponent implements OnInit {
     );
   };
   closeResponseType() {
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   toggleResponseTypeModal(value) {
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   handleResponses(response = {}) {
@@ -231,7 +231,10 @@ export class ResponseTypeComponent implements OnInit {
   };
   quickResponseTypeHandler(event) {}
 
-  openGlobalMasterDataSlider(res) {
-    this.responseTypeCloseEvent.emit(true);
+  openGlobalMasterDataSlider(event) {
+    this.responseTypeCloseEvent.emit({
+      closeResponseModal: true,
+      openMasterDataSlider: event
+    });
   }
 }

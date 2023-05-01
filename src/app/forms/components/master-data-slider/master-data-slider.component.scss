@@ -29,8 +29,12 @@
     color: $black;
   }
 
-  .cancel {
+  .cancel-icon {
     cursor: pointer;
+    font-size: 150%;
+    color: $dark-gray;
+    position: relative;
+    top: -3px;
     float: right;
   }
 

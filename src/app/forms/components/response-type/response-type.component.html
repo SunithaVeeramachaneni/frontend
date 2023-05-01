@@ -121,7 +121,10 @@
                 <span translate="addMore"></span>
               </button>
             </div>
-            <p class="orange-color global-picklist" translate="globalPicklist"></p>
+            <p
+              class="orange-color global-picklist"
+              translate="globalPicklist"
+            ></p>
             <div class="multiple-responses global-resp">
               <div
                 *ngIf="globalResponses$ | async as globalResponses"
@@ -192,21 +195,6 @@
             </div>
           </div>
         </mat-tab>
-        <!-- will be implemented later -->
-        <!-- <mat-tab [label]="'masterData' | translate">
-          <div class="masterdata-container">
-            <div *ngFor="let response of masterData">
-              <div
-                class="p-5 cursor-pointer"
-                (click)="openGlobalMasterDataSlider(response)"
-              >
-                <span class="response">{{ response }}</span>
-                <mat-icon class="arrow">keyboard_arrow_right</mat-icon>
-              </div>
-              <hr class="line" />
-            </div>
-          </div>
-        </mat-tab> -->
       </mat-tab-group>
     </div>
   </div>

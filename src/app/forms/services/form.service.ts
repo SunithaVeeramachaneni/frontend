@@ -80,7 +80,7 @@ export class FormService {
   }
 
   deleteFromS3(objectKey: string): void {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
     params.append('objectKey', encodeURIComponent(objectKey));
 
     this._appService
@@ -89,12 +89,5 @@ export class FormService {
         `forms/instructions_delete?${params.toString()}`
       )
       .subscribe();
-  }
-
-  getTable(): Observable<any[]>{
-   return  this._appService._getResp(
-      'http://localhost:3000/',
-      'tables',
-    )
   }
 }
