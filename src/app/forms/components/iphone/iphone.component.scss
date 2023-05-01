@@ -64,11 +64,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 85%;
+    // width: 85%;
+    flex-grow: 1;
+    position: relative;
+    left: 14px;
 
     .asset-name {
       white-space: nowrap;
-      margin: 0 12px;
+      margin: 0 16px;
       max-width: 42%;
       overflow: hidden;
       text-overflow: ellipsis;

@@ -407,7 +407,7 @@ export class OperatorRoundsService {
   }
 
   copyRoundPlan$(formId: string) {
-    return this.appService.patchData(
+    return this.appService._postData(
       environment.operatorRoundsApiUrl,
       `round-plans/copy`,
       {
@@ -654,7 +654,7 @@ export class OperatorRoundsService {
       .map((p) => ({
         ...p,
         preTextImage: {
-          image: p.formLogo,
+          image: 'assets/img/svg/rounds-icon.svg',
           style: {
             width: '40px',
             height: '40px',

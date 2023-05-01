@@ -15,9 +15,7 @@
   <span class="custom-form-field-gray-color search">
     <span class="no-of-rounds">
       <ng-container *ngIf="(isLoading$ | async) === false; else loadingRounds">
-        <span class="rounds-count">
-          {{ roundsCount }}
-        </span>
+        <span class="rounds-count"> {{ roundsCount }} &nbsp; </span>
         <span class="rounds-text">{{
           'roundsPlural'
             | translate

@@ -72,7 +72,7 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
-    const numericRegex = /^[0-9]+$/;
+    const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
       image: '',
@@ -93,11 +93,11 @@ export class AddEditPlantComponent implements OnInit {
       ]),
       zipCode: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
+        Validators.minLength(2),
         Validators.maxLength(6),
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace,
-        Validators.pattern(numericRegex)
+        Validators.pattern(regex)
       ]),
       state: new FormControl('', [
         Validators.required,
@@ -139,6 +139,7 @@ export class AddEditPlantComponent implements OnInit {
     }
   }
   cancel() {
+    this.plantForm.reset();
     this.slideInOut.emit('out');
   }
 

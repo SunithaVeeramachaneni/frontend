@@ -50,6 +50,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-issues',
@@ -356,6 +357,7 @@ export class IssuesComponent implements OnInit {
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
+    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -408,7 +410,11 @@ export class IssuesComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.issues$ = combineLatest([issuesOnLoadSearch$, onScrollIssues$]).pipe(
+    this.issues$ = combineLatest([
+      issuesOnLoadSearch$,
+      onScrollIssues$,
+      this.users$
+    ]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
@@ -422,10 +428,13 @@ export class IssuesComponent implements OnInit {
         const issues = this.initial.data?.map((issue) => {
           if (issue.assignedTo !== null) {
             const assignee = issue.assignedTo.split(',');
+            const firstAssignee = assignee[0]
+              ? this.userService.getUserFullName(assignee[0])
+              : '';
             const formattedAssignee =
               assignee?.length === 1
-                ? assignee[0]
-                : `${assignee[0]} + ${assignee.length - 1} more`;
+                ? firstAssignee
+                : `${firstAssignee} + ${assignee.length - 1} more`;
             issue = { ...issue, assignedTo: formattedAssignee };
             return issue;
           }
@@ -515,7 +524,7 @@ export class IssuesComponent implements OnInit {
               ...data,
               status,
               priority,
-              dueDate: format(new Date(dueDate), 'dd MMM, yyyy'),
+              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
               assignedTo
             };
           }

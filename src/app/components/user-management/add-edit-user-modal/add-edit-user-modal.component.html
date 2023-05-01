@@ -10,7 +10,10 @@
   <div class="image-upload">
     <img [src]="profileImage" class="user-profile-img" />
     <label for="file-input">
-      <svg-icon icon="icon-upload-icon-tenant" class="file-upload-icon"></svg-icon>
+      <svg-icon
+        icon="icon-upload-icon-tenant"
+        class="file-upload-icon"
+      ></svg-icon>
     </label>
     <input type="hidden" formControlName="profileImageFileName" />
     <input
@@ -180,6 +183,7 @@
                   [selectedRolePermissions$]="selectedRolePermissions$"
                   [allPermissions$]="permissionsList$"
                   [rolesWithPermissionsInUsers]="userRolePermissions"
+                  [addingRole$]="addingRole$"
                 ></app-permissions>
               </div>
               <div class="dashboard-widgets-list"></div>
@@ -195,6 +199,71 @@
         class="m-t-5 error-fields"
       >
         {{ 'rolesEmpty' | translate }}
+      </mat-error>
+    </mat-form-field>
+
+    <div class="width-100 user-date-range m-b-10">
+      <mat-form-field class="width-95 user-date-from" appearance="outline">
+        <mat-label>{{ 'validFrom' | translate }}</mat-label>
+        <input
+          matInput
+          [matDatepicker]="validFromPicker"
+          [min]="minDate"
+          formControlName="validFrom"
+          (dateChange)="validFromDateChange($event)"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="validFromPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #validFromPicker></mat-datepicker>
+        <mat-error
+          *ngIf="userForm.controls.validFrom.errors?.required"
+          class="m-t-5 error-fields"
+          >{{ 'validFromInvalid' | translate }}</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-100">
+        <mat-label>{{ 'validThrough' | translate }}</mat-label>
+        <input
+          matInput
+          [matDatepicker]="validThroughPicker"
+          [min]="userValidFromDate"
+          formControlName="validThrough"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="validThroughPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #validThroughPicker></mat-datepicker>
+        <mat-error
+          *ngIf="userForm.controls.validThrough.errors?.required"
+          class="m-t-5 error-fields"
+          >{{ 'validThroughInvalid' | translate }}</mat-error
+        >
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="width-100 m-b-10">
+      <mat-label>{{ 'plant' | translate }}</mat-label>
+      <mat-select formControlName="plantId">
+        <mat-option
+          *ngFor="let plant of data.plantsList"
+          [value]="plant.id"
+          style="padding-right: 0"
+          class="roles-select"
+        >
+          <span>{{ plant.plantId }}</span>
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          userForm.controls.plantId.errors?.selectOne &&
+          userForm.controls.plantId.touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'plantsEmpty' | translate }}
       </mat-error>
     </mat-form-field>
   </div>

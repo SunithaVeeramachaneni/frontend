@@ -31,6 +31,9 @@ export interface UserDetails {
   createdAt?: string;
   updatedAt?: string;
   roles: any[];
+  validFrom: string;
+  validThrough: string;
+  plantId: string;
   displayRoles?: string;
 }
 

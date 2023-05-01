@@ -70,7 +70,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'Forms',
     'Operator Rounds',
     'Master Configuration',
-    'Work Instructions Authoring'
+    'Work Instructions'
   ];
   idps = ['azure'];
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
