@@ -19,7 +19,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
+      <svg-icon icon="icon-round-plans-icon" class="plans-icon"></svg-icon>
       <input
         hidden
         type="file"
@@ -69,7 +69,10 @@
         </a>
         <br />
         <div class="dis-flex center">
-          <a matTooltip="{{ formConfiguration.get('description').value }}">
+          <a
+            matTooltip="{{ formConfiguration.get('description').value }}"
+            class="width-62"
+          >
             <input
               type="text"
               class="form_description_input"
@@ -139,9 +142,13 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-      <button mat-stroked-button class="next-btn">
+      <button
+        mat-stroked-button
+        class="next-btn"
+        (click)="goToPDFBuilderConfiguration()"
+      >
         <span>
-          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
+          <span translate="next"></span>
         </span>
       </button>
     </div>
@@ -149,6 +156,7 @@
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
       <app-hierarchy-container
+        [plantId]="formMetadata.plantId"
         (hierarchyEvent)="hierarchyEventHandler($event)"
       ></app-hierarchy-container>
     </div>
@@ -190,6 +198,7 @@
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
+              *ngIf="false"
             ></button>
           </div>
           <app-builder
@@ -207,13 +216,13 @@
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <!-- will be enabled after implementation -->
-          <!-- <button
+          <!-- will be enabled after implementation
+             <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
-          ></button> -->
+          ></button>  -->
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"

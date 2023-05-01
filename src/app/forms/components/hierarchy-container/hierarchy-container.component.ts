@@ -5,8 +5,8 @@ import {
   ChangeDetectionStrategy,
   EventEmitter,
   Output,
-  ChangeDetectorRef,
-  Inject
+  Input,
+  ChangeDetectorRef
 } from '@angular/core';
 import { Observable, combineLatest } from 'rxjs';
 import {
@@ -33,13 +33,12 @@ import {
   State
 } from '../../state/builder/builder-state.selectors';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { HierarchyActions } from '../../state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-hierarchy-container',
@@ -49,6 +48,7 @@ import { DOCUMENT } from '@angular/common';
 })
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Input() plantId: string;
 
   filteredOptions$: Observable<any[]>;
 
@@ -72,9 +72,9 @@ export class HierarchyContainerComponent implements OnInit {
   flatHierarchyList = [];
 
   filteredList = [];
+  totalTasksCount: number;
 
   constructor(
-    @Inject(DOCUMENT) document: Document,
     private operatorRoundsService: OperatorRoundsService,
     private locationService: LocationService,
     private assetService: AssetsService,
@@ -82,7 +82,6 @@ export class HierarchyContainerComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
-    private fb: FormBuilder,
     private store: Store<State>
   ) {}
 
@@ -95,6 +94,7 @@ export class HierarchyContainerComponent implements OnInit {
               selectedHierarchy
             );
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
+          this.updateTotalTasksCount();
           const { stitchedHierarchy, instanceIdMappings } =
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
@@ -110,8 +110,8 @@ export class HierarchyContainerComponent implements OnInit {
       })
     );
 
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allAssets$ = this.assetService.fetchAllAssets$();
+    this.allLocations$ = this.locationService.fetchAllLocations$(this.plantId);
+    this.allAssets$ = this.assetService.fetchAllAssets$(this.plantId);
 
     this.masterHierarchyList$ = combineLatest([
       this.allLocations$,
@@ -205,25 +205,30 @@ export class HierarchyContainerComponent implements OnInit {
     }, 0);
   }
 
-  getTotalTasksCount() {
+  updateTotalTasksCount() {
     const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
     const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
       hierarchy,
       0
     );
     const nodeIds = flatHierarchy.map((h) => h.id);
-    let count = 0;
     this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
-      count = c;
+      this.totalTasksCount = c;
+      this.cdrf.detectChanges();
     });
-    setTimeout(() => this.cdrf.detectChanges(), 0);
-    return count;
   }
 
   handleCopyNode = (event) => {
     this.store.dispatch(
       HierarchyActions.copyNodeToRoutePlan({
         node: event
+      })
+    );
+    this.store.dispatch(
+      BuilderConfigurationActions.updateFormStatuses({
+        formStatus: formConfigurationStatus.draft,
+        formDetailPublishStatus: formConfigurationStatus.draft,
+        formSaveStatus: formConfigurationStatus.saving
       })
     );
   };

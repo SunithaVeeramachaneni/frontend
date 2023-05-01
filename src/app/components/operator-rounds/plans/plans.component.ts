@@ -113,14 +113,16 @@ export class PlansComponent implements OnInit, OnDestroy {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -282,7 +284,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     },
     {
       id: 'scheduleDates',
-      displayName: 'Start - Ends',
+      displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
       order: 9,
@@ -545,18 +547,21 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId
     };
 
-    return this.operatorRoundsService.getPlansList$(obj, this.filter).pipe(
-      tap(({ scheduledCount, unscheduledCount, next }) => {
-        this.nextToken = next !== undefined ? next : null;
-        const { scheduled, unscheduled } = this.roundPlanCounts;
-        this.roundPlanCounts = {
-          ...this.roundPlanCounts,
-          scheduled: scheduledCount !== undefined ? scheduledCount : scheduled,
-          unscheduled:
-            unscheduledCount !== undefined ? unscheduledCount : unscheduled
-        };
-      })
-    );
+    return this.operatorRoundsService
+      .getPlansList$({ ...obj, ...this.filter })
+      .pipe(
+        tap(({ scheduledCount, unscheduledCount, next }) => {
+          this.nextToken = next !== undefined ? next : null;
+          const { scheduled, unscheduled } = this.roundPlanCounts;
+          this.roundPlanCounts = {
+            ...this.roundPlanCounts,
+            scheduled:
+              scheduledCount !== undefined ? scheduledCount : scheduled,
+            unscheduled:
+              unscheduledCount !== undefined ? unscheduledCount : unscheduled
+          };
+        })
+      );
   }
 
   getAllRoundPlans() {
@@ -889,7 +894,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = this.plantsIdNameMap[item.value];
+        const plantId = this.plantsIdNameMap[item.value] ?? '';
         this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;

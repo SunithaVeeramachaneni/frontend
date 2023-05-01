@@ -25,12 +25,14 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, routingUrls } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -58,13 +60,18 @@ export class ArchivedListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '90%',
+        'overflow-wrap': 'anywhere'
+      },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -94,7 +101,7 @@ export class ArchivedListComponent implements OnInit {
     },
     {
       id: 'isArchivedAt',
-      displayName: 'Archived',
+      displayName: 'Archived On',
       type: 'timeAgo',
       controlType: 'string',
       isMultiValued: true,
@@ -184,14 +191,23 @@ export class ArchivedListComponent implements OnInit {
   };
   plants = [];
   plantsIdNameMap = {};
+  readonly routingUrls = routingUrls;
+  currentRouteUrl$: Observable<string>;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => {
+        this.headerService.setHeaderTitle(routingUrls.archivedForms.title);
+      })
+    );
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');

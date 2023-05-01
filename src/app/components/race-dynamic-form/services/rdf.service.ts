@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -19,8 +19,6 @@ import {
   TableEvent,
   Count,
   InspectionDetail,
-  UserDetails,
-  UsersInfoByEmail,
   FormMetadata
 } from './../../../interfaces';
 
@@ -44,7 +42,6 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
-  usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -112,19 +109,14 @@ export class RaceDynamicFormService {
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ) {
-    const { fetchType, ...rest } = queryParams;
+    const { fetchType } = queryParams;
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.next = '';
-      }
-      let queryParamaters;
+      const queryParamaters = queryParams;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        Object.assign(queryParamaters, { plantId: filterData.plant });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -734,8 +726,8 @@ export class RaceDynamicFormService {
 
   private formatGetRdfFormsResponse(resp: any) {
     const rows =
-      resp.items
-        .sort(
+      resp?.items
+        ?.sort(
           (a, b) =>
             new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
@@ -930,7 +922,7 @@ export class RaceDynamicFormService {
         displayToast: true,
         failureResponse: {}
       })
-      .pipe(map((res) => this.formatInspections(res.rows)));
+      .pipe(map((res) => this.formatInspections(res.items || [])));
   };
 
   getInspectionsList$(
@@ -959,21 +951,6 @@ export class RaceDynamicFormService {
         rows: []
       } as InspectionDetailResponse);
     }
-  }
-
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
-  getUsersInfo(): UsersInfoByEmail {
-    return this.usersInfoByEmail;
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
   }
 
   private formatInspections(inspections: any[] = []): any[] {

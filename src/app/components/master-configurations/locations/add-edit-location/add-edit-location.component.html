@@ -19,10 +19,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="name"></mat-label>
+          <mat-label translate="nameMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'name' | translate"
+            [placeholder]="'nameMandatory' | translate"
             formControlName="name"
           />
 
@@ -42,10 +42,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="locationId"></mat-label>
+          <mat-label translate="locationIdMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'locationId' | translate"
+            [placeholder]="'locationIdMandatory' | translate"
             formControlName="locationId"
           />
           <mat-error
@@ -101,6 +101,18 @@
               >
             </div>
           </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('plantsID')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.plantsID.name
+                | translate
+                  : {
+                      name: 'Plant' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="m-0">
@@ -114,6 +126,7 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option

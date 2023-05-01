@@ -63,6 +63,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { UsersService } from '../../user-management/services/users.service';
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -99,14 +100,16 @@ export class FormsComponent implements OnInit, OnDestroy {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -224,7 +227,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     },
     {
       id: 'scheduleDates',
-      displayName: 'Start - Ends',
+      displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -329,7 +332,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private router: Router,
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -666,7 +670,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
     const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
     return value
-      ? this.raceDynamicFormService.getUserFullName(value)
+      ? this.userService.getUserFullName(value) ?? ''
       : this.placeHolder;
   }
 
@@ -830,7 +834,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {

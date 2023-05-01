@@ -55,6 +55,8 @@ import { CustomRangePanelComponent } from './components/custom-range-panel/custo
 import { MatCardModule } from '@angular/material/card';
 import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 import { SlideshowComponent } from './components/slideshow/slideshow.component';
+import { ResponseCountPipe } from './pipes/response-count.pipe';
+
 @NgModule({
   declarations: [
     CustomPaginationControlsComponent,
@@ -83,7 +85,8 @@ import { SlideshowComponent } from './components/slideshow/slideshow.component';
     FilterComponent,
     CustomRangePanelComponent,
     FilterSidePanelComponent,
-    SlideshowComponent
+    SlideshowComponent,
+    ResponseCountPipe
   ],
   imports: [
     FormsModule,
@@ -121,6 +124,7 @@ import { SlideshowComponent } from './components/slideshow/slideshow.component';
     TimeAgoPipe,
     DropDownFilterPipe,
     DateTimePipe,
+    ResponseCountPipe,
     FilterSidePanelComponent,
     DateSegmentComponent,
     FilterComponent,

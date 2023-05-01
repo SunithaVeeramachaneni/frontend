@@ -168,7 +168,7 @@ export class OperatorRoundsService {
       if (isSearch) {
         rest.next = '';
       }
-      let queryParamaters;
+      let queryParamaters: any = rest;
       if (filterData) {
         queryParamaters = { ...rest, plantId: filterData.plant };
       }
@@ -206,19 +206,14 @@ export class OperatorRoundsService {
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundPlanDetailResponse> {
-    const { fetchType, ...rest } = queryParams;
+    const { fetchType } = queryParams;
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
-      const isSearch = fetchType === 'search';
-      if (isSearch) {
-        rest.next = '';
-      }
-      let queryParamaters;
+      const queryParamaters = queryParams;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        Object.assign(queryParamaters, { plantId: filterData.plant });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -306,7 +301,8 @@ export class OperatorRoundsService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { hierarchy, ...formMetadata } = formMetaDataDetails.formMetadata;
+    const { hierarchy, plant, moduleName, ...formMetadata } =
+      formMetaDataDetails.formMetadata;
     return this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `round-plans/${formMetaDataDetails?.formMetadata?.id}`,
@@ -411,7 +407,7 @@ export class OperatorRoundsService {
   }
 
   copyRoundPlan$(formId: string) {
-    return this.appService.patchData(
+    return this.appService._postData(
       environment.operatorRoundsApiUrl,
       `round-plans/copy`,
       {
@@ -652,12 +648,13 @@ export class OperatorRoundsService {
   private formatRounds(rounds: RoundDetail[] = []): RoundDetail[] {
     const rows = rounds
       .sort(
-        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        (a, b) =>
+          new Date(a?.dueDate).getTime() - new Date(b?.dueDate).getTime()
       )
       .map((p) => ({
         ...p,
         preTextImage: {
-          image: p.formLogo,
+          image: 'assets/img/svg/rounds-icon.svg',
           style: {
             width: '40px',
             height: '40px',
@@ -665,7 +662,7 @@ export class OperatorRoundsService {
           },
           condition: true
         },
-        dueDate: format(new Date(p.dueDate), 'dd MMM yyyy'),
+        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
@@ -718,7 +715,7 @@ export class OperatorRoundsService {
         'rounds?' + params.toString(),
         { displayToast: true, failureResponse: {} }
       )
-      .pipe(map((res) => this.formatRounds(res.rows)));
+      .pipe(map((res) => this.formatRounds(res?.items || [])));
   };
 
   fetchAllPlansList$ = () => {

@@ -59,18 +59,16 @@ export class ChartComponent implements OnInit, OnChanges {
       itemHeight: 20,
       top: '90%'
     },
-    series: [
-      {
-        name: '',
-        type: 'pie',
-        radius: ['50%', '70%'],
-        color: [],
-        data: [],
-        labelLine: {
-          show: true
-        }
+    series: {
+      name: '',
+      type: 'pie',
+      radius: [10, 40],
+      color: [],
+      data: [],
+      labelLine: {
+        show: true
       }
-    ]
+    }
   };
 
   private chartConfigurations: any;

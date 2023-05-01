@@ -30,12 +30,14 @@ import {
   SearchEvent,
   RoundPlan
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, routingUrls } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 interface FormTableUpdate {
   action: 'restore' | 'delete' | null;
@@ -63,13 +65,18 @@ export class ArchivedListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '90%',
+        'overflow-wrap': 'anywhere'
+      },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -196,14 +203,25 @@ export class ArchivedListComponent implements OnInit {
   };
   plantsIdNameMap = {};
   plants = [];
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
 
   constructor(
     private readonly toast: ToastService,
     public dialog: MatDialog,
-    private readonly operatorRoundsService: OperatorRoundsService
+    private readonly operatorRoundsService: OperatorRoundsService,
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() =>
+        this.headerService.setHeaderTitle(
+          routingUrls.roundPlanArchivedForms.title
+        )
+      )
+    );
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');

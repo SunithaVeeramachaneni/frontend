@@ -286,7 +286,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
       return {
         ...state,
-        [key]: pageToBeUpdated,
+        [key]: [...pageToBeUpdated],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -412,7 +412,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        [key]: pages,
+        [key]: [...pages],
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus

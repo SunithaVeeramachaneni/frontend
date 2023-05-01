@@ -34,6 +34,9 @@ import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
+import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-form-list',
@@ -66,7 +69,8 @@ export class FormListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
@@ -76,8 +80,8 @@ export class FormListComponent implements OnInit {
         color: 'darkgray',
         display: 'block',
         'white-space': 'wrap',
-        'overflow-wrap': 'break-word',
-        'max-width': '350px'
+        'max-width': '350px',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -273,7 +277,8 @@ export class FormListComponent implements OnInit {
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private router: Router,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -360,15 +365,18 @@ export class FormListComponent implements OnInit {
                 authoredFormDetail &&
                 Object.keys(authoredFormDetail).length
               ) {
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: authoredFormDetail?.formStatus,
-                  formDetailPublishStatus: 'Draft',
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
-                  counter: authoredFormDetail?.counter,
-                  authoredFormDetailVersion: 1
-                });
+                this.raceDynamicFormService
+                  .createAuthoredFormDetail$({
+                    formStatus: authoredFormDetail?.formStatus,
+                    formDetailPublishStatus: 'Draft',
+                    formListId: newRecord?.id,
+                    pages: JSON.parse(authoredFormDetail?.pages) ?? '',
+                    counter: authoredFormDetail?.counter,
+                    authoredFormDetailVersion: 1
+                  })
+                  .subscribe(() => (newRecord.publishedDate = ''));
               }
+              newRecord.publishedDate = '';
               this.addEditCopyForm$.next({
                 action: 'copy',
                 form: {
@@ -391,6 +399,7 @@ export class FormListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getForms();
       })
     );
@@ -420,7 +429,7 @@ export class FormListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {
@@ -638,6 +647,26 @@ export class FormListComponent implements OnInit {
     }
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  openCreateFromTemplateModal() {
+    const dialogRef = this.dialog.open(CreateFromTemplateModalComponent, {});
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data.selectedTemplate) {
+        this.openFormCreationModal(data.selectedTemplate);
+      }
+    });
+  }
+
+  openFormCreationModal(data: any) {
+    this.dialog.open(FormConfigurationModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data
+    });
   }
 
   resetFilter() {

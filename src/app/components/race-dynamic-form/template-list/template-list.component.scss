@@ -87,5 +87,18 @@
     background: $blue-main;
     color: $white;
     margin-left: 8px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 100%;
+    letter-spacing: 0.15px;
+    border: 1px solid $blue-main;
+    border-radius: 4px;
+    height: 29px;
+    line-height: 20px;
+    padding: 0px 14px;
+    float: right;
+    margin: 6px 7px 5px 7px;
+    cursor: pointer;
+    font-weight: normal;
   }
 }
