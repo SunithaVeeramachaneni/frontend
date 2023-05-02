@@ -522,7 +522,14 @@ export class ActionsComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: {
+        ...row,
+        users$: this.users$,
+        totalCount$: this.actionsCount$,
+        allData: this.initial?.data || [],
+        next: this.nextToken,
+        limit: this.limit
+      },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
