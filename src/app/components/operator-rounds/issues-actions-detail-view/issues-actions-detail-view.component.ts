@@ -293,15 +293,9 @@ export class IssuesActionsDetailViewComponent
   createNotification() {
     if (this.data.category !== this.placeholder) {
       this.observations.createNotification(this.data).subscribe((value) => {
-        const { notificationNumber } = value;
-        if (notificationNumber) {
-          this.data.notificationNumber =
-            notificationNumber !== this.placeholder ? notificationNumber : '';
-        } else {
-          this.toastService.show({
-            type: 'warning',
-            text: 'Notification Creation failed'
-          });
+        if (Object.keys(value).length) {
+          const { notificationNumber } = value;
+          this.data.notificationNumber = notificationNumber;
         }
       });
     } else {
