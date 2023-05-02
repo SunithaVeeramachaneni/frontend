@@ -1,4 +1,4 @@
-<div id="openmasterdata">
+<div id="openmasterdata" [formGroup]="masterDataForm">
   <div class="slider-header">
     <span class="heading" translate="globalMasterData"></span>
     <mat-icon (click)="cancel()" class="cancel-icon">close</mat-icon>
@@ -6,33 +6,63 @@
   <div class="custom-form-field-white-color slider-body">
     <mat-form-field appearance="outline" class="form-fields">
       <mat-label>Label</mat-label>
-      <mat-select [(value)]="selectedLabel">
+      <mat-select formControlName="label">
         <ng-container *ngFor="let label of labels">
           <mat-option [value]="label">
             {{ label }}
           </mat-option>
         </ng-container>
       </mat-select>
+      <mat-error
+        *ngIf="processValidationErrors('label')"
+        class="m-t-12 error-fields"
+      >
+        {{
+          errors.label.name
+            | translate
+              : {
+                  name: 'label' | translate
+                }
+        }}
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-fields">
       <mat-label>Primary Response Type</mat-label>
-      <mat-select [(value)]="selectedPrimaryField">
-        <ng-container *ngFor="let field of fields[selectedLabel]">
-          <mat-option [value]="[field.key, field.dbKey]">
+      <mat-select formControlName="primaryField">
+        <ng-container
+          *ngFor="let field of fields[masterDataForm.get('label').value]"
+        >
+          <mat-option [value]="{ key: field.key, dbKey: field.dbKey }">
             {{ field.key }}
           </mat-option>
         </ng-container>
       </mat-select>
+      <mat-error
+        *ngIf="processValidationErrors('primaryField')"
+        class="m-t-12 error-fields"
+      >
+        {{
+          errors.primaryField.name
+            | translate
+              : {
+                  name: 'primaryField' | translate
+                }
+        }}
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-fields">
       <mat-label>Secondary Response Type (optional)</mat-label>
-      <mat-select [(value)]="selectedSecondaryField">
-        <ng-container *ngFor="let field of fields[selectedLabel]">
+      <mat-select formControlName="secondaryField">
+        <ng-container
+          *ngFor="let field of fields[masterDataForm.get('label').value]"
+        >
           <mat-option
-            [value]="[field.key, field.dbKey]"
-            *ngIf="field.dbKey !== selectedPrimaryField"
+            [value]="{ key: field.key, dbKey: field.dbKey }"
+            *ngIf="
+              field.dbKey !== masterDataForm.get('primaryField').value.dbKey
+            "
           >
             {{ field.key }}
           </mat-option>
@@ -48,9 +78,13 @@
     >
       <mat-form-field appearance="outline" class="form-fields">
         <mat-label>Dependent Fields (optional)</mat-label>
-        <mat-select [(value)]="selectedDependentFields" multiple>
+        <mat-select formControlName="dependentFields" multiple>
           <ng-container
-            *ngFor="let dependentField of dependentFields[selectedLabel]"
+            *ngFor="
+              let dependentField of dependentFields[
+                masterDataForm.get('label').value
+              ]
+            "
           >
             <mat-option [value]="dependentField.dbKey">
               {{ dependentField.key }}
@@ -74,6 +108,7 @@
       class="save-btn"
       translate="save"
       (click)="save()"
+      [disabled]="masterDataForm.invalid"
     ></button>
   </div>
 </div>

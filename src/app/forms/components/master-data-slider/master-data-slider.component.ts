@@ -6,7 +6,14 @@ import {
   OnInit,
   Output
 } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
+import { ValidationError } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-master-data-slider',
@@ -22,14 +29,22 @@ export class MasterDataSliderComponent implements OnInit {
   labels = [];
   fields = {};
   dependentFields = {};
-  selectedPrimaryField: string;
-  selectedSecondaryField: string;
-  selectedDependentFields: string[];
+  masterDataForm: FormGroup;
+  errors: ValidationError = {};
 
-  constructor(private responseSetService: ResponseSetService) {}
+  constructor(
+    private fb: FormBuilder,
+    private responseSetService: ResponseSetService
+  ) {}
 
   ngOnInit(): void {
-    this.responseSetService.listMasterDataResponses().subscribe((data) => {
+    this.masterDataForm = this.fb.group({
+      label: new FormControl('', [Validators.required]),
+      primaryField: new FormControl('', [Validators.required]),
+      secondaryField: new FormControl(''),
+      dependentFields: new FormControl([])
+    });
+    this.responseSetService.fetchMasterDataResponses().subscribe((data) => {
       this.labels = Object.keys(data);
       this.fields = Object.fromEntries(
         Object.entries(data).map(([k, v]: [any, any]) => [k, v.fields])
@@ -37,7 +52,25 @@ export class MasterDataSliderComponent implements OnInit {
       this.dependentFields = Object.fromEntries(
         Object.entries(data).map(([k, v]: [any, any]) => [k, v.dependentFields])
       );
+      this.masterDataForm.patchValue({
+        label: this.selectedLabel
+      });
     });
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.masterDataForm.get(controlName).touched;
+    const errors = this.masterDataForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 
   cancel(): void {
@@ -46,11 +79,12 @@ export class MasterDataSliderComponent implements OnInit {
 
   save(): void {
     this.selectedMasterData.emit({
-      label: this.selectedLabel,
-      primaryField: this.selectedPrimaryField,
-      secondaryField: this.selectedSecondaryField,
-      dependentFields: this.selectedDependentFields?.toString()
+      ...this.masterDataForm.value,
+      dependentFields: this.masterDataForm
+        .get('dependentFields')
+        .value?.toString()
     });
+    this.masterDataForm.reset();
     this.slideInOut.emit('out');
   }
 }

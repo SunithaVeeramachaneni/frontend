@@ -179,6 +179,13 @@ export class ResponseSetService {
     );
   }
 
+  fetchMasterDataResponses() {
+    return this._appService._getResp(
+      environment.masterConfigApiUrl,
+      'response-set/masterdata'
+    );
+  }
+
   private formatGraphQLocationResponse(resp) {
     let rows =
       resp.items

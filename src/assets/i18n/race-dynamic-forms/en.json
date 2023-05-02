@@ -262,5 +262,7 @@
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
   "selectAnOperator": "Select an Operator",
-  "globalMasterData": "Global Masterdata"
+  "globalMasterData": "Global Masterdata",
+  "mdmLabel": "Label",
+  "mdmPrimaryField": "Primary Field"
 }

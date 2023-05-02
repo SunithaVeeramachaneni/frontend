@@ -305,5 +305,7 @@
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
-  "globalMasterData": "Global Masterdata"
+  "globalMasterData": "Global Masterdata",
+  "mdmLabel": "Label",
+  "mdmPrimaryField": "Primary Field"
 }

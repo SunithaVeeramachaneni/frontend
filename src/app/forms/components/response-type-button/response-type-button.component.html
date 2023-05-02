@@ -103,8 +103,13 @@
     >
       <span>
         <div class="md-response-type-text">
-          {{ questionForm.get('value').value.primaryField[0] }}
-          <span class="blue-text"> &nbsp;+1 </span>
+          {{ questionForm.get('value').value.primaryField.key }}
+          <span
+            class="blue-text"
+            *ngIf="questionForm.get('value').value.secondaryField"
+          >
+            &nbsp;+1
+          </span>
         </div>
       </span>
     </div>

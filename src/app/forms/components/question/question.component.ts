@@ -178,6 +178,7 @@ export class QuestionComponent implements OnInit {
   formId: string;
   isINSTFieldChanged = false;
   instructionTagColours = {};
+  loadMasterDataSlider = false;
   isMasterDataOpen = 'out';
 
   private _pageIndex: number;
@@ -573,8 +574,9 @@ export class QuestionComponent implements OnInit {
       .get('isResponseTypeModalOpen')
       .setValue(!event.closeResponseModal, { emitEvent: false });
     if (event.openMasterDataSlider) {
-      this.isMasterDataOpen = 'in';
       this.selectedLabel = event.openMasterDataSlider;
+      this.isMasterDataOpen = 'in';
+      this.loadMasterDataSlider = true;
     }
   }
   setQuestionValue(event) {
@@ -862,7 +864,6 @@ export class QuestionComponent implements OnInit {
   }
 
   processSelectedMasterData(event) {
-    console.log(event);
     this.questionForm.get('fieldType').setValue('DD');
     this.questionForm.get('value').setValue(event);
   }

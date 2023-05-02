@@ -424,10 +424,10 @@
   </div>
 </div>
 
-<ng-container *ngIf="isMasterDataOpen">
+<ng-container *ngIf="loadMasterDataSlider">
   <app-master-data-slider
     [@slideInOut]="isMasterDataOpen"
-    (slideInOut)="isMasterDataOpen = 'out'"
+    (slideInOut)="isMasterDataOpen = 'out'; loadMasterDataSlider = false"
     [selectedLabel]="selectedLabel"
     (selectedMasterData)="processSelectedMasterData($event)"
   ></app-master-data-slider>
