@@ -461,11 +461,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
             }))
           );
         }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
-          );
-        }
         this.skip = this.initial.data.length;
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
@@ -722,19 +717,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchRounds$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -746,6 +730,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: ''
     };
+    this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
 

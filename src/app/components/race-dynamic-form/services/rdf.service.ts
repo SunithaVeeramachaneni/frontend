@@ -109,7 +109,10 @@ export class RaceDynamicFormService {
     ) {
       const queryParamaters = queryParams;
       if (filterData) {
-        Object.assign(queryParamaters, { plantId: filterData.plant });
+        Object.assign(queryParamaters, {
+          ...filterData,
+          plantId: filterData?.plant
+        });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
