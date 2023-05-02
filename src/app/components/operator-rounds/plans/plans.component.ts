@@ -548,7 +548,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     };
 
     return this.operatorRoundsService
-      .getPlansList$({ ...obj, ...this.filter })
+      .getPlansList$({ ...obj }, this.filter)
       .pipe(
         tap(({ scheduledCount, unscheduledCount, next }) => {
           this.nextToken = next !== undefined ? next : null;
@@ -569,7 +569,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       const objectKeys = Object.keys(plansList);
 
       if (objectKeys.length > 0) {
-        const uniquePlants = plansList.rows
+        const uniquePlants = plansList.items
           .map((item) => {
             if (item.plant) {
               this.plantsIdNameMap[item.plant] = item.plantId;
