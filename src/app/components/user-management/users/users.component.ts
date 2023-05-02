@@ -539,11 +539,9 @@ export class UsersComponent implements OnInit {
   }
 
   formatIdToPlantId(users, idToPlantId) {
-    console.log('user', users);
     users = users.map((user) => {
       let plantIdString = '';
       if (user.plantId != null) {
-        console.log('plantId', user.plantId);
         user.plantId
           .toString()
           .split(',')
@@ -553,7 +551,6 @@ export class UsersComponent implements OnInit {
       }
       user.plantId = plantIdString;
     });
-    // console.log('user:', users);
     return users;
   }
 
@@ -562,7 +559,6 @@ export class UsersComponent implements OnInit {
       acc[cur.id] = cur.plantId;
       return acc;
     }, {});
-    console.log(obj);
     return obj;
   }
   getUsers = () =>
