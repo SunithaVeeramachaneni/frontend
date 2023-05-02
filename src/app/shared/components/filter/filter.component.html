@@ -123,13 +123,13 @@
             <input
               matStartDate
               [(ngModel)]="item.startDate"
-              placeholder="Start Date"
+              [placeholder]="'startDate' | translate"
             />
             <input
               matEndDate
               [(ngModel)]="item.endDate"
               (dateInput)="dateRangeSelect(item)"
-              placeholder="End Date"
+              [placeholder]="'endDate' | translate"
             />
           </mat-date-range-input>
           <mat-icon matDatepickerToggleIcon (click)="picker1.open()"

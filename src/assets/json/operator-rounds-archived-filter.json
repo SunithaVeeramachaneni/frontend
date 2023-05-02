@@ -21,7 +21,7 @@
     "value": ""
   },
   {
-    "label": "Plants",
+    "label": "Plant",
     "items": [],
     "column": "plant",
     "type": "select",

@@ -73,5 +73,6 @@
   "createResponses": "Create Responses",
   "editResponses": "Edit Responses",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "status": "Status"
 }
