@@ -194,8 +194,6 @@ export class RdfService {
             return null;
           }
 
-          console.log(question);
-
           const { expression, validationMessage, askQuestions } =
             this.getValidationExpression(question, questions);
 
@@ -305,7 +303,6 @@ export class RdfService {
         })
         .filter((payload) => payload);
       payloads = [...payloads, ...sectionPayloads];
-      console.log(payloads);
     });
     return payloads;
   }
@@ -355,7 +352,7 @@ export class RdfService {
         const { name } = question;
         properties = {
           ...properties,
-          FIELDLABEL: this.getDOMStringFromHTML(name),
+          FIELDLABEL: `<html>${name}</html>`,
           DEFAULTVALUE: ''
           //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
@@ -589,8 +586,6 @@ export class RdfService {
         validationMessage.length - 1
       );
     }
-    console.log(expression);
-
     return { expression, validationMessage, askQuestions };
   }
 
