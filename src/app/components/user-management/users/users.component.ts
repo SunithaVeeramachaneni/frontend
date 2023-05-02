@@ -26,7 +26,6 @@ import {
   UserTable,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../services/users.service';
 import {
   defaultLimit,
@@ -137,8 +136,8 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'validThroughPlaceholder',
-      displayName: 'Valid Through',
+      id: 'plantIdPlaceholder',
+      displayName: 'Plant',
       type: 'string',
       controlType: 'string',
       order: 4,
@@ -159,96 +158,8 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'plantIdPlaceholder',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
       id: 'validThroughPlaceholder',
       displayName: 'Valid Through',
-      type: 'string',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'plantIdPlaceholder',
-      displayName: 'Plant',
-      type: 'string',
-      controlType: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'validThrough',
-      displayName: 'Valid Through',
-      type: 'date',
-      controlType: 'string',
-      order: 6,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'plantId',
-      displayName: 'plant Id',
       type: 'string',
       controlType: 'string',
       order: 5,
@@ -598,19 +509,7 @@ export class UsersComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
         this.skip = initial.data.length;
-        /* this.plantList$ = this.plantService.fetchAllPlants$();
-
-        this.plantList$.subscribe((plantList) => {
-          initial.data = initial.data.map((obj) => {
-            const id = plantList.items
-              .filter((plant) => plant.id === obj.plantId)
-              .map((plant) => plant.plantId);
-            return { ...obj, plantId: id[0] };
-          });
-          this.dataSource = new MatTableDataSource(initial.data);
-        }); */
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -622,29 +521,6 @@ export class UsersComponent implements OnInit {
       user.validThroughPlaceholder = this.formatDate(user.validThrough);
       if (user.plantId) {
         user.plantIdPlaceholder = this.plantsObject[user.plantId];
-      }
-      return user;
-    });
-  }
-
-  formatDate(validThrough) {
-    if (validThrough) validThrough = format(new Date(validThrough), 'dd.MM.yy');
-    return validThrough;
-  }
-
-  getPlantsObject(plants) {
-    return plants.reduce((acc, cur) => {
-      acc[cur.id] = cur.plantId;
-      return acc;
-    }, {});
-  }
-
-  formatUsers(users, plants) {
-    const plantsObject = this.getPlantsObject(plants);
-    return users.map((user) => {
-      user.validThroughPlaceholder = this.formatDate(user.validThrough);
-      if (user.plantId) {
-        user.plantIdPlaceholder = plantsObject[user.plantId];
       }
       return user;
     });
