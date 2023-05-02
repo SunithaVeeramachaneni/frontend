@@ -1,0 +1,23 @@
+[
+  {
+    "label": "User",
+    "items": [],
+    "column": "email",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Role",
+    "items": [],
+    "column": "role",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
+    "type": "select",
+    "value": ""
+  }
+]

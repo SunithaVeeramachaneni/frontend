@@ -312,4 +312,8 @@ export class UsersService {
       info
     );
   }
+
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this.appService._getLocal('', 'assets/json/users-filter.json', info);
+  }
 }

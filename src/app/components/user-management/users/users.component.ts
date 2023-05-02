@@ -256,7 +256,15 @@ export class UsersComponent implements OnInit {
   plantsList: Plant[];
   plantsObject = {};
   isOpenAddEditModal = false;
-
+  isPopoverOpen = false;
+  filter = {
+    email: '',
+    role: '',
+    plant: ''
+  };
+  filterJson = [];
+  plantsIdNameMap = {};
+  nextToken = '';
   constructor(
     private usersService: UsersService,
     private roleService: RolesPermissionsService,
@@ -305,6 +313,8 @@ export class UsersComponent implements OnInit {
     this.loggedInUserInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.getFilter();
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -581,7 +591,18 @@ export class UsersComponent implements OnInit {
           );
           return of(resp);
         }),
-        tap((x) => (this.allUsersList = x))
+        tap((x) => {
+          this.allUsersList = x;
+          for (const item of this.filterJson) {
+            if (item.column === 'plant') {
+              item.items = x.map((user) => {
+                if (user.plantId) {
+                  return user.plantId;
+                }
+              });
+            }
+          }
+        })
       );
 
   rowLevelActionHandler = (event) => {
@@ -743,5 +764,37 @@ export class UsersComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  applyFilters(data: any): void {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      }
+    }
+    this.nextToken = '';
+    this.fetchUsers$.next({ data: 'load' });
+  }
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      email: '',
+      role: '',
+      plant: ''
+    };
+    this.fetchUsers$.next({ data: 'load' });
+  }
+
+  getFilter() {
+    this.usersService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
   }
 }
