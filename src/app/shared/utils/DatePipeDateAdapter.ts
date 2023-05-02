@@ -1,13 +1,24 @@
+import { Platform } from '@angular/cdk/platform';
 import { DatePipe } from '@angular/common';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import {
+  MAT_DATE_LOCALE,
   MAT_NATIVE_DATE_FORMATS,
   MatDateFormats,
   NativeDateAdapter
 } from '@angular/material/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class DatePipeDateAdapter extends NativeDateAdapter {
+  constructor(
+    @Optional() @Inject(MAT_DATE_LOCALE) matDateLocale: string,
+    platform: Platform,
+    private translateService: TranslateService
+  ) {
+    super(matDateLocale, platform);
+  }
+
   // This function creates a custom `MatDateFormats` object that
   // defaults all values to `MAT_NATIVE_DATE_FORMATS` except for
   // the `display.dateInput` property, which gets set by the user
@@ -32,7 +43,10 @@ export class DatePipeDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
     // Use DatePipe to format date however you specify
     if (typeof displayFormat === 'string') {
-      return new DatePipe('en-US').transform(date, displayFormat) as string;
+      return new DatePipe(this.translateService.currentLang).transform(
+        date,
+        displayFormat
+      ) as string;
     }
 
     // Default to parent class format() if no custom format string is given
