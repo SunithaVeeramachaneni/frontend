@@ -27,7 +27,10 @@
               {{
                 errors.name.name
                   | translate
-                    : { name: 'name' | translate, length: errors.name.length }
+                    : {
+                        name: 'Template name' | translate,
+                        length: errors.name.length
+                      }
               }}
             </mat-error>
           </mat-form-field>
