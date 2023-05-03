@@ -39,7 +39,7 @@
             <span class="email">{{ user.email }}</span>
           </div>
           <mat-checkbox
-            [checked]="false"
+            [checked]="isAssigneeSelected(user.email)"
             *ngIf="isMultiple"
             (change)="selectAssignee(user, $event)"
             (click)="$event.stopPropagation()"
