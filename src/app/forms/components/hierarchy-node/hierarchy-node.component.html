@@ -10,7 +10,8 @@
   <div
     class="dis-flex"
     [ngClass]="{
-      'highlight-bg': masterData?.uid === searchedUid
+      'highlight-bg': masterData?.uid === searchedUid,
+      'node-container': !viewMode
     }"
   >
     <div class="dis-flex">
@@ -37,13 +38,26 @@
         }"
       ></svg-icon>
     </div>
-    <div
-      [ngClass]="{
-        'master-data-title': !viewMode,
-        'view-mode': viewMode === true
-      }"
-    >
-      {{ masterData.name }}
+    <div [ngClass]="{ 'node-info': !viewMode }">
+      <div
+        [ngClass]="{
+          'master-data-title': !viewMode,
+          'view-mode': viewMode === true
+        }"
+      >
+        {{ masterData.name }}
+      </div>
+      <div *ngIf="!viewMode" class="node-id">
+        {{
+          'nodeId'
+            | translate
+              : {
+                  type: masterData.type,
+                  id: masterData.nodeId
+                }
+            | titlecase
+        }}
+      </div>
     </div>
   </div>
   <hr
