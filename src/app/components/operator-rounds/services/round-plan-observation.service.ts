@@ -210,7 +210,8 @@ export class RoundPlanObservationsService {
         priority: item.PRIORITY,
         status: item.STATUS,
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
-        category: item.CATEGORY || placeHolder,
+        category:
+          item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         task: item.TASK || placeHolder,
         round: item.ROUND || placeHolder,
         raisedBy: item.createdBy,

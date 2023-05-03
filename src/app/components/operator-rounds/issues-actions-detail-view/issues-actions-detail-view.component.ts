@@ -48,6 +48,7 @@ export class IssuesActionsDetailViewComponent
     description: '',
     category: '',
     round: '',
+    plant: '',
     location: '',
     asset: '',
     task: '',
@@ -96,6 +97,7 @@ export class IssuesActionsDetailViewComponent
 
   ngOnInit(): void {
     const { id, type, users$, dueDate, notificationNumber } = this.data;
+    console.log(this.data);
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();
