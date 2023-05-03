@@ -26,26 +26,11 @@
 
           <button
             mat-raised-button
-            [matMenuTriggerFor]="createMenu"
             translate="createNew"
             class="create-new-btn"
             *appCheckUserHasPermission="[perms.createPlant, perms.importPlants]"
+            (click)="addManually()"
           ></button>
-          <mat-menu #createMenu="matMenu">
-            <button
-              mat-menu-item
-              (click)="addManually()"
-              class="menu-buttons"
-              *appCheckUserHasPermission="[perms.createPlant]"
-            >
-              <svg-icon
-                matSuffix
-                icon="icon-add-manually"
-                class="add-manually-icon"
-              ></svg-icon>
-              <span translate="addManually"></span>
-            </button>
-          </mat-menu>
 
           <input id="upload" hidden type="file" />
         </div>

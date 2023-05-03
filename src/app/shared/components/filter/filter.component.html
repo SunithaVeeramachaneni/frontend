@@ -143,25 +143,28 @@
       </mat-form-field>
     </div>
   </div>
-  <button
-    mat-raised-button
-    class="btn apply-filters-btn"
-    type="button"
-    [disabled]="checkState()"
-    (click)="applyFilter()"
-    (click)="closeFilter()"
-    aria-label="Apply Filter"
-  >
-    Apply
-  </button>
-  <button
-    mat-button
-    color="primary"
-    [disabled]="checkState()"
-    (click)="resetFilter()"
-    class="btn reset-filters-btn"
-    aria-label="Cancel Filter"
-  >
-    Reset
-  </button>
+
+  <div>
+    <button
+      mat-raised-button
+      class="btn apply-filters-btn"
+      type="button"
+      [disabled]="checkState()"
+      (click)="applyFilter()"
+      (click)="closeFilter()"
+      aria-label="Apply Filter"
+    >
+      Apply
+    </button>
+    <button
+      mat-button
+      color="primary"
+      [disabled]="checkState()"
+      (click)="resetFilter()"
+      class="btn reset-filters-btn"
+      aria-label="Cancel Filter"
+    >
+      Reset
+    </button>
+  </div>
 </div>

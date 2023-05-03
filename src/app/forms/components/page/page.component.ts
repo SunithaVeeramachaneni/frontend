@@ -47,7 +47,8 @@ export class PageComponent implements OnInit {
 
   pageForm: FormGroup = this.fb.group({
     name: {
-      value: ''
+      value: '',
+      disabled: true
     },
     position: '',
     isOpen: true
@@ -59,9 +60,8 @@ export class PageComponent implements OnInit {
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit() {
-    this.pageForm
-      .get('name')
-      .valueChanges.pipe(
+    this.pageForm.valueChanges
+      .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         pairwise(),

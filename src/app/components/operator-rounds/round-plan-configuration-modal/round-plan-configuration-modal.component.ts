@@ -60,6 +60,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   originalTags: string[] = [];
 
   allPlantsData = [];
+  plantInformation = [];
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -94,6 +95,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   getAllPlantsData() {
     this.plantService.fetchAllPlants$().subscribe((plants) => {
       this.allPlantsData = plants.items || [];
+      this.plantInformation = this.allPlantsData;
     });
   }
 
@@ -208,7 +210,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
             ...this.headerDataForm.value,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
-            formLogo: 'assets/img/svg/rounds-icon.svg'
+            formLogo: 'assets/img/svg/round-plans-icon.svg'
           }
         })
       );
@@ -219,6 +221,25 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (value) {
+      this.plantInformation = this.searchPlant(value);
+    } else {
+      this.plantInformation = this.allPlantsData;
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
   }
 
   processValidationErrors(controlName: string): boolean {

@@ -46,13 +46,22 @@
       background: $blue-main;
       color: $white;
     }
+    .viewPDFBtn:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
     .downloadPDFBtn {
       width: 50%;
       background: $white;
+      color: $blue-main;
       border: 1px solid $blue-main;
       img {
         margin-right: 5px;
       }
+    }
+    .downloadPDFBtn:disabled {
+      border: 1px solid $gray2-bg;
+      color: $gray7;
     }
   }
 

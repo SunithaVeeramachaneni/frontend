@@ -35,9 +35,7 @@ export class OperatorRoundsContainerComponent implements OnInit {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.operatorRoundPlans.url) {
-          this.headerService.setHeaderTitle(
-            routingUrls.operatorRoundPlans.title
-          );
+          this.headerService.setHeaderTitle(routingUrls.myRoundPlans.title);
           this.breadcrumbService.set(routingUrls.operatorRoundPlans.url, {
             skip: true
           });

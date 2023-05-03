@@ -5,7 +5,6 @@
       <h1 class="heading">{{ assetTitle }}</h1>
     </div>
     <div class="container-div">
-      <p class="m-0" translate="image"></p>
       <p class="image-container">
         <span *ngIf="!assetImage?.length">
           <svg-icon icon="icon-asset-icon" class="image-contain"></svg-icon>
@@ -20,10 +19,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="name"></mat-label>
+          <mat-label translate="nameMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'name' | translate"
+            [placeholder]="'nameMandatory' | translate"
             formControlName="name"
           />
 
@@ -43,10 +42,10 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="assetsId"></mat-label>
+          <mat-label translate="assetsIdMandatory"></mat-label>
           <input
             matInput
-            [placeholder]="'assetsId' | translate"
+            [placeholder]="'assetsIdMandatory' | translate"
             formControlName="assetsId"
           />
           <mat-error
@@ -86,7 +85,11 @@
         </mat-form-field>
       </p>
       <p class="m-0">
-        <mat-form-field appearance="outline" class="width-100">
+        <mat-form-field
+          appearance="outline"
+          class="plant-input-field"
+          class="width-100"
+        >
           <mat-label translate="plantMandatory"></mat-label>
           <mat-select
             formControlName="plantsID"
@@ -103,6 +106,18 @@
               >
             </div>
           </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('plantsID')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.plantsID.name
+                | translate
+                  : {
+                      name: 'Plant' | translate
+                    }
+            }}
+          </mat-error>
         </mat-form-field>
       </p>
       <p class="parent-type">
@@ -131,11 +146,12 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKey($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option
                 [value]="parent.id"
-                *ngFor="let parent of allParentsData"
+                *ngFor="let parent of allParentsData$ | async"
               >
                 {{
                   parentType === 'location'

@@ -6,7 +6,7 @@
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
-    <div class="width-5 bg-white"></div>
+    <div class="width-5"></div>
     <div class="width-95">
       <div class="form-detials">
         <h2 class="heading" translate="setFormDetailsHeading"></h2>
@@ -74,10 +74,15 @@
               formControlName="plantId"
               [placeholder]="'plant' | translate"
             >
+              <input
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKeyPlant($event)"
+              />
               <div class="scrollable-area">
                 <mat-option
                   [value]="plant.id"
-                  *ngFor="let plant of allPlantsData"
+                  *ngFor="let plant of plantInformation"
                   >{{ plant.plantId }} - {{ plant.name }}</mat-option
                 >
               </div>
@@ -123,23 +128,25 @@
           </mat-form-field>
         </div>
 
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          class="next-btn"
-          (click)="next()"
-          [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-          translate="nextBtn"
-        ></button>
-        <button
-          mat-stroked-button
-          type="button"
-          color="primary"
-          class="skip-btn"
-          (click)="onCancel()"
-          translate="cancelBtn"
-        ></button>
+        <div mat-dialog-actions align="end" class="buttons">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            class="skip-btn"
+            (click)="onCancel()"
+            translate="cancelBtn"
+          ></button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            class="next-btn"
+            (click)="next()"
+            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+            translate="nextBtn"
+          ></button>
+        </div>
       </div>
     </div>
   </div>

@@ -96,7 +96,7 @@
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false">
+  <div *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false" class="forms-list">
     <cwp-dynamictable
       [ngClass]="{
         'remove-zindex': zIndexDelay === 400 || zIndexScheduleDelay === 400

@@ -17,7 +17,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -34,6 +38,8 @@ import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -43,7 +49,7 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<any>;
+
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -64,14 +70,16 @@ export class AssetsListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'assetsId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -82,9 +90,7 @@ export class AssetsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 2,
-      hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: '',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -94,10 +100,14 @@ export class AssetsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
-      hasConditionalStyles: true
+      hasSubtitle: true,
+      subtitleColumn: 'plantSubId',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
@@ -150,9 +160,9 @@ export class AssetsListComponent implements OnInit {
       type: 'string',
       controlType: 'string',
       order: 5,
-      hasSubtitle: false,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
+      subtitleColumn: 'parentSubId',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -162,7 +172,10 @@ export class AssetsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     }
@@ -223,16 +236,23 @@ export class AssetsListComponent implements OnInit {
   };
   plantsIdNameMap = {};
   plants = [];
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
 
   constructor(
     private assetService: AssetsService,
     private readonly toast: ToastService,
     private locationService: LocationService,
     private loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private headerService: HeaderService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
+    );
     this.assetService.fetchAssets$.next({ data: 'load' });
     this.assetService.fetchAssets$.next({} as TableEvent);
     this.searchAssets = new FormControl('');
@@ -300,26 +320,40 @@ export class AssetsListComponent implements OnInit {
     this.assets$ = combineLatest([
       assetsOnLoadSearch$,
       this.addEditCopyDeleteAssets$,
-      onScrollAssets$
+      onScrollAssets$,
+      this.getAllLocations(),
     ]).pipe(
-      map(([rows, form, scrollData]) => {
+      map(([rows, { form, action }, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
-        } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
-            this.toast.show({
-              text: 'Assets deleted successfully!',
-              type: 'success'
-            });
-            form.action = 'add';
-          } else {
-            initial.data = initial.data.concat(scrollData);
+        } else if (this.addEditCopyDeleteAssets) {
+          switch (action) {
+            case 'delete':
+              initial.data = initial.data.filter((d) => d.id !== form.id);
+              this.toast.show({
+                text: 'Assets deleted successfully!',
+                type: 'success'
+              });
+              break;
+            case 'add':
+              initial.data = [form, ...initial.data];
+              break;
+            case 'edit':
+              initial.data = [
+                form,
+                ...initial.data.filter((item) => item.id !== form.id)
+              ];
+              break;
+            default:
+            //Do nothing
           }
+          this.addEditCopyDeleteAssets = false;
+        } else {
+          initial.data = initial.data.concat(scrollData);
         }
         for (const item of initial.data) {
           if (item.parentType.toLowerCase() === 'location') {
@@ -328,8 +362,10 @@ export class AssetsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentSubId = parent.locationId;
             } else {
               item.parent = '';
+              item.parentSubId = '';
             }
           } else {
             const parent = this.allParentsAssets.find(
@@ -337,8 +373,10 @@ export class AssetsListComponent implements OnInit {
             );
             if (parent) {
               item.parent = parent.name;
+              item.parentSubId = parent.assetsId;
             } else {
               item.parent = '';
+              item.parentSubId = '';
             }
           }
         }
@@ -378,7 +416,9 @@ export class AssetsListComponent implements OnInit {
             if (item.plantsID) {
               item = {
                 ...item,
-                plant: `${item.plant.plantId} - ${item.plant.name}`
+                plant: item?.plant?.name,
+                plantsID: item?.plantsID,
+                plantId: item?.plant?.plantId
               };
             } else {
               item = { ...item, plant: '' };
@@ -549,22 +589,19 @@ export class AssetsListComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
-          const objectKeys = Object.keys(allLocations);
-          if (objectKeys.length > 0) {
-            this.parentInformation = allLocations.items.filter(
-              (loc) => loc._deleted !== true
-            );
-            this.allParentsLocations = this.parentInformation;
-          } else {
-            this.allParentsLocations = [];
-          }
-        })
-      )
-      .subscribe();
+    return this.locationService.fetchAllLocations$().pipe(
+      tap((allLocations) => {
+        const objectKeys = Object.keys(allLocations);
+        if (objectKeys.length > 0) {
+          this.parentInformation = allLocations.items.filter(
+            (loc) => loc._deleted !== true
+          );
+          this.allParentsLocations = this.parentInformation;
+        } else {
+          this.allParentsLocations = [];
+        }
+      })
+    );
   }
 
   getAllAssets() {

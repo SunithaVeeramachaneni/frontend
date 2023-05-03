@@ -6,7 +6,7 @@
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
-    <div class="width-5 bg-white"></div>
+    <div class="width-5"></div>
     <div class="width-95">
       <div class="form-details">
         <h2 class="heading" translate="templateDetailsHeading"></h2>
@@ -27,7 +27,10 @@
               {{
                 errors.name.name
                   | translate
-                    : { name: 'name' | translate, length: errors.name.length }
+                    : {
+                        name: 'Template name' | translate,
+                        length: errors.name.length
+                      }
               }}
             </mat-error>
           </mat-form-field>
@@ -81,23 +84,25 @@
           </mat-form-field>
         </div>
 
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          class="next-btn"
-          (click)="next()"
-          [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-          translate="nextBtn"
-        ></button>
-        <button
-          mat-stroked-button
-          type="button"
-          color="primary"
-          class="skip-btn"
-          (click)="onCancel()"
-          translate="cancelBtn"
-        ></button>
+        <div mat-dialog-actions align="end" class="buttons">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            class="skip-btn"
+            (click)="onCancel()"
+            translate="cancelBtn"
+          ></button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            class="next-btn"
+            (click)="next()"
+            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+            translate="nextBtn"
+          ></button>
+        </div>
       </div>
     </div>
   </div>

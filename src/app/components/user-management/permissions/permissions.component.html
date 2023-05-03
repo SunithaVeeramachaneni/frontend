@@ -1,37 +1,60 @@
-<div *ngIf="permissions$ | async as permissions; else loadingPermissionList" [ngClass]="{
+<div
+  *ngIf="permissions$ | async as permissions; else loadingPermissionList"
+  [ngClass]="{
     'permissions-list': rolesWithPermissionsInUsers === userRolePermissions,
     'permissions-container': rolesWithPermissionsInUsers !== userRolePermissions
-  }">
+  }"
+>
   <div *ngFor="let module of permissions; let i = index" class="sections">
     <ng-container>
       <div class="headers">
-        <mat-checkbox [checked]="module.checked" [indeterminate]="fewComplete(module)"
-          (change)="setAllChecked($event.checked, module)" [disabled]="
+        <mat-checkbox
+          [checked]="module.checked"
+          [indeterminate]="fewComplete(module, 'main')"
+          (change)="setAllChecked($event.checked, module)"
+          [disabled]="
             rolesWithPermissionsInUsers === userRolePermissions ||
             isEditable === false
-          " [ngClass]="{
+          "
+          [ngClass]="{
             'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
             'permissions-checkbox':
               rolesWithPermissionsInUsers !== userRolePermissions
-          }">
+          }"
+        >
         </mat-checkbox>
         <span class="module-name">{{ module.name }}</span>
         <span class="permission-count m-r-10">
-          {{ module.totalActivePermissions }} of {{ module.totalPermissionsCount }}
+          {{ module.totalActivePermissions }} of
+          {{ module.totalPermissionsCount }}
         </span>
-        <svg-icon icon="icon-right-arrow" *ngIf="!opened[i].main" (click)="opened[i].main = true"
-          class="arrow-icon"></svg-icon>
-        <svg-icon icon="icon-down-arrow" *ngIf="opened[i].main" (click)="opened[i].main = false"
-          class="arrow-icon"></svg-icon>
+        <svg-icon
+          icon="icon-right-arrow"
+          *ngIf="!opened[i].main && module.subPermissions.length === 0"
+          (click)="opened[i].main = true"
+          class="arrow-icon"
+        ></svg-icon>
+        <svg-icon
+          icon="icon-down-arrow"
+          *ngIf="opened[i].main"
+          (click)="opened[i].main = false"
+          class="arrow-icon"
+        ></svg-icon>
       </div>
       <div class="permissions-body">
         <ul *ngIf="opened[i].main === true">
-          <li *ngFor="let permission of module.permissions" class="list-element">
-            <mat-checkbox [checked]="permission.checked" (change)="updateAllChecked($event.checked, permission)"
+          <li
+            *ngFor="let permission of module.permissions"
+            class="list-element"
+          >
+            <mat-checkbox
+              [checked]="permission.checked"
+              (change)="updateAllChecked($event.checked, permission)"
               [disabled]="
                 rolesWithPermissionsInUsers === userRolePermissions ||
                 isEditable === false
-              ">
+              "
+            >
             </mat-checkbox>
             <span class="m-r-15 m-l-5">{{ permission.displayName }}</span>
           </li>
@@ -40,35 +63,54 @@
     </ng-container>
 
     <div>
-      <ng-container *ngFor="let subper of module.subPermissions; let subindex = index">
+      <ng-container
+        *ngFor="let subper of module.subPermissions; let subindex = index"
+      >
         <div class="sub-headers">
-          <mat-checkbox [checked]="subper.checked" [indeterminate]="fewComplete(subper)"
-            (change)="setAllSubChecked($event.checked, subper)" [disabled]="
+          <mat-checkbox
+            [checked]="subper.checked"
+            [indeterminate]="fewComplete(subper, 'submodule')"
+            (change)="setAllSubChecked($event.checked, subper)"
+            [disabled]="
               rolesWithPermissionsInUsers === userRolePermissions ||
               isEditable === false
-            " [ngClass]="{
+            "
+            [ngClass]="{
               'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
               'permissions-checkbox':
                 rolesWithPermissionsInUsers !== userRolePermissions
-            }">
+            }"
+          >
           </mat-checkbox>
           <span class="module-name">{{ subper.name }}</span>
           <span class="permission-count m-r-10">
             {{ subper.countOfSubChecked }} of {{ subper.permissions.length }}
           </span>
-          <svg-icon icon="icon-right-arrow" *ngIf="!opened[i]['sub'][subindex]"
-            (click)="opened[i]['sub'][subindex] = true" class="arrow-icon"></svg-icon>
-          <svg-icon icon="icon-down-arrow" *ngIf="opened[i]['sub'][subindex]"
-            (click)="opened[i]['sub'][subindex] = false" class="arrow-icon"></svg-icon>
+          <svg-icon
+            icon="icon-right-arrow"
+            *ngIf="!opened[i]['sub'][subindex]"
+            (click)="opened[i]['sub'][subindex] = true"
+            class="arrow-icon"
+          ></svg-icon>
+          <svg-icon
+            icon="icon-down-arrow"
+            *ngIf="opened[i]['sub'][subindex]"
+            (click)="opened[i]['sub'][subindex] = false"
+            class="arrow-icon"
+          ></svg-icon>
         </div>
 
         <div class="permissions-body">
           <ul *ngIf="opened[i]['sub'][subindex] === true">
             <li *ngFor="let sub of subper.permissions" class="list-element">
-              <mat-checkbox [checked]="sub.checked" (change)="updateAllSubChecked($event.checked, sub)" [disabled]="
+              <mat-checkbox
+                [checked]="sub.checked"
+                (change)="updateAllSubChecked($event.checked, sub)"
+                [disabled]="
                   rolesWithPermissionsInUsers === userRolePermissions ||
                   isEditable === false
-                ">
+                "
+              >
               </mat-checkbox>
               <span class="m-r-15 m-l-5"> {{ sub.displayName }}</span>
             </li>

@@ -106,7 +106,9 @@ export class WorkInstructionsComponent
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.workInstructions.url) {
-          this.headerService.setHeaderTitle(routingUrls.workInstructions.title);
+          this.headerService.setHeaderTitle(
+            routingUrls.workInstructionsHome.title
+          );
           this.breadcrumbService.set(routingUrls.workInstructions.url, {
             skip: true
           });

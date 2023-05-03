@@ -6,6 +6,7 @@
   .form-toolbar {
     height: 65px;
     background-color: $white;
+    border-bottom: 1px solid $border-color;
 
     .back-btn {
       border: none;
@@ -31,14 +32,15 @@
   }
 
   .form-content {
-    height: 100vh;
+    height: calc(100vh - 75px);
 
     .form-details {
-      width: 500px;
-      height: 90%;
-      margin: 10px auto;
-      padding: 15px;
       background-color: $white;
+      width: 600px;
+      border-radius: 5px;
+      margin: 15px auto;
+      padding: 49px;
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
 
       .heading {
         font-size: 130%;
@@ -84,6 +86,7 @@
         font-size: 110%;
         color: $black;
         margin: 5px;
+        margin-top: 25px;
       }
 
       .form-name {
@@ -100,7 +103,7 @@
 
       .tags {
         ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-          padding: 20px 0 0 0 !important;
+          padding: 17px 0 0 0 !important;
         }
       }
 
@@ -108,16 +111,33 @@
         margin: 0 5px !important;
       }
 
+      .buttons {
+        padding: 15px 0 15px 0;
+      }
+
       .next-btn {
         float: right;
-        margin-top: 10px;
+        margin-top: 40px;
+        height: 29px;
+        font-weight: normal;
+        line-height: normal;
       }
 
       .skip-btn {
         float: right;
         margin-right: 15px;
-        margin-top: 10px;
+        margin-top: 40px;
+        height: 29px;
+        font-weight: normal;
+        line-height: normal;
+        color: $blue-main;
+        border: 1px solid $blue-main;
       }
     }
   }
+}
+
+.next-btn {
+  background-color: $radio-button-checked;
+  border-color: $radio-button-checked;
 }

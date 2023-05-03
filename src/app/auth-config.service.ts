@@ -26,7 +26,7 @@ export class AuthConfigService {
     private appService: AppService,
     private oidcSecurityService: OidcSecurityService,
     @Inject(DOCUMENT) private document: Document
-  ) { }
+  ) {}
 
   getAuthConfig$ = (
     info: ErrorInfo = {} as ErrorInfo

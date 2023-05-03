@@ -1,57 +1,60 @@
 <div class="main-container" *ngIf="loggedInUserInfo$ | async">
   <div class="users-header">
-    <span class="custom-form-field-gray-color search">
-      <mat-form-field appearance="outline">
-        <mat-icon matPrefix class="searchIcon">search</mat-icon>
-        <input
-          matInput
-          type="text"
-          [placeholder]="'searchUsers' | translate"
-          autocomplete="off"
-          [formControl]="searchUser"
-        />
-      </mat-form-field>
-    </span>
-
-    <button
-      mat-raised-button
-      class="add-user-btn"
-      (click)="openEditAddUserModal()"
-      *appCheckUserHasPermission="[perms.createUser]"
-      translate="addUserBtn"
-    ></button>
-    <span class="no-of-users" *ngIf="userCount$ | async as userCount">
-      <span class="users-count" *ngIf="userCount.count">
-        {{ userCount.count }}
+    <h2 class="heading" translate="activeUsers"></h2>
+    <div>
+      <span class="no-of-users" *ngIf="userCount$ | async as userCount">
+        <span class="users-count" *ngIf="userCount.count">
+          {{ userCount.count }} &nbsp;
+        </span>
+        <span class="users-count" *ngIf="!userCount.count">0</span>
+        <span class="users-text">{{
+          'usersPlural'
+            | translate
+              : {
+                  count: userCount.count ? userCount.count : 0
+                }
+        }}</span>
       </span>
-      <span class="users-count" *ngIf="!userCount.count">0</span>
-      <span class="users-text">{{
-        'usersPlural'
-          | translate
-            : {
-                count: userCount.count ? userCount.count : 0
-              }
-      }}</span>
-    </span>
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="menu"
-      class="more-users"
-      *appCheckUserHasPermission="[perms.deactivateUser]"
-      aria-label="More Options"
-    >
-      <mat-icon>more_horiz</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
       <button
-        mat-menu-item
-        [disabled]="selectedUsers.length > 1 || disableDeactivate"
-        (click)="deactivateUsers()"
-        class="text-red"
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        class="more-users"
+        *appCheckUserHasPermission="[perms.deactivateUser]"
+        aria-label="More Options"
       >
-        <span translate="deactivate"></span>
+        <mat-menu #menu="matMenu">
+          <button
+            mat-menu-item
+            [disabled]="selectedUsers.length > 1 || disableDeactivate"
+            (click)="deactivateUsers()"
+            class="text-red"
+          >
+            <span translate="deactivate"></span>
+          </button>
+        </mat-menu>
+        <mat-icon>more_horiz</mat-icon>
       </button>
-    </mat-menu>
+      <span class="custom-form-field-gray-color search">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchUsers' | translate"
+            autocomplete="off"
+            [formControl]="searchUser"
+          />
+        </mat-form-field>
+      </span>
+
+      <button
+        mat-raised-button
+        class="add-user-btn"
+        (click)="openEditAddUserModal()"
+        *appCheckUserHasPermission="[perms.createUser]"
+        translate="addUserBtn"
+      ></button>
+    </div>
   </div>
   <div
     *ngIf="users$ | async as users; else loadingUsers"

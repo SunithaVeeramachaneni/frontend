@@ -40,6 +40,52 @@
   ::ng-deep .table-column {
     width: 20%;
   }
+
+  ::ng-deep .space-between {
+    width: 90px !important;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-tasksCompleted {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 95px;
+  }
+
+  ::ng-deep .mat-column-schedule {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-form-field-infix {
+    border-top: none !important;
+  }
+
+  ::ng-deep .dropdown .arrow {
+    margin-right: 15px;
+  }
+
+  ::ng-deep .dropdown mat-icon {
+    font-size: 195% !important;
+    line-height: 30px !important;
+  }
+
+  ::ng-deep .date-picker {
+    align-items: center;
+  }
+
+  ::ng-deep .date-picker mat-icon {
+    font-size: 195% !important;
+    line-height: 22px !important;
+  }
 }
 
 ::ng-deep .remove-zindex th {

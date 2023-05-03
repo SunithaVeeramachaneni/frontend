@@ -307,19 +307,19 @@
                 "
               >
                 <div
-                  class="w-33 f-s-8"
+                  class="w-33 f-s-8 submitted-by"
                   *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
                 >
-                  Submitted On: 18-03-2023 10:00 PM
+                  Submitted On: 3/18/23, 10:00 PM
                 </div>
                 <div
                   class="w-33 f-s-8"
                   *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
                 >
-                  Submitted By: Shiva Kumar K
+                  Submitted By: {{ currentUserName }}
                 </div>
                 <div
-                  class="w-33 f-s-8"
+                  class="w-33 f-s-8 tasks-completed"
                   *ngIf="
                     pdfBuilderConfigurationsForm.get('questionCompleted').value
                   "
@@ -464,6 +464,10 @@
         <span class="discribe">{{
           formMetadata.description ? formMetadata.description : ''
         }}</span>
+        <span
+          ><span class="plant">{{ 'plant' | translate }}:</span>
+          {{ ' ' + formMetadata.plant }}</span
+        >
       </div>
     </div>
     <div
@@ -478,13 +482,13 @@
         class="w-33 f-s-8"
         *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
       >
-        Submitted On: 18-03-2023 10:00 PM
+        Submitted On: 3/18/23, 10:00 PM
       </div>
       <div
         class="w-33 f-s-8"
         *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
       >
-        Submitted By: Shiva Kumar K
+        Submitted By: {{ currentUserName }}
       </div>
       <div
         class="w-33 f-s-8"
@@ -547,7 +551,7 @@
                 <tr>
                   <td>
                     <span class="label"> Due Date : </span>
-                    <span class="description"> 25 Feb, 2023 </span>
+                    <span class="description"> 3/25/23 </span>
                   </td>
                   <td>
                     <span class="label"> Raised By: </span>
@@ -614,7 +618,7 @@
                 <tr>
                   <td>
                     <span class="label"> Due Date: </span>
-                    <span class="description"> 25 Feb, 2023 </span>
+                    <span class="description"> 3/25/23 </span>
                   </td>
                   <td>
                     <span class="label"> Raised By: </span>
@@ -696,13 +700,13 @@
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
         >
-          Submitted On: 18-03-2023 10:00 PM
+          Submitted On: 3/18/23, 10:00 PM
         </div>
         <div
           class="w-33 f-s-8"
           *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
         >
-          Submitted By: Shiva Kumar K
+          Submitted By: {{ currentUserName }}
         </div>
         <div
           class="w-33 f-s-8"
@@ -766,7 +770,7 @@
                 <tr>
                   <td>
                     <span class="label"> Due Date: </span>
-                    <span class="description"> 25 Feb, 2023 </span>
+                    <span class="description"> 3/25/23 </span>
                   </td>
                   <td>
                     <span class="label"> Status: </span>
@@ -823,7 +827,7 @@
                 <tr>
                   <td>
                     <span class="label"> Due Date: </span>
-                    <span class="description"> 25 Feb, 2023 </span>
+                    <span class="description"> 3/25/2023 </span>
                   </td>
                   <td>
                     <span class="label"> Status: </span>

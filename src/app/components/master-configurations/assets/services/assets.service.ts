@@ -38,9 +38,18 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = (info: ErrorInfo = {} as ErrorInfo) => {
+  fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', this.MAX_FETCH_LIMIT);
+    if (plantsID) {
+      const filter = {
+        plantsID: {
+          eq: plantsID
+        }
+      };
+      params.set('filter', JSON.stringify(filter));
+    }
+    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'asset/list?' + params.toString(),

@@ -2,11 +2,9 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="myPlans"></h2>
-      <span class="custom-form-field-gray-color search">
+      <div class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
-          <span class="forms-count">
-            {{ totalCount }}
-          </span>
+          <span class="forms-count"> {{ totalCount | count }} &nbsp; </span>
           <span class="forms-text">{{
             'plans'
               | translate
@@ -34,7 +32,10 @@
             class="filter-icon"
           ></svg-icon>
         </mat-form-field>
-      </span>
+        <button class="create-new-btn" (click)="openRoundPlanCreationModal()">
+          <span class="widgets-title" translate="createNew"></span>
+        </button>
+      </div>
     </div>
 
     <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">

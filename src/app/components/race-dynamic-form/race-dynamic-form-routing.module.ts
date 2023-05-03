@@ -43,15 +43,6 @@ const routes: Routes = [
         }
       },
       {
-        path: 'submissions',
-        component: SubmissionComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: { label: 'Submissions', alias: 'formName' },
-          permissions: [permissions.viewSubmissions]
-        }
-      },
-      {
         path: 'archived',
         component: ArchivedListComponent,
         canActivate: [AuthGuard],

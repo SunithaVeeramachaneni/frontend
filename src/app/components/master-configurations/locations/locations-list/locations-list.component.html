@@ -1,163 +1,172 @@
-<div class="locations-list-view">
-  <ng-container *ngIf="userInfo$ | async">
-    <div class="main-container">
-      <div class="locations-header">
-        <div>
-          <h2 class="heading" translate="locations"></h2>
-        </div>
-        <div>
-          <span
-            class="no-of-location"
-            *ngIf="locationsListCount$ | async as totalCount"
-          >
-            <span class="location-count">
-              {{ totalCount }}
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div
+    class="locations-list-view"
+    *ngIf="currentRouteUrl === routingUrls.locations.url"
+  >
+    <ng-container *ngIf="userInfo$ | async">
+      <div class="main-container">
+        <div class="locations-header">
+          <div>
+            <h2 class="heading" translate="locations"></h2>
+          </div>
+          <div>
+            <span
+              class="no-of-location"
+              *ngIf="locationsListCount$ | async as totalCount"
+            >
+              <span class="location-count">
+                {{ totalCount | count }}
+              </span>
+              <span class="location-text">{{
+                'locations'
+                  | translate
+                    : {
+                        count: totalCount || 0
+                      }
+              }}</span>
             </span>
-            <span class="location-text">{{
-              'locations'
-                | translate
-                  : {
-                      count: totalCount || 0
-                    }
-            }}</span>
-          </span>
-          <span class="custom-form-field-gray-color search">
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'search' | translate"
-                autocomplete="off"
-                [formControl]="searchLocation"
-              />
-              <svg-icon
-                matSuffix
-                cdkOverlayOrigin
-                class="common-filter-icon"
-                alt="Open Filter"
-                #trigger="cdkOverlayOrigin"
-                (click)="isPopoverOpen = !isPopoverOpen"
-                icon="icon-filterIcon"
-                class="filter-icon"
-              ></svg-icon>
-            </mat-form-field>
-          </span>
-          <ng-template
-            cdkConnectedOverlay
-            cdkConnectedOverlayPanelClass="custom-popover"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            [cdkConnectedOverlayHasBackdrop]="true"
-            [cdkConnectedOverlayOpen]="isPopoverOpen"
-            [cdkConnectedOverlayOrigin]="trigger"
-            cdkConnectedOverlayWidth="400px"
-            (backdropClick)="isPopoverOpen = false"
-          >
-            <app-filter
-              [json]="filterJson"
-              (close)="isPopoverOpen = false"
-              (apply)="applyFilters($event)"
-              (reset)="clearFilters()"
-            ></app-filter>
-          </ng-template>
+            <span class="custom-form-field-gray-color search">
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="'search' | translate"
+                  autocomplete="off"
+                  [formControl]="searchLocation"
+                />
+                <svg-icon
+                  matSuffix
+                  cdkOverlayOrigin
+                  class="common-filter-icon"
+                  alt="Open Filter"
+                  #trigger="cdkOverlayOrigin"
+                  (click)="isPopoverOpen = !isPopoverOpen"
+                  icon="icon-filterIcon"
+                  class="filter-icon"
+                ></svg-icon>
+              </mat-form-field>
+            </span>
+            <ng-template
+              cdkConnectedOverlay
+              cdkConnectedOverlayPanelClass="custom-popover"
+              cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+              [cdkConnectedOverlayHasBackdrop]="true"
+              [cdkConnectedOverlayOpen]="isPopoverOpen"
+              [cdkConnectedOverlayOrigin]="trigger"
+              cdkConnectedOverlayWidth="400px"
+              (backdropClick)="isPopoverOpen = false"
+            >
+              <app-filter
+                [json]="filterJson"
+                (close)="isPopoverOpen = false"
+                (apply)="applyFilters($event)"
+                (reset)="clearFilters()"
+              ></app-filter>
+            </ng-template>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="createMenu"
-            translate="createNew"
-            class="create-new-btn"
-            *appCheckUserHasPermission="[
-              perms.createLocation,
-              perms.importLocations
-            ]"
-          ></button>
-          <mat-menu #createMenu="matMenu">
             <button
-              mat-menu-item
-              (click)="uploader.click()"
-              class="menu-buttons"
+              mat-raised-button
+              [matMenuTriggerFor]="createMenu"
+              translate="createNew"
+              class="create-new-btn"
+              *appCheckUserHasPermission="[
+                perms.createLocation,
+                perms.importLocations
+              ]"
+            ></button>
+            <mat-menu #createMenu="matMenu">
+              <button
+                mat-menu-item
+                (click)="uploader.click()"
+                class="menu-buttons"
+                *appCheckUserHasPermission="[perms.importLocations]"
+              >
+                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+                <span translate="uploadExcel"></span>
+              </button>
+              <button
+                mat-menu-item
+                (click)="addManually()"
+                class="menu-buttons"
+                *appCheckUserHasPermission="[perms.createLocation]"
+              >
+                <svg-icon
+                  icon="icon-add-manually"
+                  class="add-manually-icon"
+                ></svg-icon>
+                <span translate="createManually"></span>
+              </button>
+            </mat-menu>
+
+            <button
+              mat-raised-button
+              [matMenuTriggerFor]="moreMenu"
+              class="more-btn"
               *appCheckUserHasPermission="[perms.importLocations]"
             >
-              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-              <span translate="uploadExcel"></span>
+              <mat-icon class="menu-icon">more_horiz</mat-icon>
             </button>
-            <button
-              mat-menu-item
-              (click)="addManually()"
-              class="menu-buttons"
-              *appCheckUserHasPermission="[perms.createLocation]"
-            >
-              <svg-icon
-                icon="icon-add-manually"
-                class="add-manually-icon"
-              ></svg-icon>
-              <span translate="addManually"></span>
-            </button>
-          </mat-menu>
+            <mat-menu #moreMenu="matMenu">
+              <button
+                (click)="exportAsXLSX()"
+                mat-menu-item
+                class="menu-buttons"
+              >
+                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+                <span translate="downloadTemplate"></span>
+              </button>
+            </mat-menu>
+            <input
+              id="upload"
+              hidden
+              type="file"
+              #uploader
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+              (change)="uploadFile($event)"
+              (click)="resetFile($event)"
+            />
+          </div>
+        </div>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="moreMenu"
-            class="more-btn"
-            *appCheckUserHasPermission="[perms.importLocations]"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #moreMenu="matMenu">
-            <button (click)="exportAsXLSX()" mat-menu-item class="menu-buttons">
-              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-              <span translate="downloadTemplate"></span>
-            </button>
-          </mat-menu>
-          <input
-            id="upload"
-            hidden
-            type="file"
-            #uploader
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
-            (change)="uploadFile($event)"
-            (click)="resetFile($event)"
-          />
+        <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
+          <cwp-dynamictable
+            [dataSource]="dataSource"
+            [configOptions]="configOptions"
+            (fetchDataCallback)="handleTableEvent($event)"
+            (rowLevelActionHandler)="rowLevelActionHandler($event)"
+            (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+            (cellClickActionHandler)="cellClickActionHandler($event)"
+            class="width-100"
+          ></cwp-dynamictable>
         </div>
       </div>
 
-      <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
-    </div>
+      <ng-container *ngIf="locationAddOrEditOpenState">
+        <app-add-edit-location
+          [@slideInOut]="locationAddOrEditOpenState"
+          (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+          [locationEditData]="locationEditData"
+          (createdLocationData)="addOrUpdateLocation($event)"
+        ></app-add-edit-location>
+      </ng-container>
 
-    <ng-container *ngIf="locationAddOrEditOpenState">
-      <app-add-edit-location
-        [@slideInOut]="locationAddOrEditOpenState"
-        (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
-        [locationEditData]="locationEditData"
-        (createdLocationData)="addOrUpdateLocation($event)"
-      ></app-add-edit-location>
-    </ng-container>
+      <ng-container *ngIf="openLocationDetailedView">
+        <app-location-detail-view
+          [@slideInOut]="openLocationDetailedView"
+          (slideInOut)="onCloseLocationDetailedView($event)"
+          [selectedLocation]="selectedLocation"
+        ></app-location-detail-view>
+      </ng-container>
 
-    <ng-container *ngIf="openLocationDetailedView">
-      <app-location-detail-view
-        [@slideInOut]="openLocationDetailedView"
-        (slideInOut)="onCloseLocationDetailedView($event)"
-        [selectedLocation]="selectedLocation"
-      ></app-location-detail-view>
-    </ng-container>
-
-    <div *ngIf="isLoading$ | async">
-      <div class="ghost-loading">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
+      <div *ngIf="isLoading$ | async">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-</div>
+    </ng-container>
+  </div>
+</ng-container>

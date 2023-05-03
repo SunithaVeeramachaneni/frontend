@@ -29,7 +29,7 @@ export class QuestionPreviewComponent implements OnInit {
     NF: 55,
     DD: '',
     SF: 'Can be a part number',
-    DT: '1 Feb 2023 6:00 PM',
+    DT: '02/01/23, 6:00 PM',
     HL: `<a href="">www.innovapptive.com</a>`,
     CB: `<span>Checked <input type="checkbox" checked /></span>`,
     SGF: '',
@@ -40,7 +40,7 @@ export class QuestionPreviewComponent implements OnInit {
     LTV: 'Notes Added',
     GAL: '14 Lang Rd, Centennial Park NSW 2021, Australia (-33.8912784, 151.2322645)',
     DDM: `<span style="color:green; border:0.715174px solid #CCCCCC">Yes</span>`,
-    DFR: '1 Feb 2023 - 6 Feb 2023',
+    DFR: '02/01/23 - 02/06/23',
     TAF: 'Tabular View',
     ARD: 'Array Fields',
     USR: 'User'

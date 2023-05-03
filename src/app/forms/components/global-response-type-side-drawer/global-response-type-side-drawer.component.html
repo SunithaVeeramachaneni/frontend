@@ -4,7 +4,7 @@
     <mat-card-title class="m-0 light-gray">
       <div
         class="mcq-heading"
-        translate="createResponses"
+        translate="globalResponseHeading"
         [hidden]="isViewMode"
       ></div>
       <div
@@ -126,7 +126,6 @@
       [disabled]="isResponseFormUpdated === false || responseForm.pristine"
       translate="create"
     ></button>
-    
   </div>
   <ng-template #viewBlock>
     <div class="actions-footer-view">

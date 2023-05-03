@@ -1,9 +1,19 @@
 .user-modal {
-  width: 480px;
+  width: 450px;
   overflow: hidden;
-  padding: 20px;
+  padding: 16px;
   background: #ffffff;
   border-radius: 4px;
+}
+
+.user-date-range {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+
+  .user-date-from {
+    margin-right: 10px;
+  }
 }
 
 .dialog-close-btn {
@@ -34,8 +44,8 @@
 .user-profile-img {
   display: block;
   margin: 0 auto;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
 }
 
@@ -79,6 +89,9 @@
   float: right;
   background: #3d5afe;
   color: #ffffff;
+  height: 29px;
+  font-weight: normal;
+  line-height: normal;
 }
 
 .cancel-btn {
@@ -86,6 +99,9 @@
   float: right;
   background: transparent;
   margin-right: 10px;
+  height: 29px;
+  font-weight: normal;
+  line-height: normal;
 }
 
 .first-name {

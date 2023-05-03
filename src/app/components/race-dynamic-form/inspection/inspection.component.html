@@ -1,49 +1,93 @@
 <div class="search-container">
   <div id="openviewtab">
-    <app-form-detail [@slideInOut]="menuState" (slideInOut)="onCloseViewDetail()" [selectedForm]="selectedForm"
-      [moduleName]="'RDF'" [showPDFDownload]="true" [hidden]="hideInspectionDetail"
-      [formStatus]="formConfigurationStatus.published" formDetailType="submitted"
-      (formDetailAction)="formsDetailActionHandler($event)"></app-form-detail>
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+      [moduleName]="'RDF'"
+      [showPDFDownload]="false"
+      [hidden]="hideInspectionDetail"
+      [formStatus]="formConfigurationStatus.published"
+      formDetailType="submitted"
+      (formDetailAction)="formsDetailActionHandler($event)"
+    ></app-form-detail>
   </div>
   <span class="custom-form-field-gray-color search">
     <span class="no-of-inspections">
-      <ng-container *ngIf="(isLoading$ | async) === false; else loadingInspections">
-        <span class="inspections-count"> {{ inspectionsCount }} </span>
+      <ng-container
+        *ngIf="(isLoading$ | async) === false; else loadingInspections"
+      >
+        <span class="inspections-count"> {{ inspectionsCount }} &nbsp; </span>
         <span class="inspections-text">{{
           'inspectionPlural'
-          | translate
-          : {
-          count: inspectionsCount || 0
-          }
-          }}</span>
+            | translate
+              : {
+                  count: inspectionsCount || 0
+                }
+        }}</span>
       </ng-container>
       <ng-template #loadingInspections>
-        <ngx-shimmer-loading class="loading-inspections" [width]="'100%'" [height]="'35px'">
+        <ngx-shimmer-loading
+          class="loading-inspections"
+          [width]="'100%'"
+          [height]="'35px'"
+        >
         </ngx-shimmer-loading>
       </ng-template>
     </span>
     <mat-form-field appearance="outline">
       <mat-icon matPrefix class="searchIcon">search</mat-icon>
-      <input matInput type="text" [placeholder]="'search' | translate" autocomplete="off" [formControl]="searchForm" />
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [formControl]="searchForm"
+      />
 
-      <svg-icon icon="icon-filterIcon" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
-        (click)="isPopoverOpen = !isPopoverOpen" matSuffix class="filter-icon"></svg-icon>
+      <svg-icon
+        icon="icon-filterIcon"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
+        matSuffix
+        class="filter-icon"
+      ></svg-icon>
     </mat-form-field>
   </span>
-  <ng-template cdkConnectedOverlay cdkConnectedOverlayPanelClass="custom-popover"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOpen]="isPopoverOpen" [cdkConnectedOverlayOrigin]="trigger" cdkConnectedOverlayWidth="400px"
-    (backdropClick)="isPopoverOpen = false">
-    <app-filter [json]="filterJson" (close)="isPopoverOpen = false" (apply)="applyFilters($event)"
-      (reset)="clearFilters()"></app-filter>
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
+  >
+    <app-filter
+      [json]="filterJson"
+      (close)="isPopoverOpen = false"
+      (apply)="applyFilters($event)"
+      (reset)="clearFilters()"
+    ></app-filter>
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(inspections$ | async) && (isLoading$ | async) === false" class="inspections-list">
-    <cwp-dynamictable [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }" [dataSource]="dataSource"
-      [configOptions]="configOptions" (fetchDataCallback)="handleTableEvent($event)"
-      (cellClickActionHandler)="cellClickActionHandler($event)" (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      (onDateChangeHandler)="onChangeDueDateHandler($event)" class="width-100"></cwp-dynamictable>
+  <div
+    *ngIf="(inspections$ | async) && (isLoading$ | async) === false"
+    class="inspections-list"
+  >
+    <cwp-dynamictable
+      [ngClass]="{ 'remove-zindex': zIndexDelay === 400 }"
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      (onDateChangeHandler)="onChangeDueDateHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
   </div>
 
   <div *ngIf="isLoading$ | async">
@@ -55,11 +99,18 @@
     </div>
   </div>
   <ng-container *ngIf="users$ | async">
-    <button style="display: none" mat-button [matMenuTriggerFor]="assigneeMenu"
-      #assigneeMenuTrigger="matMenuTrigger"></button>
+    <button
+      style="display: none"
+      mat-button
+      [matMenuTriggerFor]="assigneeMenu"
+      #assigneeMenuTrigger="matMenuTrigger"
+    ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-inspection [assigneeDetails]="assigneeDetails" [dropdownPosition]="assigneePosition"
-        (selectedAssignee)="selectedAssigneeHandler($event)"></app-assign-inspection>
+      <app-assign-inspection
+        [assigneeDetails]="assigneeDetails"
+        [dropdownPosition]="assigneePosition"
+        (selectedAssignee)="selectedAssigneeHandler($event)"
+      ></app-assign-inspection>
     </mat-menu>
   </ng-container>
 </ng-container>

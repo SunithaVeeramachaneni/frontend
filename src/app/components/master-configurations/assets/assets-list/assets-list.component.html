@@ -1,164 +1,174 @@
-<div class="assets-list-view">
-  <ng-container *ngIf="userInfo$ | async">
-    <div class="main-container">
-      <div class="assets-header">
-        <div>
-          <h2 class="heading" translate="assets"></h2>
-        </div>
-        <div>
-          <span
-            class="no-of-asset"
-            *ngIf="assetsListCount$ | async as totalCount"
-          >
-            <span class="asset-count">
-              {{ totalCount }}
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div
+    class="assets-list-view"
+    *ngIf="currentRouteUrl === routingUrls.assets.url"
+  >
+    <ng-container *ngIf="userInfo$ | async">
+      <div class="main-container">
+        <div class="assets-header">
+          <div>
+            <h2 class="heading" translate="assets"></h2>
+          </div>
+          <div>
+            <span
+              class="no-of-asset"
+              *ngIf="assetsListCount$ | async as totalCount"
+            >
+              <span class="asset-count"> {{ totalCount | count }} &nbsp; </span>
+              <span class="asset-text">{{
+                'assets'
+                  | translate
+                    : {
+                        count: totalCount || 0
+                      }
+              }}</span>
             </span>
-            <span class="asset-text">{{
-              'assets'
-                | translate
-                  : {
-                      count: totalCount || 0
-                    }
-            }}</span>
-          </span>
-          <span class="custom-form-field-gray-color search">
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'search' | translate"
-                autocomplete="off"
-                [formControl]="searchAssets"
-              />
-              <svg-icon
-                matSuffix
-                cdkOverlayOrigin
-                class="common-filter-icon"
-                alt="Open Filter"
-                #trigger="cdkOverlayOrigin"
-                (click)="isPopoverOpen = !isPopoverOpen"
-                icon="icon-filterIcon"
-                class="filter-icon"
-              ></svg-icon>
-            </mat-form-field>
-          </span>
-          <ng-template
-            cdkConnectedOverlay
-            cdkConnectedOverlayPanelClass="custom-popover"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            [cdkConnectedOverlayHasBackdrop]="true"
-            [cdkConnectedOverlayOpen]="isPopoverOpen"
-            [cdkConnectedOverlayOrigin]="trigger"
-            cdkConnectedOverlayWidth="400px"
-            (backdropClick)="isPopoverOpen = false"
-          >
-            <app-filter
-              [json]="filterJson"
-              (close)="isPopoverOpen = false"
-              (apply)="applyFilters($event)"
-              (reset)="clearFilters()"
-            ></app-filter>
-          </ng-template>
+            <span class="custom-form-field-gray-color search">
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="'search' | translate"
+                  autocomplete="off"
+                  [formControl]="searchAssets"
+                />
+                <svg-icon
+                  matSuffix
+                  cdkOverlayOrigin
+                  class="common-filter-icon"
+                  alt="Open Filter"
+                  #trigger="cdkOverlayOrigin"
+                  (click)="isPopoverOpen = !isPopoverOpen"
+                  icon="icon-filterIcon"
+                  class="filter-icon"
+                ></svg-icon>
+              </mat-form-field>
+            </span>
+            <ng-template
+              cdkConnectedOverlay
+              cdkConnectedOverlayPanelClass="custom-popover"
+              cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+              [cdkConnectedOverlayHasBackdrop]="true"
+              [cdkConnectedOverlayOpen]="isPopoverOpen"
+              [cdkConnectedOverlayOrigin]="trigger"
+              cdkConnectedOverlayWidth="400px"
+              (backdropClick)="isPopoverOpen = false"
+            >
+              <app-filter
+                [json]="filterJson"
+                (close)="isPopoverOpen = false"
+                (apply)="applyFilters($event)"
+                (reset)="clearFilters()"
+              ></app-filter>
+            </ng-template>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="createMenu"
-            translate="createNew"
-            class="create-new-btn"
-            *appCheckUserHasPermission="[perms.createAsset, perms.importAssets]"
-          ></button>
-          <mat-menu #createMenu="matMenu">
             <button
-              mat-menu-item
-              class="menu-buttonsbuttons"
-              (click)="uploader.click()"
+              mat-raised-button
+              [matMenuTriggerFor]="createMenu"
+              translate="createNew"
+              class="create-new-btn"
+              *appCheckUserHasPermission="[
+                perms.createAsset,
+                perms.importAssets
+              ]"
+            ></button>
+            <mat-menu #createMenu="matMenu">
+              <button
+                mat-menu-item
+                class="menu-buttons"
+                (click)="uploader.click()"
+                *appCheckUserHasPermission="[perms.importAssets]"
+              >
+                <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+                <span translate="uploadExcel"></span>
+              </button>
+              <button
+                mat-menu-item
+                (click)="addManually()"
+                class="menu-buttons"
+                *appCheckUserHasPermission="[perms.createAsset]"
+              >
+                <svg-icon
+                  icon="icon-add-manually"
+                  class="add-manually-icon"
+                ></svg-icon>
+                <span translate="createManually"></span>
+              </button>
+            </mat-menu>
+
+            <button
+              mat-raised-button
+              [matMenuTriggerFor]="moreMenu"
+              class="more-btn"
               *appCheckUserHasPermission="[perms.importAssets]"
             >
-              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
-              <span translate="uploadExcel"></span>
+              <mat-icon class="menu-icon">more_horiz</mat-icon>
             </button>
-            <button
-              mat-menu-item
-              (click)="addManually()"
-              class="menu-buttons"
-              *appCheckUserHasPermission="[perms.createAsset]"
-            >
-              <svg-icon
-                icon="icon-add-manually"
-                class="add-manually-icon"
-              ></svg-icon>
-              <span translate="addManually"></span>
-            </button>
-          </mat-menu>
+            <mat-menu #moreMenu="matMenu">
+              <button
+                mat-menu-item
+                (click)="exportAsXLSX()"
+                class="menu-buttons"
+              >
+                <svg-icon
+                  matSuffix
+                  icon="icon-excel1"
+                  class="menu-icons"
+                ></svg-icon>
+                <span translate="downloadTemplate"></span>
+              </button>
+            </mat-menu>
+            <input
+              id="upload"
+              hidden
+              type="file"
+              #uploader
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+              (change)="uploadFile($event)"
+              (click)="resetFile($event)"
+            />
+          </div>
+        </div>
 
-          <button
-            mat-raised-button
-            [matMenuTriggerFor]="moreMenu"
-            class="more-btn"
-            *appCheckUserHasPermission="[perms.importAssets]"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #moreMenu="matMenu">
-            <button mat-menu-item (click)="exportAsXLSX()" class="menu-buttons">
-              <svg-icon
-                matSuffix
-                icon="icon-excel1"
-                class="menu-icons"
-              ></svg-icon>
-              <span translate="downloadTemplate"></span>
-            </button>
-          </mat-menu>
-          <input
-            id="upload"
-            hidden
-            type="file"
-            #uploader
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
-            (change)="uploadFile($event)"
-            (click)="resetFile($event)"
-          />
+        <div *ngIf="(assets$ | async) && (isLoading$ | async) === false">
+          <cwp-dynamictable
+            [dataSource]="dataSource"
+            [configOptions]="configOptions"
+            (fetchDataCallback)="handleTableEvent($event)"
+            (rowLevelActionHandler)="rowLevelActionHandler($event)"
+            (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+            (cellClickActionHandler)="cellClickActionHandler($event)"
+            class="width-100"
+          ></cwp-dynamictable>
         </div>
       </div>
 
-      <div *ngIf="(assets$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
-    </div>
+      <ng-container *ngIf="assetsAddOrEditOpenState">
+        <app-add-edit-assets
+          [@slideInOut]="assetsAddOrEditOpenState"
+          (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
+          [assetsEditData]="assetsEditData"
+          (createdAssetsData)="addOrUpdateAssets($event)"
+        ></app-add-edit-assets>
+      </ng-container>
 
-    <ng-container *ngIf="assetsAddOrEditOpenState">
-      <app-add-edit-assets
-        [@slideInOut]="assetsAddOrEditOpenState"
-        (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
-        [assetsEditData]="assetsEditData"
-        (createdAssetsData)="addOrUpdateAssets($event)"
-      ></app-add-edit-assets>
-    </ng-container>
+      <ng-container *ngIf="openAssetsDetailedView">
+        <app-assets-detail-view
+          [@slideInOut]="openAssetsDetailedView"
+          (slideInOut)="onCloseAssetsDetailedView($event)"
+          [selectedAsset]="selectedAsset"
+        ></app-assets-detail-view>
+      </ng-container>
 
-    <ng-container *ngIf="openAssetsDetailedView">
-      <app-assets-detail-view
-        [@slideInOut]="openAssetsDetailedView"
-        (slideInOut)="onCloseAssetsDetailedView($event)"
-        [selectedAsset]="selectedAsset"
-      ></app-assets-detail-view>
-    </ng-container>
-
-    <div *ngIf="isLoading$ | async">
-      <div class="ghost-loading">
-        <div *ngFor="let number of ghostLoading">
-          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-          </ngx-shimmer-loading>
+      <div *ngIf="isLoading$ | async">
+        <div class="ghost-loading">
+          <div *ngFor="let number of ghostLoading">
+            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+            </ngx-shimmer-loading>
+          </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-</div>
+    </ng-container>
+  </div>
+</ng-container>

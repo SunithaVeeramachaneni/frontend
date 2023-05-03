@@ -135,8 +135,8 @@ export class PermissionsComponent implements OnChanges {
           });
 
           if (
-            activePermissionCount ===
-              this.newPermissionsArray.permissions.length &&
+            this.newPermissionsArray.totalActivePermissions ===
+              this.newPermissionsArray.totalPermissionsCount &&
             !addingNewRole
           ) {
             this.newPermissionsArray.checked = true;
@@ -333,7 +333,7 @@ export class PermissionsComponent implements OnChanges {
         }
       });
       module.subPermissions.forEach((sp) => {
-        sp.forEach((p) => {
+        sp.permissions.forEach((p) => {
           if (p.checked) {
             module.totalActivePermissions += 1;
           }
@@ -345,24 +345,28 @@ export class PermissionsComponent implements OnChanges {
     this.permissionsChange.emit(newPermissions);
   }
 
-  fewComplete(module): boolean {
+  fewComplete(module, moduleType): boolean {
     if (module.permissions == null) {
       return false;
     }
-    const permissionCheckedCount = module.permissions.filter(
-      (p) => p.checked
-    ).length;
-    let subPermissionsCheckCount = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    module.subPermissions?.forEach((sp: any) => {
-      if (sp.checked) {
-        subPermissionsCheckCount += 1;
-      }
-    });
 
+    if (moduleType === 'main') {
+      if (module.totalActivePermissions === module.totalPermissionsCount) {
+        module.countOfChecked = module.totalActivePermissions;
+        module.checked = true;
+        return false;
+      }
+      module.countOfChecked = module.totalActivePermissions;
+      module.checked = false;
+
+      return (
+        module.countOfChecked !== 0 &&
+        module.countOfChecked !== module.permissions.length
+      );
+    }
     return (
-      (permissionCheckedCount > 0 || subPermissionsCheckCount > 0) &&
-      permissionCheckedCount !== module.permissions.length
+      module.countOfSubChecked !== 0 &&
+      module.countOfSubChecked !== module.permissions.length
     );
   }
 

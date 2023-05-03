@@ -5,10 +5,34 @@
     width: 15%;
   }
 
+  ::ng-deep .mat-column-title {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-priority {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 100px;
+  }
+
+  ::ng-deep .mat-column-notificationNumber {
+    min-width: 70px;
+  }
+
   .issues-search {
     position: fixed;
     right: 14px;
-    top: 387px;
+    top: 335px;
   }
   .no-of-issues {
     margin-right: 10px;

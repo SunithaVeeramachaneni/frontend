@@ -25,6 +25,10 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 145px);
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin-top: 20px;
+  }
 }
 
 #add-edit-slider {
@@ -45,7 +49,7 @@
   }
 
   .image-container {
-    margin: 20px 0 40px 0;
+    margin: 20px 0 10px 0;
   }
 
   .image-contain {

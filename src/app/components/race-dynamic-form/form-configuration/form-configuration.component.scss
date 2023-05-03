@@ -84,12 +84,12 @@
   }
 
   .import-btn {
-    width: 160px;
+    width: 140px;
     height: 36px;
     border: 1px solid $blue-primary;
     color: $blue-primary;
     margin: 12px 0 0 12px;
-    border-radius: 8px;
+    border-radius: 4px;
   }
 
   .save-status {
@@ -110,7 +110,7 @@
     height: 36px;
     background-color: $blue-primary;
     border-color: $blue-primary;
-    border-radius: 8px;
+    border-radius: 4px;
     margin: 12px 12px 0 12px;
   }
 
@@ -337,11 +337,11 @@
 .next-btn {
   padding: 0px 20px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 4px;
   margin: 12px 12px 0px 10px;
   border: 1px solid;
-  background-color: $blue-primary;
-  border-color: $blue-primary;
+  background-color: $radio-button-checked;
+  border-color: $radio-button-checked;
   color: $white;
   display: flex;
   align-items: center;

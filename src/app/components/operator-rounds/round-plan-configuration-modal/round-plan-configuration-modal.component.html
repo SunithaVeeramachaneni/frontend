@@ -38,7 +38,7 @@
         <div class="form-name">
           <p
             class="form-name-description m-t-0 m-b-0"
-            translate="addFormName"
+            translate="addFormNameMandatory"
           ></p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <input
@@ -72,16 +72,24 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p class="form-name-description m-t-20 m-b-0" translate="plant"></p>
+          <p
+            class="form-name-description m-t-20 m-b-0"
+            translate="plantMandatory"
+          ></p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <mat-select
               formControlName="plantId"
               [placeholder]="'plant' | translate"
             >
+              <input
+                class="searchable-input"
+                [placeholder]="'search' | translate"
+                (keyup)="onKeyPlant($event)"
+              />
               <div class="scrollable-area">
                 <mat-option
                   [value]="plant.id"
-                  *ngFor="let plant of allPlantsData"
+                  *ngFor="let plant of plantInformation"
                   >{{ plant.plantId }} - {{ plant.name }}</mat-option
                 >
               </div>

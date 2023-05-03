@@ -250,7 +250,12 @@
         </div>
       </ng-template>
     </ng-container>
-    <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
+    <div
+      *ngIf="
+        moduleName !== 'OPERATOR_ROUNDS' &&
+        formStatus !== formConfigurationStatus.published
+      "
+    >
       <h4>{{ 'preview' | translate }}</h4>
       <div>
         <div class="name-heading">
@@ -267,6 +272,45 @@
             <button mat-raised-button class="w-full btn-push btn-primary-blue">
               {{ 'editForm' | translate }}
             </button>
+          </div>
+        </div>
+
+        <div
+          class="question-bg"
+          *ngIf="selectedFormDetail$ | async as selectedFormDetail"
+        >
+          <div>
+            <h3 class="question-heading headind-accordian pointer">
+              <ng-container>
+                {{ defaultFormName }}
+                <label [matMenuTriggerFor]="menu">
+                  <svg-icon
+                    icon="icon-arrow-down"
+                    class="arrow-icon"
+                  ></svg-icon>
+                </label>
+              </ng-container>
+            </h3>
+            <mat-menu #menu="matMenu">
+              <button
+                class="btn-range"
+                (click)="openMenu(page)"
+                mat-menu-item
+                *ngFor="
+                  let page of selectedFormDetail?.pages;
+                  let index = index
+                "
+              >
+                {{ page?.name }} {{ page.position }}
+              </button>
+            </mat-menu>
+          </div>
+          <div>
+            <app-preview
+              [subFormId]="''"
+              [pageIndex]="currentPage"
+              [moduleType]="'formDetailView'"
+            ></app-preview>
           </div>
         </div>
       </div>
@@ -287,45 +331,27 @@
         mat-raised-button
         class="viewPDFBtn"
         translate="viewPDFBtn"
+        [disabled]="pdfButtonDisabled"
         (click)="viewPDF()"
       ></button>
-      <button mat-stroked-button class="downloadPDFBtn" (click)="downloadPDF()">
-        <svg-icon icon="icon-picture-as-pdf" class="pdf-picture"></svg-icon>
+      <button
+        mat-stroked-button
+        class="downloadPDFBtn"
+        [disabled]="pdfButtonDisabled"
+        (click)="downloadPDF()"
+      >
+        <svg-icon
+          icon="{{
+            pdfButtonDisabled
+              ? 'icon-picture-as-pdf-disabled'
+              : 'icon-picture-as-pdf'
+          }}"
+          class="pdf-picture"
+        ></svg-icon>
         <span translate="download"></span>
       </button>
     </div>
   </mat-card>
-
-  <div *ngIf="moduleName !== 'OPERATOR_ROUNDS'">
-    <div
-      class="question-bg"
-      *ngIf="selectedFormDetail$ | async as selectedFormDetail"
-    >
-      <div>
-        <h3 class="question-heading headind-accordian pointer">
-          <ng-container>
-            {{ defaultFormName }}
-            <label [matMenuTriggerFor]="menu">
-              <svg-icon icon="icon-arrow-down" class="arrow-icon"></svg-icon>
-            </label>
-          </ng-container>
-        </h3>
-        <mat-menu #menu="matMenu">
-          <button
-            class="btn-range"
-            (click)="openMenu(page)"
-            mat-menu-item
-            *ngFor="let page of selectedFormDetail?.pages; let index = index"
-          >
-            {{ page?.name }} {{ page.position }}
-          </button>
-        </mat-menu>
-      </div>
-      <div>
-        <app-preview [subFormId]=""></app-preview>
-      </div>
-    </div>
-  </div>
 </div>
 <div *ngIf="isLoading$ | async">
   <div class="ghost-loading mt-5 pt-5">
