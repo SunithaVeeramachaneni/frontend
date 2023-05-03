@@ -24,7 +24,10 @@
     }
   }
 }
-
+.back-arrow-icon {
+  width: 15px;
+  height: 15px;
+}
 .add-details {
   width: 500px;
   height: 90%;
@@ -105,7 +108,4 @@
     border-radius: 0;
     padding: 0px 17px;
   }
-}
-
-.preview-button-in:hover {
 }
