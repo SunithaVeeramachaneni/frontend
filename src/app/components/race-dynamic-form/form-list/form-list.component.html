@@ -41,10 +41,21 @@
         ></button>
         <mat-menu #menu="matMenu" backdropClass="template-list">
           <button mat-menu-item (click)="openCreateFromTemplateModal()">
-            {{ 'createFromTemplate' | translate }}
+            <svg-icon
+              icon="icon-Template-icon"
+              class="add-template-icon"
+            ></svg-icon>
+            <span class="create-template">
+              {{ 'createFromTemplate' | translate }}</span
+            >
           </button>
+
           <button mat-menu-item (click)="openFormCreationModal(null)">
-            {{ 'createNew' | translate }}
+            <svg-icon
+              icon="icon-add-manually"
+              class="add-manually-icon"
+            ></svg-icon>
+            {{ 'createManually' | translate }}
           </button>
         </mat-menu>
       </div>

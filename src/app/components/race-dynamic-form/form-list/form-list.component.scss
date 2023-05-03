@@ -3,7 +3,7 @@
 ::ng-deep .template-list + * .mat-menu-panel {
   position: absolute;
   top: 8px;
-  left: -62px;
+  left: -86px;
   background: $white;
   box-shadow: 3px 3px 5px 0px $box-shadow1;
 }
@@ -109,4 +109,26 @@
     cursor: pointer;
     font-weight: normal;
   }
+}
+
+.add-manually-icon {
+  height: 14px;
+  width: 14px;
+  position: relative;
+  top: 3px;
+  right: 5px;
+}
+
+.add-template-icon {
+  height: 20px;
+  width: 20px;
+  position: relative;
+  top: 7px;
+  right: 7px;
+}
+
+.create-template {
+  position: relative;
+  right: 8px;
+  top: 2px;
 }
