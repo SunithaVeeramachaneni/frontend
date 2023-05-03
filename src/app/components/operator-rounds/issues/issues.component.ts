@@ -50,7 +50,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
-import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-issues',
@@ -268,7 +267,7 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
@@ -357,7 +356,6 @@ export class IssuesComponent implements OnInit {
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
-    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -421,29 +419,30 @@ export class IssuesComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = rows;
+          this.initial.data = this.formatIssues(rows);
         } else {
-          this.initial.data = this.initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(
+            this.formatIssues(scrollData)
+          );
         }
-        const issues = this.initial.data?.map((issue) => {
-          if (issue.assignedTo !== null) {
-            const assignee = issue.assignedTo.split(',');
-            const firstAssignee = assignee[0]
-              ? this.userService.getUserFullName(assignee[0])
-              : '';
-            const formattedAssignee =
-              assignee?.length === 1
-                ? firstAssignee
-                : `${firstAssignee} + ${assignee.length - 1} more`;
-            issue = { ...issue, assignedTo: formattedAssignee };
-            return issue;
-          }
-        });
-        this.skip = issues.length;
-        this.dataSource = new MatTableDataSource(issues);
-        return issues;
+        this.skip = this.initial.data.length;
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
+  }
+
+  formatIssues(issues) {
+    return issues.map((issue) => {
+      const { assignedTo } = issue;
+      return {
+        ...issue,
+        assignedToDisplay:
+          assignedTo !== null
+            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
+            : assignedTo
+      };
+    });
   }
 
   getIssuesList() {
@@ -506,7 +505,10 @@ export class IssuesComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: {
+        ...row,
+        users$: this.users$
+      },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -517,7 +519,8 @@ export class IssuesComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {
-        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        const { id, status, priority, dueDate, assignedToDisplay, assignedTo } =
+          resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
@@ -525,6 +528,7 @@ export class IssuesComponent implements OnInit {
               status,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              assignedToDisplay,
               assignedTo
             };
           }
