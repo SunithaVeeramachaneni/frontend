@@ -364,7 +364,6 @@ export class RaceDynamicFormService {
         formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
-        flatHierarchy: JSON.stringify([]),
         counter: formDetails.counter,
         version: formDetails.authoredFormDetailVersion.toString()
       }
@@ -381,7 +380,6 @@ export class RaceDynamicFormService {
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration,
-        flatHierarchy: JSON.stringify([]),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
         version: formDetails.authoredFormDetailDynamoDBVersion,
