@@ -74,5 +74,13 @@
   "createResponses": "Create Responses",
   "editResponses": "Edit Responses",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "masterDataDetails": "Masterdata Details",
+  "eg.": "eg. Work Center",
+  "tableName": "Table Name",
+  "tableColumn": "Table Column",
+  "typeQuestion": "Type Column name eg.Work Center",
+  "title": "Title",
+  "temporaryId": "Temporary ID *",
+  "editTableColumn": "Edit Table Column"
 }

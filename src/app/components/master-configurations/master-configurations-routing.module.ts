@@ -8,6 +8,8 @@ import { MasterConfigurationsContainerComponent } from './master-configurations-
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 import { LocationsListComponent } from './locations/locations-list/locations-list.component';
+import { AddDetailsComponent } from './mdm-table/add-details/add-details.component';
+import { ViewDetailsComponent } from './mdm-table/view-details/view-details.component';
 const routes: Routes = [
   {
     path: '',
@@ -53,6 +55,23 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Global Response Set' },
           permissions: [permissions.viewGlobalResponses]
+        }
+      },
+      {
+        path: 'create-more',
+        component: AddDetailsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Create More' },
+          permissions: [permissions.viewLocations]
+        }
+      },
+      {
+        path: ':tableUID',
+        component: ViewDetailsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          permissions: [permissions.viewLocations]
         }
       }
     ]

@@ -1,0 +1,127 @@
+<div class="mdm-table-list-view">
+  <ng-container>
+    <div class="main-container">
+      <div class="mdm-table-header">
+        <div>
+          <h2 class="heading">{{ tableHeader?.tableName }}</h2>
+        </div>
+        <div>
+          <!-- ---------------------------------------------------------------------------------------------- -->
+          <!-- <span
+            class="no-of-asset"
+            *ngIf="assetsListCount$ | async as totalCount"
+          >
+            <span class="asset-count">
+              {{ totalCount }}
+            </span>
+            <span class="asset-text">{{
+              'assets'
+                | translate
+                  : {
+                      count: totalCount || 0
+                    }
+            }}</span>
+          </span> -->
+          <!-- code start from here ---------------------------------------------------------------------------->
+          <span class="custom-form-field-gray-color search">
+            <mat-form-field appearance="outline">
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'search' | translate"
+                autocomplete="off"
+              />
+              <svg-icon
+                matSuffix
+                cdkOverlayOrigin
+                class="common-filter-icon"
+                alt="Open Filter"
+                #trigger="cdkOverlayOrigin"
+                (click)="isPopoverOpen = !isPopoverOpen"
+                icon="icon-filterIcon"
+                class="filter-icon"
+              ></svg-icon>
+            </mat-form-field>
+          </span>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="createMenu"
+            translate="createNew"
+            class="create-new-btn"
+          ></button>
+          <mat-menu #createMenu="matMenu">
+            <button mat-menu-item class="menu-buttons">
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+              <span translate="uploadExcel"></span>
+            </button>
+            <button mat-menu-item class="menu-buttons" (click)="addManually()">
+              <svg-icon
+                icon="icon-add-manually"
+                class="add-manually-icon"
+              ></svg-icon>
+              <span translate="addManually"></span>
+            </button>
+          </mat-menu>
+
+          <button
+            mat-raised-button
+            [matMenuTriggerFor]="moreMenu"
+            class="more-btn"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item class="menu-buttons">
+              <svg-icon icon="icon-excel1" class="menu-icons"></svg-icon>
+              <span translate="downloadTemplate"></span>
+            </button>
+            <button mat-menu-item class="menu-buttons">
+              <svg-icon icon="icon-edit-icon" class="menu-icons"></svg-icon>
+              <span translate="editTableColumn"></span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+
+      <!-- <div *ngIf="(mdmTableItems$ | async) && (isLoading$ | async) === false"> -->
+      <cwp-dynamictable
+        *ngIf="columns.length !== 0"
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        class="width-100"
+      ></cwp-dynamictable>
+      <!-- </div> -->
+      <!-- <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
+      </div> -->
+    </div>
+
+    <!-- code ends here ---------------------------------------------------------------------------->
+
+    <ng-container *ngIf="assetsAddOrEditOpenState">
+      <app-add-edit-mdm
+        [@slideInOut]="assetsAddOrEditOpenState"
+        (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
+      ></app-add-edit-mdm>
+    </ng-container>
+
+    <!-- <ng-container *ngIf="openAssetsDetailedView">
+      <app-mdm-detail-view
+        [@slideInOut]="openAssetsDetailedView"
+        (slideInOut)="onCloseAssetsDetailedView($event)"
+      ></app-mdm-detail-view>
+    </ng-container> -->
+
+    <!-- ---------------------------------------------------------------------------------- -->
+  </ng-container>
+</div>

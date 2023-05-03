@@ -49,6 +49,14 @@ import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detai
 import { PlantListComponent } from './plants/plant-list/plant-list.component';
 import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
+import { AddDetailsComponent } from './mdm-table/add-details/add-details.component';
+import { ViewDetailsComponent } from './mdm-table/view-details/view-details.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { CreateTableComponent } from './mdm-table/create-table/create-table.component';
+import { PreviewComponent } from './mdm-table/preview/preview.component';
+import { AddEditMdmComponent } from './mdm-table/add-edit-mdm/add-edit-mdm.component';
+import { MdmDetailViewComponent } from './mdm-table/mdm-detail-view/mdm-detail-view.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -74,7 +82,13 @@ export const customTranslateLoader = (http: HttpClient) =>
     PlantDetailViewComponent,
     PlantListComponent,
     UploadResponseModalComponent,
-    ResponsesListComponent
+    ResponsesListComponent,
+    AddDetailsComponent,
+    ViewDetailsComponent,
+    CreateTableComponent,
+    PreviewComponent,
+    AddEditMdmComponent,
+    MdmDetailViewComponent
   ],
   imports: [
     FormsModule,
@@ -111,7 +125,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatRadioModule,
     NgxShimmerLoadingModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatToolbarModule,
+    MatStepperModule
   ],
   exports: [
     MasterConfigurationsContainerComponent,
@@ -121,7 +137,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     LocationDetailViewComponent,
     AddEditLocationComponent,
     AddEditAssetsComponent,
-    AssetsDetailViewComponent
+    AssetsDetailViewComponent,
+    ViewDetailsComponent
   ]
 })
 export class MasterConfigurationsModule {

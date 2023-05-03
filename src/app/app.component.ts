@@ -28,6 +28,8 @@ import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
+import { AppService } from 'src/app/shared/services/app.services';
+import { MdmTableService } from './components/master-configurations/mdm-table/services/mdm-table.service';
 
 const {
   dashboard,
@@ -63,7 +65,8 @@ const {
   plants,
   globalResponse,
   roundPlanArchivedForms,
-  roundPlanObservations
+  roundPlanObservations,
+  createMore
 } = routingUrls;
 
 @Component({
@@ -244,41 +247,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       ],
       disable: false
-    },
-    {
-      title: masterConfiguration.title,
-      url: masterConfiguration.url,
-      imageName: 'master-configuration',
-      showSubMenu: false,
-      permission: masterConfiguration.permission,
-      disable: false,
-      subPages: [
-        {
-          title: plants.title,
-          url: plants.url,
-          permission: plants.permission
-        },
-        {
-          title: locations.title,
-          url: locations.url,
-          permission: locations.permission
-        },
-        {
-          title: assets.title,
-          url: assets.url,
-          permission: assets.permission
-        },
-        {
-          title: unitOfMeasurement.title,
-          url: unitOfMeasurement.url,
-          permission: unitOfMeasurement.permission
-        },
-        {
-          title: globalResponse.title,
-          url: globalResponse.url,
-          permission: globalResponse.permission
-        }
-      ]
     }
   ];
   loggedIn = false;
@@ -317,7 +285,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
     private userIdle: UserIdleService,
-    private sseService: SseService
+    private sseService: SseService,
+    private mdmTableService: MdmTableService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
@@ -430,6 +399,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (Object.keys(userInfo).length) {
           this.registerServerSentEvents(userInfo, ref);
         }
+
+        this.mdmTableService.fetchAllTables$();
+        this.mdmTableService.mdmTables$.subscribe((res) => {
+          console.log(res);
+          this.fetchMasterConfigurations(res);
+        });
       });
 
     this.router.events
@@ -468,6 +443,61 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.displayLoader$ = this.commonService.displayLoader$.pipe(
       tap((display) => (this.displayLoader = display))
     );
+  }
+
+  fetchMasterConfigurations(mdmTables) {
+    const masterConfigMenu = {
+      title: masterConfiguration.title,
+      url: masterConfiguration.url,
+      imageName: 'master-configuration',
+      showSubMenu: false,
+      permission: masterConfiguration.permission,
+      disable: false,
+      subPages: [
+        {
+          title: plants.title,
+          url: plants.url,
+          permission: plants.permission
+        },
+        {
+          title: locations.title,
+          url: locations.url,
+          permission: locations.permission
+        },
+        {
+          title: assets.title,
+          url: assets.url,
+          permission: assets.permission
+        }
+      ]
+    };
+    for (const mdmTable of mdmTables) {
+      masterConfigMenu.subPages.push({
+        title: mdmTable.tableName,
+        url: `/master-configuration/${mdmTable.tableUID}`,
+        permission: masterConfiguration.permission
+      });
+    }
+    masterConfigMenu.subPages.push(
+      {
+        title: unitOfMeasurement.title,
+        url: unitOfMeasurement.url,
+        permission: unitOfMeasurement.permission
+      },
+      {
+        title: globalResponse.title,
+        url: globalResponse.url,
+        permission: globalResponse.permission
+      },
+      {
+        title: createMore.title,
+        url: createMore.url,
+        permission: locations.permission //need to added permission
+      }
+    );
+    if (this.menus[this.menus.length - 1].title === masterConfigMenu.title)
+      this.menus.pop();
+    this.menus.push(masterConfigMenu);
   }
 
   registerServerSentEvents(userInfo, ref) {

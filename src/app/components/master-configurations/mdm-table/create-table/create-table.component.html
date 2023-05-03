@@ -1,0 +1,88 @@
+<div class="table">
+  <form [formGroup]="columnForm" class="add-details">
+    <ng-template matStepLabel>Create Table</ng-template>
+
+    <h2 class="heading" translate="masterDataDetails"></h2>
+
+    <div class="table-name">
+      <h2 class="sub-heading" translate="tableName"></h2>
+
+      <mat-form-field appearance="outline" class="width-100 table-input">
+        <input
+          type="text"
+          name="tableName"
+          matInput
+          [placeholder]="'eg.' | translate"
+        />
+      </mat-form-field>
+
+      <h2 class="tableColumnHeader" translate="tableColumn"></h2>
+
+      <!-- <div>
+          <span class="tableCountHeaderCount"> 1 </span>
+        </div> -->
+
+      <div class="questionContainer">
+        <!-- <app-question class="question"></app-question> -->
+        {{ column }}
+        <div class="dis-flex questions-div">
+          <div class="bottom-border">
+            <div class="width-70">
+              <input
+                #name
+                autocomplete="off"
+                type="text"
+                [placeholder]="'typeQuestion' | translate"
+                class="width-90 question-input"
+              />
+            </div>
+
+            <span class="divider">|</span>
+            <!-- dropdown -->
+
+            <mat-form-field appearance="outline" class="response">
+              <mat-select placeholder="Responses" class="input-select">
+                <mat-option
+                  *ngFor="let response of responses"
+                  [value]="response.value"
+                >
+                  {{ response.viewValue }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="icon">
+            <a (click)="favoriteToggle()" class="favorite-toggle width-20">
+              <span *ngIf="!this.isFav">
+                <svg-icon
+                  icon="icon-favriotes"
+                  class="favorite-icon"
+                ></svg-icon>
+              </span>
+              <span *ngIf="this.isFav">
+                <svg-icon icon="icon-fav-fill" class="favorite-icon"></svg-icon>
+              </span>
+            </a>
+
+            <button class="delete-btn">
+              <svg-icon icon="icon-delete-gray" class="delete-icon"></svg-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="add-new-btn" (click)="addColumn(getColumnCount())">
+      <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
+      <span translate="addMore" class="add-more"></span>
+    </button>
+    <div class="cancel-next">
+      <button mat-button matStepperNext class="button">
+        <span class="button-text">cancel</span>
+      </button>
+      <button mat-button matStepperNext class="button">
+        <span class="button-text">Save & Next</span>
+      </button>
+    </div>
+  </form>
+</div>
