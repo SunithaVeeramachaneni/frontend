@@ -304,5 +304,6 @@
   "assetCreated": "Asset: ",
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
-  "categoryCreated": "Category: "
+  "categoryCreated": "Category: ",
+  "nodeId": "{type} Id: {id}"
 }
