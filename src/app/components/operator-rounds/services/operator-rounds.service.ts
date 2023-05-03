@@ -219,7 +219,9 @@ export class OperatorRoundsService {
       if (filterData.assignedTo) {
         Object.assign(queryParamaters, { assignedTo: filterData.assignedTo });
       }
-      console.log('filterData', filterData);
+      if (filterData.scheduledAt) {
+        Object.assign(queryParams, { scheduledAt: filterData.scheduledAt });
+      }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(

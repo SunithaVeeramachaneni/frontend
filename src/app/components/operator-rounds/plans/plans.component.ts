@@ -367,6 +367,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
+  userObj = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -439,29 +440,35 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfigurations$,
       this.users$
     ]).pipe(
-      map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
-        this.isLoading$.next(false);
-        if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
-            roundPlans.rows,
-            roundPlanScheduleConfigurations
-          );
-        } else {
-          this.initial.data = this.initial.data.concat(
-            this.formatRoundPlans(
-              scrollData.rows,
+      map(
+        ([roundPlans, scrollData, roundPlanScheduleConfigurations, users]) => {
+          this.userObj = users.reduce((acc, cur) => {
+            acc[cur.firstName + ' ' + cur.lastName] = cur.email;
+            return acc;
+          }, {});
+          this.isLoading$.next(false);
+          if (this.skip === 0) {
+            this.initial.data = this.formatRoundPlans(
+              roundPlans.rows,
               roundPlanScheduleConfigurations
-            )
-          );
+            );
+          } else {
+            this.initial.data = this.initial.data.concat(
+              this.formatRoundPlans(
+                scrollData.rows,
+                roundPlanScheduleConfigurations
+              )
+            );
+          }
+          if (this.filter?.schedule?.length > 0) {
+            this.initial.data = this.dataSource?.data?.filter((d) =>
+              this.filter.schedule.includes(d?.schedule)
+            );
+          }
+          this.skip = this.initial.data.length;
+          return this.initial;
         }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
-          );
-        }
-        this.skip = this.initial.data.length;
-        return this.initial;
-      })
+      )
     );
 
     this.filteredRoundPlans$ = combineLatest([
@@ -897,9 +904,13 @@ export class PlansComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value] ?? '';
         this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        if (item.column === 'assignedTo') {
+          this.filter[item.column] = this.userObj[item.value];
+        } else {
+          this.filter[item.column] = item.value;
+        }
       } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        this.filter[item.column] = item.value.toISOString().slice(0, 10);
       }
     }
     if (
