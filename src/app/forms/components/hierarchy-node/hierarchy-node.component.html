@@ -52,9 +52,10 @@
           'nodeId'
             | translate
               : {
-                  type: getCapitalizedValue(masterData.type),
+                  type: masterData.type,
                   id: masterData.nodeId
                 }
+            | titlecase
         }}
       </div>
     </div>

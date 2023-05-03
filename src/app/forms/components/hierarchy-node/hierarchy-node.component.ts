@@ -181,7 +181,4 @@ export class HierarchyNodeComponent implements OnInit {
     if (this.selectedCount > 0 && !this.allSelected) return true;
     return false;
   };
-
-  getCapitalizedValue = (nodeType: string): string =>
-    nodeType.charAt(0).toUpperCase() + nodeType.slice(1);
 }
