@@ -365,7 +365,7 @@ export class IssuesActionsDetailViewComponent
   openPreviewDialog() {
     const slideshowImages = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(this.s3BaseUrl + media.message);
+      slideshowImages.push(`${this.s3BaseUrl}public/${media.message}`);
     });
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
