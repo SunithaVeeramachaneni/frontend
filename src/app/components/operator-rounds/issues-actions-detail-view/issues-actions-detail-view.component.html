@@ -148,8 +148,14 @@
                   <ng-container *ngIf="history.message.ASSIGNEE">
                     <span class="data">
                       <span
+                        *ngIf="history.message.assignmentType === 'add'"
                         class="sub-headings"
                         translate="assigneeAddedTo"
+                      ></span>
+                      <span
+                        *ngIf="history.message.assignmentType === 'remove'"
+                        class="sub-headings"
+                        translate="assigneeRemovedTo"
                       ></span>
                       {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
@@ -343,7 +349,7 @@
         </div>
         <div class="custom-form-field-white-color footer" #footer>
           <mat-form-field appearance="outline" class="width-90 margin">
-            <input type="text" matInput placeholder="Type" />
+            <input type="text" matInput [placeholder]="'type' | translate" />
             <svg-icon
               icon="icon-add-attachment-icon"
               matSuffix
@@ -500,9 +506,9 @@
               <input
                 class="searchable-input"
                 type="text"
-                placeholder="Select Assignee"
+                [placeholder]="'selectAssignee' | translate"
                 matInput
-                formControlName="assignedTo"
+                formControlName="assignedToDisplay"
                 class="cursor"
               />
               <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
@@ -513,6 +519,7 @@
             <app-assign-to
               [assigneeDetails]="assigneeDetails"
               [isMultiple]="true"
+              [assignedTo]="issuesActionsDetailViewForm.get('assignedTo').value"
               (selectedAssignee)="selectedAssigneeHandler($event)"
             ></app-assign-to>
           </mat-menu>

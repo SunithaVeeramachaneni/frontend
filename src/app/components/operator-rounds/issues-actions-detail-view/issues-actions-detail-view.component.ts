@@ -56,12 +56,13 @@ export class IssuesActionsDetailViewComponent
     status: '',
     dueDateDisplayValue: '',
     dueDate: '',
+    assignedToDisplay: '',
     assignedTo: '',
     raisedBy: '',
     attachments: this.fb.array([]),
     message: ''
   });
-  priorities = ['High', 'Medium', 'Low'];
+  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
@@ -97,7 +98,9 @@ export class IssuesActionsDetailViewComponent
 
   ngOnInit(): void {
     const { id, type, users$, dueDate, notificationNumber } = this.data;
-    console.log(this.data);
+    if (type === 'issue') {
+      this.issuesActionsDetailViewForm.get('priority').disable();
+    }
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();
@@ -223,7 +226,10 @@ export class IssuesActionsDetailViewComponent
           issueOrActionDBVersion,
           history: {
             type: 'Object',
-            message: JSON.stringify({ [field.toUpperCase()]: value })
+            message: JSON.stringify({
+              [field.toUpperCase()]: value,
+              assignmentType: checked ? 'add' : 'remove'
+            })
           }
         },
         type
@@ -281,6 +287,11 @@ export class IssuesActionsDetailViewComponent
                   field.FIELDDESC ? `,${assignee}` : `${assignee}`
                 }`;
               }
+              this.issuesActionsDetailViewForm.patchValue({
+                assignedToDisplay: this.observations.formatUsersDisplay(
+                  field.FIELDDESC
+                )
+              });
               this.issuesActionsDetailViewForm.patchValue({
                 assignedTo: field.FIELDDESC
               });
