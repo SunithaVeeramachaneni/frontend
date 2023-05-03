@@ -865,6 +865,8 @@ export class QuestionComponent implements OnInit {
 
   processSelectedMasterData(event) {
     this.questionForm.get('fieldType').setValue('DD');
-    this.questionForm.get('value').setValue(event);
+    this.questionForm
+      .get('value')
+      .setValue({ type: 'masterDataResponse', ...event });
   }
 }

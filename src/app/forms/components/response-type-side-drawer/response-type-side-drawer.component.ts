@@ -261,6 +261,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-     return `icon-${action.toLowerCase()}`;
+    return `icon-${action.toLowerCase()}`;
   }
 }

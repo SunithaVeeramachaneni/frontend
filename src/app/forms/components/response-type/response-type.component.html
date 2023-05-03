@@ -170,15 +170,6 @@
                 [formId]="formId"
               ></app-response-type-side-drawer>
             </div>
-            <div *ngIf="isGlobalResponseOpen">
-              <app-global-response-type-side-drawer
-                [@slideInOut]="globalResponseSlideState"
-                (slideInOut)="handleSlideState($event)"
-                [globalResponseToBeEdited]="responseToBeEdited"
-                [isControlInViewMode]="false"
-                (globalResponseHandler)="handleGlobalResponseChange($event)"
-              ></app-global-response-type-side-drawer>
-            </div>
           </div>
         </mat-tab>
         <mat-tab [label]="'Masterdata' | translate">
@@ -198,4 +189,13 @@
       </mat-tab-group>
     </div>
   </div>
+</div>
+<div *ngIf="isGlobalResponseOpen">
+  <app-global-response-type-side-drawer
+    [@slideInOut]="globalResponseSlideState"
+    (slideInOut)="handleSlideState($event)"
+    [globalResponseToBeEdited]="responseToBeEdited"
+    [isControlInViewMode]="false"
+    (globalResponseHandler)="handleGlobalResponseChange($event)"
+  ></app-global-response-type-side-drawer>
 </div>

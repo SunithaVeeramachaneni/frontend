@@ -5,7 +5,7 @@
     'dis-flex p-t-0':
       questionForm.get('fieldType').value === 'VI' ||
       (questionForm.get('fieldType').value === 'DD' &&
-        !questionForm.get('value').value.label),
+        questionForm.get('value').value.type !== 'masterDataResponse'),
     border: title === 'table response type'
   }"
 >
@@ -13,7 +13,7 @@
     *ngIf="
       questionForm.get('fieldType').value === 'VI' ||
         (questionForm.get('fieldType').value === 'DD' &&
-          !questionForm.get('value').value.label);
+          questionForm.get('value').value.type !== 'masterDataResponse');
       else nonMCQFields
     "
     class="chip-list"
@@ -98,7 +98,7 @@
     <div
       *ngIf="
         questionForm.get('fieldType').value === 'DD' &&
-        questionForm.get('value').value.label
+        questionForm.get('value').value.type === 'masterDataResponse'
       "
     >
       <span>

@@ -153,7 +153,7 @@ export class ResponseTypeComponent implements OnInit {
     if (fieldType.type === 'RT') {
       this.formService.setsliderOpenState(true);
     }
-    this.responseTypeCloseEvent.emit(true);
+    this.responseTypeCloseEvent.emit({ closeResponseModal: true });
   }
 
   handleMCQRepsonseSelection = (responseType, response) => {
@@ -195,7 +195,7 @@ export class ResponseTypeComponent implements OnInit {
         isOpen: true,
         response
       });
-      this.responseTypeCloseEvent.emit(true);
+      this.responseTypeCloseEvent.emit({ closeResponseModal: true });
     }
   }
 
