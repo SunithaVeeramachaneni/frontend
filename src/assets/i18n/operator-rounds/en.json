@@ -292,6 +292,7 @@
   "issueStatusUpdated": "Issue Status Updated to: ",
   "actionStatusUpdated": "Action Status Updated to: ",
   "assigneeAddedTo": "'Assigned to' Added: ",
+  "assigneeRemovedTo": "'Assigned to' Removed: ",
   "erpNotif": "ERP Notification Updated to: ",
   "priorityUpdated": "Priority Updated to: ",
   "dueDateUpdated": "DueDate Updated to: ",
@@ -305,5 +306,6 @@
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
-  "nodeId": "{type} Id: {id}"
+  "nodeId": "{type} Id: {id}",
+  "typePlaceholder": "Type"
 }
