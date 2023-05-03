@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserDetails } from 'src/app/interfaces';
 import { UsersService } from '../../user-management/services/users.service';
@@ -96,7 +101,8 @@ export class ObservationsComponent implements OnInit {
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private userService: UsersService,
     private headerService: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -194,6 +200,7 @@ export class ObservationsComponent implements OnInit {
             }
           };
         }
+        this.cdrf.markForCheck();
       });
   }
 }
