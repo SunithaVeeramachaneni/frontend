@@ -78,4 +78,8 @@ export class CreateTableComponent implements OnInit {
   get columns(): FormArray {
     return this.columnForm.get('columns') as FormArray;
   }
+  deleteColumn = (idx: number) => {
+    this.columns.removeAt(idx);
+    this.columnForm.markAsDirty();
+  };
 }
