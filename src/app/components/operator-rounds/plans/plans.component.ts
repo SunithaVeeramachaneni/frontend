@@ -438,37 +438,38 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
-      this.users$
-    ]).pipe(
-      map(
-        ([roundPlans, scrollData, roundPlanScheduleConfigurations, users]) => {
-          this.userObj = users.reduce((acc, cur) => {
+      this.users$.pipe(
+        tap((data) => {
+          this.userObj = data.reduce((acc, cur) => {
             acc[cur.firstName + ' ' + cur.lastName] = cur.email;
             return acc;
           }, {});
-          this.isLoading$.next(false);
-          if (this.skip === 0) {
-            this.initial.data = this.formatRoundPlans(
-              roundPlans.rows,
-              roundPlanScheduleConfigurations
-            );
-          } else {
-            this.initial.data = this.initial.data.concat(
-              this.formatRoundPlans(
-                scrollData.rows,
-                roundPlanScheduleConfigurations
-              )
-            );
-          }
-          if (this.filter?.schedule?.length > 0) {
-            this.initial.data = this.dataSource?.data?.filter((d) =>
-              this.filter.schedule.includes(d?.schedule)
-            );
-          }
-          this.skip = this.initial.data.length;
-          return this.initial;
-        }
+        })
       )
+    ]).pipe(
+      map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
+        this.isLoading$.next(false);
+        if (this.skip === 0) {
+          this.initial.data = this.formatRoundPlans(
+            roundPlans.rows,
+            roundPlanScheduleConfigurations
+          );
+        } else {
+          this.initial.data = this.initial.data.concat(
+            this.formatRoundPlans(
+              scrollData.rows,
+              roundPlanScheduleConfigurations
+            )
+          );
+        }
+        if (this.filter?.schedule?.length > 0) {
+          this.initial.data = this.dataSource?.data?.filter((d) =>
+            this.filter.schedule.includes(d?.schedule)
+          );
+        }
+        this.skip = this.initial.data.length;
+        return this.initial;
+      })
     );
 
     this.filteredRoundPlans$ = combineLatest([
