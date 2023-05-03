@@ -1,5 +1,9 @@
 <div class="table">
-  <form [formGroup]="columnForm" class="add-details">
+  <form
+    [formGroup]="masterConfiguration"
+    (ngSubmit)="onSubmit()"
+    class="add-details"
+  >
     <ng-template matStepLabel>Create Table</ng-template>
 
     <h2 class="heading" translate="masterDataDetails"></h2>
@@ -13,74 +17,96 @@
           name="tableName"
           matInput
           [placeholder]="'eg.' | translate"
+          formControlName="tableName"
         />
       </mat-form-field>
 
-      <h2 class="tableColumnHeader" translate="tableColumn"></h2>
+      <h2 class="tableColumnHeader">
+        <span translate="tableColumns"></span> ({{ columnCount }})
+      </h2>
 
       <!-- <div>
           <span class="tableCountHeaderCount"> 1 </span>
         </div> -->
 
-      <div class="questionContainer">
-        <!-- <app-question class="question"></app-question> -->
-        {{ column }}
-        <div class="dis-flex questions-div">
-          <div class="bottom-border">
-            <div class="width-70">
-              <input
-                #name
-                autocomplete="off"
-                type="text"
-                [placeholder]="'typeQuestion' | translate"
-                class="width-90 question-input"
-              />
+      <div formArrayName="columns">
+        <div
+          *ngFor="let column of columns.controls; let i = index"
+          [formGroupName]="i"
+          class="questionContainer"
+        >
+          <!-- {{ column | json }} -->
+          <!-- <app-question class="question"></app-question> -->
+          <div class="dis-flex questions-div">
+            <div class="bottom-border">
+              <div class="width-70">
+                <input
+                  #name
+                  autocomplete="off"
+                  type="text"
+                  [placeholder]="'typeQuestion' | translate"
+                  class="width-90 question-input"
+                  formControlName="displayName"
+                />
+              </div>
+
+              <span class="divider">|</span>
+              <!-- dropdown -->
+
+              <mat-form-field appearance="outline" class="response">
+                <mat-select placeholder="Responses" class="input-select">
+                  <mat-option
+                    *ngFor="let columnType of columnTypes.all"
+                    [value]="columnType.type"
+                  >
+                    {{ columnType.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
+            <div class="icon">
+              <a (click)="isKeyFieldToggle(i)" class="favorite-toggle width-20">
+                <span>
+                  <svg-icon
+                    icon="{{
+                      masterConfiguration.controls['columns'].controls[i]
+                        .controls.isKeyField
+                        ? 'icon-fav-fill'
+                        : 'icon-fav'
+                    }}"
+                    class="favorite-icon"
+                  ></svg-icon>
+                </span>
+                <!-- <span *ngIf="column.isKeyField">
+                  <svg-icon
+                    icon="icon-fav-fill"
+                    class="favorite-icon"
+                    formControlName="isKeyField"
+                  ></svg-icon>
+                </span> -->
+              </a>
 
-            <span class="divider">|</span>
-            <!-- dropdown -->
-
-            <mat-form-field appearance="outline" class="response">
-              <mat-select placeholder="Responses" class="input-select">
-                <mat-option
-                  *ngFor="let response of responses"
-                  [value]="response.value"
-                >
-                  {{ response.viewValue }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-          <div class="icon">
-            <a (click)="favoriteToggle()" class="favorite-toggle width-20">
-              <span *ngIf="!this.isFav">
+              <button (click)="removeColumn(i)" class="delete-btn">
                 <svg-icon
-                  icon="icon-favriotes"
-                  class="favorite-icon"
+                  icon="icon-delete-gray"
+                  class="delete-icon"
                 ></svg-icon>
-              </span>
-              <span *ngIf="this.isFav">
-                <svg-icon icon="icon-fav-fill" class="favorite-icon"></svg-icon>
-              </span>
-            </a>
-
-            <button class="delete-btn">
-              <svg-icon icon="icon-delete-gray" class="delete-icon"></svg-icon>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <button class="add-new-btn" (click)="addColumn(getColumnCount())">
+    <button class="add-new-btn" (click)="addColumn()">
       <svg-icon icon="icon-add-more" class="add-more-icon"></svg-icon>
       <span translate="addMore" class="add-more"></span>
     </button>
     <div class="cancel-next">
       <button mat-button matStepperNext class="button">
-        <span class="button-text">cancel</span>
+        <span class="button-text" (click)="cancel()">cancel</span>
       </button>
-      <button mat-button matStepperNext class="button">
+      <button type="submit" mat-button matStepperNext class="button">
         <span class="button-text">Save & Next</span>
       </button>
     </div>

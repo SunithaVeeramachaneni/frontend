@@ -278,7 +278,7 @@ export const routingUrls = {
   createMore: {
     url: '/master-configuration/create-more',
     title: 'Create More',
-    permission: permissions.viewLocations //need to set permissions
+    permission: permissions.viewGlobalResponses //need to set permissions
   }
 };
 export const formConfigurationStatus = Object.freeze({

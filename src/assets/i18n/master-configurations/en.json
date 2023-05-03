@@ -78,7 +78,7 @@
   "masterDataDetails": "Masterdata Details",
   "eg.": "eg. Work Center",
   "tableName": "Table Name",
-  "tableColumn": "Table Column",
+  "tableColumns": "Table Columns",
   "typeQuestion": "Type Column name eg.Work Center",
   "title": "Title",
   "temporaryId": "Temporary ID *",
