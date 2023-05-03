@@ -158,6 +158,18 @@ export class RoundPlanObservationsService {
     });
   }
 
+  createNotification(
+    issue,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `issue/notification`,
+      issue,
+      info
+    );
+  }
+
   closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
     this.sseService.closeEventSource();
   }
