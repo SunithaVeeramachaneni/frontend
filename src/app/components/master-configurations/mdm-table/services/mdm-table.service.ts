@@ -19,6 +19,7 @@ export class MdmTableService {
         'masterconfigapi/masterdata/list'
       )
       .subscribe((res) => {
+        console.log('All Tables: ', res);
         this.mdmTables$.next(res.items);
       });
   };

@@ -3,7 +3,8 @@ import {
   OnInit,
   ViewChildren,
   QueryList,
-  ElementRef
+  ElementRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import {
@@ -21,7 +22,8 @@ interface Response {
 @Component({
   selector: 'app-create-table',
   templateUrl: './create-table.component.html',
-  styleUrls: ['./create-table.component.scss']
+  styleUrls: ['./create-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTableComponent implements OnInit {
   @ViewChildren('columnInfo')
@@ -59,10 +61,12 @@ export class CreateTableComponent implements OnInit {
   addColumn(index: number) {
     this.columns.push(
       this.fb.group({
-        columnName: [''],
-        responseType: ['']
+        columnName: ['asdf'],
+        responseType: ['adf']
       })
     );
+
+    console.log('Add Column: ', this.columns);
 
     timer(0).subscribe(() =>
       this.columnInfo.toArray()[index]?.nativeElement.focus()

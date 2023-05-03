@@ -57,26 +57,28 @@ export class MasterConfigurationsContainerComponent implements OnInit {
 
     // create item in table by tableid
     // this.mdmTableService
-    //   .createTableItem$('53d4aa3d-131f-4bf8-9cb7-3ef0ca4ce364', {
+    //   .createTableItem$('37bcf0bd-d3d3-4584-820c-66dca67e8a0a', {
     //     // eslint-disable-next-line @typescript-eslint/naming-convention
-    //     WorkCenterID: 'test1',
+    //     WorkCenterID: 'work center test 2',
     //     // eslint-disable-next-line @typescript-eslint/naming-convention
-    //     WorkCenterTitle: 'Test 1'
+    //     WorkCenterTitle: 'work center test 2'
     //   })
     //   .subscribe((res) => console.log(res));
 
     // get all tables list
-    // this.mdmTableService.fetchAllTables$().subscribe((res) => console.log(res));
+    // this.mdmTableService
+    //   .fetchAllTables$()
+    //   .subscribe((res) => console.log('Get All Tables: ', res));
 
     // get mdm table list by table id
-    // MDMTable1
-    // this.mdmTableService
-    //   .fetchTablesList$('53d4aa3d-131f-4bf8-9cb7-3ef0ca4ce364')
-    //   .subscribe((res) => console.log(res));
+    // MDMTable1;
+    this.mdmTableService
+      .fetchTablesList$('9fb0f1ff-fcef-4f71-a439-d243ccee6c77')
+      .subscribe((res) => console.log('Equipment Table List: ', res));
     // MDMTable2
-    // this.mdmTableService
-    //   .fetchTablesList$('56917876-7958-4826-8efa-b27359ec9f59')
-    //   .subscribe((res) => console.log(res));
+    this.mdmTableService
+      .fetchTablesList$('37bcf0bd-d3d3-4584-820c-66dca67e8a0a')
+      .subscribe((res) => console.log('Work Center Table List: ', res));
     // get mdm table list item by table id and item id
     // MDMTable 1
     // this.mdmTableService
@@ -96,15 +98,15 @@ export class MasterConfigurationsContainerComponent implements OnInit {
     // create new masterdata
     // this.mdmTableService
     //   .createTable$({
-    //     tableName: 'New Table',
+    //     tableName: 'Equipment',
     //     columns: [
     //       {
-    //         displayName: 'Column ID',
+    //         displayName: 'Equipment ID',
     //         columnType: 'ID',
     //         isKeyField: true
     //       },
     //       {
-    //         displayName: 'Column Title',
+    //         displayName: 'Equipment Title',
     //         columnType: 'String',
     //         isKeyField: false
     //       }

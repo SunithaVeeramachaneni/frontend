@@ -1,5 +1,5 @@
 <div class="table">
-  <form class="add-details">
+  <form [formGroup]="columnForm" class="add-details">
     <ng-template matStepLabel>Create Table</ng-template>
 
     <h2 class="heading" translate="masterDataDetails"></h2>
@@ -22,9 +22,9 @@
           <span class="tableCountHeaderCount"> 1 </span>
         </div> -->
 
-      <div class="questionContainer">
+      <div *ngFor="let column of columns" class="questionContainer">
         <!-- <app-question class="question"></app-question> -->
-
+        {{ column }}
         <div class="dis-flex questions-div">
           <div class="bottom-border">
             <div class="width-70">

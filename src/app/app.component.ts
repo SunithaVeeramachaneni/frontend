@@ -402,6 +402,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
         this.mdmTableService.fetchAllTables$();
         this.mdmTableService.mdmTables$.subscribe((res) => {
+          console.log(res);
           this.fetchMasterConfigurations(res);
         });
       });

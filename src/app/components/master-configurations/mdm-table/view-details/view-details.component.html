@@ -85,11 +85,14 @@
         </div>
       </div>
 
+      <!-- <div *ngIf="(mdmTableItems$ | async) && (isLoading$ | async) === false"> -->
       <cwp-dynamictable
         *ngIf="columns.length !== 0"
         [dataSource]="dataSource"
         [configOptions]="configOptions"
+        class="width-100"
       ></cwp-dynamictable>
+      <!-- </div> -->
       <!-- <div *ngIf="(locations$ | async) && (isLoading$ | async) === false">
         <cwp-dynamictable
           [dataSource]="dataSource"

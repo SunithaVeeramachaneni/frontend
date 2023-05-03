@@ -26,6 +26,8 @@ export class ViewDetailsComponent implements OnInit {
   isPopoverOpen = false;
   tableHeader;
 
+  mdmTableItems$: Observable<any>;
+  allMdmTableItems$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   columns: Column[] = [];
 
@@ -108,9 +110,21 @@ export class ViewDetailsComponent implements OnInit {
                     hasPostTextImage: false
                   });
                 }
-                this.configOptions.allColumns = this.columns;
+                this.configOptions = {
+                  ...this.configOptions,
+                  allColumns: this.columns,
+                  tableHeight: 'calc(100vh - 140px)'
+                };
+                console.log('Config Options: ', this.configOptions);
                 this.dataSource = new MatTableDataSource([]);
               });
+            this.allMdmTableItems$ = this.mdmTableService.fetchTablesList$(
+              mdmTable.id
+            );
+            this.allMdmTableItems$.subscribe((res) => {
+              console.log('Table Items: ', res);
+              this.dataSource = new MatTableDataSource(res.items);
+            });
             break;
           }
         }
