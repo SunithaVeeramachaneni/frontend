@@ -1,5 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -249,7 +254,8 @@ export class AssetsListComponent implements OnInit {
     private loginService: LoginService,
     private dialog: MatDialog,
     private headerService: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -362,8 +368,9 @@ export class AssetsListComponent implements OnInit {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
             };
-            initial.data = rows;
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
           } else if (this.addEditCopyDeleteAssets) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
             switch (action) {
               case 'delete':
                 initial.data = initial.data.filter((d) => d.id !== form.id);
@@ -373,60 +380,27 @@ export class AssetsListComponent implements OnInit {
                 });
                 break;
               case 'add':
-                initial.data = [form, ...initial.data];
+                initial.data = [newForm, ...initial.data];
                 break;
               case 'edit':
-                initial.data = [
-                  form,
-                  ...initial.data.filter((item) => item.id !== form.id)
-                ];
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
                 break;
               default:
               //Do nothing
             }
             this.addEditCopyDeleteAssets = false;
           } else {
-            initial.data = initial.data.concat(scrollData);
-          }
-          for (const item of initial.data) {
-            const plantInfo = allPlants.find(
-              (plant) => plant.id === item.plantsID
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
             );
-
-            if (plantInfo) {
-              Object.assign(item, {
-                plant: plantInfo.name,
-                plantSubId: plantInfo.plantId
-              });
-            }
-
-            if (item.parentType.toLowerCase() === 'location') {
-              const parent = this.allParentsLocations.find(
-                (d) => d.id === item.parentId
-              );
-              if (parent) {
-                item.parent = parent.name;
-                item.parentSubId = parent.locationId;
-              } else {
-                item.parent = '';
-                item.parentSubId = '';
-              }
-            } else {
-              const parent = this.allParentsAssets.find(
-                (d) => d.id === item.parentId
-              );
-              if (parent) {
-                item.parent = parent.name;
-                item.parentSubId = parent.assetsId;
-              } else {
-                item.parent = '';
-                item.parentSubId = '';
-              }
-            }
           }
           this.skip = initial.data.length;
           this.assetsListCount$ = this.assetService.getAssetCount$();
           this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
           return initial;
         }
       )
@@ -673,4 +647,34 @@ export class AssetsListComponent implements OnInit {
     };
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantSubId: plantInfo.plantId
+        });
+      }
+
+      if (data.parentType) {
+        const isParentLocation = data.parentType.toLowerCase() === 'location';
+        const parent = (
+          isParentLocation ? this.allParentsLocations : this.allParentsAssets
+        ).find((item) => item.id === data.parentId);
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentSubId: isParentLocation ? parent.locationId : parent.assetsId
+          });
+        } else Object.assign(data, { parent: '', parentSubId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
 }

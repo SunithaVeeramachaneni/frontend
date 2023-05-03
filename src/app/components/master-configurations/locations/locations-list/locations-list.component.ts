@@ -386,8 +386,9 @@ export class LocationsListComponent implements OnInit {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
             };
-            initial.data = rows;
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
           } else if (this.addEditCopyDeleteLocations) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
             switch (action) {
               case 'delete':
                 initial.data = initial.data.filter((d) => d.id !== form.id);
@@ -397,47 +398,26 @@ export class LocationsListComponent implements OnInit {
                 });
                 break;
               case 'add':
-                initial.data = [form, ...initial.data];
+                initial.data = [newForm, ...initial.data];
                 break;
               case 'edit':
-                initial.data = [
-                  form,
-                  ...initial.data.filter((item) => item.id !== form.id)
-                ];
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
                 break;
               default:
               //Do nothing
             }
             this.addEditCopyDeleteLocations = false;
           } else {
-            initial.data = initial.data.concat(scrollData);
-          }
-          for (const item of initial.data) {
-            const plantInfo = allPlants.find(
-              (plant) => plant.id === item.plantsID
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
             );
-
-            if (plantInfo) {
-              Object.assign(item, {
-                plant: plantInfo.name,
-                plantId: plantInfo.plantId
-              });
-            }
-
-            if (item.parentId) {
-              const parent = this.allParentsLocations.find(
-                (d) => d.id === item.parentId
-              );
-              if (parent) {
-                item.parent = parent.name;
-                item.parentID = parent.locationId;
-              } else {
-                item.parent = '';
-              }
-            }
           }
           this.skip = initial.data.length;
           this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
           return initial;
         }
       )
@@ -684,4 +664,32 @@ export class LocationsListComponent implements OnInit {
     const file = event.target as HTMLInputElement;
     file.value = '';
   }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantId: plantInfo.plantId
+        });
+      }
+      if (data.parentId) {
+        const parent = this.allParentsLocations.find(
+          (d) => d.id === data.parentId
+        );
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentID: parent.locationId
+          });
+        } else Object.assign(data, { parent: '', parendId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
 }
