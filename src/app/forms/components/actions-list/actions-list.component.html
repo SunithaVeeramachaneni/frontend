@@ -1,0 +1,52 @@
+<div *ngIf="userInfo$ | async" class="actions-list">
+  <span class="custom-form-field-gray-color">
+    <span class="no-of-actions" *ngIf="actionsCount$ | async as totalCount">
+      <span class="actions-count">
+        {{ totalCount | count }}
+      </span>
+      <span class="actions-text">{{
+        'actions'
+          | translate
+            : {
+                count: totalCount || 0
+              }
+      }}</span>
+    </span>
+    <mat-form-field appearance="outline" class="actions-search">
+      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="'search' | translate"
+        autocomplete="off"
+        [formControl]="searchAction"
+      />
+
+      <svg-icon
+        icon="icon-filterIcon"
+        matSuffix
+        class="common-filter-icon"
+      ></svg-icon>
+    </mat-form-field>
+  </span>
+
+  <div *ngIf="(actions$ | async) && (isLoading$ | async) === false">
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+
+  <div *ngIf="isLoading$ | async">
+    <div class="padding-lr-20">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</div>
