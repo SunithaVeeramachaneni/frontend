@@ -34,6 +34,7 @@ import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { Router } from '@angular/router';
+import { ToastService } from 'src/app/shared/toast';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -61,6 +62,7 @@ export class IssuesActionsDetailViewComponent
     description: '',
     category: '',
     round: '',
+    plant: '',
     location: '',
     asset: '',
     task: '',
@@ -68,12 +70,13 @@ export class IssuesActionsDetailViewComponent
     status: '',
     dueDateDisplayValue: '',
     dueDate: '',
+    assignedToDisplay: '',
     assignedTo: '',
     raisedBy: '',
     attachments: this.fb.array([]),
     message: ''
   });
-  priorities = ['High', 'Medium', 'Low'];
+  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
@@ -88,6 +91,7 @@ export class IssuesActionsDetailViewComponent
   chatPanelHeight;
   isPreviousEnabled = false;
   ghostLoading = new Array(17).fill(0).map((_, i) => i);
+  placeholder = '_ _';
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$ = null;
@@ -102,7 +106,8 @@ export class IssuesActionsDetailViewComponent
     private tenantService: TenantService,
     private dialog: MatDialog,
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   getAttachmentsList() {
@@ -256,7 +261,10 @@ export class IssuesActionsDetailViewComponent
           issueOrActionDBVersion,
           history: {
             type: 'Object',
-            message: JSON.stringify({ [field.toUpperCase()]: value })
+            message: JSON.stringify({
+              [field.toUpperCase()]: value,
+              assignmentType: checked ? 'add' : 'remove'
+            })
           }
         },
         type
@@ -315,6 +323,11 @@ export class IssuesActionsDetailViewComponent
                 }`;
               }
               this.issuesActionsDetailViewForm.patchValue({
+                assignedToDisplay: this.observations.formatUsersDisplay(
+                  field.FIELDDESC
+                )
+              });
+              this.issuesActionsDetailViewForm.patchValue({
                 assignedTo: field.FIELDDESC
               });
             }
@@ -323,6 +336,22 @@ export class IssuesActionsDetailViewComponent
       });
     });
     return JSON.stringify(data);
+  }
+
+  createNotification() {
+    if (this.data.category !== this.placeholder) {
+      this.observations.createNotification(this.data).subscribe((value) => {
+        if (Object.keys(value).length) {
+          const { notificationNumber } = value;
+          this.data.notificationNumber = notificationNumber;
+        }
+      });
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Category is mandatory for notification creation'
+      });
+    }
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
@@ -371,7 +400,7 @@ export class IssuesActionsDetailViewComponent
   openPreviewDialog() {
     const slideshowImages = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(this.s3BaseUrl + media.message);
+      slideshowImages.push(`${this.s3BaseUrl}public/${media.message}`);
     });
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
@@ -482,7 +511,12 @@ export class IssuesActionsDetailViewComponent
   }
 
   private init(logEventSource = true): void {
-    const { id, type, dueDate } = this.data;
+    const { id, type, dueDate, notificationNumber } = this.data;
+    if (type === 'issue') {
+      this.issuesActionsDetailViewForm.get('priority').disable();
+    }
+    this.data.notificationNumber =
+      notificationNumber !== this.placeholder ? notificationNumber : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',
