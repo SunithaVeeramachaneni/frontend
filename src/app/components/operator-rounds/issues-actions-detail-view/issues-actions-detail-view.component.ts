@@ -100,12 +100,9 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { users$, totalCount$, allData, type } = this.data;
+    const { users$, totalCount$, allData } = this.data;
     this.allData = allData;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
-    if (type === 'issue') {
-      this.issuesActionsDetailViewForm.get('priority').disable();
-    }
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();
@@ -457,6 +454,9 @@ export class IssuesActionsDetailViewComponent
 
   private init(logEventSource = true): void {
     const { id, type, dueDate, notificationNumber } = this.data;
+    if (type === 'issue') {
+      this.issuesActionsDetailViewForm.get('priority').disable();
+    }
     this.data.notificationNumber =
       notificationNumber !== this.placeholder ? notificationNumber : '';
     this.issuesActionsDetailViewForm.patchValue({
