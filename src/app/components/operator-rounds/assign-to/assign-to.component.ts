@@ -41,6 +41,7 @@ export class AssignToComponent implements OnInit {
 
   @Input() dropdownPosition;
   @Input() isMultiple = false;
+  @Input() assignedTo: string;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
@@ -72,5 +73,9 @@ export class AssignToComponent implements OnInit {
     { checked }: MatCheckboxChange = {} as MatCheckboxChange
   ) {
     this.selectedAssignee.emit({ user, checked });
+  }
+
+  isAssigneeSelected(email: string) {
+    return this.assignedTo.indexOf(email) !== -1;
   }
 }
