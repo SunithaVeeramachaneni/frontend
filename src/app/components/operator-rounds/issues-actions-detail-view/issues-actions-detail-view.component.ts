@@ -5,7 +5,9 @@ import {
   OnDestroy,
   ElementRef,
   ViewChild,
-  DoCheck
+  DoCheck,
+  Directive,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -15,7 +17,7 @@ import {
   MatDialog
 } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
@@ -33,6 +35,16 @@ import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { Router } from '@angular/router';
 
+@Directive({
+  selector: '[appScrollToBottom]'
+})
+export class ScrollToBottomDirective {
+  constructor(private el: ElementRef) {}
+  public scrollToBottom() {
+    const el: HTMLDivElement = this.el.nativeElement;
+    el.scrollTop = Math.max(0, el.scrollHeight - el.offsetHeight);
+  }
+}
 @Component({
   selector: 'app-issues-actions-detail-view',
   templateUrl: './issues-actions-detail-view.component.html',
@@ -41,6 +53,8 @@ import { Router } from '@angular/router';
 export class IssuesActionsDetailViewComponent
   implements OnInit, OnDestroy, DoCheck
 {
+  @ViewChild(ScrollToBottomDirective)
+  scroll: ScrollToBottomDirective;
   @ViewChild('footer') footer: ElementRef;
   issuesActionsDetailViewForm: FormGroup = this.fb.group({
     title: '',
@@ -76,6 +90,7 @@ export class IssuesActionsDetailViewComponent
   ghostLoading = new Array(17).fill(0).map((_, i) => i);
   private totalCount = 0;
   private allData = [];
+  private amplifySubscription$ = null;
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsDetailViewComponent>,
@@ -86,7 +101,8 @@ export class IssuesActionsDetailViewComponent
     private sanitizer: DomSanitizer,
     private tenantService: TenantService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   getAttachmentsList() {
@@ -107,11 +123,52 @@ export class IssuesActionsDetailViewComponent
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
     this.init();
+
+    this.amplifySubscription$ = this.observations
+      .onCreateIssueActionList$({
+        issueslistID: {
+          eq: this.data.id
+        }
+      })
+      ?.subscribe({
+        next: ({
+          _,
+          value: {
+            data: { onCreateIssuesLogHistory }
+          }
+        }) => {
+          if (onCreateIssuesLogHistory) {
+            this.logHistory = [
+              ...this.logHistory,
+              {
+                ...onCreateIssuesLogHistory,
+                createdAt: format(
+                  new Date(onCreateIssuesLogHistory?.createdAt),
+                  'dd MMM yyyy, hh:mm a'
+                ),
+                message:
+                  onCreateIssuesLogHistory.type === 'Object'
+                    ? JSON.parse(onCreateIssuesLogHistory?.message)
+                    : onCreateIssuesLogHistory?.message
+              }
+            ];
+            this.filteredMediaType = this.logHistory.filter(
+              (history) => history?.type === 'Media'
+            );
+            this.logHistory$ = of({
+              nextToken: null,
+              rows: this.logHistory
+            });
+          }
+        },
+        error: (error) => console.warn(error)
+      });
   }
 
   ngDoCheck() {
     const height = this.footer?.nativeElement.offsetHeight;
     this.chatPanelHeight = `calc(100vh - ${height + 105}px)`;
+    this.cdRef.detectChanges();
   }
 
   getImageSrc = (source: string) => {
@@ -387,6 +444,7 @@ export class IssuesActionsDetailViewComponent
 
   ngOnDestroy(): void {
     this.observations.closeOnCreateIssueOrActionLogHistoryEventSourceEventSource();
+    if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
   }
 
   private getIssuesList(data): void {

@@ -9,6 +9,7 @@ import {
   HistoryResponse,
   IssueOrAction
 } from 'src/app/interfaces';
+import { API, graphqlOperation } from 'aws-amplify';
 
 import { AppService } from 'src/app/shared/services/app.services';
 import { SseService } from 'src/app/shared/services/sse.service';
@@ -158,6 +159,24 @@ export class RoundPlanObservationsService {
 
   closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
     this.sseService.closeEventSource();
+  }
+
+  onCreateIssueActionList$(input) {
+    const statement = `subscription OnCreateIssuesLogHistory($filter: ModelSubscriptionIssuesLogHistoryFilterInput) {
+      onCreateIssuesLogHistory(filter: $filter) {
+        assignedTo
+        createdAt
+        createdBy
+        username
+        message
+        type
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
   }
 
   private formateGetObservationResponse(resp, type) {

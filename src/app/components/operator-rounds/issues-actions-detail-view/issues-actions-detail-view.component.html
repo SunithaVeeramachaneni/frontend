@@ -26,7 +26,12 @@
       class="width-60 chat-div"
       *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
-      <div class="chat-panel" [ngStyle]="{ height: chatPanelHeight }">
+      <div
+        class="chat-panel"
+        [ngStyle]="{ height: chatPanelHeight }"
+        #scrollMe
+        [scrollTop]="scrollMe.scrollHeight"
+      >
         <ng-container *ngFor="let history of logHistory.rows; let i = index">
           <div
             [ngClass]="{
