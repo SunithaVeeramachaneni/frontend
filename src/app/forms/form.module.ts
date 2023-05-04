@@ -91,7 +91,15 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-
+import { DonutChartComponent } from './components/donut-chart/donut-chart.component';
+import { IssuesListComponent } from './components/issues-list/issues-list.component';
+import { ActionsListComponent } from './components/actions-list/actions-list.component';
+import { IssuesActionsViewComponent } from './components/issues-actions-view/issues-actions-view.component';
+import { DynamictableModule } from '@innovapptive.com/dynamictable';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -150,7 +158,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
     AssignToComponent,
-    DynamicPreviewResponseTypeLoaderDirective
+    DynamicPreviewResponseTypeLoaderDirective,
+    DonutChartComponent,
+    IssuesListComponent,
+    ActionsListComponent,
+    IssuesActionsViewComponent,
+    AssignedToComponent
   ],
   imports: [
     SharedModule,
@@ -185,7 +198,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     TranslateModule.forChild({}),
     MatDatepickerModule,
     PdfViewerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    DynamictableModule,
+    NgxEchartsModule.forRoot({
+      echarts
+    }),
+    MatToolbarModule
   ],
   exports: [
     FormWidgetComponent,
@@ -212,7 +230,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent
+    AssignToComponent,
+    DonutChartComponent,
+    IssuesListComponent,
+    ActionsListComponent,
+    IssuesActionsViewComponent,
+    AssignedToComponent
   ]
 })
 export class FormModule {}
