@@ -1,0 +1,52 @@
+@import '../../../../scss/colors.scss';
+
+.observations-container {
+  background-color: $white;
+
+  .charts {
+    padding: 15px 27.5px 15px 27.5px;
+    height: 215px;
+    justify-content: center;
+  }
+
+  .chart {
+    border: 1px solid $border-color;
+    box-shadow: 0px 2px 10px rgb(0 0 0 / 9%);
+    border-radius: 10px;
+    padding: 0px 10px;
+  }
+
+  .tabs-header {
+    background-color: $white;
+    padding: 0 10px;
+  }
+
+  ::ng-deep .mat-tab-header {
+    margin-bottom: 10px !important;
+    width: fit-content;
+  }
+
+  ::ng-deep .mat-tab-label {
+    min-width: 120px;
+  }
+
+  ::ng-deep .mat-tab-body-content,
+  .ng-trigger,
+  .ng-trigger-translateTab,
+  .mat-tab-list {
+    transform: none !important;
+  }
+
+  ::ng-deep .mat-tab-body-wrapper {
+    overflow: inherit !important;
+  }
+
+  .issue-chart {
+    width: 250px;
+    height: 250px;
+  }
+  .center {
+    text-align: center;
+    margin: 0;
+  }
+}
