@@ -184,6 +184,7 @@ export interface History {
   createdBy?: string;
   assignedTo?: string;
   type: 'Object' | 'Media' | 'Message';
+  isUserAssigned?: string;
 }
 
 export interface HistoryResponse {
