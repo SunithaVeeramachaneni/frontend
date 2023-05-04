@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,7 +12,6 @@ import {
 import { API, graphqlOperation } from 'aws-amplify';
 
 import { AppService } from 'src/app/shared/services/app.services';
-import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 import { UsersService } from '../../user-management/services/users.service';
 
@@ -25,8 +24,6 @@ const dataPlaceHolder = '--';
 export class RoundPlanObservationsService {
   constructor(
     private readonly appService: AppService,
-    private sseService: SseService,
-    private zone: NgZone,
     private userService: UsersService
   ) {}
 
@@ -135,30 +132,6 @@ export class RoundPlanObservationsService {
       );
   }
 
-  onCreateIssueOrActionLogHistoryEventSource(
-    urlString: string
-  ): Observable<History> {
-    return new Observable((observer) => {
-      const eventSource = this.sseService.getEventSourceWithGet(
-        `${environment.operatorRoundsApiUrl}${urlString}`,
-        null
-      );
-      eventSource.stream();
-      eventSource.onmessage = (event) => {
-        this.zone.run(() => {
-          observer.next(JSON.parse(event.data));
-        });
-      };
-      eventSource.onerror = (event) => {
-        this.zone.run(() => {
-          if (event.data) {
-            observer.error(JSON.parse(event.data));
-          }
-        });
-      };
-    });
-  }
-
   createNotification(
     issue,
     info: ErrorInfo = {} as ErrorInfo
@@ -171,19 +144,35 @@ export class RoundPlanObservationsService {
     );
   }
 
-  closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
-    this.sseService.closeEventSource();
-  }
-
-  onCreateIssueActionList$(input) {
+  onCreateIssuesLogHistory$(input) {
     const statement = `subscription OnCreateIssuesLogHistory($filter: ModelSubscriptionIssuesLogHistoryFilterInput) {
       onCreateIssuesLogHistory(filter: $filter) {
-        assignedTo
-        createdAt
-        createdBy
-        username
+        id
         message
         type
+        username
+        createdAt
+        createdBy
+        issueslistID
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onCreateActionsLogHistory$(input) {
+    const statement = `subscription OnCreateActionsLogHistory($filter: ModelSubscriptionActionsLogHistoryFilterInput) {
+      OnCreateActionsLogHistory(filter: $filter) {
+        id
+        message
+        type
+        username
+        createdAt
+        createdBy
+        actionslistID
       }
     }`;
     return API.graphql(

@@ -17,7 +17,7 @@ import {
   MatDialog
 } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
@@ -94,7 +94,7 @@ export class IssuesActionsDetailViewComponent
   placeholder = '_ _';
   private totalCount = 0;
   private allData = [];
-  private amplifySubscription$ = null;
+  private amplifySubscription$: Subscription = null;
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsDetailViewComponent>,
@@ -130,7 +130,7 @@ export class IssuesActionsDetailViewComponent
     this.init();
 
     this.amplifySubscription$ = this.observations
-      .onCreateIssueActionList$({
+      .onCreateIssuesLogHistory$({
         issueslistID: {
           eq: this.data.id
         }
@@ -143,27 +143,27 @@ export class IssuesActionsDetailViewComponent
           }
         }) => {
           if (onCreateIssuesLogHistory) {
-            this.logHistory = [
-              ...this.logHistory,
-              {
-                ...onCreateIssuesLogHistory,
-                createdAt: format(
-                  new Date(onCreateIssuesLogHistory?.createdAt),
-                  'dd MMM yyyy, hh:mm a'
-                ),
-                message:
-                  onCreateIssuesLogHistory.type === 'Object'
-                    ? JSON.parse(onCreateIssuesLogHistory?.message)
-                    : onCreateIssuesLogHistory?.message
-              }
-            ];
-            this.filteredMediaType = this.logHistory.filter(
-              (history) => history?.type === 'Media'
-            );
-            this.logHistory$ = of({
-              nextToken: null,
-              rows: this.logHistory
-            });
+            this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
+          }
+        },
+        error: (error) => console.warn(error)
+      });
+
+    this.amplifySubscription$ = this.observations
+      .onCreateActionsLogHistory$({
+        actionslistID: {
+          eq: this.data.id
+        }
+      })
+      ?.subscribe({
+        next: ({
+          _,
+          value: {
+            data: { onCreateActionsLogHistory }
+          }
+        }) => {
+          if (onCreateActionsLogHistory) {
+            this.prepareSubscriptionResponse(onCreateActionsLogHistory);
           }
         },
         error: (error) => console.warn(error)
@@ -439,7 +439,7 @@ export class IssuesActionsDetailViewComponent
         limit: this.data?.limit,
         ...previousRecord
       };
-      this.init(false);
+      this.init();
     }
   }
 
@@ -467,12 +467,11 @@ export class IssuesActionsDetailViewComponent
         limit: this.data?.limit,
         ...nextRecord
       };
-      this.init(false);
+      this.init();
     }
   }
 
   ngOnDestroy(): void {
-    this.observations.closeOnCreateIssueOrActionLogHistoryEventSourceEventSource();
     if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
   }
 
@@ -505,12 +504,12 @@ export class IssuesActionsDetailViewComponent
             users$: this.data?.users$,
             ...nextRecord
           };
-          this.init(false);
+          this.init();
         }
       });
   }
 
-  private init(logEventSource = true): void {
+  private init(): void {
     const { id, type, dueDate, notificationNumber } = this.data;
     if (type === 'issue') {
       this.issuesActionsDetailViewForm.get('priority').disable();
@@ -535,12 +534,24 @@ export class IssuesActionsDetailViewComponent
           );
         })
       );
-    if (logEventSource) {
-      this.observations
-        .onCreateIssueOrActionLogHistoryEventSource(
-          `${type}/${id}/log-history/sse`
-        )
-        .subscribe();
-    }
+  }
+
+  private prepareSubscriptionResponse(data) {
+    this.logHistory = [
+      ...this.logHistory,
+      {
+        ...data,
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        message:
+          data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+      }
+    ];
+    this.filteredMediaType = this.logHistory.filter(
+      (history) => history?.type === 'Media'
+    );
+    this.logHistory$ = of({
+      nextToken: null,
+      rows: this.logHistory
+    });
   }
 }
