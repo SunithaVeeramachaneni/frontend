@@ -165,11 +165,12 @@ export class RoundPlanObservationsService {
 
   onCreateActionsLogHistory$(input) {
     const statement = `subscription OnCreateActionsLogHistory($filter: ModelSubscriptionActionsLogHistoryFilterInput) {
-      OnCreateActionsLogHistory(filter: $filter) {
+      onCreateActionsLogHistory(filter: $filter) {
         id
         message
         type
         username
+        assignedTo
         createdAt
         createdBy
         actionslistID

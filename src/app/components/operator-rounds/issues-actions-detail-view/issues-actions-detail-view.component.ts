@@ -90,6 +90,7 @@ export class IssuesActionsDetailViewComponent
   filteredMediaType: any;
   chatPanelHeight;
   isPreviousEnabled = false;
+  isNextEnabled = false;
   ghostLoading = new Array(17).fill(0).map((_, i) => i);
   placeholder = '_ _';
   private totalCount = 0;
@@ -118,6 +119,9 @@ export class IssuesActionsDetailViewComponent
   ngOnInit(): void {
     const { users$, totalCount$, allData } = this.data;
     this.allData = allData;
+    if (this.allData?.length > 1) {
+      this.isNextEnabled = true;
+    }
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
       s3Details: { bucket, region }
@@ -452,13 +456,16 @@ export class IssuesActionsDetailViewComponent
     }
     const nextRecordIdx = idx + 1;
     const nextRecord = this.allData[nextRecordIdx];
-    this.isPreviousEnabled = true;
     if (!nextRecord) {
       if (this.data?.next === null) {
+        this.isPreviousEnabled = false;
+        this.isNextEnabled = false;
         return;
       }
       this.getIssuesList(this.data);
+      this.isPreviousEnabled = true;
     } else {
+      this.isPreviousEnabled = true;
       this.data = {
         allData: this.data?.allData,
         next: this.data?.next,

@@ -10,13 +10,19 @@
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
     </button>
     <h4 class="heading">
-      <mat-icon (click)="onPrevious()" class="arrows"
+      <mat-icon
+        (click)="onPrevious()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isPreviousEnabled }"
         >keyboard_arrow_left</mat-icon
       >
       &nbsp;
       {{ this.issuesActionsDetailViewForm.get('title').value }}
       &nbsp;
-      <mat-icon (click)="onNext()" class="arrows"
+      <mat-icon
+        (click)="onNext()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isNextEnabled }"
         >keyboard_arrow_right</mat-icon
       >
     </h4>

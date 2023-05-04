@@ -32,6 +32,10 @@
       cursor: pointer;
     }
 
+    .disabled-arrow {
+      color: $gray1;
+    }
+
     .back-btn {
       border: none;
       background-color: transparent;
