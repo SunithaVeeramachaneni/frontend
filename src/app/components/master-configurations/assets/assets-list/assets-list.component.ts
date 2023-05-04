@@ -1,5 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -40,6 +45,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { PlantService } from '../../plants/services/plant.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -212,6 +218,7 @@ export class AssetsListComponent implements OnInit {
   assetsCount$: Observable<Count>;
   assetsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   assetsListCount$: Observable<number>;
+  allPlants$: Observable<any>;
 
   addEditCopyDeleteAssets = false;
   addEditCopyDeleteAssets$: BehaviorSubject<FormTableUpdate> =
@@ -241,17 +248,41 @@ export class AssetsListComponent implements OnInit {
 
   constructor(
     private assetService: AssetsService,
+    private plantsService: PlantService,
     private readonly toast: ToastService,
     private locationService: LocationService,
     private loginService: LoginService,
     private dialog: MatDialog,
     private headerService: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
+    );
+    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
+      tap(({ items: allPlants = [] }) => {
+        this.plants = allPlants.map((plant) => {
+          const { id, name, plantId } = plant;
+          this.plantsIdNameMap[plantId] = id;
+          return `${plantId} - ${name}`;
+        });
+
+        const plantFilter = {
+          column: 'plant',
+          items: ['', ...this.plants],
+          label: 'Plants',
+          type: 'select',
+          value: ''
+        };
+
+        this.filterJson = [
+          plantFilter,
+          ...this.filterJson.filter((item) => item.column !== 'plant')
+        ];
+      })
     );
     this.assetService.fetchAssets$.next({ data: 'load' });
     this.assetService.fetchAssets$.next({} as TableEvent);
@@ -322,69 +353,57 @@ export class AssetsListComponent implements OnInit {
       this.addEditCopyDeleteAssets$,
       onScrollAssets$,
       this.getAllLocations(),
+      this.allPlants$
     ]).pipe(
-      map(([rows, { form, action }, scrollData]) => {
-        if (this.skip === 0) {
-          this.configOptions = {
-            ...this.configOptions,
-            tableHeight: 'calc(100vh - 140px)'
-          };
-          initial.data = rows;
-        } else if (this.addEditCopyDeleteAssets) {
-          switch (action) {
-            case 'delete':
-              initial.data = initial.data.filter((d) => d.id !== form.id);
-              this.toast.show({
-                text: 'Assets deleted successfully!',
-                type: 'success'
-              });
-              break;
-            case 'add':
-              initial.data = [form, ...initial.data];
-              break;
-            case 'edit':
-              initial.data = [
-                form,
-                ...initial.data.filter((item) => item.id !== form.id)
-              ];
-              break;
-            default:
-            //Do nothing
-          }
-          this.addEditCopyDeleteAssets = false;
-        } else {
-          initial.data = initial.data.concat(scrollData);
-        }
-        for (const item of initial.data) {
-          if (item.parentType.toLowerCase() === 'location') {
-            const parent = this.allParentsLocations.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-              item.parentSubId = parent.locationId;
-            } else {
-              item.parent = '';
-              item.parentSubId = '';
+      map(
+        ([
+          rows,
+          { form, action },
+          scrollData,
+          allLocations,
+          { items: allPlants = [] }
+        ]) => {
+          if (this.skip === 0) {
+            this.configOptions = {
+              ...this.configOptions,
+              tableHeight: 'calc(100vh - 140px)'
+            };
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
+          } else if (this.addEditCopyDeleteAssets) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
+            switch (action) {
+              case 'delete':
+                initial.data = initial.data.filter((d) => d.id !== form.id);
+                this.toast.show({
+                  text: 'Assets deleted successfully!',
+                  type: 'success'
+                });
+                break;
+              case 'add':
+                initial.data = [newForm, ...initial.data];
+                break;
+              case 'edit':
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
+                break;
+              default:
+              //Do nothing
             }
+            this.addEditCopyDeleteAssets = false;
           } else {
-            const parent = this.allParentsAssets.find(
-              (d) => d.id === item.parentId
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
             );
-            if (parent) {
-              item.parent = parent.name;
-              item.parentSubId = parent.assetsId;
-            } else {
-              item.parent = '';
-              item.parentSubId = '';
-            }
           }
+          this.skip = initial.data.length;
+          this.assetsListCount$ = this.assetService.getAssetCount$();
+          this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
+          return initial;
         }
-        this.skip = initial.data.length;
-        this.assetsListCount$ = this.assetService.getAssetCount$();
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
-      })
+      )
     );
   }
 
@@ -410,22 +429,7 @@ export class AssetsListComponent implements OnInit {
           this.assetsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        }),
-        map((data) =>
-          data.map((item) => {
-            if (item.plantsID) {
-              item = {
-                ...item,
-                plant: item?.plant?.name,
-                plantsID: item?.plantsID,
-                plantId: item?.plant?.plantId
-              };
-            } else {
-              item = { ...item, plant: '' };
-            }
-            return item;
-          })
-        )
+        })
       );
   }
 
@@ -611,24 +615,6 @@ export class AssetsListComponent implements OnInit {
         this.allParentsAssets = allAssets.items.filter(
           (asset) => !asset._deleted
         );
-
-        const uniquePlants = allAssets.items
-          .map((item) => {
-            if (item.plant) {
-              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-              return `${item.plant.plantId} - ${item.plant.name}`;
-            }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-
-        this.plants = [...uniquePlants];
-
-        for (const item of this.filterJson) {
-          if (item.column === 'plant') {
-            item.items = this.plants;
-          }
-        }
       } else {
         this.allParentsAssets = [];
       }
@@ -661,4 +647,34 @@ export class AssetsListComponent implements OnInit {
     };
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantSubId: plantInfo.plantId
+        });
+      }
+
+      if (data.parentType) {
+        const isParentLocation = data.parentType.toLowerCase() === 'location';
+        const parent = (
+          isParentLocation ? this.allParentsLocations : this.allParentsAssets
+        ).find((item) => item.id === data.parentId);
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentSubId: isParentLocation ? parent.locationId : parent.assetsId
+          });
+        } else Object.assign(data, { parent: '', parentSubId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
 }

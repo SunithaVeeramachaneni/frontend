@@ -98,3 +98,17 @@
   display: flex;
   align-items: center;
 }
+
+.node-container {
+  height: 38px;
+}
+
+.node-info {
+  position: relative;
+  top: -7px;
+}
+
+.node-id {
+  position: relative;
+  top: -8px;
+}
