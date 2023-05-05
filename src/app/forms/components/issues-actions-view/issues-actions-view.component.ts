@@ -5,7 +5,8 @@ import {
   OnDestroy,
   ElementRef,
   ViewChild,
-  DoCheck
+  DoCheck,
+  Input
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -26,7 +27,7 @@ import {
   UserDetails
 } from 'src/app/interfaces';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
-import { RoundPlanObservationsService } from 'src/app/components/operator-rounds/services/round-plan-observation.service';
+import { ObservationsService } from '../../services/observations.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
@@ -70,12 +71,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   logHistory: History[];
   filteredMediaType: any;
   chatPanelHeight;
-
+  moduleName;
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private observations: RoundPlanObservationsService,
+    private observations: ObservationsService,
     private loginService: LoginService,
     private userService: UsersService,
     private sanitizer: DomSanitizer,
@@ -90,7 +91,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
-    const { id, type, users$, dueDate } = this.data;
+    const { id, type, users$, dueDate, moduleName } = this.data;
+    this.moduleName = moduleName;
+    console.log('issue-action:', moduleName);
     const {
       s3Details: { bucket, region }
     } = this.tenantService.getTenantInfo();
@@ -108,7 +111,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     });
     this.minDate = new Date(this.data.createdAt);
     this.logHistory$ = this.observations
-      .getIssueOrActionLogHistory$(id, type, {})
+      .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
           this.logHistory = logHistory.rows;
@@ -119,7 +122,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       );
     this.observations
       .onCreateIssueOrActionLogHistoryEventSource(
-        `${type}/${id}/log-history/sse`
+        `${this.moduleName}/${type}/${id}/log-history/sse`
       )
       .subscribe();
   }
@@ -146,7 +149,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       const { id, type } = this.data;
 
       this.observations
-        .uploadIssueOrActionLogHistoryAttachment$(id, attachmentsForm, type)
+        .uploadIssueOrActionLogHistoryAttachment$(
+          id,
+          attachmentsForm,
+          type,
+          this.moduleName
+        )
         .pipe(
           tap((resp) => {
             if (Object.keys(resp).length) {
@@ -217,7 +225,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             message: JSON.stringify({ [field.toUpperCase()]: value })
           }
         },
-        type
+        type,
+        this.moduleName
       )
       .pipe(
         tap((response) => {
@@ -300,7 +309,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           type: 'Message',
           message
         },
-        type
+        type,
+        this.moduleName
       )
       .pipe(
         tap((history) => {

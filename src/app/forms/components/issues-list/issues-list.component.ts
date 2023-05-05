@@ -47,7 +47,7 @@ import {
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
-import { RoundPlanObservationsService } from 'src/app/components/operator-rounds/services/round-plan-observation.service';
+import { ObservationsService } from '../../services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
@@ -63,6 +63,9 @@ export class IssuesListComponent implements OnInit {
       tap((users) => (this.assigneeDetails = { users }))
     );
   }
+
+  @Input() moduleName;
+
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
@@ -353,7 +356,7 @@ export class IssuesListComponent implements OnInit {
   private _users$: Observable<UserDetails[]>;
 
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly ObservationsService: ObservationsService,
     private readonly loginService: LoginService,
     private readonly userService: UsersService,
     private dialog: MatDialog,
@@ -449,10 +452,10 @@ export class IssuesListComponent implements OnInit {
       next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
-      type: 'issue'
+      type: 'issue',
+      moduleName: this.moduleName
     };
-
-    return this.roundPlanObservationsService.getObservations$(obj).pipe(
+    return this.ObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
         this.nextToken = next;
         this.isLoading$.next(false);
@@ -504,14 +507,13 @@ export class IssuesListComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: { ...row, users$: this.users$, moduleName: this.moduleName },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
     });
-
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {

@@ -47,7 +47,7 @@ import {
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
-import { RoundPlanObservationsService } from 'src/app/components/operator-rounds/services/round-plan-observation.service';
+import { ObservationsService } from '../../services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
@@ -58,6 +58,7 @@ import { UsersService } from 'src/app/components/user-management/services/users.
   animations: [slideInOut]
 })
 export class ActionsListComponent implements OnInit {
+  @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -357,7 +358,7 @@ export class ActionsListComponent implements OnInit {
   private _users$: Observable<UserDetails[]>;
 
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
     private readonly userService: UsersService,
     private dialog: MatDialog,
@@ -466,10 +467,11 @@ export class ActionsListComponent implements OnInit {
       next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
-      type: 'action'
+      type: 'action',
+      moduleName: this.moduleName
     };
 
-    return this.roundPlanObservationsService.getObservations$(obj).pipe(
+    return this.observationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
         this.nextToken = next;
         this.isLoading$.next(false);
@@ -520,7 +522,7 @@ export class ActionsListComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: { ...row, users$: this.users$, moduleName: this.moduleName },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
