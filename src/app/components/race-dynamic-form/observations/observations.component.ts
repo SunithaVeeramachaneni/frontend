@@ -22,6 +22,7 @@ interface IPriority {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ObservationsComponent implements OnInit {
+  moduleName = 'inspection-observations';
   counts: {
     openActions: {
       priority: IPriority;
@@ -108,92 +109,92 @@ export class ObservationsComponent implements OnInit {
       )
     );
     this.users$ = this.userService.getUsersInfo$();
-    this.ObservationsService.getObservationChartCounts$().subscribe(
-      (result) => {
-        if (result) {
-          this.priorityData = {
-            issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openIssues?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+    this.ObservationsService.getObservationChartCounts$(
+      this.moduleName
+    ).subscribe((result) => {
+      if (result) {
+        this.priorityData = {
+          issues: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openIssues?.priorityTotal
             },
-            actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openActions?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
-            }
-          };
+            series: [
+              {
+                ...this.options.series[0],
+                color: this.priorityColors,
+                data: Object.entries(result?.openIssues?.priority).map(
+                  ([key, value]) => ({
+                    name: key,
+                    value
+                  })
+                )
+              }
+            ]
+          },
+          actions: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openActions?.priorityTotal
+            },
+            series: [
+              {
+                ...this.options.series[0],
+                color: this.priorityColors,
+                data: Object.entries(result?.openActions?.priority).map(
+                  ([key, value]) => ({
+                    name: key,
+                    value
+                  })
+                )
+              }
+            ]
+          }
+        };
 
-          this.statusData = {
-            issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openIssues?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
+        this.statusData = {
+          issues: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openIssues?.statusTotal
             },
-            actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openActions?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
-                  )
-                }
-              ]
-            }
-          };
-        }
+            series: [
+              {
+                ...this.options.series[0],
+                color: this.statusColors,
+                data: Object.entries(result?.openIssues?.status).map(
+                  ([key, value]) => ({
+                    name: key,
+                    value
+                  })
+                )
+              }
+            ]
+          },
+          actions: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openActions?.statusTotal
+            },
+            series: [
+              {
+                ...this.options.series[0],
+                color: this.statusColors,
+                data: Object.entries(result?.openActions?.status).map(
+                  ([key, value]) => ({
+                    name: key,
+                    value
+                  })
+                )
+              }
+            ]
+          }
+        };
       }
-    );
+    });
   }
 }

@@ -48,11 +48,17 @@
       <mat-tab-group>
         <mat-tab>
           <ng-template mat-tab-label>{{ 'issues' | translate }}</ng-template>
-          <app-issues-list [users$]="users$"></app-issues-list>
+          <app-issues-list
+            [users$]="users$"
+            [moduleName]="moduleName"
+          ></app-issues-list>
         </mat-tab>
         <mat-tab>
           <ng-template mat-tab-label>{{ 'actions' | translate }}</ng-template>
-          <app-actions-list [users$]="users$"></app-actions-list>
+          <app-actions-list
+            [users$]="users$"
+            [moduleName]="moduleName"
+          ></app-actions-list>
         </mat-tab>
       </mat-tab-group>
     </div>
