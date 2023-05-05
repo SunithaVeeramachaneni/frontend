@@ -50,7 +50,7 @@ export class AssetsService {
     }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/list?' + params.toString(),
+      'asset/listAll?' + params.toString(),
       { displayToast: true, failureResponse: {} }
     );
   };
