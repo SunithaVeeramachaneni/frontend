@@ -177,10 +177,14 @@ export class RdfService {
       } = section;
 
       let index = 0;
+      let evidenceQuestionCheck = false;
       const sectionPayloads = [];
       questions
         .map((question) => {
           index = index + 1;
+          if (question?.id.includes('EVIDENCE')) {
+             evidenceQuestionCheck = true;
+          }
           const {
             id: questionId,
             name: questionName,
@@ -212,7 +216,7 @@ export class RdfService {
             INSTRUCTION: '',
             TEXTSTYLE: '',
             TEXTCOLOR: '',
-            MANDATORY: required ? 'X' : '',
+            MANDATORY: required && !evidenceQuestionCheck ? 'X' : '',
             SECTIONPOSITION: sectionPosition.toString(),
             DEFAULTVALUE: this.getDefaultValue(question),
             APPNAME,
@@ -535,6 +539,12 @@ export class RdfService {
       const evidenceQuestion = logic.askEvidence;
       const oppositeOperator = this.getOppositeOperator(logic.operator);
       if (evidenceQuestion && evidenceQuestion.length) {
+        let isEvidenceMandatory = false;
+        if (sectionQuestions.findIndex((q) => q.id === evidenceQuestion) > -1) {
+          isEvidenceMandatory = sectionQuestions.filter(
+            (q) => q.id === evidenceQuestion
+          )[0].required;
+        }
         globalIndex = globalIndex + 1;
         if (question.fieldType === 'CB') {
           expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
@@ -542,16 +552,18 @@ export class RdfService {
           expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
         }
         globalIndex = globalIndex + 1;
-        if (isEmpty) {
-          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
-        } else {
-          if (question.fieldType === 'CB') {
-            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        if (isEvidenceMandatory) {
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            if (question.fieldType === 'CB') {
+              expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            } else {
+              expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            }
           }
+          validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
         }
-        validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
       }
 
       // Ask Questions;
@@ -560,6 +572,11 @@ export class RdfService {
       questionsToBeAsked.forEach((q) => {
         globalIndex = globalIndex + 1;
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        if (q?.required) {
+          globalIndex = globalIndex + 1;
+          expression = `${expression};${globalIndex}:(E) ${q.id} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          validationMessage = `${validationMessage};${globalIndex}:Please answer the question ${q.name}`;
+        }
       });
 
       // Raise Notification;
