@@ -15,13 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -38,10 +32,8 @@ import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
-  LoadEvent,
   Permission,
   RowLevelActionEvent,
-  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo
