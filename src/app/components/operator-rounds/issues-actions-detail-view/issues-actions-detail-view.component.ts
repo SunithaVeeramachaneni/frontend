@@ -119,9 +119,6 @@ export class IssuesActionsDetailViewComponent
   ngOnInit(): void {
     const { users$, totalCount$, allData } = this.data;
     this.allData = allData;
-    if (this.allData?.length > 1) {
-      this.isNextEnabled = true;
-    }
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
       s3Details: { bucket, region }
@@ -428,13 +425,18 @@ export class IssuesActionsDetailViewComponent
       this.isPreviousEnabled = false;
       return;
     }
-    const previousIdx = idx - 1;
-    const previousRecord = this.allData[previousIdx];
+    const previousRecord = this.allData[idx - 1];
     if (!previousRecord) {
       this.isPreviousEnabled = false;
       return;
     } else {
-      this.isPreviousEnabled = true;
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === previousRecord?.id
+      );
+      this.isPreviousEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx - 1]) {
+        this.isPreviousEnabled = true;
+      }
       this.data = {
         allData: this.data?.allData,
         next: this.data?.next,
@@ -454,18 +456,27 @@ export class IssuesActionsDetailViewComponent
       this.isPreviousEnabled = false;
       return;
     }
-    const nextRecordIdx = idx + 1;
-    const nextRecord = this.allData[nextRecordIdx];
+    const nextRecord = this.allData[idx + 1];
     if (!nextRecord) {
       if (this.data?.next === null) {
         this.isPreviousEnabled = false;
+        if (idx !== -1 && this.allData[idx - 1]) {
+          this.isPreviousEnabled = true;
+        }
         this.isNextEnabled = false;
         return;
       }
       this.getIssuesList(this.data);
       this.isPreviousEnabled = true;
     } else {
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === nextRecord?.id
+      );
       this.isPreviousEnabled = true;
+      this.isNextEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx + 1]) {
+        this.isNextEnabled = true;
+      }
       this.data = {
         allData: this.data?.allData,
         next: this.data?.next,
@@ -507,8 +518,9 @@ export class IssuesActionsDetailViewComponent
           this.data = {
             allData: this.allData,
             next: _next,
-            totalCount$: this.data?.totalCount$,
-            users$: this.data?.users$,
+            totalCount$: data?.totalCount$,
+            users$: data?.users$,
+            limit: data?.limit,
             ...nextRecord
           };
           this.init();
@@ -518,6 +530,17 @@ export class IssuesActionsDetailViewComponent
 
   private init(): void {
     const { id, type, dueDate, notificationNumber } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      this.isNextEnabled = false;
+    } else {
+      if (this.allData[idx - 1]) this.isPreviousEnabled = true;
+      if (this.allData[idx + 1]) this.isNextEnabled = true;
+    }
+    if (this.data.next !== null) {
+      this.isNextEnabled = true;
+    }
     if (type === 'issue') {
       this.issuesActionsDetailViewForm.get('priority').disable();
     }
