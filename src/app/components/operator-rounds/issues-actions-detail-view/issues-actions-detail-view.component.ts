@@ -478,7 +478,7 @@ export class IssuesActionsDetailViewComponent
         this.isNextEnabled = false;
         return;
       }
-      this.getIssuesList(this.data);
+      this.getIssuesActionsList(this.data);
       this.isPreviousEnabled = true;
     } else {
       const currentIdx = this.allData?.findIndex(
@@ -505,39 +505,46 @@ export class IssuesActionsDetailViewComponent
     if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
   }
 
-  private getIssuesList(data): void {
-    const { next, limit, type } = data;
-    const obj = {
-      next,
-      limit,
-      type,
-      searchKey: ''
-    };
-    this.observations
-      .getObservations$(obj)
-      .subscribe(({ count, next: _next, rows }) => {
-        this.totalCount = count;
-        this.allData = [...this.allData, ...rows];
-        const idx = this.allData?.findIndex((a) => a?.id === data?.id);
-        if (idx === -1) {
-          return;
-        }
-        const nextRecordIdx = idx + 1;
-        const nextRecord = this.allData[nextRecordIdx];
-        if (!nextRecord) {
-          return;
-        } else {
-          this.data = {
-            allData: this.allData,
-            next: _next,
-            totalCount$: data?.totalCount$,
-            users$: data?.users$,
-            limit: data?.limit,
-            ...nextRecord
-          };
-          this.init();
-        }
+  private getIssuesActionsList(data): void {
+    let observable: Observable<{ count: number; next: string; rows: any[] }>;
+    if (data?.type === 'issue') {
+      this.observations.issuesNextToken = data.next;
+      this.observations.fetchIssues$.next({
+        data: 'infiniteScroll'
       });
+      observable = this.observations.issues$;
+    } else {
+      this.observations.actionsNextToken = data.next;
+      this.observations.fetchActions$.next({
+        data: 'infiniteScroll'
+      });
+      observable = this.observations.actions$;
+    }
+
+    observable?.pipe().subscribe(({ count, next: _next, rows }) => {
+      this.totalCount = count;
+      this.allData = [...this.allData, ...rows];
+      const idx = this.allData?.findIndex((a) => a?.id === data?.id);
+      if (idx === -1) {
+        return;
+      }
+      const nextRecordIdx = idx + 1;
+      const nextRecord = this.allData[nextRecordIdx];
+      if (!nextRecord) {
+        return;
+      } else {
+        this.observations.issuesNextToken = _next;
+        this.data = {
+          allData: this.allData,
+          next: _next,
+          totalCount$: data?.totalCount$,
+          users$: data?.users$,
+          limit: data?.limit,
+          ...nextRecord
+        };
+        this.init();
+      }
+    });
   }
 
   private init(): void {

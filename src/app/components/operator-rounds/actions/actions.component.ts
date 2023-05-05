@@ -341,13 +341,10 @@ export class ActionsComponent implements OnInit {
     columns: Column[];
     data: any[];
   }>;
-  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
-  nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -367,15 +364,17 @@ export class ActionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchActions$.next({ data: 'load' });
-    this.fetchActions$.next({} as TableEvent);
+    this.roundPlanObservationsService.fetchActions$.next({ data: 'load' });
+    this.roundPlanObservationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
     this.searchAction.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchActions$.next({ data: 'search' });
+          this.roundPlanObservationsService.fetchActions$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -388,27 +387,29 @@ export class ActionsComponent implements OnInit {
   }
 
   displayActions(): void {
-    const actionsOnLoadSearch$ = this.fetchActions$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        this.skip = 0;
-        this.nextToken = '';
-        this.fetchType = data;
-        return this.getActionsList();
-      })
-    );
-
-    const onScrollActions$ = this.fetchActions$.pipe(
-      filter(({ data }) => data !== 'load' && data !== 'search'),
-      switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
-          this.fetchType = 'infiniteScroll';
+    const actionsOnLoadSearch$ =
+      this.roundPlanObservationsService.fetchActions$.pipe(
+        filter(({ data }) => data === 'load' || data === 'search'),
+        switchMap(({ data }) => {
+          this.skip = 0;
+          this.roundPlanObservationsService.actionsNextToken = '';
+          this.fetchType = data;
           return this.getActionsList();
-        } else {
-          return of([]);
-        }
-      })
-    );
+        })
+      );
+
+    const onScrollActions$ =
+      this.roundPlanObservationsService.fetchActions$.pipe(
+        filter(({ data }) => data !== 'load' && data !== 'search'),
+        switchMap(({ data }) => {
+          if (data === 'infiniteScroll') {
+            this.fetchType = 'infiniteScroll';
+            return this.getActionsList();
+          } else {
+            return of([]);
+          }
+        })
+      );
 
     this.initial = {
       columns: this.columns,
@@ -454,7 +455,7 @@ export class ActionsComponent implements OnInit {
 
   getActionsList() {
     const obj = {
-      next: this.nextToken,
+      next: this.roundPlanObservationsService.actionsNextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
       type: 'action'
@@ -462,9 +463,10 @@ export class ActionsComponent implements OnInit {
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.roundPlanObservationsService.actionsNextToken = next;
         this.isLoading$.next(false);
         this.actionsCount$ = of(count);
+        this.roundPlanObservationsService.actions$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -475,7 +477,7 @@ export class ActionsComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchActions$.next(event);
+    this.roundPlanObservationsService.fetchActions$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -516,7 +518,7 @@ export class ActionsComponent implements OnInit {
         users$: this.users$,
         totalCount$: this.actionsCount$,
         allData: this.initial?.data || [],
-        next: this.nextToken,
+        next: this.roundPlanObservationsService.actionsNextToken,
         limit: this.limit
       },
       maxWidth: '100vw',

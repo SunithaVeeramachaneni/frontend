@@ -1,13 +1,16 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   History,
   HistoryResponse,
-  IssueOrAction
+  IssueOrAction,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
 } from 'src/app/interfaces';
 import { API, graphqlOperation } from 'aws-amplify';
 
@@ -22,6 +25,16 @@ const dataPlaceHolder = '--';
   providedIn: 'root'
 })
 export class RoundPlanObservationsService {
+  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  issuesNextToken = '';
+  issues$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
+  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  actionsNextToken = '';
+  actions$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
   constructor(
     private readonly appService: AppService,
     private userService: UsersService
