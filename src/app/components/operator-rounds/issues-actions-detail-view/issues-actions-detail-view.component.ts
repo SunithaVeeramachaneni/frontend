@@ -19,6 +19,11 @@ import {
 import { format } from 'date-fns';
 import { Observable, of, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Amplify } from 'aws-amplify';
+import { Router } from '@angular/router';
+import { ToastService } from 'src/app/shared/toast';
+import { DomSanitizer } from '@angular/platform-browser';
+
 import {
   AssigneeDetails,
   History,
@@ -29,13 +34,9 @@ import {
 } from 'src/app/interfaces';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { Router } from '@angular/router';
-import { ToastService } from 'src/app/shared/toast';
-
 @Directive({
   selector: '[appScrollToBottom]'
 })
@@ -121,7 +122,8 @@ export class IssuesActionsDetailViewComponent
     this.allData = allData;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
-      s3Details: { bucket, region }
+      s3Details: { bucket, region },
+      tenantId
     } = this.tenantService.getTenantInfo();
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
@@ -130,45 +132,55 @@ export class IssuesActionsDetailViewComponent
     );
     this.init();
 
-    this.amplifySubscription$ = this.observations
-      .onCreateIssuesLogHistory$({
-        issueslistID: {
-          eq: this.data.id
-        }
-      })
-      ?.subscribe({
-        next: ({
-          _,
-          value: {
-            data: { onCreateIssuesLogHistory }
-          }
-        }) => {
-          if (onCreateIssuesLogHistory) {
-            this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
-          }
-        },
-        error: (error) => console.warn(error)
-      });
+    if (tenantId) {
+      this.tenantService
+        .getTenantAmplifyConfigByTenantId$(tenantId)
+        .subscribe(({ amplifyConfig }) => {
+          if (Object.keys(amplifyConfig).length > 0) {
+            Amplify.configure(amplifyConfig);
 
-    this.amplifySubscription$ = this.observations
-      .onCreateActionsLogHistory$({
-        actionslistID: {
-          eq: this.data.id
-        }
-      })
-      ?.subscribe({
-        next: ({
-          _,
-          value: {
-            data: { onCreateActionsLogHistory }
+            this.amplifySubscription$ = this.observations
+              .onCreateIssuesLogHistory$({
+                issueslistID: {
+                  eq: this.data.id
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateIssuesLogHistory }
+                  }
+                }) => {
+                  if (onCreateIssuesLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
+                  }
+                },
+                error: (error) => console.warn(error)
+              });
+
+            this.amplifySubscription$ = this.observations
+              .onCreateActionsLogHistory$({
+                actionslistID: {
+                  eq: this.data.id
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateActionsLogHistory }
+                  }
+                }) => {
+                  if (onCreateActionsLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateActionsLogHistory);
+                  }
+                },
+                error: (error) => console.warn(error)
+              });
           }
-        }) => {
-          if (onCreateActionsLogHistory) {
-            this.prepareSubscriptionResponse(onCreateActionsLogHistory);
-          }
-        },
-        error: (error) => console.warn(error)
-      });
+        });
+    }
   }
 
   ngDoCheck() {

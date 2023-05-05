@@ -15,7 +15,6 @@ import { ErrorInfo, Tenant } from './interfaces';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { DOCUMENT } from '@angular/common';
 import { AppService } from './shared/services/app.services';
-import { Amplify } from 'aws-amplify';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +37,6 @@ export class AuthConfigService {
       .pipe(
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
-            if (tenant?.amplifyConfig) {
-              Amplify.configure(tenant.amplifyConfig);
-            }
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();

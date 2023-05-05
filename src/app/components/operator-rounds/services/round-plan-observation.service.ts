@@ -153,6 +153,7 @@ export class RoundPlanObservationsService {
         username
         createdAt
         createdBy
+        assignedTo
         issueslistID
       }
     }`;
