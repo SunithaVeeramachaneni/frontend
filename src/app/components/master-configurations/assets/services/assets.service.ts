@@ -40,7 +40,6 @@ export class AssetsService {
 
   fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
     if (plantsID) {
       const filter = {
         plantsID: {
@@ -49,7 +48,6 @@ export class AssetsService {
       };
       params.set('filter', JSON.stringify(filter));
     }
-    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'asset/list?' + params.toString(),
