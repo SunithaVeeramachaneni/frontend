@@ -292,6 +292,7 @@
   "issueStatusUpdated": "Issue Status Updated to: ",
   "actionStatusUpdated": "Action Status Updated to: ",
   "assigneeAddedTo": "'Assigned to' Added: ",
+  "assigneeRemovedTo": "'Assigned to' Removed: ",
   "erpNotif": "ERP Notification Updated to: ",
   "priorityUpdated": "Priority Updated to: ",
   "dueDateUpdated": "DueDate Updated to: ",
@@ -307,5 +308,7 @@
   "categoryCreated": "Category: ",
   "globalMasterData": "Global Masterdata",
   "mdmLabel": "Label",
-  "mdmPrimaryField": "Primary Field"
+  "mdmPrimaryField": "Primary Field",
+  "nodeId": "{type} Id: {id}",
+  "typePlaceholder": "Type"
 }

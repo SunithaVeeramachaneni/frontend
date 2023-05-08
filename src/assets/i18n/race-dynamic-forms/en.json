@@ -264,5 +264,6 @@
   "selectAnOperator": "Select an Operator",
   "globalMasterData": "Global Masterdata",
   "mdmLabel": "Label",
-  "mdmPrimaryField": "Primary Field"
+  "mdmPrimaryField": "Primary Field",
+  "createManually": "Create Manually"
 }

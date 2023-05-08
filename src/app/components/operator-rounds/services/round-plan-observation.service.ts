@@ -13,6 +13,7 @@ import {
 import { AppService } from 'src/app/shared/services/app.services';
 import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
+import { UsersService } from '../../user-management/services/users.service';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -24,7 +25,8 @@ export class RoundPlanObservationsService {
   constructor(
     private readonly appService: AppService,
     private sseService: SseService,
-    private zone: NgZone
+    private zone: NgZone,
+    private userService: UsersService
   ) {}
 
   getObservations$(queryParams: {
@@ -156,8 +158,30 @@ export class RoundPlanObservationsService {
     });
   }
 
+  createNotification(
+    issue,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `issue/notification`,
+      issue,
+      info
+    );
+  }
+
   closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
     this.sseService.closeEventSource();
+  }
+
+  formatUsersDisplay(users: string) {
+    const assignee = users.split(',');
+    const formatedDisplay = assignee[0]
+      ? this.userService.getUserFullName(assignee[0])
+      : '';
+    return assignee.length === 1
+      ? formatedDisplay
+      : `${formatedDisplay} + ${assignee.length - 1} more`;
   }
 
   private formateGetObservationResponse(resp, type) {
@@ -173,7 +197,10 @@ export class RoundPlanObservationsService {
       return {
         ...item,
         preTextImage: {
-          image: '/assets/maintenance-icons/issue-icon.svg',
+          image:
+            type === 'issue'
+              ? '/assets/maintenance-icons/issue-icon.svg'
+              : '/assets/maintenance-icons/actionsIcon.svg',
           style: {
             width: '40px',
             height: '40px',
@@ -198,7 +225,8 @@ export class RoundPlanObservationsService {
         priority: item.PRIORITY,
         status: item.STATUS,
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
-        category: item.CATEGORY || placeHolder,
+        category:
+          item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         task: item.TASK || placeHolder,
         round: item.ROUND || placeHolder,
         raisedBy: item.createdBy,

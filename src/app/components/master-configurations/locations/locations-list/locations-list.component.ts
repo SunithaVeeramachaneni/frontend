@@ -45,6 +45,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { PlantService } from '../../plants/services/plant.service';
 
 @Component({
   selector: 'app-locations-list',
@@ -223,6 +224,7 @@ export class LocationsListComponent implements OnInit {
 
   locations$: Observable<any>;
   allLocations$: Observable<any>;
+  allPlants$: Observable<any>;
   locationsCount$: Observable<Count>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
@@ -261,6 +263,7 @@ export class LocationsListComponent implements OnInit {
 
   constructor(
     private locationService: LocationService,
+    private plantsService: PlantService,
     private readonly toast: ToastService,
     private loginService: LoginService,
     private dialog: MatDialog,
@@ -275,6 +278,28 @@ export class LocationsListComponent implements OnInit {
     );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
+    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
+      tap(({ items: allPlants = [] }) => {
+        this.plants = allPlants.map((plant) => {
+          const { id, name, plantId } = plant;
+          this.plantsIdNameMap[plantId] = id;
+          return `${plantId} - ${name}`;
+        });
+
+        const plantFilter = {
+          column: 'plant',
+          items: ['', ...this.plants],
+          label: 'Plants',
+          type: 'select',
+          value: ''
+        };
+
+        this.filterJson = [
+          plantFilter,
+          ...this.filterJson.filter((item) => item.column !== 'plant')
+        ];
+      })
+    );
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.searchLocation = new FormControl('');
 
@@ -341,61 +366,61 @@ export class LocationsListComponent implements OnInit {
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
       onScrollLocations$,
-      this.allLocations$
+      this.allLocations$,
+      this.allPlants$
     ]).pipe(
-      map(([rows, { form, action }, scrollData, allLocations]) => {
-        const { items: unfilteredParentLocations } = allLocations;
-        this.allParentsLocations = unfilteredParentLocations.filter(
-          (location) => location._deleted !== true
-        );
-        if (this.skip === 0) {
-          this.configOptions = {
-            ...this.configOptions,
-            tableHeight: 'calc(100vh - 140px)'
-          };
-          initial.data = rows;
-        } else if (this.addEditCopyDeleteLocations) {
-          switch (action) {
-            case 'delete':
-              initial.data = initial.data.filter((d) => d.id !== form.id);
-              this.toast.show({
-                text: 'Location deleted successfully!',
-                type: 'success'
-              });
-              break;
-            case 'add':
-              initial.data = [form, ...initial.data];
-              break;
-            case 'edit':
-              initial.data = [
-                form,
-                ...initial.data.filter((item) => item.id !== form.id)
-              ];
-              break;
-            default:
-            //Do nothing
-          }
-          this.addEditCopyDeleteLocations = false;
-        } else {
-          initial.data = initial.data.concat(scrollData);
-        }
-        for (const item of initial.data) {
-          if (item.parentId) {
-            const parent = this.allParentsLocations.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-              item.parentID = parent.locationId;
-            } else {
-              item.parent = '';
+      map(
+        ([
+          rows,
+          { form, action },
+          scrollData,
+          allLocations,
+          { items: allPlants = [] }
+        ]) => {
+          const { items: unfilteredParentLocations } = allLocations;
+          this.allParentsLocations = unfilteredParentLocations.filter(
+            (location) => location._deleted !== true
+          );
+          if (this.skip === 0) {
+            this.configOptions = {
+              ...this.configOptions,
+              tableHeight: 'calc(100vh - 140px)'
+            };
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
+          } else if (this.addEditCopyDeleteLocations) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
+            switch (action) {
+              case 'delete':
+                initial.data = initial.data.filter((d) => d.id !== form.id);
+                this.toast.show({
+                  text: 'Location deleted successfully!',
+                  type: 'success'
+                });
+                break;
+              case 'add':
+                initial.data = [newForm, ...initial.data];
+                break;
+              case 'edit':
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
+                break;
+              default:
+              //Do nothing
             }
+            this.addEditCopyDeleteLocations = false;
+          } else {
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
+            );
           }
+          this.skip = initial.data.length;
+          this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
+          return initial;
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
-      })
+      )
     );
   }
 
@@ -455,22 +480,7 @@ export class LocationsListComponent implements OnInit {
           this.locationsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        }),
-        map((data) =>
-          data.map((item) => {
-            if (item.plantsID) {
-              item = {
-                ...item,
-                plant: item?.plant?.name,
-                plantsID: item?.plantsID,
-                plantId: item?.plant?.plantId
-              };
-            } else {
-              item = { ...item, plant: '' };
-            }
-            return item;
-          })
-        )
+        })
       );
   }
 
@@ -620,24 +630,6 @@ export class LocationsListComponent implements OnInit {
           (location) => location._deleted !== true
         );
         this.allParentsLocations = this.parentInformation;
-
-        const uniquePlants = allLocations.items
-          .map((item) => {
-            if (item.plant) {
-              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-              return `${item.plant.plantId} - ${item.plant.name}`;
-            }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-
-        this.plants = [...uniquePlants];
-
-        for (const item of this.filterJson) {
-          if (item.column === 'plant') {
-            item.items = this.plants;
-          }
-        }
       } else {
         this.allParentsLocations = [];
       }
@@ -672,4 +664,32 @@ export class LocationsListComponent implements OnInit {
     const file = event.target as HTMLInputElement;
     file.value = '';
   }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantId: plantInfo.plantId
+        });
+      }
+      if (data.parentId) {
+        const parent = this.allParentsLocations.find(
+          (d) => d.id === data.parentId
+        );
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentID: parent.locationId
+          });
+        } else Object.assign(data, { parent: '', parendId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
 }
