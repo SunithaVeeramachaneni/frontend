@@ -15,6 +15,8 @@ import {
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { timer } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteColumnModalComponent } from '../delete-column-modal/delete-column-modal.component';
 interface Response {
   value: string;
   viewValue: string;
@@ -31,6 +33,7 @@ import { MdmTableService } from '../services/mdm-table.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTableComponent implements OnInit {
+  public deleteColumn: boolean;
   masterConfiguration: FormGroup;
   columnTypes = {
     all: {},
@@ -38,6 +41,7 @@ export class CreateTableComponent implements OnInit {
   };
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private location: Location,
     private mdmTableService: MdmTableService
@@ -71,7 +75,12 @@ export class CreateTableComponent implements OnInit {
   }
 
   removeColumn(index: number) {
-    this.columns.removeAt(index);
+    const dialogRef = this.dialog.open(DeleteColumnModalComponent, {});
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.columns.removeAt(index);
+      }
+    });
   }
 
   onSubmit() {

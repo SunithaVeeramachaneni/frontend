@@ -57,6 +57,7 @@ import { CreateTableComponent } from './mdm-table/create-table/create-table.comp
 import { PreviewComponent } from './mdm-table/preview/preview.component';
 import { AddEditMdmComponent } from './mdm-table/add-edit-mdm/add-edit-mdm.component';
 import { MdmDetailViewComponent } from './mdm-table/mdm-detail-view/mdm-detail-view.component';
+import { DeleteColumnModalComponent } from './mdm-table/delete-column-modal/delete-column-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -88,7 +89,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateTableComponent,
     PreviewComponent,
     AddEditMdmComponent,
-    MdmDetailViewComponent
+    MdmDetailViewComponent,
+    DeleteColumnModalComponent
   ],
   imports: [
     FormsModule,
