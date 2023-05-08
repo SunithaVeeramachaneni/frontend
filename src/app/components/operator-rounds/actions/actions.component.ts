@@ -247,7 +247,7 @@ export class ActionsComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
@@ -425,42 +425,31 @@ export class ActionsComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = rows;
+          this.initial.data = this.formatActions(rows);
         } else {
-          this.initial.data = this.initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(
+            this.formatActions(scrollData)
+          );
         }
-
-        this.initial.data = this.initial.data.map((action) => {
-          if (action.assignedTo !== null) {
-            const assignee = action.assignedTo.split(',');
-            const firstAssignee = assignee[0]
-              ? this.userService.getUserFullName(assignee[0])
-              : '';
-            const formattedAssignee =
-              assignee?.length === 1
-                ? firstAssignee
-                : `${firstAssignee} + ${assignee.length - 1} more`;
-            action = { ...action, assignedTo: formattedAssignee };
-          }
-          if (action.createdBy.length > 0) {
-            const createdBy = this.userService.getUserFullName(
-              action.createdBy
-            );
-            action = { ...action, createdBy };
-          }
-          return action;
-        });
-
         this.skip = this.initial.data.length;
-        this.initial.data.map((item) => {
-          item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
-          return item;
-        });
-
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );
+  }
+
+  formatActions(actions) {
+    return actions.map((action) => {
+      const { assignedTo, createdBy } = action;
+      return {
+        ...action,
+        assignedToDisplay:
+          assignedTo !== null
+            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
+            : assignedTo,
+        createdBy: this.userService.getUserFullName(createdBy)
+      };
+    });
   }
 
   getActionsList() {
@@ -533,7 +522,8 @@ export class ActionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {
-        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        const { id, status, priority, dueDate, assignedToDisplay, assignedTo } =
+          resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
@@ -541,6 +531,7 @@ export class ActionsComponent implements OnInit {
               status,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              assignedToDisplay,
               assignedTo
             };
           }

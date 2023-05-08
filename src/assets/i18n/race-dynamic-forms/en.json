@@ -264,5 +264,6 @@
   "selectAnOperator": "Select an Operator",
   "openIssues": "Open Issues",
   "openActions": "Open Actions",
-  "priority": "Priority"
+  "priority": "Priority",
+  "createManually": "Create Manually"
 }
