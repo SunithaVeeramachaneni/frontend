@@ -1507,7 +1507,7 @@
           <p class="m-0">
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>collaborationType</mat-label>
-              <mat-select formControlName="collaborationType" [disabled]="true">
+              <mat-select formControlName="collaborationType">
                 <mat-option
                   *ngFor="let type of collaborationTypes"
                   [value]="type"
