@@ -131,11 +131,11 @@ export class OperatorRoundsService {
         'formStatus',
         filterData.status ? filterData.status : formStatus
       );
-      params.set('modifiedBy', filterData.modifiedBy);
-      params.set('authoredBy', filterData.authoredBy);
-      params.set('plantId', filterData.plant);
-      params.set('createdBy', filterData.createdBy);
-      params.set('lastModifiedOn', filterData.lastModifiedOn);
+      params.set('modifiedBy', filterData.modifiedBy ?? '');
+      params.set('authoredBy', filterData.authoredBy ?? '');
+      params.set('plantId', filterData.plant ?? '');
+      params.set('createdBy', filterData.createdBy ?? '');
+      params.set('lastModifiedOn', filterData.lastModifiedOn ?? '');
       params.set(
         'scheduleStartDate',
         filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
@@ -741,7 +741,7 @@ export class OperatorRoundsService {
         failureResponse: {}
       })
       .pipe(
-        map((data) => ({ ...data, rows: this.formatRoundPlans(data.rows) }))
+        map((data) => ({ ...data, rows: this.formatRoundPlans(data?.items) }))
       );
   };
 

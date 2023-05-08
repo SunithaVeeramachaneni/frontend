@@ -372,7 +372,6 @@ export class FormListComponent implements OnInit {
                     formListId: newRecord?.id,
                     pages: JSON.parse(authoredFormDetail?.pages) ?? '',
                     counter: authoredFormDetail?.counter,
-                    flatHierarchy: [],
                     authoredFormDetailVersion: 1
                   })
                   .subscribe(() => (newRecord.publishedDate = ''));
