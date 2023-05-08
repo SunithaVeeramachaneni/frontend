@@ -94,34 +94,34 @@
                     ></span>
                     {{ getUserNameByEmail(history.username) }}
                   </span>
-                  <br *ngIf="data.category !== placeHolder" />
-                  <span class="data" *ngIf="data.category !== placeHolder">
+                  <br *ngIf="data.category !== placeholder" />
+                  <span class="data" *ngIf="data.category !== placeholder">
                     <span
                       class="sub-headings"
                       translate="categoryCreated"
                     ></span>
                     {{ data.category }}
                   </span>
-                  <br *ngIf="data.round !== placeHolder" />
-                  <span class="data" *ngIf="data.round !== placeHolder">
+                  <br *ngIf="data.round !== placeholder" />
+                  <span class="data" *ngIf="data.round !== placeholder">
                     <span class="sub-headings" translate="roundCreated"></span>
                     {{ data.round }}
                   </span>
-                  <br *ngIf="data.asset !== placeHolder" />
-                  <span class="data" *ngIf="data.asset !== placeHolder">
+                  <br *ngIf="data.asset !== placeholder" />
+                  <span class="data" *ngIf="data.asset !== placeholder">
                     <span class="sub-headings" translate="assetCreated"></span>
                     {{ data.asset }}
                   </span>
-                  <br *ngIf="data.location !== placeHolder" />
-                  <span class="data" *ngIf="data.location !== placeHolder">
+                  <br *ngIf="data.location !== placeholder" />
+                  <span class="data" *ngIf="data.location !== placeholder">
                     <span
                       class="sub-headings"
                       translate="locationCreated"
                     ></span>
                     {{ data.location }}
                   </span>
-                  <br *ngIf="data.plant !== placeHolder" />
-                  <span class="data" *ngIf="data.plant !== placeHolder">
+                  <br *ngIf="data.plant !== placeholder" />
+                  <span class="data" *ngIf="data.plant !== placeholder">
                     <span class="sub-headings" translate="plantCreated"></span>
                     {{ data.plant }}
                   </span>
@@ -398,6 +398,13 @@
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
+        <div class="titles" translate="plant"></div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('plant').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
           {{ this.issuesActionsDetailViewForm.get('location').value }}
@@ -527,6 +534,7 @@
             *ngIf="!data.notificationNumber.length"
             mat-raised-button
             color="primary"
+            (click)="createNotification()"
           >
             Create
           </button>
