@@ -60,11 +60,16 @@
   "doYouWantToText": " Do you want to",
   "delete": " delete",
   "activeUsers": "Active Users",
-  "delete": " delete",
   "plant": "Plant",
   "plantsEmpty": "Atleast one plant is required",
   "validFrom": "Valid From",
   "validThrough": "Valid Through",
   "validFromInvalid": "Valid from is required",
-  "validThroughInvalid": "Valid through is required"
+  "validThroughInvalid": "Valid through is required",
+  "closeBtn": "Close",
+  "successfullyUpload": "Users Successfully Uploaded",
+  "failedUpload": "Users Failed to Uploaded ",
+  "downloadExcel": "Download Excel",
+  "addManually": "Create Manually",
+  "uploadExcel": "Upload Excel"
 }
