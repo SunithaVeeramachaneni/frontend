@@ -223,7 +223,7 @@ export class RoundPlanObservationsService {
             ? `Asset ID: ${item.ANLNR}`
             : '',
         priority: item.PRIORITY,
-        status: item.STATUS,
+        status: this.prepareStatus(item?.STATUS),
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         category:
           item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
@@ -240,5 +240,13 @@ export class RoundPlanObservationsService {
       next: resp?.next,
       count: resp?.count
     };
+  }
+
+  private prepareStatus(status = '') {
+    let formattedStatus = status ?? '';
+    if (status?.toLowerCase() === 'in-progress') {
+      formattedStatus = 'In Progress';
+    }
+    return formattedStatus;
   }
 }
