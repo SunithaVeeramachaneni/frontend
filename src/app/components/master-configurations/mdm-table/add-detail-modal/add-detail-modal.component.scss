@@ -1,0 +1,86 @@
+@import '../../../../../scss/colors.scss';
+
+.form-header-modal {
+  background: $white2;
+
+  ::ng-deep .mat-stepper-horizontal,
+  ::ng-deep .mat-stepper-vertical {
+    background-color: transparent !important;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    width: 50%;
+    position: relative;
+    left: 23%;
+    bottom: 65px;
+  }
+
+  ::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: $blue-main;
+  }
+
+  ::ng-deep .mat-step-header .mat-step-icon-state-edit {
+    background-color: $blue-main;
+  }
+
+  ::ng-deep .mat-step-header:hover:not([aria-disabled]) {
+    background-color: transparent;
+  }
+
+  .form-toolbar {
+    height: 65px;
+    background-color: $white;
+    border-bottom: 1px solid $border-color;
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+    }
+  }
+}
+.back-arrow-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.create-table {
+  display: flex;
+  justify-content: center;
+}
+
+.stepper {
+  background-color: none;
+}
+
+.btns {
+  float: right;
+  position: relative;
+  top: 20px;
+
+  .btn-in {
+    border: 1px solid $blue-main;
+    margin: 0px 11px;
+    border-radius: 0;
+    padding: 0px 17px;
+    border-radius: 4px;
+    height: 30px;
+    line-height: 10px;
+  }
+
+  .save-btn {
+    background-color: $blue-main;
+    color: $white;
+  }
+
+  .edit-btn {
+    border: 1px solid $blue-main;
+    color: $blue-main;
+  }
+}
+
+.preview-table {
+  background-color: $white;
+  padding: 20px;
+  height: 150px;
+  border-radius: 10px;
+}

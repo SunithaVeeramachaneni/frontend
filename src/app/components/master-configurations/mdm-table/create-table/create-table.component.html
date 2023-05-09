@@ -103,11 +103,11 @@
       <span translate="addMore" class="add-more"></span>
     </button>
     <div class="cancel-next">
-      <button mat-button matStepperNext class="button">
-        <span class="button-text" (click)="cancel()">cancel</span>
+      <button mat-button matStepperNext class="button" (click)="cancel()">
+        <span class="button-text" translate="cancel"></span>
       </button>
-      <button type="submit" mat-button matStepperNext class="button">
-        <span class="button-text">Save & Next</span>
+      <button type="submit" mat-button matStepperNext class="saveBtn">
+        <span class="save-text" translate="saveAndGoNext"></span>
       </button>
     </div>
   </form>

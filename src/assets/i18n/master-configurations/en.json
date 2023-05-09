@@ -82,5 +82,7 @@
   "typeQuestion": "Type Column name eg.Work Center",
   "title": "Title",
   "temporaryId": "Temporary ID *",
-  "editTableColumn": "Edit Table Column"
+  "editTableColumn": "Edit Table Column",
+  "saveAndGoNext": "Save & Go Next",
+  "goBackToEdit": "Go Back to Edit"
 }

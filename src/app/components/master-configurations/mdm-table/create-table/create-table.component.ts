@@ -4,7 +4,9 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import {
@@ -31,6 +33,8 @@ import { MdmTableService } from '../services/mdm-table.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTableComponent implements OnInit {
+  @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   masterConfiguration: FormGroup;
   columnTypes = {
     all: {},
@@ -87,7 +91,7 @@ export class CreateTableComponent implements OnInit {
   }
 
   cancel() {
-    this.location.back();
+    this.closeEmitter.emit(true);
   }
 
   ngOnInit(): void {

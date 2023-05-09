@@ -49,7 +49,7 @@ import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detai
 import { PlantListComponent } from './plants/plant-list/plant-list.component';
 import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
-import { AddDetailsComponent } from './mdm-table/add-details/add-details.component';
+import { AddDetailsComponent } from './mdm-table/add-detail-modal/add-detail-modal.component';
 import { ViewDetailsComponent } from './mdm-table/view-details/view-details.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -57,6 +57,7 @@ import { CreateTableComponent } from './mdm-table/create-table/create-table.comp
 import { PreviewComponent } from './mdm-table/preview/preview.component';
 import { AddEditMdmComponent } from './mdm-table/add-edit-mdm/add-edit-mdm.component';
 import { MdmDetailViewComponent } from './mdm-table/mdm-detail-view/mdm-detail-view.component';
+import { AddDetailModalComponent } from './mdm-table/add-detail/add-detail.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -88,7 +89,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateTableComponent,
     PreviewComponent,
     AddEditMdmComponent,
-    MdmDetailViewComponent
+    MdmDetailViewComponent,
+    AddDetailModalComponent
   ],
   imports: [
     FormsModule,

@@ -8,8 +8,9 @@ import { MasterConfigurationsContainerComponent } from './master-configurations-
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 import { LocationsListComponent } from './locations/locations-list/locations-list.component';
-import { AddDetailsComponent } from './mdm-table/add-details/add-details.component';
+import { AddDetailsComponent } from './mdm-table/add-detail-modal/add-detail-modal.component';
 import { ViewDetailsComponent } from './mdm-table/view-details/view-details.component';
+import { AddDetailModalComponent } from './mdm-table/add-detail/add-detail.component';
 const routes: Routes = [
   {
     path: '',
@@ -59,7 +60,7 @@ const routes: Routes = [
       },
       {
         path: 'create-more',
-        component: AddDetailsComponent,
+        component: AddDetailModalComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Create More' },
