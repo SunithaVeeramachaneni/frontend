@@ -1,18 +1,15 @@
 <div *ngIf="question.value.tag.title !== getNoneTag()">
-  <p
-    class="tag-text"
-    [ngClass]="
-      question.value.tag.title === 'Warning'
-        ? 'warning'
-        : question.value.tag.title === 'Danger'
-        ? 'danger'
-        : question.value.tag.title === 'Caution'
-        ? 'caution'
-        : ''
-    "
-  >
-    {{ question.value.tag.title }}
-  </p>
+  <div class="tag-text">
+    <div *ngIf="question.value.tag.title === 'Caution'">
+      <svg-icon icon="icon-caution" class="icon-caution"> </svg-icon>
+    </div>
+    <div *ngIf="question.value.tag.title === 'Information'">
+      <svg-icon icon="icon-information" class="icon-information"></svg-icon>
+    </div>
+    <div *ngIf="question.value.tag.title === 'Danger'">
+      <svg-icon icon="icon-danger" class="icon-danger"></svg-icon>
+    </div>
+  </div>
   <!-- <p class="tag-text" [ngStyle]="{ color: question.value.tag.colour }">
     {{ question.value.tag.title }}
   </p> -->

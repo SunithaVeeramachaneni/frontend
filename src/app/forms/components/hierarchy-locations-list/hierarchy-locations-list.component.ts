@@ -68,6 +68,7 @@ export class HierarchyLocationsListComponent implements OnInit {
                 .trim()
                 .includes(searchInput.toLowerCase().trim())
           );
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();
