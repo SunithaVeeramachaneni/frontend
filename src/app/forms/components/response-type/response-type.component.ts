@@ -8,6 +8,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { FormService } from '../../services/form.service';
 
 import { slideInOut } from 'src/app/animations';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-response-type',
@@ -29,6 +30,7 @@ export class ResponseTypeComponent implements OnInit {
   public globalResponses$: Observable<any[]>;
   public responseToBeEdited: any;
   public globalResponseSlideState: string;
+  tabIndex = 0;
   addEditDeleteResponseSet: boolean;
   addEditDeleteResponseSet$: BehaviorSubject<any> = new BehaviorSubject({
     action: '',
@@ -223,6 +225,16 @@ export class ResponseTypeComponent implements OnInit {
     }
     this.isGlobalResponseOpen = false;
   };
+
+  getSelectedIndex(question) {
+    return question.fieldType === 'DD' || question.fieldType === 'VI'
+      ? (this.tabIndex = 1)
+      : (this.tabIndex = 0);
+  }
+
+  onTabChange(event: MatTabChangeEvent) {
+    this.tabIndex = event.index;
+  }
 
   handleGlobalResponseCancel = (event) => {
     this.isGlobalResponseOpen = event.isGlobalResponseOpen;

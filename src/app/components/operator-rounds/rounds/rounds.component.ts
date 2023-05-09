@@ -443,7 +443,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
