@@ -1,37 +1,4 @@
 <!-- <p>add-details works!</p> -->
-<!-- <div class="form-header-modal">
-  <div class="form-toolbar">
-    <button class="back-btn" [routerLink]="['/master-configuration']">
-      <svg-icon icon="icon-back-arrow" class="back-arrow-icon"></svg-icon>
-     
-    </button>
-
-    <mat-horizontal-stepper #stepper class="stepper">
-      <mat-step>
-        <ng-template matStepLabel>Create Table</ng-template>
-        <app-create-table class="create-table"></app-create-table>
-      </mat-step>
-
-      <mat-step label="Preview">
-        <app-preview-table></app-preview-table>
-
-        <div class="preview-button">
-          <button
-            mat-button
-            (click)="stepper.reset()"
-            class="preview-button-in"
-          >
-            Go Back to Edit
-          </button>
-          <button mat-button matStepperPrevious class="preview-button-in">
-            Save
-          </button>
-        </div>
-      </mat-step>
-    </mat-horizontal-stepper>
-  </div>
-</div> -->
-
 <div class="form-header-modal">
   <mat-toolbar class="form-toolbar">
     <button class="back-btn" (click)="close()">
