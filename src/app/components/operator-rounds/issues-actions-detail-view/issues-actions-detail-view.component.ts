@@ -155,8 +155,7 @@ export class IssuesActionsDetailViewComponent
                   if (onCreateIssuesLogHistory) {
                     this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
                   }
-                },
-                error: (error) => console.warn(error)
+                }
               });
 
             this.amplifySubscription$ = this.observations
@@ -175,8 +174,7 @@ export class IssuesActionsDetailViewComponent
                   if (onCreateActionsLogHistory) {
                     this.prepareSubscriptionResponse(onCreateActionsLogHistory);
                   }
-                },
-                error: (error) => console.warn(error)
+                }
               });
           }
         });
