@@ -93,6 +93,7 @@ export class ObservationsComponent implements OnInit {
   };
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
+  animationDuration = '0ms';
   readonly routingUrls = routingUrls;
   private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
   private statusColors = ['#F56565', '#FFCC00'];
