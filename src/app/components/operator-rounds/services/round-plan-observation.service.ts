@@ -184,6 +184,8 @@ export class RoundPlanObservationsService {
       : `${formatedDisplay} + ${assignee.length - 1} more`;
   }
 
+  removeSpecialCharacter = (str = '') => str?.replace(/[^A-Z0-9]/gi, '');
+
   private formateGetObservationResponse(resp, type) {
     const items = resp?.items?.sort(
       (a, b) =>

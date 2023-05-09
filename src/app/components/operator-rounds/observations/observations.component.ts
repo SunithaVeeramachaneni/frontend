@@ -96,17 +96,18 @@ export class ObservationsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private statusColors = {
-    Open: '#e0e0e0',
-    'In Progress': '#ffcc01',
-    Overdue: '#aa2e24'
+    open: '#e0e0e0',
+    inprogress: '#ffcc01',
+    overdue: '#aa2e24',
+    resolved: '#2C9E53'
   };
   private priorityColors = {
-    High: '#F6695E',
-    Medium: '#f4a916',
-    Low: '#c8dae1',
-    Shutdown: '#000000',
-    Turnaround: '#3C59FE',
-    Emergency: '#E2190E'
+    high: '#F6695E',
+    medium: '#f4a916',
+    low: '#c8dae1',
+    shutdown: '#000000',
+    turnaround: '#3C59FE',
+    emergency: '#E2190E'
   };
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
@@ -204,16 +205,25 @@ export class ObservationsComponent implements OnInit {
   }
 
   private prepareColorsAndData(result, action: 'priority' | 'status') {
-    return {
-      color: Object.entries(result).map(([key, _]) =>
+    const color = [];
+    const data = [];
+    Object.entries(result).map(([key, value]) => {
+      const leanKey = this.roundPlanObservationsService.removeSpecialCharacter(
+        key.toLowerCase()
+      );
+      color.push(
         action === 'priority'
-          ? this.priorityColors[key]
-          : this.statusColors[key]
-      ),
-      data: Object.entries(result).map(([key, value]) => ({
-        name: key,
+          ? this.priorityColors[leanKey]
+          : this.statusColors[leanKey]
+      );
+      data.push({
+        name: leanKey === 'inprogress' ? 'In Progress' : key,
         value
-      }))
+      });
+    });
+    return {
+      color,
+      data
     };
   }
 }
