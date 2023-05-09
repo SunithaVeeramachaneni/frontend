@@ -344,10 +344,10 @@ export class QuestionComponent implements OnInit {
     );
 
     this.instructionTagColours[this.translate.instant('cautionTag')] =
-      '#D27B16';
-    this.instructionTagColours[this.translate.instant('warningTag')] =
-      '#FF3D00';
-    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
+      '#FFCC00';
+    this.instructionTagColours[this.translate.instant('informationTag')] =
+      '#CAE4FB';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#FF3B30';
   }
 
   getRangeMetadata() {

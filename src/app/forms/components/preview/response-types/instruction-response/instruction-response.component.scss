@@ -1,25 +1,22 @@
 @import '../../../../../../scss/colors.scss';
 
 .tag-text {
-  padding: 8px 12px;
   border-radius: 16px;
   width: fit-content;
   margin: 0 0 4px 0;
 }
 
-.warning {
-  background-color: $warning-bg;
-  color: $warning-text;
+.icon-information {
+  height: 22px;
+  width: 85px;
 }
-
-.danger {
-  background-color: $danger-bg;
-  color: $danger-text;
+.icon-caution {
+  height: 22px;
+  width: 75px;
 }
-
-.caution {
-  background-color: $caution-bg;
-  color: $caution-text;
+.icon-danger {
+  height: 22px;
+  width: 75px;
 }
 
 .instruction {
