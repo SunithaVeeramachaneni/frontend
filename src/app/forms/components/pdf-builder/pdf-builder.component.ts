@@ -207,6 +207,13 @@ export class PDFBuilderComponent implements OnInit {
         isFormDetailPublished: true
       })
     );
+    if (this.data.moduleName === 'OPERATOR_ROUNDS') {
+      this.router.navigate(['/operator-rounds']);
+      this.dialogRef.close();
+    } else {
+      this.router.navigate(['/forms']);
+      this.dialogRef.close();
+    }
   }
 
   toggleSelectAll(event) {
