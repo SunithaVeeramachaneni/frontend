@@ -5,7 +5,9 @@ import {
   OnDestroy,
   ElementRef,
   ViewChild,
-  DoCheck
+  DoCheck,
+  Directive,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -15,8 +17,13 @@ import {
   MatDialog
 } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Amplify } from 'aws-amplify';
+import { Router } from '@angular/router';
+import { ToastService } from 'src/app/shared/toast';
+import { DomSanitizer } from '@angular/platform-browser';
+
 import {
   AssigneeDetails,
   History,
@@ -27,13 +34,19 @@ import {
 } from 'src/app/interfaces';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { Router } from '@angular/router';
-import { ToastService } from 'src/app/shared/toast';
-
+@Directive({
+  selector: '[appScrollToBottom]'
+})
+export class ScrollToBottomDirective {
+  constructor(private el: ElementRef) {}
+  public scrollToBottom() {
+    const el: HTMLDivElement = this.el.nativeElement;
+    el.scrollTop = Math.max(0, el.scrollHeight - el.offsetHeight);
+  }
+}
 @Component({
   selector: 'app-issues-actions-detail-view',
   templateUrl: './issues-actions-detail-view.component.html',
@@ -42,6 +55,8 @@ import { ToastService } from 'src/app/shared/toast';
 export class IssuesActionsDetailViewComponent
   implements OnInit, OnDestroy, DoCheck
 {
+  @ViewChild(ScrollToBottomDirective)
+  scroll: ScrollToBottomDirective;
   @ViewChild('footer') footer: ElementRef;
   issuesActionsDetailViewForm: FormGroup = this.fb.group({
     title: '',
@@ -75,8 +90,13 @@ export class IssuesActionsDetailViewComponent
   logHistory: History[];
   filteredMediaType: any;
   chatPanelHeight;
+  isPreviousEnabled = false;
+  isNextEnabled = false;
+  ghostLoading = new Array(17).fill(0).map((_, i) => i);
   placeholder = '_ _';
-
+  private totalCount = 0;
+  private allData = [];
+  private amplifySubscription$: Subscription = null;
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsDetailViewComponent>,
@@ -88,6 +108,7 @@ export class IssuesActionsDetailViewComponent
     private tenantService: TenantService,
     private dialog: MatDialog,
     private router: Router,
+    private cdRef: ChangeDetectorRef,
     private toastService: ToastService
   ) {}
 
@@ -97,48 +118,73 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { id, type, users$, dueDate, notificationNumber } = this.data;
-    if (type === 'issue') {
-      this.issuesActionsDetailViewForm.get('priority').disable();
-    }
+    const { users$, totalCount$, allData } = this.data;
+    this.allData = allData;
+    totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
-      s3Details: { bucket, region }
+      s3Details: { bucket, region },
+      tenantId
     } = this.tenantService.getTenantInfo();
-    this.data.notificationNumber =
-      notificationNumber !== this.placeholder ? notificationNumber : '';
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
-    this.issuesActionsDetailViewForm.patchValue({
-      ...this.data,
-      dueDate: dueDate ? new Date(dueDate) : '',
-      dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy')
-        : ''
-    });
-    this.minDate = new Date(this.data.createdAt);
-    this.logHistory$ = this.observations
-      .getIssueOrActionLogHistory$(id, type, {})
-      .pipe(
-        tap((logHistory) => {
-          this.logHistory = logHistory.rows;
-          this.filteredMediaType = this.logHistory.filter(
-            (history) => history.type === 'Media'
-          );
-        })
-      );
-    this.observations
-      .onCreateIssueOrActionLogHistoryEventSource(
-        `${type}/${id}/log-history/sse`
-      )
-      .subscribe();
+    this.init();
+
+    if (tenantId) {
+      this.tenantService
+        .getTenantAmplifyConfigByTenantId$(tenantId)
+        .subscribe(({ amplifyConfig }) => {
+          if (Object.keys(amplifyConfig).length > 0) {
+            Amplify.configure(amplifyConfig);
+
+            this.amplifySubscription$ = this.observations
+              .onCreateIssuesLogHistory$({
+                issueslistID: {
+                  eq: this.data.id
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateIssuesLogHistory }
+                  }
+                }) => {
+                  if (onCreateIssuesLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
+                  }
+                }
+              });
+
+            this.amplifySubscription$ = this.observations
+              .onCreateActionsLogHistory$({
+                actionslistID: {
+                  eq: this.data.id
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateActionsLogHistory }
+                  }
+                }) => {
+                  if (onCreateActionsLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateActionsLogHistory);
+                  }
+                }
+              });
+          }
+        });
+    }
   }
 
   ngDoCheck() {
     const height = this.footer?.nativeElement.offsetHeight;
     this.chatPanelHeight = `calc(100vh - ${height + 105}px)`;
+    this.cdRef.detectChanges();
   }
 
   getImageSrc = (source: string) => {
@@ -382,7 +428,177 @@ export class IssuesActionsDetailViewComponent
     return this.userService.getUserFullName(email);
   }
 
+  onPrevious(): void {
+    const { id } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      return;
+    }
+    const previousRecord = this.allData[idx - 1];
+    if (!previousRecord) {
+      this.isPreviousEnabled = false;
+      return;
+    } else {
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === previousRecord?.id
+      );
+      this.isPreviousEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx - 1]) {
+        this.isPreviousEnabled = true;
+      }
+      this.data = {
+        allData: this.data?.allData,
+        next: this.data?.next,
+        totalCount$: this.data?.totalCount$,
+        users$: this.data?.users$,
+        limit: this.data?.limit,
+        ...previousRecord
+      };
+      this.init();
+    }
+  }
+
+  onNext(): void {
+    const { id } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      return;
+    }
+    const nextRecord = this.allData[idx + 1];
+    if (!nextRecord) {
+      if (this.data?.next === null) {
+        this.isPreviousEnabled = false;
+        if (idx !== -1 && this.allData[idx - 1]) {
+          this.isPreviousEnabled = true;
+        }
+        this.isNextEnabled = false;
+        return;
+      }
+      this.getIssuesActionsList(this.data);
+      this.isPreviousEnabled = true;
+    } else {
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === nextRecord?.id
+      );
+      this.isPreviousEnabled = true;
+      this.isNextEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx + 1]) {
+        this.isNextEnabled = true;
+      }
+      this.data = {
+        allData: this.data?.allData,
+        next: this.data?.next,
+        totalCount$: this.data?.totalCount$,
+        users$: this.data?.users$,
+        limit: this.data?.limit,
+        ...nextRecord
+      };
+      this.init();
+    }
+  }
+
   ngOnDestroy(): void {
-    this.observations.closeOnCreateIssueOrActionLogHistoryEventSourceEventSource();
+    if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
+  }
+
+  private getIssuesActionsList(data): void {
+    let observable: Observable<{ count: number; next: string; rows: any[] }>;
+    if (data?.type === 'issue') {
+      this.observations.issuesNextToken = data.next;
+      this.observations.fetchIssues$.next({
+        data: 'infiniteScroll'
+      });
+      observable = this.observations.issues$;
+    } else {
+      this.observations.actionsNextToken = data.next;
+      this.observations.fetchActions$.next({
+        data: 'infiniteScroll'
+      });
+      observable = this.observations.actions$;
+    }
+
+    observable?.pipe().subscribe(({ count, next: _next, rows }) => {
+      this.totalCount = count;
+      this.allData = [...this.allData, ...rows];
+      const idx = this.allData?.findIndex((a) => a?.id === data?.id);
+      if (idx === -1) {
+        return;
+      }
+      const nextRecordIdx = idx + 1;
+      const nextRecord = this.allData[nextRecordIdx];
+      if (!nextRecord) {
+        return;
+      } else {
+        this.observations.issuesNextToken = _next;
+        this.data = {
+          allData: this.allData,
+          next: _next,
+          totalCount$: data?.totalCount$,
+          users$: data?.users$,
+          limit: data?.limit,
+          ...nextRecord
+        };
+        this.init();
+      }
+    });
+  }
+
+  private init(): void {
+    const { id, type, dueDate, notificationNumber } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      this.isNextEnabled = false;
+    } else {
+      if (this.allData[idx - 1]) this.isPreviousEnabled = true;
+      if (this.allData[idx + 1]) this.isNextEnabled = true;
+    }
+    if (this.data.next !== null) {
+      this.isNextEnabled = true;
+    }
+    if (type === 'issue') {
+      this.issuesActionsDetailViewForm.get('priority').disable();
+    }
+    this.data.notificationNumber =
+      notificationNumber !== this.placeholder ? notificationNumber : '';
+    this.issuesActionsDetailViewForm.patchValue({
+      ...this.data,
+      dueDate: dueDate ? new Date(dueDate) : '',
+      dueDateDisplayValue: dueDate
+        ? format(new Date(dueDate), 'dd MMM yyyy')
+        : ''
+    });
+    this.minDate = new Date(this.data.createdAt);
+    this.logHistory$ = this.observations
+      .getIssueOrActionLogHistory$(id, type, {})
+      .pipe(
+        tap((logHistory) => {
+          this.logHistory = logHistory.rows;
+          this.filteredMediaType = this.logHistory.filter(
+            (history) => history.type === 'Media'
+          );
+        })
+      );
+  }
+
+  private prepareSubscriptionResponse(data) {
+    this.logHistory = [
+      ...this.logHistory,
+      {
+        ...data,
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        message:
+          data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+      }
+    ];
+    this.filteredMediaType = this.logHistory.filter(
+      (history) => history?.type === 'Media'
+    );
+    this.logHistory$ = of({
+      nextToken: null,
+      rows: this.logHistory
+    });
   }
 }
