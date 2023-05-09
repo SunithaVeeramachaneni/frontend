@@ -182,6 +182,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         );
         break;
       case 'delete':
+        this.isEmptyPage[pageIndex] = false;
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({
             pageIndex,
