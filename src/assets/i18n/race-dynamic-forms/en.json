@@ -263,5 +263,6 @@
   "exists": "A template with this name already exists, please choose another name",
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
-  "selectAnOperator": "Select an Operator"
+  "selectAnOperator": "Select an Operator",
+  "createManually": "Create Manually"
 }

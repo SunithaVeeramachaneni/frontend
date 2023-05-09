@@ -291,7 +291,8 @@
   "createdByAction": "Created By: ",
   "issueStatusUpdated": "Issue Status Updated to: ",
   "actionStatusUpdated": "Action Status Updated to: ",
-  "assigneeAddedTo": "'Assigned To' Added: ",
+  "assigneeAddedTo": "'Assigned to' Added: ",
+  "assigneeRemovedTo": "'Assigned to' Removed: ",
   "erpNotif": "ERP Notification Updated to: ",
   "priorityUpdated": "Priority Updated to: ",
   "dueDateUpdated": "DueDate Updated to: ",
@@ -304,5 +305,7 @@
   "assetCreated": "Asset: ",
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
-  "categoryCreated": "Category: "
+  "categoryCreated": "Category: ",
+  "nodeId": "{type} Id: {id}",
+  "typePlaceholder": "Type"
 }
