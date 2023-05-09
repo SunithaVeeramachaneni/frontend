@@ -416,7 +416,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         let filteredForms = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
