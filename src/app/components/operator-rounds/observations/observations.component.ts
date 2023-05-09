@@ -204,17 +204,6 @@ export class ObservationsComponent implements OnInit {
   }
 
   private prepareColorsAndData(result, action: 'priority' | 'status') {
-    console.log({
-      color: Object.entries(result).map(([key, _]) =>
-        action === 'priority'
-          ? this.priorityColors[key]
-          : this.statusColors[key]
-      ),
-      data: Object.entries(result).map(([key, value]) => ({
-        name: key,
-        value
-      }))
-    });
     return {
       color: Object.entries(result).map(([key, _]) =>
         action === 'priority'
