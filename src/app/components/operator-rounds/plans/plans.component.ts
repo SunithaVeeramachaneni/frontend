@@ -467,7 +467,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         let filteredRoundPlans = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
