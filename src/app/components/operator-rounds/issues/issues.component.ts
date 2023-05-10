@@ -15,13 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -38,10 +32,8 @@ import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
-  LoadEvent,
   Permission,
   RowLevelActionEvent,
-  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo
@@ -336,12 +328,9 @@ export class IssuesComponent implements OnInit {
     columns: Column[];
     data: any[];
   }>;
-  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
   searchIssue: FormControl;
-  nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -361,15 +350,17 @@ export class IssuesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchIssues$.next({ data: 'load' });
-    this.fetchIssues$.next({} as TableEvent);
+    this.roundPlanObservationsService.fetchIssues$.next({ data: 'load' });
+    this.roundPlanObservationsService.fetchIssues$.next({} as TableEvent);
     this.searchIssue = new FormControl('');
     this.searchIssue.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchIssues$.next({ data: 'search' });
+          this.roundPlanObservationsService.fetchIssues$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -382,17 +373,18 @@ export class IssuesComponent implements OnInit {
   }
 
   displayIssues(): void {
-    const issuesOnLoadSearch$ = this.fetchIssues$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        this.skip = 0;
-        this.nextToken = '';
-        this.fetchType = data;
-        return this.getIssuesList();
-      })
-    );
+    const issuesOnLoadSearch$ =
+      this.roundPlanObservationsService.fetchIssues$.pipe(
+        filter(({ data }) => data === 'load' || data === 'search'),
+        switchMap(({ data }) => {
+          this.skip = 0;
+          this.roundPlanObservationsService.issuesNextToken = '';
+          this.fetchType = data;
+          return this.getIssuesList();
+        })
+      );
 
-    const onScrollIssues$ = this.fetchIssues$.pipe(
+    const onScrollIssues$ = this.roundPlanObservationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -447,7 +439,7 @@ export class IssuesComponent implements OnInit {
 
   getIssuesList() {
     const obj = {
-      next: this.nextToken,
+      next: this.roundPlanObservationsService.issuesNextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
       type: 'issue'
@@ -455,9 +447,10 @@ export class IssuesComponent implements OnInit {
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.roundPlanObservationsService.issuesNextToken = next;
         this.isLoading$.next(false);
         this.issuesCount$ = of(count);
+        this.roundPlanObservationsService.issues$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -468,7 +461,7 @@ export class IssuesComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchIssues$.next(event);
+    this.roundPlanObservationsService.fetchIssues$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -507,7 +500,11 @@ export class IssuesComponent implements OnInit {
     const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
       data: {
         ...row,
-        users$: this.users$
+        users$: this.users$,
+        totalCount$: this.issuesCount$,
+        allData: this.initial?.data || [],
+        next: this.roundPlanObservationsService.issuesNextToken,
+        limit: this.limit
       },
       maxWidth: '100vw',
       maxHeight: '100vh',

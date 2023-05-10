@@ -28,17 +28,15 @@
   ::ng-deep .mat-column-notificationNumber {
     min-width: 70px;
   }
+}
 
-  .issues-search {
-    position: fixed;
-    right: 14px;
-    top: 335px;
-  }
+.issues-search-container {
+  position: fixed;
+  top: 335px;
+  right: 30px;
+  z-index: 100;
   .no-of-issues {
     margin-right: 10px;
-    position: fixed;
-    right: 265px;
-    top: 402px;
   }
   .issues-count {
     font-weight: 500;
