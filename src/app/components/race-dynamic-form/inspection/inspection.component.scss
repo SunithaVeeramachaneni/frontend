@@ -55,6 +55,7 @@
 
   ::ng-deep .mat-column-dueDate {
     min-width: 95px;
+    width: 95px;
   }
 
   ::ng-deep .mat-column-schedule {
@@ -101,21 +102,23 @@
   width: 40%;
   height: 35px;
   border-radius: 5px;
-  right: 270px;
-  top: 6px;
+  right: 260px;
+  top: -10px;
 }
 
 ::ng-deep .assign-menu-list + * .mat-menu-panel {
   position: relative;
   top: 60px;
   left: 915px;
+  width: 340px;
+  min-width: 340px;
 }
 
 @media (min-width: 1090px) and (max-width: 1240px) {
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 172px !important;
-    left: 495px !important;
+    left: 515px !important;
   }
 }
 
@@ -123,7 +126,7 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 641px !important;
+    left: 662px !important;
   }
 }
 
@@ -131,7 +134,7 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 765px !important;
+    left: 785px !important;
   }
 }
 
@@ -139,7 +142,7 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 915px !important;
+    left: 937px !important;
   }
 }
 
@@ -152,7 +155,7 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 1106px !important;
+    left: 1126px !important;
   }
 }
 
@@ -160,7 +163,7 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 1220px !important;
+    left: 1240px !important;
   }
 }
 
@@ -168,6 +171,6 @@
   ::ng-deep .assign-menu-list + * .mat-menu-panel {
     position: relative;
     top: 175px !important;
-    left: 1450px !important;
+    left: 1470px !important;
   }
 }

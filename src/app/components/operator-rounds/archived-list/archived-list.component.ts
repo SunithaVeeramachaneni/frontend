@@ -277,7 +277,7 @@ export class ArchivedListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 130px)'
           };
           initial.data = rows;
         } else {
