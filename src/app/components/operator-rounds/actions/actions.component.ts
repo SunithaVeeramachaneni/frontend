@@ -302,29 +302,38 @@ export class ActionsComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#FF3B30'
+        color: '#F6695E'
       },
       medium: {
-        color: '#FF9500'
+        color: '#F4A916'
       },
       low: {
-        color: '#8A8A8C'
+        color: '#8b8b8d'
       },
-      open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
-      },
-      'in-progress': {
-        'background-color': '#FFCC00',
+      shutdown: {
         color: '#000000'
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#FFFFFF'
+      emergency: {
+        color: '#E2190E'
+      },
+      turnaround: {
+        color: '#3C59FE'
+      },
+      open: {
+        'background-color': '#e0e0e0',
+        color: '#000000'
+      },
+      'in progress': {
+        'background-color': '#ffcc01',
+        color: '#000000'
       },
       resolved: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      overdue: {
+        'background-color': '#2C9E53',
+        color: '#aa2e24'
       }
     }
   };

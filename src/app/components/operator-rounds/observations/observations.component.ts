@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   Component,
   OnInit,
@@ -95,9 +96,20 @@ export class ObservationsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   animationDuration = '0ms';
   readonly routingUrls = routingUrls;
-  private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
-  private statusColors = ['#F56565', '#FFCC00'];
-
+  private statusColors = {
+    open: '#e0e0e0',
+    inprogress: '#ffcc01',
+    overdue: '#aa2e24',
+    resolved: '#2C9E53'
+  };
+  private priorityColors = {
+    high: '#F6695E',
+    medium: '#f4a916',
+    low: '#c8dae1',
+    shutdown: '#000000',
+    turnaround: '#3C59FE',
+    emergency: '#E2190E'
+  };
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private userService: UsersService,
@@ -129,12 +141,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openIssues?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.prepareColorsAndData(
+                    result?.openIssues?.priority,
+                    'priority'
                   )
                 }
               ]
@@ -148,12 +157,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openActions?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.prepareColorsAndData(
+                    result?.openActions?.priority,
+                    'priority'
                   )
                 }
               ]
@@ -170,12 +176,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openIssues?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.prepareColorsAndData(
+                    result?.openIssues?.status,
+                    'status'
                   )
                 }
               ]
@@ -189,12 +192,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openActions?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.prepareColorsAndData(
+                    result?.openActions?.status,
+                    'status'
                   )
                 }
               ]
@@ -203,5 +203,28 @@ export class ObservationsComponent implements OnInit {
         }
         this.cdrf.markForCheck();
       });
+  }
+
+  private prepareColorsAndData(result, action: 'priority' | 'status') {
+    const color = [];
+    const data = [];
+    Object.entries(result).map(([key, value]) => {
+      const leanKey = this.roundPlanObservationsService.removeSpecialCharacter(
+        key.toLowerCase()
+      );
+      color.push(
+        action === 'priority'
+          ? this.priorityColors[leanKey]
+          : this.statusColors[leanKey]
+      );
+      data.push({
+        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        value
+      });
+    });
+    return {
+      color,
+      data
+    };
   }
 }
