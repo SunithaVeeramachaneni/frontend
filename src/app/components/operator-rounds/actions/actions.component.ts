@@ -179,7 +179,7 @@ export class ActionsComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
