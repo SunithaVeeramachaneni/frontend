@@ -273,7 +273,23 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailDynamoDBVersion
                 })
               );
+              if (formMetadata.formStatus === 'Published') {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: { ...formMetadata, formStatus: 'Draft' },
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
+
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateForm({
+                    formMetadata: { ...formMetadata, formStatus: 'Draft' },
+                    formListDynamoDBVersion: this.formListVersion
+                  })
+                );
+              }
             }
+
             this.formDetails = formDetails;
           } else {
             this.store.dispatch(

@@ -141,7 +141,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     BuilderConfigurationActions.updateFormMetadata,
     (state, action): FormConfigurationState => {
-      const { formStatus, ...formMetadata } = action.formMetadata;
+      const formMetadata = action.formMetadata;
       return {
         ...state,
         formMetadata: {
