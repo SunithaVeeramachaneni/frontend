@@ -1,17 +1,20 @@
 /* eslint-disable no-underscore-dangle */
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   History,
   HistoryResponse,
-  IssueOrAction
+  IssueOrAction,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
 } from 'src/app/interfaces';
+import { API, graphqlOperation } from 'aws-amplify';
 
 import { AppService } from 'src/app/shared/services/app.services';
-import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
 import { UsersService } from '../../user-management/services/users.service';
 
@@ -22,10 +25,18 @@ const dataPlaceHolder = '--';
   providedIn: 'root'
 })
 export class RoundPlanObservationsService {
+  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  issuesNextToken = '';
+  issues$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
+  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  actionsNextToken = '';
+  actions$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
   constructor(
     private readonly appService: AppService,
-    private sseService: SseService,
-    private zone: NgZone,
     private userService: UsersService
   ) {}
 
@@ -134,30 +145,6 @@ export class RoundPlanObservationsService {
       );
   }
 
-  onCreateIssueOrActionLogHistoryEventSource(
-    urlString: string
-  ): Observable<History> {
-    return new Observable((observer) => {
-      const eventSource = this.sseService.getEventSourceWithGet(
-        `${environment.operatorRoundsApiUrl}${urlString}`,
-        null
-      );
-      eventSource.stream();
-      eventSource.onmessage = (event) => {
-        this.zone.run(() => {
-          observer.next(JSON.parse(event.data));
-        });
-      };
-      eventSource.onerror = (event) => {
-        this.zone.run(() => {
-          if (event.data) {
-            observer.error(JSON.parse(event.data));
-          }
-        });
-      };
-    });
-  }
-
   createNotification(
     issue,
     info: ErrorInfo = {} as ErrorInfo
@@ -170,8 +157,44 @@ export class RoundPlanObservationsService {
     );
   }
 
-  closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
-    this.sseService.closeEventSource();
+  onCreateIssuesLogHistory$(input) {
+    const statement = `subscription OnCreateIssuesLogHistory($filter: ModelSubscriptionIssuesLogHistoryFilterInput) {
+      onCreateIssuesLogHistory(filter: $filter) {
+        id
+        message
+        type
+        username
+        createdAt
+        createdBy
+        assignedTo
+        issueslistID
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onCreateActionsLogHistory$(input) {
+    const statement = `subscription OnCreateActionsLogHistory($filter: ModelSubscriptionActionsLogHistoryFilterInput) {
+      onCreateActionsLogHistory(filter: $filter) {
+        id
+        message
+        type
+        username
+        assignedTo
+        createdAt
+        createdBy
+        actionslistID
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
   }
 
   formatUsersDisplay(users: string) {
@@ -183,6 +206,8 @@ export class RoundPlanObservationsService {
       ? formatedDisplay
       : `${formatedDisplay} + ${assignee.length - 1} more`;
   }
+
+  removeSpecialCharacter = (str = '') => str?.replace(/[^A-Z0-9]/gi, '');
 
   private formateGetObservationResponse(resp, type) {
     const items = resp?.items?.sort(
@@ -223,7 +248,7 @@ export class RoundPlanObservationsService {
             ? `Asset ID: ${item.ANLNR}`
             : '',
         priority: item.PRIORITY,
-        status: item.STATUS,
+        status: this.prepareStatus(item?.STATUS),
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         category:
           item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
@@ -240,5 +265,13 @@ export class RoundPlanObservationsService {
       next: resp?.next,
       count: resp?.count
     };
+  }
+
+  private prepareStatus(status = '') {
+    let formattedStatus = status ?? '';
+    if (status?.toLowerCase() === 'in-progress') {
+      formattedStatus = 'In Progress';
+    }
+    return formattedStatus;
   }
 }
