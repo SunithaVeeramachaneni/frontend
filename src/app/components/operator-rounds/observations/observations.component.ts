@@ -94,7 +94,6 @@ export class ObservationsComponent implements OnInit {
   };
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
-  animationDuration = '0ms';
   readonly routingUrls = routingUrls;
   private statusColors = {
     open: '#e0e0e0',

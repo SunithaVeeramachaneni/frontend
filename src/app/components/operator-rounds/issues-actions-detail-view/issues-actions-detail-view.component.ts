@@ -131,14 +131,14 @@ export class IssuesActionsDetailViewComponent
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
     this.init();
-
     if (tenantId) {
       this.tenantService
         .getTenantAmplifyConfigByTenantId$(tenantId)
         .subscribe(({ amplifyConfig }) => {
           if (Object.keys(amplifyConfig).length > 0) {
+            // 1. Configure amplify
             Amplify.configure(amplifyConfig);
-
+            // 2. Create issue history subscription
             this.amplifySubscription$ = this.observations
               .onCreateIssuesLogHistory$({
                 issueslistID: {
@@ -157,7 +157,7 @@ export class IssuesActionsDetailViewComponent
                   }
                 }
               });
-
+            // 3. Create actions log history
             this.amplifySubscription$ = this.observations
               .onCreateActionsLogHistory$({
                 actionslistID: {
@@ -173,6 +173,36 @@ export class IssuesActionsDetailViewComponent
                 }) => {
                   if (onCreateActionsLogHistory) {
                     this.prepareSubscriptionResponse(onCreateActionsLogHistory);
+                  }
+                }
+              });
+            // 4. Update actions log history
+            this.amplifySubscription$ = this.observations
+              .onUpdateActionsList$({ id: { eq: this.data.id } })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onUpdateActionsList }
+                  }
+                }) => {
+                  if (onUpdateActionsList) {
+                    this.initOnUpdateList(onUpdateActionsList, 'actionData');
+                  }
+                }
+              });
+            // 5. Update issues log history
+            this.amplifySubscription$ = this.observations
+              .onUpdateIssuesList$({ id: { eq: this.data.id } })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onUpdateIssuesList }
+                  }
+                }) => {
+                  if (onUpdateIssuesList) {
+                    this.initOnUpdateList(onUpdateIssuesList, 'issueData');
                   }
                 }
               });
@@ -448,7 +478,7 @@ export class IssuesActionsDetailViewComponent
         this.isPreviousEnabled = true;
       }
       this.data = {
-        allData: this.data?.allData,
+        allData: this.allData,
         next: this.data?.next,
         totalCount$: this.data?.totalCount$,
         users$: this.data?.users$,
@@ -488,7 +518,7 @@ export class IssuesActionsDetailViewComponent
         this.isNextEnabled = true;
       }
       this.data = {
-        allData: this.data?.allData,
+        allData: this.allData,
         next: this.data?.next,
         totalCount$: this.data?.totalCount$,
         users$: this.data?.users$,
@@ -558,9 +588,6 @@ export class IssuesActionsDetailViewComponent
     if (this.data.next !== null) {
       this.isNextEnabled = true;
     }
-    if (type === 'issue') {
-      this.issuesActionsDetailViewForm.get('priority').disable();
-    }
     this.data.notificationNumber =
       notificationNumber !== this.placeholder ? notificationNumber : '';
     this.issuesActionsDetailViewForm.patchValue({
@@ -600,5 +627,45 @@ export class IssuesActionsDetailViewComponent
       nextToken: null,
       rows: this.logHistory
     });
+  }
+
+  private initJSONData(data = null) {
+    const obj = {};
+    data = JSON.parse(data) ?? {};
+    data?.FORMS.forEach((form) => {
+      form?.PAGES.forEach((page) => {
+        page?.SECTIONS.forEach((section) => {
+          section?.FIELDS.forEach((field) => {
+            obj[field.FIELDNAME] = field.FIELDVALUE;
+          });
+        });
+      });
+    });
+    return obj;
+  }
+
+  private initOnUpdateList(data, key) {
+    if (data) {
+      const idx = this.data?.allData?.findIndex((d) => d?.id === data?.id);
+      if (idx !== -1) {
+        const jsonData: any = this.initJSONData(data[key]);
+        if (this.data?.id === data?.id) {
+          this.data = {
+            ...this.data,
+            ...data,
+            ...jsonData,
+            dueDate: jsonData?.DUEDATE
+              ? format(new Date(jsonData?.DUEDATE), 'dd MMM, yyyy')
+              : '',
+            priority: jsonData.PRIORITY ?? '',
+            statusDisplay: this.observations.prepareStatus(
+              jsonData.STATUS ?? ''
+            ),
+            status: jsonData?.STATUS ?? ''
+          };
+          this.allData[idx] = this.data;
+        }
+      }
+    }
   }
 }

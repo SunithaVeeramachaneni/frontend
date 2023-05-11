@@ -197,6 +197,42 @@ export class RoundPlanObservationsService {
     ) as unknown as Observable<any>;
   }
 
+  onUpdateActionsList$(input) {
+    const statement = `subscription OnUpdateActionsList($filter: ModelSubscriptionActionsListFilterInput) {
+      onUpdateActionsList(filter: $filter) {
+        id
+        actionData
+        createdBy
+        createdAt
+        assignedTo
+        _version
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onUpdateIssuesList$(input) {
+    const statement = `subscription OnUpdateIssuesList($filter: ModelSubscriptionIssuesListFilterInput) {
+      onUpdateIssuesList(filter: $filter) {
+        id
+        issueData
+        createdBy
+        createdAt
+        assignedTo
+        _version
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
   formatUsersDisplay(users: string) {
     const assignee = users.split(',');
     const formatedDisplay = assignee[0]
@@ -208,6 +244,14 @@ export class RoundPlanObservationsService {
   }
 
   removeSpecialCharacter = (str = '') => str?.replace(/[^A-Z0-9]/gi, '');
+
+  prepareStatus(status = '') {
+    let formattedStatus = status ?? '';
+    if (this.removeSpecialCharacter(status)?.toLowerCase() === 'inprogress') {
+      formattedStatus = 'In Progress';
+    }
+    return formattedStatus;
+  }
 
   private formateGetObservationResponse(resp, type) {
     const items = resp?.items?.sort(
@@ -248,7 +292,8 @@ export class RoundPlanObservationsService {
             ? `Asset ID: ${item.ANLNR}`
             : '',
         priority: item.PRIORITY,
-        status: this.prepareStatus(item?.STATUS),
+        status: item?.STATUS ?? '',
+        statusDisplay: this.prepareStatus(item?.STATUS),
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         category:
           item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
@@ -265,13 +310,5 @@ export class RoundPlanObservationsService {
       next: resp?.next,
       count: resp?.count
     };
-  }
-
-  private prepareStatus(status = '') {
-    let formattedStatus = status ?? '';
-    if (status?.toLowerCase() === 'in-progress') {
-      formattedStatus = 'In Progress';
-    }
-    return formattedStatus;
   }
 }
