@@ -179,6 +179,18 @@ export class TenantService {
     return configOptions;
   }
 
+  getTenantAmplifyConfigByTenantId$ = (
+    tenantId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    // eslint-disable-next-line no-underscore-dangle
+    this.appService._getRespById(
+      environment.userRoleManagementApiUrl,
+      `catalogs/${tenantId}/amplifyConfig`,
+      '',
+      info
+    );
+
   formatTenants = (tenants: Tenant[]) =>
     tenants.map((tenant) => {
       const {

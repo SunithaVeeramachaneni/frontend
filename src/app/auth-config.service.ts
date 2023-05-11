@@ -15,6 +15,7 @@ import { ErrorInfo, Tenant } from './interfaces';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { DOCUMENT } from '@angular/common';
 import { AppService } from './shared/services/app.services';
+
 @Injectable({
   providedIn: 'root'
 })
