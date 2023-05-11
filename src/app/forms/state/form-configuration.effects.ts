@@ -86,19 +86,40 @@ export class FormConfigurationEffects {
           .pipe(
             mergeMap((response) =>
               forkJoin([
-                this.raceDynamicFormService.updateAuthoredFormDetail$({
-                  ...authoredFormDetail,
-                  formStatus: formConfigurationStatus.published,
-                  formDetailPublishStatus: formConfigurationStatus.published
-                }),
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  ...authoredFormDetail,
-                  formDetailPublishStatus: formConfigurationStatus.published,
-                  authoredFormDetailVersion:
-                    authoredFormDetail.authoredFormDetailVersion + 1
+                this.raceDynamicFormService.publishAuthoredFormDetail$({
+                  formlistID: authoredFormDetail.formListId,
+                  updateAuthoredForm: {
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published,
+                    formlistID: authoredFormDetail.formListId,
+                    pages: JSON.stringify(authoredFormDetail.pages),
+                    pdfBuilderConfiguration:
+                      authoredFormDetail.pdfBuilderConfiguration,
+                    counter: authoredFormDetail.counter,
+                    id: authoredFormDetail.authoredFormDetailId,
+                    version:
+                      authoredFormDetail.authoredFormDetailDynamoDBVersion,
+                    condition: {
+                      formlistID: { eq: authoredFormDetail.formListId },
+                      version: {
+                        eq: authoredFormDetail.authoredFormDetailVersion.toString()
+                      }
+                    }
+                  },
+                  createAuthoredForm: {
+                    formStatus: formConfigurationStatus.draft,
+                    formDetailPublishStatus: formConfigurationStatus.published,
+                    formlistID: authoredFormDetail.formListId,
+                    pages: JSON.stringify(authoredFormDetail.pages),
+                    counter: authoredFormDetail.counter,
+                    version: (
+                      authoredFormDetail.authoredFormDetailVersion + 1
+                    ).toString()
+                  },
+                  isEdit: location?.pathname?.startsWith('/forms/edit/')
                 })
               ]).pipe(
-                map(([, createAuthoredFormDetail]) =>
+                map(([createAuthoredFormDetail]) =>
                   FormConfigurationApiActions.createFormDetailSuccess({
                     formDetail: response?.data?.updateFormList,
                     authoredFormDetail: createAuthoredFormDetail,
@@ -138,19 +159,40 @@ export class FormConfigurationEffects {
           .pipe(
             mergeMap((response) =>
               forkJoin([
-                this.raceDynamicFormService.updateAuthoredFormDetail$({
-                  ...authoredFormDetail,
-                  formStatus: formConfigurationStatus.published,
-                  formDetailPublishStatus: formConfigurationStatus.published
-                }),
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  ...authoredFormDetail,
-                  formDetailPublishStatus: formConfigurationStatus.published,
-                  authoredFormDetailVersion:
-                    authoredFormDetail.authoredFormDetailVersion + 1
+                this.raceDynamicFormService.publishAuthoredFormDetail$({
+                  formlistID: authoredFormDetail.formListId,
+                  updateAuthoredForm: {
+                    formStatus: formConfigurationStatus.published,
+                    formDetailPublishStatus: formConfigurationStatus.published,
+                    formlistID: authoredFormDetail.formListId,
+                    pages: JSON.stringify(authoredFormDetail.pages),
+                    pdfBuilderConfiguration:
+                      authoredFormDetail.pdfBuilderConfiguration,
+                    counter: authoredFormDetail.counter,
+                    id: authoredFormDetail.authoredFormDetailId,
+                    version:
+                      authoredFormDetail.authoredFormDetailDynamoDBVersion,
+                    condition: {
+                      formlistID: { eq: authoredFormDetail.formListId },
+                      version: {
+                        eq: authoredFormDetail.authoredFormDetailVersion.toString()
+                      }
+                    }
+                  },
+                  createAuthoredForm: {
+                    formStatus: formConfigurationStatus.draft,
+                    formDetailPublishStatus: formConfigurationStatus.published,
+                    formlistID: authoredFormDetail.formListId,
+                    pages: JSON.stringify(authoredFormDetail.pages),
+                    counter: authoredFormDetail.counter,
+                    version: (
+                      authoredFormDetail.authoredFormDetailVersion + 1
+                    ).toString()
+                  },
+                  isEdit: location?.pathname?.startsWith('/forms/edit/')
                 })
               ]).pipe(
-                map(([, createAuthoredFormDetail]) =>
+                map(([createAuthoredFormDetail]) =>
                   FormConfigurationApiActions.updateFormDetailSuccess({
                     formDetail: response?.data?.updateFormList,
                     authoredFormDetail: createAuthoredFormDetail,

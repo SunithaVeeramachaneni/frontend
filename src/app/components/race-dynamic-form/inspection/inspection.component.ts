@@ -428,7 +428,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
