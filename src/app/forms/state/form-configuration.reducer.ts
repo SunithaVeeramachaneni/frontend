@@ -652,23 +652,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             (a, b) => a.position - b.position
           );
 
-          sourceSectionQuestions = sourceSectionQuestions.map(
-            (question, index) => {
-              if (action.previousIndex === 0) {
-                const que = Object.assign({}, question, {
-                  position: index + 1
-                });
-                return que;
-              }
-              if (index >= action.previousIndex) {
-                const que = Object.assign({}, question, {
-                  position: index - 1
-                });
-                return que;
-              }
-              return question;
-            }
-          );
+          sourceSectionQuestions = [
+            ...sourceSectionQuestions.slice(0, action.previousIndex),
+            ...sourceSectionQuestions
+              .slice(action.previousIndex)
+              .map((question) => ({
+                ...question,
+                position: question.position - 1
+              }))
+          ];
 
           return {
             ...page,
