@@ -15,13 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -38,10 +32,8 @@ import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
-  LoadEvent,
   Permission,
   RowLevelActionEvent,
-  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo
@@ -50,7 +42,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from '../../login/services/login.service';
 import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
 import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
-import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-issues',
@@ -268,7 +259,7 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
@@ -309,25 +300,38 @@ export class IssuesComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#FF3B30'
+        color: '#F6695E'
       },
       medium: {
-        color: '#FF9500'
+        color: '#F4A916'
       },
       low: {
-        color: '#8A8A8C'
+        color: '#8b8b8d'
+      },
+      shutdown: {
+        color: '#000000'
+      },
+      emergency: {
+        color: '#E2190E'
+      },
+      turnaround: {
+        color: '#3C59FE'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
-      'in-progress': {
-        'background-color': '#FFCC00',
+      'in progress': {
+        'background-color': '#ffcc01',
         color: '#000000'
       },
       resolved: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      overdue: {
+        'background-color': '#2C9E53',
+        color: '#aa2e24'
       }
     }
   };
@@ -337,12 +341,9 @@ export class IssuesComponent implements OnInit {
     columns: Column[];
     data: any[];
   }>;
-  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
   searchIssue: FormControl;
-  nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -357,21 +358,22 @@ export class IssuesComponent implements OnInit {
   constructor(
     private readonly roundPlanObservationsService: RoundPlanObservationsService,
     private readonly loginService: LoginService,
-    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.fetchIssues$.next({ data: 'load' });
-    this.fetchIssues$.next({} as TableEvent);
+    this.roundPlanObservationsService.fetchIssues$.next({ data: 'load' });
+    this.roundPlanObservationsService.fetchIssues$.next({} as TableEvent);
     this.searchIssue = new FormControl('');
     this.searchIssue.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchIssues$.next({ data: 'search' });
+          this.roundPlanObservationsService.fetchIssues$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -384,17 +386,18 @@ export class IssuesComponent implements OnInit {
   }
 
   displayIssues(): void {
-    const issuesOnLoadSearch$ = this.fetchIssues$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        this.skip = 0;
-        this.nextToken = '';
-        this.fetchType = data;
-        return this.getIssuesList();
-      })
-    );
+    const issuesOnLoadSearch$ =
+      this.roundPlanObservationsService.fetchIssues$.pipe(
+        filter(({ data }) => data === 'load' || data === 'search'),
+        switchMap(({ data }) => {
+          this.skip = 0;
+          this.roundPlanObservationsService.issuesNextToken = '';
+          this.fetchType = data;
+          return this.getIssuesList();
+        })
+      );
 
-    const onScrollIssues$ = this.fetchIssues$.pipe(
+    const onScrollIssues$ = this.roundPlanObservationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -421,34 +424,35 @@ export class IssuesComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = rows;
+          this.initial.data = this.formatIssues(rows);
         } else {
-          this.initial.data = this.initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(
+            this.formatIssues(scrollData)
+          );
         }
-        const issues = this.initial.data?.map((issue) => {
-          if (issue.assignedTo !== null) {
-            const assignee = issue.assignedTo.split(',');
-            const firstAssignee = assignee[0]
-              ? this.userService.getUserFullName(assignee[0])
-              : '';
-            const formattedAssignee =
-              assignee?.length === 1
-                ? firstAssignee
-                : `${firstAssignee} + ${assignee.length - 1} more`;
-            issue = { ...issue, assignedTo: formattedAssignee };
-            return issue;
-          }
-        });
-        this.skip = issues.length;
-        this.dataSource = new MatTableDataSource(issues);
-        return issues;
+        this.skip = this.initial.data.length;
+        this.dataSource = new MatTableDataSource(this.initial.data);
+        return this.initial;
       })
     );
   }
 
+  formatIssues(issues) {
+    return issues.map((issue) => {
+      const { assignedTo } = issue;
+      return {
+        ...issue,
+        assignedToDisplay:
+          assignedTo !== null
+            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
+            : assignedTo
+      };
+    });
+  }
+
   getIssuesList() {
     const obj = {
-      next: this.nextToken,
+      next: this.roundPlanObservationsService.issuesNextToken,
       limit: this.limit,
       searchKey: this.searchIssue.value,
       type: 'issue'
@@ -456,9 +460,10 @@ export class IssuesComponent implements OnInit {
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.roundPlanObservationsService.issuesNextToken = next;
         this.isLoading$.next(false);
         this.issuesCount$ = of(count);
+        this.roundPlanObservationsService.issues$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -469,7 +474,7 @@ export class IssuesComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchIssues$.next(event);
+    this.roundPlanObservationsService.fetchIssues$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -506,7 +511,14 @@ export class IssuesComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: {
+        ...row,
+        users$: this.users$,
+        totalCount$: this.issuesCount$,
+        allData: this.initial?.data || [],
+        next: this.roundPlanObservationsService.issuesNextToken,
+        limit: this.limit
+      },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -517,7 +529,8 @@ export class IssuesComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {
-        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        const { id, status, priority, dueDate, assignedToDisplay, assignedTo } =
+          resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
@@ -525,6 +538,7 @@ export class IssuesComponent implements OnInit {
               status,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              assignedToDisplay,
               assignedTo
             };
           }

@@ -15,13 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -38,10 +32,8 @@ import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
-  LoadEvent,
   Permission,
   RowLevelActionEvent,
-  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo
@@ -247,7 +239,7 @@ export class ActionsComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'assignedTo',
+      id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
@@ -310,29 +302,38 @@ export class ActionsComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#FF3B30'
+        color: '#F6695E'
       },
       medium: {
-        color: '#FF9500'
+        color: '#F4A916'
       },
       low: {
-        color: '#8A8A8C'
+        color: '#8b8b8d'
       },
-      open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
-      },
-      'in-progress': {
-        'background-color': '#FFCC00',
+      shutdown: {
         color: '#000000'
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#FFFFFF'
+      emergency: {
+        color: '#E2190E'
+      },
+      turnaround: {
+        color: '#3C59FE'
+      },
+      open: {
+        'background-color': '#e0e0e0',
+        color: '#000000'
+      },
+      'in progress': {
+        'background-color': '#ffcc01',
+        color: '#000000'
       },
       resolved: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      overdue: {
+        'background-color': '#2C9E53',
+        color: '#aa2e24'
       }
     }
   };
@@ -341,13 +342,10 @@ export class ActionsComponent implements OnInit {
     columns: Column[];
     data: any[];
   }>;
-  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
-  nextToken = '';
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -367,15 +365,17 @@ export class ActionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchActions$.next({ data: 'load' });
-    this.fetchActions$.next({} as TableEvent);
+    this.roundPlanObservationsService.fetchActions$.next({ data: 'load' });
+    this.roundPlanObservationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
     this.searchAction.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchActions$.next({ data: 'search' });
+          this.roundPlanObservationsService.fetchActions$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -388,27 +388,29 @@ export class ActionsComponent implements OnInit {
   }
 
   displayActions(): void {
-    const actionsOnLoadSearch$ = this.fetchActions$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        this.skip = 0;
-        this.nextToken = '';
-        this.fetchType = data;
-        return this.getActionsList();
-      })
-    );
-
-    const onScrollActions$ = this.fetchActions$.pipe(
-      filter(({ data }) => data !== 'load' && data !== 'search'),
-      switchMap(({ data }) => {
-        if (data === 'infiniteScroll') {
-          this.fetchType = 'infiniteScroll';
+    const actionsOnLoadSearch$ =
+      this.roundPlanObservationsService.fetchActions$.pipe(
+        filter(({ data }) => data === 'load' || data === 'search'),
+        switchMap(({ data }) => {
+          this.skip = 0;
+          this.roundPlanObservationsService.actionsNextToken = '';
+          this.fetchType = data;
           return this.getActionsList();
-        } else {
-          return of([]);
-        }
-      })
-    );
+        })
+      );
+
+    const onScrollActions$ =
+      this.roundPlanObservationsService.fetchActions$.pipe(
+        filter(({ data }) => data !== 'load' && data !== 'search'),
+        switchMap(({ data }) => {
+          if (data === 'infiniteScroll') {
+            this.fetchType = 'infiniteScroll';
+            return this.getActionsList();
+          } else {
+            return of([]);
+          }
+        })
+      );
 
     this.initial = {
       columns: this.columns,
@@ -425,47 +427,36 @@ export class ActionsComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = rows;
+          this.initial.data = this.formatActions(rows);
         } else {
-          this.initial.data = this.initial.data.concat(scrollData);
+          this.initial.data = this.initial.data.concat(
+            this.formatActions(scrollData)
+          );
         }
-
-        this.initial.data = this.initial.data.map((action) => {
-          if (action.assignedTo !== null) {
-            const assignee = action.assignedTo.split(',');
-            const firstAssignee = assignee[0]
-              ? this.userService.getUserFullName(assignee[0])
-              : '';
-            const formattedAssignee =
-              assignee?.length === 1
-                ? firstAssignee
-                : `${firstAssignee} + ${assignee.length - 1} more`;
-            action = { ...action, assignedTo: formattedAssignee };
-          }
-          if (action.createdBy.length > 0) {
-            const createdBy = this.userService.getUserFullName(
-              action.createdBy
-            );
-            action = { ...action, createdBy };
-          }
-          return action;
-        });
-
         this.skip = this.initial.data.length;
-        this.initial.data.map((item) => {
-          item.preTextImage.image = '/assets/maintenance-icons/actionsIcon.svg';
-          return item;
-        });
-
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );
   }
 
+  formatActions(actions) {
+    return actions.map((action) => {
+      const { assignedTo, createdBy } = action;
+      return {
+        ...action,
+        assignedToDisplay:
+          assignedTo !== null
+            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
+            : assignedTo,
+        createdBy: this.userService.getUserFullName(createdBy)
+      };
+    });
+  }
+
   getActionsList() {
     const obj = {
-      next: this.nextToken,
+      next: this.roundPlanObservationsService.actionsNextToken,
       limit: this.limit,
       searchKey: this.searchAction.value,
       type: 'action'
@@ -473,9 +464,10 @@ export class ActionsComponent implements OnInit {
 
     return this.roundPlanObservationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.roundPlanObservationsService.actionsNextToken = next;
         this.isLoading$.next(false);
         this.actionsCount$ = of(count);
+        this.roundPlanObservationsService.actions$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -486,7 +478,7 @@ export class ActionsComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchActions$.next(event);
+    this.roundPlanObservationsService.fetchActions$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -522,7 +514,14 @@ export class ActionsComponent implements OnInit {
     }
     this.isModalOpened = true;
     const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: { ...row, users$: this.users$ },
+      data: {
+        ...row,
+        users$: this.users$,
+        totalCount$: this.actionsCount$,
+        allData: this.initial?.data || [],
+        next: this.roundPlanObservationsService.actionsNextToken,
+        limit: this.limit
+      },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -533,7 +532,8 @@ export class ActionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {
-        const { id, status, priority, dueDate, assignedTo } = resp.data;
+        const { id, status, priority, dueDate, assignedToDisplay, assignedTo } =
+          resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
@@ -541,6 +541,7 @@ export class ActionsComponent implements OnInit {
               status,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              assignedToDisplay,
               assignedTo
             };
           }
