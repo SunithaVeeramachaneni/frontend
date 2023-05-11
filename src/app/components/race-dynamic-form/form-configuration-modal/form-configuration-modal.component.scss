@@ -104,7 +104,7 @@
       }
 
       .tags-mat-chips {
-        margin: 0 5px !important;
+        margin: 5px 5px !important;
       }
 
       .buttons {
@@ -127,6 +127,7 @@
         height: 29px;
         font-weight: normal;
         line-height: normal;
+        border: 1px solid $blue-main;
       }
     }
   }
