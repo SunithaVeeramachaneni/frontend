@@ -64,6 +64,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
   @Input() counter;
   @Input() isPreviewActive;
+  @Input() moduleName;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
