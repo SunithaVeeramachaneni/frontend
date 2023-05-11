@@ -12,7 +12,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-
+import { ToastService } from 'src/app/shared/toast';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
@@ -60,7 +60,7 @@ export class PDFBuilderComponent implements OnInit {
   totalQuestionsCount = 0;
   totalAssetsCount = 0;
   totalLocationsCount = 0;
-
+  draftState = false;
   pdfBuilderConfigurationsForm: FormGroup = this.fb.group({
     formId: true,
     formTitle: true,
@@ -101,6 +101,7 @@ export class PDFBuilderComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     public dialogRef: MatDialogRef<PDFBuilderComponent>,
     private loginService: LoginService,
+    private toast: ToastService,
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
@@ -124,10 +125,32 @@ export class PDFBuilderComponent implements OnInit {
     this.formDetailPublishStatus$ = this.store
       .select(getFormPublishStatus)
       .pipe(
-        tap(
-          (formDetailPublishStatus) =>
-            (this.formDetailPublishStatus = formDetailPublishStatus)
-        )
+        tap((formDetailPublishStatus) => {
+          if (formDetailPublishStatus === 'Draft') this.draftState = true;
+          this.formDetailPublishStatus = formDetailPublishStatus;
+          if (formDetailPublishStatus === 'Published' && this.draftState) {
+            if (this.data.moduleName === 'OPERATOR_ROUNDS') {
+              this.toast.show({
+                text: 'Round published successfully',
+                type: 'success'
+              });
+              this.router.navigate(['/operator-rounds']);
+              this.dialogRef.close();
+            } else if (this.data.moduleName === 'FORMS') {
+              this.toast.show({
+                text: 'Form published successfully',
+                type: 'success'
+              });
+              this.router.navigate(['/forms']);
+              this.dialogRef.close();
+            }
+          }
+          if (
+            this.draftState === false &&
+            this.formDetailPublishStatus === 'Publishing'
+          )
+            this.draftState = true;
+        })
       );
 
     if (this.data.moduleName && this.data.moduleName === 'OPERATOR_ROUNDS') {
@@ -207,13 +230,6 @@ export class PDFBuilderComponent implements OnInit {
         isFormDetailPublished: true
       })
     );
-    if (this.data.moduleName === 'OPERATOR_ROUNDS') {
-      this.router.navigate(['/operator-rounds']);
-      this.dialogRef.close();
-    } else {
-      this.router.navigate(['/forms']);
-      this.dialogRef.close();
-    }
   }
 
   toggleSelectAll(event) {
