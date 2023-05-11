@@ -118,13 +118,19 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { users$, totalCount$, allData } = this.data;
+    const { users$, totalCount$, allData, notificationNumber } = this.data;
     this.allData = allData;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
       s3Details: { bucket, region },
       tenantId
     } = this.tenantService.getTenantInfo();
+    this.data.notificationNumber = this.checkNotificationNumberCorrect(
+      notificationNumber
+    )
+      ? notificationNumber
+      : '';
+
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
@@ -194,6 +200,17 @@ export class IssuesActionsDetailViewComponent
     }
   };
 
+  checkNotificationNumberCorrect(notificationNumber) {
+    if (notificationNumber.split(' ').length > 1) {
+      return false;
+    } else if (notificationNumber.split('_').length > 1) {
+      return false;
+    } else if (notificationNumber === this.placeholder) {
+      return false;
+    }
+    return true;
+  }
+
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
@@ -233,7 +250,12 @@ export class IssuesActionsDetailViewComponent
 
   onCancel(): void {
     this.dialogRef.close({
-      data: { ...this.issuesActionsDetailViewForm.value, id: this.data.id }
+      data: {
+        ...this.issuesActionsDetailViewForm.value,
+        id: this.data.id,
+        priority: this.data.priority,
+        notificationNumber: this.data.notificationNumber
+      }
     });
   }
 
