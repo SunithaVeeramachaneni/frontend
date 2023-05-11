@@ -88,8 +88,7 @@ export class LocationService {
         params.set('filter', JSON.stringify(filter));
       }
       if (filterData.plant) {
-        params.set('limit', this.MAX_FETCH_LIMIT);
-        let filter = JSON.parse(params.get('plantsID'));
+        let filter = JSON.parse(params.get('filter'));
         filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
