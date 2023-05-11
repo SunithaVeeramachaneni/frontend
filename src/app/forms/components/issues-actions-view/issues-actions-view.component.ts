@@ -6,18 +6,19 @@ import {
   ElementRef,
   ViewChild,
   DoCheck,
-  Input
+  Directive,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
   MatDialog
 } from '@angular/material/dialog';
-import { format } from 'date-fns';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, Subscription, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+
 import {
   AssigneeDetails,
   History,
@@ -28,11 +29,25 @@ import {
 } from 'src/app/interfaces';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 import { ObservationsService } from '../../services/observations.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
+import { Amplify } from 'aws-amplify';
+import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { Router } from '@angular/router';
+import { format } from 'date-fns';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { ToastService } from 'src/app/shared/toast';
+
+@Directive({
+  selector: '[appScrollToBottom]'
+})
+export class ScrollToBottomDirective {
+  constructor(private el: ElementRef) {}
+  public scrollToBottom() {
+    const el: HTMLDivElement = this.el.nativeElement;
+    el.scrollTop = Math.max(0, el.scrollHeight - el.offsetHeight);
+  }
+}
 
 @Component({
   selector: 'app-issues-actions-view',
@@ -40,12 +55,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./issues-actions-view.component.scss']
 })
 export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
+  @ViewChild(ScrollToBottomDirective)
+  scroll: ScrollToBottomDirective;
   @ViewChild('footer') footer: ElementRef;
   issuesActionsDetailViewForm: FormGroup = this.fb.group({
     title: '',
     description: '',
     category: '',
     round: '',
+    plant: '',
     location: '',
     asset: '',
     task: '',
@@ -53,12 +71,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     status: '',
     dueDateDisplayValue: '',
     dueDate: '',
+    assignedToDisplay: '',
     assignedTo: '',
     raisedBy: '',
     attachments: this.fb.array([]),
     message: ''
   });
-  priorities = ['High', 'Medium', 'Low'];
+  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
@@ -71,7 +90,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   logHistory: History[];
   filteredMediaType: any;
   chatPanelHeight;
-  moduleName;
+  isPreviousEnabled = false;
+  isNextEnabled = false;
+  ghostLoading = new Array(17).fill(0).map((_, i) => i);
+  placeholder = '_ _';
+  moduleName: string;
+  private totalCount = 0;
+  private allData = [];
+  private amplifySubscription$: Subscription = null;
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -82,7 +108,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     private sanitizer: DomSanitizer,
     private tenantService: TenantService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   getAttachmentsList() {
@@ -91,45 +119,124 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
-    const { id, type, users$, dueDate, moduleName } = this.data;
+    const { users$, totalCount$, allData, moduleName } = this.data;
+    this.allData = allData;
     this.moduleName = moduleName;
-    console.log('issue-action:', moduleName);
+    totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
-      s3Details: { bucket, region }
+      s3Details: { bucket, region },
+      tenantId
     } = this.tenantService.getTenantInfo();
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
       tap((users: UserDetails[]) => (this.assigneeDetails = { users }))
     );
-    this.issuesActionsDetailViewForm.patchValue({
-      ...this.data,
-      dueDate: dueDate ? new Date(dueDate) : '',
-      dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy')
-        : ''
-    });
-    this.minDate = new Date(this.data.createdAt);
-    this.logHistory$ = this.observations
-      .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
-      .pipe(
-        tap((logHistory) => {
-          this.logHistory = logHistory.rows;
-          this.filteredMediaType = this.logHistory.filter(
-            (history) => history.type === 'Media'
-          );
-        })
-      );
-    this.observations
-      .onCreateIssueOrActionLogHistoryEventSource(
-        `${this.moduleName}/${type}/${id}/log-history/sse`
-      )
-      .subscribe();
+    this.init();
+    if (tenantId) {
+      this.tenantService
+        .getTenantAmplifyConfigByTenantId$(tenantId)
+        .subscribe(({ amplifyConfig }) => {
+          if (Object.keys(amplifyConfig).length > 0) {
+            // 1. Configure amplify
+            Amplify.configure(amplifyConfig);
+
+            // 2. Create issue history subscription
+            this.amplifySubscription$ = this.observations
+              .onCreateIssuesLogHistory$({
+                issueslistID: {
+                  eq: this.data.id
+                },
+                moduleName: {
+                  eq: this.moduleName
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateIssuesLogHistory }
+                  }
+                }) => {
+                  if (onCreateIssuesLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateIssuesLogHistory);
+                  }
+                }
+              });
+
+            // 3. Create actions log history
+            this.amplifySubscription$ = this.observations
+              .onCreateActionsLogHistory$({
+                actionslistID: {
+                  eq: this.data.id
+                },
+                moduleName: {
+                  eq: this.moduleName
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateActionsLogHistory }
+                  }
+                }) => {
+                  if (onCreateActionsLogHistory) {
+                    this.prepareSubscriptionResponse(onCreateActionsLogHistory);
+                  }
+                }
+              });
+
+            // 4. Update actions log history
+            this.amplifySubscription$ = this.observations
+              .onUpdateActionsList$({
+                id: { eq: this.data.id },
+                moduleName: {
+                  eq: this.moduleName
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onUpdateActionsList }
+                  }
+                }) => {
+                  if (onUpdateActionsList) {
+                    this.initOnUpdateList(onUpdateActionsList, 'actionData');
+                  }
+                }
+              });
+
+            // 5. Update issues log history
+            this.amplifySubscription$ = this.observations
+              .onUpdateIssuesList$({
+                id: { eq: this.data.id },
+                moduleName: {
+                  eq: this.moduleName
+                }
+              })
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onUpdateIssuesList }
+                  }
+                }) => {
+                  if (onUpdateIssuesList) {
+                    this.initOnUpdateList(onUpdateIssuesList, 'issueData');
+                  }
+                }
+              });
+          }
+        });
+    }
   }
 
   ngDoCheck() {
     const height = this.footer?.nativeElement.offsetHeight;
     this.chatPanelHeight = `calc(100vh - ${height + 105}px)`;
+    this.cdRef.detectChanges();
   }
 
   getImageSrc = (source: string) => {
@@ -222,7 +329,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           issueOrActionDBVersion,
           history: {
             type: 'Object',
-            message: JSON.stringify({ [field.toUpperCase()]: value })
+            message: JSON.stringify({
+              [field.toUpperCase()]: value,
+              assignmentType: checked ? 'add' : 'remove'
+            })
           }
         },
         type,
@@ -282,6 +392,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }`;
               }
               this.issuesActionsDetailViewForm.patchValue({
+                assignedToDisplay: this.observations.formatUsersDisplay(
+                  field.FIELDDESC
+                )
+              });
+              this.issuesActionsDetailViewForm.patchValue({
                 assignedTo: field.FIELDDESC
               });
             }
@@ -290,6 +405,24 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       });
     });
     return JSON.stringify(data);
+  }
+
+  createNotification() {
+    if (this.data.category !== this.placeholder) {
+      this.observations
+        .createNotification(this.data, this.moduleName)
+        .subscribe((value) => {
+          if (Object.keys(value).length) {
+            const { notificationNumber } = value;
+            this.data.notificationNumber = notificationNumber;
+          }
+        });
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Category is mandatory for notification creation'
+      });
+    }
   }
 
   selectedAssigneeHandler({ user, checked }: SelectedAssignee) {
@@ -339,7 +472,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   openPreviewDialog() {
     const slideshowImages = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(this.s3BaseUrl + media.message);
+      slideshowImages.push(this.getS3Url(media.message));
     });
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
@@ -356,7 +489,214 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     return this.userService.getUserFullName(email);
   }
 
+  onPrevious(): void {
+    const { id } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      return;
+    }
+    const previousRecord = this.allData[idx - 1];
+    if (!previousRecord) {
+      this.isPreviousEnabled = false;
+      return;
+    } else {
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === previousRecord?.id
+      );
+      this.isPreviousEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx - 1]) {
+        this.isPreviousEnabled = true;
+      }
+      this.data = {
+        allData: this.allData,
+        next: this.data?.next,
+        totalCount$: this.data?.totalCount$,
+        users$: this.data?.users$,
+        limit: this.data?.limit,
+        ...previousRecord
+      };
+      this.init();
+    }
+  }
+
+  onNext(): void {
+    const { id } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      return;
+    }
+    const nextRecord = this.allData[idx + 1];
+    if (!nextRecord) {
+      if (this.data?.next === null) {
+        this.isPreviousEnabled = false;
+        if (idx !== -1 && this.allData[idx - 1]) {
+          this.isPreviousEnabled = true;
+        }
+        this.isNextEnabled = false;
+        return;
+      }
+      this.getIssuesActionsList(this.data);
+      this.isPreviousEnabled = true;
+    } else {
+      const currentIdx = this.allData?.findIndex(
+        (a) => a?.id === nextRecord?.id
+      );
+      this.isPreviousEnabled = true;
+      this.isNextEnabled = false;
+      if (currentIdx !== -1 && this.allData[currentIdx + 1]) {
+        this.isNextEnabled = true;
+      }
+      this.data = {
+        allData: this.allData,
+        next: this.data?.next,
+        totalCount$: this.data?.totalCount$,
+        users$: this.data?.users$,
+        limit: this.data?.limit,
+        ...nextRecord
+      };
+      this.init();
+    }
+  }
+
   ngOnDestroy(): void {
-    this.observations.closeOnCreateIssueOrActionLogHistoryEventSourceEventSource();
+    if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
+  }
+
+  private getIssuesActionsList(data): void {
+    let observable: Observable<{ count: number; next: string; rows: any[] }>;
+    if (data?.type === 'issue') {
+      this.observations.issuesNextToken = data.next;
+      this.observations.fetchIssues$.next({
+        data: 'infiniteScroll'
+      });
+      observable = this.observations.issues$;
+    } else {
+      this.observations.actionsNextToken = data.next;
+      this.observations.fetchActions$.next({
+        data: 'infiniteScroll'
+      });
+      observable = this.observations.actions$;
+    }
+
+    observable?.pipe().subscribe(({ count, next: _next, rows }) => {
+      this.totalCount = count;
+      this.allData = [...this.allData, ...rows];
+      const idx = this.allData?.findIndex((a) => a?.id === data?.id);
+      if (idx === -1) {
+        return;
+      }
+      const nextRecordIdx = idx + 1;
+      const nextRecord = this.allData[nextRecordIdx];
+      if (!nextRecord) {
+        return;
+      } else {
+        this.observations.issuesNextToken = _next;
+        this.data = {
+          allData: this.allData,
+          next: _next,
+          totalCount$: data?.totalCount$,
+          users$: data?.users$,
+          limit: data?.limit,
+          ...nextRecord
+        };
+        this.init();
+      }
+    });
+  }
+
+  private init(): void {
+    const { id, type, dueDate, notificationNumber } = this.data;
+    const idx = this.allData?.findIndex((a) => a?.id === id);
+    if (idx === -1) {
+      this.isPreviousEnabled = false;
+      this.isNextEnabled = false;
+    } else {
+      if (this.allData[idx - 1]) this.isPreviousEnabled = true;
+      if (this.allData[idx + 1]) this.isNextEnabled = true;
+    }
+    if (this.data.next !== null) {
+      this.isNextEnabled = true;
+    }
+    this.data.notificationNumber =
+      notificationNumber !== this.placeholder ? notificationNumber : '';
+    this.issuesActionsDetailViewForm.patchValue({
+      ...this.data,
+      dueDate: dueDate ? new Date(dueDate) : '',
+      dueDateDisplayValue: dueDate
+        ? format(new Date(dueDate), 'dd MMM yyyy')
+        : ''
+    });
+    this.minDate = new Date(this.data.createdAt);
+    this.logHistory$ = this.observations
+      .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
+      .pipe(
+        tap((logHistory) => {
+          this.logHistory = logHistory.rows;
+          this.filteredMediaType = this.logHistory.filter(
+            (history) => history.type === 'Media'
+          );
+        })
+      );
+  }
+
+  private prepareSubscriptionResponse(data) {
+    this.logHistory = [
+      ...this.logHistory,
+      {
+        ...data,
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        message:
+          data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+      }
+    ];
+    this.filteredMediaType = this.logHistory.filter(
+      (history) => history?.type === 'Media'
+    );
+    this.logHistory$ = of({
+      nextToken: null,
+      rows: this.logHistory
+    });
+  }
+
+  private initJSONData(data = null) {
+    const obj = {};
+    data = JSON.parse(data) ?? {};
+    data?.FORMS.forEach((form) => {
+      form?.PAGES.forEach((page) => {
+        page?.SECTIONS.forEach((section) => {
+          section?.FIELDS.forEach((field) => {
+            obj[field.FIELDNAME] = field.FIELDVALUE;
+          });
+        });
+      });
+    });
+    return obj;
+  }
+
+  private initOnUpdateList(data, key) {
+    if (data) {
+      const idx = this.data?.allData?.findIndex((d) => d?.id === data?.id);
+      if (idx !== -1) {
+        const jsonData: any = this.initJSONData(data[key]);
+        if (this.data?.id === data?.id) {
+          this.data = {
+            ...this.data,
+            ...data,
+            ...jsonData,
+            dueDate: jsonData?.DUEDATE
+              ? format(new Date(jsonData?.DUEDATE), 'dd MMM, yyyy')
+              : '',
+            priority: jsonData.PRIORITY ?? '',
+            statusDisplay: this.observations.prepareStatus(
+              jsonData.STATUS ?? ''
+            ),
+            status: jsonData?.STATUS ?? ''
+          };
+          this.allData[idx] = this.data;
+        }
+      }
+    }
   }
 }

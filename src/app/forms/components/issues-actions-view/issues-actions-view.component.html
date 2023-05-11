@@ -10,9 +10,21 @@
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
     </button>
     <h4 class="heading">
-      <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
+      <mat-icon
+        (click)="onPrevious()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isPreviousEnabled }"
+        >keyboard_arrow_left</mat-icon
+      >
+      &nbsp;
       {{ this.issuesActionsDetailViewForm.get('title').value }}
-      &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
+      &nbsp;
+      <mat-icon
+        (click)="onNext()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isNextEnabled }"
+        >keyboard_arrow_right</mat-icon
+      >
     </h4>
   </mat-toolbar>
   <div class="dis-flex form-content">
@@ -20,7 +32,12 @@
       class="width-60 chat-div"
       *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
-      <div class="chat-panel" [ngStyle]="{ height: chatPanelHeight }">
+      <div
+        class="chat-panel"
+        [ngStyle]="{ height: chatPanelHeight }"
+        #scrollMe
+        [scrollTop]="scrollMe.scrollHeight"
+      >
         <ng-container *ngFor="let history of logHistory.rows; let i = index">
           <div
             [ngClass]="{
@@ -94,34 +111,34 @@
                     ></span>
                     {{ getUserNameByEmail(history.username) }}
                   </span>
-                  <br *ngIf="data.category !== '_ _'" />
-                  <span class="data" *ngIf="data.category !== '_ _'">
+                  <br *ngIf="data.category !== placeholder" />
+                  <span class="data" *ngIf="data.category !== placeholder">
                     <span
                       class="sub-headings"
                       translate="categoryCreated"
                     ></span>
                     {{ data.category }}
                   </span>
-                  <br *ngIf="data.round !== '_ _'" />
-                  <span class="data" *ngIf="data.round !== '_ _'">
+                  <br *ngIf="data.round !== placeholder" />
+                  <span class="data" *ngIf="data.round !== placeholder">
                     <span class="sub-headings" translate="roundCreated"></span>
                     {{ data.round }}
                   </span>
-                  <br *ngIf="data.asset !== '_ _'" />
-                  <span class="data" *ngIf="data.asset !== '_ _'">
+                  <br *ngIf="data.asset !== placeholder" />
+                  <span class="data" *ngIf="data.asset !== placeholder">
                     <span class="sub-headings" translate="assetCreated"></span>
                     {{ data.asset }}
                   </span>
-                  <br *ngIf="data.location !== '_ _'" />
-                  <span class="data" *ngIf="data.location !== '_ _'">
+                  <br *ngIf="data.location !== placeholder" />
+                  <span class="data" *ngIf="data.location !== placeholder">
                     <span
                       class="sub-headings"
                       translate="locationCreated"
                     ></span>
                     {{ data.location }}
                   </span>
-                  <br *ngIf="data.plant !== '_ _'" />
-                  <span class="data" *ngIf="data.plant !== '_ _'">
+                  <br *ngIf="data.plant !== placeholder" />
+                  <span class="data" *ngIf="data.plant !== placeholder">
                     <span class="sub-headings" translate="plantCreated"></span>
                     {{ data.plant }}
                   </span>
@@ -148,8 +165,14 @@
                   <ng-container *ngIf="history.message.ASSIGNEE">
                     <span class="data">
                       <span
+                        *ngIf="history.message.assignmentType === 'add'"
                         class="sub-headings"
                         translate="assigneeAddedTo"
+                      ></span>
+                      <span
+                        *ngIf="history.message.assignmentType === 'remove'"
+                        class="sub-headings"
+                        translate="assigneeRemovedTo"
                       ></span>
                       {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
@@ -171,7 +194,7 @@
                     <span class="data">
                       <span class="sub-headings" translate="dueDateUpdated">
                       </span>
-                      {{ history.message.DUEDATE }}
+                      {{ history.message.DUEDATE | date : 'longDate' }}
                     </span>
                   </ng-container>
                 </ng-container>
@@ -241,109 +264,21 @@
     <ng-template #historyLoading>
       <div class="width-60 chat-div">
         <div class="chat-panel">
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
+          <div *ngFor="let number of ghostLoading">
+            <br />
+            <ngx-shimmer-loading
+              [width]="'47%'"
+              [height]="'30px'"
+              [ngClass]="number % 2 === 0 ? 'right-chat' : 'left-chat'"
+              class="left-chat"
+            >
+            </ngx-shimmer-loading>
+            <br />
+          </div>
         </div>
         <div class="custom-form-field-white-color footer" #footer>
           <mat-form-field appearance="outline" class="width-90 margin">
-            <input type="text" matInput placeholder="Type" />
+            <input type="text" matInput [placeholder]="'type' | translate" />
             <svg-icon
               icon="icon-add-attachment-icon"
               matSuffix
@@ -392,6 +327,13 @@
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
+        <div class="titles" translate="plant"></div>
+        <div class="values">
+          {{ this.issuesActionsDetailViewForm.get('plant').value }}
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
           {{ this.issuesActionsDetailViewForm.get('location').value }}
@@ -421,6 +363,7 @@
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "
+              [disabled]="data?.type === 'issue'"
             >
               <mat-option
                 *ngFor="let priority of priorities"
@@ -493,9 +436,9 @@
               <input
                 class="searchable-input"
                 type="text"
-                placeholder="Select Assignee"
+                [placeholder]="'selectAssignee' | translate"
                 matInput
-                formControlName="assignedTo"
+                formControlName="assignedToDisplay"
                 class="cursor"
               />
               <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
@@ -506,6 +449,7 @@
             <app-assigned-to
               [assigneeDetails]="assigneeDetails"
               [isMultiple]="true"
+              [assignedTo]="issuesActionsDetailViewForm.get('assignedTo').value"
               (selectedAssignee)="selectedAssigneeHandler($event)"
             ></app-assigned-to>
           </mat-menu>
@@ -520,6 +464,7 @@
             *ngIf="!data.notificationNumber.length"
             mat-raised-button
             color="primary"
+            (click)="createNotification()"
           >
             Create
           </button>

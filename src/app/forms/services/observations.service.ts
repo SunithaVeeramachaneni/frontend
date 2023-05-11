@@ -1,17 +1,21 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
   History,
   HistoryResponse,
-  IssueOrAction
+  IssueOrAction,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
 } from 'src/app/interfaces';
+import { API, graphqlOperation } from 'aws-amplify';
 
 import { AppService } from 'src/app/shared/services/app.services';
-import { SseService } from 'src/app/shared/services/sse.service';
 import { environment } from 'src/environments/environment';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -19,10 +23,59 @@ const dataPlaceHolder = '--';
   providedIn: 'root'
 })
 export class ObservationsService {
+  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  issuesNextToken = '';
+  issues$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
+  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  actionsNextToken = '';
+  actions$: Subject<{ count: number; next: string; rows: any[] }> =
+    new Subject();
+  statusColors = {
+    open: '#e0e0e0',
+    inprogress: '#ffcc01',
+    overdue: '#aa2e24',
+    resolved: '#2C9E53'
+  };
+  priorityColors = {
+    high: '#F6695E',
+    medium: '#f4a916',
+    low: '#c8dae1',
+    shutdown: '#000000',
+    turnaround: '#3C59FE',
+    emergency: '#E2190E'
+  };
+  colors: [
+    {
+      key: 'open';
+      color: '#B96060';
+    },
+    {
+      key: 'inprogress';
+      color: '#FF9500';
+    },
+    {
+      key: 'resolved';
+      color: '#357A38';
+    },
+    {
+      key: 'high';
+      color: '#FF3B30';
+    },
+    {
+      key: 'medium';
+      color: '#FF9500';
+    },
+    {
+      key: 'low';
+      color: '#8A8A8C';
+    }
+  ];
   constructor(
     private readonly appService: AppService,
-    private sseService: SseService,
-    private zone: NgZone
+    private readonly userService: UsersService
   ) {}
 
   getObservations$(queryParams: {
@@ -135,32 +188,134 @@ export class ObservationsService {
       );
   }
 
-  onCreateIssueOrActionLogHistoryEventSource(
-    urlString: string
-  ): Observable<History> {
-    return new Observable((observer) => {
-      const eventSource = this.sseService.getEventSourceWithGet(
-        `${environment.operatorRoundsApiUrl}${urlString}`,
-        null
-      );
-      eventSource.stream();
-      eventSource.onmessage = (event) => {
-        this.zone.run(() => {
-          observer.next(JSON.parse(event.data));
-        });
-      };
-      eventSource.onerror = (event) => {
-        this.zone.run(() => {
-          if (event.data) {
-            observer.error(JSON.parse(event.data));
-          }
-        });
-      };
-    });
+  createNotification(
+    issue,
+    moduleName: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `${moduleName}/issue/notification`,
+      issue,
+      info
+    );
   }
 
-  closeOnCreateIssueOrActionLogHistoryEventSourceEventSource(): void {
-    this.sseService.closeEventSource();
+  onCreateIssuesLogHistory$(input) {
+    const statement = `subscription OnCreateIssuesLogHistory($filter: ModelSubscriptionIssuesLogHistoryFilterInput) {
+      onCreateIssuesLogHistory(filter: $filter) {
+        id
+        message
+        type
+        username
+        createdAt
+        createdBy
+        assignedTo
+        issueslistID
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onCreateActionsLogHistory$(input) {
+    const statement = `subscription OnCreateActionsLogHistory($filter: ModelSubscriptionActionsLogHistoryFilterInput) {
+      onCreateActionsLogHistory(filter: $filter) {
+        id
+        message
+        type
+        username
+        assignedTo
+        createdAt
+        createdBy
+        actionslistID
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onUpdateActionsList$(input) {
+    const statement = `subscription OnUpdateActionsList($filter: ModelSubscriptionActionsListFilterInput) {
+      onUpdateActionsList(filter: $filter) {
+        id
+        actionData
+        createdBy
+        createdAt
+        assignedTo
+        _version
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onUpdateIssuesList$(input) {
+    const statement = `subscription OnUpdateIssuesList($filter: ModelSubscriptionIssuesListFilterInput) {
+      onUpdateIssuesList(filter: $filter) {
+        id
+        issueData
+        createdBy
+        createdAt
+        assignedTo
+        _version
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  formatUsersDisplay(users: string) {
+    const assignee = users.split(',');
+    const formatedDisplay = assignee[0]
+      ? this.userService.getUserFullName(assignee[0])
+      : '';
+    return assignee.length === 1
+      ? formatedDisplay
+      : `${formatedDisplay} + ${assignee.length - 1} more`;
+  }
+
+  removeSpecialCharacter = (str = '') => str?.replace(/[^A-Z0-9]/gi, '');
+
+  prepareStatus(status = '') {
+    let formattedStatus = status ?? '';
+    if (this.removeSpecialCharacter(status)?.toLowerCase() === 'inprogress') {
+      formattedStatus = 'In Progress';
+    }
+    return formattedStatus;
+  }
+
+  prepareColorsAndData(result, action: 'priority' | 'status') {
+    const color = [];
+    const data = [];
+    Object.entries(result).map(([key, value]) => {
+      const leanKey = this.removeSpecialCharacter(key.toLowerCase());
+      color.push(
+        action === 'priority'
+          ? this.priorityColors[leanKey]
+          : this.statusColors[leanKey]
+      );
+      data.push({
+        name: leanKey === 'inprogress' ? 'In Progress' : key,
+        value
+      });
+    });
+    return {
+      color,
+      data
+    };
   }
 
   private formateGetObservationResponse(resp, type) {
@@ -176,7 +331,10 @@ export class ObservationsService {
       return {
         ...item,
         preTextImage: {
-          image: '/assets/maintenance-icons/issue-icon.svg',
+          image:
+            type === 'issue'
+              ? '/assets/maintenance-icons/issue-icon.svg'
+              : '/assets/maintenance-icons/actionsIcon.svg',
           style: {
             width: '40px',
             height: '40px',
@@ -199,9 +357,11 @@ export class ObservationsService {
             ? `Asset ID: ${item.ANLNR}`
             : '',
         priority: item.PRIORITY,
-        status: item.STATUS,
+        status: item?.STATUS ?? '',
+        statusDisplay: this.prepareStatus(item?.STATUS),
         plant: item.WERKS?.replace(dataPlaceHolder, placeHolder) || placeHolder,
-        category: item.CATEGORY || placeHolder,
+        category:
+          item.CATEGORY?.replace(dataPlaceHolder, placeHolder) || placeHolder,
         task: item.TASK || placeHolder,
         round: item.ROUND || placeHolder,
         raisedBy: item.createdBy,

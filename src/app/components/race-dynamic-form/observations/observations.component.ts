@@ -1,12 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserDetails } from 'src/app/interfaces';
-import { UsersService } from '../../user-management/services/users.service';
+import { tap } from 'rxjs/operators';
 
+import { UsersService } from '../../user-management/services/users.service';
 import { ObservationsService } from 'src/app/forms/services/observations.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { tap } from 'rxjs/operators';
+import { UserDetails } from 'src/app/interfaces';
 import { routingUrls } from 'src/app/app.constants';
 
 interface IPriority {
@@ -90,14 +90,12 @@ export class ObservationsComponent implements OnInit {
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
-  private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
-  private statusColors = ['#F56565', '#FFCC00'];
-
   constructor(
-    private readonly ObservationsService: ObservationsService,
+    private readonly observationsService: ObservationsService,
     private userService: UsersService,
     private headerService: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -109,9 +107,9 @@ export class ObservationsComponent implements OnInit {
       )
     );
     this.users$ = this.userService.getUsersInfo$();
-    this.ObservationsService.getObservationChartCounts$(
-      this.moduleName
-    ).subscribe((result) => {
+    this.observationsService
+    .getObservationChartCounts$(this.moduleName)
+    .subscribe((result) => {
       if (result) {
         this.priorityData = {
           issues: {
@@ -123,12 +121,9 @@ export class ObservationsComponent implements OnInit {
             series: [
               {
                 ...this.options.series[0],
-                color: this.priorityColors,
-                data: Object.entries(result?.openIssues?.priority).map(
-                  ([key, value]) => ({
-                    name: key,
-                    value
-                  })
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openIssues?.priority,
+                  'priority'
                 )
               }
             ]
@@ -142,12 +137,9 @@ export class ObservationsComponent implements OnInit {
             series: [
               {
                 ...this.options.series[0],
-                color: this.priorityColors,
-                data: Object.entries(result?.openActions?.priority).map(
-                  ([key, value]) => ({
-                    name: key,
-                    value
-                  })
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openActions?.priority,
+                  'priority'
                 )
               }
             ]
@@ -164,12 +156,9 @@ export class ObservationsComponent implements OnInit {
             series: [
               {
                 ...this.options.series[0],
-                color: this.statusColors,
-                data: Object.entries(result?.openIssues?.status).map(
-                  ([key, value]) => ({
-                    name: key,
-                    value
-                  })
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openIssues?.status,
+                  'status'
                 )
               }
             ]
@@ -183,18 +172,16 @@ export class ObservationsComponent implements OnInit {
             series: [
               {
                 ...this.options.series[0],
-                color: this.statusColors,
-                data: Object.entries(result?.openActions?.status).map(
-                  ([key, value]) => ({
-                    name: key,
-                    value
-                  })
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openActions?.status,
+                  'status'
                 )
               }
             ]
           }
         };
       }
+      this.cdrf.markForCheck();
     });
   }
 }

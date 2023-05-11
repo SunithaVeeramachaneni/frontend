@@ -6,14 +6,14 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserDetails } from 'src/app/interfaces';
-import { UsersService } from '../../user-management/services/users.service';
+import { tap } from 'rxjs/operators';
 
-import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { UsersService } from '../../user-management/services/users.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { tap } from 'rxjs/operators';
+import { UserDetails } from 'src/app/interfaces';
 import { routingUrls } from 'src/app/app.constants';
+import { ObservationsService } from 'src/app/forms/services/observations.service';
 
 interface IPriority {
   high: number;
@@ -28,6 +28,7 @@ interface IPriority {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ObservationsComponent implements OnInit {
+  moduleName = 'round-observations';
   counts: {
     openActions: {
       priority: IPriority;
@@ -95,22 +96,8 @@ export class ObservationsComponent implements OnInit {
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
-  private statusColors = {
-    open: '#e0e0e0',
-    inprogress: '#ffcc01',
-    overdue: '#aa2e24',
-    resolved: '#2C9E53'
-  };
-  private priorityColors = {
-    high: '#F6695E',
-    medium: '#f4a916',
-    low: '#c8dae1',
-    shutdown: '#000000',
-    turnaround: '#3C59FE',
-    emergency: '#E2190E'
-  };
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly observationsService: ObservationsService,
     private userService: UsersService,
     private headerService: HeaderService,
     private commonService: CommonService,
@@ -126,8 +113,8 @@ export class ObservationsComponent implements OnInit {
       )
     );
     this.users$ = this.userService.getUsersInfo$();
-    this.roundPlanObservationsService
-      .getObservationChartCounts$()
+    this.observationsService
+      .getObservationChartCounts$(this.moduleName)
       .subscribe((result) => {
         if (result) {
           this.priorityData = {
@@ -140,7 +127,7 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  ...this.prepareColorsAndData(
+                  ...this.observationsService.prepareColorsAndData(
                     result?.openIssues?.priority,
                     'priority'
                   )
@@ -156,7 +143,7 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  ...this.prepareColorsAndData(
+                  ...this.observationsService.prepareColorsAndData(
                     result?.openActions?.priority,
                     'priority'
                   )
@@ -175,7 +162,7 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  ...this.prepareColorsAndData(
+                  ...this.observationsService.prepareColorsAndData(
                     result?.openIssues?.status,
                     'status'
                   )
@@ -191,7 +178,7 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  ...this.prepareColorsAndData(
+                  ...this.observationsService.prepareColorsAndData(
                     result?.openActions?.status,
                     'status'
                   )
@@ -202,28 +189,5 @@ export class ObservationsComponent implements OnInit {
         }
         this.cdrf.markForCheck();
       });
-  }
-
-  private prepareColorsAndData(result, action: 'priority' | 'status') {
-    const color = [];
-    const data = [];
-    Object.entries(result).map(([key, value]) => {
-      const leanKey = this.roundPlanObservationsService.removeSpecialCharacter(
-        key.toLowerCase()
-      );
-      color.push(
-        action === 'priority'
-          ? this.priorityColors[leanKey]
-          : this.statusColors[leanKey]
-      );
-      data.push({
-        name: leanKey === 'inprogress' ? 'In Progress' : key,
-        value
-      });
-    });
-    return {
-      color,
-      data
-    };
   }
 }
