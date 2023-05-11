@@ -2,14 +2,18 @@
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-      <span class="back-btn-text" translate="backBtn"></span>
+      <span class="back-btn-text">
+        {{ 'backBtn' | translate }}
+      </span>
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
     <div class="width-5"></div>
     <div class="width-95">
       <div class="form-detials">
-        <h2 class="heading" translate="setFormDetailsHeading"></h2>
+        <h2 class="heading">
+          {{ 'setFormDetailsHeading' | translate }}
+        </h2>
 
         <!-- <p class="sub-heading" translate="setFormTypeHeading"></p> -->
         <!-- <input
@@ -106,7 +110,7 @@
           </mat-form-field>
         </div>
         <div class="tags">
-          <p class="form-name-description m-b-0" translate="tags"></p>
+          <p class="form-name-description m-b-0">{{ 'tags' | translate }}</p>
           <mat-form-field class="chips-list width-100" appearance="outline">
             <mat-chip-list #chipList>
               <mat-chip
