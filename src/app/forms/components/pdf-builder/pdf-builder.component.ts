@@ -60,7 +60,7 @@ export class PDFBuilderComponent implements OnInit {
   totalQuestionsCount = 0;
   totalAssetsCount = 0;
   totalLocationsCount = 0;
-  draftState = false;
+  inDraftState = false;
   pdfBuilderConfigurationsForm: FormGroup = this.fb.group({
     formId: true,
     formTitle: true,
@@ -126,9 +126,9 @@ export class PDFBuilderComponent implements OnInit {
       .select(getFormPublishStatus)
       .pipe(
         tap((formDetailPublishStatus) => {
-          if (formDetailPublishStatus === 'Draft') this.draftState = true;
+          if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           this.formDetailPublishStatus = formDetailPublishStatus;
-          if (formDetailPublishStatus === 'Published' && this.draftState) {
+          if (formDetailPublishStatus === 'Published' && this.inDraftState) {
             if (this.data.moduleName === 'OPERATOR_ROUNDS') {
               this.toast.show({
                 text: 'Round published successfully',
@@ -136,7 +136,7 @@ export class PDFBuilderComponent implements OnInit {
               });
               this.router.navigate(['/operator-rounds']);
               this.dialogRef.close();
-            } else if (this.data.moduleName === 'FORMS') {
+            } else if (this.data.moduleName === 'RDF') {
               this.toast.show({
                 text: 'Form published successfully',
                 type: 'success'
@@ -146,10 +146,10 @@ export class PDFBuilderComponent implements OnInit {
             }
           }
           if (
-            this.draftState === false &&
+            this.inDraftState === false &&
             this.formDetailPublishStatus === 'Publishing'
           )
-            this.draftState = true;
+            this.inDraftState = true;
         })
       );
 
