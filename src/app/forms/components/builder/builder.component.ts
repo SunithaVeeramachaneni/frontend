@@ -129,7 +129,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         this.subFormPages$
           .pipe(
             tap((pages) => {
-              if (!pages || !pages.length) {
+              if (pages && pages.length === 0) {
                 this.isEmptyPlan = true;
               } else {
                 this.isEmptyPlan = false;
@@ -375,14 +375,16 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex, subFormId) {
-    this.roundPlanConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      1,
-      subFormId
-    );
+    if (!this.isEmptyPage[pageIndex]) {
+      this.roundPlanConfigurationService.addQuestions(
+        pageIndex,
+        sectionIndex,
+        1,
+        questionIndex,
+        1,
+        subFormId
+      );
+    }
   }
 
   addSection(pageIndex) {
