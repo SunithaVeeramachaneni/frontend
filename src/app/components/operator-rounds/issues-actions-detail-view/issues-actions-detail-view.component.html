@@ -194,7 +194,7 @@
                     <span class="data">
                       <span class="sub-headings" translate="dueDateUpdated">
                       </span>
-                      {{ history.message.DUEDATE }}
+                      {{ history.message.DUEDATE | date : 'longDate' }}
                     </span>
                   </ng-container>
                 </ng-container>
@@ -363,6 +363,7 @@
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "
+              [disabled]="data?.type === 'issue'"
             >
               <mat-option
                 *ngFor="let priority of priorities"
