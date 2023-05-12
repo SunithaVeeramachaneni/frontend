@@ -68,7 +68,6 @@ import { ScheduleSuccessModalComponent } from './components/schedular/schedule-s
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
-import { AssignToComponent } from './components/schedular/assign/assign.component';
 import { SharedModule } from '../shared/shared.module';
 import { DynamicPreviewResponseTypeLoaderDirective } from './components/preview/directives/dynamic-preview-response-type-loader.directive';
 import { PreviewQuestionComponent } from './components/preview/preview-question/preview-question.component';
@@ -159,7 +158,6 @@ import { ObservationsComponent } from './components/observations/observations.co
     InstructionPdfPreviewComponent,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent,
     DynamicPreviewResponseTypeLoaderDirective,
     DonutChartComponent,
     IssuesListComponent,
@@ -233,7 +231,6 @@ import { ObservationsComponent } from './components/observations/observations.co
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent,
     DonutChartComponent,
     IssuesListComponent,
     ActionsListComponent,
