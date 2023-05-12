@@ -446,12 +446,12 @@
           </div>
 
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
-            <app-assign-to
+            <app-assigned-to
               [assigneeDetails]="assigneeDetails"
               [isMultiple]="true"
               [assignedTo]="issuesActionsDetailViewForm.get('assignedTo').value"
               (selectedAssignee)="selectedAssigneeHandler($event)"
-            ></app-assign-to>
+            ></app-assigned-to>
           </mat-menu>
         </ng-container>
       </div>

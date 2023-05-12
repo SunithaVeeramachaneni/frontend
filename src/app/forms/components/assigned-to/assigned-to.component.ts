@@ -22,7 +22,7 @@ import {
   UserDetails
 } from 'src/app/interfaces';
 @Component({
-  selector: 'app-assign-to',
+  selector: 'app-assigned-to',
   templateUrl: './assigned-to.component.html',
   styleUrls: ['./assigned-to.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
