@@ -87,6 +87,8 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           plantId,
           plant: plant.name
         };
+        this.getResponseTypeDetails(id);
+
         return {
           formMetadata,
           counter,
