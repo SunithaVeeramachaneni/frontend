@@ -4,9 +4,17 @@ import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  graphQLDefaultMaxLimit
+} from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  GlobalResponseActions,
+  QuickResponseActions,
+  UnitOfMeasurementActions
+} from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.service';
 
@@ -19,6 +27,10 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
     const id = route.params.id;
+    if (id === undefined) {
+      this.getResponseTypeDetails();
+      return of({} as FormConfigurationState);
+    }
     return forkJoin({
       form: this.raceDynamicFormService.getFormById$(id),
       authoredFormDetail:
@@ -95,5 +107,25 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
         return of({} as FormConfigurationState);
       })
     );
+  }
+
+  getResponseTypeDetails(id: string = '') {
+    if (id) {
+      this.store.dispatch(
+        QuickResponseActions.fetchFormSpecificQuickResponses({ formId: id })
+      );
+    }
+    this.store.dispatch(
+      UnitOfMeasurementActions.fetchUnitOfMeasurementList({
+        queryParams: {
+          next: '',
+          limit: graphQLDefaultMaxLimit,
+          searchKey: '',
+          fetchType: 'load'
+        }
+      })
+    );
+    this.store.dispatch(QuickResponseActions.fetchDefaultQuickResponses());
+    this.store.dispatch(GlobalResponseActions.fetchGlobalResponses());
   }
 }

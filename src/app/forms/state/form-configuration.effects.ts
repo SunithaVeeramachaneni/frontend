@@ -32,13 +32,12 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.createForm),
       concatMap((action) =>
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
-          map((response) => {
-            this.raceDynamicFormService.setFormCreatedUpdated(response);
-            return FormConfigurationApiActions.createFormSuccess({
+          map((response) =>
+            FormConfigurationApiActions.createFormSuccess({
               formMetadata: { id: response.id, ...action.formMetadata },
               formSaveStatus: formConfigurationStatus.saved
-            });
-          }),
+            })
+          ),
           catchError((error) => {
             this.raceDynamicFormService.handleError(error);
             return of(FormConfigurationApiActions.createFormFailure({ error }));

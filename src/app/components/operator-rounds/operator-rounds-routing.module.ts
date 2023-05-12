@@ -25,6 +25,7 @@ const routes: Routes = [
         path: 'create',
         component: RoundPlanConfigurationComponent,
         canActivate: [AuthGuard],
+        resolve: { form: RoundPlanResolverService },
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
           permissions: [permissions.createORPlan],

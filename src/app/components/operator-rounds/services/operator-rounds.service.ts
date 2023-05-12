@@ -37,11 +37,9 @@ export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
 
-  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
@@ -57,10 +55,6 @@ export class OperatorRoundsService {
   }
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
-  }
-
-  setFormCreatedUpdated(data: any) {
-    this.formCreatedUpdatedSubject.next(data);
   }
 
   createTags$ = (
@@ -80,12 +74,14 @@ export class OperatorRoundsService {
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._putDataToGateway(
-      environment.rdfApiUrl,
-      `datasets/${datasetId}`,
-      dataset,
-      info
-    );
+    this.appService
+      ._putDataToGateway(
+        environment.rdfApiUrl,
+        `datasets/${datasetId}`,
+        dataset,
+        info
+      )
+      .pipe((resp) => (resp === null ? dataset : resp));
 
   getDataSetsByType$ = (
     datasetType: string,

@@ -50,8 +50,11 @@ import {
 
 import {
   BuilderConfigurationActions,
+  GlobalResponseActions,
   HierarchyActions,
-  RoundPlanConfigurationActions
+  QuickResponseActions,
+  RoundPlanConfigurationActions,
+  UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
@@ -735,6 +738,9 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(HierarchyActions.resetSelectedHierarchyState());
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
+    this.store.dispatch(QuickResponseActions.resetQuickResponses());
+    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {

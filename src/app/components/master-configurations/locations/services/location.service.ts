@@ -22,20 +22,13 @@ import {
   providedIn: 'root'
 })
 export class LocationService {
-  locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
   // this fetch limit is limited by DynamoDB's 1 MB query size limit.
-  private MAX_FETCH_LIMIT: string = '1000000';
+  private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.locationCreatedUpdatedSubject.next(data);
-  }
 
   fetchAllLocations$ = (plantsID = null) => {
     const params: URLSearchParams = new URLSearchParams();

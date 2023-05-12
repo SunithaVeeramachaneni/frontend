@@ -75,6 +75,12 @@ import { SaveTemplateContainerComponent } from './save-template-container/save-t
 import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
+import { unitOfMeasurementReducer } from 'src/app/forms/state/unit-of-measurement.reducer';
+import { quickResponseReducer } from 'src/app/forms/state/quick-responses.reducer';
+import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
+import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measurement.effects';
+import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
+import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -155,10 +161,18 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTabsModule,
     MatRadioModule,
     StoreModule.forFeature('feature', {
-      formConfiguration: formConfigurationReducer
+      formConfiguration: formConfigurationReducer,
+      unitOfMeasurement: unitOfMeasurementReducer,
+      quickResponse: quickResponseReducer,
+      globalResponse: globalResponseReducer
     }),
     StoreDevtoolsModule.instrument({ logOnly: environment.production }),
-    EffectsModule.forFeature([FormConfigurationEffects])
+    EffectsModule.forFeature([
+      FormConfigurationEffects,
+      UnitOfMeasurementEffects,
+      QuickResponseEffects,
+      GlobalResponseEffects
+    ])
   ],
   exports: [
     FormContainerComponent,

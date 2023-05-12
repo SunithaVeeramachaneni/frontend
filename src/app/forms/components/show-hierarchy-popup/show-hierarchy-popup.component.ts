@@ -41,6 +41,7 @@ export class ShowHierarchyPopupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('show hierarchy popup component');
     this.hierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
       tap((masterHierarchyList) => {
         this.hierarchyList = masterHierarchyList;

@@ -35,12 +35,8 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
-  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -48,10 +44,6 @@ export class RaceDynamicFormService {
     private appService: AppService,
     private translate: TranslateService
   ) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.formCreatedUpdatedSubject.next(data);
-  }
 
   createTags$ = (
     tags: any,
