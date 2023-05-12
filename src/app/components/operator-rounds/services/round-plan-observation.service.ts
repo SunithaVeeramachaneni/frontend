@@ -164,10 +164,14 @@ export class RoundPlanObservationsService {
         message
         type
         username
-        createdAt
+        issueslistID
         createdBy
         assignedTo
-        issueslistID
+        isDeleted
+        moduleName
+        plantId
+        createdAt
+        createdBy
       }
     }`;
     return API.graphql(
@@ -184,10 +188,14 @@ export class RoundPlanObservationsService {
         message
         type
         username
+        actionslistID
+        createdBy
         assignedTo
+        isDeleted
+        moduleName
+        plantId
         createdAt
         createdBy
-        actionslistID
       }
     }`;
     return API.graphql(
