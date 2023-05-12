@@ -307,5 +307,6 @@
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
   "nodeId": "{type} Id: {id}",
-  "typePlaceholder": "Type"
+  "typePlaceholder": "Type",
+  "notificationCreation": "Notification Creation In-Progress"
 }

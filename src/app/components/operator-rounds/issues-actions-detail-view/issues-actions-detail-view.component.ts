@@ -94,6 +94,7 @@ export class IssuesActionsDetailViewComponent
   isNextEnabled = false;
   ghostLoading = new Array(17).fill(0).map((_, i) => i);
   placeholder = '_ _';
+  isCreateNotification = false;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription = null;
@@ -372,11 +373,13 @@ export class IssuesActionsDetailViewComponent
   }
 
   createNotification() {
+    this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
       this.observations.createNotification(this.data).subscribe((value) => {
         if (Object.keys(value).length) {
-          const { notificationNumber } = value;
-          this.data.notificationNumber = notificationNumber;
+          const { notificationInfo } = value;
+          this.data.notificationNumber = notificationInfo;
+          this.isCreateNotification = false;
         }
       });
     } else {
@@ -384,6 +387,7 @@ export class IssuesActionsDetailViewComponent
         type: 'warning',
         text: 'Category is mandatory for notification creation'
       });
+      this.isCreateNotification = false;
     }
   }
 
