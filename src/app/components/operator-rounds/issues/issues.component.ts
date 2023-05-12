@@ -237,7 +237,7 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'notificationNumber',
+      id: 'notificationInfo',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
@@ -432,10 +432,10 @@ export class IssuesComponent implements OnInit {
         }
         this.skip = this.initial.data.length;
         this.initial.data = this.initial.data.map((data) => {
-          data.notificationNumber = this.checkNotificationNumberCorrect(
-            data.notificationNumber
+          data.notificationInfo = this.checkNotificationNumberCorrect(
+            data.notificationInfo
           )
-            ? data.notificationNumber
+            ? data.notificationInfo
             : '_ _';
           return data;
         });
@@ -445,10 +445,10 @@ export class IssuesComponent implements OnInit {
     );
   }
 
-  checkNotificationNumberCorrect(notificationNumber) {
-    if (notificationNumber.split(' ').length > 1) {
+  checkNotificationNumberCorrect(notificationInfo) {
+    if (notificationInfo.split(' ').length > 1) {
       return false;
-    } else if (notificationNumber.split('_').length > 1) {
+    } else if (notificationInfo.split('_').length > 1) {
       return false;
     }
     return true;
@@ -553,17 +553,17 @@ export class IssuesComponent implements OnInit {
           dueDate,
           assignedToDisplay,
           assignedTo,
-          notificationNumber
+          notificationInfo
         } = resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
               ...data,
               status,
-              notificationNumber: this.checkNotificationNumberCorrect(
-                notificationNumber
+              notificationInfo: this.checkNotificationNumberCorrect(
+                notificationInfo
               )
-                ? notificationNumber
+                ? notificationInfo
                 : '_ _',
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',

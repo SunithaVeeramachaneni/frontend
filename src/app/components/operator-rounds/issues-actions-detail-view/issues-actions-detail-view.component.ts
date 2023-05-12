@@ -119,17 +119,17 @@ export class IssuesActionsDetailViewComponent
   }
 
   ngOnInit(): void {
-    const { users$, totalCount$, allData, notificationNumber } = this.data;
+    const { users$, totalCount$, allData, notificationInfo } = this.data;
     this.allData = allData;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
       s3Details: { bucket, region },
       tenantId
     } = this.tenantService.getTenantInfo();
-    this.data.notificationNumber = this.checkNotificationNumberCorrect(
-      notificationNumber
+    this.data.notificationInfo = this.checkNotificationNumberCorrect(
+      notificationInfo
     )
-      ? notificationNumber
+      ? notificationInfo
       : '';
 
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
@@ -201,12 +201,12 @@ export class IssuesActionsDetailViewComponent
     }
   };
 
-  checkNotificationNumberCorrect(notificationNumber) {
-    if (notificationNumber.split(' ').length > 1) {
+  checkNotificationNumberCorrect(notificationInfo) {
+    if (notificationInfo.split(' ').length > 1) {
       return false;
-    } else if (notificationNumber.split('_').length > 1) {
+    } else if (notificationInfo.split('_').length > 1) {
       return false;
-    } else if (notificationNumber === this.placeholder) {
+    } else if (notificationInfo === this.placeholder) {
       return false;
     }
     return true;
@@ -255,7 +255,7 @@ export class IssuesActionsDetailViewComponent
         ...this.issuesActionsDetailViewForm.value,
         id: this.data.id,
         priority: this.data.priority,
-        notificationNumber: this.data.notificationNumber
+        notificationInfo: this.data.notificationInfo
       }
     });
   }
@@ -378,7 +378,7 @@ export class IssuesActionsDetailViewComponent
       this.observations.createNotification(this.data).subscribe((value) => {
         if (Object.keys(value).length) {
           const { notificationInfo } = value;
-          this.data.notificationNumber = notificationInfo;
+          this.data.notificationInfo = notificationInfo;
           this.isCreateNotification = false;
         }
       });
@@ -572,7 +572,7 @@ export class IssuesActionsDetailViewComponent
   }
 
   private init(): void {
-    const { id, type, dueDate, notificationNumber } = this.data;
+    const { id, type, dueDate, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -587,8 +587,8 @@ export class IssuesActionsDetailViewComponent
     if (type === 'issue') {
       this.issuesActionsDetailViewForm.get('priority').disable();
     }
-    this.data.notificationNumber =
-      notificationNumber !== this.placeholder ? notificationNumber : '';
+    this.data.notificationInfo =
+      notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',
