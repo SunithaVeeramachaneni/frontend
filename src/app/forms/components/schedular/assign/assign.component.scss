@@ -10,15 +10,14 @@
   height: 60%;
   z-index: 9999;
   background-color: $white;
-  border-left: 1px solid $border-color;
 }
 
-#assign {
+#assign-to {
   .mat-card {
     margin: 0;
-    border-radius: 0;
+    border-radius: 4px;
     height: 100%;
-    padding: 0;
+    padding: 10px 0;
 
     .title {
       display: flex;
@@ -34,33 +33,35 @@
     }
 
     .heading {
-      padding: 0 16px;
-      font-size: 80%;
+      padding: 3px 16px;
+      font-size: 65%;
     }
 
     .mat-card-content {
-      padding: 0 16px;
-      height: calc(100vh - 240px);
+      padding: 0 12px;
+      width: 316px;
+      height: calc(100vh - 290px);
       overflow-y: auto;
       overflow-x: hidden;
-
-      .profile-image {
-        height: 35px;
-        width: 35px;
-        margin-top: 7px;
-        margin-right: 7px;
-        border-radius: 50%;
-      }
 
       .user-menu-item {
         display: flex;
         flex-direction: row;
         padding-left: 0;
 
+        .profile-image {
+          height: 35px;
+          width: 35px;
+          margin-top: 7px;
+          margin-right: 7px;
+          border-radius: 50%;
+        }
+
         .user-info {
           display: flex;
           flex-direction: column;
           margin-top: 7px;
+          width: 195px;
 
           .name {
             font-size: 93%;
@@ -73,6 +74,25 @@
             font-weight: 400;
             line-height: 15px;
           }
+        }
+      }
+
+      .disable-events {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .enable-events {
+        pointer-events: all;
+        user-select: auto;
+        cursor: pointer;
+      }
+
+      .jsutify-content {
+        padding-right: 0;
+
+        .mat-ripple-element {
+          display: none !important;
         }
       }
 

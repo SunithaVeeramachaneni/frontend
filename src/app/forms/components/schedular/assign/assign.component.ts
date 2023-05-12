@@ -8,6 +8,7 @@ import {
   Output
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Observable } from 'rxjs';
 import {
   debounceTime,
@@ -16,7 +17,11 @@ import {
   startWith,
   tap
 } from 'rxjs/operators';
-import { AssigneeDetails, UserDetails } from 'src/app/interfaces';
+import {
+  AssigneeDetails,
+  SelectedAssignee,
+  UserDetails
+} from 'src/app/interfaces';
 
 @Component({
   selector: 'app-assign',
@@ -31,8 +36,12 @@ export class AssignToComponent implements OnInit {
   get assigneeDetails(): AssigneeDetails {
     return this._assigneeDetails;
   }
-  @Output() selectedAssignee: EventEmitter<UserDetails> =
-    new EventEmitter<UserDetails>();
+  @Output() selectedAssignee: EventEmitter<SelectedAssignee> =
+    new EventEmitter<SelectedAssignee>();
+
+  @Input() dropdownPosition;
+  @Input() isMultiple = false;
+  @Input() assignedTo: string;
   searchUsers: FormControl;
   filteredUsers$: Observable<UserDetails[]>;
   filteredUsersCount: number;
@@ -48,18 +57,25 @@ export class AssignToComponent implements OnInit {
       distinctUntilChanged(),
       map((search) => {
         search = search.toLowerCase();
-        return this.assigneeDetails?.users?.filter(
+        return this.assigneeDetails.users.filter(
           (user) =>
             user.isActive &&
             (user.firstName.toLowerCase().indexOf(search) !== -1 ||
               user.lastName.toLowerCase().indexOf(search) !== -1)
         );
       }),
-      tap((users) => (this.filteredUsersCount = users?.length || 0))
+      tap((users) => (this.filteredUsersCount = users.length))
     );
   }
 
-  selectAssignee(user: UserDetails) {
-    this.selectedAssignee.emit(user);
+  selectAssignee(
+    user: UserDetails,
+    { checked }: MatCheckboxChange = {} as MatCheckboxChange
+  ) {
+    this.selectedAssignee.emit({ user, checked });
+  }
+
+  isAssigneeSelected(email: string) {
+    return this.assignedTo.indexOf(email) !== -1;
   }
 }

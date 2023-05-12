@@ -75,7 +75,7 @@ import { SaveTemplateContainerComponent } from './save-template-container/save-t
 import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
-import { ObservationsComponent } from './observations/observations.component';
+import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -110,7 +110,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
-    ObservationsComponent
+    InspectionObservationsComponent
   ],
   imports: [
     FormsModule,

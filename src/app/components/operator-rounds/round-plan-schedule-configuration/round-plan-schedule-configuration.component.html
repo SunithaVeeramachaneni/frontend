@@ -294,11 +294,11 @@
             </mat-error>
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
-            <app-assign-to
+            <app-assign
               [assigneeDetails]="assigneeDetails"
               [dropdownPosition]="dropdownPosition"
               (selectedAssignee)="selectedAssigneeHandler($event)"
-            ></app-assign-to>
+            ></app-assign>
           </mat-menu>
         </ng-container>
 

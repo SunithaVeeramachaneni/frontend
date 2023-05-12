@@ -12,7 +12,8 @@ import { SchedulerComponent } from './scheduler/scheduler.component';
 import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
 import { TemplateResolverService } from './services/template-resolver.service';
 import { TemplateContainerComponent } from './template-container/template-container.component';
-import { ObservationsComponent } from './observations/observations.component';
+import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -83,7 +84,7 @@ const routes: Routes = [
       },
       {
         path: 'observations',
-        component: ObservationsComponent,
+        component: InspectionObservationsComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Observations' },

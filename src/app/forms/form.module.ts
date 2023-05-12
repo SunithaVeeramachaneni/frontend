@@ -100,6 +100,8 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
+import { ObservationsComponent } from './components/observations/observations.component';
+
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -163,7 +165,8 @@ import { AssignedToComponent } from './components/assigned-to/assigned-to.compon
     IssuesListComponent,
     ActionsListComponent,
     IssuesActionsViewComponent,
-    AssignedToComponent
+    AssignedToComponent,
+    ObservationsComponent
   ],
   imports: [
     SharedModule,
@@ -235,7 +238,8 @@ import { AssignedToComponent } from './components/assigned-to/assigned-to.compon
     IssuesListComponent,
     ActionsListComponent,
     IssuesActionsViewComponent,
-    AssignedToComponent
+    AssignedToComponent,
+    ObservationsComponent
   ]
 })
 export class FormModule {}

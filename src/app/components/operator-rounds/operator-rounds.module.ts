@@ -66,10 +66,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
-import { ObservationsComponent } from './observations/observations.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { AssignToComponent } from './assign-to/assign-to.component';
+import { RoundObservationsComponent } from './round-observations/round-observations.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -97,8 +96,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanScheduleSuccessModalComponent,
     RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
-    ObservationsComponent,
-    AssignToComponent
+    RoundObservationsComponent
   ],
   imports: [
     FormsModule,
@@ -151,7 +149,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       hierarchy: hierarchyReducer
     }),
     StoreDevtoolsModule.instrument({ logOnly: environment.production }),
-    EffectsModule.forFeature([RoundPlanConfigurationEffects]),
+    EffectsModule.forFeature([RoundPlanConfigurationEffects])
   ],
   exports: [OperatorRoundsContainerComponent]
 })
