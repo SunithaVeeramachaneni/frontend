@@ -129,7 +129,7 @@
               (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
-              <div *ngFor="let parent of allParentsData">
+              <ng-container *ngFor="let parent of allParentsData">
                 <mat-option
                   [value]="parent.id"
                   *ngIf="
@@ -137,7 +137,7 @@
                   "
                   >{{ parent.locationId }} - {{ parent.name }}</mat-option
                 >
-              </div>
+              </ng-container>
             </div>
           </mat-select>
         </mat-form-field>
