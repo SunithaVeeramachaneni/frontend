@@ -140,9 +140,7 @@ export class BuilderComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    this.responseSetService.fetchAllGlobalResponses$().subscribe();
-  }
+  ngOnInit(): void {}
 
   addPage() {
     this.isEmptyPlan = false;

@@ -145,8 +145,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    this.responseSetService.fetchAllGlobalResponses$().subscribe();
-
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),
