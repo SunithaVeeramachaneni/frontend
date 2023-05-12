@@ -191,8 +191,8 @@
   <div
     *ngIf="isEmptyPlan"
     [ngClass]="{
-      emptyRoutePlanContainer: !isPreviewActive,
-      emptyRoutePlanContainerWithPreview: isPreviewActive
+      emptyRoutePlanContainer: moduleName === 'rounds',
+      emptyRoutePlanContainerWithPreview: moduleName === 'forms'
     }"
   >
     <div>
