@@ -10,9 +10,21 @@
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
     </button>
     <h4 class="heading">
-      <mat-icon class="arrows">keyboard_arrow_left</mat-icon> &nbsp;
+      <mat-icon
+        (click)="onPrevious()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isPreviousEnabled }"
+        >keyboard_arrow_left</mat-icon
+      >
+      &nbsp;
       {{ this.issuesActionsDetailViewForm.get('title').value }}
-      &nbsp; <mat-icon class="arrows">keyboard_arrow_right</mat-icon>
+      &nbsp;
+      <mat-icon
+        (click)="onNext()"
+        class="arrows"
+        [ngClass]="{ 'disabled-arrow': !isNextEnabled }"
+        >keyboard_arrow_right</mat-icon
+      >
     </h4>
   </mat-toolbar>
   <div class="dis-flex form-content">
@@ -20,7 +32,12 @@
       class="width-60 chat-div"
       *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
-      <div class="chat-panel" [ngStyle]="{ height: chatPanelHeight }">
+      <div
+        class="chat-panel"
+        [ngStyle]="{ height: chatPanelHeight }"
+        #scrollMe
+        [scrollTop]="scrollMe.scrollHeight"
+      >
         <ng-container *ngFor="let history of logHistory.rows; let i = index">
           <div
             [ngClass]="{
@@ -177,7 +194,7 @@
                     <span class="data">
                       <span class="sub-headings" translate="dueDateUpdated">
                       </span>
-                      {{ history.message.DUEDATE }}
+                      {{ history.message.DUEDATE | date : 'longDate' }}
                     </span>
                   </ng-container>
                 </ng-container>
@@ -247,105 +264,17 @@
     <ng-template #historyLoading>
       <div class="width-60 chat-div">
         <div class="chat-panel">
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="left-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
-          <ngx-shimmer-loading
-            [width]="'47%'"
-            [height]="'30px'"
-            class="right-chat"
-          >
-          </ngx-shimmer-loading>
-          <br />
+          <div *ngFor="let number of ghostLoading">
+            <br />
+            <ngx-shimmer-loading
+              [width]="'47%'"
+              [height]="'30px'"
+              [ngClass]="number % 2 === 0 ? 'right-chat' : 'left-chat'"
+              class="left-chat"
+            >
+            </ngx-shimmer-loading>
+            <br />
+          </div>
         </div>
         <div class="custom-form-field-white-color footer" #footer>
           <mat-form-field appearance="outline" class="width-90 margin">
@@ -434,6 +363,7 @@
               (selectionChange)="
                 updateIssueOrAction({ field: 'priority', value: $event.value })
               "
+              [disabled]="data?.type === 'issue'"
             >
               <mat-option
                 *ngFor="let priority of priorities"
@@ -516,12 +446,12 @@
           </div>
 
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
-            <app-assign-to
+            <app-assigned-to
               [assigneeDetails]="assigneeDetails"
               [isMultiple]="true"
               [assignedTo]="issuesActionsDetailViewForm.get('assignedTo').value"
               (selectedAssignee)="selectedAssigneeHandler($event)"
-            ></app-assign-to>
+            ></app-assigned-to>
           </mat-menu>
         </ng-container>
       </div>
@@ -531,15 +461,15 @@
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
           <button
-            *ngIf="!data.notificationNumber.length"
+            *ngIf="!data.notificationInfo.length"
             mat-raised-button
             color="primary"
             (click)="createNotification()"
           >
             Create
           </button>
-          <span *ngIf="data.notificationNumber.length">{{
-            data.notificationNumber
+          <span *ngIf="data.notificationInfo.length">{{
+            data.notificationInfo
           }}</span>
         </div>
       </div>

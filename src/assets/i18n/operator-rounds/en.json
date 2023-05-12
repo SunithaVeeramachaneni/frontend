@@ -54,7 +54,7 @@
   "longAns": "Long Answer",
   "tag": "Tag:",
   "noneTag": "None",
-  "warningTag": "Warning",
+  "informationTag": "Information",
   "cautionTag": "Caution",
   "dangerTag": "Danger",
   "range": "Range:",

@@ -202,7 +202,7 @@ export class AssetsService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/asset-icon.svg',
             style: {

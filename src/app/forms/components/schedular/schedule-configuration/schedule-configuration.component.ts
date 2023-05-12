@@ -679,8 +679,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     });
   }
 
-  selectedAssigneeHandler(event: UserDetails) {
-    const { email: value, firstName, lastName } = event;
+  selectedAssigneeHandler(event) {
+    const { email: value, firstName, lastName } = event as UserDetails;
     this.schedulerConfigForm
       .get('assignmentDetails')
       .patchValue({ value, displayValue: `${firstName} ${lastName}` });

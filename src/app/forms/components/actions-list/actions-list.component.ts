@@ -1,11 +1,9 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable @typescript-eslint/naming-convention */
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  OnInit,
+  ChangeDetectionStrategy,
   Input,
-  OnInit
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,18 +45,20 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { LoginService } from '../../login/services/login.service';
-import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
-import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
+import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
+import { ObservationsService } from '../../services/observations.service';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
-  selector: 'app-issues',
-  templateUrl: './issues.component.html',
-  styleUrls: ['./issues.component.scss'],
+  selector: 'app-actions-list',
+  templateUrl: './actions-list.component.html',
+  styleUrls: ['./actions-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class IssuesComponent implements OnInit {
+export class ActionsListComponent implements OnInit {
+  @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -86,7 +86,8 @@ export class IssuesComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000',
+        width: '280px',
+        color: '#212121',
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
@@ -185,7 +186,7 @@ export class IssuesComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -245,33 +246,11 @@ export class IssuesComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'notificationNumber',
-      displayName: 'Notification No.',
-      type: 'string',
-      controlType: 'string',
-      order: 7,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -289,10 +268,32 @@ export class IssuesComponent implements OnInit {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
+    },
+    {
+      id: 'createdBy',
+      displayName: 'Raised By',
+      type: 'string',
+      controlType: 'string',
+      order: 8,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
     }
   ];
   configOptions: ConfigOptions = {
-    tableID: 'issuesTable',
+    tableID: 'actionsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -308,68 +309,80 @@ export class IssuesComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#FF3B30'
+        color: '#F6695E'
       },
       medium: {
-        color: '#FF9500'
+        color: '#F4A916'
       },
       low: {
-        color: '#8A8A8C'
+        color: '#8b8b8d'
+      },
+      shutdown: {
+        color: '#000000'
+      },
+      emergency: {
+        color: '#E2190E'
+      },
+      turnaround: {
+        color: '#3C59FE'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
-      'in-progress': {
-        'background-color': '#FFCC00',
+      'in progress': {
+        'background-color': '#ffcc01',
         color: '#000000'
       },
       resolved: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      overdue: {
+        'background-color': '#2C9E53',
+        color: '#aa2e24'
       }
     }
   };
-
   dataSource: MatTableDataSource<any>;
-  issues$: Observable<{
+  actions$: Observable<{
     columns: Column[];
     data: any[];
   }>;
-  fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
-  searchIssue: FormControl;
-  nextToken = '';
+  searchAction: FormControl;
+  actionsCount$: Observable<number>;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
-  issuesCount$: Observable<number>;
   initial: any;
   isModalOpened = false;
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
 
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
+    private readonly userService: UsersService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.fetchIssues$.next({ data: 'load' });
-    this.fetchIssues$.next({} as TableEvent);
-    this.searchIssue = new FormControl('');
-    this.searchIssue.valueChanges
+    this.observationsService.fetchActions$.next({ data: 'load' });
+    this.observationsService.fetchActions$.next({} as TableEvent);
+    this.searchAction = new FormControl('');
+    this.searchAction.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchIssues$.next({ data: 'search' });
+          this.observationsService.fetchActions$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -377,27 +390,27 @@ export class IssuesComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-    this.displayIssues();
+    this.displayActions();
     this.configOptions.allColumns = this.columns;
   }
 
-  displayIssues(): void {
-    const issuesOnLoadSearch$ = this.fetchIssues$.pipe(
+  displayActions(): void {
+    const actionsOnLoadSearch$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
-        this.nextToken = '';
+        this.observationsService.actionsNextToken = '';
         this.fetchType = data;
-        return this.getIssuesList();
+        return this.getActionsList();
       })
     );
 
-    const onScrollIssues$ = this.fetchIssues$.pipe(
+    const onScrollActions$ = this.observationsService.fetchActions$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getIssuesList();
+          return this.getActionsList();
         } else {
           return of([]);
         }
@@ -408,9 +421,9 @@ export class IssuesComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.issues$ = combineLatest([
-      issuesOnLoadSearch$,
-      onScrollIssues$,
+    this.actions$ = combineLatest([
+      actionsOnLoadSearch$,
+      onScrollActions$,
       this.users$
     ]).pipe(
       map(([rows, scrollData]) => {
@@ -419,10 +432,10 @@ export class IssuesComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = this.formatIssues(rows);
+          this.initial.data = this.formatActions(rows);
         } else {
           this.initial.data = this.initial.data.concat(
-            this.formatIssues(scrollData)
+            this.formatActions(scrollData)
           );
         }
         this.skip = this.initial.data.length;
@@ -432,32 +445,35 @@ export class IssuesComponent implements OnInit {
     );
   }
 
-  formatIssues(issues) {
-    return issues.map((issue) => {
-      const { assignedTo } = issue;
+  formatActions(actions) {
+    return actions.map((action) => {
+      const { assignedTo, createdBy } = action;
       return {
-        ...issue,
+        ...action,
         assignedToDisplay:
           assignedTo !== null
-            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
-            : assignedTo
+            ? this.observationsService.formatUsersDisplay(assignedTo)
+            : assignedTo,
+        createdBy: this.userService.getUserFullName(createdBy)
       };
     });
   }
 
-  getIssuesList() {
+  getActionsList() {
     const obj = {
-      next: this.nextToken,
+      next: this.observationsService.actionsNextToken,
       limit: this.limit,
-      searchKey: this.searchIssue.value,
-      type: 'issue'
+      searchKey: this.searchAction.value,
+      type: 'action',
+      moduleName: this.moduleName
     };
 
-    return this.roundPlanObservationsService.getObservations$(obj).pipe(
+    return this.observationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.observationsService.actionsNextToken = next;
         this.isLoading$.next(false);
-        this.issuesCount$ = of(count);
+        this.actionsCount$ = of(count);
+        this.observationsService.actions$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -468,7 +484,7 @@ export class IssuesComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchIssues$.next(event);
+    this.observationsService.fetchActions$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -481,7 +497,6 @@ export class IssuesComponent implements OnInit {
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [];
-
     if (
       this.loginService.checkUserHasPermission(
         permissions,
@@ -504,10 +519,15 @@ export class IssuesComponent implements OnInit {
       return;
     }
     this.isModalOpened = true;
-    const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
+    const dialogRef = this.dialog.open(IssuesActionsViewComponent, {
       data: {
         ...row,
-        users$: this.users$
+        users$: this.users$,
+        totalCount$: this.actionsCount$,
+        allData: this.initial?.data || [],
+        next: this.observationsService.actionsNextToken,
+        limit: this.limit,
+        moduleName: this.moduleName
       },
       maxWidth: '100vw',
       maxHeight: '100vh',

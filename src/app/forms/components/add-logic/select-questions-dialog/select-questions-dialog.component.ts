@@ -48,10 +48,19 @@ export class SelectQuestionsDialogComponent implements OnInit {
       .select(getPage(this.data.pageIndex, this.data.subFormId))
       .subscribe((pageObj) => {
         const page = Object.assign({}, pageObj);
+        const hideQuestion = page.logics
+          .map((logic) => logic.hideQuestions)
+          .flat();
+        const mandateQuestion = page.logics
+          .map((logic) => logic.mandateQuestions)
+          .flat();
         page.sections.map((section) => {
-          const sectionQuestions = page.questions.filter(
-            (q) => q.sectionId === section.id
+          const sectionQuestions = page.questions.filter((q) =>
+            this.data.viewMode === 'HIDE'
+              ? q.sectionId === section.id && !mandateQuestion.includes(q.id)
+              : q.sectionId === section.id && !hideQuestion.includes(q.id)
           );
+
           this.sections.push({
             ...section,
             questions: sectionQuestions || []

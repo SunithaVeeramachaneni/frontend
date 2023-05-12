@@ -9,7 +9,7 @@ import { OperatorRoundsContainerComponent } from './operator-rounds-container/op
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 import { SchedulerComponent } from './scheduler/scheduler.component';
-import { ObservationsComponent } from './observations/observations.component';
+import { RoundObservationsComponent } from './round-observations/round-observations.component';
 
 const routes: Routes = [
   {
@@ -72,7 +72,7 @@ const routes: Routes = [
       },
       {
         path: 'observations',
-        component: ObservationsComponent,
+        component: RoundObservationsComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Observations' },

@@ -1,4 +1,7 @@
-<div class="arrow-left"></div>
+<div
+  class="arrow-left"
+  [ngStyle]="{ left: positions?.arrowleft, top: positions?.arrowtop }"
+></div>
 <div class="show-hierarchy-container" *ngIf="hierarchyList$ | async">
   <div class="heading">
     <a translate>hierarchy</a>

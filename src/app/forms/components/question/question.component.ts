@@ -173,6 +173,7 @@ export class QuestionComponent implements OnInit {
   formId: string;
   isINSTFieldChanged = false;
   instructionTagColours = {};
+  instructionTagTextColour = {};
 
   private _pageIndex: number;
   private _id: string;
@@ -326,10 +327,16 @@ export class QuestionComponent implements OnInit {
     );
 
     this.instructionTagColours[this.translate.instant('cautionTag')] =
-      '#D27B16';
-    this.instructionTagColours[this.translate.instant('warningTag')] =
-      '#FF3D00';
-    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
+      '#FFCC00';
+    this.instructionTagColours[this.translate.instant('informationTag')] =
+      '#CAE4FB';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#FF3B30';
+    this.instructionTagTextColour[this.translate.instant('cautionTag')] =
+      '#000000';
+    this.instructionTagTextColour[this.translate.instant('informationTag')] =
+      '#000000';
+    this.instructionTagTextColour[this.translate.instant('dangerTag')] =
+      '#FFFFFF';
   }
 
   getRangeMetadata() {
@@ -772,7 +779,8 @@ export class QuestionComponent implements OnInit {
     const originalValue = this.questionForm.get('value').value;
     originalValue.tag = {
       title: event,
-      colour: this.instructionTagColours[event]
+      colour: this.instructionTagColours[event],
+      textColour: this.instructionTagTextColour[event]
     };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

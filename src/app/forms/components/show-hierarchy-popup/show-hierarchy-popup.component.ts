@@ -29,6 +29,7 @@ export class ShowHierarchyPopupComponent implements OnInit {
   }
 
   @Output() closeHierarchyOverlay: EventEmitter<boolean> = new EventEmitter();
+  @Input() positions;
 
   public hierarchyList$: Observable<HierarchyEntity[]>;
   public hierarchyList: any[];

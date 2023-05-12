@@ -1,11 +1,9 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable @typescript-eslint/naming-convention */
 import {
-  Component,
-  OnInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
   Input,
-  ChangeDetectorRef
+  OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,13 +13,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -38,33 +30,34 @@ import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
-  LoadEvent,
   Permission,
   RowLevelActionEvent,
-  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo
 } from 'src/app/interfaces';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { LoginService } from '../../login/services/login.service';
-import { IssuesActionsDetailViewComponent } from '../issues-actions-detail-view/issues-actions-detail-view.component';
-import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
-import { UsersService } from '../../user-management/services/users.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
+import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
+import { ObservationsService } from '../../services/observations.service';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
-  selector: 'app-actions',
-  templateUrl: './actions.component.html',
-  styleUrls: ['./actions.component.scss'],
+  selector: 'app-issues-list',
+  templateUrl: './issues-list.component.html',
+  styleUrls: ['./issues-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class ActionsComponent implements OnInit {
+export class IssuesListComponent implements OnInit {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
     );
   }
+
+  @Input() moduleName;
+
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
@@ -87,8 +80,7 @@ export class ActionsComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        width: '280px',
-        color: '#212121',
+        color: '#000000',
         'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
@@ -187,7 +179,7 @@ export class ActionsComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
-      id: 'status',
+      id: 'statusDisplay',
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
@@ -247,11 +239,33 @@ export class ActionsComponent implements OnInit {
       hasPostTextImage: false
     },
     {
+      id: 'notificationInfo',
+      displayName: 'Notification No.',
+      type: 'string',
+      controlType: 'string',
+      order: 7,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'assignedToDisplay',
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -269,32 +283,10 @@ export class ActionsComponent implements OnInit {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
-      id: 'createdBy',
-      displayName: 'Raised By',
-      type: 'string',
-      controlType: 'string',
-      order: 8,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
     }
   ];
   configOptions: ConfigOptions = {
-    tableID: 'actionsTable',
+    tableID: 'issuesTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -310,72 +302,79 @@ export class ActionsComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
-        color: '#FF3B30'
+        color: '#F6695E'
       },
       medium: {
-        color: '#FF9500'
+        color: '#F4A916'
       },
       low: {
-        color: '#8A8A8C'
+        color: '#8b8b8d'
       },
-      open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
-      },
-      'in-progress': {
-        'background-color': '#FFCC00',
+      shutdown: {
         color: '#000000'
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#FFFFFF'
+      emergency: {
+        color: '#E2190E'
+      },
+      turnaround: {
+        color: '#3C59FE'
+      },
+      open: {
+        'background-color': '#e0e0e0',
+        color: '#000000'
+      },
+      'in progress': {
+        'background-color': '#ffcc01',
+        color: '#000000'
       },
       resolved: {
         'background-color': '#2C9E53',
         color: '#FFFFFF'
+      },
+      overdue: {
+        'background-color': '#2C9E53',
+        color: '#aa2e24'
       }
     }
   };
   dataSource: MatTableDataSource<any>;
-  actions$: Observable<{
+  issues$: Observable<{
     columns: Column[];
     data: any[];
   }>;
-  fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
-    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   limit = defaultLimit;
-  searchAction: FormControl;
-  actionsCount$: Observable<number>;
-  nextToken = '';
+  searchIssue: FormControl;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  issuesCount$: Observable<number>;
   initial: any;
   isModalOpened = false;
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
 
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
-    private readonly userService: UsersService,
-    private dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private readonly dialog: MatDialog,
+    private readonly cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.fetchActions$.next({ data: 'load' });
-    this.fetchActions$.next({} as TableEvent);
-    this.searchAction = new FormControl('');
-    this.searchAction.valueChanges
+    this.observationsService.fetchIssues$.next({ data: 'load' });
+    this.observationsService.fetchIssues$.next({} as TableEvent);
+    this.searchIssue = new FormControl('');
+    this.searchIssue.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.fetchActions$.next({ data: 'search' });
+          this.observationsService.fetchIssues$.next({
+            data: 'search'
+          });
           this.isLoading$.next(true);
         })
       )
@@ -383,27 +382,28 @@ export class ActionsComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-    this.displayActions();
+    this.displayIssues();
     this.configOptions.allColumns = this.columns;
   }
 
-  displayActions(): void {
-    const actionsOnLoadSearch$ = this.fetchActions$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(({ data }) => {
-        this.skip = 0;
-        this.nextToken = '';
-        this.fetchType = data;
-        return this.getActionsList();
-      })
-    );
+  displayIssues(): void {
+    const issuesOnLoadSearch$ =
+      this.observationsService.fetchIssues$.pipe(
+        filter(({ data }) => data === 'load' || data === 'search'),
+        switchMap(({ data }) => {
+          this.skip = 0;
+          this.observationsService.issuesNextToken = '';
+          this.fetchType = data;
+          return this.getIssuesList();
+        })
+      );
 
-    const onScrollActions$ = this.fetchActions$.pipe(
+    const onScrollIssues$ = this.observationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getActionsList();
+          return this.getIssuesList();
         } else {
           return of([]);
         }
@@ -414,9 +414,9 @@ export class ActionsComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.actions$ = combineLatest([
-      actionsOnLoadSearch$,
-      onScrollActions$,
+    this.issues$ = combineLatest([
+      issuesOnLoadSearch$,
+      onScrollIssues$,
       this.users$
     ]).pipe(
       map(([rows, scrollData]) => {
@@ -425,10 +425,10 @@ export class ActionsComponent implements OnInit {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 390px)'
           };
-          this.initial.data = this.formatActions(rows);
+          this.initial.data = this.formatIssues(rows);
         } else {
           this.initial.data = this.initial.data.concat(
-            this.formatActions(scrollData)
+            this.formatIssues(scrollData)
           );
         }
         this.skip = this.initial.data.length;
@@ -438,33 +438,33 @@ export class ActionsComponent implements OnInit {
     );
   }
 
-  formatActions(actions) {
-    return actions.map((action) => {
-      const { assignedTo, createdBy } = action;
+  formatIssues(issues) {
+    return issues.map((issue) => {
+      const { assignedTo } = issue;
       return {
-        ...action,
+        ...issue,
         assignedToDisplay:
           assignedTo !== null
-            ? this.roundPlanObservationsService.formatUsersDisplay(assignedTo)
-            : assignedTo,
-        createdBy: this.userService.getUserFullName(createdBy)
+            ? this.observationsService.formatUsersDisplay(assignedTo)
+            : assignedTo
       };
     });
   }
 
-  getActionsList() {
+  getIssuesList() {
     const obj = {
-      next: this.nextToken,
+      next: this.observationsService.issuesNextToken,
       limit: this.limit,
-      searchKey: this.searchAction.value,
-      type: 'action'
+      searchKey: this.searchIssue.value,
+      type: 'issue',
+      moduleName: this.moduleName
     };
-
-    return this.roundPlanObservationsService.getObservations$(obj).pipe(
+    return this.observationsService.getObservations$(obj).pipe(
       mergeMap(({ rows, next, count }) => {
-        this.nextToken = next;
+        this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
-        this.actionsCount$ = of(count);
+        this.issuesCount$ = of(count);
+        this.observationsService.issues$.next({ rows, next, count });
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -475,7 +475,7 @@ export class ActionsComponent implements OnInit {
   }
 
   handleTableEvent = (event): void => {
-    this.fetchActions$.next(event);
+    this.observationsService.fetchIssues$.next(event);
   };
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -488,6 +488,7 @@ export class ActionsComponent implements OnInit {
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [];
+
     if (
       this.loginService.checkUserHasPermission(
         permissions,
@@ -505,13 +506,22 @@ export class ActionsComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
+
   openModal(row: GetFormList): void {
     if (this.isModalOpened) {
       return;
     }
     this.isModalOpened = true;
-    const dialogRef = this.dialog.open(IssuesActionsDetailViewComponent, {
-      data: { ...row, users$: this.users$ },
+    const dialogRef = this.dialog.open(IssuesActionsViewComponent, {
+      data: {
+        ...row,
+        users$: this.users$,
+        totalCount$: this.issuesCount$,
+        allData: this.initial?.data || [],
+        next: this.observationsService.issuesNextToken,
+        limit: this.limit,
+        moduleName: this.moduleName
+      },
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
