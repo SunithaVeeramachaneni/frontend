@@ -365,7 +365,7 @@ export class ObservationsService {
         task: item.TASK || placeHolder,
         round: item.ROUND || placeHolder,
         raisedBy: item.createdBy,
-        notificationNumber: item.notificationNumber || placeHolder,
+        notificationInfo: item.notificationInfo || placeHolder,
         issueOrActionDBVersion: item._version,
         type
       };

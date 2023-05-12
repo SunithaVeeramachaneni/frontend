@@ -413,8 +413,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         .createNotification(this.data, this.moduleName)
         .subscribe((value) => {
           if (Object.keys(value).length) {
-            const { notificationNumber } = value;
-            this.data.notificationNumber = notificationNumber;
+            const { notificationInfo } = value;
+            this.data.notificationInfo = notificationInfo;
           }
         });
     } else {
@@ -607,7 +607,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private init(): void {
-    const { id, type, dueDate, notificationNumber } = this.data;
+    const { id, type, dueDate, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -619,8 +619,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data.next !== null) {
       this.isNextEnabled = true;
     }
-    this.data.notificationNumber =
-      notificationNumber !== this.placeholder ? notificationNumber : '';
+    this.data.notificationInfo =
+      notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',

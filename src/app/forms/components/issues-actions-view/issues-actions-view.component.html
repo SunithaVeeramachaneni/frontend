@@ -461,15 +461,15 @@
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
           <button
-            *ngIf="!data.notificationNumber.length"
+            *ngIf="!data.notificationInfo.length"
             mat-raised-button
             color="primary"
             (click)="createNotification()"
           >
             Create
           </button>
-          <span *ngIf="data.notificationNumber.length">{{
-            data.notificationNumber
+          <span *ngIf="data.notificationInfo.length">{{
+            data.notificationInfo
           }}</span>
         </div>
       </div>

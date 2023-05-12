@@ -239,7 +239,7 @@ export class IssuesListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'notificationNumber',
+      id: 'notificationInfo',
       displayName: 'Notification No.',
       type: 'string',
       controlType: 'string',
