@@ -225,7 +225,7 @@ export class LocationsListComponent implements OnInit {
   locations$: Observable<any>;
   allLocations$: Observable<any>;
   allPlants$: Observable<any>;
-  locationsCount$: Observable<Count>;
+  locationsCount$: Observable<number>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
@@ -306,24 +306,20 @@ export class LocationsListComponent implements OnInit {
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
           this.locationsListCount$ = this.locationService.getLocationCount$(
-            null,
             value.toLocaleLowerCase()
           );
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.locationsListCount$ = this.locationService.getLocationCount$(
-      null,
-      null
-    );
+    this.locationsListCount$ = this.locationService.getLocationCount$(null);
     this.getDisplayedLocations();
     this.locationsCount$ = combineLatest([
-      this.locationsCount$,
+      this.locationsListCount$,
       this.locationsCountUpdate$
     ]).pipe(
       map(([count, update]) => {
         if (this.addEditCopyDeleteLocations) {
-          count.count += update;
+          count += update;
           this.addEditCopyDeleteLocations = false;
         }
         return count;
@@ -458,13 +454,11 @@ export class LocationsListComponent implements OnInit {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.locationsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.locationsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })
@@ -641,10 +635,7 @@ export class LocationsListComponent implements OnInit {
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.locationsListCount$ = this.locationService.getLocationCount$(
-          null,
-          null
-        );
+        this.locationsListCount$ = this.locationService.getLocationCount$(null);
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'

@@ -54,11 +54,10 @@ export class LocationService {
       { displayToast: true, failureResponse: {} }
     );
   };
-  getLocationCount$(plantsID, searchTerm): Observable<number> {
+  getLocationCount$(searchTerm: string): Observable<number> {
     const filter = JSON.stringify(
       Object.fromEntries(
         Object.entries({
-          plantsID: { eq: plantsID },
           searchTerm: { contains: searchTerm }
         }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
       )
