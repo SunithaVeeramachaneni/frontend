@@ -7,7 +7,9 @@
   <div class="dis-flex form-content">
     <div class="width-100">
       <div class="form-detials">
-        <h2 class="heading" translate="setFormDetailsHeading"></h2>
+        <h2 class="heading">
+          {{ 'setFormDetailsHeading' | translate }}
+        </h2>
 
         <!-- <p class="sub-heading" translate="setFormTypeHeading"></p> -->
         <!-- <input
@@ -36,10 +38,9 @@
         <!-- <hr class="horizontal-line" /> -->
 
         <div class="form-name">
-          <p
-            class="form-name-description m-t-0 m-b-0"
-            translate="addFormNameMandatory"
-          ></p>
+          <p class="form-name-description m-t-0 m-b-0">
+            {{ 'addFormNameMandatory' | translate }}
+          </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <input
               type="text"
@@ -59,10 +60,9 @@
               }}
             </mat-error>
           </mat-form-field>
-          <p
-            class="form-name-description m-t-20 m-b-0"
-            translate="addFormDescription"
-          ></p>
+          <p class="form-name-description m-t-20 m-b-0">
+            {{ 'addFormDescription' | translate }}
+          </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <input
               type="text"
@@ -72,10 +72,9 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p
-            class="form-name-description m-t-20 m-b-0"
-            translate="plantMandatory"
-          ></p>
+          <p class="form-name-description m-t-20 m-b-0">
+            {{ 'plantMandatory' | translate }}
+          </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
             <mat-select
               formControlName="plantId"
@@ -102,7 +101,7 @@
                 errors.plantId.name
                   | translate
                     : {
-                        name: 'plant' | translate
+                        name: 'Plant' | translate
                       }
               }}
             </mat-error>
@@ -110,7 +109,9 @@
         </div>
 
         <div class="tags">
-          <p class="form-name-description m-b-0 m-t-20" translate="tags"></p>
+          <p class="form-name-description m-b-0 m-t-20">
+            {{ 'tags' | translate }}
+          </p>
           <mat-form-field
             class="chips-list width-100 form-field"
             appearance="outline"
