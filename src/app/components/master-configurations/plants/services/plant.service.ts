@@ -132,7 +132,7 @@ export class PlantService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/default-plant.svg',
             style: {

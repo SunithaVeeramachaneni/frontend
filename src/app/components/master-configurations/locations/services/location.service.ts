@@ -226,7 +226,7 @@ export class LocationService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/locationIcon.svg',
             style: {
