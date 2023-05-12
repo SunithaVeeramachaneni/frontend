@@ -24,7 +24,7 @@ import {
 } from 'src/app/interfaces';
 
 @Component({
-  selector: 'app-assign',
+  selector: 'app-assign-to',
   templateUrl: './assign.component.html',
   styleUrls: ['./assign.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
