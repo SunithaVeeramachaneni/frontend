@@ -3,32 +3,26 @@ import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import {
-  DEFAULT_PDF_BUILDER_CONFIG,
-  graphQLDefaultMaxLimit
-} from 'src/app/app.constants';
+import { map } from 'rxjs/operators';
+import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
-import {
-  FormConfigurationActions,
-  GlobalResponseActions,
-  QuickResponseActions,
-  UnitOfMeasurementActions
-} from 'src/app/forms/state/actions';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.service';
+import { RoundPlanResolverService } from '../../operator-rounds/services/round-plan-resolver.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormResolverService implements Resolve<FormConfigurationState> {
   constructor(
     private raceDynamicFormService: RaceDynamicFormService,
+    private roundPlanResolverServive: RoundPlanResolverService,
     private store: Store<State>
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
     const id = route.params.id;
     if (id === undefined) {
-      this.getResponseTypeDetails();
+      this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);
     }
     return forkJoin({
@@ -87,7 +81,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           plantId,
           plant: plant.name
         };
-        this.getResponseTypeDetails(id);
+        this.roundPlanResolverServive.getResponseTypeDetails(id);
 
         return {
           formMetadata,
@@ -103,31 +97,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           authoredFormDetailDynamoDBVersion,
           formDetailDynamoDBVersion
         } as FormConfigurationState;
-      }),
-      catchError((error) => {
-        this.raceDynamicFormService.handleError(error);
-        return of({} as FormConfigurationState);
       })
     );
-  }
-
-  getResponseTypeDetails(id: string = '') {
-    if (id) {
-      this.store.dispatch(
-        QuickResponseActions.fetchFormSpecificQuickResponses({ formId: id })
-      );
-    }
-    this.store.dispatch(
-      UnitOfMeasurementActions.fetchUnitOfMeasurementList({
-        queryParams: {
-          next: '',
-          limit: graphQLDefaultMaxLimit,
-          searchKey: '',
-          fetchType: 'load'
-        }
-      })
-    );
-    this.store.dispatch(QuickResponseActions.fetchDefaultQuickResponses());
-    this.store.dispatch(GlobalResponseActions.fetchGlobalResponses());
   }
 }
