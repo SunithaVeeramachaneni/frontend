@@ -25,6 +25,7 @@
     ></button>
   </div>
   <hr class="horizontal-line" />
+
   <div class="dis-flex form-content">
     <div class="width-100">
       <div class="form-detials">
@@ -119,28 +120,6 @@
           </mat-form-field>
         </div>
 
-        <!-- STARTED -->
-        <!-- <div class="plant">
-          <p class="form-name-description m-b-0 m-t-20" translate="Plant"></p>
-          <mat-form-field
-            class="chips-list width-100 form-field"
-            appearance="outline"
-          >
-            <mat-label>Select Plant</mat-label>
-            <mat-select [(value)]="selected">
-              <mat-option>None</mat-option>
-              <mat-option value="option1">Plant 1</mat-option>
-              <mat-option value="option2">Plant 2</mat-option>
-              <mat-option value="option3">Plant 3</mat-option>
-            </mat-select>
-            <mat-select [(value)]="selectedOption">
-              <mat-option *ngFor="let option of options" [value]="option">{{
-                option
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div> -->
-
         <div class="tags">
           <p class="form-name-description m-b-0 m-t-20" translate="tags"></p>
           <mat-form-field
@@ -183,11 +162,11 @@
           </mat-form-field>
         </div>
 
-        <p
-          class="form-name-description m-b-0 m-t-20"
-          translate="Notes and Attachments"
-        ></p>
         <div class="notes_and_Attachment">
+          <p
+            class="form-name-description m-b-0 m-t-20"
+            translate="Notes and Attachments"
+          ></p>
           <mat-form-field
             placeholder="Notes and Attachments"
             class="notes_Attachment"
@@ -198,42 +177,47 @@
               [ngClass]="{
                 'display-toolbar': true
               }"
-              formControlName="notes_attachment"
+              formControlName="notesAttachment"
             >
             </quill-material>
+
+            <mat-error
+              *ngIf="maxLengthWithoutBulletPoints(250)"
+              class="m-5 error-fields"
+            >
+              {{ 'errorExceedingLimit' | translate }}
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="addpdf">
-          <div class="dis-flex">
+          <div class="attachments-container">
             <span
               *ngFor="
-                let image of headerDataForm.get('value').value.images;
+                let image of headerDataForm.get('attachments').value.images;
                 index as i
               "
               class="m-r-10"
             >
               <app-round-plan-image-preview
                 [image]="image"
-                (indexEmitter)="instructionsFileDeleteHandler()"
-                *ngIf="image !== null"
+                (imageIndexEmitter)="roundPlanFileDeleteHandler($event)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
               ></app-round-plan-image-preview>
             </span>
 
-            <!-- <span *ngIf="headerDataForm.get('value').value.image">
-              <app-round-plan-image-preview
-                [image]="headerDataForm.get('value').value"
-                (indexEmitter)="instructionsFileDeleteHandler()"
-              >
-              </app-round-plan-image-preview>
-            </span> -->
-
-            <span *ngIf="headerDataForm.get('value').value.pdf">
+            <span
+              *ngFor="
+                let pdf of headerDataForm.get('attachments').value.pdf;
+                index as i
+              "
+              class="m-r-10"
+            >
               <app-round-plan-pdf-preview
-                [pdf]="headerDataForm.get('value').value"
-                (indexEmitter)="instructionsFileDeleteHandler()"
-              >
-              </app-round-plan-pdf-preview>
+                [pdf]="pdf"
+                (pdfIndexEmitter)="roundPlanPdfDeleteHandler($event)"
+              ></app-round-plan-pdf-preview>
             </span>
           </div>
 
@@ -254,7 +238,7 @@
             (click)="roundplanFileUpload.click()"
           >
             <mat-icon class="icon">link</mat-icon>
-            <span translate="_addImagesAndPDFBtn"></span>
+            <span translate="addImagesAndPDFBtn1"></span>
           </button>
         </div>
       </div>

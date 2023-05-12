@@ -204,7 +204,7 @@
 
   .mat-dialog-actions {
     margin-bottom: 0.2px;
-    margin-left: 970px;
+    margin-left: 1340px;
   }
 
   .buttons {
@@ -223,12 +223,10 @@
   }
   ::ng-deep .ql-toolbar.ql-snow {
     margin-left: 80px;
-    background-color: $black;
-    color: $white;
   }
 
   .mat-error {
-    margin-top: 8px;
+    margin-top: 10px;
   }
 }
 
@@ -262,4 +260,11 @@
   height: 29px;
   font-weight: normal;
   line-height: normal;
+}
+
+.attachments-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 10px;
+  margin-top: 10px;
 }

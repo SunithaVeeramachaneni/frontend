@@ -67,6 +67,5 @@ export type UpdateRoundPlanDetail = {
 export interface RoundPlanFile {
   name: string;
   size: number;
-  objectKey: string | null;
-  objectURL: string;
+  objectKey: string;
 }

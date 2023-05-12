@@ -76,10 +76,6 @@ import { ChartComponent } from './observations/donut-chart/chart.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { AssignToComponent } from './assign-to/assign-to.component';
-import { QuillMaterialComponent } from './quill-material/quill-material.component';
-import { RoundPlanImagePreviewComponent } from './round-plan-image-preview/round-plan-image-preview.component';
-import { RoundPlanPdfPreviewComponent } from './round-plan-pdf-preview/round-plan-pdf-preview.component';
-
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -111,11 +107,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ActionsComponent,
     IssuesActionsDetailViewComponent,
     ChartComponent,
-    AssignToComponent,
-    QuillMaterialComponent,
-
-    RoundPlanImagePreviewComponent,
-    RoundPlanPdfPreviewComponent
+    AssignToComponent
   ],
   imports: [
     FormsModule,

@@ -102,4 +102,5 @@ export interface InstructionsFile {
 export interface FormUploadFile {
   name: string;
   size: number;
+  objectKey: string;
 }

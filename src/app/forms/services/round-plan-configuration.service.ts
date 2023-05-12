@@ -21,7 +21,6 @@ export class RoundPlanConfigurationService {
 
   uploadToS3$(file: Blob): Observable<any> {
     const roundplandata = new FormData();
-    //roundplandata.append('roundplanmedia', mediafolder);
     roundplandata.append('file', file);
 
     return this._appService._postData(
@@ -31,17 +30,14 @@ export class RoundPlanConfigurationService {
     );
   }
 
-  // deleteFromS3(objectKey: string): void {
-  //   const params = new URLSearchParams();
-  //   params.append('objectKey', encodeURIComponent(objectKey));
+  deleteFromS3(objectKey: string): void {
+    const params = new URLSearchParams();
+    params.append('objectKey', encodeURIComponent(objectKey));
 
-  //   this._appService
-  //     ._removeData(
-  //       environment.rdfApiUrl,
-  //       `forms/instructions_delete?${params.toString()}`
-  //     )
-  //     .subscribe();
-  // }
+    this._appService
+      ._removeData(environment.operatorRoundsApiUrl, 'round-plan/delete')
+      .subscribe();
+  }
 
   addPage(
     pageIndex: number,
@@ -160,13 +156,6 @@ export class RoundPlanConfigurationService {
         isResponseTypeModalOpen: false,
         subFormId
       })
-    );
-  }
-
-  fetchPlant() {
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'plants/list'
     );
   }
 
