@@ -16,11 +16,13 @@
           ></svg-icon>
           <div class="nodeContent" class="nodeContent">
             <svg-icon
-          [icon]="
-            node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'
-          "
-          class="node-icon"
-        ></svg-icon>
+              [icon]="
+                node?.type === 'location'
+                  ? 'icon-locationIcon'
+                  : 'icon-asset-icon'
+              "
+              class="node-icon"
+            ></svg-icon>
             <div class="description">
               <span class="title">{{ node.name }}</span>
               <span class="subTitle">
@@ -87,13 +89,20 @@
             [cdkConnectedOverlayOrigin]="trigger"
             [cdkConnectedOverlayOpen]="togglePopover"
             *ngIf="node.id === nodeSelectedForShowHierarchy.id"
+            (backdropClick)="togglePopover = true"
           >
-            <app-show-hierarchy-popup
-              #showHierarchy
-              class="showHierarchy"
-              [nodeUid]="nodeSelectedForShowHierarchy.uid"
-              (closeHierarchyOverlay)="togglePopover = $event"
-            ></app-show-hierarchy-popup>
+            <div
+              class="show-popup"
+              [ngStyle]="{ top: positions.top, left: positions.left }"
+            >
+              <app-show-hierarchy-popup
+                #showHierarchy
+                class="showHierarchy"
+                [nodeUid]="nodeSelectedForShowHierarchy.uid"
+                (closeHierarchyOverlay)="togglePopover = $event"
+                [positions]="positions"
+              ></app-show-hierarchy-popup>
+            </div>
           </ng-template>
           <button mat-menu-item (click)="triggerCopyNode(node)">
             <span translate="copy"></span>
