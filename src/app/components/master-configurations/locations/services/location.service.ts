@@ -39,7 +39,6 @@ export class LocationService {
 
   fetchAllLocations$ = (plantsID = null) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
     if (plantsID) {
       const filter = {
         plantsID: {
@@ -48,10 +47,9 @@ export class LocationService {
       };
       params.set('filter', JSON.stringify(filter));
     }
-    params.set('next', '');
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'location/list?' + params.toString(),
+      'location/listAll?' + params.toString(),
       { displayToast: true, failureResponse: {} }
     );
   };
@@ -90,8 +88,7 @@ export class LocationService {
         params.set('filter', JSON.stringify(filter));
       }
       if (filterData.plant) {
-        params.set('limit', this.MAX_FETCH_LIMIT);
-        let filter = JSON.parse(params.get('plantsID'));
+        let filter = JSON.parse(params.get('filter'));
         filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
