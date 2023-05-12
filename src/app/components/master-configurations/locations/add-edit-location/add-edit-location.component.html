@@ -129,11 +129,15 @@
               (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
-              <mat-option
-                [value]="parent.id"
-                *ngFor="let parent of allParentsData"
-                >{{ parent.locationId }} {{ parent.name }}</mat-option
-              >
+              <div *ngFor="let parent of allParentsData">
+                <mat-option
+                  [value]="parent.id"
+                  *ngIf="
+                    parent.plantsID === this.locationForm.get('plantsID').value
+                  "
+                  >{{ parent.locationId }} - {{ parent.name }}</mat-option
+                >
+              </div>
             </div>
           </mat-select>
         </mat-form-field>

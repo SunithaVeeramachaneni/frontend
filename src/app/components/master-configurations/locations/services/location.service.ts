@@ -29,7 +29,8 @@ export class LocationService {
 
   locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
   // this fetch limit is limited by DynamoDB's 1 MB query size limit.
-  private MAX_FETCH_LIMIT: string = '1000000';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
 
@@ -53,11 +54,25 @@ export class LocationService {
       { displayToast: true, failureResponse: {} }
     );
   };
-  getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
+  getLocationCount$(plantsID, searchTerm): Observable<number> {
+    const filter = JSON.stringify(
+      Object.fromEntries(
+        Object.entries({
+          plantsID: { eq: plantsID },
+          searchTerm: { contains: searchTerm }
+        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
+      )
+    );
     return this._appService
-      ._getResp(environment.masterConfigApiUrl, 'location/count', info, {
-        limit: this.MAX_FETCH_LIMIT
-      })
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'location/count',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: this.MAX_FETCH_LIMIT,
+          filter
+        }
+      )
       .pipe(map((res) => res?.count || 0));
   }
 
