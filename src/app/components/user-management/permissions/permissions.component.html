@@ -10,7 +10,7 @@
       <div class="headers">
         <mat-checkbox
           [checked]="module.checked"
-          [indeterminate]="fewComplete(module)"
+          [indeterminate]="fewComplete(module, 'main')"
           (change)="setAllChecked($event.checked, module)"
           [disabled]="
             rolesWithPermissionsInUsers === userRolePermissions ||
@@ -25,11 +25,12 @@
         </mat-checkbox>
         <span class="module-name">{{ module.name }}</span>
         <span class="permission-count m-r-10">
-          {{ module.countOfChecked }} of {{ module.permissions.length }}
+          {{ module.totalActivePermissions }} of
+          {{ module.totalPermissionsCount }}
         </span>
         <svg-icon
           icon="icon-right-arrow"
-          *ngIf="!opened[i].main"
+          *ngIf="!opened[i].main && module.subPermissions.length === 0"
           (click)="opened[i].main = true"
           class="arrow-icon"
         ></svg-icon>
@@ -68,7 +69,7 @@
         <div class="sub-headers">
           <mat-checkbox
             [checked]="subper.checked"
-            [indeterminate]="fewComplete(subper)"
+            [indeterminate]="fewComplete(subper, 'submodule')"
             (change)="setAllSubChecked($event.checked, subper)"
             [disabled]="
               rolesWithPermissionsInUsers === userRolePermissions ||

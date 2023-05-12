@@ -1,6 +1,6 @@
 export interface UnitOfMeasurementList {
   items: Array<UnitOfMeasurement | null>;
-  nextToken?: string | null;
+  next?: string | null;
   startedAt?: number | null;
 }
 

@@ -168,7 +168,8 @@
   width: 250px;
   display: flex;
   flex-direction: column;
-  // padding: 5px;
+  max-height: calc(100vh - 350px);
+  min-height: auto;
   background: $white2;
   .searchUOM {
     height: 35px;

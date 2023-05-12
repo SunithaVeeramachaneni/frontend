@@ -1,5 +1,12 @@
 [
   {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "multiple",
+    "value": ""
+  },
+  {
     "label": "Schedule",
     "items": [],
     "column": "schedule",
@@ -20,6 +27,13 @@
     "type": "daterange",
     "startDate": "",
     "endDate": "",
+    "value": ""
+  },
+  {
+    "label": "Plants",
+    "items": [],
+    "column": "plant",
+    "type": "select",
     "value": ""
   }
 ]

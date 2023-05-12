@@ -10,6 +10,7 @@ export interface CreateAssets {
   parentId?: string;
   assetsId: string;
   image?: string;
+  plantsID?: string;
   searchTerm?: string;
 }
 
@@ -23,7 +24,7 @@ export interface AssetsResponse {
     image?: string;
     createdAt: string;
   } | null>;
-  nextToken?: string;
+  next?: string;
 }
 
 export interface FilterInput {

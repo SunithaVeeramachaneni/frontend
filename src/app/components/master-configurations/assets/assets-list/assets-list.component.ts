@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+/* eslint-disable no-underscore-dangle */
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -16,7 +22,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -33,6 +43,9 @@ import { LocationService } from '../../locations/services/location.service';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadResponseModalComponent } from '../../upload-response-modal/upload-response-modal.component';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { PlantService } from '../../plants/services/plant.service';
 @Component({
   selector: 'app-assets-list',
   templateUrl: './assets-list.component.html',
@@ -42,7 +55,7 @@ import { UploadResponseModalComponent } from '../../upload-response-modal/upload
 })
 export class AssetsListComponent implements OnInit {
   readonly perms = perms;
-  allLocations$: Observable<any>;
+
   parentInformation;
   allParentsData;
   columns: Column[] = [
@@ -63,24 +76,51 @@ export class AssetsListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'assetsId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      showMenuOptions: false,
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
+      hasSubtitle: true,
+      subtitleColumn: 'plantSubId',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      }
     },
     {
       id: 'description',
       displayName: 'Description',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -103,7 +143,7 @@ export class AssetsListComponent implements OnInit {
       displayName: 'Model',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -125,10 +165,10 @@ export class AssetsListComponent implements OnInit {
       displayName: 'Parent',
       type: 'string',
       controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
+      order: 5,
+      hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',
+      subtitleColumn: 'parentSubId',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -138,7 +178,10 @@ export class AssetsListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
-      subtitleStyle: {},
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false
     }
@@ -175,6 +218,7 @@ export class AssetsListComponent implements OnInit {
   assetsCount$: Observable<Count>;
   assetsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   assetsListCount$: Observable<number>;
+  allPlants$: Observable<any>;
 
   addEditCopyDeleteAssets = false;
   addEditCopyDeleteAssets$: BehaviorSubject<FormTableUpdate> =
@@ -191,15 +235,55 @@ export class AssetsListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
+
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    plant: ''
+  };
+  plantsIdNameMap = {};
+  plants = [];
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
+
   constructor(
     private assetService: AssetsService,
+    private plantsService: PlantService,
     private readonly toast: ToastService,
     private locationService: LocationService,
     private loginService: LoginService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private headerService: HeaderService,
+    private commonService: CommonService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.assets.title))
+    );
+    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
+      tap(({ items: allPlants = [] }) => {
+        this.plants = allPlants.map((plant) => {
+          const { id, name, plantId } = plant;
+          this.plantsIdNameMap[plantId] = id;
+          return `${plantId} - ${name}`;
+        });
+
+        const plantFilter = {
+          column: 'plant',
+          items: ['', ...this.plants],
+          label: 'Plants',
+          type: 'select',
+          value: ''
+        };
+
+        this.filterJson = [
+          plantFilter,
+          ...this.filterJson.filter((item) => item.column !== 'plant')
+        ];
+      })
+    );
     this.assetService.fetchAssets$.next({ data: 'load' });
     this.assetService.fetchAssets$.next({} as TableEvent);
     this.searchAssets = new FormControl('');
@@ -214,6 +298,7 @@ export class AssetsListComponent implements OnInit {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.assetsListCount$ = this.assetService.getAssetCount$();
+    this.getFilter();
     this.getAllLocations();
     this.getAllAssets();
     this.getDisplayedAssets();
@@ -242,6 +327,7 @@ export class AssetsListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getAssets();
       })
     );
@@ -265,68 +351,77 @@ export class AssetsListComponent implements OnInit {
     this.assets$ = combineLatest([
       assetsOnLoadSearch$,
       this.addEditCopyDeleteAssets$,
-      onScrollAssets$
+      onScrollAssets$,
+      this.getAllLocations(),
+      this.allPlants$
     ]).pipe(
-      map(([rows, form, scrollData]) => {
-        if (this.skip === 0) {
-          this.configOptions = {
-            ...this.configOptions,
-            tableHeight: 'calc(100vh - 140px)'
-          };
-          initial.data = rows;
-        } else {
-          if (form.action === 'delete') {
-            initial.data = initial.data.filter((d) => d.id !== form.form.id);
-            this.toast.show({
-              text: 'Assets deleted successfully!',
-              type: 'success'
-            });
-            form.action = 'add';
-          } else {
-            initial.data = initial.data.concat(scrollData);
-          }
-        }
-        for (const item of initial.data) {
-          if (item.parentType.toLowerCase() === 'location') {
-            const parent = this.allParentsLocations.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-            } else {
-              item.parent = '';
+      map(
+        ([
+          rows,
+          { form, action },
+          scrollData,
+          allLocations,
+          { items: allPlants = [] }
+        ]) => {
+          if (this.skip === 0) {
+            this.configOptions = {
+              ...this.configOptions,
+              tableHeight: 'calc(100vh - 140px)'
+            };
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
+          } else if (this.addEditCopyDeleteAssets) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
+            switch (action) {
+              case 'delete':
+                initial.data = initial.data.filter((d) => d.id !== form.id);
+                this.toast.show({
+                  text: 'Assets deleted successfully!',
+                  type: 'success'
+                });
+                break;
+              case 'add':
+                initial.data = [newForm, ...initial.data];
+                break;
+              case 'edit':
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
+                break;
+              default:
+              //Do nothing
             }
+            this.addEditCopyDeleteAssets = false;
           } else {
-            const parent = this.allParentsAssets.find(
-              (d) => d.id === item.parentId
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
             );
-            if (parent) {
-              item.parent = parent.name;
-            } else {
-              item.parent = '';
-            }
           }
+          this.skip = initial.data.length;
+          this.assetsListCount$ = this.assetService.getAssetCount$();
+          this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
+          return initial;
         }
-        this.skip = initial.data.length;
-        this.assetsListCount$ = this.assetService.getAssetCount$();
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
-      })
+      )
     );
   }
 
   getAssets() {
     return this.assetService
-      .getAssetsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchAssets.value,
-        fetchType: this.fetchType
-      })
+      .getAssetsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchAssets.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
+        mergeMap(({ count, rows, next }) => {
           this.assetsCount$ = of({ count });
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
@@ -498,24 +593,88 @@ export class AssetsListComponent implements OnInit {
   }
 
   getAllLocations() {
-    this.allLocations$ = this.locationService.fetchAllLocations$();
-    this.allLocations$
-      .pipe(
-        tap((allLocations) => {
+    return this.locationService.fetchAllLocations$().pipe(
+      tap((allLocations) => {
+        const objectKeys = Object.keys(allLocations);
+        if (objectKeys.length > 0) {
           this.parentInformation = allLocations.items.filter(
             (loc) => loc._deleted !== true
           );
           this.allParentsLocations = this.parentInformation;
-        })
-      )
-      .subscribe();
+        } else {
+          this.allParentsLocations = [];
+        }
+      })
+    );
   }
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allParentsAssets = allAssets.items.filter(
-        (asset) => !asset._deleted
-      );
+      const objectKeys = Object.keys(allAssets);
+      if (objectKeys.length > 0) {
+        this.allParentsAssets = allAssets.items.filter(
+          (asset) => !asset._deleted
+        );
+      } else {
+        this.allParentsAssets = [];
+      }
     });
   }
+
+  getFilter() {
+    this.assetService.getFilter().subscribe((res) => {
+      this.filterJson = res;
+    });
+  }
+
+  applyFilters(data: any) {
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.column === 'plant') {
+        const plantId = item.value.split('-')[0].trim();
+        const plantsID = this.plantsIdNameMap[plantId];
+        this.filter[item.column] = plantsID;
+      }
+    }
+    this.nextToken = '';
+    this.assetService.fetchAssets$.next({ data: 'load' });
+  }
+
+  clearFilters() {
+    this.isPopoverOpen = false;
+    this.filter = {
+      plant: ''
+    };
+    this.assetService.fetchAssets$.next({ data: 'load' });
+  }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantSubId: plantInfo.plantId
+        });
+      }
+
+      if (data.parentType) {
+        const isParentLocation = data.parentType.toLowerCase() === 'location';
+        const parent = (
+          isParentLocation ? this.allParentsLocations : this.allParentsAssets
+        ).find((item) => item.id === data.parentId);
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentSubId: isParentLocation ? parent.locationId : parent.assetsId
+          });
+        } else Object.assign(data, { parent: '', parentSubId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
 }

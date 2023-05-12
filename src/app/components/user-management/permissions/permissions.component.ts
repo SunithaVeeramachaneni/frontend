@@ -18,6 +18,7 @@ import { userRolePermissions } from 'src/app/app.constants';
 export class PermissionsComponent implements OnChanges {
   @Input() selectedRolePermissions$: Observable<any[]>;
   @Input() allPermissions$: Observable<any[]>;
+  @Input() addingRole$: Observable<boolean>;
   @Input() rolesWithPermissionsInUsers: string;
   @Input() isEditable = true;
   @Input() selectedRole: any;
@@ -68,9 +69,10 @@ export class PermissionsComponent implements OnChanges {
 
     const permissionObservable = combineLatest([
       this.selectedRolePermissions$,
-      this.allPermissions$
+      this.allPermissions$,
+      this.addingRole$
     ]).pipe(
-      map(([permissionIDs, allPermissions]) =>
+      map(([permissionIDs, allPermissions, addingNewRole]) =>
         allPermissions.map((modulePermissions) => {
           const filteredPermissions = [];
           const subModules = [];
@@ -92,6 +94,16 @@ export class PermissionsComponent implements OnChanges {
             subPermissions: this.groupedArray(this.groupPermissions(subModules))
           };
 
+          this.newPermissionsArray.totalPermissionsCount = 0;
+          this.newPermissionsArray.totalPermissionsCount +=
+            this.newPermissionsArray.permissions.length;
+          this.newPermissionsArray.subPermissions.forEach((sp) => {
+            this.newPermissionsArray.totalPermissionsCount +=
+              sp.permissions.length;
+          });
+
+          this.newPermissionsArray.totalActivePermissions = 0;
+
           let activePermissionCount = 0;
           let activeSubPermissionCount = 0;
 
@@ -102,25 +114,30 @@ export class PermissionsComponent implements OnChanges {
                 permission.checked = true;
                 activePermissionCount += 1;
               }
-              this.newPermissionsArray.subPermissions.forEach(
-                (subpermission) => {
-                  subpermission.permissions.forEach((sub) => {
-                    sub.checked = false;
-                    if (permissionIDs && permissionIDs.includes(sub.id)) {
-                      sub.checked = true;
-                      activeSubPermissionCount += 1;
-                    }
-                  });
-                  subpermission.countOfSubChecked = activeSubPermissionCount;
-                  activeSubPermissionCount = 0;
-                }
-              );
               return permission;
             }
           );
+          this.newPermissionsArray.totalActivePermissions +=
+            activePermissionCount;
+
+          this.newPermissionsArray.subPermissions.forEach((subpermission) => {
+            subpermission.permissions.forEach((sub) => {
+              sub.checked = false;
+              if (permissionIDs && permissionIDs.includes(sub.id)) {
+                sub.checked = true;
+                activeSubPermissionCount += 1;
+              }
+            });
+            this.newPermissionsArray.totalActivePermissions +=
+              activeSubPermissionCount;
+            subpermission.countOfSubChecked = activeSubPermissionCount;
+            activeSubPermissionCount = 0;
+          });
+
           if (
-            activePermissionCount ===
-            this.newPermissionsArray.permissions.length
+            this.newPermissionsArray.totalActivePermissions ===
+              this.newPermissionsArray.totalPermissionsCount &&
+            !addingNewRole
           ) {
             this.newPermissionsArray.checked = true;
           }
@@ -222,13 +239,26 @@ export class PermissionsComponent implements OnChanges {
           });
         }
 
-        module.countOfChecked = module.permissions.filter(
-          (per) => per.checked
-        ).length;
+        module.totalPermissionsCount = 0;
+        module.totalPermissionsCount += module.permissions.length;
+        module.subPermissions.forEach((sp) => {
+          module.totalPermissionsCount += sp.permissions.length;
+        });
+        module.totalActivePermissions = 0;
+        module.activeSubPermissionCount = 0;
+        module.permissions.forEach((p) => {
+          if (p.checked) {
+            module.totalActivePermissions += 1;
+          }
+        });
+        module.subPermissions.forEach((sp) => {
+          module.activeSubPermissionCount += 1;
+        });
 
         if (module.countOfChecked === 0) module.checked = false;
-        if (module.countOfChecked === module.permissions.length)
+        if (module.countOfChecked === module.permissions.length) {
           module.checked = true;
+        }
       }
       return module;
     });
@@ -295,22 +325,48 @@ export class PermissionsComponent implements OnChanges {
             submodule.checked = true;
         }
       });
+      module.totalActivePermissions = 0;
+      module.activeSubPermissionCount = 0;
+      module.permissions.forEach((p) => {
+        if (p.checked) {
+          module.totalActivePermissions += 1;
+        }
+      });
+      module.subPermissions.forEach((sp) => {
+        sp.permissions.forEach((p) => {
+          if (p.checked) {
+            module.totalActivePermissions += 1;
+          }
+        });
+      });
       return module;
     });
     this.permissions$.next(newPermissions);
     this.permissionsChange.emit(newPermissions);
   }
 
-  fewComplete(per): boolean {
-    if (per.permissions == null) {
+  fewComplete(module, moduleType): boolean {
+    if (module.permissions == null) {
       return false;
     }
-    const permissionCheckedCount = per.permissions.filter(
-      (p) => p.checked
-    ).length;
+
+    if (moduleType === 'main') {
+      if (module.totalActivePermissions === module.totalPermissionsCount) {
+        module.countOfChecked = module.totalActivePermissions;
+        module.checked = true;
+        return false;
+      }
+      module.countOfChecked = module.totalActivePermissions;
+      module.checked = false;
+
+      return (
+        module.countOfChecked !== 0 &&
+        module.countOfChecked !== module.permissions.length
+      );
+    }
     return (
-      permissionCheckedCount > 0 &&
-      permissionCheckedCount !== per.permissions.length
+      module.countOfSubChecked !== 0 &&
+      module.countOfSubChecked !== module.permissions.length
     );
   }
 
@@ -321,18 +377,35 @@ export class PermissionsComponent implements OnChanges {
         module.checked = checked;
         module.permissions = module.permissions.map((per) => {
           per.checked = checked;
-          module.subPermissions.forEach((subper) => {
-            subper.checked = checked;
-            subper.countOfSubChecked = checked ? subper.permissions.length : 0;
-            subper.permissions.forEach((subpermission) => {
-              subpermission.checked = checked;
-            });
-          });
           return per;
         });
-
         module.countOfChecked = checked ? module.permissions.length : 0;
+
+        module.subPermissions.forEach((subper) => {
+          subper.checked = checked;
+          subper.countOfSubChecked = checked ? subper.permissions.length : 0;
+          subper.permissions.forEach((subpermission) => {
+            subpermission.checked = checked;
+          });
+          module.countOfChecked += subper.countOfSubChecked;
+        });
       }
+
+      module.totalActivePermissions = 0;
+      module.activeSubPermissionCount = 0;
+      module.permissions.forEach((p) => {
+        if (p.checked) {
+          module.totalActivePermissions += 1;
+        }
+      });
+      module.subPermissions.forEach((sp) => {
+        sp.permissions?.forEach((p) => {
+          if (p.checked) {
+            module.totalActivePermissions += 1;
+          }
+        });
+      });
+
       return module;
     });
     this.permissions$.next(newPermissions);
@@ -356,6 +429,22 @@ export class PermissionsComponent implements OnChanges {
             : 0;
         }
       });
+
+      totalPermissions.totalActivePermissions = 0;
+      totalPermissions.activeSubPermissionCount = 0;
+      totalPermissions.permissions.forEach((p) => {
+        if (p.checked) {
+          totalPermissions.totalActivePermissions += 1;
+        }
+      });
+      totalPermissions.subPermissions.forEach((sp) => {
+        sp.permissions?.forEach((p) => {
+          if (p.checked) {
+            totalPermissions.totalActivePermissions += 1;
+          }
+        });
+      });
+
       return totalPermissions;
     });
     this.permissions$.next(newPermissions);

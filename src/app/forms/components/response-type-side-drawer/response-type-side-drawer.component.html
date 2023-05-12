@@ -6,7 +6,7 @@
     <mat-card-content>
       <div class="dis-flex">
         <div class="width-50">
-          <label for="min" translate="from"></label><br />
+          <label for="min" translate="from" class="values"></label><br />
           <input
             id="min"
             type="number"
@@ -16,7 +16,7 @@
           />
         </div>
         <div class="width-50 text-align-end">
-          <label for="max" translate="to"></label><br />
+          <label for="max" translate="to" class="values"></label><br />
           <input
             id="max"
             type="number"
@@ -36,8 +36,8 @@
       >
         <input matSliderThumb />
       </mat-slider>
-      <div>
-        <label for="incre" translate="increment"></label>
+      <div class="margin-20">
+        <label for="incre" translate="increment" class="values"></label>
         <br />
         <input
           id="incre"
@@ -50,18 +50,18 @@
       <br />
       <br />
       <button
+        mat-stroked-button
+        color="primary"
+        class="cancel-slider"
+        (click)="cancelSlider()"
+        translate="cancel"
+      ></button>
+      <button
         mat-raised-button
         color="primary"
         class="apply-slider-btn"
         (click)="applySliderOptions(sliderOptions)"
         translate="apply"
-      ></button>
-      <button
-        mat-raised-button
-        color="primary"
-        class="cancel-slider"
-        (click)="cancelSlider()"
-        translate="cancel"
       ></button>
     </mat-card-content>
   </mat-card>
@@ -77,7 +77,11 @@
       <input type="hidden" formControlName="id" />
 
       <mat-card-content>
-        <div class="width-100" formArrayName="responses">
+        <div
+          class="width-100 response-drop-list"
+          formArrayName="responses"
+          cdkScrollable
+        >
           <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
             <div *ngFor="let response of getResponseList(); let i = index">
               <div [formGroupName]="i" class="dis-flex response-list">
@@ -114,30 +118,32 @@
               </div>
             </div>
           </div>
+          <button
+            mat-flat-button
+            (click)="initResponse()"
+            class="add-response"
+            translate="addRes"
+          ></button>
         </div>
-        <button
-          mat-flat-button
-          (click)="initResponse()"
-          class="add-response"
-          translate="addRes"
-        ></button>
       </mat-card-content>
     </div>
-    <button
-      mat-raised-button
-      (click)="submitResponses()"
-      color="primary"
-      class="submit-response-btn"
-      [disabled]="isFormNotUpdated === true || responseForm.pristine"
-      translate="apply"
-    ></button>
+  </mat-card>
+
+  <div class="actions-footer">
     <button
       mat-stroked-button
       class="cancel-response-btn"
       (click)="cancelResponse()"
       translate="cancel"
     ></button>
-  </mat-card>
+    <button
+      mat-raised-button
+      (click)="submitResponses()"
+      class="submit-response-btn"
+      [disabled]="isFormNotUpdated === true || responseForm.pristine"
+      translate="create"
+    ></button>
+  </div>
 </div>
 
 <div class="app-customizer" *ngIf="rangeSelectorOpenState">
@@ -191,9 +197,11 @@
           >
             <div class="messageHead">
               <span class="titleRow">
-                <svg-icon class="titleRowIcon"
-                [icon]="getImage(rangeMetadataForm.get('minAction').value)">
-                   </svg-icon>
+                <svg-icon
+                  class="titleRowIcon"
+                  [icon]="getImage(rangeMetadataForm.get('minAction').value)"
+                >
+                </svg-icon>
                 <span class="title">
                   {{ rangeMetadataForm.get('minAction').value }}
                 </span>
@@ -260,9 +268,11 @@
           >
             <div class="messageHead">
               <span class="titleRow">
-                <svg-icon   class="titleRowIcon"
-                [icon]="getImage(rangeMetadataForm.get('maxAction').value)">
-                 </svg-icon>
+                <svg-icon
+                  class="titleRowIcon"
+                  [icon]="getImage(rangeMetadataForm.get('maxAction').value)"
+                >
+                </svg-icon>
                 <span class="title">{{
                   rangeMetadataForm.get('maxAction').value
                 }}</span>

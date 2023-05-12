@@ -4,10 +4,11 @@
     class="pages"
     [ngClass]="{ active: pageIndex === i + 1 }"
   >
-    <div class="page-header">
+    <div class="page-header" *ngIf="moduleType !== 'formDetailView'">
       <div class="page-name">{{ page.name }}</div>
       <div class="task-progress-bar">
-        0/{{ page.sections.length }} <span class="filledTxt" translate="filled"></span>
+        0/{{ page.sections.length }}
+        <span class="filledTxt" translate="filled"></span>
       </div>
       <hr />
     </div>
@@ -43,7 +44,11 @@
       </div>
     </div>
     <button
-      *ngIf="pageIndex === pageData.length && page.sections.length !== 0"
+      *ngIf="
+        pageIndex === pageData.length &&
+        page.sections.length !== 0 &&
+        moduleType !== 'formDetailView'
+      "
       class="submit-button"
       translate="submit"
     ></button>

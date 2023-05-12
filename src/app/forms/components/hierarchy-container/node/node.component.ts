@@ -42,8 +42,7 @@ export class NodeComponent implements OnInit {
     private operatorRoundsService: OperatorRoundsService,
     private formService: FormService,
     private cdrf: ChangeDetectorRef,
-    private store: Store<State>,
-    private dialog: MatDialog
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -64,11 +63,15 @@ export class NodeComponent implements OnInit {
       this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
         count = c;
       });
+      // commented due to performance regression while editing round plan.
+      // setTimeout(() => this.cdrf.detectChanges(), 0);
       return count;
     } else {
       this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
         count = c;
       });
+      // commented due to performance regression while editing round plan.
+      // setTimeout(() => this.cdrf.detectChanges(), 0);
       return count;
     }
   }

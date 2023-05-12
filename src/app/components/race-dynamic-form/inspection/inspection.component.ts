@@ -43,11 +43,13 @@ import {
   SelectTab,
   RowLevelActionEvent,
   UserDetails,
-  AssigneeDetails
+  AssigneeDetails,
+  ErrorInfo
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
+  graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -59,6 +61,9 @@ import { slideInOut } from 'src/app/animations';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
+import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-inspection',
@@ -80,10 +85,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
+  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
   filter = {
+    status: '',
     schedule: '',
     assignedTo: '',
-    dueDate: ''
+    dueDate: '',
+    plant: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -106,16 +114,41 @@ export class InspectionComponent implements OnInit, OnDestroy {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      controlValue: ',',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { width: '125px' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
@@ -141,6 +174,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
+
     {
       id: 'dueDate',
       displayName: 'Due Date',
@@ -272,20 +306,20 @@ export class InspectionComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': ' #2C9E53',
+        color: '#ffffff'
       },
       'in-progress': {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       open: {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       },
       'to-do': {
-        'background-color': '#FEE2E2',
-        color: '#991B1B'
+        'background-color': '#F56565',
+        color: '#ffffff'
       }
     }
   };
@@ -297,7 +331,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLDefaultMaxLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
@@ -311,6 +345,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
   formId: string;
+
+  plants = [];
+  plantsIdNameMap = {};
+
   initial = {
     columns: this.columns,
     data: []
@@ -323,9 +361,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private store: Store<State>,
     private router: Router,
+    private dialog: MatDialog,
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -368,7 +408,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             {} as {
               rows: any[];
               count: number;
-              nextToken: string | null;
+              next: string | null;
             }
           );
         }
@@ -395,9 +435,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
             dueDate: inspectionDetail.dueDate
               ? new Date(inspectionDetail.dueDate)
               : '',
-            assignedTo: this.raceDynamicFormService.getUserFullName(
-              inspectionDetail.assignedTo
-            )
+            assignedTo: inspectionDetail?.assignedTo
+              ? this.userService.getUserFullName(inspectionDetail.assignedTo)
+              : ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -406,7 +446,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               dueDate: inspectionDetail.dueDate
                 ? new Date(inspectionDetail.dueDate)
                 : '',
-              assignedTo: this.raceDynamicFormService.getUserFullName(
+              assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               )
             }))
@@ -439,7 +479,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   getInspectionsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
@@ -448,8 +488,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
-        tap(({ count, nextToken }) => {
-          this.nextToken = nextToken !== undefined ? nextToken : null;
+        tap(({ count, next }) => {
+          this.nextToken = next !== undefined ? next : null;
           this.inspectionsCount =
             count !== undefined ? count : this.inspectionsCount;
           this.isLoading$.next(false);
@@ -457,39 +497,59 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
   }
   getAllInspections() {
-    this.raceDynamicFormService
-      .fetchAllInspections$()
-      .subscribe((formsList) => {
-        const uniqueAssignTo = formsList
-          ?.map((item) => item.assignedTo)
-          .filter((value, index, self) => self.indexOf(value) === index);
+    this.isLoading$.next(true);
+    this.raceDynamicFormService.fetchAllRounds$().subscribe(
+      (formsList) => {
+        this.isLoading$.next(false);
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueAssignTo = formsList
+            ?.map((item) => item.assignedTo)
+            .filter((value, index, self) => self.indexOf(value) === index);
 
-        const uniqueSchedules = formsList
-          ?.map((item) => item?.schedule)
-          .filter((value, index, self) => self?.indexOf(value) === index);
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.assignedTo.push(item);
+              }
+            });
+          }
 
-        if (uniqueSchedules?.length > 0) {
-          uniqueSchedules?.filter(Boolean).forEach((item) => {
-            if (item) {
-              this.schedules.push(item);
+          const uniqueSchedules = formsList
+            ?.map((item) => item?.schedule)
+            .filter((value, index, self) => self?.indexOf(value) === index);
+
+          if (uniqueSchedules?.length > 0) {
+            uniqueSchedules?.filter(Boolean).forEach((item) => {
+              if (item) {
+                this.schedules.push(item);
+              }
+            });
+          }
+          const uniquePlants = formsList
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant] = item.plantId;
+                return item.plant;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'assignedTo') {
+              item.items = this.assignedTo;
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
+            } else if (item.column === 'schedule') {
+              item.items = this.schedules;
             }
-          });
-        }
-
-        for (const item of uniqueAssignTo) {
-          if (item) {
-            this.assignedTo.push(item);
           }
         }
-        for (const item of this.filterJson) {
-          if (item.column === 'assignedTo') {
-            item.items = this.assignedTo;
-          }
-          if (item.column === 'schedule') {
-            item.items = this.schedules;
-          }
-        }
-      });
+      },
+      () => this.isLoading$.next(true)
+    );
   }
 
   handleTableEvent = (event): void => {
@@ -570,21 +630,84 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.zIndexDelay = 400;
   }
 
-  formsDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+  formsDetailActionHandler(event) {
+    if (event) {
+      const { type } = event;
+      if (type === 'VIEW_PDF') {
+        this.dialog.open(PDFPreviewComponent, {
+          data: {
+            moduleName: 'RDF',
+            roundId: this.selectedForm.id,
+            selectedForm: this.selectedForm
+          },
+          hasBackdrop: false,
+          disableClose: true,
+          width: '100vw',
+          minWidth: '100vw',
+          height: '100vh'
+        });
+      } else if (type === 'DOWNLOAD_PDF') {
+        this.downloadPDF(this.selectedForm);
+      }
+    } else {
+      this.store.dispatch(FormConfigurationActions.resetPages());
+      this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+    }
+  }
+
+  downloadPDF(selectedForm) {
+    const formId = selectedForm.id;
+    const inspectionId = selectedForm.inspectionId;
+
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: 'throwError'
+    };
+
+    this.raceDynamicFormService
+      .downloadAttachment$(formId, inspectionId, info)
+      .subscribe(
+        (data) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          const aElement = document.createElement('a');
+          const fileName =
+            selectedForm.name && selectedForm.name?.length
+              ? selectedForm.name
+              : 'untitled';
+          aElement.setAttribute('download', `${fileName}.pdf`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href);
+        },
+        (err) => {
+          this.toastService.show({
+            text: 'Error occured while generating PDF!',
+            type: 'warning'
+          });
+        }
+      );
   }
 
   getFilter() {
     this.raceDynamicFormService.getInspectionFilter().subscribe((res) => {
       this.filterJson = res;
+      for (const item of this.filterJson) {
+        if (item.column === 'status') {
+          item.items = this.status;
+        }
+      }
     });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.type !== 'date' && item.value) {
+      if (item.column === 'plant') {
+        const plantId = this.plantsIdNameMap[item.value];
+        this.filter[item.column] = plantId ?? '';
+      } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
@@ -608,9 +731,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
+      status: '',
       schedule: '',
       assignedTo: '',
-      dueDate: ''
+      dueDate: '',
+      plant: ''
     };
     this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
@@ -633,10 +758,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
     const { inspectionId } = this.selectedForm;
+    let { status } = this.selectedForm;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo },
+        { ...this.selectedForm, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -646,9 +773,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
-                  assignedTo:
-                    this.raceDynamicFormService.getUserFullName(assignedTo),
+                  assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
+                  status,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
                 };
               }
@@ -664,6 +791,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.assigneeMenuTrigger.closeMenu();
   }
 
   onChangeDueDateHandler(dueDate: Date) {

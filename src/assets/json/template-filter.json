@@ -1,0 +1,23 @@
+[
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Modified By",
+    "items": [],
+    "column": "modifiedBy",
+    "type": "multiple",
+    "value": ""
+  },
+  {
+    "label": "Created By",
+    "items": [],
+    "column": "createdBy",
+    "type": "multiple",
+    "value": ""
+  }
+]

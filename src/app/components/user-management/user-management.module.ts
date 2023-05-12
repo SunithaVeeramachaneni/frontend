@@ -41,6 +41,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -58,6 +59,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
+    MatDatepickerModule,
     MatSelectModule,
     OverlayModule,
     MatListModule,

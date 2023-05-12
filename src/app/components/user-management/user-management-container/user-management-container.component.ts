@@ -32,7 +32,7 @@ export class UserManagementContainerComponent implements OnInit {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.userManagement.url) {
-          this.headerService.setHeaderTitle(routingUrls.userManagement.title);
+          this.headerService.setHeaderTitle(routingUrls.activeUsers.title);
           this.breadcrumbService.set(routingUrls.userManagement.url, {
             skip: true
           });

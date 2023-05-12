@@ -34,7 +34,8 @@
           .groupHead {
             font-size: 130%;
             font-weight: 500;
-            border-bottom: 1px solid $drag-preview-shadow2;
+            border-top: 1px solid $drag-preview-shadow2;
+            padding-top: 13px;
           }
           .option {
             display: flex;
@@ -43,8 +44,10 @@
             .customText {
               display: flex;
               justify-content: flex-start;
+              width: 100%;
               .field {
                 margin: 10px;
+                width: 45%;
               }
             }
           }
@@ -140,11 +143,11 @@ ul {
 }
 
 .publish-btn {
-  width: 120px;
-  height: 40px;
+  width: 110px;
+  height: 36px;
   background-color: $blue-primary;
   border-color: $blue-primary;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .logo {
@@ -171,9 +174,11 @@ ul {
   width: 25px;
   position: relative;
   top: 5px;
+  margin-left: -8px;
 }
 
 .publish {
+  top: -2px;
   font-style: normal;
   font-weight: 100;
   font-size: 100%;
@@ -183,6 +188,13 @@ ul {
   color: $white;
   position: relative;
   left: 3px;
+}
+.publish-btn:active,
+.publish-btn:focus,
+.publish-btn:focus:active {
+  background-image: none;
+  outline: 0;
+  box-shadow: none;
 }
 
 .dialog {
@@ -265,7 +277,6 @@ ul {
 }
 
 .pdf-head {
-  width: 88px;
   height: 29px;
   left: 533px;
   top: 90px;
@@ -308,7 +319,7 @@ ul {
   margin-left: 10px;
 }
 .issue {
-  margin: 0px 5px;
+  margin: 5px 5px;
 }
 .issuesHead {
   background: $issue-bg;
@@ -369,7 +380,15 @@ ul {
   display: flex;
   align-items: center;
   font-weight: 500;
+  width: 100%;
+  height: 10px;
+  .poweredByText {
+    width: 175px;
+    position: relative;
+    left: 110px;
+  }
 }
+
 .customText {
   font-weight: 500;
   text-align: end;
@@ -378,9 +397,10 @@ ul {
   justify-content: flex-end;
 }
 .footerLogo {
-  width: 150px;
-  height: 25px;
-  margin-left: 15px;
+  position: relative;
+  right: 12px;
+  height: 120px !important;
+  width: 180px !important;
 }
 
 .issuesContainer {
@@ -390,9 +410,11 @@ ul {
   border: 1px solid $issue-border;
 }
 .issueHead {
-  background: $white1;
+  background: $issue-background;
   padding: 10px;
+  color: $issue-bg-text;
 }
+
 .issueBody {
   padding: 10px;
 }
@@ -581,10 +603,23 @@ ul {
 .form-status {
   display: flex;
   align-items: center;
+  position: relative;
+  left: -46px;
 }
 .save-status {
   font-weight: 500;
   font-size: 100%;
   line-height: 20px;
   margin-right: 10px;
+}
+.plant {
+  font-weight: 500;
+}
+
+.submitted-by {
+  text-align: start;
+}
+
+.tasks-completed {
+  text-align: end;
 }

@@ -32,25 +32,29 @@ export class AddEditPlantComponent implements OnInit {
       this.plantTitle = 'Create Plant';
       this.plantButton = 'Create';
       this.plantImage = '';
-      this.plantForm.get('plantId').enable();
+      this.plantForm?.reset();
+      this.plantForm?.get('plantId').enable();
     } else {
       this.plantStatus = 'edit';
       this.plantTitle = 'Edit Plant';
       this.plantButton = 'Update';
-      this.plantImage = this.plantsEditData.image;
+      this.plantImage =
+        this.plantEditData && this.plantsEditData.image
+          ? this.plantEditData.image
+          : '';
       const plantdata = {
-        id: this.plantsEditData.id,
-        image: this.plantsEditData.image,
-        name: this.plantsEditData.name,
-        plantId: this.plantsEditData.plantId,
-        country: this.plantsEditData.country,
-        state: this.plantsEditData.state,
-        zipCode: this.plantsEditData.zipCode,
-        label: this.plantEditData.label,
-        field: this.plantEditData.field
+        id: this.plantsEditData?.id,
+        image: this.plantsEditData?.image,
+        name: this.plantsEditData?.name,
+        plantId: this.plantsEditData?.plantId,
+        country: this.plantsEditData?.country,
+        state: this.plantsEditData?.state,
+        zipCode: this.plantsEditData?.zipCode,
+        label: this.plantEditData?.label,
+        field: this.plantEditData?.field
       };
-      this.plantForm.patchValue(plantdata);
-      this.plantForm.get('plantId').disable();
+      this.plantForm?.patchValue(plantdata);
+      this.plantForm?.get('plantId').disable();
     }
   }
   get plantEditData() {
@@ -68,30 +72,38 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
-    const numericRegex = /^[0-9]+$/;
+    const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
       image: '',
       name: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       plantId: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       country: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       zipCode: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
+        Validators.minLength(2),
         Validators.maxLength(6),
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace,
-        Validators.pattern(numericRegex)
+        Validators.pattern(regex)
       ]),
-      state: '',
+      state: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       label: '',
       field: ''
     });
@@ -127,35 +139,8 @@ export class AddEditPlantComponent implements OnInit {
     }
   }
   cancel() {
+    this.plantForm.reset();
     this.slideInOut.emit('out');
-    this.resetForm();
-  }
-
-  resetForm() {
-    if (this.plantsEditData === null) {
-      this.plantStatus = 'add';
-      this.plantTitle = 'Create Plant';
-      this.plantButton = 'Create';
-      this.plantImage = '';
-      this.plantForm.get('plantId').enable();
-    } else {
-      this.plantStatus = 'edit';
-      this.plantTitle = 'Edit Plant';
-      this.plantButton = 'Update';
-      this.plantImage = this.plantsEditData.image;
-      const plantdata = {
-        id: this.plantsEditData.id,
-        image: this.plantsEditData.image,
-        name: this.plantsEditData.name,
-        plantId: this.plantsEditData.plantId,
-        country: this.plantsEditData.country,
-        state: this.plantsEditData.state,
-        zipCode: this.plantsEditData.zipCode,
-        label: this.plantEditData.label,
-        field: this.plantEditData.field
-      };
-      this.plantForm.patchValue(plantdata);
-    }
   }
 
   processValidationErrors(controlName: string): boolean {

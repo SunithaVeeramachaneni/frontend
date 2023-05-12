@@ -26,6 +26,7 @@
   height: 100vh;
   background-color: $white;
   border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgba(0, 0, 0, 0.46);
 
   ::ng-deep .mat-card {
     box-shadow: none !important;
@@ -104,16 +105,25 @@
     display: flex;
     justify-content: center;
     position: relative;
-    bottom: 15px;
+    top: 48px;
   }
 
   .submit-response-btn {
     width: 45%;
-    margin-right: 10px;
+     background-color: $blue-main;
+    color: $white;
+  }
+
+  .submit-response-btn:disabled {
+    background-color: $gray2-bg;
+    color: $gray7;
   }
 
   .cancel-response-btn {
     width: 45%;
+    margin-right: 10px;
+    color: $blue-main;
+    border-color: $blue-main;
   }
 
   .actions-footer-view {
@@ -135,8 +145,6 @@
   font-size: 130%;
   font-weight: 500;
   color: #000000;
-  margin-top: 5px;
-  margin-left: 15px;
 }
 
 .global_response_description_input {
@@ -145,7 +153,5 @@
   font-size: 90%;
   font-weight: 200;
   color: #000000;
-  margin-top: 5px;
-  margin-left: 15px;
   height: 24px;
 }

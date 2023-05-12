@@ -469,7 +469,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   getImage = (imageName: string, active: boolean) =>
     active ? `icon-${imageName}-white` : `icon-${imageName}-blue`;
- 
 
   togglePreview() {
     this.isPreviewActive = !this.isPreviewActive;

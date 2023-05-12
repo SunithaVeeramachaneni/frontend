@@ -18,37 +18,346 @@
   <div class="dis-flex form-content">
     <div
       class="width-60 chat-div"
-      *ngIf="logHistory$ | async; else historyLoading"
+      *ngIf="logHistory$ | async as logHistory; else historyLoading"
     >
-      <div class="chat-panel"></div>
-      <div class="custom-form-field-white-color footer">
-        <mat-form-field appearance="outline" class="width-90 margin">
-          <input type="text" matInput placeholder="Type" />
+      <div class="chat-panel" [ngStyle]="{ height: chatPanelHeight }">
+        <ng-container *ngFor="let history of logHistory.rows; let i = index">
+          <div
+            [ngClass]="{
+              'text-align-right': history.username === userInfo.email
+            }"
+          >
+            <ng-container *ngIf="history.type === 'Object'">
+              <ng-container *ngIf="i === 0">
+                <div class="username-top">
+                  {{ getUserNameByEmail(history.username) }}
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
 
+          <div
+            class="dis-flex"
+            [ngClass]="{
+              'text-align-right': history.username === userInfo.email
+            }"
+          >
+            <ng-container *ngIf="history.type === 'Object'">
+              <div class="issue-created">
+                <ng-container *ngIf="i === 0">
+                  <span
+                    class="main-heading"
+                    *ngIf="data.type === 'issue'"
+                    translate="issueCreated"
+                  >
+                  </span>
+                  <span
+                    class="main-heading"
+                    *ngIf="data.type === 'action'"
+                    translate="actionCreated"
+                  >
+                  </span>
+                  <br />
+                  <span class="data">
+                    <span
+                      class="sub-headings"
+                      *ngIf="data.type === 'issue'"
+                      translate="issue"
+                    >
+                    </span>
+                    <span
+                      class="sub-headings"
+                      *ngIf="data.type === 'action'"
+                      translate="action"
+                    >
+                    </span>
+                    {{ history.message.TITLE }}
+                  </span>
+                  <br />
+                  <span class="data" *ngIf="data.type === 'action'">
+                    <span class="sub-headings" translate="description"></span>
+                    {{ history.message.DESCRIPTION }}
+                  </span>
+                  <br *ngIf="data.type === 'action'" />
+                  <span class="data" *ngIf="data.type === 'action'">
+                    <span
+                      class="sub-headings"
+                      translate="assignedToAction"
+                    ></span>
+                    {{ history.message.ASSIGNEE }}
+                  </span>
+                  <br *ngIf="data.type === 'action'" />
+                  <span class="data">
+                    <span
+                      class="sub-headings"
+                      translate="createdByAction"
+                    ></span>
+                    {{ getUserNameByEmail(history.username) }}
+                  </span>
+                  <br *ngIf="data.category !== '_ _'" />
+                  <span class="data" *ngIf="data.category !== '_ _'">
+                    <span
+                      class="sub-headings"
+                      translate="categoryCreated"
+                    ></span>
+                    {{ data.category }}
+                  </span>
+                  <br *ngIf="data.round !== '_ _'" />
+                  <span class="data" *ngIf="data.round !== '_ _'">
+                    <span class="sub-headings" translate="roundCreated"></span>
+                    {{ data.round }}
+                  </span>
+                  <br *ngIf="data.asset !== '_ _'" />
+                  <span class="data" *ngIf="data.asset !== '_ _'">
+                    <span class="sub-headings" translate="assetCreated"></span>
+                    {{ data.asset }}
+                  </span>
+                  <br *ngIf="data.location !== '_ _'" />
+                  <span class="data" *ngIf="data.location !== '_ _'">
+                    <span
+                      class="sub-headings"
+                      translate="locationCreated"
+                    ></span>
+                    {{ data.location }}
+                  </span>
+                  <br *ngIf="data.plant !== '_ _'" />
+                  <span class="data" *ngIf="data.plant !== '_ _'">
+                    <span class="sub-headings" translate="plantCreated"></span>
+                    {{ data.plant }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngIf="i !== 0">
+                  <ng-container *ngIf="history.message.STATUS">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        *ngIf="data.type === 'action'"
+                        translate="actionStatusUpdated"
+                      >
+                      </span>
+                      <span
+                        class="sub-headings"
+                        *ngIf="data.type === 'issue'"
+                        translate="issueStatusUpdated"
+                      >
+                      </span>
+                      {{ history.message.STATUS }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="history.message.ASSIGNEE">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="assigneeAddedTo"
+                      ></span>
+                      {{ getUserNameByEmail(history.message.ASSIGNEE) }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="history.message.ERPNOTIF">
+                    <span class="data">
+                      <span class="sub-headings" translate="erpNotif"> </span>
+                      {{ history.message.ERPNOTIF }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="history.message.PRIORITY">
+                    <span class="data">
+                      <span class="sub-headings" translate="priorityUpdated">
+                      </span>
+                      {{ history.message.PRIORITY }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngIf="history.message.DUEDATE">
+                    <span class="data">
+                      <span class="sub-headings" translate="dueDateUpdated">
+                      </span>
+                      {{ history.message.DUEDATE }}
+                    </span>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="history.type === 'Message'">
+              <div class="message-created">{{ history.message }}</div>
+            </ng-container>
+
+            <ng-container *ngIf="history.type === 'Media'">
+              <div class="media-created">
+                <img
+                  [src]="getS3Url(history.message)"
+                  alt="Log History"
+                  class="media-image"
+                />
+              </div>
+            </ng-container>
+          </div>
+          <div
+            class="time"
+            [ngClass]="{
+              'text-align-right': history.username === userInfo.email
+            }"
+          >
+            {{ history.createdAt }}
+          </div>
+        </ng-container>
+      </div>
+      <div class="custom-form-field-white-color footer" #footer>
+        <mat-form-field appearance="outline" class="width-90 margin">
+          <textarea
+            matInput
+            matAutosize
+            name=""
+            formControlName="message"
+            cdkTextareaAutosize
+            #messageContainer
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="5"
+          >
+          </textarea>
           <svg-icon
             icon="icon-add-attachment-icon"
             matSuffix
             class="add-attachment-icon"
+            (click)="fileInput.click()"
           ></svg-icon>
         </mat-form-field>
-
-        <svg-icon icon="icon-send-message" class="send-message"></svg-icon>
+        <input
+          hidden
+          type="file"
+          accept="image/x-png,image/jpeg,,image/jpg"
+          #fileInput
+          (change)="uploadFile($event)"
+          (click)="resetFile($event)"
+        />
+        <svg-icon
+          icon="icon-send-message"
+          class="send-message"
+          (click)="createIssueOrActionHistory()"
+        ></svg-icon>
       </div>
     </div>
     <ng-template #historyLoading>
       <div class="width-60 chat-div">
-        <div class="chat-panel"></div>
-        <div class="custom-form-field-white-color footer">
+        <div class="chat-panel">
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="left-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+          <ngx-shimmer-loading
+            [width]="'47%'"
+            [height]="'30px'"
+            class="right-chat"
+          >
+          </ngx-shimmer-loading>
+          <br />
+        </div>
+        <div class="custom-form-field-white-color footer" #footer>
           <mat-form-field appearance="outline" class="width-90 margin">
             <input type="text" matInput placeholder="Type" />
-
             <svg-icon
               icon="icon-add-attachment-icon"
               matSuffix
               class="add-attachment-icon"
+              (click)="fileInput.click()"
             ></svg-icon>
           </mat-form-field>
-
+          <input
+            hidden
+            type="file"
+            accept="image/x-png,image/jpeg"
+            #fileInput
+            (change)="uploadFile($event)"
+          />
           <svg-icon icon="icon-send-message" class="send-message"></svg-icon>
         </div>
       </div>
@@ -77,7 +386,7 @@
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="round"></div>
-        <div class="values">
+        <div class="values round-title" (click)="navigateToRounds()">
           {{ this.issuesActionsDetailViewForm.get('round').value }}
         </div>
       </div>
@@ -184,6 +493,7 @@
               <input
                 class="searchable-input"
                 type="text"
+                placeholder="Select Assignee"
                 matInput
                 formControlName="assignedTo"
                 class="cursor"
@@ -201,12 +511,21 @@
           </mat-menu>
         </ng-container>
       </div>
-      <hr class="line" />
+      <hr class="line" *ngIf="data.type === 'issue'" />
 
-      <div class="right-div p-5-0">
+      <div class="right-div p-5-0" *ngIf="data.type === 'issue'">
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values">
-          <button mat-raised-button color="primary">Create</button>
+          <button
+            *ngIf="!data.notificationNumber.length"
+            mat-raised-button
+            color="primary"
+          >
+            Create
+          </button>
+          <span *ngIf="data.notificationNumber.length">{{
+            data.notificationNumber
+          }}</span>
         </div>
       </div>
       <hr class="line" />
@@ -214,16 +533,31 @@
       <div class="right-div p-5-0">
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
-          {{ this.issuesActionsDetailViewForm.get('raisedBy').value }}
+          {{
+            getUserNameByEmail(
+              this.issuesActionsDetailViewForm.get('raisedBy').value
+            )
+          }}
         </div>
       </div>
       <hr class="line" />
 
       <div class="right-div p-5-0">
         <div class="titles" translate="attachment"></div>
-        <div class="values">3</div>
+        <div class="values">
+          {{ filteredMediaType?.length }}
+        </div>
       </div>
-      <hr class="line" />
+      <div class="attachments-container" *ngIf="filteredMediaType">
+        <div *ngFor="let att of filteredMediaType; let i = index">
+          <img
+            [src]="getS3Url(att.message)"
+            alt="images"
+            class="attachments cursor-pointer"
+            (click)="openPreviewDialog()"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </div>

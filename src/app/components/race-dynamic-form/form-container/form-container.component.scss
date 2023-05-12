@@ -1,5 +1,13 @@
 @import '../../../../scss/colors.scss';
 
+::ng-deep .template-list + * .mat-menu-panel {
+  position: absolute;
+  top: -42px;
+  left: 10px;
+  background: $white;
+  box-shadow: 3px 3px 5px 0px $box-shadow1;
+}
+
 .widgets {
   width: 300px;
   background: $white;

@@ -19,7 +19,7 @@
 >
   <div class="dis-flex form-header">
     <div class="dis-flex width-55">
-      <svg-icon icon="icon-plansicon" class="plans-icon"></svg-icon>
+      <svg-icon icon="icon-round-plans-icon" class="plans-icon"></svg-icon>
       <input
         hidden
         type="file"
@@ -68,16 +68,25 @@
           </button>
         </a>
         <br />
-        <a matTooltip="{{ formConfiguration.get('description').value }}">
-          <input
-            type="text"
-            class="form_description_input"
-            placeholder="{{ 'addFormDesc' | translate }}"
-            formControlName="description"
-            autofocus="true"
-            autocomplete="off"
-          />
-        </a>
+        <div class="dis-flex center">
+          <a
+            matTooltip="{{ formConfiguration.get('description').value }}"
+            class="width-62"
+          >
+            <input
+              type="text"
+              class="form_description_input"
+              placeholder="{{ 'addFormDesc' | translate }}"
+              formControlName="description"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+          <span
+            ><span class="plant">{{ 'plant' | translate }}:</span>
+            {{ ' ' + formMetadata.plant }}</span
+          >
+        </div>
       </div>
     </div>
     <div class="dis-flex width-45 justify-content-end">
@@ -133,9 +142,13 @@
           <span translate="preview" class="preview-text"></span>
         </span>
       </button>
-      <button mat-stroked-button class="next-btn">
+      <button
+        mat-stroked-button
+        class="next-btn"
+        (click)="goToPDFBuilderConfiguration()"
+      >
         <span>
-          <span translate="next" (click)="goToPDFBuilderConfiguration()"></span>
+          <span translate="next"></span>
         </span>
       </button>
     </div>
@@ -143,6 +156,7 @@
   <div class="dis-flex form">
     <div class="assetHierarchyContainer" [hidden]="isPreviewActive">
       <app-hierarchy-container
+        [plantId]="formMetadata.plantId"
         (hierarchyEvent)="hierarchyEventHandler($event)"
       ></app-hierarchy-container>
     </div>
@@ -179,13 +193,13 @@
                 }}
               </span>
             </ng-template>
-            <!-- will be enabled after implementation -->
-            <!-- <button
+            <button
               mat-stroked-button
               class="import-btn"
               translate="importBtn"
               (click)="importTasks()"
-            ></button> -->
+              *ngIf="false"
+            ></button>
           </div>
           <app-builder
             *ngIf="selectedNodeLoadStatus"
@@ -202,13 +216,13 @@
               'tasksOfSelectedNode' | translate : { name: selectedNode.name }
             }}
           </span>
-          <!-- will be enabled after implementation -->
-          <!-- <button
+          <!-- will be enabled after implementation
+             <button
             mat-stroked-button
             class="import-btn"
             translate="importBtn"
             (click)="importTasks()"
-          ></button> -->
+          ></button>  -->
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"
@@ -218,7 +232,8 @@
       </div>
     </div>
     <div class="iphone-width" [hidden]="!isPreviewActive" @previewSlide>
-      <app-iphone *ngIf="selectedNode?.id"
+      <app-iphone
+        *ngIf="selectedNode?.id"
         [moduleType]="'operator-rounds'"
         [subFormId]="selectedNode?.id"
         [assetLocationName]="selectedNode?.name"

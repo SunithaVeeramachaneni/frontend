@@ -5,8 +5,14 @@
       viewMode === true && !masterData.hasChildren ? '#FEFFDF' : '#ffffff',
     'margin-top': viewMode === false ? '5px' : '0'
   }"
+  [attr.id]="'Node-' + masterData.uid"
 >
-  <div class="dis-flex">
+  <div
+    class="dis-flex"
+    [ngClass]="{
+      'highlight-bg': masterData?.uid === searchedUid
+    }"
+  >
     <div class="dis-flex">
       <mat-checkbox
         *ngIf="viewMode === false"
@@ -29,7 +35,6 @@
           'hierarchy-tail': !masterData.children.length,
           'hierarchy-no-tail': masterData.children.length
         }"
-       
       ></svg-icon>
     </div>
     <div
@@ -101,6 +106,7 @@
           [displayMode]="viewMode"
           [mode]="'selectAssets'"
           [isMasterChecked]="isParentCheckedData"
+          [searchedUid]="searchedUid"
         ></app-hierarchy-node>
       </div>
     </div>

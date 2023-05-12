@@ -14,10 +14,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
+import { PlantService } from '../../plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
@@ -41,32 +42,36 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetTitle = 'Create Asset';
       this.assetButton = 'Create';
       this.assetImage = '';
+      this.assetForm?.reset();
       this.assetForm?.get('parentType').setValue('location');
     } else {
       this.assetStatus = 'edit';
       this.assetTitle = 'Edit Asset';
       this.assetButton = 'Update';
       this.assetImage = this.assetEditData.image;
-      const assdata = {
-        id: this.assetEditData.id,
-        image: this.assetEditData.image,
-        name: this.assetEditData.name,
-        assetsId: this.assetEditData.assetsId,
-        model: this.assetEditData.model,
-        description: this.assetEditData.description,
+      const assetData = {
+        id: this.assetEditData?.id,
+        image: this.assetEditData?.image,
+        name: this.assetEditData?.name,
+        assetsId: this.assetEditData?.assetsId,
+        model: this.assetEditData?.model,
+        description: this.assetEditData?.description,
         parentType: this.assetEditData.parentType?.toLowerCase(),
-        parentId: this.assetEditData.parentId
+        parentId: this.assetEditData?.parentId,
+        plantsID: this.assetEditData?.plantsID
       };
       this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assdata);
+      this.assetForm?.patchValue(assetData);
     }
     if (
       this.assetEditData === null ||
-      this.assetEditData.parentType === 'location'
+      this.assetEditData.parentType?.toLowerCase() === 'location'
     ) {
-      this.getAllLocations();
-    } else if (this.assetEditData.parentType === 'asset') {
-      this.getAllAssets();
+      this.parentInformation = this.allLocationsData;
+      this.allParentsData$.next(this.allLocationsData);
+    } else if (this.assetEditData.parentType?.toLowerCase() === 'asset') {
+      this.parentInformation = this.allAssetsData;
+      this.allParentsData$.next(this.allAssetsData);
     }
   }
   get assetsEditData() {
@@ -84,10 +89,14 @@ export class AddEditAssetsComponent implements OnInit {
   locations$;
   assets$;
   parentInformation;
+  plantInformation;
   allParentsData;
+  allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
+  allPlantsData;
 
   constructor(
     private fb: FormBuilder,
+    private plantService: PlantService,
     private assetService: AssetsService,
     private locationService: LocationService
   ) {}
@@ -97,32 +106,91 @@ export class AddEditAssetsComponent implements OnInit {
       image: '',
       name: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       assetsId: new FormControl('', [
         Validators.required,
+        WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       model: '',
       description: '',
       parentType: 'location',
-      parentId: ''
+      parentId: '',
+      locationId: '',
+      plantsID: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ])
     });
     this.getAllLocations();
     this.getAllAssets();
+    this.getAllPlants();
     this.assetForm.get('parentType').valueChanges.subscribe((value) => {
-      this.assetForm.get('parentId').setValue('');
       this.parentType = value;
-      if (value === 'location') {
-        this.parentInformation = this.allLocationsData;
-        this.allParentsData = this.allLocationsData;
-        this.getAllLocations();
-      } else if (value === 'asset') {
-        this.parentInformation = this.allAssetsData;
-        this.allParentsData = this.allAssetsData;
-        this.getAllAssets();
-      }
     });
+  }
+
+  onSelectPlant(plantId) {
+    const parentId = this.assetForm.get('parentId').value;
+    const parentType = this.assetForm.get('parentType').value;
+
+    if (parentType === 'location') {
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+
+    if (parentId) {
+      this.allParentsData = this.parentInformation;
+      this.allParentsData$.next(this.allParentsData);
+    } else {
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantId
+      );
+      this.allParentsData$.next(this.allParentsData);
+    }
+  }
+
+  onChangeParentType(event) {
+    const parentType = event.value;
+    const plantsID = this.assetForm.get('plantsID').value;
+
+    // select parentData
+    if (parentType === 'location') {
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+
+    // if plant is selected already
+    if (plantsID) {
+      this.allParentsData = this.parentInformation.filter(
+        (parent) => parent.plantsID === plantsID
+      );
+      this.allParentsData$.next(this.allParentsData);
+    }
+  }
+
+  onSelectLocation(parentId) {
+    const plantsID = this.assetForm.get('plantsID').value;
+    const parentType = this.assetForm.get('parentType').value;
+
+    if (parentType === 'location') {
+      this.assetForm.get('locationId').setValue(parentId);
+      this.parentInformation = this.allLocationsData;
+    } else if (parentType === 'asset') {
+      this.parentInformation = this.allAssetsData;
+    }
+    if (!plantsID) {
+      // set plant value if plant field was not selected first
+      const parent = this.parentInformation.find((d) => d.id === parentId);
+      if (parent.plantsID) {
+        this.assetForm.get('plantsID').setValue(parent.plantsID);
+      }
+    }
   }
 
   create() {
@@ -156,70 +224,126 @@ export class AddEditAssetsComponent implements OnInit {
     }
   }
 
-  onKey(event) {
+  onKeyPlant(event) {
     const value = event.target.value || '';
-    this.allParentsData = this.search(value);
+    if (!value) {
+      this.allPlantsData = this.plantInformation;
+    } else {
+      this.allPlantsData = this.searchPlant(value);
+    }
   }
 
-  search(value: string) {
+  onKey(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      const plantsID = this.assetForm.get('plantsID').value;
+      this.allParentsData = this.parentInformation.filter(
+        (l) => l.plantsID === plantsID
+      );
+    } else {
+      this.allParentsData = this.parentInformation;
+      this.allParentsData = this.searchParent(value);
+    }
+  }
+
+  searchPlant(value: string) {
     const searchValue = value.toLowerCase();
-    return this.parentInformation.filter(
-      (parent) =>
-        (parent.name &&
-          parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (parent.locationId &&
-          parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
     );
   }
 
-  cancel() {
-    this.slideInOut.emit('out');
-    this.assetForm?.get('parentType').setValue('location');
-    this.resetForm();
+  searchParent(value: string) {
+    const plantsID = this.assetForm.get('plantsID').value;
+    const parentType = this.assetForm.get('parentType').value;
+    const searchValue = value.toLowerCase();
+
+    if (parentType === 'location') {
+      if (plantsID) {
+        const filteredData = this.allParentsData.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.locationId &&
+              parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+        this.allParentsData$.next(filteredData);
+        return filteredData;
+      } else {
+        const filteredData = this.parentInformation.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.locationId &&
+              parent.locationId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+        this.allParentsData$.next(filteredData);
+        return filteredData;
+      }
+    } else {
+      if (plantsID) {
+        const filteredData = this.allParentsData.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.assetsId &&
+              parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+        this.allParentsData$.next(filteredData);
+        return filteredData;
+      } else {
+        const filteredData = this.parentInformation.filter(
+          (parent) =>
+            (parent.name &&
+              parent.name.toLowerCase().indexOf(searchValue) !== -1) ||
+            (parent.assetsId &&
+              parent.assetsId.toLowerCase().indexOf(searchValue) !== -1)
+        );
+        this.allParentsData$.next(filteredData);
+        return filteredData;
+      }
+    }
   }
 
-  resetForm() {
-    if (this.assetEditData === null) {
-      this.assetStatus = 'add';
-      this.assetTitle = 'Create Asset';
-      this.assetButton = 'Create';
-      this.assetImage = '';
-      this.assetForm?.get('parentType').setValue('location');
-    } else {
-      this.assetStatus = 'edit';
-      this.assetTitle = 'Edit Asset';
-      this.assetButton = 'Update';
-      this.assetImage = this.assetEditData.image;
-      const assetdata = {
-        id: this.assetEditData.id,
-        image: this.assetEditData.image,
-        name: this.assetEditData.name,
-        assetsId: this.assetEditData.assetsId,
-        model: this.assetEditData.model,
-        description: this.assetEditData.description,
-        parentType: this.assetEditData.parentType?.toLowerCase(),
-        parentId: this.assetEditData.parentId
-      };
-      this.parentType = this.assetEditData.parentType?.toLowerCase();
-      this.assetForm.patchValue(assetdata);
-    }
+  cancel() {
+    this.assetForm.reset();
+    this.slideInOut.emit('out');
   }
 
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.allLocationsData = allLocations.items;
+      this.allLocationsData = allLocations.items || [];
       this.parentInformation = this.allLocationsData;
       this.allParentsData = this.allLocationsData;
+      this.allParentsData$.next(this.allParentsData);
     });
   }
 
   getAllAssets() {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      this.allAssetsData = allAssets.items.filter(
-        (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
-      );
-      this.parentInformation = this.allAssetsData;
-      this.allParentsData = this.allAssetsData;
+      if (allAssets.items) {
+        this.allAssetsData = allAssets.items.filter(
+          (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
+        );
+        this.parentInformation = this.allAssetsData;
+        this.allParentsData = this.allAssetsData;
+        this.allParentsData$.next(this.allParentsData);
+      } else {
+        this.allAssetsData = [];
+        this.parentInformation = [];
+        this.allParentsData = [];
+        this.allParentsData$.next([]);
+      }
+    });
+  }
+
+  getAllPlants() {
+    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
+      this.allPlantsData = allPlants.items || [];
+      this.plantInformation = allPlants.items || [];
     });
   }
 

@@ -65,7 +65,33 @@
 
 .plans-list {
   ::ng-deep .table-column {
-    width: 40%;
+    width: 15%;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-locations {
+    min-width: 50px;
+  }
+
+  ::ng-deep .mat-column-assets {
+    min-width: 50px;
+  }
+
+  ::ng-deep .mat-column-tasks {
+    min-width: 50px;
+  }
+
+  ::ng-deep .mat-column-rounds {
+    min-width: 80px;
+  }
+
+  ::ng-deep .table-buttons {
+    width: 120px !important;
+    height: 30px;
+    line-height: 25px;
   }
 }
 

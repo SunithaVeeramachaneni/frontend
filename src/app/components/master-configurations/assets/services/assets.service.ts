@@ -38,12 +38,20 @@ export class AssetsService {
     this.assetsCreatedUpdatedSubject.next(data);
   }
 
-  fetchAllAssets$ = () => {
+  fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
+    if (plantsID) {
+      const filter = {
+        plantsID: {
+          eq: plantsID
+        }
+      };
+      params.set('filter', JSON.stringify(filter));
+    }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'asset/list?' + params.toString()
+      'asset/list?' + params.toString(),
+      { displayToast: true, failureResponse: {} }
     );
   };
 
@@ -55,34 +63,38 @@ export class AssetsService {
         environment.masterConfigApiUrl,
         'asset/count?' + params.toString()
       )
-      .pipe(map((res) => res?.count || 0));
+      .pipe(map((res) => res.count || 0));
   }
 
-  getAssetsList$(queryParams: {
-    nextToken?: string;
-    limit: number;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getAssetsList$(
+    queryParams: {
+      next?: string;
+      limit: number;
+      searchKey: string;
+      fetchType: string;
+    },
+    filterData: any = null
+  ) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.nextToken !== null)
+        queryParams.next !== null)
     ) {
-      const isSearch = queryParams.fetchType === 'search';
       const params: URLSearchParams = new URLSearchParams();
 
-      if (!isSearch) {
-        params.set('limit', `${queryParams.limit}`);
-      }
-      if (!isSearch && queryParams.nextToken) {
-        params.set('nextToken', queryParams.nextToken);
-      }
+      params.set('limit', `${queryParams.limit}`);
+      params.set('next', queryParams.next);
 
       if (queryParams.searchKey) {
         const filter: GetAssets = {
           searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
         };
+        params.set('filter', JSON.stringify(filter));
+      }
+
+      if (filterData.plant) {
+        let filter = JSON.parse(params.get('filter'));
+        filter = { ...filter, plantsID: { eq: filterData.plant } };
         params.set('filter', JSON.stringify(filter));
       }
 
@@ -96,7 +108,7 @@ export class AssetsService {
       return of({
         count: 0,
         rows: [],
-        nextToken: null
+        next: null
       });
     }
   }
@@ -111,6 +123,7 @@ export class AssetsService {
       | 'assetsId'
       | 'parentId'
       | 'parentType'
+      | 'plantsID'
     >
   ) {
     return this._appService._postData(
@@ -174,6 +187,14 @@ export class AssetsService {
     );
   }
 
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+    return this._appService._getLocal(
+      '',
+      'assets/json/master-configuration-assets-filter.json',
+      info
+    );
+  }
+
   private formatGraphQAssetsResponse(resp: AssetsResponse) {
     let rows =
       resp.items
@@ -184,7 +205,10 @@ export class AssetsService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            image: p?.image,
+            image:
+              p?.image.length > 0
+                ? p?.image
+                : 'assets/master-configurations/asset-icon.svg',
             style: {
               width: '40px',
               height: '40px',
@@ -199,12 +223,12 @@ export class AssetsService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    const nextToken = resp?.nextToken;
+    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
       count,
       rows,
-      nextToken
+      next
     };
   }
 

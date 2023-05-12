@@ -8,7 +8,7 @@
           *ngIf="submissionFormsListCount$ | async as totalCount"
         >
           <span class="forms-count">
-            {{ totalCount }}
+            {{ totalCount | count }}
           </span>
           <span class="forms-text">{{
             'submissions'

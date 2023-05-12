@@ -26,9 +26,7 @@ export class MasterConfigurationsContainerComponent implements OnInit {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.masterConfiguration.url) {
-          this.headerService.setHeaderTitle(
-            routingUrls.masterConfiguration.title
-          );
+          this.headerService.setHeaderTitle(routingUrls.plants.title);
           this.breadcrumbService.set(routingUrls.masterConfiguration.url, {
             skip: true
           });

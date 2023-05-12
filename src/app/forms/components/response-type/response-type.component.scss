@@ -9,7 +9,7 @@
 }
 .response-type-modal {
   height: calc(100vh - 180px);
-  max-height: 380px;
+  max-height: 555px;
   border-radius: 4px;
   width: 330px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
@@ -64,6 +64,10 @@
     color: $gray1;
     margin: 10px 0px 10px 15px;
     font-size: 120%;
+  }
+
+  .global-picklist {
+    margin: 20px 10px 20px 20px;
   }
 
   .content {
@@ -136,7 +140,7 @@
 
   .add-btn-margin {
     position: relative;
-    top: -15px;
+    top: -4px;
     left: -15px;
   }
 
@@ -166,8 +170,8 @@
 
 .picklist-scroll {
   overflow-y: auto;
-  height: calc(100vh - 275px);
-  max-height: 280px;
+  height: calc(100vh - 325px);
+  max-height: 445px;
   overflow-x: hidden;
 }
 

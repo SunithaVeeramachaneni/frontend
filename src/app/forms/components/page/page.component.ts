@@ -60,9 +60,8 @@ export class PageComponent implements OnInit {
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit() {
-    this.pageForm
-      .get('name')
-      .valueChanges.pipe(
+    this.pageForm.valueChanges
+      .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         pairwise(),

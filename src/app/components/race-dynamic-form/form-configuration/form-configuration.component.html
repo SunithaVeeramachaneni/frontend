@@ -66,19 +66,25 @@
           </button>
         </a>
         <br />
-        <a matTooltip="{{ formConfiguration.get('description').value }}">
-          <input
-            type="text"
-            class="form_description_input"
-            placeholder="{{ 'addFormDesc' | translate }}"
-            formControlName="description"
-            autofocus="true"
-            autocomplete="off"
-          />
-        </a>
+        <div class="dis-flex center">
+          <a matTooltip="{{ formConfiguration.get('description').value }}">
+            <input
+              type="text"
+              class="form_description_input"
+              placeholder="{{ 'addFormDesc' | translate }}"
+              formControlName="description"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+          <span
+            ><span class="plant">{{ 'plant' | translate }}:</span>
+            {{ ' ' + formMetadata.plant }}</span
+          >
+        </div>
       </div>
     </div>
-    <div class="dis-flex width-45 justify-content-end">
+    <div class="dis-flex width-70 justify-content-end">
       <div
         class="save-status"
         [hidden]="
@@ -125,6 +131,13 @@
 
       <button
         mat-stroked-button
+        class="import-btn"
+        translate="saveAsTemplate"
+        (click)="openSaveTemplateDialog()"
+      ></button>
+
+      <button
+        mat-stroked-button
         class="next-btn"
         translate="next"
         (click)="goToPDFBuilderConfiguration()"
@@ -135,6 +148,7 @@
     <div class="questions-responses-width">
       <app-builder
         [selectedNode]="selectedNode"
+        [isPreviewActive]="true"
         [counter]="formConfiguration.get('counter').value"
       ></app-builder>
     </div>

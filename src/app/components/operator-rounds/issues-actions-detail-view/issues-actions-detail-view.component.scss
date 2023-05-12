@@ -84,8 +84,87 @@
       border-radius: 7px;
 
       .chat-panel {
-        height: calc(100vh - 148px);
         overflow-y: auto;
+        padding-bottom: 15px;
+
+        .username {
+          margin: 10px 15px 0;
+          letter-spacing: 0.15px;
+          font-size: 105%;
+          color: $black;
+        }
+
+        .issue-created {
+          background: $chat-yellow-bg;
+          border-radius: 6px;
+          padding: 10px;
+          width: 40%;
+          margin: 10px;
+        }
+
+        .main-heading {
+          font-weight: 600;
+          font-size: 100%;
+        }
+
+        .sub-headings {
+          font-weight: 500;
+          font-size: 100%;
+        }
+
+        .data {
+          color: $black;
+          font-size: 95%;
+          letter-spacing: 0.15px;
+          line-height: 15px;
+        }
+
+        .text-align-right {
+          justify-content: flex-end;
+        }
+
+        .username-top {
+          margin: 10px 0 0 20px;
+        }
+
+        .message-created {
+          background: $blue-main;
+          border-radius: 6px;
+          padding: 10px;
+          width: 40%;
+          margin: 10px;
+          color: $white;
+        }
+
+        .media-created {
+          border: 5px solid $border-color;
+          border-radius: 4px;
+          width: 300px;
+          height: 280px;
+          margin: 10px;
+        }
+
+        .media-image {
+          width: 300px;
+          height: 280px;
+        }
+
+        .time {
+          font-size: 75%;
+          color: $gray1;
+          margin: 0 15px;
+          line-height: 0;
+          display: flex;
+        }
+
+        ::ng-deep .left-chat .ngx-shimmer {
+          margin: 3px 10px;
+        }
+
+        ::ng-deep .right-chat .ngx-shimmer {
+          margin: 3px 10px;
+          float: right;
+        }
       }
 
       .footer {
@@ -93,6 +172,10 @@
         border-top: 1px solid rgba(61, 90, 254, 0.5);
         border-bottom-left-radius: 7px;
         border-bottom-right-radius: 7px;
+        position: absolute;
+        bottom: 11px;
+        padding: 5px 0 10px 0;
+        width: 58%;
       }
 
       .add-attachment-icon {
@@ -109,10 +192,9 @@
       .send-message {
         position: relative;
         top: 10px;
-        position: relative;
-        top: 4px;
-        height: 20px;
-        width: 20px;
+        cursor: pointer;
+        height: 30px;
+        width: 30px;
       }
     }
 
@@ -123,6 +205,20 @@
       .right-div {
         display: flex;
         justify-content: space-between;
+
+        .create-erp-notification {
+          background-color: $blue-main;
+          color: $white;
+          width: 102px;
+          height: 34px;
+          font-size: 115%;
+          line-height: 143%;
+        }
+
+        .create-erp-notification:disabled {
+          background-color: $gray2-bg;
+          color: $light-gray;
+        }
       }
 
       .p-5-0 {
@@ -144,6 +240,11 @@
         padding-right: 20px;
       }
 
+      .round-title {
+        color: $blue-main;
+        cursor: pointer;
+      }
+
       .dropdowns {
         height: 48px;
       }
@@ -152,6 +253,24 @@
         border-bottom: 1px solid $border-color;
         border-top: none;
         margin-right: 12px;
+      }
+
+      .attachments-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: 10px;
+        margin-top: 10px;
+      }
+
+      .attachments {
+        width: 110px;
+        height: 100px;
+        margin-right: 15px;
+        margin-bottom: 10px;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
       }
     }
   }

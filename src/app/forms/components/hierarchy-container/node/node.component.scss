@@ -77,6 +77,13 @@
   background: $active-blue;
   color: $white;
 }
+
+.active:hover{
+  background-color: $hierarchy-active;
+  color: $white;
+
+}
+
 .question-six-dots {
   position: relative;
   width: 10px;
@@ -106,8 +113,8 @@
 }
 
 .node-icon{
-  height: 30px;
-  width: 30px;
+  height: 24px;
+    width: 24px;
   position: relative;
   top: 2px;
 }

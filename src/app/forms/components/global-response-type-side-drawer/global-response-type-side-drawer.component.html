@@ -113,19 +113,20 @@
   </mat-card>
   <div class="actions-footer" *ngIf="!isViewMode; else viewBlock">
     <button
-      mat-raised-button
-      color="primary"
-      class="submit-response-btn"
-      (click)="submitResponseSet()"
-      [disabled]="isResponseFormUpdated === false || responseForm.pristine"
-      translate="apply"
-    ></button>
-    <button
       mat-stroked-button
       class="cancel-response-btn"
       (click)="closeGlobalResponse()"
       translate="cancel"
     ></button>
+    <button
+      mat-raised-button
+      color="primary"
+      class="submit-response-btn"
+      (click)="submitResponseSet()"
+      [disabled]="isResponseFormUpdated === false || responseForm.pristine"
+      translate="create"
+    ></button>
+    
   </div>
   <ng-template #viewBlock>
     <div class="actions-footer-view">

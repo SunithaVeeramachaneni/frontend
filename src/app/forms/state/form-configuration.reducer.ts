@@ -28,6 +28,14 @@ export interface FormConfigurationState {
   moduleName: string;
 }
 
+export interface TemplateConfigurationState {
+  formMetadata: any;
+  pages: Page[];
+  counter: number;
+  formStatus: string;
+  authoredFormDetailVersion: number;
+}
+
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
@@ -222,7 +230,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const updatedPageIdx = state.pages.findIndex(
         (page) => page.position === action.pageIndex + 1
       );
-      let newPages = state.pages;
+      const newPages = state.pages;
       newPages[updatedPageIdx] = {
         ...newPages[updatedPageIdx],
         ...action.page
@@ -644,23 +652,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             (a, b) => a.position - b.position
           );
 
-          sourceSectionQuestions = sourceSectionQuestions.map(
-            (question, index) => {
-              if (action.previousIndex === 0) {
-                const que = Object.assign({}, question, {
-                  position: index + 1
-                });
-                return que;
-              }
-              if (index >= action.previousIndex) {
-                const que = Object.assign({}, question, {
-                  position: index - 1
-                });
-                return que;
-              }
-              return question;
-            }
-          );
+          sourceSectionQuestions = [
+            ...sourceSectionQuestions.slice(0, action.previousIndex),
+            ...sourceSectionQuestions
+              .slice(action.previousIndex)
+              .map((question) => ({
+                ...question,
+                position: question.position - 1
+              }))
+          ];
 
           return {
             ...page,

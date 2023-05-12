@@ -330,7 +330,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
 
   getSubmissionFormsList() {
     const obj = {
-      nextToken: this.nextToken,
+      next: this.nextToken,
       limit: this.limit,
       searchKey: this.searchForm.value,
       fetchType: this.fetchType
@@ -339,8 +339,8 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       ? this.operatorRoundsService.getSubmissionFormsList$(obj)
       : this.raceDynamicFormService.getSubmissionFormsList$(obj, this.filter);
     return observable.pipe(
-      mergeMap(({ rows, nextToken }) => {
-        this.nextToken = nextToken;
+      mergeMap(({ rows, next }) => {
+        this.nextToken = next;
         this.isLoading$.next(false);
         return of(rows as any);
       }),

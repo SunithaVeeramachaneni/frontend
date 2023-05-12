@@ -11,6 +11,13 @@
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="id"></p>
       <p class="m-0 sub-headings-value">{{ selectedLocation.locationId }}</p>
+      <ng-container *ngIf="selectedLocation.plant">
+        <hr class="horizon-line" />
+        <p class="m-0 sub-headings" translate="plant"></p>
+        <p class="m-0 sub-headings-value">
+          {{ selectedLocation.plant }}
+        </p>
+      </ng-container>
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="parent"></p>
       <p class="m-0 sub-headings-value">

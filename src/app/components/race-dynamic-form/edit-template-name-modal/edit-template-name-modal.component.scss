@@ -1,0 +1,34 @@
+@import '../../../../scss/colors.scss';
+
+.edit-template-name-modal {
+  width: 450px;
+  height: 90px;
+  padding: 10px;
+  background: $white;
+  border-radius: 4px;
+}
+
+.dialog-close-btn {
+  float: right;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.save-template-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+}
+
+.cancel-btn {
+  border: 0px;
+  color: $blue-main;
+  background-color: $white;
+  float: right;
+  margin-right: 10px;
+}

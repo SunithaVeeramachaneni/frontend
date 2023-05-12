@@ -3,13 +3,32 @@
 .actions-list {
   ::ng-deep .table-column {
     width: 15%;
-    min-width: fit-content;
+  }
+
+  ::ng-deep .mat-column-title {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-priority {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 100px;
   }
 
   .actions-search {
     position: fixed;
     right: 14px;
-    top: 387px;
+    top: 335px;
   }
   .no-of-actions {
     margin-right: 10px;
@@ -33,7 +52,7 @@
   }
 }
 
-.common-filter-icon{
+.common-filter-icon {
   height: 17px;
   width: 17px;
 }

@@ -32,6 +32,10 @@ import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
+import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -52,7 +56,8 @@ export class RoundPlanListComponent implements OnInit {
     createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
-    scheduleEndDate: ''
+    scheduleEndDate: '',
+    plant: ''
   };
   columns: Column[] = [
     {
@@ -72,14 +77,16 @@ export class RoundPlanListComponent implements OnInit {
       titleStyle: {
         'font-weight': '500',
         'font-size': '100%',
-        color: '#000000'
+        color: '#000000',
+        'overflow-wrap': 'anywhere'
       },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: true,
       hasPostTextImage: false
@@ -122,11 +129,33 @@ export class RoundPlanListComponent implements OnInit {
       hasConditionalStyles: true
     },
     {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -148,7 +177,7 @@ export class RoundPlanListComponent implements OnInit {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -171,7 +200,7 @@ export class RoundPlanListComponent implements OnInit {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -236,12 +265,19 @@ export class RoundPlanListComponent implements OnInit {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  authoredBy = [];
+  plants = [];
+  plantsIdNameMap = {};
   createdBy = [];
+  plantsObject: { [key: string]: PlantsResponse } = {};
+
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private dialog: MatDialog,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -286,15 +322,11 @@ export class RoundPlanListComponent implements OnInit {
     if (!form.id) {
       return;
     }
-    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
-      this.toast.show({
-        text: 'Round Plan copied successfully!',
-        type: 'success'
+    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe((round) => {
+      this.addEditCopyForm$.next({
+        action: 'copy',
+        form: round
       });
-      this.nextToken = '';
-      this.operatorRoundsService.fetchForms$.next({ data: 'load' });
-      this.formsListCount$ =
-        this.operatorRoundsService.getFormsListCount$('All');
     });
   }
 
@@ -304,6 +336,7 @@ export class RoundPlanListComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.nextToken = '';
         return this.getForms();
       })
     );
@@ -327,13 +360,22 @@ export class RoundPlanListComponent implements OnInit {
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
       this.addEditCopyForm$,
-      onScrollForms$
+      onScrollForms$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap(
+          ({ items: plants }) =>
+            (this.plantsObject = plants.reduce((acc, curr) => {
+              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
+              return acc;
+            }, {}))
+        )
+      )
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {
@@ -343,7 +385,20 @@ export class RoundPlanListComponent implements OnInit {
               (d) => d?.id === obj?.oldId
             );
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
-            initial.data.splice(newIdx, 0, obj);
+            initial.data.splice(newIdx, 0, {
+              ...obj,
+              publishedDate: '',
+              preTextImage: {
+                image: obj.formLogo,
+                style: {
+                  width: '40px',
+                  height: '40px',
+                  marginRight: '10px'
+                },
+                condition: true
+              },
+              plant: this.plantsObject[obj.plantId]
+            });
             form.action = 'add';
             this.toast.show({
               text: 'Round Plan copied successfully!',
@@ -361,7 +416,6 @@ export class RoundPlanListComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -373,7 +427,7 @@ export class RoundPlanListComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchForm.value,
           fetchType: this.fetchType
@@ -383,18 +437,43 @@ export class RoundPlanListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
+        mergeMap(({ rows, next }) => {
           // if next token turns null from not null, that means all records have been fetched with the given limit.
-          if (nextToken === null && this.nextToken !== null) {
+          if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;
           }
-          this.nextToken = nextToken;
+          this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.isLoading$.next(false);
           return of([]);
+        }),
+        map((data) => {
+          const rows = data.map((item) => {
+            if (item.plantId) {
+              if (item.plant) {
+                item = {
+                  ...item,
+                  plant: `${item.plant?.plantId} - ${item.plant?.name}`
+                };
+              } else {
+                item = {
+                  ...item,
+                  plant: ``
+                };
+              }
+            } else {
+              // remove if condition after clearing data since plant will be mandatory
+              item = {
+                ...item,
+                plant: ``
+              };
+            }
+            return item;
+          });
+          return rows;
         })
       );
   }
@@ -406,6 +485,7 @@ export class RoundPlanListComponent implements OnInit {
           id: form?.id,
           isArchived: true,
           name: form?.name,
+          plantId: form?.plantId,
           description: form?.description,
           isArchivedAt: new Date().toISOString()
         },
@@ -483,29 +563,41 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
       .subscribe((formsList) => {
-        const uniqueLastPublishedBy = formsList.rows
-          .map((item) => item.lastPublishedBy)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueLastPublishedBy) {
-          if (item) {
-            this.lastPublishedBy.push(item);
-          }
-        }
-        const uniqueAuthoredBy = formsList.rows
-          .map((item) => item.author)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        for (const item of uniqueAuthoredBy) {
-          if (item) {
-            this.createdBy.push(item);
-          }
-        }
-        for (const item of this.filterJson) {
-          if (item.column === 'status') {
-            item.items = this.status;
-          } else if (item.column === 'modifiedBy') {
-            item.items = this.lastPublishedBy;
-          } else if (item.column === 'createdBy') {
-            item.items = this.createdBy;
+        const objectKeys = Object.keys(formsList);
+        if (objectKeys.length > 0) {
+          const uniqueLastPublishedBy = formsList.rows
+            .map((item) => item.lastPublishedBy)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.lastPublishedBy = [...uniqueLastPublishedBy];
+
+          const uniqueAuthoredBy = formsList.rows
+            .map((item) => item.author)
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.createdBy = [...uniqueAuthoredBy];
+
+          const uniquePlants = formsList.rows
+            .map((item) => {
+              if (item.plant) {
+                this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
+                return `${item.plant.plantId} - ${item.plant.name}`;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.plants = [...uniquePlants];
+
+          for (const item of this.filterJson) {
+            if (item.column === 'status') {
+              item.items = this.status;
+            } else if (item.column === 'modifiedBy') {
+              item.items = this.lastPublishedBy;
+            } else if (item.column === 'authoredBy') {
+              item.items = this.authoredBy;
+            } else if (item.column === 'plant') {
+              item.items = this.plants;
+            } else if (item.column === 'createdBy') {
+              item.items = this.createdBy;
+            }
           }
         }
       });
@@ -522,12 +614,26 @@ export class RoundPlanListComponent implements OnInit {
       if (item.type === 'daterange') {
         this.filter.scheduleStartDate = item.value[0];
         this.filter.scheduleEndDate = item.value[1];
+      } else if (item.column === 'plant') {
+        const id = item.value.split('-')[0].trim();
+        const plantId = this.plantsIdNameMap[id];
+        this.filter[item.column] = plantId;
       } else {
         this.filter[item.column] = item.value;
       }
     }
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+  }
+
+  openRoundPlanCreationModal() {
+    this.dialog.open(RoundPlanConfigurationModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
   }
 
   resetFilter() {
@@ -537,12 +643,12 @@ export class RoundPlanListComponent implements OnInit {
       createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
-      scheduleEndDate: ''
+      scheduleEndDate: '',
+      plant: ''
     };
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
-
   private showFormDetail(row: RoundPlan): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;

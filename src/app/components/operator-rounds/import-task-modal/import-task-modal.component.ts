@@ -116,7 +116,7 @@ export class ImportTaskModalComponent implements OnInit {
     return this.operatorRoundsService
       .getFormsList$(
         {
-          nextToken: this.nextToken,
+          next: this.nextToken,
           limit: this.limit,
           searchKey: this.searchRoundPlan.value,
           fetchType: this.fetchType
@@ -124,8 +124,8 @@ export class ImportTaskModalComponent implements OnInit {
         'All'
       )
       .pipe(
-        mergeMap(({ count, rows, nextToken }) => {
-          this.nextToken = nextToken;
+        mergeMap(({ count, rows, next }) => {
+          this.nextToken = next;
           return of(rows);
         })
       );
