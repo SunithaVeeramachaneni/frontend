@@ -62,6 +62,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
+  isCreate = true;
 
   constructor(
     private formService: FormService,
@@ -71,6 +72,21 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.responseForm = this.fb.group({
+      id: new FormControl(''),
+      name: new FormControl(''),
+      responses: this.fb.array([])
+    });
+
+    this.rangeMetadataForm = this.fb.group({
+      min: undefined,
+      max: undefined,
+      minMsg: '',
+      maxMsg: '',
+      minAction: 'None',
+      maxAction: 'None'
+    });
+
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
     this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
@@ -83,6 +99,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       if (state.isOpen) {
         state.response.values = state.response.values || [];
         const responsesArray = [];
+        this.isCreate = state.response.values.length ? false : true;
         state.response.values.map((response) => {
           responsesArray.push(this.fb.group(response));
         });
@@ -102,21 +119,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       if (state.isOpen) {
         this.rangeMetadataForm.patchValue(state.rangeMetadata);
       }
-    });
-
-    this.responseForm = this.fb.group({
-      id: new FormControl(''),
-      name: new FormControl(''),
-      responses: this.fb.array([])
-    });
-
-    this.rangeMetadataForm = this.fb.group({
-      min: undefined,
-      max: undefined,
-      minMsg: '',
-      maxMsg: '',
-      minAction: 'None',
-      maxAction: 'None'
     });
 
     this.responseForm.valueChanges
@@ -261,6 +263,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-     return `icon-${action.toLowerCase()}`;
+    return `icon-${action.toLowerCase()}`;
   }
 }

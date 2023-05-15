@@ -22,20 +22,14 @@ import {
   providedIn: 'root'
 })
 export class LocationService {
-  locationCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchLocations$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  locationCreatedUpdated$ = this.locationCreatedUpdatedSubject.asObservable();
   // this fetch limit is limited by DynamoDB's 1 MB query size limit.
-  private MAX_FETCH_LIMIT: string = '1000000';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.locationCreatedUpdatedSubject.next(data);
-  }
 
   fetchAllLocations$ = (plantsID = null) => {
     const params: URLSearchParams = new URLSearchParams();
@@ -53,11 +47,24 @@ export class LocationService {
       { displayToast: true, failureResponse: {} }
     );
   };
-  getLocationCount$(info: ErrorInfo = {} as ErrorInfo): Observable<number> {
+  getLocationCount$(searchTerm: string): Observable<number> {
+    const filter = JSON.stringify(
+      Object.fromEntries(
+        Object.entries({
+          searchTerm: { contains: searchTerm }
+        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
+      )
+    );
     return this._appService
-      ._getResp(environment.masterConfigApiUrl, 'location/count', info, {
-        limit: this.MAX_FETCH_LIMIT
-      })
+      ._getResp(
+        environment.masterConfigApiUrl,
+        'location/count',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: this.MAX_FETCH_LIMIT,
+          filter
+        }
+      )
       .pipe(map((res) => res?.count || 0));
   }
 
@@ -212,7 +219,7 @@ export class LocationService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/locationIcon.svg',
             style: {

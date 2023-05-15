@@ -99,7 +99,9 @@ export const permissions = Object.freeze({
   createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
   updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
   deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
-  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES',
+
+  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS'
 });
 
 export const routingUrls = {
@@ -218,6 +220,11 @@ export const routingUrls = {
     url: '/forms/scheduler/0',
     title: 'Scheduler',
     permission: permissions.viewFormScheduler
+  },
+  rdfObservations: {
+    url: '/forms/observations',
+    title: 'Observations',
+    permission: permissions.viewRdfObservations
   },
 
   operatorRoundPlans: {

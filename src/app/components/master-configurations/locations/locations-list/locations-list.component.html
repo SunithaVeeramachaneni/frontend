@@ -12,7 +12,7 @@
           <div>
             <span
               class="no-of-location"
-              *ngIf="locationsListCount$ | async as totalCount"
+              *ngIf="locationsCount$ | async as totalCount"
             >
               <span class="location-count">
                 {{ totalCount }}
@@ -142,14 +142,18 @@
         </div>
       </div>
 
-      <ng-container *ngIf="locationAddOrEditOpenState">
-        <app-add-edit-location
-          [@slideInOut]="locationAddOrEditOpenState"
-          (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
-          [locationEditData]="locationEditData"
-          (createdLocationData)="addOrUpdateLocation($event)"
-        ></app-add-edit-location>
-      </ng-container>
+      <div *ngIf="dataFetchingComplete">
+        <ng-container *ngIf="locationAddOrEditOpenState">
+          <app-add-edit-location
+            [@slideInOut]="locationAddOrEditOpenState"
+            (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+            [locationEditData]="locationEditData"
+            (createdLocationData)="addOrUpdateLocation($event)"
+            [allPlants]="allPlants"
+            [allLocations]="allParentsLocations"
+          ></app-add-edit-location>
+        </ng-container>
+      </div>
 
       <ng-container *ngIf="openLocationDetailedView">
         <app-location-detail-view

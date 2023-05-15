@@ -124,8 +124,9 @@
       class="submit-response-btn"
       (click)="submitResponseSet()"
       [disabled]="isResponseFormUpdated === false || responseForm.pristine"
-      translate="create"
-    ></button>
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
   <ng-template #viewBlock>
     <div class="actions-footer-view">
