@@ -141,8 +141,9 @@
       (click)="submitResponses()"
       class="submit-response-btn"
       [disabled]="isFormNotUpdated === true || responseForm.pristine"
-      translate="create"
-    ></button>
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
 </div>
 
