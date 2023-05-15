@@ -79,7 +79,8 @@ export class FormConfigurationEffects {
               ...formDetail.formMetadata,
               lastPublishedBy: this.loginService.getLoggedInUserName(),
               publishedDate: new Date().toISOString(),
-              formStatus: formConfigurationStatus.published
+              formStatus: formConfigurationStatus.published,
+              isPublished: true
             },
             formListDynamoDBVersion: action.formListDynamoDBVersion
           })
@@ -124,6 +125,7 @@ export class FormConfigurationEffects {
                     formDetail: response?.data?.updateFormList,
                     authoredFormDetail: createAuthoredFormDetail,
                     formStatus: formConfigurationStatus.published,
+                    isPublished: true,
                     formDetailPublishStatus: formConfigurationStatus.published
                   })
                 )

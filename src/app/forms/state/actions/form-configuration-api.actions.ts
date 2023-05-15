@@ -1,6 +1,11 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata } from 'src/app/interfaces';
-import { CreateAuthoredFormDetail, CreateFormDetail, UpdateAuthoredFormDetail, UpdateFormDetail } from 'src/app/interfaces/master-data-management/forms';
+import {
+  CreateAuthoredFormDetail,
+  CreateFormDetail,
+  UpdateAuthoredFormDetail,
+  UpdateFormDetail
+} from 'src/app/interfaces/master-data-management/forms';
 
 export const createFormSuccess = createAction(
   '[Form Configuration API] createFormSuccess',
@@ -28,6 +33,7 @@ export const createFormDetailSuccess = createAction(
     formDetail: CreateFormDetail;
     authoredFormDetail: CreateAuthoredFormDetail;
     formStatus: string;
+    isPublished: boolean;
     formDetailPublishStatus: string;
   }>()
 );

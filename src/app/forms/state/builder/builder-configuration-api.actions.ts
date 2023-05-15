@@ -33,6 +33,7 @@ export const createFormDetailSuccess = createAction(
     formDetail: CreateFormDetail;
     authoredFormDetail: CreateAuthoredRoundPlanDetail;
     formStatus: string;
+    isPublished: boolean;
     formDetailPublishStatus: string;
   }>()
 );

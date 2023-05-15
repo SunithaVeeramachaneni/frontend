@@ -19,6 +19,7 @@ export interface FormMetadata {
   plantId?: string;
   plant: string;
   pdfTemplateConfiguration: any;
+  isPublished: boolean;
 }
 
 export interface Page {
