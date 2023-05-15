@@ -37,11 +37,9 @@ export class OperatorRoundsService {
   private selectedNodeSubject = new BehaviorSubject<any>({});
   private hierarchyModeSubject = new BehaviorSubject<any>('asset_hierarchy');
 
-  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
@@ -57,10 +55,6 @@ export class OperatorRoundsService {
   }
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
-  }
-
-  setFormCreatedUpdated(data: any) {
-    this.formCreatedUpdatedSubject.next(data);
   }
 
   createTags$ = (
@@ -80,12 +74,14 @@ export class OperatorRoundsService {
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._putDataToGateway(
-      environment.rdfApiUrl,
-      `datasets/${datasetId}`,
-      dataset,
-      info
-    );
+    this.appService
+      ._putDataToGateway(
+        environment.rdfApiUrl,
+        `datasets/${datasetId}`,
+        dataset,
+        info
+      )
+      .pipe((resp) => (resp === null ? dataset : resp));
 
   getDataSetsByType$ = (
     datasetType: string,
@@ -436,77 +432,6 @@ export class OperatorRoundsService {
       type: 'warning',
       text: message
     });
-  }
-
-  getValidationExpression(questionId, question, questions, logics) {
-    let expression = '';
-    let globalIndex = 0;
-    const logicsT = JSON.parse(JSON.stringify(logics));
-    const questionLogics = logicsT.filter(
-      (logic) => logic.questionId === questionId
-    );
-    if (!questionLogics || !questionLogics.length) return expression;
-
-    const fieldType = question.fieldType;
-
-    questionLogics.forEach((logic) => {
-      const isEmpty = !logic.operand2.length;
-
-      if (fieldType === 'CB') {
-        logic.operand2 = logic.operand2 ? 'X' : '';
-      }
-
-      // Mandate Questions;
-      const mandatedQuestions = logic.mandateQuestions;
-      if (mandatedQuestions && mandatedQuestions.length) {
-        mandatedQuestions.forEach((mq) => {
-          globalIndex = globalIndex + 1;
-          if (isEmpty) {
-            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
-          } else {
-            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
-          }
-        });
-      }
-
-      // Hide Questions;
-      const hiddenQuestions = logic.hideQuestions;
-      if (hiddenQuestions && hiddenQuestions.length) {
-        hiddenQuestions.forEach((hq) => {
-          globalIndex = globalIndex + 1;
-          if (isEmpty) {
-            if (fieldType === 'CB') {
-              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
-            } else {
-              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
-            }
-          } else {
-            if (fieldType === 'CB') {
-              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
-            } else {
-              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
-            }
-          }
-        });
-      }
-
-      // Ask Questions;
-      const askQuestions = questions.filter(
-        (q) => q.sectionId === `AQ_${logic.id}`
-      );
-      askQuestions.forEach((q) => {
-        globalIndex = globalIndex + 1;
-        const oppositeOperator = oppositeOperatorMap[logic.operator];
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
-      });
-    });
-    if (expression[0] === ';') {
-      expression = expression.slice(1, expression.length);
-    }
-    if (expression[expression.length - 1] === ';') {
-      expression = expression.slice(0, expression.length - 1);
-    }
-    return expression;
   }
 
   private formateGetRoundPlanResponse(resp: RoundPlanList) {
