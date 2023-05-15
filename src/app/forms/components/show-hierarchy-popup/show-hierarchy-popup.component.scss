@@ -5,8 +5,6 @@
   padding: 10px;
   min-width: 400px;
   overflow: hidden;
-  position: relative;
-  top: -28px;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
@@ -38,10 +36,8 @@
 .arrow-left {
   width: 0;
   height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid $white;
-  position: relative;
-  left: -10px;
-  top: 50%;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 15px solid $white;
+  position: fixed;
 }

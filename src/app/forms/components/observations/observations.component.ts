@@ -1,18 +1,20 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  Input
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserDetails } from 'src/app/interfaces';
-import { UsersService } from '../../user-management/services/users.service';
+import { tap } from 'rxjs/operators';
 
-import { RoundPlanObservationsService } from '../services/round-plan-observation.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { tap } from 'rxjs/operators';
+import { UserDetails } from 'src/app/interfaces';
 import { routingUrls } from 'src/app/app.constants';
+import { ObservationsService } from 'src/app/forms/services/observations.service';
+import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 interface IPriority {
   high: number;
@@ -27,6 +29,7 @@ interface IPriority {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ObservationsComponent implements OnInit {
+  @Input() moduleName: string;
   counts: {
     openActions: {
       priority: IPriority;
@@ -94,11 +97,8 @@ export class ObservationsComponent implements OnInit {
   users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
-  private priorityColors = ['#C84141', '#F4A916 ', '#CFCFCF'];
-  private statusColors = ['#F56565', '#FFCC00'];
-
   constructor(
-    private readonly roundPlanObservationsService: RoundPlanObservationsService,
+    private readonly observationsService: ObservationsService,
     private userService: UsersService,
     private headerService: HeaderService,
     private commonService: CommonService,
@@ -114,8 +114,8 @@ export class ObservationsComponent implements OnInit {
       )
     );
     this.users$ = this.userService.getUsersInfo$();
-    this.roundPlanObservationsService
-      .getObservationChartCounts$()
+    this.observationsService
+      .getObservationChartCounts$(this.moduleName)
       .subscribe((result) => {
         if (result) {
           this.priorityData = {
@@ -128,12 +128,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openIssues?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.observationsService.prepareColorsAndData(
+                    result?.openIssues?.priority,
+                    'priority'
                   )
                 }
               ]
@@ -147,12 +144,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.priorityColors,
-                  data: Object.entries(result?.openActions?.priority).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.observationsService.prepareColorsAndData(
+                    result?.openActions?.priority,
+                    'priority'
                   )
                 }
               ]
@@ -169,12 +163,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openIssues?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.observationsService.prepareColorsAndData(
+                    result?.openIssues?.status,
+                    'status'
                   )
                 }
               ]
@@ -188,12 +179,9 @@ export class ObservationsComponent implements OnInit {
               series: [
                 {
                   ...this.options.series[0],
-                  color: this.statusColors,
-                  data: Object.entries(result?.openActions?.status).map(
-                    ([key, value]) => ({
-                      name: key,
-                      value
-                    })
+                  ...this.observationsService.prepareColorsAndData(
+                    result?.openActions?.status,
+                    'status'
                   )
                 }
               ]

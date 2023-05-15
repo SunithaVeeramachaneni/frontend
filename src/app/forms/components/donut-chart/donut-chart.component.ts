@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
@@ -9,12 +8,12 @@ import {
 import { EChartsOption } from 'echarts';
 
 @Component({
-  selector: 'app-chart',
-  templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss'],
+  selector: 'app-donut-chart',
+  templateUrl: './donut-chart.component.html',
+  styleUrls: ['./donut-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartComponent implements OnInit, OnChanges {
+export class DonutChartComponent implements OnInit, OnChanges {
   @Input() set options(options) {
     this.chartConfigurations = options;
     if (options.renderChart) {
