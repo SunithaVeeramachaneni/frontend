@@ -34,10 +34,6 @@ export class AssetsService {
 
   constructor(private _appService: AppService) {}
 
-  setFormCreatedUpdated(data: any) {
-    this.assetsCreatedUpdatedSubject.next(data);
-  }
-
   fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
     if (plantsID) {

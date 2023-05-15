@@ -353,6 +353,7 @@ export class IssuesListComponent implements OnInit {
   issuesCount$: Observable<number>;
   initial: any;
   isModalOpened = false;
+  placeHolder = '_ _';
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
 
@@ -387,16 +388,15 @@ export class IssuesListComponent implements OnInit {
   }
 
   displayIssues(): void {
-    const issuesOnLoadSearch$ =
-      this.observationsService.fetchIssues$.pipe(
-        filter(({ data }) => data === 'load' || data === 'search'),
-        switchMap(({ data }) => {
-          this.skip = 0;
-          this.observationsService.issuesNextToken = '';
-          this.fetchType = data;
-          return this.getIssuesList();
-        })
-      );
+    const issuesOnLoadSearch$ = this.observationsService.fetchIssues$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(({ data }) => {
+        this.skip = 0;
+        this.observationsService.issuesNextToken = '';
+        this.fetchType = data;
+        return this.getIssuesList();
+      })
+    );
 
     const onScrollIssues$ = this.observationsService.fetchIssues$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
@@ -432,10 +432,25 @@ export class IssuesListComponent implements OnInit {
           );
         }
         this.skip = this.initial.data.length;
+        this.initial.data = this.initial.data.map((data) => {
+          data.notificationInfo = this.isNotificationNumber(
+            data.notificationInfo
+          )
+            ? data.notificationInfo
+            : this.placeHolder;
+          return data;
+        });
         this.dataSource = new MatTableDataSource(this.initial.data);
         return this.initial;
       })
     );
+  }
+
+  isNotificationNumber(notificationInfo) {
+    if (!notificationInfo || notificationInfo.split(' ').length > 1) {
+      return false;
+    }
+    return true;
   }
 
   formatIssues(issues) {
@@ -506,7 +521,6 @@ export class IssuesListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-
   openModal(row: GetFormList): void {
     if (this.isModalOpened) {
       return;
@@ -532,13 +546,23 @@ export class IssuesListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((resp) => {
       this.isModalOpened = false;
       if (resp && Object.keys(resp).length) {
-        const { id, status, priority, dueDate, assignedToDisplay, assignedTo } =
-          resp.data;
+        const {
+          id,
+          status,
+          priority,
+          dueDate,
+          assignedToDisplay,
+          assignedTo,
+          notificationInfo
+        } = resp.data;
         this.initial.data = this.dataSource.data.map((data) => {
           if (data.id === id) {
             return {
               ...data,
               status,
+              notificationInfo: this.isNotificationNumber(notificationInfo)
+                ? notificationInfo
+                : this.placeHolder,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
               assignedToDisplay,
