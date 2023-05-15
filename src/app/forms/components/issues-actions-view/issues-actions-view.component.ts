@@ -129,9 +129,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       s3Details: { bucket, region },
       tenantId
     } = this.tenantService.getTenantInfo();
-    this.data.notificationInfo = this.checkNotificationNumberCorrect(
-      notificationInfo
-    )
+    this.data.notificationInfo = this.isNotificationNumber(notificationInfo)
       ? notificationInfo
       : '';
 
@@ -254,7 +252,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   };
 
-  checkNotificationNumberCorrect(notificationInfo) {
+  isNotificationNumber(notificationInfo) {
     if (
       !notificationInfo ||
       notificationInfo.split(' ').length > 1 ||
