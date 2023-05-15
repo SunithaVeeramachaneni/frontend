@@ -64,6 +64,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
   @Input() counter;
   @Input() isPreviewActive;
+  @Input() moduleName;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -128,7 +129,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         this.subFormPages$
           .pipe(
             tap((pages) => {
-              if (!pages || !pages.length) {
+              if (pages && pages.length === 0) {
                 this.isEmptyPlan = true;
               } else {
                 this.isEmptyPlan = false;
