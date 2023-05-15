@@ -58,8 +58,6 @@ import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { MatRadioModule } from '@angular/material/radio';
-import { NgxEchartsModule } from 'ngx-echarts';
-import * as echarts from 'echarts';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
 import { SubmissionComponent } from './submission/submission.component';
@@ -68,14 +66,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
-import { ObservationsComponent } from './observations/observations.component';
-import { IssuesComponent } from './issues/issues.component';
-import { ActionsComponent } from './actions/actions.component';
-import { IssuesActionsDetailViewComponent } from './issues-actions-detail-view/issues-actions-detail-view.component';
-import { ChartComponent } from './observations/donut-chart/chart.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { AssignToComponent } from './assign-to/assign-to.component';
+import { RoundObservationsComponent } from './round-observations/round-observations.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -103,12 +96,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanScheduleSuccessModalComponent,
     RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
-    ObservationsComponent,
-    IssuesComponent,
-    ActionsComponent,
-    IssuesActionsDetailViewComponent,
-    ChartComponent,
-    AssignToComponent
+    RoundObservationsComponent
   ],
   imports: [
     FormsModule,
@@ -161,10 +149,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       hierarchy: hierarchyReducer
     }),
     StoreDevtoolsModule.instrument({ logOnly: environment.production }),
-    EffectsModule.forFeature([RoundPlanConfigurationEffects]),
-    NgxEchartsModule.forRoot({
-      echarts
-    })
+    EffectsModule.forFeature([RoundPlanConfigurationEffects])
   ],
   exports: [OperatorRoundsContainerComponent]
 })

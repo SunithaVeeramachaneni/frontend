@@ -34,6 +34,7 @@ export class NodeComponent implements OnInit {
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
   selectedNode: any;
+  positions: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
 
@@ -123,9 +124,15 @@ export class NodeComponent implements OnInit {
   }
 
   toggleShowHierarchyPopover = (node) => {
-    const nodeCoordinates = document
+    const position = document
       .getElementById(`node-${node.id}`)
       .getBoundingClientRect();
+    this.positions = {
+      left: `${position.right + 10}px`,
+      top: `${position.top - 220}px`,
+      arrowleft: `${position.right}px`,
+      arrowtop: `${position.top + 10}px`
+    };
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };
