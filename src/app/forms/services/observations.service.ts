@@ -212,6 +212,7 @@ export class ObservationsService {
         createdBy
         assignedTo
         issueslistID
+        plantId
       }
     }`;
     return API.graphql(
@@ -232,6 +233,7 @@ export class ObservationsService {
         createdAt
         createdBy
         actionslistID
+        plantId
       }
     }`;
     return API.graphql(
