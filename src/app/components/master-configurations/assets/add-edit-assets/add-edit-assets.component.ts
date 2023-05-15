@@ -119,11 +119,7 @@ export class AddEditAssetsComponent implements OnInit {
       parentType: 'location',
       parentId: '',
       locationId: '',
-      plantsID: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ])
+      plantsID: new FormControl('', [Validators.required])
     });
     this.getAllLocations();
     this.getAllAssets();
