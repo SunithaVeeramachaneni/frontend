@@ -242,6 +242,7 @@
   "column": "Column",
   "multipleChoice": "Multiple Choice",
   "create": "Create",
+  "update": "Update",
   "templateName": "Template Name",
   "templateDescription": "Template Description",
   "saveTemplateBtn": "Save",

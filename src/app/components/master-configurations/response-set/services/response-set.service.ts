@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
-import { map, catchError, shareReplay } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
 
@@ -52,10 +52,13 @@ export class ResponseSetService {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
     params.set('next', '');
+    const info: ErrorInfo = {} as ErrorInfo;
+    const { displayToast, failureResponse = {} } = info;
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
-        'response-set/list?' + params.toString()
+        'response-set/list?' + params.toString(),
+        { displayToast, failureResponse }
       )
       .pipe(shareReplay(1));
   };

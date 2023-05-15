@@ -28,6 +28,7 @@ const routes: Routes = [
         path: 'create',
         component: FormConfigurationComponent,
         canActivate: [AuthGuard],
+        resolve: { form: FormResolverService },
         data: {
           breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForm]
