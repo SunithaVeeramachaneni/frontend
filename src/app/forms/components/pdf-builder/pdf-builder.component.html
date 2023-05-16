@@ -77,22 +77,24 @@
               <span translate="customText"></span>
             </mat-checkbox>
             <div class="customText">
-              <mat-form-field class="field" appearance="outline">
-                <mat-label translate="label"></mat-label>
-                <input
-                  matInput
-                  formControlName="customTextLabel"
-                  maxlength="25"
-                />
-              </mat-form-field>
-              <mat-form-field class="field" appearance="outline">
-                <mat-label translate="field"></mat-label>
-                <input
-                  matInput
-                  formControlName="customTextField"
-                  maxlength="25"
-                />
-              </mat-form-field>
+              <div [formGroup]="pdfBuilderConfigurationsFormCustomText">
+                <mat-form-field class="field" appearance="outline">
+                  <mat-label translate="label"></mat-label>
+                  <input
+                    matInput
+                    formControlName="customTextLabel"
+                    maxlength="25"
+                  />
+                </mat-form-field>
+                <mat-form-field class="field" appearance="outline">
+                  <mat-label translate="field"></mat-label>
+                  <input
+                    matInput
+                    formControlName="customTextField"
+                    maxlength="25"
+                  />
+                </mat-form-field>
+              </div>
             </div>
           </span>
         </div>
@@ -864,12 +866,12 @@
       class="customText"
       *ngIf="
         pdfBuilderConfigurationsForm.get('customText').value &&
-        pdfBuilderConfigurationsForm.get('customTextField').value &&
-        pdfBuilderConfigurationsForm.get('customTextLabel').value
+        pdfBuilderConfigurationsFormCustomText.get('customTextField').value &&
+        pdfBuilderConfigurationsFormCustomText.get('customTextLabel').value
       "
     >
-      {{ pdfBuilderConfigurationsForm.get('customTextLabel').value }}:
-      {{ pdfBuilderConfigurationsForm.get('customTextField').value }}
+      {{ pdfBuilderConfigurationsFormCustomText.get('customTextLabel').value }}:
+      {{ pdfBuilderConfigurationsFormCustomText.get('customTextField').value }}
     </span>
   </div>
 </ng-template>
