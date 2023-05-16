@@ -26,7 +26,10 @@ import {
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
 
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  permissions as perms
+} from 'src/app/app.constants';
 import {
   AssigneeDetails,
   CellClickActionEvent,
@@ -343,7 +346,7 @@ export class IssuesListComponent implements OnInit {
     data: any[];
   }>;
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
