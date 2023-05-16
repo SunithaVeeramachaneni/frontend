@@ -1,6 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata } from 'src/app/interfaces';
-import { CreateRoundPlanDetail, UpdateAuthoredRoundPlanDetail } from 'src/app/interfaces/master-data-management/round-plan';
+import {
+  CreateRoundPlanDetail,
+  UpdateAuthoredRoundPlanDetail
+} from 'src/app/interfaces/master-data-management/round-plan';
 
 export const createRoundPlanSuccess = createAction(
   '[Round Plan Configuration API] createRoundPlanSuccess',
@@ -55,6 +58,7 @@ export const publishRoundPlanSuccess = createAction(
     authoredFormDetail: CreateRoundPlanDetail;
     formStatus: string;
     formDetailPublishStatus: string;
+    isPublished: boolean;
   }>()
 );
 

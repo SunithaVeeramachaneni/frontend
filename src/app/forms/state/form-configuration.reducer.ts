@@ -148,7 +148,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formStatus: action.formStatus,
       formMetadata: {
         ...state.formMetadata,
-        formStatus: 'Published'
+        formStatus: 'Published',
+        isPublished: true
       },
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,

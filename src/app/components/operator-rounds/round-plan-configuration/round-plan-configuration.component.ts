@@ -335,9 +335,26 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   hierarchy: selectedHierarchyList
                 })
               );
+              if (formMetadata.formStatus === 'Published') {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: { ...formMetadata, formStatus: 'Draft' },
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
+                this.store.dispatch(
+                  RoundPlanConfigurationActions.updateRoundPlan({
+                    formMetadata: { ...formMetadata, formStatus: 'Draft' },
+                    formListDynamoDBVersion: this.formListVersion,
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
+              }
               this.formDetails = formDetails;
               this.selectedHierarchyList = selectedHierarchyList;
             }
+            this.formDetails = formDetails;
+            this.selectedHierarchyList = selectedHierarchyList;
           } else {
             this.store.dispatch(
               RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({

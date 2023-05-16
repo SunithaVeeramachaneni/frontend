@@ -87,6 +87,7 @@ export class RoundPlanConfigurationEffects {
                   lastPublishedBy: this.loginService.getLoggedInUserName(),
                   publishedDate: new Date().toISOString(),
                   formStatus: formConfigurationStatus.published,
+                  isPublished: true,
                   _version: action.formListDynamoDBVersion
                 },
                 authoredFormDetail: {
@@ -102,7 +103,8 @@ export class RoundPlanConfigurationEffects {
                   RoundPlanConfigurationApiActions.publishRoundPlanSuccess({
                     authoredFormDetail: createAuthoredFormDetail,
                     formStatus: formConfigurationStatus.published,
-                    formDetailPublishStatus: formConfigurationStatus.published
+                    formDetailPublishStatus: formConfigurationStatus.published,
+                    isPublished: true
                   })
                 )
               )
