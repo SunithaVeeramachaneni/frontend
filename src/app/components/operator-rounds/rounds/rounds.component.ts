@@ -372,6 +372,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
+  userFullNameByEmail: {};
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -390,6 +391,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.users$.subscribe((user) => {
+      this.userService.setUsers(user);
+      this.userFullNameByEmail = this.userService.getUsersInfo();
+      console.log(this.userFullNameByEmail);
+    });
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -712,7 +718,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === item.value[0]
+        );
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }

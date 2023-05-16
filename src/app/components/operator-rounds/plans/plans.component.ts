@@ -367,6 +367,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
+  userFullNameByEmail: {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -384,6 +385,11 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.users$.subscribe((user) => {
+      this.userService.setUsers(user);
+      this.userFullNameByEmail = this.userService.getUsersInfo();
+      console.log(this.userFullNameByEmail);
+    });
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -481,7 +487,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           filteredRoundPlans = roundPlans.data;
         }
         const uniqueAssignTo = filteredRoundPlans
-          ?.map((item) => item?.assigneeToEmail)
+          ?.map((item) => item?.assignedTo)
           .filter((value, index, self) => self.indexOf(value) === index);
 
         const uniqueSchedules = filteredRoundPlans
@@ -905,7 +911,9 @@ export class PlansComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value] ?? '';
         this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === item.value[0]
+        );
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
