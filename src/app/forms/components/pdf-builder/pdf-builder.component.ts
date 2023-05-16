@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -30,7 +31,7 @@ import {
   getFormPublishStatus,
   getFormDetails
 } from '../../state/builder/builder-state.selectors';
-import { tap } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
@@ -71,8 +72,6 @@ export class PDFBuilderComponent implements OnInit {
     submittedBy: true,
     pdfGeneratedDate: true,
     customText: true,
-    customTextLabel: '',
-    customTextField: '',
     actions: true,
     issues: true,
     questions: true,
@@ -82,6 +81,11 @@ export class PDFBuilderComponent implements OnInit {
     photos: true,
     skippedQuestions: true
   });
+  pdfBuilderConfigurationsFormCustomText: FormGroup = this.fb.group({
+    customTextLabel: '',
+    customTextField: ''
+  });
+
   formStatus: string;
   isFormDetailPublished: string;
   formDetailPublishStatus: string;
@@ -179,7 +183,10 @@ export class PDFBuilderComponent implements OnInit {
     this.pdfBuilderConfigurationsForm.valueChanges.subscribe((data) => {
       this.store.dispatch(
         BuilderConfigurationActions.updatePDFBuilderConfiguration({
-          pdfBuilderConfiguration: data
+          pdfBuilderConfiguration: {
+            ...this.pdfBuilderConfigurationsFormCustomText.value,
+            ...data
+          }
         })
       );
 
@@ -201,13 +208,55 @@ export class PDFBuilderComponent implements OnInit {
         );
       }
     });
+
+    this.pdfBuilderConfigurationsFormCustomText.valueChanges
+      .pipe(debounceTime(1000))
+      .subscribe((data) => {
+        const { customTextField, customTextLabel } = data;
+        this.store.dispatch(
+          BuilderConfigurationActions.updatePDFBuilderConfiguration({
+            pdfBuilderConfiguration: {
+              ...this.pdfBuilderConfigurationsForm.value,
+              customTextField,
+              customTextLabel
+            }
+          })
+        );
+
+        if (this.data.moduleName && this.data.moduleName === 'RDF') {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateForm({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        } else {
+          this.store.dispatch(
+            RoundPlanConfigurationActions.updateRoundPlan({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        }
+      });
     this.loadPDFBuilderConfig$ = this.store
       .select(getPDFBuilderConfiguration)
       .pipe(
         tap((config) => {
           this.pdfBuilderConfigurationsForm.patchValue(config, {
             emitEvent: false
-          });
+          }),
+            this.pdfBuilderConfigurationsFormCustomText.patchValue(
+              {
+                customTextField: config?.customTextField || '',
+                customTextLabel: config?.customTextLabel || ''
+              },
+              {
+                emitEvent: false
+              }
+            );
         })
       );
   }
@@ -244,8 +293,6 @@ export class PDFBuilderComponent implements OnInit {
         submittedBy: true,
         pdfGeneratedDate: true,
         customText: true,
-        customTextLabel: '',
-        customTextField: '',
         actions: true,
         issues: true,
         questions: true,
@@ -266,8 +313,6 @@ export class PDFBuilderComponent implements OnInit {
         submittedBy: false,
         pdfGeneratedDate: false,
         customText: false,
-        customTextLabel: '',
-        customTextField: '',
         actions: false,
         issues: false,
         questions: false,

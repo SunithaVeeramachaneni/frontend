@@ -314,8 +314,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -758,8 +758,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  status,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  status
                 };
               }
               return data;
@@ -800,6 +799,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

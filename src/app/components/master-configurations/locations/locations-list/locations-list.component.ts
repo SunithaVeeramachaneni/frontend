@@ -223,7 +223,6 @@ export class LocationsListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   locations$: Observable<any>;
-  allLocations$: Observable<any>;
   allPlants$: Observable<any>;
   locationsCount$: Observable<number>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
@@ -285,18 +284,17 @@ export class LocationsListComponent implements OnInit {
           return `${plantId} - ${name}`;
         });
 
-        const plantFilter = {
-          column: 'plant',
-          items: this.plants,
-          label: 'Plants',
-          type: 'select',
-          value: ''
-        };
-
-        this.filterJson = [plantFilter];
+        this.filterJson = [
+          {
+            column: 'plant',
+            items: this.plants,
+            label: 'Plant',
+            type: 'select',
+            value: ''
+          }
+        ];
       })
     );
-    this.allLocations$ = this.locationService.fetchAllLocations$();
     this.searchLocation = new FormControl('');
 
     this.searchLocation.valueChanges
@@ -305,26 +303,12 @@ export class LocationsListComponent implements OnInit {
         distinctUntilChanged(),
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
-          this.locationsListCount$ = this.locationService.getLocationCount$(
-            value.toLocaleLowerCase()
-          );
+          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.locationsListCount$ = this.locationService.getLocationCount$(null);
     this.getDisplayedLocations();
-    this.locationsCount$ = combineLatest([
-      this.locationsListCount$,
-      this.locationsCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addEditCopyDeleteLocations) {
-          count += update;
-          this.addEditCopyDeleteLocations = false;
-        }
-        return count;
-      })
-    );
+    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -362,7 +346,7 @@ export class LocationsListComponent implements OnInit {
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
       onScrollLocations$,
-      this.allLocations$,
+      this.locationService.fetchAllLocations$(),
       this.allPlants$
     ]).pipe(
       map(
@@ -373,9 +357,9 @@ export class LocationsListComponent implements OnInit {
           { items: allLocations = [] },
           { items: allPlants = [] }
         ]) => {
-          this.allPlants = allPlants;
+          this.allPlants = allPlants.filter((plant) => !plant._deleted);
           this.allParentsLocations = allLocations.filter(
-            (location) => location._deleted !== true
+            (location) => !location._deleted
           );
           this.dataFetchingComplete = true;
           if (this.skip === 0) {
@@ -610,7 +594,7 @@ export class LocationsListComponent implements OnInit {
       const objectKeys = Object.keys(allLocations);
       if (objectKeys.length > 0) {
         this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
+          (location) => !location._deleted
         );
         this.allParentsLocations = this.parentInformation;
       } else {
@@ -635,7 +619,7 @@ export class LocationsListComponent implements OnInit {
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.locationsListCount$ = this.locationService.getLocationCount$(null);
+        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -676,4 +660,21 @@ export class LocationsListComponent implements OnInit {
 
     return tableData;
   };
+
+  reloadLocationCount(searchTerm: string) {
+    this.locationsListCount$ =
+      this.locationService.getLocationCount$(searchTerm);
+    this.locationsCount$ = combineLatest([
+      this.locationsListCount$,
+      this.locationsCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addEditCopyDeleteLocations) {
+          count += update;
+          this.addEditCopyDeleteLocations = false;
+        }
+        return count;
+      })
+    );
+  }
 }

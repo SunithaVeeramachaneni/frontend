@@ -200,14 +200,6 @@ export class LocationService {
     );
   }
 
-  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this._appService._getLocal(
-      '',
-      'assets/json/master-configuration-locations-filter.json',
-      info
-    );
-  }
-
   private formatGraphQLocationResponse(resp: LocationsResponse) {
     let rows =
       resp.items

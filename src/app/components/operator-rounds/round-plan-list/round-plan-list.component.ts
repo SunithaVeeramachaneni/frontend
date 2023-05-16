@@ -183,6 +183,7 @@ export class RoundPlanListComponent implements OnInit {
       subtitleColumn: '',
       searchable: false,
       sortable: true,
+      reverseSort: true,
       hideable: false,
       visible: true,
       movable: false,
@@ -581,9 +582,12 @@ export class RoundPlanListComponent implements OnInit {
                 this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
                 return `${item.plant.plantId} - ${item.plant.name}`;
               }
-              return '';
+              return null;
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
+            .filter(
+              (value, index, self) =>
+                self.indexOf(value) === index && value !== null
+            );
           this.plants = [...uniquePlants];
 
           for (const item of this.filterJson) {

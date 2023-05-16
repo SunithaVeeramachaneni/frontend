@@ -450,6 +450,7 @@ export class ResponsesListComponent implements OnInit {
           this.responseSetService
             .deleteResponseSet$({
               id: data.id,
+              // eslint-disable-next-line no-underscore-dangle
               _version: data._version
             })
             .subscribe(() => {
