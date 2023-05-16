@@ -196,8 +196,6 @@ export class ResponsesListComponent implements OnInit {
   };
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   public searchResponseSet: FormControl;
-
-  public users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private addEditDeleteResponseSet: boolean;
@@ -241,26 +239,6 @@ export class ResponsesListComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.users$ = this.usersService
-      .getUsers$(
-        {
-          includeRoles: false,
-          includeSlackDetails: false
-        },
-        { displayToast: true, failureResponse: { rows: [] } }
-      )
-      .pipe(
-        map(({ rows: users }) =>
-          users.map((user: UserDetails) => ({
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email
-          }))
-        ),
-        shareReplay(1),
-        tap((users) => this.responseSetService.setUsers(users))
-      );
 
     this.getDisplayedResponseSets();
 
@@ -307,7 +285,7 @@ export class ResponsesListComponent implements OnInit {
       responseSetOnLoadSearch$,
       this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
-      this.users$
+      this.usersService.getUsersInfo$()
     ]).pipe(
       map(([rows, addEditData, scrollData, users]) => {
         if (this.skip === 0) {
@@ -320,7 +298,7 @@ export class ResponsesListComponent implements OnInit {
             ...item,
             responseCount: JSON.parse(item?.values)?.length,
             createdBy: item?.createdBy || '',
-            creator: this.responseSetService.getUserFullName(item?.createdBy)
+            creator: this.usersService.getUserFullName(item?.createdBy)
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
@@ -331,9 +309,7 @@ export class ResponsesListComponent implements OnInit {
                   {
                     ...form,
                     responseCount: JSON.parse(form.values).length,
-                    creator: this.responseSetService.getUserFullName(
-                      form.createdBy
-                    )
+                    creator: this.usersService.getUserFullName(form.createdBy)
                   },
                   ...initial.data
                 ];
@@ -344,9 +320,7 @@ export class ResponsesListComponent implements OnInit {
                 );
                 initial.data[updatedIdx] = {
                   ...form,
-                  creator: this.responseSetService.getUserFullName(
-                    form.createdBy
-                  ),
+                  creator: this.usersService.getUserFullName(form.createdBy),
                   responseCount: JSON.parse(form.values).length,
                   updatedAt: new Date().toISOString()
                 };
@@ -367,9 +341,7 @@ export class ResponsesListComponent implements OnInit {
                 ...item,
                 responseCount: JSON.parse(item?.values)?.length,
                 createdBy: item.createdBy || '',
-                creator: this.responseSetService.getUserFullName(
-                  item?.createdBy
-                )
+                creator: this.usersService.getUserFullName(item?.createdBy)
               }))
             );
         }
