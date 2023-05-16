@@ -337,8 +337,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -768,8 +768,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   status,
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  roundDBVersion: resp.roundDBVersion + 1
                 };
               }
               return data;
