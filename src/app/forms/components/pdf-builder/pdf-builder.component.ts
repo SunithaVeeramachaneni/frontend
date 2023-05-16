@@ -72,8 +72,6 @@ export class PDFBuilderComponent implements OnInit {
     submittedBy: true,
     pdfGeneratedDate: true,
     customText: true,
-    // customTextLabel: '',
-    // customTextField: '',
     actions: true,
     issues: true,
     questions: true,
@@ -187,7 +185,7 @@ export class PDFBuilderComponent implements OnInit {
         BuilderConfigurationActions.updatePDFBuilderConfiguration({
           pdfBuilderConfiguration: {
             ...this.pdfBuilderConfigurationsFormCustomText.value,
-            data
+            ...data
           }
         })
       );
