@@ -130,11 +130,7 @@
             />
             <div class="scrollable-area">
               <ng-container *ngFor="let parent of allParentsData">
-                <mat-option
-                  [value]="parent.id"
-                  *ngIf="
-                    parent.plantsID === this.locationForm.get('plantsID').value
-                  "
+                <mat-option [value]="parent.id"
                   >{{ parent.locationId }} - {{ parent.name }}</mat-option
                 >
               </ng-container>

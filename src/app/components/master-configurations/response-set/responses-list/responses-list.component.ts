@@ -98,7 +98,7 @@ export class ResponsesListComponent implements OnInit {
     },
     {
       id: 'responseCount',
-      displayName: '#Response',
+      displayName: 'Response',
       type: 'number',
       order: 2,
       controlType: 'string',
@@ -450,6 +450,7 @@ export class ResponsesListComponent implements OnInit {
           this.responseSetService
             .deleteResponseSet$({
               id: data.id,
+              // eslint-disable-next-line no-underscore-dangle
               _version: data._version
             })
             .subscribe(() => {
