@@ -204,14 +204,21 @@ export class ObservationsService {
   onCreateIssuesLogHistory$(input) {
     const statement = `subscription OnCreateIssuesLogHistory($filter: ModelSubscriptionIssuesLogHistoryFilterInput) {
       onCreateIssuesLogHistory(filter: $filter) {
-        id
-        message
-        type
-        username
+        _deleted
+        _lastChangedAt
+        _version
+        assignedTo
         createdAt
         createdBy
-        assignedTo
+        id
+        isDeleted
         issueslistID
+        message
+        moduleName
+        plantId
+        type
+        updatedAt
+        username
       }
     }`;
     return API.graphql(
@@ -224,14 +231,21 @@ export class ObservationsService {
   onCreateActionsLogHistory$(input) {
     const statement = `subscription OnCreateActionsLogHistory($filter: ModelSubscriptionActionsLogHistoryFilterInput) {
       onCreateActionsLogHistory(filter: $filter) {
-        id
-        message
-        type
-        username
+        _deleted
+        _lastChangedAt
+        _version
+        actionslistID
         assignedTo
         createdAt
         createdBy
-        actionslistID
+        id
+        isDeleted
+        message
+        moduleName
+        plantId
+        type
+        updatedAt
+        username
       }
     }`;
     return API.graphql(
@@ -244,12 +258,23 @@ export class ObservationsService {
   onUpdateActionsList$(input) {
     const statement = `subscription OnUpdateActionsList($filter: ModelSubscriptionActionsListFilterInput) {
       onUpdateActionsList(filter: $filter) {
-        id
-        actionData
-        createdBy
-        createdAt
-        assignedTo
+        _deleted
+        _lastChangedAt
         _version
+        actionData
+        actionId
+        assignedTo
+        createdAt
+        createdBy
+        id
+        isDeleted
+        moduleName
+        plantId
+        roundId
+        searchTerm
+        taskDescription
+        taskId
+        updatedAt
       }
     }`;
     return API.graphql(
@@ -262,12 +287,24 @@ export class ObservationsService {
   onUpdateIssuesList$(input) {
     const statement = `subscription OnUpdateIssuesList($filter: ModelSubscriptionIssuesListFilterInput) {
       onUpdateIssuesList(filter: $filter) {
-        id
-        issueData
-        createdBy
-        createdAt
-        assignedTo
+        _deleted
+        _lastChangedAt
         _version
+        assignedTo
+        createdAt
+        createdBy
+        id
+        isDeleted
+        issueData
+        issueId
+        moduleName
+        notificationInfo
+        plantId
+        roundId
+        searchTerm
+        taskDescription
+        taskId
+        updatedAt
       }
     }`;
     return API.graphql(
