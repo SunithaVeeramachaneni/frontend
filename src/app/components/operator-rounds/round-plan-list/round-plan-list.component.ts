@@ -183,6 +183,7 @@ export class RoundPlanListComponent implements OnInit {
       subtitleColumn: '',
       searchable: false,
       sortable: true,
+      reverseSort: true,
       hideable: false,
       visible: true,
       movable: false,
