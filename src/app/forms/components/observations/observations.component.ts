@@ -116,79 +116,81 @@ export class ObservationsComponent implements OnInit {
     this.users$ = this.userService.getUsersInfo$();
     this.observationsService
       .getObservationChartCounts$(this.moduleName)
-      .subscribe((result) => {
-        if (result) {
-          this.priorityData = {
-            issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  ...this.observationsService.prepareColorsAndData(
-                    result?.openIssues?.priority,
-                    'priority'
-                  )
-                }
-              ]
-            },
-            actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.priorityTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  ...this.observationsService.prepareColorsAndData(
-                    result?.openActions?.priority,
-                    'priority'
-                  )
-                }
-              ]
-            }
-          };
+      .subscribe();
 
-          this.statusData = {
-            issues: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openIssues?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  ...this.observationsService.prepareColorsAndData(
-                    result?.openIssues?.status,
-                    'status'
-                  )
-                }
-              ]
+    this.observationsService.observationChartCounts$.subscribe((result) => {
+      if (result) {
+        this.priorityData = {
+          issues: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openIssues?.priorityTotal
             },
-            actions: {
-              ...this.options,
-              title: {
-                ...this.options.title,
-                text: result?.openActions?.statusTotal
-              },
-              series: [
-                {
-                  ...this.options.series[0],
-                  ...this.observationsService.prepareColorsAndData(
-                    result?.openActions?.status,
-                    'status'
-                  )
-                }
-              ]
-            }
-          };
-        }
-        this.cdrf.markForCheck();
-      });
+            series: [
+              {
+                ...this.options.series[0],
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openIssues?.priority,
+                  'priority'
+                )
+              }
+            ]
+          },
+          actions: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openActions?.priorityTotal
+            },
+            series: [
+              {
+                ...this.options.series[0],
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openActions?.priority,
+                  'priority'
+                )
+              }
+            ]
+          }
+        };
+
+        this.statusData = {
+          issues: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openIssues?.statusTotal
+            },
+            series: [
+              {
+                ...this.options.series[0],
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openIssues?.status,
+                  'status'
+                )
+              }
+            ]
+          },
+          actions: {
+            ...this.options,
+            title: {
+              ...this.options.title,
+              text: result?.openActions?.statusTotal
+            },
+            series: [
+              {
+                ...this.options.series[0],
+                ...this.observationsService.prepareColorsAndData(
+                  result?.openActions?.status,
+                  'status'
+                )
+              }
+            ]
+          }
+        };
+      }
+      this.cdrf.markForCheck();
+    });
   }
 }

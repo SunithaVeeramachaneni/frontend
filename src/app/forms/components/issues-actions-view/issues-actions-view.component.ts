@@ -94,6 +94,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   isNextEnabled = false;
   ghostLoading = new Array(17).fill(0).map((_, i) => i);
   placeholder = '_ _';
+  isCreateNotification = false;
   moduleName: string;
   private totalCount = 0;
   private allData = [];
@@ -119,7 +120,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
-    const { users$, totalCount$, allData, moduleName } = this.data;
+    const { users$, totalCount$, allData, notificationInfo, moduleName } =
+      this.data;
     this.allData = allData;
     this.moduleName = moduleName;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
@@ -127,6 +129,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       s3Details: { bucket, region },
       tenantId
     } = this.tenantService.getTenantInfo();
+    this.data.notificationInfo = this.isNotificationNumber(notificationInfo)
+      ? notificationInfo
+      : '';
+
     this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
     this.userInfo = this.loginService.getLoggedInUserInfo();
     this.users$ = users$.pipe(
@@ -246,6 +252,17 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   };
 
+  isNotificationNumber(notificationInfo) {
+    if (
+      !notificationInfo ||
+      notificationInfo.split(' ').length > 1 ||
+      notificationInfo === this.placeholder
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
@@ -289,9 +306,18 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   onCancel(): void {
-    this.dialogRef.close({
-      data: { ...this.issuesActionsDetailViewForm.value, id: this.data.id }
-    });
+    this.observations
+      .getObservationChartCounts$(this.moduleName)
+      .subscribe(() => {
+        this.dialogRef.close({
+          data: {
+            ...this.issuesActionsDetailViewForm.value,
+            id: this.data.id,
+            priority: this.data.priority,
+            notificationInfo: this.data.notificationInfo
+          }
+        });
+      });
   }
 
   updateIssueOrAction(event: UpdateIssueOrActionEvent) {
@@ -408,6 +434,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   createNotification() {
+    this.isCreateNotification = true;
     if (this.data.category !== this.placeholder) {
       this.observations
         .createNotification(this.data, this.moduleName)
@@ -416,12 +443,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             const { notificationInfo } = value;
             this.data.notificationInfo = notificationInfo;
           }
+          this.isCreateNotification = false;
         });
     } else {
       this.toastService.show({
         type: 'warning',
         text: 'Category is mandatory for notification creation'
       });
+      this.isCreateNotification = false;
     }
   }
 
