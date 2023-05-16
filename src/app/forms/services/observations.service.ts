@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -33,6 +33,7 @@ export class ObservationsService {
   actionsNextToken = '';
   actions$: Subject<{ count: number; next: string; rows: any[] }> =
     new Subject();
+  observationChartCounts$ = new BehaviorSubject(null);
   statusColors = {
     open: '#e0e0e0',
     inprogress: '#ffcc01',
@@ -100,11 +101,10 @@ export class ObservationsService {
       );
   }
 
-  getObservationChartCounts$(param): any {
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      `${param}/chart-data`
-    );
+  getObservationChartCounts$(param) {
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, `${param}/chart-data`)
+      .pipe(map((result) => this.observationChartCounts$.next(result)));
   }
 
   updateIssueOrAction$ = (
@@ -208,10 +208,17 @@ export class ObservationsService {
         message
         type
         username
-        createdAt
+        issueslistID
         createdBy
         assignedTo
-        issueslistID
+        isDeleted
+        moduleName
+        plantId
+        createdAt
+        updatedAt
+        _version
+        _lastChangedAt
+        _deleted
       }
     }`;
     return API.graphql(
@@ -228,10 +235,17 @@ export class ObservationsService {
         message
         type
         username
-        assignedTo
-        createdAt
-        createdBy
         actionslistID
+        createdBy
+        assignedTo
+        isDeleted
+        moduleName
+        plantId
+        createdAt
+        updatedAt
+        _version
+        _lastChangedAt
+        _deleted
       }
     }`;
     return API.graphql(
@@ -245,11 +259,22 @@ export class ObservationsService {
     const statement = `subscription OnUpdateActionsList($filter: ModelSubscriptionActionsListFilterInput) {
       onUpdateActionsList(filter: $filter) {
         id
+        actionId
         actionData
+        taskId
+        taskDescription
+        searchTerm
         createdBy
-        createdAt
+        roundId
         assignedTo
+        isDeleted
+        moduleName
+        plantId
+        createdAt
+        updatedAt
         _version
+        _lastChangedAt
+        _deleted
       }
     }`;
     return API.graphql(
@@ -263,11 +288,23 @@ export class ObservationsService {
     const statement = `subscription OnUpdateIssuesList($filter: ModelSubscriptionIssuesListFilterInput) {
       onUpdateIssuesList(filter: $filter) {
         id
+        issueId
         issueData
+        taskId
+        taskDescription
+        notificationInfo
+        searchTerm
         createdBy
-        createdAt
+        roundId
         assignedTo
+        isDeleted
+        moduleName
+        plantId
+        createdAt
+        updatedAt
         _version
+        _lastChangedAt
+        _deleted
       }
     }`;
     return API.graphql(
