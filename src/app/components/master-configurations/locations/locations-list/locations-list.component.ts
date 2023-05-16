@@ -288,7 +288,7 @@ export class LocationsListComponent implements OnInit {
           {
             column: 'plant',
             items: this.plants,
-            label: 'Plants',
+            label: 'Plant',
             type: 'select',
             value: ''
           }
