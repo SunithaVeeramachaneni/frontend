@@ -36,7 +36,7 @@
         <input
           matInput
           formControlName="description"
-          placeholder="Untitled description"
+          [placeholder]="'untitledDescription' | translate"
           autocomplete="off"
           class="global_response_description_input"
           [hidden]="isViewMode"
