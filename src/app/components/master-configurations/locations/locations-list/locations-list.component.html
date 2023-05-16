@@ -163,7 +163,7 @@
         ></app-location-detail-view>
       </ng-container>
 
-      <div *ngIf="isLoading$ | async">
+      <div *ngIf="(isLoading$ | async) || !dataFetchingComplete">
         <div class="ghost-loading">
           <div *ngFor="let number of ghostLoading">
             <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
