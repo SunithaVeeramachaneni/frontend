@@ -306,14 +306,18 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   onCancel(): void {
-    this.dialogRef.close({
-      data: {
-        ...this.issuesActionsDetailViewForm.value,
-        id: this.data.id,
-        priority: this.data.priority,
-        notificationInfo: this.data.notificationInfo
-      }
-    });
+    this.observations
+      .getObservationChartCounts$(this.moduleName)
+      .subscribe(() => {
+        this.dialogRef.close({
+          data: {
+            ...this.issuesActionsDetailViewForm.value,
+            id: this.data.id,
+            priority: this.data.priority,
+            notificationInfo: this.data.notificationInfo
+          }
+        });
+      });
   }
 
   updateIssueOrAction(event: UpdateIssueOrActionEvent) {
