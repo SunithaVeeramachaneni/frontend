@@ -459,18 +459,21 @@
 
       <div class="right-div p-5-0" *ngIf="data.type === 'issue'">
         <div class="titles m-t-10" translate="erpnotification"></div>
-        <div class="values">
+        <div class="values" *ngIf="!isCreateNotification">
           <button
             *ngIf="!data.notificationInfo.length"
             mat-raised-button
             color="primary"
             (click)="createNotification()"
           >
-            Create
+            {{ 'create' | translate }}
           </button>
           <span *ngIf="data.notificationInfo.length">{{
             data.notificationInfo
           }}</span>
+        </div>
+        <div class="values" *ngIf="isCreateNotification">
+          <span>{{ 'notificationCreation' | translate }}</span>
         </div>
       </div>
       <hr class="line" />

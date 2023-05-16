@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -33,6 +33,7 @@ export class ObservationsService {
   actionsNextToken = '';
   actions$: Subject<{ count: number; next: string; rows: any[] }> =
     new Subject();
+  observationChartCounts$ = new BehaviorSubject(null);
   statusColors = {
     open: '#e0e0e0',
     inprogress: '#ffcc01',
@@ -100,11 +101,10 @@ export class ObservationsService {
       );
   }
 
-  getObservationChartCounts$(param): any {
-    return this.appService._getResp(
-      environment.operatorRoundsApiUrl,
-      `${param}/chart-data`
-    );
+  getObservationChartCounts$(param) {
+    return this.appService
+      ._getResp(environment.operatorRoundsApiUrl, `${param}/chart-data`)
+      .pipe(map((result) => this.observationChartCounts$.next(result)));
   }
 
   updateIssueOrAction$ = (
