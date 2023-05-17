@@ -19,12 +19,13 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import {
   CellClickActionEvent,
-  Count,
   TableEvent,
   FormTableUpdate,
-  RoundPlan
+  RoundPlan,
+  UserInfo,
+  Permission
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -36,6 +37,7 @@ import { RoundPlanConfigurationModalComponent } from '../round-plan-configuratio
 import { MatDialog } from '@angular/material/dialog';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -271,6 +273,8 @@ export class RoundPlanListComponent implements OnInit {
   plantsIdNameMap = {};
   createdBy = [];
   plantsObject: { [key: string]: PlantsResponse } = {};
+  userInfo$: Observable<UserInfo>;
+  readonly perms = perms;
 
   constructor(
     private readonly toast: ToastService,
@@ -278,7 +282,8 @@ export class RoundPlanListComponent implements OnInit {
     private router: Router,
     private readonly store: Store<State>,
     private dialog: MatDialog,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -300,7 +305,9 @@ export class RoundPlanListComponent implements OnInit {
     this.getDisplayedForms();
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -526,25 +533,32 @@ export class RoundPlanListComponent implements OnInit {
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_OR_PLAN')
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
+      });
+    }
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_OR_PLAN')) {
+      menuActions.push({
         title: 'Copy',
         action: 'copy'
-      },
-      {
+      });
+    }
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'ARCHIVE_OR_PLAN')
+    ) {
+      menuActions.push({
         title: 'Archive',
         action: 'archive'
-      }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
