@@ -26,7 +26,7 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import {
-  LIST_LENGTH,
+  graphQLDefaultLimit,
   formConfigurationStatus,
   permissions as perms
 } from 'src/app/app.constants';
@@ -265,7 +265,7 @@ export class FormListComponent implements OnInit {
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = LIST_LENGTH;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
