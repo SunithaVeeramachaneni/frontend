@@ -96,6 +96,8 @@ export interface RoundDetail extends RoundPlan {
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
+  assignedToEmail?: string;
+  previouslyAssignedTo: string;
   roundDBVersion: number;
   roundDetailDBVersion: number;
 }
