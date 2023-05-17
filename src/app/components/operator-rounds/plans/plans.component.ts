@@ -80,7 +80,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     this._users$ = users$.pipe(
       tap((users) => {
         this.assigneeDetails = { users };
-        this.userService.setUsers(users);
         this.userFullNameByEmail = this.userService.getUsersInfo();
       })
     );
