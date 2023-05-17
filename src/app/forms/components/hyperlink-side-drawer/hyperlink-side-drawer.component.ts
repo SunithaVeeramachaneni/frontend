@@ -103,7 +103,6 @@ export class HyperlinkSideDrawerComponent implements OnInit {
   processValidationErrors(controlName: string): boolean {
     const touched = this.hyperlinkForm.get(controlName).touched;
     const errors = this.hyperlinkForm.get(controlName).errors;
-    console.log(errors);
     this.errors[controlName] = null;
     if (touched && errors) {
       Object.keys(errors).forEach((messageKey) => {
