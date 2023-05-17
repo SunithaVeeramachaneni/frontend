@@ -16,19 +16,12 @@ import { formatDistance } from 'date-fns';
   providedIn: 'root'
 })
 export class PlantService {
-  plantCreatedUpdatedSubject = new BehaviorSubject<any>({});
   fetchPlants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  plantCreatedUpdated$ = this.plantCreatedUpdatedSubject.asObservable();
-
-  private MAX_FETCH_LIMIT: string = '1000000';
+  private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.plantCreatedUpdatedSubject.next(data);
-  }
 
   fetchAllPlants$ = () => {
     const params: URLSearchParams = new URLSearchParams();
@@ -132,7 +125,7 @@ export class PlantService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/default-plant.svg',
             style: {

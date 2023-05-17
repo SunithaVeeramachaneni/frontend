@@ -66,6 +66,8 @@
     align-items: center;
     // width: 85%;
     flex-grow: 1;
+    position: relative;
+    left: 14px;
 
     .asset-name {
       white-space: nowrap;

@@ -71,6 +71,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   ghostLoading = new Array(19).fill(0).map((_, i) => i);
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
+  pdfButtonDisabled = false;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -87,7 +88,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.id
+          this.selectedForm.id,
+          this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
         formDetail$ = this.operatorRoundsService.getAuthoredFormDetailByFormId$(
@@ -132,6 +134,15 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
+      this.pdfButtonDisabled = false;
+      if (this.selectedForm?.status) {
+        if (
+          this.selectedForm?.status.toLowerCase() === 'open' ||
+          this.selectedForm?.status.toLowerCase() === 'to-do'
+        ) {
+          this.pdfButtonDisabled = true;
+        }
+      }
     }
   }
 

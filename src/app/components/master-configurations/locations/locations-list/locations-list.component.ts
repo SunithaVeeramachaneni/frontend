@@ -45,6 +45,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { PlantService } from '../../plants/services/plant.service';
 
 @Component({
   selector: 'app-locations-list',
@@ -222,8 +223,8 @@ export class LocationsListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   locations$: Observable<any>;
-  allLocations$: Observable<any>;
-  locationsCount$: Observable<Count>;
+  allPlants$: Observable<any>;
+  locationsCount$: Observable<number>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
@@ -248,11 +249,10 @@ export class LocationsListComponent implements OnInit {
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
-    status: '',
-    assignedTo: '',
-    dueDate: '',
     plant: ''
   };
+  allPlants: any[] = [];
+  dataFetchingComplete = false;
 
   plants = [];
   plantsIdNameMap = {};
@@ -261,6 +261,7 @@ export class LocationsListComponent implements OnInit {
 
   constructor(
     private locationService: LocationService,
+    private plantsService: PlantService,
     private readonly toast: ToastService,
     private loginService: LoginService,
     private dialog: MatDialog,
@@ -275,39 +276,43 @@ export class LocationsListComponent implements OnInit {
     );
     this.locationService.fetchLocations$.next({ data: 'load' });
     this.locationService.fetchLocations$.next({} as TableEvent);
-    this.allLocations$ = this.locationService.fetchAllLocations$();
+    this.allPlants$ = this.plantsService.fetchAllPlants$().pipe(
+      tap(({ items: allPlants = [] }) => {
+        this.plants = allPlants.map((plant) => {
+          const { id, name, plantId } = plant;
+          this.plantsIdNameMap[`${plantId} - ${name}`] = id;
+          return `${plantId} - ${name}`;
+        });
+
+        this.filterJson = [
+          {
+            column: 'plant',
+            items: this.plants,
+            label: 'Plant',
+            type: 'select',
+            value: ''
+          }
+        ];
+      })
+    );
     this.searchLocation = new FormControl('');
 
     this.searchLocation.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => {
+        tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
+          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.getDisplayedLocations();
-    this.locationsCount$ = combineLatest([
-      this.locationsCount$,
-      this.locationsCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addEditCopyDeleteLocations) {
-          count.count += update;
-          this.addEditCopyDeleteLocations = false;
-        }
-        return count;
-      })
-    );
+    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.getFilter();
-    this.getAllLocations();
   }
 
   getDisplayedLocations(): void {
@@ -341,81 +346,71 @@ export class LocationsListComponent implements OnInit {
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
       onScrollLocations$,
-      this.allLocations$
+      this.locationService.fetchAllLocations$(),
+      this.allPlants$
     ]).pipe(
-      map(([rows, { form, action }, scrollData, allLocations]) => {
-        const { items: unfilteredParentLocations } = allLocations;
-        this.allParentsLocations = unfilteredParentLocations.filter(
-          (location) => location._deleted !== true
-        );
-        if (this.skip === 0) {
-          this.configOptions = {
-            ...this.configOptions,
-            tableHeight: 'calc(100vh - 140px)'
-          };
-          initial.data = rows;
-        } else if (this.addEditCopyDeleteLocations) {
-          switch (action) {
-            case 'delete':
-              initial.data = initial.data.filter((d) => d.id !== form.id);
-              this.toast.show({
-                text: 'Location deleted successfully!',
-                type: 'success'
-              });
-              break;
-            case 'add':
-              initial.data = [form, ...initial.data];
-              break;
-            case 'edit':
-              initial.data = [
-                form,
-                ...initial.data.filter((item) => item.id !== form.id)
-              ];
-              break;
-            default:
-            //Do nothing
-          }
-          this.addEditCopyDeleteLocations = false;
-        } else {
-          initial.data = initial.data.concat(scrollData);
-        }
-        for (const item of initial.data) {
-          if (item.parentId) {
-            const parent = this.allParentsLocations.find(
-              (d) => d.id === item.parentId
-            );
-            if (parent) {
-              item.parent = parent.name;
-              item.parentID = parent.locationId;
-            } else {
-              item.parent = '';
+      map(
+        ([
+          rows,
+          { form, action },
+          scrollData,
+          { items: allLocations = [] },
+          { items: allPlants = [] }
+        ]) => {
+          this.allPlants = allPlants.filter((plant) => !plant._deleted);
+          this.allParentsLocations = allLocations.filter(
+            (location) => !location._deleted
+          );
+          this.dataFetchingComplete = true;
+          if (this.skip === 0) {
+            this.configOptions = {
+              ...this.configOptions,
+              tableHeight: 'calc(100vh - 140px)'
+            };
+            initial.data = this.injectPlantAndParentInfo(rows, allPlants);
+          } else if (this.addEditCopyDeleteLocations) {
+            const newForm = this.injectPlantAndParentInfo([form], allPlants);
+            switch (action) {
+              case 'delete':
+                initial.data = initial.data.filter((d) => d.id !== form.id);
+                this.toast.show({
+                  text: 'Location deleted successfully!',
+                  type: 'success'
+                });
+                break;
+              case 'add':
+                initial.data = [newForm, ...initial.data];
+                break;
+              case 'edit':
+                const formIdx = initial.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                initial.data[formIdx] = newForm;
+                break;
+              default:
+              //Do nothing
             }
+            this.addEditCopyDeleteLocations = false;
+          } else {
+            initial.data = initial.data.concat(
+              this.injectPlantAndParentInfo(scrollData, allPlants)
+            );
           }
+          this.skip = initial.data.length;
+          this.dataSource = new MatTableDataSource(initial.data);
+          this.cdrf.markForCheck();
+          return initial;
         }
-        this.skip = initial.data.length;
-        this.dataSource = new MatTableDataSource(initial.data);
-        return initial;
-      })
+      )
     );
-  }
-
-  getFilter() {
-    this.locationService.getFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
   }
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = item.value.split('-')[0].trim();
-        const plantsID = this.plantsIdNameMap[plantId];
+        const plantsID = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantsID;
-      } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
       }
     }
     this.nextToken = '';
@@ -425,9 +420,6 @@ export class LocationsListComponent implements OnInit {
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
-      assignedTo: '',
-      dueDate: '',
       plant: ''
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
@@ -446,37 +438,19 @@ export class LocationsListComponent implements OnInit {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.locationsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.locationsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
-        }),
-        map((data) =>
-          data.map((item) => {
-            if (item.plantsID) {
-              item = {
-                ...item,
-                plant: item?.plant?.name,
-                plantsID: item?.plantsID,
-                plantId: item?.plant?.plantId
-              };
-            } else {
-              item = { ...item, plant: '' };
-            }
-            return item;
-          })
-        )
+        })
       );
   }
 
   addOrUpdateLocation(locationData) {
     if (locationData?.status === 'add') {
-      this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
         this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
@@ -489,6 +463,8 @@ export class LocationsListComponent implements OnInit {
         text: 'Location created successfully!',
         type: 'success'
       });
+      this.addEditCopyDeleteLocations = true;
+      this.locationsCountUpdate$.next(1);
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
@@ -504,7 +480,6 @@ export class LocationsListComponent implements OnInit {
         });
       }
     }
-    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -576,8 +551,9 @@ export class LocationsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
+      this.addEditCopyDeleteLocations = true;
+      this.locationsCountUpdate$.next(-1);
     });
-    this.locationsListCount$ = this.locationService.getLocationCount$();
   }
 
   addManually() {
@@ -612,40 +588,24 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
+
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
       const objectKeys = Object.keys(allLocations);
       if (objectKeys.length > 0) {
         this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
+          (location) => !location._deleted
         );
         this.allParentsLocations = this.parentInformation;
-
-        const uniquePlants = allLocations.items
-          .map((item) => {
-            if (item.plant) {
-              this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
-              return `${item.plant.plantId} - ${item.plant.name}`;
-            }
-            return '';
-          })
-          .filter((value, index, self) => self.indexOf(value) === index);
-
-        this.plants = [...uniquePlants];
-
-        for (const item of this.filterJson) {
-          if (item.column === 'plant') {
-            item.items = this.plants;
-          }
-        }
       } else {
         this.allParentsLocations = [];
       }
     });
   }
+
   uploadFile(event) {
     const file = event.target.files[0];
-    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+    const dialogRef = this.dialog.open(UploadResponseModalComponent, {
       data: {
         file,
         type: 'locations'
@@ -653,13 +613,13 @@ export class LocationsListComponent implements OnInit {
       disableClose: true
     });
 
-    deleteReportRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.locationsListCount$ = this.locationService.getLocationCount$();
+        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -671,5 +631,50 @@ export class LocationsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  injectPlantAndParentInfo = (scrollData, allPlants) => {
+    const tableData = scrollData.map((data) => {
+      const plantInfo = allPlants.find((plant) => plant.id === data.plantsID);
+      if (plantInfo) {
+        Object.assign(data, {
+          plant: plantInfo.name,
+          plantId: plantInfo.plantId
+        });
+      }
+      if (data.parentId) {
+        const parent = this.allParentsLocations.find(
+          (d) => d.id === data.parentId
+        );
+
+        if (parent) {
+          Object.assign(data, {
+            parent: parent.name,
+            parentID: parent.locationId
+          });
+        } else Object.assign(data, { parent: '', parentId: '' });
+      }
+
+      return data;
+    });
+
+    return tableData;
+  };
+
+  reloadLocationCount(searchTerm: string) {
+    this.locationsListCount$ =
+      this.locationService.getLocationCount$(searchTerm);
+    this.locationsCount$ = combineLatest([
+      this.locationsListCount$,
+      this.locationsCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addEditCopyDeleteLocations) {
+          count += update;
+          this.addEditCopyDeleteLocations = false;
+        }
+        return count;
+      })
+    );
   }
 }

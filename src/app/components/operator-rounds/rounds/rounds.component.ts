@@ -337,8 +337,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -443,7 +443,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
@@ -459,11 +459,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundDetail.assignedTo
               )
             }))
-          );
-        }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -722,19 +717,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchRounds$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -746,6 +730,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: ''
     };
+    this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
 
@@ -766,10 +751,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
     const { roundId } = this.selectedRound;
+    let { status } = this.selectedRound;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo },
+        { ...this.selectedRound, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -780,8 +767,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
-                  roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  status,
+                  roundDBVersion: resp.roundDBVersion + 1
                 };
               }
               return data;

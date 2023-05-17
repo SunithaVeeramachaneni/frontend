@@ -15,6 +15,7 @@ import { ErrorInfo, Tenant } from './interfaces';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { DOCUMENT } from '@angular/common';
 import { AppService } from './shared/services/app.services';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +27,7 @@ export class AuthConfigService {
     private appService: AppService,
     private oidcSecurityService: OidcSecurityService,
     @Inject(DOCUMENT) private document: Document
-  ) { }
+  ) {}
 
   getAuthConfig$ = (
     info: ErrorInfo = {} as ErrorInfo

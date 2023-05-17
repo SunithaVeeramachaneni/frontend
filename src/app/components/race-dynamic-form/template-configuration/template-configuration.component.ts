@@ -48,7 +48,12 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  BuilderConfigurationActions,
+  GlobalResponseActions,
+  QuickResponseActions,
+  UnitOfMeasurementActions
+} from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -148,7 +153,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         );
       });
     }
-    this.responseSetService.fetchAllGlobalResponses$().subscribe();
     this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
     this.formConfiguration.valueChanges
@@ -619,6 +623,9 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
+    this.store.dispatch(QuickResponseActions.resetQuickResponses());
+    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {

@@ -69,7 +69,10 @@
         </a>
         <br />
         <div class="dis-flex center">
-          <a matTooltip="{{ formConfiguration.get('description').value }}">
+          <a
+            matTooltip="{{ formConfiguration.get('description').value }}"
+            class="width-62"
+          >
             <input
               type="text"
               class="form_description_input"
@@ -144,7 +147,9 @@
         class="next-btn"
         (click)="goToPDFBuilderConfiguration()"
       >
-        <span translate="next"></span>
+        <span>
+          <span translate="next"></span>
+        </span>
       </button>
     </div>
   </div>
@@ -201,6 +206,7 @@
             [selectedNode]="selectedNodeInstance"
             [isPreviewActive]="isPreviewActive"
             [counter]="formConfiguration.get('counter').value"
+            [moduleName]="'rounds'"
           ></app-builder>
         </div>
       </div>
@@ -223,6 +229,7 @@
           *ngIf="selectedNodeLoadStatus"
           [selectedNode]="selectedNode"
           [counter]="formConfiguration.get('counter').value"
+          [moduleName]="'rounds'"
         ></app-builder>
       </div>
     </div>

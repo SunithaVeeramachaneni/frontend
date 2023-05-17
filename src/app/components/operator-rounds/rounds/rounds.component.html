@@ -15,9 +15,7 @@
   <span class="custom-form-field-gray-color search">
     <span class="no-of-rounds">
       <ng-container *ngIf="(isLoading$ | async) === false; else loadingRounds">
-        <span class="rounds-count">
-          {{ roundsCount }}
-        </span>
+        <span class="rounds-count"> {{ roundsCount }} &nbsp; </span>
         <span class="rounds-text">{{
           'roundsPlural'
             | translate
@@ -106,11 +104,11 @@
       #assigneeMenuTrigger="matMenuTrigger"
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-to
+      <app-assigned-to
         [assigneeDetails]="assigneeDetails"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
-      ></app-assign-to>
+      ></app-assigned-to>
     </mat-menu>
   </ng-container>
 </ng-container>

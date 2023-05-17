@@ -26,6 +26,7 @@
   height: 100vh;
   background-color: $white;
   border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgba(0, 0, 0, 0.46);
 
   ::ng-deep .mat-card {
     box-shadow: none !important;

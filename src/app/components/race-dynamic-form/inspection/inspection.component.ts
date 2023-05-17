@@ -63,6 +63,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UsersService } from '../../user-management/services/users.service';
 
 @Component({
   selector: 'app-inspection',
@@ -173,6 +174,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
+
     {
       id: 'dueDate',
       displayName: 'Due Date',
@@ -312,8 +314,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -362,7 +364,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -425,7 +428,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
@@ -433,9 +436,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               ? new Date(inspectionDetail.dueDate)
               : '',
             assignedTo: inspectionDetail?.assignedTo
-              ? this.raceDynamicFormService.getUserFullName(
-                  inspectionDetail.assignedTo
-                )
+              ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : ''
           }));
         } else {
@@ -445,16 +446,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
               dueDate: inspectionDetail.dueDate
                 ? new Date(inspectionDetail.dueDate)
                 : '',
-              assignedTo: this.raceDynamicFormService.getUserFullName(
+              assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               )
             }))
-          );
-        }
-
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -712,19 +707,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchInspection$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -757,10 +741,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
     const { inspectionId } = this.selectedForm;
+    let { status } = this.selectedForm;
+    status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo },
+        { ...this.selectedForm, assignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -770,10 +756,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
-                  assignedTo:
-                    this.raceDynamicFormService.getUserFullName(assignedTo),
+                  assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  status
                 };
               }
               return data;
@@ -788,6 +773,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    this.assigneeMenuTrigger.closeMenu();
   }
 
   onChangeDueDateHandler(dueDate: Date) {
@@ -813,6 +799,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

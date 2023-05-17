@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -19,8 +19,6 @@ import {
   TableEvent,
   Count,
   InspectionDetail,
-  UserDetails,
-  UsersInfoByEmail,
   FormMetadata
 } from './../../../interfaces';
 
@@ -37,13 +35,8 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
-  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
-  usersInfoByEmail: UsersInfoByEmail;
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -51,10 +44,6 @@ export class RaceDynamicFormService {
     private appService: AppService,
     private translate: TranslateService
   ) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.formCreatedUpdatedSubject.next(data);
-  }
 
   createTags$ = (
     tags: any,
@@ -112,7 +101,10 @@ export class RaceDynamicFormService {
     ) {
       const queryParamaters = queryParams;
       if (filterData) {
-        Object.assign(queryParamaters, { plantId: filterData.plant });
+        Object.assign(queryParamaters, {
+          ...filterData,
+          plantId: filterData?.plant
+        });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -359,18 +351,14 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      `forms/authored?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
-      {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
-      }
-    );
+    return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
+      formStatus: formDetails.formStatus,
+      formDetailPublishStatus: formDetails.formDetailPublishStatus,
+      formlistID: formDetails.formListId,
+      pages: JSON.stringify(formDetails.pages),
+      counter: formDetails.counter,
+      version: formDetails.authoredFormDetailVersion.toString()
+    });
   }
 
   updateAuthoredFormDetail$(formDetails) {
@@ -391,6 +379,14 @@ export class RaceDynamicFormService {
           version: { eq: formDetails.authoredFormDetailVersion.toString() }
         }
       }
+    );
+  }
+
+  publishAuthoredFormDetail$(formDetails) {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/authored/publish/${formDetails.formlistID}`,
+      formDetails
     );
   }
 
@@ -947,21 +943,6 @@ export class RaceDynamicFormService {
         rows: []
       } as InspectionDetailResponse);
     }
-  }
-
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
-  getUsersInfo(): UsersInfoByEmail {
-    return this.usersInfoByEmail;
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail ? this.usersInfoByEmail[email]?.fullName : '';
   }
 
   private formatInspections(inspections: any[] = []): any[] {

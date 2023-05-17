@@ -6,7 +6,7 @@
     <mat-card-content>
       <div class="dis-flex">
         <div class="width-50">
-          <label for="min" translate="from"></label><br />
+          <label for="min" translate="from" class="values"></label><br />
           <input
             id="min"
             type="number"
@@ -16,7 +16,7 @@
           />
         </div>
         <div class="width-50 text-align-end">
-          <label for="max" translate="to"></label><br />
+          <label for="max" translate="to" class="values"></label><br />
           <input
             id="max"
             type="number"
@@ -36,8 +36,8 @@
       >
         <input matSliderThumb />
       </mat-slider>
-      <div>
-        <label for="incre" translate="increment"></label>
+      <div class="margin-20">
+        <label for="incre" translate="increment" class="values"></label>
         <br />
         <input
           id="incre"
@@ -50,7 +50,7 @@
       <br />
       <br />
       <button
-        mat-raised-button
+        mat-stroked-button
         color="primary"
         class="cancel-slider"
         (click)="cancelSlider()"
@@ -70,7 +70,7 @@
 <div class="app-customizer" *ngIf="multipleChoiceOpenState">
   <mat-card class="p-0" *ngIf="multipleChoiceOpenState === true">
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="globalResponseHeading"></div>
+      <div class="mcq-heading" translate="multipleChoice"></div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div class="margin response-heading" translate="response"></div>
@@ -141,8 +141,9 @@
       (click)="submitResponses()"
       class="submit-response-btn"
       [disabled]="isFormNotUpdated === true || responseForm.pristine"
-      translate="create"
-    ></button>
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
 </div>
 

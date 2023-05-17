@@ -51,7 +51,10 @@ export class HomeComponent implements OnInit {
       userManagement,
       maintenance,
       spareParts,
-      workInstructions
+      workInstructions,
+      raceDynamicForms,
+      operatorRoundPlans,
+      masterConfiguration
     } = routingUrls;
 
     const modules = [
@@ -60,7 +63,10 @@ export class HomeComponent implements OnInit {
       userManagement,
       maintenance,
       spareParts,
-      workInstructions
+      workInstructions,
+      raceDynamicForms,
+      operatorRoundPlans,
+      masterConfiguration
     ];
 
     const module = modules.find((mod) =>

@@ -19,12 +19,13 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import {
   CellClickActionEvent,
-  Count,
   TableEvent,
   FormTableUpdate,
-  RoundPlan
+  RoundPlan,
+  UserInfo,
+  Permission
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -34,6 +35,9 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-round-plan-list',
@@ -181,6 +185,7 @@ export class RoundPlanListComponent implements OnInit {
       subtitleColumn: '',
       searchable: false,
       sortable: true,
+      reverseSort: true,
       hideable: false,
       visible: true,
       movable: false,
@@ -267,12 +272,18 @@ export class RoundPlanListComponent implements OnInit {
   plants = [];
   plantsIdNameMap = {};
   createdBy = [];
+  plantsObject: { [key: string]: PlantsResponse } = {};
+  userInfo$: Observable<UserInfo>;
+  readonly perms = perms;
+
   constructor(
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private plantService: PlantService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -294,7 +305,9 @@ export class RoundPlanListComponent implements OnInit {
     this.getDisplayedForms();
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -317,15 +330,11 @@ export class RoundPlanListComponent implements OnInit {
     if (!form.id) {
       return;
     }
-    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe(() => {
-      this.toast.show({
-        text: 'Round Plan copied successfully!',
-        type: 'success'
+    this.operatorRoundsService.copyRoundPlan$(form.id).subscribe((round) => {
+      this.addEditCopyForm$.next({
+        action: 'copy',
+        form: round
       });
-      this.nextToken = '';
-      this.operatorRoundsService.fetchForms$.next({ data: 'load' });
-      this.formsListCount$ =
-        this.operatorRoundsService.getFormsListCount$('All');
     });
   }
 
@@ -359,13 +368,22 @@ export class RoundPlanListComponent implements OnInit {
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
       this.addEditCopyForm$,
-      onScrollForms$
+      onScrollForms$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap(
+          ({ items: plants }) =>
+            (this.plantsObject = plants.reduce((acc, curr) => {
+              acc[curr.id] = `${curr.plantId} - ${curr.name}`;
+              return acc;
+            }, {}))
+        )
+      )
     ]).pipe(
       map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 105px)'
+            tableHeight: 'calc(100vh - 130px)'
           };
           initial.data = rows;
         } else {
@@ -375,7 +393,20 @@ export class RoundPlanListComponent implements OnInit {
               (d) => d?.id === obj?.oldId
             );
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
-            initial.data.splice(newIdx, 0, obj);
+            initial.data.splice(newIdx, 0, {
+              ...obj,
+              publishedDate: '',
+              preTextImage: {
+                image: obj.formLogo,
+                style: {
+                  width: '40px',
+                  height: '40px',
+                  marginRight: '10px'
+                },
+                condition: true
+              },
+              plant: this.plantsObject[obj.plantId]
+            });
             form.action = 'add';
             this.toast.show({
               text: 'Round Plan copied successfully!',
@@ -502,25 +533,32 @@ export class RoundPlanListComponent implements OnInit {
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_OR_PLAN')
+    ) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
+      });
+    }
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_OR_PLAN')) {
+      menuActions.push({
         title: 'Copy',
         action: 'copy'
-      },
-      {
+      });
+    }
+    if (
+      this.loginService.checkUserHasPermission(permissions, 'ARCHIVE_OR_PLAN')
+    ) {
+      menuActions.push({
         title: 'Archive',
         action: 'archive'
-      }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -558,9 +596,12 @@ export class RoundPlanListComponent implements OnInit {
                 this.plantsIdNameMap[item.plant.plantId] = item.plant.id;
                 return `${item.plant.plantId} - ${item.plant.name}`;
               }
-              return '';
+              return null;
             })
-            .filter((value, index, self) => self.indexOf(value) === index);
+            .filter(
+              (value, index, self) =>
+                self.indexOf(value) === index && value !== null
+            );
           this.plants = [...uniquePlants];
 
           for (const item of this.filterJson) {

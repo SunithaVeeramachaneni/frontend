@@ -1,9 +1,10 @@
 @import '../../../../scss/colors.scss';
 
 .locations-modal {
-  height: 500px;
-  width: 700px;
+  height: 478px;
+  width: 680px;
   overflow: hidden;
+  padding: 10px;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;

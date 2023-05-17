@@ -24,10 +24,7 @@ import { Observable, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import {
-  fieldTypesMock,
-  unitOfMeasurementsMock
-} from '../response-type/response-types.mock';
+import { fieldTypesMock } from '../response-type/response-types.mock';
 import {
   QuestionEvent,
   Question,
@@ -55,6 +52,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
+import { getUnitOfMeasurementList } from '../../state';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -175,6 +173,7 @@ export class QuestionComponent implements OnInit {
   formId: string;
   isINSTFieldChanged = false;
   instructionTagColours = {};
+  instructionTagTextColour = {};
 
   private _pageIndex: number;
   private _id: string;
@@ -198,41 +197,25 @@ export class QuestionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      this.formId = params.id;
+    this.store.select(getFormMetadata).subscribe((event) => {
+      this.formId = event.id;
+      this.formMetadata = event;
     });
-
-    this.operatorRoundsService.formCreatedUpdated$.subscribe((data) => {
-      if (data.id) {
-        this.formId = data.id;
-      }
-    });
-
-    this.store
-      .select(getFormMetadata)
-      .subscribe((event) => (this.formMetadata = event));
     this.store
       .select(getModuleName)
       .subscribe((event) => (this.moduleName = event));
 
-    this.unitServiceOfMeasurement
-      .getUnitOfMeasurementList$({
-        next: '',
-        limit: 10000,
-        searchKey: '',
-        fetchType: 'load'
-      })
-      .subscribe((data) => {
-        this.unitOfMeasurements = data.rows;
-        this.unitOfMeasurementsAvailable = data.rows;
-        this.unitOfMeasurementsAvailable =
-          this.unitOfMeasurementsAvailable.filter(
-            (value, index, array) =>
-              index ===
-                array.findIndex(
-                  (item) => item.description === value.description
-                ) && value.isActive === true
-          );
+    this.store
+      .select(getUnitOfMeasurementList)
+      .subscribe((unitOfMeasurements) => {
+        this.unitOfMeasurements = unitOfMeasurements.filter(
+          (value, index, array) =>
+            index ===
+              array.findIndex(
+                (item) => item.description === value.description
+              ) && value.isActive === true
+        );
+        this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
       });
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
@@ -344,10 +327,16 @@ export class QuestionComponent implements OnInit {
     );
 
     this.instructionTagColours[this.translate.instant('cautionTag')] =
-      '#D27B16';
-    this.instructionTagColours[this.translate.instant('warningTag')] =
-      '#FF3D00';
-    this.instructionTagColours[this.translate.instant('dangerTag')] = '#BA0000';
+      '#FFCC00';
+    this.instructionTagColours[this.translate.instant('informationTag')] =
+      '#CAE4FB';
+    this.instructionTagColours[this.translate.instant('dangerTag')] = '#FF3B30';
+    this.instructionTagTextColour[this.translate.instant('cautionTag')] =
+      '#000000';
+    this.instructionTagTextColour[this.translate.instant('informationTag')] =
+      '#000000';
+    this.instructionTagTextColour[this.translate.instant('dangerTag')] =
+      '#FFFFFF';
   }
 
   getRangeMetadata() {
@@ -681,38 +670,7 @@ export class QuestionComponent implements OnInit {
         break;
     }
   }
-  quickResponseTypeHandler(event) {
-    switch (event.eventType) {
-      case 'quickResponsesAdd':
-        const createDataset = {
-          formId: event.formId,
-          type: 'quickResponses',
-          values: event.data.responses,
-          name: 'quickResponses'
-        };
-        this.operatorRoundsService
-          .createDataSet$(createDataset)
-          .subscribe((response) => {
-            // do nothing
-          });
-        break;
 
-      case 'quickResponseUpdate':
-        const updateDataset = {
-          formId: this.formId,
-          type: 'quickResponses',
-          values: event.data.responses,
-          name: 'quickResponses',
-          id: event.data.id
-        };
-        this.operatorRoundsService
-          .updateDataSet$(event.data.id, updateDataset)
-          .subscribe((response) => {
-            // do nothing
-          });
-        break;
-    }
-  }
   rangeSelectionHandler(event) {
     switch (event.eventType) {
       case 'update':
@@ -821,7 +779,8 @@ export class QuestionComponent implements OnInit {
     const originalValue = this.questionForm.get('value').value;
     originalValue.tag = {
       title: event,
-      colour: this.instructionTagColours[event]
+      colour: this.instructionTagColours[event],
+      textColour: this.instructionTagTextColour[event]
     };
     this.questionForm.get('value').setValue(originalValue);
     this.instructionsUpdateValue();

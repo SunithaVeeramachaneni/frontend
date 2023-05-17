@@ -86,6 +86,7 @@
         font-size: 110%;
         color: $black;
         margin: 5px;
+        margin-top: 25px;
       }
 
       .form-name {
@@ -107,7 +108,7 @@
       }
 
       .tags-mat-chips {
-        margin: 0 5px !important;
+        margin: 5px 5px !important;
       }
 
       .buttons {
@@ -130,6 +131,7 @@
         font-weight: normal;
         line-height: normal;
         color: $blue-main;
+        border: 1px solid $blue-main;
       }
     }
   }

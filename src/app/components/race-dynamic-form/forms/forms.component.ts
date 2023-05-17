@@ -63,6 +63,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { UsersService } from '../../user-management/services/users.service';
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -226,7 +227,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     },
     {
       id: 'scheduleDates',
-      displayName: 'Start - Ends',
+      displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
       order: 7,
@@ -331,7 +332,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private router: Router,
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private userService: UsersService
   ) {}
 
   ngOnInit(): void {
@@ -401,11 +403,6 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
-          );
-        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -419,7 +416,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         let filteredForms = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
@@ -434,7 +431,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         const uniqueAssignTo = filteredForms
-          ?.map((item) => item?.assignedTo)
+          ?.map((item) => item?.assignedToEmail)
           .filter((value, index, self) => self.indexOf(value) === index);
 
         const uniqueSchedules = filteredForms
@@ -668,8 +665,13 @@ export class FormsComponent implements OnInit, OnDestroy {
   getAssignedTo(formsScheduleConfiguration: FormScheduleConfiguration) {
     const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
     return value
-      ? this.raceDynamicFormService.getUserFullName(value) ?? ''
+      ? this.userService.getUserFullName(value) ?? ''
       : this.placeHolder;
+  }
+
+  getAssignedToEmail(formsScheduleConfiguration: FormScheduleConfiguration) {
+    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
+    return value ?? '';
   }
 
   scheduleConfigHandler(scheduleConfig) {
@@ -689,7 +691,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormattedScheduleDates(
               formsScheduleConfiguration
             ),
-            assignedTo: this.getAssignedTo(formsScheduleConfiguration)
+            assignedTo: this.getAssignedTo(formsScheduleConfiguration),
+            assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
           };
         }
         return data;
@@ -741,7 +744,10 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
-          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
+          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
+          assignedToEmail: this.getAssignedToEmail(
+            formScheduleConfigurations[form.id]
+          )
         };
       }
       return {
@@ -834,26 +840,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = item.value ?? '';
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       } else {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = item.value ?? '';
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.scheduledAt &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchForms$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
   clearFilters(): void {
     this.isPopoverOpen = false;
