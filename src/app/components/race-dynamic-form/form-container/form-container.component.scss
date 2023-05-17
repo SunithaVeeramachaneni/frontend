@@ -1,5 +1,8 @@
 @import '../../../../scss/colors.scss';
-
+.template-list {
+  background: $white;
+  height: calc(100vh - 80px);
+}
 ::ng-deep .template-list + * .mat-menu-panel {
   position: absolute;
   top: -42px;
