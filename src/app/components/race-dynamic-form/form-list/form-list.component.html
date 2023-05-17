@@ -1,4 +1,4 @@
-<div class="list-view">
+<div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="myForms"></h2>
@@ -34,6 +34,7 @@
           ></svg-icon>
         </mat-form-field>
         <button
+          *appCheckUserHasPermission="[perms.createForm]"
           class="create-new-btn"
           mat-raised-button
           [matMenuTriggerFor]="menu"
