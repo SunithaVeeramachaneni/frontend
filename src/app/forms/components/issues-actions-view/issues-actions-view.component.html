@@ -461,14 +461,14 @@
         <div class="titles m-t-10" translate="erpnotification"></div>
         <div class="values" *ngIf="!isCreateNotification">
           <button
-            *ngIf="!data.notificationInfo.length"
+            *ngIf="!isNotificationNumber(data.notificationInfo)"
             mat-raised-button
             color="primary"
             (click)="createNotification()"
           >
             {{ 'create' | translate }}
           </button>
-          <span *ngIf="data.notificationInfo.length">{{
+          <span *ngIf="isNotificationNumber(data.notificationInfo)">{{
             data.notificationInfo
           }}</span>
         </div>
