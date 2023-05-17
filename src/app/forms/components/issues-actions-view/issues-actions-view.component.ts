@@ -672,22 +672,26 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private prepareSubscriptionResponse(data) {
-    this.logHistory = [
-      ...this.logHistory,
-      {
-        ...data,
-        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
-        message:
-          data.type === 'Object' ? JSON.parse(data?.message) : data?.message
-      }
-    ];
-    this.filteredMediaType = this.logHistory.filter(
-      (history) => history?.type === 'Media'
-    );
-    this.logHistory$ = of({
-      nextToken: null,
-      rows: this.logHistory
-    });
+    const currentChatSelectedId: string =
+      this.data?.type === 'issue' ? data?.issueslistID : data?.actionslistID;
+    if (this.data?.id === currentChatSelectedId) {
+      this.logHistory = [
+        ...this.logHistory,
+        {
+          ...data,
+          createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+          message:
+            data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+        }
+      ];
+      this.filteredMediaType = this.logHistory.filter(
+        (history) => history?.type === 'Media'
+      );
+      this.logHistory$ = of({
+        nextToken: null,
+        rows: this.logHistory
+      });
+    }
   }
 
   private initJSONData(data = null) {

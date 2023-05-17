@@ -134,13 +134,6 @@ export class ResponseSetService {
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
 
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
   downloadSampleResponseSetTemplate(
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
@@ -161,10 +154,6 @@ export class ResponseSetService {
         'response-set/list?' + params.toString()
       )
       .pipe(map((res) => res.items.length || 0));
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
   }
 
   downloadFailure(

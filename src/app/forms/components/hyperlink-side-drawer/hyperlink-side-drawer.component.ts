@@ -40,7 +40,7 @@ export class HyperlinkSideDrawerComponent implements OnInit {
       hyperlink: new FormControl('', [
         Validators.required,
         Validators.pattern(
-          '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$'
+          /^(https?:[/]{2})?([w]{3}[.])?(?!www.)(\w+[.])+(\w+)$/
         )
       ])
     });
