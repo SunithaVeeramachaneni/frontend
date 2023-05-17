@@ -78,7 +78,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userService.setUsers(users);
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -391,10 +395,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.users$.subscribe((user) => {
-      this.userService.setUsers(user);
-      this.userFullNameByEmail = this.userService.getUsersInfo();
-    });
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -710,9 +710,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getFullNameToEmailArray(data?: any) {
+  getFullNameToEmailArray(data: any) {
     let emailArray = [];
-    data.forEach((data: any) => {
+    data?.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
           (email) => this.userFullNameByEmail[email].fullName === data
