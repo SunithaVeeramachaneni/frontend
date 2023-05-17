@@ -145,7 +145,6 @@ export class QuestionComponent implements OnInit {
 
   unitOfMeasurementsAvailable: any[] = [];
   unitOfMeasurements = [];
-  searchQuery: string;
   fetchUnitOfMeasurement: Observable<any>;
 
   questionForm: FormGroup = this.fb.group({
@@ -356,7 +355,6 @@ export class QuestionComponent implements OnInit {
   onKey(event) {
     const value = event.target.value;
     const filter = value.toLowerCase();
-    this.searchQuery = filter;
     this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
     this.unitOfMeasurementsAvailable = this.unitOfMeasurementsAvailable.filter(
       (option) =>
