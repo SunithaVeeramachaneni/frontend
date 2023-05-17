@@ -5,7 +5,15 @@
   height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
-    width: 60%;
+    width: 25%;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
   }
 
   .heading {
