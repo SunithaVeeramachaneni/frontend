@@ -25,7 +25,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { graphQLDefaultMaxLimit, routingUrls } from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
@@ -169,7 +169,7 @@ export class ArchivedListComponent implements OnInit {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
   nextToken = '';

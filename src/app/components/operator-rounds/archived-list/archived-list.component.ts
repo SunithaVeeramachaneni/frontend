@@ -30,7 +30,7 @@ import {
   SearchEvent,
   RoundPlan
 } from 'src/app/interfaces';
-import { graphQLDefaultMaxLimit, routingUrls } from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
@@ -174,7 +174,7 @@ export class ArchivedListComponent implements OnInit {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
   nextToken = '';
