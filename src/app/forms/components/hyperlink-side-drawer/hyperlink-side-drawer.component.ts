@@ -40,7 +40,7 @@ export class HyperlinkSideDrawerComponent implements OnInit {
       hyperlink: new FormControl('', [
         Validators.required,
         Validators.pattern(
-          '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$'
+          /^(https?:[/]{2})?([w]{3}[.])?(?!www.)(\w+[.])+(\w+)$/
         )
       ])
     });
@@ -103,6 +103,7 @@ export class HyperlinkSideDrawerComponent implements OnInit {
   processValidationErrors(controlName: string): boolean {
     const touched = this.hyperlinkForm.get(controlName).touched;
     const errors = this.hyperlinkForm.get(controlName).errors;
+    console.log(errors);
     this.errors[controlName] = null;
     if (touched && errors) {
       Object.keys(errors).forEach((messageKey) => {
