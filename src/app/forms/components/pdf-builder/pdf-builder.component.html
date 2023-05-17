@@ -1,12 +1,9 @@
-<div
-  class="pdfBuilder-dialog"
-  *ngIf="{
+<div class="pdfBuilder-dialog" *ngIf="{
     authoredFormDetail: authoredFormDetail$ | async,
     formMetadata: formMetadata$ | async,
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async
-  } as props"
->
+  } as props">
   <div class="dialogHead">
     <button (click)="onCancel()" class="back-btn">
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
@@ -15,17 +12,10 @@
   </div>
   <div class="dialogContainer">
     <div class="left">
-      <h2
-        class="configHead"
-        translate="configuration"
-        *ngIf="loadPDFBuilderConfig$ | async"
-      ></h2>
+      <h2 class="configHead" translate="configuration" *ngIf="loadPDFBuilderConfig$ | async"></h2>
       <div class="configOptions" [formGroup]="pdfBuilderConfigurationsForm">
         <span class="selectAll">
-          <mat-checkbox
-            (change)="toggleSelectAll($event)"
-            [indeterminate]="isSelectAllIndeterminate()"
-          >
+          <mat-checkbox (change)="toggleSelectAll($event)" [indeterminate]="isSelectAllIndeterminate()">
             <span translate="selectAll"></span>
           </mat-checkbox>
         </span>
@@ -80,19 +70,11 @@
               <div [formGroup]="pdfBuilderConfigurationsFormCustomText">
                 <mat-form-field class="field" appearance="outline">
                   <mat-label translate="label"></mat-label>
-                  <input
-                    matInput
-                    formControlName="customTextLabel"
-                    maxlength="25"
-                  />
+                  <input matInput formControlName="customTextLabel" maxlength="25" />
                 </mat-form-field>
                 <mat-form-field class="field" appearance="outline">
                   <mat-label translate="field"></mat-label>
-                  <input
-                    matInput
-                    formControlName="customTextField"
-                    maxlength="25"
-                  />
+                  <input matInput formControlName="customTextField" maxlength="25" />
                 </mat-form-field>
               </div>
             </div>
@@ -111,58 +93,36 @@
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox
-              formControlName="photos"
-              class="checkbox"
-              (change)="toggleQuestionPhotos($event)"
-            >
+            <mat-checkbox formControlName="photos" class="checkbox" (change)="toggleQuestionPhotos($event)">
               <span translate="photos"></span>
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox
-              formControlName="questions"
-              class="checkbox"
-              [indeterminate]="areQuestionsIndeterminate()"
-              (change)="toggleAllQuestions($event)"
-            >
+            <mat-checkbox formControlName="questions" class="checkbox" [indeterminate]="areQuestionsIndeterminate()"
+              (change)="toggleAllQuestions($event)">
               <span translate="tasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-40">
-            <mat-checkbox
-              formControlName="incompleteQuestions"
-              class="checkbox"
-              (change)="toggleIncompleteQuestions($event)"
-            >
+            <mat-checkbox formControlName="incompleteQuestions" class="checkbox"
+              (change)="toggleIncompleteQuestions($event)">
               <span translate="incompleteTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-40">
-            <mat-checkbox
-              formControlName="completedQuestions"
-              class="checkbox"
-              [indeterminate]="areCompletedQuestionsIndeterminate()"
-              (change)="toggleCompletedQuestions($event)"
-            >
+            <mat-checkbox formControlName="completedQuestions" class="checkbox"
+              [indeterminate]="areCompletedQuestionsIndeterminate()" (change)="toggleCompletedQuestions($event)">
               <span translate="completedTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">
-            <mat-checkbox
-              formControlName="capturedQuestions"
-              class="checkbox"
-              (change)="togglecapturedQuestions($event)"
-            >
+            <mat-checkbox formControlName="capturedQuestions" class="checkbox"
+              (change)="togglecapturedQuestions($event)">
               <span translate="capturedTasks"></span>
             </mat-checkbox>
           </span>
           <span class="option m-l-80">
-            <mat-checkbox
-              formControlName="skippedQuestions"
-              class="checkbox"
-              (change)="toggleSkippedQuestions($event)"
-            >
+            <mat-checkbox formControlName="skippedQuestions" class="checkbox" (change)="toggleSkippedQuestions($event)">
               <span translate="skippedTasks"></span>
             </mat-checkbox>
           </span>
@@ -174,56 +134,36 @@
       <div class="view">
         <span class="pdf-head" translate="pdfPreviewTxt"></span>
         <div class="form-status">
-          <div
-            class="save-status"
-            [hidden]="
+          <div class="save-status" [hidden]="
               props.formSaveStatus !== formConfigurationStatus.saved ||
               props.authoredFormDetail.isFormDetailPublished
-            "
-          >
+            ">
             {{ 'changesSaved' | translate }}
           </div>
-          <div
-            class="save-status"
-            [hidden]="
+          <div class="save-status" [hidden]="
               props.formSaveStatus !== formConfigurationStatus.saving ||
               props.authoredFormDetail.isFormDetailPublished
-            "
-          >
+            ">
             {{ 'savingChanges' | translate }}
           </div>
-          <div
-            class="save-status"
-            [hidden]="
+          <div class="save-status" [hidden]="
               formDetailPublishStatus !== formConfigurationStatus.published ||
               formStatus !== formConfigurationStatus.published
-            "
-          >
+            ">
             {{ 'changesPublished' | translate }}
           </div>
-          <div
-            class="save-status"
-            [hidden]="
+          <div class="save-status" [hidden]="
               formDetailPublishStatus !== formConfigurationStatus.publishing ||
               !props.authoredFormDetail.isFormDetailPublished
-            "
-          >
+            ">
             {{ 'publishingChanges' | translate }}
           </div>
-          <button
-            mat-raised-button
-            class="publish-btn"
-            (click)="publish()"
-            [disabled]="
+          <button mat-raised-button class="publish-btn" (click)="publish()" [disabled]="
               formStatus === 'Published' ||
               props.authoredFormDetail.isFormDetailPublished
-            "
-          >
+            ">
             <span>
-              <svg-icon
-                icon="icon-upload-white"
-                class="publish-btn-icon"
-              ></svg-icon>
+              <svg-icon icon="icon-upload-white" class="publish-btn-icon"></svg-icon>
               <span class="publish" translate="publishBtn"></span>
             </span>
           </button>
@@ -231,179 +171,114 @@
       </div>
       <div *ngIf="formMetadata$ | async as formMetadata" class="pdf-container">
         <!-- ISSUES -->
-        <div
-          id="myPDF"
-          class="pdfPage-container"
-          #myPDF
-          *ngIf="pdfBuilderConfigurationsForm.get('issues').value"
-        >
-          <ng-container
-            *ngTemplateOutlet="
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
+          <ng-container *ngTemplateOutlet="
               issuesTemplate;
               context: { formMetadata: formMetadata }
-            "
-          ></ng-container>
+            "></ng-container>
         </div>
         <!-- ACTIONS -->
-        <div
-          id="myPDF"
-          class="pdfPage-container"
-          #myPDF
-          *ngIf="pdfBuilderConfigurationsForm.get('actions').value"
-        >
-          <ng-container
-            *ngTemplateOutlet="
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
+          <ng-container *ngTemplateOutlet="
               actionsTemplate;
               context: { formMetadata: formMetadata }
-            "
-          ></ng-container>
+            "></ng-container>
         </div>
         <!-- TASKS -->
-        <div
-          id="myPDF"
-          class="pdfPage-container"
-          #myPDF
-          *ngIf="pdfBuilderConfigurationsForm.get('questions').value"
-        >
+        <div id="myPDF" class="pdfPage-container" #myPDF *ngIf="pdfBuilderConfigurationsForm.get('questions').value">
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
-              <span
-                class="roundId"
-                *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
-                >{{ formMetadata.id }}</span
-              >
-              <span
-                class="formName"
-                *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                >{{ formMetadata.name }}</span
-              >
+              <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id
+                }}</span>
+              <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name
+                }}</span>
             </div>
-            <div
-              *ngIf="
+            <div *ngIf="
                 !(
                   pdfBuilderConfigurationsForm.get('issues').value &&
                   pdfBuilderConfigurationsForm.get('issues').value
                 )
-              "
-            >
+              ">
               <div class="pageTitleRow">
-                <div
-                  class="tableHead-logo"
-                  *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
-                >
+                <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
                   <img [src]="innovapptiveLogo" class="tablelogo" />
                 </div>
                 <div class="tableHeading-text">
                   <span class="name">{{ formMetadata.name }}</span>
                   <span class="discribe">{{
                     formMetadata.description ? formMetadata.description : ''
-                  }}</span>
+                    }}</span>
                 </div>
               </div>
-              <div
-                class="subjectRow"
-                *ngIf="
+              <div class="subjectRow" *ngIf="
                   pdfBuilderConfigurationsForm.get('submittedOn').value ||
                   pdfBuilderConfigurationsForm.get('submittedBy').value ||
                   pdfBuilderConfigurationsForm.get('questionCompleted').value
-                "
-              >
-                <div
-                  class="w-33 f-s-8 submitted-by"
-                  *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
-                >
+                ">
+                <div class="w-33 f-s-8 submitted-by" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
                   Submitted On: 3/18/23, 10:00 PM
                 </div>
-                <div
-                  class="w-33 f-s-8"
-                  *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
-                >
+                <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
                   Submitted By: {{ currentUserName }}
                 </div>
-                <div
-                  class="w-33 f-s-8 tasks-completed"
-                  *ngIf="
+                <div class="w-33 f-s-8 tasks-completed" *ngIf="
                     pdfBuilderConfigurationsForm.get('questionCompleted').value
-                  "
-                >
-                  Tasks Completed : 35/35 (100%)
+                  ">
+                  {{'taskCompleted' | translate}}: 35/35 (100%)
                 </div>
               </div>
             </div>
-            <div
-              *ngIf="pdfBuilderConfigurationsForm.get('questions').value"
-              class="issuesRow"
-            >
+            <div *ngIf="pdfBuilderConfigurationsForm.get('questions').value" class="issuesRow">
               <div class="tasksHead">
-                <span>Tasks</span>
-                <span
-                  >Total Locations: {{ totalLocationsCount }}, Assets:
-                  {{ totalAssetsCount }}, Tasks:
-                  {{ totalQuestionsCount }}
+                <span translate="questions"></span>
+                <span *ngIf="data.moduleName !== 'RDF'">
+                  <span>Total Locations: {{ totalLocationsCount }}, Assets:
+                    {{ totalAssetsCount }}, Tasks:
+                    {{ totalQuestionsCount }}
+                  </span>
                 </span>
               </div>
               <div *ngIf="data.moduleName !== 'RDF'">
                 <div class="actionCell" *ngIf="selectedFlatHierarchy">
-                  <div
-                    *ngFor="let node of selectedFlatHierarchy"
-                    class="hierarchyNode"
-                  >
+                  <div *ngFor="let node of selectedFlatHierarchy" class="hierarchyNode">
                     <div class="hierarchyNodeHead">
                       <div class="nodeLeft">
                         <span class="nodeTitle">{{ node.name }}</span>
                         <span class="nodeId">
                           {{ node.type === 'asset' ? 'Asset' : 'Location' }} ID:
-                          <span class="no-bold"
-                            >{{ node.nodeId }} - {{ node.id }}</span
-                          ></span
-                        >
+                          <span class="no-bold">{{ node.nodeId }} - {{ node.id }}</span></span>
                       </div>
-                      <div
-                        class="nodeRight"
-                        *ngIf="getPagesOfNode(node.id) | async as totalPages"
-                      >
+                      <div class="nodeRight" *ngIf="getPagesOfNode(node.id) | async as totalPages">
                         Pages: {{ totalPages.length }} • Sections:
                         {{ getSectionsCountByNode(totalPages) }} • Tasks:
                         {{ getAllQuestionsCountByNode(totalPages) }}
                       </div>
                     </div>
-                    <div
-                      class="hierarchyNodeContainer"
-                      *ngIf="getPagesOfNode(node.id) | async as pages"
-                    >
-                      <ng-container
-                        *ngTemplateOutlet="
+                    <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(node.id) | async as pages">
+                      <ng-container *ngTemplateOutlet="
                           pagesTemplate;
                           context: { pages: pages }
-                        "
-                      ></ng-container>
+                        "></ng-container>
                     </div>
                   </div>
                 </div>
               </div>
               <div *ngIf="data.moduleName === 'RDF'">
                 <div class="actionCell">
-                  <div
-                    class="hierarchyNodeContainer"
-                    *ngIf="getPagesOfNode(null) | async as pages"
-                  >
-                    <ng-container
-                      *ngTemplateOutlet="
+                  <div class="hierarchyNodeContainer" *ngIf="getPagesOfNode(null) | async as pages">
+                    <ng-container *ngTemplateOutlet="
                         pagesTemplate;
                         context: { pages: pages }
-                      "
-                    ></ng-container>
+                      "></ng-container>
                   </div>
                 </div>
               </div>
             </div>
             <div class="pageFooter">
-              <ng-container
-                *ngTemplateOutlet="
+              <ng-container *ngTemplateOutlet="
                   footerTemplate;
                   context: { footerData: null }
-                "
-              ></ng-container>
+                "></ng-container>
             </div>
           </div>
         </div>
@@ -415,8 +290,7 @@
   <div *ngFor="let page of pages" class="pageContainer">
     <div class="nodePageHeader">
       <span class="nodePageTitle">{{ page.name }}</span>
-      <span class="nodePageRight"
-        >Sections: {{ page.sections.length }} • Tasks:
+      <span class="nodePageRight">Sections: {{ page.sections.length }} • {{'tasks' | translate}}:
         {{ page.questions.length }}
       </span>
     </div>
@@ -426,14 +300,12 @@
           <div class="sectionTitle">
             {{ section.name }}
           </div>
-          <div class="sectionRight">Tasks: {{ section.questions.length }}</div>
+          <div class="sectionRight">{{'tasks' | translate}}: {{ section.questions.length }}</div>
         </div>
         <div class="sectionQuestionsContainer">
           <div *ngFor="let question of section.questions" class="questionRow">
-            <app-question-preview
-              [question]="question"
-              [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"
-            ></app-question-preview>
+            <app-question-preview [question]="question"
+              [pdfConfigOptions]="pdfBuilderConfigurationsForm.value"></app-question-preview>
           </div>
         </div>
       </div>
@@ -443,66 +315,38 @@
 <ng-template #issuesTemplate let-formMetadata="formMetadata">
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
-      <span
-        class="roundId"
-        *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
-        >{{ formMetadata.id }}</span
-      >
-      <span
-        class="formName"
-        *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
-      >
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id }}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
     </div>
     <div class="pageTitleRow">
-      <div
-        class="tableHead-logo"
-        *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
-      >
+      <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
         <img [src]="innovapptiveLogo" class="tablelogo" />
       </div>
       <div class="tableHeading-text">
         <span class="name">{{ formMetadata.name }}</span>
         <span class="discribe">{{
           formMetadata.description ? formMetadata.description : ''
-        }}</span>
-        <span
-          ><span class="plant">{{ 'plant' | translate }}:</span>
-          {{ ' ' + formMetadata.plant }}</span
-        >
+          }}</span>
+        <span><span class="plant">{{ 'plant' | translate }}:</span>
+          {{ ' ' + formMetadata.plant }}</span>
       </div>
     </div>
-    <div
-      class="subjectRow"
-      *ngIf="
+    <div class="subjectRow" *ngIf="
         pdfBuilderConfigurationsForm.get('submittedOn').value ||
         pdfBuilderConfigurationsForm.get('submittedBy').value ||
         pdfBuilderConfigurationsForm.get('questionCompleted').value
-      "
-    >
-      <div
-        class="w-33 f-s-8"
-        *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
-      >
+      ">
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
         Submitted On: 3/18/23, 10:00 PM
       </div>
-      <div
-        class="w-33 f-s-8"
-        *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
-      >
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
         Submitted By: {{ currentUserName }}
       </div>
-      <div
-        class="w-33 f-s-8"
-        *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value"
-      >
-        Tasks Completed: 35/35 (100%)
+      <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
+        {{'tasks' | translate}} Completed: 35/35 (100%)
       </div>
     </div>
-    <div
-      *ngIf="pdfBuilderConfigurationsForm.get('issues').value"
-      class="issuesRow"
-    >
+    <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value" class="issuesRow">
       <div class="issuesHead">
         <span>Issues</span>
         <span>Raised: 3</span>
@@ -527,7 +371,7 @@
               </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Task: </span>
+              <span class="label"> {{'question' | translate}}: </span>
               <span class="description"> Check water pressure. </span>
             </div>
             <div class="issueRow">
@@ -594,7 +438,7 @@
               </span>
             </div>
             <div class="issueRow">
-              <span class="label"> Task: </span>
+              <span class="label"> {{'question' | translate}}: </span>
               <span class="description"> Check water pressure. </span>
             </div>
             <div class="issueRow">
@@ -640,11 +484,7 @@
                 <tr>
                   <td colspan="3">
                     <div class="imagesContainer">
-                      <img
-                        [src]="image"
-                        *ngFor="let image of dummyImages"
-                        class="image"
-                      />
+                      <img [src]="image" *ngFor="let image of dummyImages" class="image" />
                     </div>
                   </td>
                 </tr>
@@ -655,73 +495,45 @@
       </div>
     </div>
     <div class="pageFooter">
-      <ng-container
-        *ngTemplateOutlet="footerTemplate; context: { footerData: null }"
-      ></ng-container>
+      <ng-container *ngTemplateOutlet="footerTemplate; context: { footerData: null }"></ng-container>
     </div>
   </div>
 </ng-template>
 <ng-template #actionsTemplate let-formMetadata="formMetadata">
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
-      <span
-        class="roundId"
-        *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
-        >{{ formMetadata.id }}</span
-      >
-      <span
-        class="formName"
-        *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
-      >
+      <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id }}</span>
+      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
     </div>
     <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
       <div class="pageTitleRow">
-        <div
-          class="tableHead-logo"
-          *ngIf="pdfBuilderConfigurationsForm.get('logo').value"
-        >
+        <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
           <img [src]="innovapptiveLogo" class="tablelogo" />
         </div>
         <div class="tableHeading-text">
           <span class="name">{{ formMetadata.name }}</span>
           <span class="discribe">{{
             formMetadata.description ? formMetadata.description : ''
-          }}</span>
+            }}</span>
         </div>
       </div>
-      <div
-        class="subjectRow"
-        *ngIf="
+      <div class="subjectRow" *ngIf="
           pdfBuilderConfigurationsForm.get('submittedOn').value ||
           pdfBuilderConfigurationsForm.get('submittedBy').value ||
           pdfBuilderConfigurationsForm.get('questionCompleted').value
-        "
-      >
-        <div
-          class="w-33 f-s-8"
-          *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
-        >
+        ">
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
           Submitted On: 3/18/23, 10:00 PM
         </div>
-        <div
-          class="w-33 f-s-8"
-          *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
-        >
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
           Submitted By: {{ currentUserName }}
         </div>
-        <div
-          class="w-33 f-s-8"
-          *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value"
-        >
+        <div class="w-33 f-s-8" *ngIf="pdfBuilderConfigurationsForm.get('questionCompleted').value">
           Tasks Completed: 35/35 (100%)
         </div>
       </div>
     </div>
-    <div
-      *ngIf="pdfBuilderConfigurationsForm.get('actions').value"
-      class="issuesRow"
-    >
+    <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value" class="issuesRow">
       <div class="actionsHead">
         <span>Actions</span>
         <span>Raised: 3</span>
@@ -746,7 +558,7 @@
               </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Task: </span>
+              <span class="label"> {{'question' | translate}}: </span>
               <span class="description"> Check water pressure. </span>
             </div>
             <div class="actionRow">
@@ -803,7 +615,7 @@
               </span>
             </div>
             <div class="actionRow">
-              <span class="label"> Task: </span>
+              <span class="label"> {{'question' | translate}}: </span>
               <span class="description"> Check water pressure. </span>
             </div>
             <div class="actionRow">
@@ -843,33 +655,25 @@
       </div>
     </div>
     <div class="pageFooter">
-      <ng-container
-        *ngTemplateOutlet="footerTemplate; context: { footerData: null }"
-      ></ng-container>
+      <ng-container *ngTemplateOutlet="footerTemplate; context: { footerData: null }"></ng-container>
     </div>
   </div>
 </ng-template>
 <ng-template #footerTemplate let-footerData="footerData">
   <div class="w-33">
-    <span
-      class="generatedDate"
-      *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value"
-      >{{ getCurrentDate() }}</span
-    >
+    <span class="generatedDate" *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value">{{ getCurrentDate()
+      }}</span>
   </div>
   <div class="w-33 poweredBy">
     <span class="poweredByText">Powered By</span>
     <svg-icon icon="icon-innova-big" class="footerLogo"></svg-icon>
   </div>
   <div class="w-33">
-    <span
-      class="customText"
-      *ngIf="
+    <span class="customText" *ngIf="
         pdfBuilderConfigurationsForm.get('customText').value &&
         pdfBuilderConfigurationsFormCustomText.get('customTextField').value &&
         pdfBuilderConfigurationsFormCustomText.get('customTextLabel').value
-      "
-    >
+      ">
       {{ pdfBuilderConfigurationsFormCustomText.get('customTextLabel').value }}:
       {{ pdfBuilderConfigurationsFormCustomText.get('customTextField').value }}
     </span>
