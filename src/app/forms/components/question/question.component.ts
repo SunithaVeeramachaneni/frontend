@@ -348,6 +348,10 @@ export class QuestionComponent implements OnInit {
     this.unitMenuTrigger.closeMenu();
   }
 
+  handleMatMenu() {
+    this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
+  }
+
   onKey(event) {
     const value = event.target.value;
     const filter = value.toLowerCase();
