@@ -388,7 +388,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.users$.subscribe((user) => {
       this.userService.setUsers(user);
       this.userFullNameByEmail = this.userService.getUsersInfo();
-      console.log(this.userFullNameByEmail);
     });
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
@@ -904,6 +903,18 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
   }
 
+  getFullNameToEmailArray(data?: any) {
+    let emailArray = [];
+    data.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -911,9 +922,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value] ?? '';
         this.filter[item.column] = plantId;
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = Object.keys(this.userFullNameByEmail).find(
-          (email) => this.userFullNameByEmail[email].fullName === item.value[0]
-        );
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
