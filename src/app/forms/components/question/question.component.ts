@@ -350,7 +350,6 @@ export class QuestionComponent implements OnInit {
   }
 
   handleMatMenu() {
-    this.searchQuery = '';
     this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
   }
 
