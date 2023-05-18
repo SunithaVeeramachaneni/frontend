@@ -133,6 +133,7 @@
                 [matAutocomplete]="auto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="add($event)"
+                (click)="openAutoComplete()"
                 #tagsInput
                 [formControl]="tagsCtrl"
               />
