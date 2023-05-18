@@ -238,7 +238,7 @@ export const routingUrls = {
   },
   myRoundPlans: {
     url: '/operator-rounds',
-    title: 'My Plans',
+    title: 'Round Plans',
     permission: permissions.viewORPlans
   },
   roundPlanScheduler: {

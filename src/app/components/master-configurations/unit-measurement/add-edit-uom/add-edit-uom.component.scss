@@ -156,27 +156,35 @@
   }
 
   .footer-buttons {
+    display: flex;
+    justify-content: center;
     position: absolute;
-    bottom: 0;
-    right: 0;
-    background: $footer-bg-color;
-    width: 100%;
-    padding: 15px 0;
+    bottom: 10px;
+    width: 92%;
+    margin-left: 16px;
+    margin-bottom: 4px;
 
     .cancel-btn {
-      float: right;
       color: $blue-main;
+      border-color: $blue-main;
+      float: right;
+      margin-right: 15px;
+      margin-top: 15px;
+      width: 50%;
     }
 
     .save-btn {
-      float: right;
-      margin-right: 15px;
       background-color: $blue-main;
       color: $white;
+      float: right;
+      margin-top: 15px;
+      width: 50%;
     }
     .save-btn:disabled {
       background-color: $gray2-bg;
       color: $gray7;
+      margin-top: 15px;
+      width: 50%;
     }
   }
 
