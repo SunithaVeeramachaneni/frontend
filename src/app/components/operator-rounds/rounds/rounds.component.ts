@@ -54,6 +54,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
+  graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -359,7 +360,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLDefaultMaxLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;

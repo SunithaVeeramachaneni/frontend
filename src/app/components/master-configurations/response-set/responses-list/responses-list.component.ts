@@ -98,7 +98,7 @@ export class ResponsesListComponent implements OnInit {
     },
     {
       id: 'responseCount',
-      displayName: 'Response',
+      displayName: 'Responses',
       type: 'number',
       order: 2,
       controlType: 'string',

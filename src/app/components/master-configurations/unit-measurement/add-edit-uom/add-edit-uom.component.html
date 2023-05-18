@@ -166,6 +166,9 @@
       </span>
     </div>
     <div class="footer-buttons">
+      <button mat-stroked-button class="cancel-btn" (click)="cancel()">
+        {{ 'cancel' | translate }}
+      </button>
       <button
         mat-raised-button
         [disabled]="!unitType || unitMeasurementForm?.invalid"
@@ -173,9 +176,6 @@
         class="save-btn"
       >
         {{ 'save' | translate }}
-      </button>
-      <button mat-button class="cancel-btn" (click)="cancel()">
-        {{ 'cancel' | translate }}
       </button>
     </div>
   </mat-card>

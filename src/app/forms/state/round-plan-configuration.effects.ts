@@ -85,8 +85,6 @@ export class RoundPlanConfigurationEffects {
               .publishRoundPlan$({
                 form: {
                   ...formDetail.formMetadata,
-                  lastPublishedBy: this.loginService.getLoggedInUserName(),
-                  publishedDate: new Date().toISOString(),
                   formStatus: formConfigurationStatus.published,
                   _version: action.formListDynamoDBVersion
                 },
@@ -96,7 +94,9 @@ export class RoundPlanConfigurationEffects {
                   subForms, // Handle subforms form round-plan config,
                   hierarchy
                 },
-                isEdit: this.operatorRoundsService.isEdit
+                isEdit:
+                  formDetail.formMetadata.formStatus ===
+                  formConfigurationStatus.published
               })
               .pipe(
                 map((createAuthoredFormDetail) =>
