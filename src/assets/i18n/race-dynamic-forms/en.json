@@ -118,6 +118,7 @@
   "questions": "QUESTIONS",
   "editForm": "Edit Form",
   "authoredBy": "Authored by",
+  "createdBy": "Created By",
   "assignedTo": "Assigned To",
   "dueDate": "Due Date",
   "tasksCompleted": "Questions Completed",
