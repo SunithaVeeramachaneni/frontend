@@ -11,7 +11,8 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
-  MatAutocompleteSelectedEvent
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
@@ -45,6 +46,7 @@ export class FormConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   visible = true;
   selectable = true;
   removable = true;
@@ -160,6 +162,9 @@ export class FormConfigurationModalComponent implements OnInit {
     }
 
     this.tagsCtrl.setValue(null);
+  }
+  openAutoComplete() {
+    this.auto.openPanel();
   }
 
   remove(tag: string): void {
