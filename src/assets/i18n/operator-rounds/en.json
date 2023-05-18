@@ -294,6 +294,7 @@
   "actionStatusUpdated": "Action Status Updated to: ",
   "assigneeAddedTo": "'Assigned to' Added: ",
   "assigneeRemovedTo": "'Assigned to' Removed: ",
+  "assigneeUpdatedTo": "Assigned Updated to: ",
   "erpNotif": "ERP Notification Updated to: ",
   "priorityUpdated": "Priority Updated to: ",
   "dueDateUpdated": "DueDate Updated to: ",
