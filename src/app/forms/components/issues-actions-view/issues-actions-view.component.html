@@ -174,6 +174,11 @@
                         class="sub-headings"
                         translate="assigneeRemovedTo"
                       ></span>
+                      <span
+                        *ngIf="!history?.message?.assignmentType"
+                        class="sub-headings"
+                        translate="assigneeUpdatedTo"
+                      ></span>
                       {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
                   </ng-container>
@@ -311,13 +316,15 @@
           {{ this.issuesActionsDetailViewForm.get('description').value }}
         </div>
       </div>
-      <hr class="line" />
-      <div class="right-div p-5-0">
-        <div class="titles" translate="category"></div>
-        <div class="values">
-          {{ this.issuesActionsDetailViewForm.get('category').value }}
+      <ng-container *ngIf="data?.type === 'issue'">
+        <hr class="line" />
+        <div class="right-div p-5-0">
+          <div class="titles" translate="category"></div>
+          <div class="values">
+            {{ this.issuesActionsDetailViewForm.get('category').value }}
+          </div>
         </div>
-      </div>
+      </ng-container>
       <hr class="line" />
       <div class="right-div p-5-0">
         <div class="titles" translate="round"></div>
