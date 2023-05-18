@@ -43,7 +43,6 @@ export class OperatorRoundsService {
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
-  isEdit = location?.pathname?.startsWith('/operator-rounds/edit/');
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
@@ -365,7 +364,7 @@ export class OperatorRoundsService {
           ...roundPlanDetails.authoredFormDetail,
           flatHierarchy
         },
-        isEdit: location?.pathname?.startsWith('/operator-rounds/edit/')
+        isEdit: roundPlanDetails.isEdit
       }
     );
   }
