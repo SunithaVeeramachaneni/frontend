@@ -206,7 +206,7 @@ export const routingUrls = {
   },
   myForms: {
     url: '/forms',
-    title: 'My Forms',
+    title: 'Forms',
     permission: permissions.viewForms
   },
   formsTemplates: {
@@ -238,7 +238,7 @@ export const routingUrls = {
   },
   myRoundPlans: {
     url: '/operator-rounds',
-    title: 'My Plans',
+    title: 'Round Plans',
     permission: permissions.viewORPlans
   },
   roundPlanScheduler: {
