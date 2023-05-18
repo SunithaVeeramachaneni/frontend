@@ -324,15 +324,15 @@ export class ObservationsService {
       : `${formatedDisplay} + ${assignee.length - 1} more`;
   }
 
-  formatUserFullNameDisplay(emails): string {
+  formatUserFullNameDisplay(emailList): string {
     let emailToDisplay = null;
-    if (emails && emails?.includes(',')) {
-      const emailList = emails?.split(',');
+    if (emailList && emailList?.includes(',')) {
+      const list = emailList?.split(',')?.filter(Boolean);
       emailToDisplay = [];
-      if (emailList.length > 0) {
-        emailList.forEach((e) => {
-          if (e) {
-            const foundName = this.userService.getUserFullName(e);
+      if (list?.length > 0) {
+        list.forEach((email) => {
+          if (email) {
+            const foundName = this.userService.getUserFullName(email);
             if (foundName) {
               emailToDisplay.push(foundName);
             }
@@ -341,7 +341,7 @@ export class ObservationsService {
       }
       emailToDisplay = emailToDisplay.toString();
     } else {
-      emailToDisplay = this.userService.getUserFullName(emails);
+      emailToDisplay = this.userService.getUserFullName(emailList);
     }
     return emailToDisplay;
   }
