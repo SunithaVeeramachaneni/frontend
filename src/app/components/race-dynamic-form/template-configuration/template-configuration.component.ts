@@ -13,11 +13,12 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 
@@ -102,6 +103,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
+  private onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -159,6 +161,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (!this.formConfiguration.invalid) {
@@ -622,6 +625,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
     this.store.dispatch(QuickResponseActions.resetQuickResponses());
