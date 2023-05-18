@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { ToastService } from 'src/app/shared/toast';
 
@@ -26,6 +27,7 @@ export class PDFPreviewComponent implements OnInit {
     private readonly toast: ToastService,
     public dialogRef: MatDialogRef<PDFPreviewComponent>,
     private readonly operatorRoundsService: OperatorRoundsService,
+    private readonly rdfService: RaceDynamicFormService,
     @Inject(MAT_DIALOG_DATA) public data,
     private cdrf: ChangeDetectorRef
   ) {}
@@ -34,38 +36,68 @@ export class PDFPreviewComponent implements OnInit {
     const selectedForm = this.data.selectedForm;
     const roundPlanId = selectedForm.id;
     const roundId = selectedForm.roundId;
+    const moduleName = this.data.moduleName;
 
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
     };
 
-    this.operatorRoundsService
-      .downloadAttachment$(roundPlanId, roundId, info)
-      .subscribe(
-        (data) => {
-          const blob = new Blob([data], { type: 'application/pdf' });
-          this.selectedPDFBlob = blob;
-          const fileReader = new FileReader();
-          fileReader.onload = () => {
-            this.selectedPDFSrc = new Uint8Array(
-              fileReader.result as ArrayBuffer
-            );
+    if (moduleName === 'RDF') {
+      this.rdfService
+        .downloadAttachment$(roundPlanId, selectedForm.inspectionId, info)
+        .subscribe(
+          (data) => {
+            const blob = new Blob([data], { type: 'application/pdf' });
+            this.selectedPDFBlob = blob;
+            const fileReader = new FileReader();
+            fileReader.onload = () => {
+              this.selectedPDFSrc = new Uint8Array(
+                fileReader.result as ArrayBuffer
+              );
+              this.downloadInProgress = false;
+              this.cdrf.detectChanges();
+            };
+            fileReader.readAsArrayBuffer(blob);
+            return;
+          },
+          (err) => {
             this.downloadInProgress = false;
             this.cdrf.detectChanges();
-          };
-          fileReader.readAsArrayBuffer(blob);
-          return;
-        },
-        (err) => {
-          this.downloadInProgress = false;
-          this.cdrf.detectChanges();
-          this.toast.show({
-            text: 'Error occured while generating PDF!',
-            type: 'warning'
-          });
-        }
-      );
+            this.toast.show({
+              text: 'Error occured while generating PDF!',
+              type: 'warning'
+            });
+          }
+        );
+    } else {
+      this.operatorRoundsService
+        .downloadAttachment$(roundPlanId, roundId, info)
+        .subscribe(
+          (data) => {
+            const blob = new Blob([data], { type: 'application/pdf' });
+            this.selectedPDFBlob = blob;
+            const fileReader = new FileReader();
+            fileReader.onload = () => {
+              this.selectedPDFSrc = new Uint8Array(
+                fileReader.result as ArrayBuffer
+              );
+              this.downloadInProgress = false;
+              this.cdrf.detectChanges();
+            };
+            fileReader.readAsArrayBuffer(blob);
+            return;
+          },
+          (err) => {
+            this.downloadInProgress = false;
+            this.cdrf.detectChanges();
+            this.toast.show({
+              text: 'Error occured while generating PDF!',
+              type: 'warning'
+            });
+          }
+        );
+    }
   }
 
   downloadPdf() {

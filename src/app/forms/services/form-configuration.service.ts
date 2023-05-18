@@ -13,6 +13,7 @@ import { State } from '../state';
 import { AppService } from 'src/app/shared/services/app.services';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -264,7 +265,7 @@ export class FormConfigurationService {
 
   private getSection(sectionIndex: number, section: Section) {
     return {
-      id: `S${sectionIndex}`,
+      id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
       isOpen: true
@@ -300,6 +301,7 @@ export class FormConfigurationService {
         : ({} as NumberRangeMetadata)
     };
   }
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   getDefQues() {
     return this.defField;
   }

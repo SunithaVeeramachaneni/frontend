@@ -53,7 +53,7 @@ export class RoutePlanComponent implements OnInit {
   dropTargetIds = [];
   nodeLookup = {};
   dropActionTodo: any = null;
-
+  positions: any;
   selectedNode: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
@@ -267,6 +267,16 @@ export class RoutePlanComponent implements OnInit {
   }
 
   toggleShowHierarchyPopover = (node) => {
+    const position = this.document
+      .getElementById(`node-${node.id}`)
+      .getBoundingClientRect();
+    this.positions = {
+      left: `${position.right + 10}px`,
+      top: `${position.top - 220}px`,
+      arrowleft: `${position.right}px`,
+      arrowtop: `${position.top + 10}px`
+    };
+
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };

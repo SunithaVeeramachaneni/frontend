@@ -6,7 +6,8 @@ import {
   catchError,
   concatMap,
   mergeMap,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
@@ -18,13 +19,14 @@ import {
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
-
+import { Router } from '@angular/router';
 @Injectable()
 export class FormConfigurationEffects {
   constructor(
     private actions$: Actions,
     private raceDynamicFormService: RaceDynamicFormService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) {}
 
   createForm$ = createEffect(() =>
@@ -32,13 +34,12 @@ export class FormConfigurationEffects {
       ofType(BuilderConfigurationActions.createForm),
       concatMap((action) =>
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
-          map((response) => {
-            this.raceDynamicFormService.setFormCreatedUpdated(response);
-            return FormConfigurationApiActions.createFormSuccess({
+          map((response) =>
+            FormConfigurationApiActions.createFormSuccess({
               formMetadata: { id: response.id, ...action.formMetadata },
               formSaveStatus: formConfigurationStatus.saved
-            });
-          }),
+            })
+          ),
           catchError((error) => {
             this.raceDynamicFormService.handleError(error);
             return of(FormConfigurationApiActions.createFormFailure({ error }));

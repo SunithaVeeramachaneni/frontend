@@ -2,7 +2,9 @@
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-      <span class="back-btn-text" translate="backBtn"></span>
+      <span class="back-btn-text">
+        {{ 'backBtn' | translate }}
+      </span>
     </button>
   </mat-toolbar>
 
@@ -31,7 +33,9 @@
     <div class="width-5"></div>
     <div class="width-95">
       <div class="form-detials">
-        <h2 class="heading" translate="setFormDetailsHeading"></h2>
+        <h2 class="heading">
+          {{ 'setFormDetailsHeading' | translate }}
+        </h2>
 
         <!-- <p class="sub-heading" translate="setFormTypeHeading"></p> -->
         <!-- <input
@@ -60,7 +64,9 @@
         <!-- <hr class="horizontal-line" /> -->
 
         <div class="form-name">
-          <p class="form-name-description" translate="addFormName"></p>
+          <p class="form-name-description">
+            {{ 'addFormNameMandatory' | translate }}
+          </p>
           <mat-form-field appearance="outline" class="width-100">
             <input
               type="text"
@@ -90,7 +96,9 @@
               formControlName="description"
             />
           </mat-form-field>
-          <p class="form-name-description" translate="plant"></p>
+          <p class="form-name-description">
+            {{ 'plantMandatory' | translate }}
+          </p>
           <mat-form-field appearance="outline" class="width-100">
             <mat-select
               formControlName="plantId"
@@ -109,10 +117,22 @@
                 >
               </div>
             </mat-select>
+            <mat-error
+              *ngIf="processValidationErrors('plantId')"
+              class="m-t-5 error-fields"
+            >
+              {{
+                errors.plantId.name
+                  | translate
+                    : {
+                        name: 'plant' | translate
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="tags">
-          <p class="form-name-description m-b-0" translate="tags"></p>
+          <p class="form-name-description m-b-0">{{ 'tags' | translate }}</p>
           <mat-form-field class="chips-list width-100" appearance="outline">
             <mat-chip-list #chipList>
               <mat-chip
@@ -131,6 +151,7 @@
                 [matAutocomplete]="auto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="add($event)"
+                (click)="openAutoComplete()"
                 #tagsInput
                 [formControl]="tagsCtrl"
               />

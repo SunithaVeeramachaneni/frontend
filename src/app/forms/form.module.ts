@@ -67,7 +67,6 @@ import { ScheduleSuccessModalComponent } from './components/schedular/schedule-s
 import { ScheduleConfigurationComponent } from './components/schedular/schedule-configuration/schedule-configuration.component';
 import { PDFPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
-import { AssignToComponent } from './components/schedular/assign/assign.component';
 import { SharedModule } from '../shared/shared.module';
 import { DynamicPreviewResponseTypeLoaderDirective } from './components/preview/directives/dynamic-preview-response-type-loader.directive';
 import { PreviewQuestionComponent } from './components/preview/preview-question/preview-question.component';
@@ -92,6 +91,19 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RoundPlanImagePreviewComponent } from './components/round-plan-image-preview/round-plan-image-preview.component';
 import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-preview/round-plan-pdf-preview.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
+import { ObservationsComponent } from './components/observations/observations.component';
+import { DonutChartComponent } from './components/donut-chart/donut-chart.component';
+import { IssuesListComponent } from './components/issues-list/issues-list.component';
+import { ActionsListComponent } from './components/actions-list/actions-list.component';
+import { IssuesActionsViewComponent } from './components/issues-actions-view/issues-actions-view.component';
+import { DynamictableModule } from '@innovapptive.com/dynamictable';
+
+import * as echarts from 'echarts';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -149,10 +161,15 @@ import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-previe
     InstructionPdfPreviewComponent,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent,
     DynamicPreviewResponseTypeLoaderDirective,
-    RoundPlanPdfPreviewComponent,
-    RoundPlanImagePreviewComponent
+    DonutChartComponent,
+    IssuesListComponent,
+    ActionsListComponent,
+    IssuesActionsViewComponent,
+    AssignedToComponent,
+    ObservationsComponent,
+    RoundPlanImagePreviewComponent,
+    RoundPlanPdfPreviewComponent
   ],
   imports: [
     SharedModule,
@@ -186,7 +203,13 @@ import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-previe
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
-    MatProgressSpinnerModule
+    PdfViewerModule,
+    MatProgressSpinnerModule,
+    DynamictableModule,
+    NgxEchartsModule.forRoot({
+      echarts
+    }),
+    MatToolbarModule
   ],
   exports: [
     FormWidgetComponent,
@@ -213,10 +236,12 @@ import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-previe
     NgxShimmerLoadingModule,
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
-    AssignToComponent,
-    InstructionImageComponent,
-    InstructionPdfComponent,
-    QuillMaterialComponent,
+    DonutChartComponent,
+    IssuesListComponent,
+    ActionsListComponent,
+    IssuesActionsViewComponent,
+    AssignedToComponent,
+    ObservationsComponent,
     RoundPlanImagePreviewComponent,
     RoundPlanPdfPreviewComponent
   ]

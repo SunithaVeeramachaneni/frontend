@@ -63,7 +63,8 @@ const {
   plants,
   globalResponse,
   roundPlanArchivedForms,
-  roundPlanObservations
+  roundPlanObservations,
+  rdfObservations
 } = routingUrls;
 
 @Component({
@@ -172,6 +173,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: archivedForms.title,
           url: archivedForms.url,
           permission: archivedForms.permission
+        },
+        {
+          title: rdfObservations.title,
+          url: rdfObservations.url,
+          permission: rdfObservations.permission
         }
       ]
     },

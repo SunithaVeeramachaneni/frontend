@@ -98,7 +98,7 @@
       }
 
       .tags-mat-chips {
-        margin: 0 5px !important;
+        margin: 5px 5px !important;
       }
 
       .buttons {
@@ -111,6 +111,7 @@
         height: 29px;
         font-weight: normal;
         line-height: normal;
+        border: 1px solid $blue-main;
       }
     }
   }
@@ -247,6 +248,11 @@
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
+}
+
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
 }
 
 .next-btn {

@@ -12,9 +12,9 @@
           <div>
             <span
               class="no-of-asset"
-              *ngIf="assetsListCount$ | async as totalCount"
+              *ngIf="assetsCount$ | async as totalCount; else loadingAssets"
             >
-              <span class="asset-count"> {{ totalCount | count }} &nbsp; </span>
+              <span class="asset-count"> {{ totalCount }} &nbsp; </span>
               <span class="asset-text">{{
                 'assets'
                   | translate
@@ -23,6 +23,14 @@
                       }
               }}</span>
             </span>
+            <ng-template #loadingAssets>
+              <ngx-shimmer-loading
+                class="loading-assets"
+                [width]="'100%'"
+                [height]="'30px'"
+              >
+              </ngx-shimmer-loading>
+            </ng-template>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -144,14 +152,19 @@
         </div>
       </div>
 
-      <ng-container *ngIf="assetsAddOrEditOpenState">
-        <app-add-edit-assets
-          [@slideInOut]="assetsAddOrEditOpenState"
-          (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
-          [assetsEditData]="assetsEditData"
-          (createdAssetsData)="addOrUpdateAssets($event)"
-        ></app-add-edit-assets>
-      </ng-container>
+      <div *ngIf="dataLoadingComplete">
+        <ng-container *ngIf="assetsAddOrEditOpenState">
+          <app-add-edit-assets
+            [@slideInOut]="assetsAddOrEditOpenState"
+            (slideInOut)="onCloseAssetsAddOrEditOpenState($event)"
+            [assetsEditData]="assetsEditData"
+            (createdAssetsData)="addOrUpdateAssets($event)"
+            [allPlants]="allPlants"
+            [allLocations]="allParentsLocations"
+            [allAssets]="allParentsAssets"
+          ></app-add-edit-assets>
+        </ng-container>
+      </div>
 
       <ng-container *ngIf="openAssetsDetailedView">
         <app-assets-detail-view
@@ -161,7 +174,7 @@
         ></app-assets-detail-view>
       </ng-container>
 
-      <div *ngIf="isLoading$ | async">
+      <div *ngIf="(isLoading$ | async) || !dataLoadingComplete">
         <div class="ghost-loading">
           <div *ngFor="let number of ghostLoading">
             <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
