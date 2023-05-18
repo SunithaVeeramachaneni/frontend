@@ -377,7 +377,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   userFullNameByEmail: {};
-
+  roundId = '';
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -482,6 +482,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.isLoading$.next(true);
     });
 
+    this.activatedRoute.queryParams.subscribe(({ roundId = '' }) => {
+      this.roundId = roundId;
+      this.fetchRounds$.next({ data: 'load' });
+      this.isLoading$.next(true);
+    });
+
     this.configOptions.allColumns = this.columns;
   }
 
@@ -491,7 +497,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
+      roundPlanId: this.roundPlanId,
+      roundId: this.roundId
     };
 
     return this.operatorRoundsService
