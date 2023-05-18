@@ -206,7 +206,7 @@ export const routingUrls = {
   },
   myForms: {
     url: '/forms',
-    title: 'Forms',
+    title: 'My Forms',
     permission: permissions.viewForms
   },
   formsTemplates: {
