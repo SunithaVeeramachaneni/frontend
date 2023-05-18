@@ -25,6 +25,7 @@ export type GetFormList = {
   updatedAt: string;
   _version: number;
   pdfTemplateConfiguration?: any;
+  instructions?: any;
 };
 
 export type UpdateAuthoredFormDetail = {

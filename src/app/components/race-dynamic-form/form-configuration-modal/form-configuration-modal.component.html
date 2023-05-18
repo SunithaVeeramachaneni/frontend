@@ -6,7 +6,7 @@
     </button>
   </mat-toolbar>
 
-  <div mat-dialog-actions class="buttons">
+  <div mat-dialog-actions align="end" class="buttons">
     <button
       mat-stroked-button
       type="button"
@@ -22,7 +22,7 @@
       class="next-btn"
       (click)="next()"
       [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-      translate="Save and Go Next"
+      translate="nextBtn"
     ></button>
   </div>
   <hr class="horizontal-line" />
@@ -110,22 +110,6 @@
               </div>
             </mat-select>
           </mat-form-field>
-
-          <div class="plant">
-            <p class="form-name-description m-b-0 m-t-20" translate="Plant"></p>
-            <mat-form-field
-              class="chips-list width-100 form-field"
-              appearance="outline"
-            >
-              <mat-label>Select Plant</mat-label>
-
-              <mat-select [(value)]="selectedOption">
-                <mat-option *ngFor="let option of options" [value]="option">{{
-                  option
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
         </div>
         <div class="tags">
           <p class="form-name-description m-b-0" translate="tags"></p>
@@ -166,11 +150,11 @@
           </mat-form-field>
         </div>
 
-        <p
-          class="form-name-description m-b-0 m-t-20"
-          translate="Notes and Attachments"
-        ></p>
-        <div class="notes_and_Attachment">
+        <div class="notesAndAttachment">
+          <p
+            class="form-name-description m-b-0 m-t-20"
+            translate="notesAndAttachment"
+          ></p>
           <mat-form-field
             placeholder="Notes and Attachments"
             class="notes_Attachment"
@@ -178,33 +162,23 @@
             appearance="outline"
           >
             <quill-material
+              #notesAttachment
               [ngClass]="{
                 'display-toolbar': true
               }"
-              formControlName="notes_attachment"
+              formControlName="notesAttachment"
             >
             </quill-material>
           </mat-form-field>
         </div>
 
         <div class="addpdf">
-          <div class="dis-flex">
-            <!-- <span *ngIf="headerDataForm.get('value').value.pdf !== null">
-              <app-instruction-pdf
-                [pdf]="headerDataForm.get('value').value.pdf"
-                [index]="'4'"
-                (indexEmitter)="instructionsFileDeleteHandler($event)"
-              >
-              </app-instruction-pdf>
-            </span> -->
-          </div>
-
           <br />
           <input
             type="file"
             class="file-upload"
             accept="image/jpeg,image/jpg,image/png,application/pdf"
-            (change)="formplanFileUploadHandler($event)"
+            (change)="formFileUploadHandler($event)"
             [hidden]="true"
             #formFileUpload
           />
@@ -216,28 +190,38 @@
             (click)="formFileUpload.click()"
           >
             <mat-icon class="icon">link</mat-icon>
-            <span translate="addImagesAndPDFBtn"></span>
+            <span translate="addImagesAndPDFBtn1"></span>
           </button>
-        </div>
 
-        <div mat-dialog-actions align="end" class="buttons">
-          <button
-            mat-stroked-button
-            type="button"
-            color="primary"
-            class="skip-btn"
-            (click)="onCancel()"
-            translate="cancelBtn"
-          ></button>
-          <button
-            mat-raised-button
-            type="submit"
-            color="primary"
-            class="next-btn"
-            (click)="next()"
-            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-            translate="nextBtn"
-          ></button>
+          <div class="attachments-container">
+            <span
+              *ngFor="
+                let image of headerDataForm.get('instructions').value.images;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-round-plan-image-preview
+                [image]="image"
+                (imageIndexEmitter)="formFileDeleteHandler($event)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-round-plan-image-preview>
+            </span>
+
+            <span
+              *ngFor="
+                let pdf of headerDataForm.get('instructions').value.pdf;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-round-plan-pdf-preview
+                [pdf]="pdf"
+                (pdfIndexEmitter)="formPdfDeleteHandler($event)"
+              ></app-round-plan-pdf-preview>
+            </span>
+          </div>
         </div>
       </div>
     </div>

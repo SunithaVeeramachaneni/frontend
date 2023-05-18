@@ -264,6 +264,6 @@
   "selectAnOperator": "Select an Operator",
   "createManually": "Create Manually",
   "addImagesAndPDFBtn1": "Add images and  PDF",
-  "notesAndAttachments": "Notes and Attachments",
+  "notesAndAttachment": "Notes and Attachments",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters"
 }

@@ -215,19 +215,30 @@
     display: inline-block;
     position: relative;
     text-align: left;
-    margin-top: 26px;
+    margin-top: 10px;
   }
 
   .mat-icon {
     -webkit-transform: rotate(120deg);
   }
-  ::ng-deep .ql-toolbar.ql-snow {
-    margin-left: 80px;
-  }
 
   .mat-error {
     margin-top: 10px;
   }
+
+  ::ng-deep .mat-form-field[_ngcontent-hbq-c404] {
+    margin: 0.25em 0;
+    margin-top: 6px;
+    margin-top: 10px;
+  }
+  ::ng-deep .display-toolbar .ql-toolbar.ql-snow {
+    display: block;
+    margin-top: 0px;
+    margin-left: 140px;
+  }
+  .form-header-modal[_ngcontent-qdp-c430] mat-form-field[_ngcontent-qdp-c430] {
+    margin-top: 2px;
+  }
 }
 
 .searchable-input {
@@ -252,14 +263,6 @@
   padding: 5px;
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
-}
-
-.next-btn {
-  background-color: $radio-button-checked;
-  border-color: $radio-button-checked;
-  height: 29px;
-  font-weight: normal;
-  line-height: normal;
 }
 
 .attachments-container {

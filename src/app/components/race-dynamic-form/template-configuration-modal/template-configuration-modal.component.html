@@ -5,6 +5,28 @@
       <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
+
+  <div mat-dialog-actions align="end" class="buttons">
+    <button
+      mat-stroked-button
+      type="button"
+      color="primary"
+      class="skip-btn"
+      (click)="onCancel()"
+      translate="cancelBtn"
+    ></button>
+    <button
+      mat-raised-button
+      type="submit"
+      color="primary"
+      class="next-btn"
+      (click)="next()"
+      [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+      translate="nextBtn"
+    ></button>
+  </div>
+  <hr class="horizontal-line" />
+
   <div class="dis-flex form-content">
     <div class="width-5"></div>
     <div class="width-95">
@@ -84,7 +106,35 @@
           </mat-form-field>
         </div>
 
-        <div mat-dialog-actions align="end" class="buttons">
+        <p
+          class="form-name-description m-b-0 m-t-20"
+          translate="Notes and Attachments"
+        ></p>
+        <div class="notes_and_Attachment">
+          <mat-form-field
+            placeholder="Notes and Attachments"
+            class="notes_Attachment"
+            class="width-100"
+            appearance="outline"
+          >
+            <quill-material
+              [ngClass]="{
+                'display-toolbar': true
+              }"
+              formControlName="notesAttachment"
+            >
+            </quill-material>
+
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="m-5 error-fields"
+            >
+              pLEASE check you have exceeded limit
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- <div mat-dialog-actions align="end" class="buttons">
           <button
             mat-stroked-button
             type="button"
@@ -102,6 +152,58 @@
             [disabled]="headerDataForm.invalid || headerDataForm.pristine"
             translate="nextBtn"
           ></button>
+        </div> -->
+
+        <div class="addpdf">
+          <br />
+          <input
+            type="file"
+            class="file-upload"
+            accept="image/jpeg,image/jpg,image/png,application/pdf"
+            (change)="formFileUploadHandler($event)"
+            [hidden]="true"
+            #formFileUpload
+          />
+
+          <button
+            mat-button
+            color="primary"
+            class="addLogicBtn"
+            (click)="formFileUpload.click()"
+          >
+            <mat-icon class="icon">link</mat-icon>
+            <span translate="addImagesAndPDFBtn1"></span>
+          </button>
+
+          <div class="attachments-container">
+            <span
+              *ngFor="
+                let image of headerDataForm.get('instructions').value.images;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-round-plan-image-preview
+                [image]="image"
+                (imageIndexEmitter)="formFileDeleteHandler($event)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-round-plan-image-preview>
+            </span>
+
+            <span
+              *ngFor="
+                let pdf of headerDataForm.get('instructions').value.pdf;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-round-plan-pdf-preview
+                [pdf]="pdf"
+                (pdfIndexEmitter)="formPdfDeleteHandler($event)"
+              ></app-round-plan-pdf-preview>
+            </span>
+          </div>
         </div>
       </div>
     </div>

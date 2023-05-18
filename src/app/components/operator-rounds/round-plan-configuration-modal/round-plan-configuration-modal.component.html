@@ -194,7 +194,7 @@
           <div class="attachments-container">
             <span
               *ngFor="
-                let image of headerDataForm.get('attachments').value.images;
+                let image of headerDataForm.get('instructions').value.images;
                 index as i
               "
               class="m-r-10"
@@ -209,7 +209,7 @@
 
             <span
               *ngFor="
-                let pdf of headerDataForm.get('attachments').value.pdf;
+                let pdf of headerDataForm.get('instructions').value.pdf;
                 index as i
               "
               class="m-r-10"

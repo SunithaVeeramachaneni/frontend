@@ -280,6 +280,7 @@ export class OperatorRoundsService {
   }
 
   createForm$(formListQuery) {
+    console.log('formlistquery', formListQuery);
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
       'round-plans',
@@ -295,7 +296,8 @@ export class OperatorRoundsService {
         plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
-        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        instructions: formListQuery.instructions
       }
     );
   }

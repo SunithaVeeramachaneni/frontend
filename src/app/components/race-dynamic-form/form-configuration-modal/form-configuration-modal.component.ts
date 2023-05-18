@@ -17,9 +17,11 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
 import { FormUploadFile, ValidationError } from 'src/app/interfaces';
@@ -37,6 +39,11 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 import { ToastService } from 'src/app/shared/toast';
+import { MatDialog } from '@angular/material/dialog';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { TenantService } from '../../tenant-management/services/tenant.service';
+import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
@@ -65,6 +72,8 @@ export class FormConfigurationModalComponent implements OnInit {
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
   options: any = [];
+  filteredMediaType: any;
+  s3BaseUrl: string;
 
   constructor(
     private fb: FormBuilder,
@@ -76,7 +85,10 @@ export class FormConfigurationModalComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private plantService: PlantService,
     @Inject(MAT_DIALOG_DATA) public data,
-    private toast: ToastService
+    private toast: ToastService,
+    public dialog: MatDialog,
+    public tenantService: TenantService,
+    private formConfigurationService: FormConfigurationService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -92,6 +104,17 @@ export class FormConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
+  }
+
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    const htmlTagsRegex = /<[^>]+>/g;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const textWithoutTags = control.value.replace(htmlTagsRegex, '');
+      if (textWithoutTags.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
   }
 
   ngOnInit(): void {
@@ -112,8 +135,22 @@ export class FormConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantId: ['', Validators.required]
+      plantId: ['', Validators.required],
+      instructions: [
+        {
+          images: [],
+          pdf: []
+        }
+      ],
+      notesAttachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
+
+    const {
+      s3Details: { bucket, region }
+    } = this.tenantService.getTenantInfo();
+
+    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
+
     this.getAllPlantsData();
   }
 
@@ -196,6 +233,18 @@ export class FormConfigurationModalComponent implements OnInit {
 
   next() {
     const newTags = [];
+    const instructions = {
+      notes: '',
+      attachments: '',
+      pdfDocs: ''
+    };
+    const pdfs = this.headerDataForm.get('instructions').value.pdf;
+    const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
+
+    const images = this.headerDataForm.get('instructions').value.images;
+    const imageKeys = images.map((image) => image.objectKey.substring(7));
+    const newAttachments = [...imageKeys, ...pdfKeys];
+    const notesAdd = this.headerDataForm.get('notesAttachment').value;
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -229,6 +278,32 @@ export class FormConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
+      for (const url of newAttachments) {
+        if (
+          url.endsWith('.png') ||
+          url.endsWith('.jpeg') ||
+          url.endsWith('.jpg')
+        ) {
+          if (instructions.attachments.length > 0) {
+            instructions.attachments += ', ';
+          }
+          instructions.attachments += url;
+        } else if (url.endsWith('.pdf')) {
+          {
+            if (instructions.pdfDocs.length > 0) {
+              instructions.pdfDocs += ',';
+            }
+            instructions.pdfDocs += url;
+          }
+        }
+      }
+      instructions.notes += notesAdd;
+      console.log('instructions', instructions);
+      this.headerDataForm.get('notesAttachment').setValue(notesAdd);
+      console.log('instruction notes', instructions.notes);
+      this.headerDataForm.get('instructions').setValue(instructions);
+
+      console.log('this.headerdataform', this.headerDataForm.value);
       this.store.dispatch(
         BuilderConfigurationActions.createForm({
           formMetadata: {
@@ -276,46 +351,35 @@ export class FormConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
+  getS3Url(filePath: string) {
+    console.log('s3baseurl', this.s3BaseUrl);
+    return `${this.s3BaseUrl}public/${filePath}`;
+  }
+
   sendFileToS3(file, params): void {
-    const { originalValue, isImage, index } = params;
+    const { originalValue, isImage } = params;
     console.log('sendFile to S3', file);
-    this.rdfService.uploadToS3$(file).subscribe((event) => {
+    this.formConfigurationService.uploadToS3$(file).subscribe((event) => {
       const value: FormUploadFile = {
         name: file.name,
-        size: file.size
-        // objectKey: event.message.objectKey,
-        // objectURL: event.message.objectURL
+        size: file.size,
+        objectKey: event
       };
-      // if (isImage) {
-      //   originalValue.images[index] = value;
-      // } else {
-      //   originalValue.pdf = value;
-      // }
+      if (isImage) {
+        originalValue.images.push(value);
+      } else {
+        originalValue.pdf.push(value);
+      }
+
+      this.headerDataForm.get('instructions').setValue(originalValue);
+      console.log('originalvalue', originalValue);
     });
   }
 
-  formplanFileUploadHandler = (event: Event) => {
-    let base64: string;
+  formFileUploadHandler = (event: Event) => {
     console.log('event:', event.target);
-    const { files } = event.target as HTMLInputElement;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      const image = base64.split(',')[1];
-      const value = {
-        name: files[0].name,
-        size: (files[0].size / 1024).toFixed(2),
-        base64: image,
-        pdf: false,
-        isImage: true,
-        index: 0
-      };
-      console.log('value:', value);
-      this.headerDataForm.get('value').setValue(value);
-    };
-
     const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files);
     const allowedFileTypes: string[] = [
       'image/jpeg',
       'image/jpg',
@@ -323,10 +387,8 @@ export class FormConfigurationModalComponent implements OnInit {
       'application/pdf'
     ];
 
-    const files1 = Array.from(target.files);
-    const originalValue = this.headerDataForm.get('value');
-    let imageIndex = 0;
-    for (const file of files1) {
+    const originalValue = this.headerDataForm.get('instructions').value;
+    for (const file of files) {
       if (allowedFileTypes.indexOf(file.type) === -1) {
         this.toast.show({
           text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
@@ -334,61 +396,87 @@ export class FormConfigurationModalComponent implements OnInit {
         });
         return;
       }
-      // console.log('value:', value);
-      // console.log(file + 'file');
-      // console.log(originalValue + ':originalvalue');
-      const isImage = true;
-      this.sendFileToS3(file, {
-        originalValue,
-        isImage,
-        imageIndex
-      });
-      // if (file.type === 'application/pdf') {
-      //   if (originalValue.pdf === null) {
-      //     this.sendFileToS3(file, {
-      //       originalValue,
-      //       isImage: false
-      //     });
-      //   }
-      // } else {
-      //   const index = originalValue.images.findIndex(
-      //     (imageFile) => imageFile === null
-      //   );
-      //   if (index !== -1) {
-      //     this.sendFileToS3(file, {
-      //       originalValue,
-      //       isImage: true,
-      //       index
-      //     });
-      //   }
-      // }
-      imageIndex++;
+      if (file.type === 'application/pdf') {
+        this.sendFileToS3(file, {
+          originalValue,
+          isImage: false
+        });
+      } else {
+        this.sendFileToS3(file, {
+          originalValue,
+          isImage: true
+        });
+      }
     }
-    // console.log(originalValue);
-
-    // instructionsFileDeleteHandler(index: number): {
-    //   const originalValue = this.headerDataForm.get('value').value;
-    //   if (index < 3) {
-    //     this.roundplanconfiguarationservice.deleteFromS3(
-    //       originalValue.images[index].objectKey
-    //     );
-    //     originalValue.images[index] = null;
-    //     originalValue.images = this.imagesArrayRemoveNullGaps(
-    //       originalValue.images
-    //     );
-    //   } else {
-    //     this.roundplanconfiguarationservice.deleteFromS3(
-    //       originalValue.pdf.objectKey
-    //     );
-    //     originalValue.pdf = null;
-    //   }
-    //   // this.headerDataForm.get('value').setValue(originalValue);
-    //   // this.instructionsUpdateValue();
-    // }
-
-    // imagesArrayRemoveNullGaps(images) {
-    //   const nonNullImages = images.filter((image) => image !== null);
-    //   return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
-    // }
   };
+
+  openPreviewDialog() {
+    const attachments = this.headerDataForm.get('instructions').value;
+    const filteredMediaType1 = [...attachments.images];
+    console.log('filteresmedia', filteredMediaType1);
+
+    const slideshowImages = [];
+    filteredMediaType1.forEach((media) => {
+      slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
+    });
+
+    console.log('slideshowimage', slideshowImages);
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
+  }
+
+  // formsFileDeleteHandler(index: number): void {
+  //   const attachments = this.headerDataForm.get('attachments').value;
+
+  //   if (attachments.image) {
+  //     this.formConfigurationService.deleteFromS3(
+  //       attachments.images[index].objectKey
+  //     );
+
+  //     attachments.images.splice(index, 1);
+  //     attachments.images = this.imagesArrayRemoveNullGaps(attachments.images);
+  //   } else {
+  //     this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
+
+  //     attachments.pdf.splice(index, 1);
+  //     attachments.pdf = this.imagesArrayRemoveNullGaps(attachments.pdf);
+  //     attachments.pdf = null;
+  //   }
+  //   this.headerDataForm.get('attachments').setValue(attachments);
+  // }
+
+  // imagesArrayRemoveNullGaps(images: Array<any>): Array<any> {
+  //   const nonNullImages = images.filter((image) => image !== null);
+  //   return nonNullImages.concat(new Array(nonNullImages.length).fill(null));
+  // }
+
+  formFileDeleteHandler(index: number): void {
+    const attachments = this.headerDataForm.get('instructions').value;
+    console.log(attachments);
+    if (attachments) {
+      this.formConfigurationService.deleteFromS3(attachments.images.objectKey);
+
+      attachments.images.splice(index, 1);
+      this.headerDataForm.get('instructions').setValue(attachments);
+    }
+  }
+
+  formPdfDeleteHandler(index: number): void {
+    const attachments = this.headerDataForm.get('instructions').value;
+    if (attachments) {
+      this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
+
+      attachments.pdf.splice(index, 1);
+
+      console.log('new-attachments', attachments);
+      this.headerDataForm.get('instructions').setValue(attachments);
+    }
+  }
 }

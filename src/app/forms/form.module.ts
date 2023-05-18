@@ -28,7 +28,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
@@ -91,7 +90,8 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-
+import { RoundPlanImagePreviewComponent } from './components/round-plan-image-preview/round-plan-image-preview.component';
+import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-preview/round-plan-pdf-preview.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -150,7 +150,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     ScheduleSuccessModalComponent,
     ScheduleConfigurationComponent,
     AssignToComponent,
-    DynamicPreviewResponseTypeLoaderDirective
+    DynamicPreviewResponseTypeLoaderDirective,
+    RoundPlanPdfPreviewComponent,
+    RoundPlanImagePreviewComponent
   ],
   imports: [
     SharedModule,
@@ -184,7 +186,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
-    PdfViewerModule,
     MatProgressSpinnerModule
   ],
   exports: [
@@ -214,7 +215,10 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     ScheduleConfigurationComponent,
     AssignToComponent,
     InstructionImageComponent,
-    InstructionPdfComponent
+    InstructionPdfComponent,
+    QuillMaterialComponent,
+    RoundPlanImagePreviewComponent,
+    RoundPlanPdfPreviewComponent
   ]
 })
 export class FormModule {}

@@ -17,12 +17,14 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { FormUploadFile, ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
@@ -32,6 +34,11 @@ import {
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
+import { TenantService } from '../../tenant-management/services/tenant.service';
+import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/shared/toast/toast.service';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 
 @Component({
   selector: 'app-template-configuration-modal',
@@ -57,6 +64,8 @@ export class TemplateConfigurationModalComponent implements OnInit {
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
+  filteredMediaType: any;
+  s3BaseUrl: string;
 
   constructor(
     private fb: FormBuilder,
@@ -66,7 +75,11 @@ export class TemplateConfigurationModalComponent implements OnInit {
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
-    private data: any
+    private data: any,
+    private tenantService: TenantService,
+    private formConfigurationService: FormConfigurationService,
+    public dialog: MatDialog,
+    private toast: ToastService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -82,6 +95,17 @@ export class TemplateConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
+  }
+
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    const htmlTagsRegex = /<[^>]+>/g;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const textWithoutTags = control.value.replace(htmlTagsRegex, '');
+      if (textWithoutTags.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
   }
 
   ngOnInit(): void {
@@ -104,8 +128,20 @@ export class TemplateConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      instructions: [
+        {
+          images: [],
+          pdf: []
+        }
+      ],
+      notesAttachment: ['', [this.maxLengthWithoutBulletPoints(250)]]
     });
+    const {
+      s3Details: { bucket, region }
+    } = this.tenantService.getTenantInfo();
+
+    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
   }
 
   add(event: MatChipInputEvent): void {
@@ -153,6 +189,18 @@ export class TemplateConfigurationModalComponent implements OnInit {
 
   next() {
     const newTags = [];
+    const instructions = {
+      notes: '',
+      attachments: '',
+      pdfDocs: ''
+    };
+    const pdfs = this.headerDataForm.get('instructions').value.pdf;
+    const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
+
+    const images = this.headerDataForm.get('instructions').value.images;
+    const imageKeys = images.map((image) => image.objectKey.substring(7));
+    const newAttachments = [...imageKeys, ...pdfKeys];
+    const notesAdd = this.headerDataForm.get('notesAttachment').value;
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -168,6 +216,32 @@ export class TemplateConfigurationModalComponent implements OnInit {
 
     if (this.headerDataForm.valid) {
       const userEmail = this.loginService.getLoggedInEmail();
+      for (const url of newAttachments) {
+        if (
+          url.endsWith('.png') ||
+          url.endsWith('.jpeg') ||
+          url.endsWith('.jpg')
+        ) {
+          if (instructions.attachments.length > 0) {
+            instructions.attachments += ', ';
+          }
+          instructions.attachments += url;
+        } else if (url.endsWith('.pdf')) {
+          {
+            if (instructions.pdfDocs.length > 0) {
+              instructions.pdfDocs += ',';
+            }
+            instructions.pdfDocs += url;
+          }
+        }
+      }
+      instructions.notes += notesAdd;
+      console.log('instructions', instructions);
+      this.headerDataForm.get('notesAttachment').setValue(notesAdd);
+      console.log('instruction notes', instructions.notes);
+      this.headerDataForm.get('instructions').setValue(instructions);
+
+      console.log('this.headerdataform', this.headerDataForm.value);
       this.rdfService
         .createTemplate$({
           ...this.headerDataForm.value,
@@ -208,5 +282,201 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  getS3Url(filePath: string) {
+    console.log('s3baseurl', this.s3BaseUrl);
+    return `${this.s3BaseUrl}public/${filePath}`;
+  }
+  sendFileToS3(file, params): void {
+    const { originalValue, isImage } = params;
+    console.log('sendFile to S3', file);
+    this.formConfigurationService.uploadToS3$(file).subscribe((event) => {
+      const value: FormUploadFile = {
+        name: file.name,
+        size: file.size,
+        objectKey: event
+      };
+      if (isImage) {
+        originalValue.images.push(value);
+      } else {
+        originalValue.pdf.push(value);
+      }
+
+      this.headerDataForm.get('instructions').setValue(originalValue);
+      console.log('originalvalue', originalValue);
+    });
+  }
+  formFileUploadHandler = (event: Event) => {
+    console.log('event:', event.target);
+    const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files);
+    const allowedFileTypes: string[] = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'application/pdf'
+    ];
+
+    const originalValue = this.headerDataForm.get('instructions').value;
+    for (const file of files) {
+      if (allowedFileTypes.indexOf(file.type) === -1) {
+        this.toast.show({
+          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+          type: 'warning'
+        });
+        return;
+      }
+      if (file.type === 'application/pdf') {
+        this.sendFileToS3(file, {
+          originalValue,
+          isImage: false
+        });
+      } else {
+        this.sendFileToS3(file, {
+          originalValue,
+          isImage: true
+        });
+      }
+    }
+  };
+
+  openPreviewDialog() {
+    const attachments = this.headerDataForm.get('instructions').value;
+    const filteredMediaType1 = [...attachments.images];
+    console.log('filteresmedia', filteredMediaType1);
+
+    const slideshowImages = [];
+    filteredMediaType1.forEach((media) => {
+      slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
+    });
+
+    console.log('slideshowimage', slideshowImages);
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
+  }
+
+  formFileDeleteHandler(index: number): void {
+    const attachments = this.headerDataForm.get('instructions').value;
+    console.log(attachments);
+    if (attachments) {
+      this.formConfigurationService.deleteFromS3(attachments.images.objectKey);
+
+      attachments.images.splice(index, 1);
+      this.headerDataForm.get('instructions').setValue(attachments);
+    }
+  }
+
+  // formPdfDeleteHandler(index: number): void {
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments) {
+  //     this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
+
+  //     attachments.pdf.splice(index, 1);
+
+  //     console.log('new-attachments', attachments);
+  //     this.headerDataForm.get('instructions').setValue(attachments);
+  //   }
+  // }
+
+  // formPdfDeleteHandler(index: number): void {
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments && attachments.pdf && attachments.pdf.length > index) {
+  //     const deletedPdf = attachments.pdf;
+  //     this.formConfigurationService.deleteFromS3(deletedPdf.objectKey);
+
+  //     attachments.pdf = attachments.pdf.filter((_, i) => i !== index);
+
+  //     console.log('new-attachments', attachments);
+  //     this.headerDataForm.get('instructions').setValue(attachments);
+  //   }
+  // }
+
+  // formPdfDeleteHandler(index: number): void {
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments && attachments.pdf && attachments.pdf.length > index) {
+  //     const deletedPdf = attachments.pdf.splice(index, 1)[0];
+  //     this.formConfigurationService.deleteFromS3(deletedPdf.objectKey);
+
+  //     console.log('new-attachments', attachments);
+  //     this.headerDataForm.get('instructions').setValue(attachments);
+  //   }
+  // }
+
+  // formPdfDeleteHandler(pdf: any): void {
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments && attachments.pdf) {
+  //     const index = attachments.pdf.indexOf(pdf);
+  //     if (index > -1) {
+  //       this.formConfigurationService.deleteFromS3(pdf.objectKey);
+
+  //       attachments.pdf.splice(index, 1);
+
+  //       console.log('new-attachments', attachments);
+  //       this.headerDataForm.get('instructions').setValue(attachments);
+  //     }
+  //   }
+  // }
+
+  // formPdfDeleteHandler(pdf: any): void {
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments && attachments.pdf) {
+  //     const updatedPdfArray = attachments.pdf.filter(
+  //       (item: any) => item !== pdf
+  //     );
+
+  //     this.formConfigurationService.deleteFromS3(pdf.objectKey);
+
+  //     attachments.pdf = updatedPdfArray;
+
+  //     console.log('new-attachments', attachments);
+  //     this.headerDataForm.get('instructions').setValue(attachments);
+  //   }
+  // }
+
+  // formPdfDeleteHandler(pdf: any): void {
+  //   console.log('hi');
+  //   const attachments = this.headerDataForm.get('instructions').value;
+  //   if (attachments && attachments.pdf) {
+  //     const updatedPdfArray = attachments.pdf.filter(
+  //       (item: any) => item !== attachments.pdf
+  //     );
+
+  //     if (attachments.pdf.objectKey) {
+  //       this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
+  //     }
+
+  //     attachments.pdf = updatedPdfArray;
+
+  //     console.log('new-attachments', attachments);
+  //     this.headerDataForm.get('instructions').setValue(attachments);
+  //   }
+  // }
+
+  formPdfDeleteHandler(pdf: any): void {
+    const attachments = this.headerDataForm.get('instructions').value;
+    if (attachments && attachments.pdf) {
+      const updatedPdfArray = attachments.pdf.filter(
+        (item: any) => item.objectKey !== attachments.pdf.objectKey
+      );
+
+      if (attachments.pdf.objectKey) {
+        this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
+      }
+
+      attachments.pdf = updatedPdfArray;
+
+      console.log('new-attachments', updatedPdfArray);
+      this.headerDataForm
+        .get('instructions')
+        .patchValue({ pdf: attachments.pdf });
+    }
   }
 }

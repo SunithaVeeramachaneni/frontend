@@ -20,13 +20,13 @@ export class RoundPlanConfigurationService {
   constructor(private store: Store<State>, private _appService: AppService) {}
 
   uploadToS3$(file: Blob): Observable<any> {
-    const roundplandata = new FormData();
-    roundplandata.append('file', file);
+    const roundPlanData = new FormData();
+    roundPlanData.append('file', file);
 
     return this._appService._postData(
       environment.operatorRoundsApiUrl,
       'round-plan/imageAndPdfUpload',
-      roundplandata
+      roundPlanData
     );
   }
 
