@@ -253,7 +253,7 @@
   "plant": "Plant",
   "plantMandatory": "Plant *",
   "assignToInfo": "The assignee will be auto assigned to all the rounds generated, However you can still change from the rounds",
-  "advanceRoundsCountInfo": "How many rounds would you like to generate for the first time in advance?",
+  "advanceRoundsCountInfo": "How many rounds would you like to generate in advance?",
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
   "advanceRoundsCount": "Rounds Count",
