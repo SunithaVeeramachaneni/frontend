@@ -161,7 +161,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-top: 10px;
+    padding-top: 8px;
   }
 
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
@@ -216,7 +216,7 @@
   .responseBtn {
     padding: 0 0 0 5px;
     height: 36px;
-    width: 98%;
+    width: 80%;
   }
 }
 .m-l-10 {
@@ -244,7 +244,7 @@
 .mcq-edit {
   padding: 5px;
   position: relative;
-  top: 8px;
+  top: -2px;
 }
 
 .global-resp {

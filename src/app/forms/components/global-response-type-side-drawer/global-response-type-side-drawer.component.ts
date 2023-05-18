@@ -45,7 +45,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   @ViewChildren('globalResponses')
   private globalResponses: QueryList<ElementRef>;
-
+  isCreate = false;
   public isViewMode: boolean;
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
@@ -54,6 +54,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
   @Input() set globalResponseToBeEdited(response: any) {
     this.globalResponse = response ? response : null;
+    this.isCreate = this.globalResponse ? false : true;
   }
 
   @Input() set isControlInViewMode(mode) {

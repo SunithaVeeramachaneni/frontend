@@ -30,13 +30,10 @@ export class AssetsService {
 
   assetsCreatedUpdated$ = this.assetsCreatedUpdatedSubject.asObservable();
 
-  private MAX_FETCH_LIMIT: string = '1000000';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.assetsCreatedUpdatedSubject.next(data);
-  }
 
   fetchAllAssets$ = (plantsID = null, info: ErrorInfo = {} as ErrorInfo) => {
     const params: URLSearchParams = new URLSearchParams();
@@ -55,13 +52,24 @@ export class AssetsService {
     );
   };
 
-  getAssetCount$(): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
+  getAssetCount$(searchTerm: string): Observable<number> {
+    const filter = JSON.stringify(
+      Object.fromEntries(
+        Object.entries({
+          searchTerm: { contains: searchTerm }
+        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
+      )
+    );
+
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
-        'asset/count?' + params.toString()
+        'asset/count',
+        { displayToast: true, failureResponse: {} },
+        {
+          limit: this.MAX_FETCH_LIMIT,
+          filter
+        }
       )
       .pipe(map((res) => res.count || 0));
   }
@@ -187,14 +195,6 @@ export class AssetsService {
     );
   }
 
-  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this._appService._getLocal(
-      '',
-      'assets/json/master-configuration-assets-filter.json',
-      info
-    );
-  }
-
   private formatGraphQAssetsResponse(resp: AssetsResponse) {
     let rows =
       resp.items
@@ -206,7 +206,7 @@ export class AssetsService {
           ...p,
           preTextImage: {
             image:
-              p?.image.length > 0
+              p?.image?.length > 0
                 ? p?.image
                 : 'assets/master-configurations/asset-icon.svg',
             style: {

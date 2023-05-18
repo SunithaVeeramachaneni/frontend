@@ -1,0 +1,58 @@
+@import '../../../../scss/colors.scss';
+
+.actions-list {
+  ::ng-deep .table-column {
+    width: 15%;
+  }
+
+  ::ng-deep .mat-column-title {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-priority {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-status {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-dueDate {
+    min-width: 100px;
+  }
+
+  .actions-search {
+    position: fixed;
+    right: 14px;
+    top: 335px;
+  }
+  .no-of-actions {
+    margin-right: 10px;
+    position: fixed;
+    right: 255px;
+    top: 348px;
+  }
+  .actions-count {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray-bg;
+  }
+  .actions-text {
+    font-weight: 500;
+    font-size: 110%;
+    color: $gray1;
+    margin-left: 5px;
+    .ghost-loading {
+      padding: 0 20px;
+    }
+  }
+}
+
+.common-filter-icon {
+  height: 17px;
+  width: 17px;
+}

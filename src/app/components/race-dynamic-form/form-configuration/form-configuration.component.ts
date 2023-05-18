@@ -65,7 +65,12 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  BuilderConfigurationActions,
+  GlobalResponseActions,
+  QuickResponseActions,
+  UnitOfMeasurementActions
+} from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 
 @Component({
@@ -139,8 +144,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       counter: [0],
       formStatus: [formConfigurationStatus.draft]
     });
-
-    this.responseSetService.fetchAllGlobalResponses$().subscribe();
 
     this.formConfiguration.valueChanges
       .pipe(
@@ -699,6 +702,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
+    this.store.dispatch(QuickResponseActions.resetQuickResponses());
+    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 
   importQuestions(): void {

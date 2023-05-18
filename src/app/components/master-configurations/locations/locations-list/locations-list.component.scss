@@ -5,7 +5,15 @@
   height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
-    width: 60%;
+    width: 25%;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 90px;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
   }
 
   .heading {
@@ -14,6 +22,15 @@
     color: $blue-head;
     margin: 0;
     padding-left: 20px;
+  }
+
+  .loading-locations {
+    position: absolute;
+    width: 5%;
+    height: 32px;
+    border-radius: 5px;
+    right: 415px;
+    top: 92px;
   }
 
   .main-container {
