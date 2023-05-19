@@ -476,17 +476,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
-      this.fetchRounds$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
-
-    this.activatedRoute.queryParams.subscribe(({ roundId = '' }) => {
-      this.roundId = roundId;
-      this.fetchRounds$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ roundPlanId = '', roundId = '' }) => {
+        this.roundPlanId = roundPlanId;
+        this.roundId = roundId;
+        this.fetchRounds$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
