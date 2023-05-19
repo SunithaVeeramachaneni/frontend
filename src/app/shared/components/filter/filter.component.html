@@ -116,6 +116,7 @@
         *ngIf="item.type === 'daterange'"
         appearance="outline"
         class="mat-field date-picker"
+        (click)="picker1.open()"
       >
         <mat-label>{{ item.label }}</mat-label>
         <div class="date-picker-wrap">
