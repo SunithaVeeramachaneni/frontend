@@ -1,6 +1,7 @@
 {
   "locations": "Locations",
   "createNew": "Create New",
+  "create": "Create",
   "name": "Name",
   "nameMandatory": "Name *",
   "locationIdMandatory": "Location Id *",
