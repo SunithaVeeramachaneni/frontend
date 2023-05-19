@@ -52,6 +52,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
+  graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -78,7 +79,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -354,7 +358,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLDefaultMaxLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
@@ -372,7 +376,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
-
+  userFullNameByEmail: {};
+  roundId = '';
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -475,11 +480,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
-      this.fetchRounds$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ roundPlanId = '', roundId = '' }) => {
+        this.roundPlanId = roundPlanId;
+        this.roundId = roundId;
+        this.fetchRounds$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
@@ -490,7 +498,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
+      roundPlanId: this.roundPlanId,
+      roundId: this.roundId
     };
 
     return this.operatorRoundsService
@@ -709,6 +718,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
     });
   }
 
+  getFullNameToEmailArray(data: any) {
+    let emailArray = [];
+    data?.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -716,7 +737,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }

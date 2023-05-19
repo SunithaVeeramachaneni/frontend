@@ -25,7 +25,10 @@ import {
   UserInfo,
   Permission
 } from 'src/app/interfaces';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  permissions as perms
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -256,7 +259,7 @@ export class RoundPlanListComponent implements OnInit {
       form: {} as any
     });
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   formsListCount$: Observable<number>;
   ghostLoading = new Array(12).fill(0).map((v, i) => i);

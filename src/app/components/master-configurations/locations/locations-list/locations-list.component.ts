@@ -104,14 +104,17 @@ export class LocationsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
       subtitleColumn: 'plantId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       }
     },
     {

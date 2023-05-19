@@ -105,14 +105,17 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
       subtitleColumn: 'plantSubId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       }
     },
     {
@@ -132,7 +135,9 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -177,10 +182,13 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: false,
       hasPostTextImage: false

@@ -49,7 +49,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -282,7 +282,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
@@ -814,9 +814,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe((formsList) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
-          const uniquePlants = formsList.rows
+          const uniquePlants = formsList.items
             .map((item) => {
-              if (item.plantId) {
+              if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
                 return item.plant;
               }

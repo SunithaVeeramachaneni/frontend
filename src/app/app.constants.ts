@@ -238,7 +238,7 @@ export const routingUrls = {
   },
   myRoundPlans: {
     url: '/operator-rounds',
-    title: 'My Plans',
+    title: 'Round Plans',
     permission: permissions.viewORPlans
   },
   roundPlanScheduler: {
@@ -309,7 +309,7 @@ export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
-export const graphQLDefaultLimit = 100;
+export const graphQLDefaultLimit = 250;
 export const graphQLDefaultMaxLimit = 10000;
 export const defaultCountFieldName = 'Record Count';
 export const superAdminIcon =
