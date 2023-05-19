@@ -131,7 +131,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -176,7 +178,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -220,7 +224,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -242,7 +246,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false

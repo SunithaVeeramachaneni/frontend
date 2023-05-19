@@ -1,6 +1,6 @@
 {
-  "search": "Search",
-  "searchUsers": "Search Users",
+  "search": "Search by Name/Description",
+  "searchUsers": "Search by Name/Description",
   "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
   "inactiveUsersPlural": "{count, plural, =0{ Inactive User} one{ Inactive User} other{ Inactive Users}}",
