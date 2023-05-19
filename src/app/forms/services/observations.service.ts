@@ -324,6 +324,28 @@ export class ObservationsService {
       : `${formatedDisplay} + ${assignee.length - 1} more`;
   }
 
+  formatUserFullNameDisplay(emailList): string {
+    let emailToDisplay = null;
+    if (emailList && emailList?.includes(',')) {
+      const list = emailList?.split(',')?.filter(Boolean);
+      emailToDisplay = [];
+      if (list?.length > 0) {
+        list.forEach((email) => {
+          if (email) {
+            const foundName = this.userService.getUserFullName(email);
+            if (foundName) {
+              emailToDisplay.push(foundName);
+            }
+          }
+        });
+      }
+      emailToDisplay = emailToDisplay.toString();
+    } else {
+      emailToDisplay = this.userService.getUserFullName(emailList);
+    }
+    return emailToDisplay;
+  }
+
   removeSpecialCharacter = (str = '') => str?.replace(/[^A-Z0-9]/gi, '');
 
   prepareStatus(status = '') {

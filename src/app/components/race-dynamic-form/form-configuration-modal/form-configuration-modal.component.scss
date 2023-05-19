@@ -145,6 +145,11 @@
   margin: 10px 10px 10px 12px;
 }
 
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
+}
+
 .next-btn {
   background-color: $radio-button-checked;
   border-color: $radio-button-checked;
