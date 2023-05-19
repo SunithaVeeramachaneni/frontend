@@ -171,6 +171,7 @@ export interface IssueOrAction {
   priority?: string;
   dueDate?: string;
   assignedTo?: string;
+  previouslyAssignedTo: string;
   issueData?: string;
   actionData?: string;
   issueOrActionDBVersion: number;

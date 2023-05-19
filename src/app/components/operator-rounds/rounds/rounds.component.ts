@@ -757,11 +757,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     const { roundId, assignedToEmail, ...rest } = this.selectedRound;
     let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
-      previouslyAssignedTo += `, ${assignedToEmail}`;
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? ` ${assignedToEmail}`
+        : assignedToEmail;
     }
 
     if (previouslyAssignedTo.includes(assignedTo)) {
-      previouslyAssignedTo = previouslyAssignedTo.replace(assignedTo, '');
+      previouslyAssignedTo = previouslyAssignedTo
+        .replace(assignedTo, '')
+        .trim();
     }
 
     let { status } = this.selectedRound;

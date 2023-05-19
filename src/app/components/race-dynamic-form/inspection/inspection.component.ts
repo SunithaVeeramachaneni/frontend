@@ -743,9 +743,18 @@ export class InspectionComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
     const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
-    let previouslyAssignedTo = assignedToEmail;
-    if (assignedTo === assignedToEmail)
-      previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? ` ${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .replace(assignedTo, '')
+        .trim();
+    }
 
     let { status } = this.selectedForm;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
