@@ -8,6 +8,19 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { FormService } from '../../services/form.service';
 
 import { slideInOut } from 'src/app/animations';
+import { Store } from '@ngrx/store';
+import {
+  State,
+  getDefaultQuickResponses,
+  getFormMetadata,
+  getFormSpecificQuickResponses,
+  getGlobalResponses
+} from '../../state';
+import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import {
+  GlobalResponseActions,
+  QuickResponseActions
+} from '../../state/actions';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
@@ -38,109 +51,42 @@ export class ResponseTypeComponent implements OnInit {
   });
   allResponses: any[] = [];
   quickResponsesData$: Observable<any>;
-  createEditQuickResponse$ = new BehaviorSubject<any>({
-    type: 'create',
-    response: {}
-  });
   formId: string;
 
   constructor(
     private formService: FormService,
-    private rdfService: RaceDynamicFormService,
-    private responseSetService: ResponseSetService,
-    private route: ActivatedRoute
+    private operatorRoundsService: OperatorRoundsService,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
-    this.globalResponses$ = combineLatest([
-      this.responseSetService.fetchAllGlobalResponses$(),
-      this.addEditDeleteResponseSet$
-    ]).pipe(
-      map(([allResponses, addEditData]) => {
-        this.allResponses = allResponses.items;
-        if (this.addEditDeleteResponseSet) {
-          const { form, action } = addEditData;
-          switch (action) {
-            case 'create':
-              this.allResponses = [form, ...this.allResponses];
-              break;
-            case 'update':
-              const updatedIdx = this.allResponses.findIndex(
-                (item) => item.id === form.id
-              );
-              this.allResponses[updatedIdx] = form;
-              break;
-            default:
-            // Do nothing
-          }
-          this.addEditDeleteResponseSet = false;
-        }
-
-        return this.allResponses;
-      })
-    );
-
-    this.route.params.subscribe((params) => {
-      this.formId = params.id;
-    });
-
-    this.rdfService.formCreatedUpdated$.subscribe((data) => {
-      if (data.id) {
-        this.formId = data.id;
-      }
+    this.globalResponses$ = this.store.select(getGlobalResponses);
+    this.store.select(getFormMetadata).subscribe(({ id }) => {
+      this.formId = id;
     });
 
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),
-      this.rdfService.getDataSetsByType$('quickResponses').pipe(
-        tap((responses) => {
-          const defaultResponses = responses.filter((item) => !item.formId);
-          return defaultResponses;
-        })
-      ),
-      this.rdfService.getDataSetsByFormId$('quickResponses', this.formId),
-      this.createEditQuickResponse$
+      this.store.select(getDefaultQuickResponses),
+      this.store.select(getFormSpecificQuickResponses)
     ]).pipe(
-      map(
-        ([
-          initial,
-          responses,
-          formResponses,
-          { type, response, responseType }
-        ]) => {
-          responses = responses.filter((item) => !item.formId);
-          if (Object.keys(response).length) {
-            if (type === 'create') {
-              initial.data = initial.data.concat([response]);
-            } else {
-              initial.data = initial.data.map((resp) => {
-                if (resp.id === response.id) {
-                  return response;
-                }
-                return resp;
-              });
-            }
-            return initial;
-          } else {
-            if (initial.data.length === 0) {
-              const quickResp = responses.map((r) => ({
-                id: r.id,
-                name: '',
-                values: r.values
-              }));
-              initial.data = initial.data.concat(quickResp);
-              const formQuickResp = formResponses.map((r) => ({
-                id: r.id,
-                name: '',
-                values: r.values,
-                formId: r.formId
-              }));
-              initial.data = initial.data.concat(formQuickResp);
-            }
-            return initial;
-          }
-        }
-      )
+      map(([initial, responses, formResponses]) => {
+        initial.data = [];
+        const quickResp = responses.map((r) => ({
+          id: r.id,
+          name: '',
+          values: r.values
+        }));
+        initial.data = initial.data.concat(quickResp);
+        const formQuickResp = formResponses.map((r) => ({
+          id: r.id,
+          name: '',
+          values: r.values,
+          formId: r.formId
+        }));
+        initial.data = initial.data.concat(formQuickResp);
+        return initial;
+      })
     );
 
     this.quickResponsesData$.subscribe();
@@ -174,6 +120,7 @@ export class ResponseTypeComponent implements OnInit {
             name,
             value: JSON.parse(values),
             description,
+            // eslint-disable-next-line no-underscore-dangle
             version: response._version,
             createdBy: response.createdBy,
             refCount: response.refCount,
@@ -196,7 +143,6 @@ export class ResponseTypeComponent implements OnInit {
         isOpen: true,
         response
       });
-      this.responseTypeCloseEvent.emit(true);
     }
   }
 
@@ -213,15 +159,14 @@ export class ResponseTypeComponent implements OnInit {
   };
 
   handleGlobalResponseChange = (event) => {
-    const { actionType: action, responseSet } = event;
+    const { actionType: action, responseSet: item } = event;
     this.addEditDeleteResponseSet = true;
     this.responseToBeEdited = null;
     this.globalResponseSlideState = 'out';
-    if (action !== 'cancel') {
-      this.addEditDeleteResponseSet$.next({
-        action,
-        form: responseSet
-      });
+    if (action === 'create') {
+      this.store.dispatch(GlobalResponseActions.setGlobalResponse({ item }));
+    } else if (action === 'update') {
+      this.store.dispatch(GlobalResponseActions.updateGlobalResponse({ item }));
     }
     this.isGlobalResponseOpen = false;
   };
@@ -240,5 +185,48 @@ export class ResponseTypeComponent implements OnInit {
     this.isGlobalResponseOpen = event.isGlobalResponseOpen;
     this.responseToBeEdited = event.responseToBeEdited;
   };
-  quickResponseTypeHandler(event) {}
+  quickResponseTypeHandler(event) {
+    switch (event.eventType) {
+      case 'quickResponsesAdd':
+        const createDataset = {
+          formId: this.formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses'
+        };
+        this.operatorRoundsService
+          .createDataSet$(createDataset)
+          .subscribe((response) => {
+            if (Object.keys(response).length) {
+              this.store.dispatch(
+                QuickResponseActions.setFormSpecificQuickResponse({
+                  formSpecificResponse: response
+                })
+              );
+            }
+          });
+        break;
+
+      case 'quickResponseUpdate':
+        const updateDataset = {
+          formId: this.formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses',
+          id: event.data.id
+        };
+        this.operatorRoundsService
+          .updateDataSet$(event.data.id, updateDataset)
+          .subscribe((response) => {
+            if (Object.keys(response).length) {
+              this.store.dispatch(
+                QuickResponseActions.updateFormSpecificQuickResponse({
+                  formSpecificResponse: updateDataset
+                })
+              );
+            }
+          });
+        break;
+    }
+  }
 }

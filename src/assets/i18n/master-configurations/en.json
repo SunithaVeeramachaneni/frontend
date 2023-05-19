@@ -1,6 +1,7 @@
 {
   "locations": "Locations",
   "createNew": "Create New",
+  "create": "Create",
   "name": "Name",
   "nameMandatory": "Name *",
   "locationIdMandatory": "Location Id *",
@@ -31,9 +32,9 @@
   "uploadExcel": "Upload Excel",
   "createManually": "Create Manually",
   "downloadTemplate": "Download Template",
-  "addNew": "Add new",
+  "addNew": "Add New",
   "editUOM": "Edit UOM",
-  "unitType": "Unit of measure",
+  "unitType": "Unit of Measure",
   "delete": "Delete",
   "deleteTitle": "Delete",
   "deleteSubTitle": "Are you sure to delete",
@@ -69,10 +70,12 @@
   "globalMcqHeading": "Global Response Set",
   "globalResponseHeading": "Global Responses",
   "responseTitle": "Response Title",
+  "untitledDescription": " Untitled Description",
   "response": "Response",
   "addRes": " + Add Response",
   "createResponses": "Create Responses",
   "editResponses": "Edit Responses",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} must not start or end with spaces"
+  "trimWhiteSpace": "{name} must not start or end with spaces",
+  "status": "Status"
 }

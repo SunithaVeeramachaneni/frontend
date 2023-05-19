@@ -218,7 +218,7 @@
                 >
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
-                <mat-menu #menu="matMenu">
+                <mat-menu #menu="matMenu" (closed)="handleMatMenu()">
                   <ng-template matMenuContent>
                     <div (click)="$event.stopPropagation()" class="uomMenu">
                       <span class="searchUOM">
@@ -342,7 +342,6 @@
                 </span>
               </span>
               <app-response-type-side-drawer
-                (responseTypeHandler)="quickResponseTypeHandler($event)"
                 (rangeSelectionHandler)="rangeSelectionHandler($event)"
                 [question]="question"
                 [formId]="formId"

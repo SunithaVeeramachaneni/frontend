@@ -258,10 +258,10 @@
             <div class="info" translate>assignToInfo</div>
           </div>
           <div class="forms-count">
-            <p translate class="title">formsGeneration</p>
-            <div class="info m-b-5" translate>advanceFormsCountInfo</div>
+            <p translate class="title">InspectionsGeneration</p>
+            <div class="info m-b-5" translate>advanceInspectionsCountInfo</div>
             <mat-form-field appearance="outline" class="width-100">
-              <mat-label translate>advanceFormsCount</mat-label>
+              <mat-label translate="inspectionsCount"></mat-label>
               <input
                 type="number"
                 matInput
@@ -286,10 +286,10 @@
             </mat-error>
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
-            <app-assign
+            <app-assigned-to
               [assigneeDetails]="assigneeDetails"
               (selectedAssignee)="selectedAssigneeHandler($event)"
-            ></app-assign>
+            ></app-assigned-to>
           </mat-menu>
         </ng-container>
 

@@ -10,6 +10,7 @@ import {
   SectionQuestions
 } from 'src/app/interfaces';
 import { State } from '../state';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -241,7 +242,7 @@ export class FormConfigurationService {
 
   private getSection(sectionIndex: number, section: Section) {
     return {
-      id: `S${sectionIndex}`,
+      id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
       isOpen: true
@@ -277,6 +278,7 @@ export class FormConfigurationService {
         : ({} as NumberRangeMetadata)
     };
   }
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   getDefQues() {
     return this.defField;
   }

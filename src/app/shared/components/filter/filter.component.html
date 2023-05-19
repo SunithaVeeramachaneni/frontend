@@ -123,13 +123,13 @@
             <input
               matStartDate
               [(ngModel)]="item.startDate"
-              placeholder="Start date"
+              [placeholder]="'startDate' | translate"
             />
             <input
               matEndDate
               [(ngModel)]="item.endDate"
               (dateInput)="dateRangeSelect(item)"
-              placeholder="End date"
+              [placeholder]="'endDate' | translate"
             />
           </mat-date-range-input>
           <mat-icon matDatepickerToggleIcon (click)="picker1.open()"
@@ -144,7 +144,7 @@
     </div>
   </div>
 
-  <div>
+  <div class="footer">
     <button
       mat-raised-button
       class="btn apply-filters-btn"
