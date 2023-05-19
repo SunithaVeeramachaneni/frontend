@@ -99,6 +99,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription = null;
+  private attachmentsSubscriptionData = [];
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -234,6 +235,54 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+
+            // 6. Create issue attachments issues log history
+            // FIXME: Match objectId with this.data.id once you will get from mobile side.
+            this.amplifySubscription$ = this.observations
+              .onCreateIssuesAttachments$({})
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateIssuesAttachments }
+                  }
+                }) => {
+                  if (onCreateIssuesAttachments) {
+                    const base64Image =
+                      'data:image/jpeg;base64,' +
+                      onCreateIssuesAttachments?.imageData;
+                    this.attachmentsSubscriptionData.push({
+                      objectId: onCreateIssuesAttachments?.objectId,
+                      imageData: base64Image,
+                      id: onCreateIssuesAttachments?.id
+                    });
+                  }
+                }
+              });
+
+            // 7. Create action attachments action log history
+            // FIXME: Match objectId with this.data.id once you will get from mobile side.
+            this.amplifySubscription$ = this.observations
+              .onCreateActionsAttachments$({})
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateActionsAttachments }
+                  }
+                }) => {
+                  if (onCreateActionsAttachments) {
+                    const base64Image =
+                      'data:image/jpeg;base64,' +
+                      onCreateActionsAttachments?.imageData;
+                    this.attachmentsSubscriptionData.push({
+                      objectId: onCreateActionsAttachments?.objectId,
+                      imageData: base64Image,
+                      id: onCreateActionsAttachments?.id
+                    });
+                  }
+                }
+              });
           }
         });
     }
@@ -266,16 +315,24 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
+    const file: File = files[0];
+    const size = file.size;
+    const maxSize = 400000;
+    if (size > maxSize) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Please select file less than 400KB'
+      });
+      return;
+    }
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
-      const attachmentsForm = new FormData();
-      attachmentsForm.append('file', files[0]);
       const { id, type } = this.data;
-
+      const base64result = (reader?.result as string)?.split(';base64,')[1];
       this.observations
         .uploadIssueOrActionLogHistoryAttachment$(
           id,
-          attachmentsForm,
+          { file: base64result },
           type,
           this.moduleName
         )
@@ -506,7 +563,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   openPreviewDialog() {
     const slideshowImages = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(this.getS3Url(media.message));
+      slideshowImages.push(media.message);
     });
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
@@ -596,6 +653,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   ngOnDestroy(): void {
     if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
+    this.attachmentsSubscriptionData = [];
   }
 
   private getIssuesActionsList(data): void {
@@ -641,6 +699,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private init(): void {
+    this.attachmentsSubscriptionData = [];
     const { id, type, dueDate, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
@@ -685,6 +744,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
+      if (newMessage.type === 'Media') {
+        const foundImageData = this.attachmentsSubscriptionData.find(
+          (a) => a?.id === newMessage?.message
+        );
+        if (foundImageData) {
+          newMessage.message = foundImageData?.imageData || newMessage.message;
+        }
+      }
       this.logHistory = [...this.logHistory, newMessage];
       this.filteredMediaType = this.logHistory.filter(
         (history) => history?.type === 'Media'
