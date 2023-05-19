@@ -345,27 +345,16 @@ export class HierarchyContainerComponent implements OnInit {
       if (l.children && l.children.length) {
         const index = l.children.findIndex((i) => i.id === node.id);
         if (index > -1) {
-          const { id, ...rest } = l.children[index];
+          const { id, uid, name, ...rest } = l.children[index];
           l.children = [
             ...l.children.slice(0, index),
             ...node.children,
             ...l.children.slice(index + 1)
           ];
 
-          console.log(
-            findIfAnotherNodeInstanceExists(
-              { id, uid: l.children[index].uid },
-              hierarchyList
-            )
-          );
-
-          if (
-            !findIfAnotherNodeInstanceExists(
-              { id, uid: l.children[index].uid },
-              hierarchyList
-            )
-          ) {
+          if (!findIfAnotherNodeInstanceExists({ id, uid }, hierarchyList)) {
             l.children.push({
+              uid,
               ...rest,
               children: [] as HierarchyEntity[],
               isDeletedInRoutePlan: true

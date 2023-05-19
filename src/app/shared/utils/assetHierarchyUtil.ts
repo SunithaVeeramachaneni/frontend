@@ -452,13 +452,17 @@ export const deleteNodeFromHierarchy = (
 
 export const findIfAnotherNodeInstanceExists = (nodeIds, hierarchyList) => {
   const { id, uid } = nodeIds;
+  let exists = false;
+
   for (const node of hierarchyList) {
     if (node.uid === uid && node.id !== id) {
       return true;
-    } else if (node.hasChildren) {
-      return findIfAnotherNodeInstanceExists({ id, uid }, node.children);
+    } else if (node.children.length) {
+      exists = findIfAnotherNodeInstanceExists(nodeIds, node.children);
     }
   }
+
+  return exists;
 };
 
 export const findNodeByUid = (nodeUid, hierarchyList) => {

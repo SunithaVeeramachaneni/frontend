@@ -136,4 +136,10 @@ export class NodeComponent implements OnInit {
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };
+
+  getNodeName = (name: string): string => {
+    if (this.hierarchyMode === 'asset_hierarchy')
+      return name.replace(/ *\([^)]*\) */g, '');
+    return name;
+  };
 }
