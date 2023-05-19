@@ -755,9 +755,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
     const { roundId, assignedToEmail, ...rest } = this.selectedRound;
-    let previouslyAssignedTo = assignedToEmail;
-    if (assignedTo === assignedToEmail)
-      previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += `, ${assignedToEmail}`;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo.replace(assignedTo, '');
+    }
 
     let { status } = this.selectedRound;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
