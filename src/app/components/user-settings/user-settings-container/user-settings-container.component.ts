@@ -10,6 +10,6 @@ export class UserSettingsContainerComponent implements OnInit {
   constructor(private headerService: HeaderService) {}
 
   ngOnInit(): void {
-    this.headerService.setHeaderTitle('Your Settings');
+    this.headerService.setHeaderTitle('Profile');
   }
 }
