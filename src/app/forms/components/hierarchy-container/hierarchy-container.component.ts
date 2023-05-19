@@ -32,7 +32,10 @@ import {
   getTotalTasksCount,
   State
 } from '../../state/builder/builder-state.selectors';
-import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import {
+  AssetHierarchyUtil,
+  findIfAnotherNodeInstanceExists
+} from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -273,7 +276,11 @@ export class HierarchyContainerComponent implements OnInit {
         });
       } else {
         const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
-        const hierarchyUpdated = this.promoteChildren(hierarchyClone, event);
+        const hierarchyUpdated = this.promoteChildren(
+          hierarchyClone,
+          hierarchyClone,
+          event
+        );
         this.hierarchyEvent.emit({
           hierarchy: hierarchyUpdated,
           node: event
@@ -330,7 +337,7 @@ export class HierarchyContainerComponent implements OnInit {
     return array;
   }
 
-  promoteChildren(list, node) {
+  promoteChildren(hierarchyList, list, node): HierarchyEntity[] {
     list = list.map((l) => {
       if (l.id === node.id) {
         l.isDeletedInRoutePlan = true;
@@ -338,13 +345,34 @@ export class HierarchyContainerComponent implements OnInit {
       if (l.children && l.children.length) {
         const index = l.children.findIndex((i) => i.id === node.id);
         if (index > -1) {
+          const { id, ...rest } = l.children[index];
           l.children = [
             ...l.children.slice(0, index),
             ...node.children,
             ...l.children.slice(index + 1)
           ];
+
+          console.log(
+            findIfAnotherNodeInstanceExists(
+              { id, uid: l.children[index].uid },
+              hierarchyList
+            )
+          );
+
+          if (
+            !findIfAnotherNodeInstanceExists(
+              { id, uid: l.children[index].uid },
+              hierarchyList
+            )
+          ) {
+            l.children.push({
+              ...rest,
+              children: [] as HierarchyEntity[],
+              isDeletedInRoutePlan: true
+            });
+          }
         } else {
-          this.promoteChildren(l.children, node);
+          this.promoteChildren(hierarchyList, l.children, node);
         }
       }
       return l;
