@@ -519,8 +519,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  getUserNameByEmail(email) {
-    return this.userService.getUserFullName(email);
+  getUserNameByEmail(emails: string) {
+    return this.observations.formatUserFullNameDisplay(emails);
   }
 
   onPrevious(): void {
@@ -679,15 +679,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const currentChatSelectedId: string =
       this.data?.type === 'issue' ? data?.issueslistID : data?.actionslistID;
     if (this.data?.id === currentChatSelectedId) {
-      this.logHistory = [
-        ...this.logHistory,
-        {
-          ...data,
-          createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
-          message:
-            data.type === 'Object' ? JSON.parse(data?.message) : data?.message
-        }
-      ];
+      const newMessage = {
+        ...data,
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        message:
+          data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+      };
+      this.logHistory = [...this.logHistory, newMessage];
       this.filteredMediaType = this.logHistory.filter(
         (history) => history?.type === 'Media'
       );
@@ -730,8 +728,25 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            assignedTo: data?.assignedTo,
+            assignedToDisplay: this.observations.formatUsersDisplay(
+              data?.assignedTo
+            ),
             status: jsonData?.STATUS ?? ''
           };
+          this.issuesActionsDetailViewForm.patchValue({
+            status: this.data.status,
+            priority: this.data.priority,
+            dueDateDisplayValue: this.data.dueDate,
+            dueDate: this.data.dueDate
+              ? new Date(this.data.dueDate)
+              : this.data.dueDate,
+            statusDisplay: this.data.statusDisplay,
+            assignedTo: data?.assignedTo,
+            assignedToDisplay: this.observations.formatUsersDisplay(
+              data?.assignedTo
+            )
+          });
           this.allData[idx] = this.data;
         }
       }
