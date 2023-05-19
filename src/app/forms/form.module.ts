@@ -89,8 +89,8 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { RoundPlanImagePreviewComponent } from './components/round-plan-image-preview/round-plan-image-preview.component';
-import { RoundPlanPdfPreviewComponent } from './components/round-plan-pdf-preview/round-plan-pdf-preview.component';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
+import { UploadPdfPreviewComponent } from './components/upload-pdf-preview/upload-pdf-preview.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
@@ -168,8 +168,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    RoundPlanImagePreviewComponent,
-    RoundPlanPdfPreviewComponent
+    UploadImagePreviewComponent,
+    UploadPdfPreviewComponent
   ],
   imports: [
     SharedModule,
@@ -242,8 +242,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    RoundPlanImagePreviewComponent,
-    RoundPlanPdfPreviewComponent
+    UploadImagePreviewComponent,
+    UploadPdfPreviewComponent
   ]
 })
 export class FormModule {}

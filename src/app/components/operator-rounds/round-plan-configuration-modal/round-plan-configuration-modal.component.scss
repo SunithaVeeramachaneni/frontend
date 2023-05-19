@@ -64,11 +64,6 @@
         margin: 0px 28px;
       }
 
-      .horizontal-line {
-        border: 1px solid $border-color;
-        margin: 12px 0;
-      }
-
       .form-name-description {
         font-weight: 500;
         font-size: 100%;
@@ -101,10 +96,6 @@
         margin: 5px 5px !important;
       }
 
-      .buttons {
-        padding: 46px 0 15px 0;
-      }
-
       .skip-btn {
         margin-right: 10px;
         color: $radio-button-checked;
@@ -114,6 +105,11 @@
         border: 1px solid $blue-main;
       }
     }
+  }
+
+  .horizontal-line {
+    border: 1px solid $gray9;
+    margin-top: -13px;
   }
 
   .plan-name :after {
@@ -203,13 +199,8 @@
     font-size: 14px;
   }
 
-  .mat-dialog-actions {
-    margin-bottom: 0.2px;
-    margin-left: 1340px;
-  }
-
   .buttons {
-    padding: 10px 0 15px 0;
+    padding: 5px 0 15px 0;
   }
 
   mat-form-field {
@@ -242,6 +233,10 @@
   }
 }
 
+.mat-dialog-actions {
+  margin-bottom: 0.2px;
+  margin-left: 1440px;
+}
 .searchable-input {
   width: 92%;
   border: 1px solid $border-color;

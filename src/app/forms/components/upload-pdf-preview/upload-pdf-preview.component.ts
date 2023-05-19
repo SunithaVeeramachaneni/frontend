@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-round-plan-pdf-preview',
-  templateUrl: './round-plan-pdf-preview.component.html',
-  styleUrls: ['./round-plan-pdf-preview.component.scss']
+  selector: 'app-upload-pdf-preview',
+  templateUrl: './upload-pdf-preview.component.html',
+  styleUrls: ['./upload-pdf-preview.component.scss']
 })
-export class RoundPlanPdfPreviewComponent implements OnInit {
+export class UploadPdfPreviewComponent implements OnInit {
   @Input() pdf: any;
   @Input() index: number;
 

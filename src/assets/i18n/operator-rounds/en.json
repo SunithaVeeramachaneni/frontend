@@ -19,7 +19,7 @@
   "addFormNameMandatory": "Plan Name *",
   "addFormDescription": "Plan Description",
   "tags": "Tags",
-  "nextBtn": "Save & Next",
+  "nextBtn": "Save & Go Next",
   "nextBtnPreview": "Next",
   "next": "Next",
   "skipBtn": "Skip",
@@ -312,5 +312,6 @@
   "nodeId": "{type} Id: {id}",
   "typePlaceholder": "Type",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters",
+  "notesAndAttachments": "Notes And Attachments",
   "notificationCreation": "Notification Creation In-Progress"
 }

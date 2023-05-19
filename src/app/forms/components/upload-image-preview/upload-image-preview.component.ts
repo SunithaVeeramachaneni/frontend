@@ -2,11 +2,11 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
-  selector: 'app-round-plan-image-preview',
-  templateUrl: './round-plan-image-preview.component.html',
-  styleUrls: ['./round-plan-image-preview.component.scss']
+  selector: 'app-upload-image-preview',
+  templateUrl: './upload-image-preview.component.html',
+  styleUrls: ['./upload-image-preview.component.scss']
 })
-export class RoundPlanImagePreviewComponent implements OnInit {
+export class UploadImagePreviewComponent implements OnInit {
   @Input() image;
 
   @Output() triggerPreviewDialog: EventEmitter<null> = new EventEmitter();

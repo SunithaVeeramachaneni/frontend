@@ -35,7 +35,6 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  [x: string]: any;
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
@@ -46,12 +45,12 @@ export class RaceDynamicFormService {
     private translate: TranslateService
   ) {}
 
+  createTags$ = (
+    tags: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
 
-  fetchPlant() {
-    return this._appService._getResp(
-      environment.masterConfigApiUrl,
-      'plants/list'
-    );
   createDataSet$ = (
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo

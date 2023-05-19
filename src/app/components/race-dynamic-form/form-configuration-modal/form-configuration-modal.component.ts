@@ -303,12 +303,8 @@ export class FormConfigurationModalComponent implements OnInit {
         }
       }
       instructions.notes += notesAdd;
-      console.log('instructions', instructions);
       this.headerDataForm.get('notesAttachment').setValue(notesAdd);
-      console.log('instruction notes', instructions.notes);
       this.headerDataForm.get('instructions').setValue(instructions);
-
-      console.log('this.headerdataform', this.headerDataForm.value);
       this.store.dispatch(
         BuilderConfigurationActions.createForm({
           formMetadata: {
@@ -357,13 +353,11 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   getS3Url(filePath: string) {
-    console.log('s3baseurl', this.s3BaseUrl);
     return `${this.s3BaseUrl}public/${filePath}`;
   }
 
   sendFileToS3(file, params): void {
     const { originalValue, isImage } = params;
-    console.log('sendFile to S3', file);
     this.formConfigurationService.uploadToS3$(file).subscribe((event) => {
       const value: FormUploadFile = {
         name: file.name,
@@ -377,12 +371,10 @@ export class FormConfigurationModalComponent implements OnInit {
       }
 
       this.headerDataForm.get('instructions').setValue(originalValue);
-      console.log('originalvalue', originalValue);
     });
   }
 
   formFileUploadHandler = (event: Event) => {
-    console.log('event:', event.target);
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const allowedFileTypes: string[] = [
@@ -418,14 +410,12 @@ export class FormConfigurationModalComponent implements OnInit {
   openPreviewDialog() {
     const attachments = this.headerDataForm.get('instructions').value;
     const filteredMediaType1 = [...attachments.images];
-    console.log('filteresmedia', filteredMediaType1);
 
     const slideshowImages = [];
     filteredMediaType1.forEach((media) => {
       slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
     });
 
-    console.log('slideshowimage', slideshowImages);
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',
@@ -437,34 +427,8 @@ export class FormConfigurationModalComponent implements OnInit {
     }
   }
 
-  // formsFileDeleteHandler(index: number): void {
-  //   const attachments = this.headerDataForm.get('attachments').value;
-
-  //   if (attachments.image) {
-  //     this.formConfigurationService.deleteFromS3(
-  //       attachments.images[index].objectKey
-  //     );
-
-  //     attachments.images.splice(index, 1);
-  //     attachments.images = this.imagesArrayRemoveNullGaps(attachments.images);
-  //   } else {
-  //     this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
-
-  //     attachments.pdf.splice(index, 1);
-  //     attachments.pdf = this.imagesArrayRemoveNullGaps(attachments.pdf);
-  //     attachments.pdf = null;
-  //   }
-  //   this.headerDataForm.get('attachments').setValue(attachments);
-  // }
-
-  // imagesArrayRemoveNullGaps(images: Array<any>): Array<any> {
-  //   const nonNullImages = images.filter((image) => image !== null);
-  //   return nonNullImages.concat(new Array(nonNullImages.length).fill(null));
-  // }
-
   formFileDeleteHandler(index: number): void {
     const attachments = this.headerDataForm.get('instructions').value;
-    console.log(attachments);
     if (attachments) {
       this.formConfigurationService.deleteFromS3(attachments.images.objectKey);
 
@@ -480,7 +444,6 @@ export class FormConfigurationModalComponent implements OnInit {
 
       attachments.pdf.splice(index, 1);
 
-      console.log('new-attachments', attachments);
       this.headerDataForm.get('instructions').setValue(attachments);
     }
   }

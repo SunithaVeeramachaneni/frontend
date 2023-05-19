@@ -198,8 +198,12 @@ export class TemplateConfigurationModalComponent implements OnInit {
     const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
 
     const images = this.headerDataForm.get('instructions').value.images;
-    const imageKeys = images.map((image) => image.objectKey.substring(7));
-    const newAttachments = [...imageKeys, ...pdfKeys];
+    const imageKeys = Array.isArray(images)
+      ? images.map((image) => image.objectKey?.substring(7))
+      : [];
+
+    const newAttachments = [...(imageKeys ?? []), ...pdfKeys];
+
     const notesAdd = this.headerDataForm.get('notesAttachment').value;
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -236,12 +240,8 @@ export class TemplateConfigurationModalComponent implements OnInit {
         }
       }
       instructions.notes += notesAdd;
-      console.log('instructions', instructions);
       this.headerDataForm.get('notesAttachment').setValue(notesAdd);
-      console.log('instruction notes', instructions.notes);
       this.headerDataForm.get('instructions').setValue(instructions);
-
-      console.log('this.headerdataform', this.headerDataForm.value);
       this.rdfService
         .createTemplate$({
           ...this.headerDataForm.value,
@@ -285,12 +285,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
   }
 
   getS3Url(filePath: string) {
-    console.log('s3baseurl', this.s3BaseUrl);
     return `${this.s3BaseUrl}public/${filePath}`;
   }
   sendFileToS3(file, params): void {
     const { originalValue, isImage } = params;
-    console.log('sendFile to S3', file);
     this.formConfigurationService.uploadToS3$(file).subscribe((event) => {
       const value: FormUploadFile = {
         name: file.name,
@@ -304,11 +302,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
       }
 
       this.headerDataForm.get('instructions').setValue(originalValue);
-      console.log('originalvalue', originalValue);
     });
   }
   formFileUploadHandler = (event: Event) => {
-    console.log('event:', event.target);
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const allowedFileTypes: string[] = [
@@ -344,14 +340,12 @@ export class TemplateConfigurationModalComponent implements OnInit {
   openPreviewDialog() {
     const attachments = this.headerDataForm.get('instructions').value;
     const filteredMediaType1 = [...attachments.images];
-    console.log('filteresmedia', filteredMediaType1);
 
     const slideshowImages = [];
     filteredMediaType1.forEach((media) => {
       slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
     });
 
-    console.log('slideshowimage', slideshowImages);
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',
@@ -365,7 +359,6 @@ export class TemplateConfigurationModalComponent implements OnInit {
 
   formFileDeleteHandler(index: number): void {
     const attachments = this.headerDataForm.get('instructions').value;
-    console.log(attachments);
     if (attachments) {
       this.formConfigurationService.deleteFromS3(attachments.images.objectKey);
 
@@ -373,110 +366,13 @@ export class TemplateConfigurationModalComponent implements OnInit {
       this.headerDataForm.get('instructions').setValue(attachments);
     }
   }
-
-  // formPdfDeleteHandler(index: number): void {
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments) {
-  //     this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
-
-  //     attachments.pdf.splice(index, 1);
-
-  //     console.log('new-attachments', attachments);
-  //     this.headerDataForm.get('instructions').setValue(attachments);
-  //   }
-  // }
-
-  // formPdfDeleteHandler(index: number): void {
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments && attachments.pdf && attachments.pdf.length > index) {
-  //     const deletedPdf = attachments.pdf;
-  //     this.formConfigurationService.deleteFromS3(deletedPdf.objectKey);
-
-  //     attachments.pdf = attachments.pdf.filter((_, i) => i !== index);
-
-  //     console.log('new-attachments', attachments);
-  //     this.headerDataForm.get('instructions').setValue(attachments);
-  //   }
-  // }
-
-  // formPdfDeleteHandler(index: number): void {
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments && attachments.pdf && attachments.pdf.length > index) {
-  //     const deletedPdf = attachments.pdf.splice(index, 1)[0];
-  //     this.formConfigurationService.deleteFromS3(deletedPdf.objectKey);
-
-  //     console.log('new-attachments', attachments);
-  //     this.headerDataForm.get('instructions').setValue(attachments);
-  //   }
-  // }
-
-  // formPdfDeleteHandler(pdf: any): void {
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments && attachments.pdf) {
-  //     const index = attachments.pdf.indexOf(pdf);
-  //     if (index > -1) {
-  //       this.formConfigurationService.deleteFromS3(pdf.objectKey);
-
-  //       attachments.pdf.splice(index, 1);
-
-  //       console.log('new-attachments', attachments);
-  //       this.headerDataForm.get('instructions').setValue(attachments);
-  //     }
-  //   }
-  // }
-
-  // formPdfDeleteHandler(pdf: any): void {
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments && attachments.pdf) {
-  //     const updatedPdfArray = attachments.pdf.filter(
-  //       (item: any) => item !== pdf
-  //     );
-
-  //     this.formConfigurationService.deleteFromS3(pdf.objectKey);
-
-  //     attachments.pdf = updatedPdfArray;
-
-  //     console.log('new-attachments', attachments);
-  //     this.headerDataForm.get('instructions').setValue(attachments);
-  //   }
-  // }
-
-  // formPdfDeleteHandler(pdf: any): void {
-  //   console.log('hi');
-  //   const attachments = this.headerDataForm.get('instructions').value;
-  //   if (attachments && attachments.pdf) {
-  //     const updatedPdfArray = attachments.pdf.filter(
-  //       (item: any) => item !== attachments.pdf
-  //     );
-
-  //     if (attachments.pdf.objectKey) {
-  //       this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
-  //     }
-
-  //     attachments.pdf = updatedPdfArray;
-
-  //     console.log('new-attachments', attachments);
-  //     this.headerDataForm.get('instructions').setValue(attachments);
-  //   }
-  // }
-
-  formPdfDeleteHandler(pdf: any): void {
+  formPdfDeleteHandler(index: number): void {
     const attachments = this.headerDataForm.get('instructions').value;
-    if (attachments && attachments.pdf) {
-      const updatedPdfArray = attachments.pdf.filter(
-        (item: any) => item.objectKey !== attachments.pdf.objectKey
-      );
+    if (attachments) {
+      this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
 
-      if (attachments.pdf.objectKey) {
-        this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
-      }
-
-      attachments.pdf = updatedPdfArray;
-
-      console.log('new-attachments', updatedPdfArray);
-      this.headerDataForm
-        .get('instructions')
-        .patchValue({ pdf: attachments.pdf });
+      attachments.pdf.splice(index, 1);
+      this.headerDataForm.get('instructions').setValue(attachments);
     }
   }
 }

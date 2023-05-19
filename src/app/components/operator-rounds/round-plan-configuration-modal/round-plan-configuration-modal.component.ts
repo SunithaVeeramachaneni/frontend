@@ -252,6 +252,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   next() {
     const newTags = [];
+    const pdfs = this.headerDataForm.get('instructions').value.pdf;
+    const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
+
+    const images = this.headerDataForm.get('instructions').value.images;
+    const imageKeys = images.map((image) => image.objectKey.substring(7));
+    const newAttachments = [...imageKeys, ...pdfKeys];
+    const notesAdd = this.headerDataForm.get('notesAttachment').value;
+
+    const instructions = {
+      notes: '',
+      attachments: '',
+      pdfDocs: ''
+    };
+
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -290,51 +304,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         })
       );
 
-      const pdfs = this.headerDataForm.get('instructions').value.pdf;
-      const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
-
-      const images = this.headerDataForm.get('instructions').value.images;
-      const imageKeys = images.map((image) => image.objectKey.substring(7));
-      const newAttachments = [...imageKeys, ...pdfKeys];
-      const notesAdd = this.headerDataForm.get('notesAttachment').value;
-      // const myObject = {
-      //   pdfKeys: [],
-      //   imageKeys: []
-      // };
-      // for (const url of newAttachments) {
-      //   if (
-      //     url.endsWith('.png') ||
-      //     url.endsWith('.jpeg') ||
-      //     url.endsWith('.jpg')
-      //   ) {
-      //     myObject.imageKeys.push(url);
-      //   } else if (url.endsWith('.pdf')) {
-      //     myObject.pdfKeys.push(url);
-      //   }
-      // }
-
-      // console.log('myobjectdata', myObject);
-
-      // this.headerDataForm.get('attachments').setValue(myObject);
-
-      const instructions = {
-        notes: '',
-        attachments: '',
-        pdfDocs: ''
-      };
-      console.log(typeof instructions);
-      // for (const url of newAttachments) {
-      //   if (
-      //     url.endsWith('.png') ||
-      //     url.endsWith('.jpeg') ||
-      //     url.endsWith('.jpg')
-      //   ) {
-      //     instructions.attachments += url;
-      //   } else if (url.endsWith('.pdf')) {
-      //     instructions.pdfDocs += url;
-      //   }
-      // }
-
       for (const url of newAttachments) {
         if (
           url.endsWith('.png') ||
@@ -355,32 +324,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         }
       }
       instructions.notes += notesAdd;
-      console.log('instructions', instructions);
       this.headerDataForm.get('notesAttachment').setValue(notesAdd);
-      console.log('instruction notes', instructions.notes);
       this.headerDataForm.get('instructions').setValue(instructions);
-
-      console.log('this.headerdataform', this.headerDataForm.value);
-
-      // extractKeys(objects, extension): string[]{
-      //   return objects
-      //     .map((object) => object.objectKey.substring(7))
-      //     .filter((key) => key.endsWith(extension));
-      // }
-
-      // const attachments = this.headerDataForm.get('attachments').value;
-      // const pdfs = attachments?.pdf || [];
-      // const images = attachments?.images || [];
-
-      // const pdfKeys = extractKeys(pdfs, '.pdf');
-      // const imageKeys = extractKeys(images, '.png');
-
-      // const myObject = {
-      //   pdfKeys: pdfKeys,
-      //   imageKeys: imageKeys
-      // };
-
-      console.log('attachmentsofform', this.headerDataForm.value);
       this.store.dispatch(
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
@@ -391,8 +336,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           }
         })
       );
-      console.log('instructions', instructions);
-      console.log('data', this.headerDataForm.value);
 
       this.router.navigate(['/operator-rounds/create']);
       this.dialogRef.close();
@@ -457,7 +400,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         originalValue.pdf.push(value);
       }
       this.headerDataForm.get('instructions').setValue(originalValue);
-      console.log(originalValue, 'originalvalue');
     });
   }
 
@@ -505,7 +447,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
     });
 
-    console.log('slideshowimage', slideshowImages);
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
         width: '100%',
@@ -519,22 +460,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   roundPlanFileDeleteHandler(index: number): void {
     const attachments = this.headerDataForm.get('instructions').value;
-    console.log(attachments);
+
     if (attachments) {
       this.roundPlanConfigurationService.deleteFromS3(
         attachments.images.objectKey
       );
 
       attachments.images.splice(index, 1);
-      // } else {
-      //   console.log('Hi');
-      //   this.roundPlanConfigurationService.deleteFromS3(
-      //     attachments.pdf.objectKey
-      //   );
-
-      //   attachments.pdf.splice(index, 1);
-      // }
-      // console.log('new-attachments', attachments);
       this.headerDataForm.get('instructions').setValue(attachments);
     }
   }
@@ -547,56 +479,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       );
 
       attachments.pdf.splice(index, 1);
-
-      console.log('new-attachments', attachments);
       this.headerDataForm.get('instructions').setValue(attachments);
     }
   }
-  // roundPlanFileDeleteHandler(event): void {
-  //   const attachments = this.headerDataForm.get('attachments').value;
-  //   const { type } = attachments;
-
-  //   const index = attachments.images.findIndex(() => index);
-  //   console.log(index);
-
-  //   console.log('Deleting images', attachments);
-
-  //   if (type === 'image') {
-  //     const objectKey = attachments.images[index].objectKey;
-  //     this.roundPlanConfigurationService.deleteFromS3(objectKey);
-
-  //     attachments.images.splice(index, 1);
-  //   }
-
-  //   if (type === 'pdf') {
-  //     const objectKey = attachments.pdf[index].objectKey;
-  //     this.roundPlanConfigurationService.deleteFromS3(objectKey);
-
-  //     attachments.pdf.splice(index, 1);
-  //   }
-
-  //   this.headerDataForm.get('attachments').setValue(attachments);
-  // }
-
-  // roundPlanFileDeleteHandler(index: number): void {
-  //   const attachments = this.headerDataForm.get('attachments').value;
-  //   if (attachments.image) {
-  //     this.roundPlanConfigurationService.deleteFromS3(
-  //       attachments.images[index].objectKey
-  //     );
-  //     attachments.images[index] = null;
-  //     attachments.images = this.imagesArrayRemoveNullGaps(attachments.images);
-  //   } else {
-  //     this.roundPlanConfigurationService.deleteFromS3(
-  //       attachments.pdf[index].objectKey
-  //     );
-  //     attachments.pdf = null;
-  //   }
-  //   this.headerDataForm.get('attachments').setValue(attachments);
-  // }
-
-  // imagesArrayRemoveNullGaps(images: Array<any>): Array<any> {
-  //   const nonNullImages = images.filter((image) => image !== null);
-  //   return nonNullImages.concat(new Array(nonNullImages.length).fill(null));
-  // }
 }

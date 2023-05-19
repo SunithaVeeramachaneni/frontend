@@ -21,7 +21,7 @@
       class="next-btn"
       (click)="next()"
       [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-      translate="Save and Go Next"
+      translate="nextBtn"
     ></button>
   </div>
   <hr class="horizontal-line" />
@@ -178,7 +178,7 @@
         <div class="notes_and_Attachment">
           <p
             class="form-name-description m-b-0 m-t-20"
-            translate="Notes and Attachments"
+            translate="notesAndAttachments"
           ></p>
           <mat-form-field
             placeholder="Notes and Attachments"
@@ -204,36 +204,6 @@
         </div>
 
         <div class="addpdf">
-          <div class="attachments-container">
-            <span
-              *ngFor="
-                let image of headerDataForm.get('instructions').value.images;
-                index as i
-              "
-              class="m-r-10"
-            >
-              <app-round-plan-image-preview
-                [image]="image"
-                (imageIndexEmitter)="roundPlanFileDeleteHandler($event)"
-                class="attachments cursor-pointer"
-                (triggerPreviewDialog)="openPreviewDialog()"
-              ></app-round-plan-image-preview>
-            </span>
-
-            <span
-              *ngFor="
-                let pdf of headerDataForm.get('instructions').value.pdf;
-                index as i
-              "
-              class="m-r-10"
-            >
-              <app-round-plan-pdf-preview
-                [pdf]="pdf"
-                (pdfIndexEmitter)="roundPlanPdfDeleteHandler($event)"
-              ></app-round-plan-pdf-preview>
-            </span>
-          </div>
-
           <br />
           <input
             type="file"
@@ -253,6 +223,35 @@
             <mat-icon class="icon">link</mat-icon>
             <span translate="addImagesAndPDFBtn1"></span>
           </button>
+          <div class="attachments-container">
+            <span
+              *ngFor="
+                let image of headerDataForm.get('instructions').value.images;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-upload-image-preview
+                [image]="image"
+                (imageIndexEmitter)="roundPlanFileDeleteHandler($event)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-upload-image-preview>
+            </span>
+
+            <span
+              *ngFor="
+                let pdf of headerDataForm.get('instructions').value.pdf;
+                index as i
+              "
+              class="m-r-10"
+            >
+              <app-upload-pdf-preview
+                [pdf]="pdf"
+                (pdfIndexEmitter)="roundPlanPdfDeleteHandler($event)"
+              ></app-upload-pdf-preview>
+            </span>
+          </div>
         </div>
       </div>
     </div>
