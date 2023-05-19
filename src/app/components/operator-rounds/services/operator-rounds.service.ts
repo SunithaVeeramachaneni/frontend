@@ -653,10 +653,14 @@ export class OperatorRoundsService {
     params.set('dueDate', '');
 
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'round-plans/tasks-rounds', {
-        displayToast: true,
-        failureResponse: {}
-      })
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans/tasks-rounds?' + params.toString(),
+        {
+          displayToast: true,
+          failureResponse: {}
+        }
+      )
       .pipe(
         map((data) => ({ ...data, rows: this.formatRoundPlans(data?.items) }))
       );
