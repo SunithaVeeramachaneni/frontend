@@ -98,7 +98,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   private totalCount = 0;
   private allData = [];
-  private amplifySubscription$: Subscription = null;
+  private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
   constructor(
     private fb: FormBuilder,
@@ -149,7 +149,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             Amplify.configure(amplifyConfig);
 
             // 2. Create issue history subscription
-            this.amplifySubscription$ = this.observations
+            const onCreateIssuesLogHistory$ = this.observations
               .onCreateIssuesLogHistory$({
                 issueslistID: {
                   eq: this.data.id
@@ -170,9 +170,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+            if (onCreateIssuesLogHistory$) {
+              this.amplifySubscription$.push(onCreateIssuesLogHistory$);
+            }
 
             // 3. Create actions log history
-            this.amplifySubscription$ = this.observations
+            const onCreateActionsLogHistory$ = this.observations
               .onCreateActionsLogHistory$({
                 actionslistID: {
                   eq: this.data.id
@@ -194,8 +197,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }
               });
 
+            if (onCreateActionsLogHistory$) {
+              this.amplifySubscription$.push(onCreateActionsLogHistory$);
+            }
+
             // 4. Update actions log history
-            this.amplifySubscription$ = this.observations
+            const onUpdateActionsList$ = this.observations
               .onUpdateActionsList$({
                 id: { eq: this.data.id },
                 moduleName: {
@@ -215,8 +222,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }
               });
 
+            if (onUpdateActionsList$) {
+              this.amplifySubscription$.push(onUpdateActionsList$);
+            }
+
             // 5. Update issues log history
-            this.amplifySubscription$ = this.observations
+            const onUpdateIssuesList$ = this.observations
               .onUpdateIssuesList$({
                 id: { eq: this.data.id },
                 moduleName: {
@@ -235,10 +246,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+            if (onUpdateIssuesList$) {
+              this.amplifySubscription$.push(onUpdateIssuesList$);
+            }
 
             // 6. Create issue attachments issues log history
             // FIXME: Match objectId with this.data.id once you will get from mobile side.
-            this.amplifySubscription$ = this.observations
+            const onCreateIssuesAttachments$ = this.observations
               .onCreateIssuesAttachments$({})
               ?.subscribe({
                 next: ({
@@ -260,9 +274,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }
               });
 
+            if (onCreateIssuesAttachments$) {
+              this.amplifySubscription$.push(onCreateIssuesAttachments$);
+            }
+
             // 7. Create action attachments action log history
             // FIXME: Match objectId with this.data.id once you will get from mobile side.
-            this.amplifySubscription$ = this.observations
+            const onCreateActionsAttachments$ = this.observations
               .onCreateActionsAttachments$({})
               ?.subscribe({
                 next: ({
@@ -283,6 +301,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+
+            if (onCreateActionsAttachments$) {
+              this.amplifySubscription$.push(onCreateActionsAttachments$);
+            }
           }
         });
     }
@@ -652,7 +674,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnDestroy(): void {
-    if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
+    if (this.amplifySubscription$?.length > 0) {
+      this.amplifySubscription$.forEach((subscription) => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      });
+    }
     this.attachmentsSubscriptionData = [];
   }
 
