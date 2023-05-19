@@ -64,6 +64,7 @@
 
 .child-node {
   margin-left: 35px;
+  width: fit-content;
 }
 
 .arrows {
@@ -106,9 +107,11 @@
 .node-info {
   position: relative;
   top: -7px;
+  margin-right: 20px;
 }
 
 .node-id {
   position: relative;
   top: -8px;
+  white-space: nowrap;
 }
