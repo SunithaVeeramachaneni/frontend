@@ -314,8 +314,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -428,7 +428,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
@@ -450,12 +450,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 inspectionDetail.assignedTo
               )
             }))
-          );
-        }
-
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -713,19 +707,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchInspection$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -775,8 +758,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  status,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  status
                 };
               }
               return data;
@@ -817,6 +799,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

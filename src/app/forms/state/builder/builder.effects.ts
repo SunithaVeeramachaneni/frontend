@@ -25,13 +25,12 @@ export class BuilderConfigurationEffects {
       ofType(BuilderConfigurationActions.createForm),
       concatMap((action) =>
         this.operatorRoundsService.createForm$(action.formMetadata).pipe(
-          map((response) => {
-            this.operatorRoundsService.setFormCreatedUpdated(response);
-            return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
+          map((response) =>
+            RoundPlanConfigurationApiActions.createRoundPlanSuccess({
               formMetadata: { id: response.id, ...action.formMetadata },
               formSaveStatus: formConfigurationStatus.saved
-            });
-          }),
+            })
+          ),
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(

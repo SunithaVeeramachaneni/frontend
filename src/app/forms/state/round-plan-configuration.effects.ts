@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 
-import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
+import { map, catchError, concatMap, mergeMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -13,13 +13,15 @@ import {
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class RoundPlanConfigurationEffects {
   constructor(
     private actions$: Actions,
     private operatorRoundsService: OperatorRoundsService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) {}
 
   createRoundPlan$ = createEffect(() =>
@@ -27,16 +29,15 @@ export class RoundPlanConfigurationEffects {
       ofType(RoundPlanConfigurationActions.createRoundPlan),
       concatMap((action) =>
         this.operatorRoundsService.createForm$(action.formMetadata).pipe(
-          map((response) => {
-            this.operatorRoundsService.setFormCreatedUpdated(response);
-            return RoundPlanConfigurationApiActions.createRoundPlanSuccess({
+          map((response) =>
+            RoundPlanConfigurationApiActions.createRoundPlanSuccess({
               formMetadata: {
                 id: response.id,
                 ...action.formMetadata
               },
               formSaveStatus: formConfigurationStatus.saved
-            });
-          }),
+            })
+          ),
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
@@ -84,8 +85,6 @@ export class RoundPlanConfigurationEffects {
               .publishRoundPlan$({
                 form: {
                   ...formDetail.formMetadata,
-                  lastPublishedBy: this.loginService.getLoggedInUserName(),
-                  publishedDate: new Date().toISOString(),
                   formStatus: formConfigurationStatus.published,
                   _version: action.formListDynamoDBVersion
                 },
@@ -95,7 +94,9 @@ export class RoundPlanConfigurationEffects {
                   subForms, // Handle subforms form round-plan config,
                   hierarchy
                 },
-                isEdit: this.operatorRoundsService.isEdit
+                isEdit:
+                  formDetail.formMetadata.formStatus ===
+                  formConfigurationStatus.published
               })
               .pipe(
                 map((createAuthoredFormDetail) =>

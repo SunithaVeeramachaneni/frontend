@@ -65,6 +65,8 @@ export const permissions = Object.freeze({
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
   deleteForm: 'DELETE_FORM',
+  copyForm: 'COPY_FORM',
+  archiveForm: 'ARCHIVE_FORM',
   viewSubmissions: 'VIEW_SUBMISSIONS',
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
@@ -79,6 +81,8 @@ export const permissions = Object.freeze({
   createORPlan: 'CREATE_OR_PLAN',
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
+  copyRoundPlan: 'COPY_OR_PLAN',
+  archiveRoundPlan: 'ARCHIVE_OR_PLAN',
   downloadRounds: 'DOWNLOAD_ROUNDS',
   shareRounds: 'SHARE_ROUNDS',
   viewScheduler: 'VIEW_SCHEDULER',
@@ -86,7 +90,7 @@ export const permissions = Object.freeze({
   viewORPTemplates: 'VIEW_ORP_TEMPLATES',
   createORPTemplate: 'CREATE_ORP_TEMPLATES',
   updateORPTemplate: 'UPDATE_ORP_TEMPLATES',
-  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewArchivedORP: 'VIEW_OR_ARCHIVED_PLANS',
   viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
@@ -99,7 +103,9 @@ export const permissions = Object.freeze({
   createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
   updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
   deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
-  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES',
+
+  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS'
 });
 
 export const routingUrls = {
@@ -219,6 +225,11 @@ export const routingUrls = {
     title: 'Scheduler',
     permission: permissions.viewFormScheduler
   },
+  rdfObservations: {
+    url: '/forms/observations',
+    title: 'Observations',
+    permission: permissions.viewRdfObservations
+  },
 
   operatorRoundPlans: {
     url: '/operator-rounds',
@@ -227,7 +238,7 @@ export const routingUrls = {
   },
   myRoundPlans: {
     url: '/operator-rounds',
-    title: 'My Plans',
+    title: 'Round Plans',
     permission: permissions.viewORPlans
   },
   roundPlanScheduler: {
@@ -298,7 +309,7 @@ export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
-export const graphQLDefaultLimit = 100;
+export const graphQLDefaultLimit = 250;
 export const graphQLDefaultMaxLimit = 10000;
 export const defaultCountFieldName = 'Record Count';
 export const superAdminIcon =
