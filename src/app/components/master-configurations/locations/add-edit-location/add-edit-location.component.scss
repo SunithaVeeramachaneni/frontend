@@ -27,6 +27,12 @@
   height: calc(100vh - 145px);
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin-top: 7px;
+  }
+}
+
+.select-field {
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
     margin-top: 20px;
   }
 }
@@ -49,7 +55,7 @@
   }
 
   .image-container {
-    margin: 20px 0 10px 0;
+    margin: 0 0 10px 0;
   }
 
   .image-contain {
@@ -74,7 +80,7 @@
   .cancel-btn {
     color: $blue-main;
     border-color: $blue-main;
-    margin-right: 15px;
+    margin-right: 10px;
     width: 50%;
   }
 
@@ -86,9 +92,9 @@
     display: flex;
     justify-content: center;
     position: absolute;
-    bottom: 10px;
-    width: 95%;
-    margin-left: 10px;
+    bottom: 0;
+    padding: 0px 20px 12px 22px;
+    width: 90%;
   }
 }
 

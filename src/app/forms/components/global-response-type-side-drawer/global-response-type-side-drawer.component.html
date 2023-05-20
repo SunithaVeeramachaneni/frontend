@@ -4,7 +4,7 @@
     <mat-card-title class="m-0 light-gray">
       <div
         class="mcq-heading"
-        translate="createResponses"
+        translate="globalResponseHeading"
         [hidden]="isViewMode"
       ></div>
       <div
@@ -36,7 +36,7 @@
         <input
           matInput
           formControlName="description"
-          placeholder="Untitled description"
+          [placeholder]="'untitledDescription' | translate"
           autocomplete="off"
           class="global_response_description_input"
           [hidden]="isViewMode"
@@ -124,9 +124,9 @@
       class="submit-response-btn"
       (click)="submitResponseSet()"
       [disabled]="isResponseFormUpdated === false || responseForm.pristine"
-      translate="create"
-    ></button>
-    
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
   <ng-template #viewBlock>
     <div class="actions-footer-view">

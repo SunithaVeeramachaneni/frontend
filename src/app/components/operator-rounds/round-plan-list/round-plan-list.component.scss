@@ -2,14 +2,14 @@
 
 .list-view {
   background-color: $white;
-  height: calc(100vh - 205px);
+  height: calc(100vh - 80px);
 
   ::ng-deep .table-column {
     width: 15%;
   }
 
   ::ng-deep .mat-column-name {
-    min-width: 250px;
+    min-width: 350px;
   }
 
   ::ng-deep .mat-column-formStatus {
@@ -37,12 +37,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px;
   }
 
   .search {
     margin-top: 5px;
-    margin-bottom: 7px;
+    margin-bottom: 5px;
   }
 
   .filter-icon {

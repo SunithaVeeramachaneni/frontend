@@ -5,7 +5,19 @@
   height: calc(100vh - 85px);
 
   ::ng-deep .table-column {
-    width: 60%;
+    width: 25%;
+  }
+
+  ::ng-deep .mat-column-plant {
+    min-width: 70px;
+  }
+
+  ::ng-deep .mat-column-name {
+    min-width: 250px;
+  }
+
+  ::ng-deep .mat-column-parent {
+    min-width: 200px;
   }
 
   .heading {
@@ -26,6 +38,15 @@
     align-items: center;
     justify-content: space-between;
     height: 55px;
+  }
+
+  .loading-assets {
+    position: absolute;
+    width: 5%;
+    height: 32px;
+    border-radius: 5px;
+    right: 415px;
+    top: 92px;
   }
 
   .search {
@@ -49,7 +70,7 @@
     height: 29px;
     line-height: 20px;
     padding: 0px 14px;
-    margin: 6px 7px 5px 7px;
+    margin: 6px 10px 5px 9px;
     cursor: pointer;
     font-weight: normal;
   }
