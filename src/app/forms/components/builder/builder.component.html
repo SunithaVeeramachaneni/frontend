@@ -149,7 +149,10 @@
               *ngIf="isEmptyPage[pageIndex]"
               class="emptyPageContainer"
             >
-              <div class="floating-btns">
+              <div
+                class="floating-btns"
+                *ngIf="sectionIds[pageIndex].length !== 0"
+              >
                 <button
                   class="questions-btn"
                   (click)="
@@ -177,7 +180,15 @@
                   <p class="questions-delete-btn-text" translate="delete"></p>
                 </button>
               </div>
-              <button class="add-section-btn" (click)="addSection(pageIndex)">
+              <button
+                class="add-section-btn"
+                [ngClass]="{
+                  'add-section-btn': sectionIds[pageIndex].length !== 0,
+                  'add-section-without-floationg-btns':
+                    sectionIds[pageIndex].length === 0
+                }"
+                (click)="addSection(pageIndex)"
+              >
                 <svg-icon
                   icon="icon-add-section"
                   class="add-section-btn-icon"
