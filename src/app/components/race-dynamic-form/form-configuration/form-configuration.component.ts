@@ -664,22 +664,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  getQuestionsOfSection(pageIndex, sectionIndex) {
-    let sectionQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionIndex))
-      .subscribe((v) => (sectionQuestions = v));
-    return sectionQuestions;
-  }
-
-  getSectionsOfPage(pageIndex) {
-    let pageSections;
-    this.store
-      .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v?.sections));
-    return pageSections;
-  }
-
   getFormConfigurationStatuses() {
     return {
       formStatus: formConfigurationStatus.draft,

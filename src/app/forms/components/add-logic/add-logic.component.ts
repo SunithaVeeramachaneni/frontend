@@ -26,8 +26,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import {
+  getPageWiseLogicSectionAskQuestions,
   getQuestionLogics,
-  getSectionQuestions,
   State
 } from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
@@ -92,7 +92,9 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     { title: 'option2', code: 'option2' }
   ];
   selectedTabIndex: number;
-  getQuestionLogics$: Observable<any>;
+  pageWiseLogicSectionAskQuestions: any;
+  questionLogics$: Observable<any>;
+  pageWiseLogicSectionAskQuestions$: Observable<any>;
 
   private _pageIndex: number;
   private _questionId: string;
@@ -110,7 +112,15 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let logicsFormArray = [];
-    this.getQuestionLogics$ = this.store
+    this.pageWiseLogicSectionAskQuestions$ = this.store
+      .select(getPageWiseLogicSectionAskQuestions(this.selectedNodeId))
+      .pipe(
+        tap((pageWiseLogicSectionAskQuestions) => {
+          this.pageWiseLogicSectionAskQuestions =
+            pageWiseLogicSectionAskQuestions;
+        })
+      );
+    this.questionLogics$ = this.store
       .select(
         getQuestionLogics(this.pageIndex, this.questionId, this.selectedNodeId)
       )
@@ -120,10 +130,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
           logicsFormArray = logicsT.map((logic, index) => {
             const mandateQuestions = logic.mandateQuestions;
             const hideQuestions = logic.hideQuestions;
-            const askQuestions = this.getSectionQuestions(
-              this.pageIndex,
-              logic.id
-            );
+            const askQuestions =
+              this.pageWiseLogicSectionAskQuestions[this.pageIndex][logic.id];
 
             let mandateQuestionsFormArray = [];
             if (mandateQuestions && mandateQuestions.length) {
@@ -175,7 +183,6 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             });
           });
           this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
-          this.cdrf.detectChanges();
 
           merge(
             // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -232,17 +239,6 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   getLogicsList() {
     return (this.logicsForm.get('logics') as FormArray).controls;
-  }
-
-  getSectionQuestions(pageIndex, logicId) {
-    const sectionId = `AQ_${logicId}`;
-    let askQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionId, this.selectedNodeId))
-      .subscribe((v) => {
-        askQuestions = v;
-      });
-    return askQuestions;
   }
 
   askQuestionEventHandler(event, logic, logicIndex) {

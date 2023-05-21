@@ -8,7 +8,8 @@ import {
   EventEmitter,
   ViewChildren,
   QueryList,
-  ElementRef
+  ElementRef,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -22,7 +23,8 @@ import {
   pairwise,
   debounceTime,
   distinctUntilChanged,
-  tap
+  tap,
+  takeUntil
 } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
@@ -31,7 +33,7 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { Subscription, timer } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-global-response-type-side-drawer',
@@ -39,7 +41,9 @@ import { Subscription, timer } from 'rxjs';
   styleUrls: ['./global-response-type-side-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GlobalResponseTypeSideDrawerComponent implements OnInit {
+export class GlobalResponseTypeSideDrawerComponent
+  implements OnInit, OnDestroy
+{
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
 
@@ -51,6 +55,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   public isResponseFormUpdated = false;
   public globalResponse: any;
   private globalResponseSubscription: Subscription;
+  private onDestroy$ = new Subject();
 
   @Input() set globalResponseToBeEdited(response: any) {
     this.globalResponse = response ? response : null;
@@ -83,6 +88,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
             this.isResponseFormUpdated = false;
@@ -244,4 +250,9 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     this.slideInOut.next('out');
     this.cdrf.markForCheck();
   };
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

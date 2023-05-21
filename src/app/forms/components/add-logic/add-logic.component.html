@@ -1,4 +1,9 @@
-<ng-container *ngIf="getQuestionLogics$ | async">
+<ng-container
+  *ngIf="{
+    pageWiseLogicSectionAskQuestions: pageWiseLogicSectionAskQuestions$ | async,
+    questionLogics: questionLogics$ | async
+  }"
+>
   <div
     [formGroup]="logicsForm"
     *ngIf="getLogicsList()"
@@ -192,15 +197,17 @@
               </mat-menu>
             </div>
             <div
-              *ngIf="getSectionQuestions(pageIndex, logic.value.id).length"
+              *ngIf="
+                pageWiseLogicSectionAskQuestions[pageIndex][logic.value.id]
+                  ?.length
+              "
               class="logicAskQuestions"
             >
               <ng-container
                 *ngFor="
-                  let questionObj of getSectionQuestions(
-                    pageIndex,
-                    logic.value.id
-                  );
+                  let questionObj of pageWiseLogicSectionAskQuestions[
+                    pageIndex
+                  ][logic.value.id];
                   trackBy: trackByQuestionIndex;
                   let questionIndex = index
                 "
