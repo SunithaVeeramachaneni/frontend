@@ -1,11 +1,17 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  Subject
 } from 'rxjs';
 import {
   debounceTime,
@@ -15,7 +21,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -61,7 +68,7 @@ export interface FormTableUpdate {
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class UnitMeasurementListComponent implements OnInit {
+export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   columns: Column[] = [
     {
@@ -242,6 +249,7 @@ export class UnitMeasurementListComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private allUnitData: UnitOfMeasurement[] = [];
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -265,6 +273,7 @@ export class UnitMeasurementListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchUOM$.next({ data: 'search' });
         })
@@ -546,6 +555,11 @@ export class UnitMeasurementListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private onDeleteUnit(data: UnitOfMeasurement): void {

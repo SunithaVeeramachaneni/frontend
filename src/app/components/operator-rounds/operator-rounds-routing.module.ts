@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
-import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
@@ -50,15 +49,6 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Scheduler' },
           permissions: [permissions.viewScheduler]
-        }
-      },
-      {
-        path: 'submissions/view/:id',
-        component: SubmissionViewComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: { label: 'View Form', alias: 'formName' },
-          permissions: [permissions.viewORPlans]
         }
       },
       {

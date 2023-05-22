@@ -16,11 +16,12 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, of, combineLatest } from 'rxjs';
+import { Observable, of, combineLatest, Subject, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 
@@ -131,10 +132,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   selectedNodeLoadStatus = false;
   isHierarchyLoaded = false;
   createOrEditForm: boolean;
-
   isPreviewActive = false;
-
   readonly formConfigurationStatus = formConfigurationStatus;
+  authoredRoundPlanDetailSubscription: Subscription;
+  private destroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -225,6 +226,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (!this.formConfiguration.invalid) {
@@ -708,9 +710,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
       this.selectedFormName = result.selectedFormName;
-      this.authoredFormDetail$.subscribe((pagesData) => {
-        this.currentFormData = pagesData;
-      });
+      this.authoredRoundPlanDetailSubscription =
+        this.authoredFormDetail$.subscribe((pagesData) => {
+          this.currentFormData = pagesData;
+        });
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
     });
@@ -736,6 +739,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.authoredRoundPlanDetailSubscription) {
+      this.authoredRoundPlanDetailSubscription.unsubscribe();
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
     this.store.dispatch(HierarchyActions.resetSelectedHierarchyState());
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
@@ -778,7 +786,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   openHierarchyModal = () => {
-    const dialogRef = this.dialog
+    this.dialog
       .open(HierarchyModalComponent, {
         disableClose: true
       })

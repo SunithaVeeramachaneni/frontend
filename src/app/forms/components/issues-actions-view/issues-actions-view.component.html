@@ -213,7 +213,8 @@
             <ng-container *ngIf="history.type === 'Media'">
               <div class="media-created">
                 <img
-                  [src]="getS3Url(history.message)"
+                  [src]="history?.message"
+                  *ngIf="history?.message"
                   alt="Log History"
                   class="media-image"
                 />
@@ -506,8 +507,9 @@
       <div class="attachments-container" *ngIf="filteredMediaType">
         <div *ngFor="let att of filteredMediaType; let i = index">
           <img
-            [src]="getS3Url(att.message)"
+            [src]="att?.message"
             alt="images"
+            *ngIf="att?.message"
             class="attachments cursor-pointer"
             (click)="openPreviewDialog()"
           />

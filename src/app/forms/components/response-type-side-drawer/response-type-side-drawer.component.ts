@@ -5,15 +5,17 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { isEqual } from 'lodash-es';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -30,7 +32,7 @@ import { ToastService } from 'src/app/shared/toast';
   styleUrls: ['./response-type-side-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponseTypeSideDrawerComponent implements OnInit {
+export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Input() formId;
 
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
@@ -63,6 +65,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   isCreate = true;
+  private onDestroy$ = new Subject();
 
   constructor(
     private formService: FormService,
@@ -126,6 +129,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (
             isEqual(prev.responses, curr.responses) ||
@@ -145,6 +149,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) {
             this.isFormNotUpdated = true;
@@ -264,5 +269,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   getImage(action) {
     return `icon-${action.toLowerCase()}`;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }
