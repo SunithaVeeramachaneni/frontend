@@ -100,13 +100,13 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  isEmptyPage: any = [];
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
 
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private responseSetService: ResponseSetService,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -275,6 +275,12 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+    this.sectionIndexes$.subscribe((sectionIndexes) => {
+      // eslint-disable-next-line guard-for-in
+      for (const index in sectionIndexes) {
+        this.isEmptyPage.push(sectionIndexes[index].length === 0);
+      }
+    });
 
     this.authoredTemplateDetail$ = this.store.select(getFormDetails).pipe(
       tap((formDetails) => {
@@ -411,6 +417,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         break;
 
       case 'delete':
+        this.isEmptyPage[pageIndex] = false;
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({
             pageIndex,
@@ -460,6 +467,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             subFormId: null
           })
         );
+        this.isEmptyPage[pageIndex] =
+          this.getSectionsOfPage(pageIndex).length === 0;
         break;
     }
   }
@@ -629,12 +638,19 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      this.formConf.counter.value
-    );
+    if(!this.isEmptyPage[pageIndex]) {
+      this.formConfigurationService.addQuestions(
+        pageIndex,
+        sectionIndex,
+        1,
+        questionIndex,
+        this.formConf.counter.value
+      );
+    }
+  }
+
+  addSection(pageIndex) {
+    this.isEmptyPage[pageIndex] = false;
+    this.sectionEventHandler({ pageIndex, type: 'add', sectionIndex: 0 });
   }
 }

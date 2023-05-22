@@ -86,9 +86,7 @@ export class BuilderComponent implements OnInit, OnChanges {
 
   constructor(
     private store: Store<State>,
-    private roundPlanConfigurationService: RoundPlanConfigurationService,
-    private responseSetService: ResponseSetService,
-    private cdrf: ChangeDetectorRef
+    private roundPlanConfigurationService: RoundPlanConfigurationService
   ) {}
 
   initSubscriptions() {
