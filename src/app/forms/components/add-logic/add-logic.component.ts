@@ -14,10 +14,11 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { merge, Observable, Subject } from 'rxjs';
+import { merge, Observable } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
   takeUntil,
   tap
@@ -95,7 +96,9 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   pageWiseLogicSectionAskQuestions: any;
   questionLogics$: Observable<any>;
   pageWiseLogicSectionAskQuestions$: Observable<any>;
-
+  askquestion: Array<any>;
+  askQuestions: Observable<any>;
+  isAskQuestionFocusId = '';
   private _pageIndex: number;
   private _questionId: string;
   private _quickResponseValues: any;
@@ -148,8 +151,11 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             }
 
             let askQuestionsFormArray = [];
-            if (askQuestions && askQuestions.length) {
-              askQuestionsFormArray = askQuestions.map((aq) =>
+            this.askQuestions.subscribe(
+              (question) => (this.askquestion = question)
+            );
+            if (this.askquestion && this.askquestion.length) {
+              askQuestionsFormArray = this.askquestion.map((aq) =>
                 this.fb.group({
                   id: aq.id || '',
                   sectionId: aq.sectionId || '',
@@ -226,7 +232,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     return el.value.id;
   }
   trackByQuestionIndex(index: number, el: any): number {
-    return index;
+    return el.id;
   }
 
   deleteLogic(logicId, questionId, pageIndex) {
@@ -239,6 +245,13 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   getLogicsList() {
     return (this.logicsForm.get('logics') as FormArray).controls;
+  }
+
+  getSectionQuestions(pageIndex, logicId) {
+    const sectionId = `AQ_${logicId}`;
+    return this.store
+      .select(getSectionQuestions(pageIndex, sectionId, this.selectedNodeId))
+      .pipe(map((question) => question));
   }
 
   askQuestionEventHandler(event, logic, logicIndex) {
@@ -407,5 +420,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+  setIsAskQuestionFocusId(id) {
+    this.isAskQuestionFocusId = id;
   }
 }

@@ -197,17 +197,12 @@
               </mat-menu>
             </div>
             <div
-              *ngIf="
-                pageWiseLogicSectionAskQuestions[pageIndex][logic.value.id]
-                  ?.length
-              "
               class="logicAskQuestions"
+              *ngIf="askQuestions | async as questions"
             >
               <ng-container
                 *ngFor="
-                  let questionObj of pageWiseLogicSectionAskQuestions[
-                    pageIndex
-                  ][logic.value.id];
+                  let questionObj of questions;
                   trackBy: trackByQuestionIndex;
                   let questionIndex = index
                 "
@@ -222,7 +217,10 @@
                       [questionName]="questionObj.name"
                       [questionIndex]="questionIndex"
                       [isAskQuestion]="true"
+                      [isAskQuestionFocusId]="isAskQuestionFocusId"
                       [subFormId]="selectedNodeId"
+                      (click)="setIsAskQuestionFocusId(questionObj.id)"
+                      (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
                       (questionEvent)="
                         askQuestionEventHandler($event, logic.value, i)
                       "

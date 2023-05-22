@@ -31,6 +31,7 @@
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
+            [id]="questionForm.get('id').value"
           />
 
           <mat-form-field
