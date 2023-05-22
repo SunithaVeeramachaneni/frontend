@@ -496,11 +496,20 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   navigateToRounds() {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds/scheduler/1'], {
-      queryParams: {
-        roundId: this.data?.roundId
-      }
-    });
+    if (this.router.url === '/forms/observations') {
+      this.router.navigate(['/forms/scheduler/1'], {
+        queryParams: {
+          roundId: this.data?.roundId
+        }
+      });
+    }
+    if (this.router.url === '/operator-rounds/observations') {
+      this.router.navigate(['/operator-rounds/scheduler/1'], {
+        queryParams: {
+          roundId: this.data?.roundId
+        }
+      });
+    }
   }
 
   openPreviewDialog() {
