@@ -3,7 +3,10 @@
   [formGroup]="questionForm"
   *ngIf="{
     question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async
+    sectionQuestionsCount: sectionQuestionsCount$ | async,
+    formMetadata: formMetadata$ | async,
+    moduleName: moduleName$ | async,
+    uom: uom$ | async
   } as props"
 >
   <div>

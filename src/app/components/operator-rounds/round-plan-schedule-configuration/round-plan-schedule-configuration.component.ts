@@ -6,6 +6,7 @@ import {
   DoCheck,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -26,20 +27,20 @@ import {
   getDay,
   weeksToDays
 } from 'date-fns';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import {
   AssigneeDetails,
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
   SelectedAssignee,
-  UserDetails,
   ValidationError
 } from 'src/app/interfaces';
 import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
+import { Subject } from 'rxjs';
 
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -57,7 +58,7 @@ export interface ScheduleConfigEvent {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoundPlanScheduleConfigurationComponent
-  implements OnInit, DoCheck
+  implements OnInit, DoCheck, OnDestroy
 {
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
@@ -95,6 +96,7 @@ export class RoundPlanScheduleConfigurationComponent
   };
   dropdownPosition: any;
   private _roundPlanDetail: any;
+  private destroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -153,7 +155,8 @@ export class RoundPlanScheduleConfigurationComponent
     });
     this.roundPlanSchedulerConfigForm
       .get('scheduleEndType')
-      .valueChanges.subscribe((scheduleEndType) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((scheduleEndType) => {
         switch (scheduleEndType) {
           case 'on':
             this.roundPlanSchedulerConfigForm.get('scheduleEndOn').enable();
@@ -186,7 +189,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('scheduleType')
-      .valueChanges.subscribe((scheduleType) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((scheduleType) => {
         switch (scheduleType) {
           case 'byFrequency':
             this.roundPlanSchedulerConfigForm
@@ -216,7 +220,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('repeatEvery')
-      .valueChanges.subscribe((repeatEvery) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((repeatEvery) => {
         switch (repeatEvery) {
           case 'day':
             this.roundPlanSchedulerConfigForm
@@ -272,7 +277,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('daysOfWeek')
-      .valueChanges.subscribe((daysOfWeek) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((daysOfWeek) => {
         if (daysOfWeek.length === 0) {
           this.roundPlanSchedulerConfigForm
             .get('daysOfWeek')
@@ -282,7 +288,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('monthlyDaysOfWeek')
-      .valueChanges.subscribe((monthlyDaysOfWeek) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
             acc += curr.length;
@@ -297,7 +304,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('scheduleEndOccurrences')
-      .valueChanges.subscribe((occurrences) => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((occurrences) => {
         if (occurrences > 0) {
           let days = 0;
           switch (this.roundPlanSchedulerConfigForm.get('repeatEvery').value) {
@@ -333,7 +341,8 @@ export class RoundPlanScheduleConfigurationComponent
 
     this.roundPlanSchedulerConfigForm
       .get('repeatDuration')
-      .valueChanges.subscribe(() => {
+      .valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
         this.roundPlanSchedulerConfigForm
           .get('scheduleEndOccurrences')
           .patchValue(
@@ -646,5 +655,10 @@ export class RoundPlanScheduleConfigurationComponent
     this.roundPlanSchedulerConfigForm
       .get('advanceRoundsCount')
       .updateValueAndValidity();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
