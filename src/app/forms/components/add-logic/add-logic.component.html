@@ -223,6 +223,9 @@
                       [questionIndex]="questionIndex"
                       [isAskQuestion]="true"
                       [subFormId]="selectedNodeId"
+                      [isAskQuestionFocusId]="isAskQuestionFocusId"
+                      (click)="setIsAskQuestionFocusId(questionObj.id)"
+                      (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
                       (questionEvent)="
                         askQuestionEventHandler($event, logic.value, i)
                       "

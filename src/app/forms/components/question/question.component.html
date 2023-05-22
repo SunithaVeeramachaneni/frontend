@@ -30,6 +30,7 @@
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
+            [id]="questionForm.get('id').value"
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
 
