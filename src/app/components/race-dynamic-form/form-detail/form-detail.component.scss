@@ -70,11 +70,11 @@
     color: $white;
   }
 
-  // .btn-primary-blue:focus,
-  // .btn-primary-blue:active,
-  // .btn-primary-blue:focus:active {
-  //   box-shadow: none;
-  // }
+  .btn-primary-blue:focus,
+  .btn-primary-blue:active,
+  .btn-primary-blue:focus:active {
+    box-shadow: none;
+  }
 
   .color-gray {
     color: $light-gray;

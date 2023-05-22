@@ -137,30 +137,3 @@
 .width-15px {
   width: 15px;
 }
-
-.select-container {
-  position: relative;
-  display: inline-block;
-}
-
-.select-container::before {
-  position: absolute;
-  top: 0;
-  right: 10px;
-  bottom: 0;
-  left: 0;
-  padding: 7px;
-  font: 11px Arial, sans-serif;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  text-transform: capitalize;
-  pointer-events: none;
-}
-
-.select {
-  width: 80px;
-  padding: 5px;
-  appearance: none;
-  background-size: 10px 10px;
-}
