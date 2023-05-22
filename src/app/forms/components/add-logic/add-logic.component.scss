@@ -15,13 +15,14 @@
     align-items: center;
     align-content: center;
     border: 1px solid $gray3;
-    padding: 0px 15px;
+    padding: 0px 5px;
     background: $white;
     border-radius: 5px;
     cursor: pointer;
     font-size: initial;
     max-width: 100px;
     width: inherit;
+    font-size: 12px;
   }
 
   .logicCondition {
@@ -32,7 +33,7 @@
     padding: 0px 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: initial;
+    font-size: 12px;
     background: none !important;
     border: none !important;
     text-decoration: underline !important;
@@ -131,4 +132,35 @@
   .m-l-m30 {
     margin-left: -30px;
   }
+}
+
+.width-15px {
+  width: 15px;
+}
+
+.select-container {
+  position: relative;
+  display: inline-block;
+}
+
+.select-container::before {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  bottom: 0;
+  left: 0;
+  padding: 7px;
+  font: 11px Arial, sans-serif;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-transform: capitalize;
+  pointer-events: none;
+}
+
+.select {
+  width: 80px;
+  padding: 5px;
+  appearance: none;
+  background-size: 10px 10px;
 }

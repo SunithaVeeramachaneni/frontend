@@ -38,6 +38,9 @@
               class="logicCondition"
               formControlName="operator"
               (ngModelChange)="operatorChanged(logic.value, i, $event)"
+              [ngClass]="{
+                'width-15px': logic.value.operator === 'EQ'
+              }"
             >
               <option
                 class="logicOperator"
