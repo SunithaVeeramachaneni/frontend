@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -8,7 +13,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -49,7 +55,7 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class RoundPlanListComponent implements OnInit {
+export class RoundPlanListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -278,6 +284,7 @@ export class RoundPlanListComponent implements OnInit {
   plantsObject: { [key: string]: PlantsResponse } = {};
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  private destroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -298,6 +305,7 @@ export class RoundPlanListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.operatorRoundsService.fetchForms$.next({ data: 'search' });
         })
@@ -670,6 +678,12 @@ export class RoundPlanListComponent implements OnInit {
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private showFormDetail(row: RoundPlan): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;

@@ -1,4 +1,10 @@
-<div *ngIf="selectedHierarchy$ | async">
+<div
+  *ngIf="{
+    selectedHierarchy: selectedHierarchy$ | async,
+    masterHierarchyList: masterHierarchyList$ | async,
+    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+  }"
+>
   <div class="header">
     <div>
       <span>{{

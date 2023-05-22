@@ -1,81 +1,114 @@
-<div
-  [formGroup]="logicsForm"
-  *ngIf="getLogicsList()"
-  class="add-logic-container"
+<ng-container
+  *ngIf="{
+    pageWiseLogicSectionAskQuestions: pageWiseLogicSectionAskQuestions$ | async,
+    questionLogics: questionLogics$ | async
+  }"
 >
-  <div formArrayName="logics">
-    <mat-tab-group
-      [(selectedIndex)]="selectedTabIndex"
-      (selectedTabChange)="onTabChanged($event)"
-    >
-      <mat-tab
-        *ngFor="
-          let logic of getLogicsList();
-          let i = index;
-          trackBy: trackByLogicId
-        "
-        label="{{
-          logic.value.logicTitle ? logic.value.logicTitle : 'Untitled'
-        }}"
+  <div
+    [formGroup]="logicsForm"
+    *ngIf="getLogicsList()"
+    class="add-logic-container"
+  >
+    <div formArrayName="logics">
+      <mat-tab-group
+        [(selectedIndex)]="selectedTabIndex"
+        (selectedTabChange)="onTabChanged($event)"
       >
-        <div class="tabContent" [formGroupName]="i">
-          <div class="logicRow">
-            <svg-icon
-              icon="icon-delete-icon"
-              class="delete-icon"
-              (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
-            ></svg-icon>
-            <input type="hidden" formControlName="id" />
-            <input type="hidden" formControlName="logicTitle" />
-            <input type="hidden" formControlName="expression" />
+        <mat-tab
+          *ngFor="
+            let logic of getLogicsList();
+            let i = index;
+            trackBy: trackByLogicId
+          "
+          label="{{
+            logic.value.logicTitle ? logic.value.logicTitle : 'Untitled'
+          }}"
+        >
+          <div class="tabContent" [formGroupName]="i">
+            <div class="logicRow">
+              <svg-icon
+                icon="icon-delete-icon"
+                class="delete-icon"
+                (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
+              ></svg-icon>
+              <input type="hidden" formControlName="id" />
+              <input type="hidden" formControlName="logicTitle" />
+              <input type="hidden" formControlName="expression" />
 
-            <input type="hidden" formControlName="action" />
-            <input type="hidden" formControlName="mandateAttachment" />
-            <input type="hidden" formControlName="raiseIssue" />
+              <input type="hidden" formControlName="action" />
+              <input type="hidden" formControlName="mandateAttachment" />
+              <input type="hidden" formControlName="raiseIssue" />
 
-            <span translate="ifAnswer"></span>
-            <select
-              class="logicCondition"
-              formControlName="operator"
-              (ngModelChange)="operatorChanged(logic.value, i, $event)"
-              [ngClass]="{
-                'width-15px': logic.value.operator === 'EQ'
-              }"
-            >
-              <option
-                class="logicOperator"
-                value="{{ operator.code }}"
-                *ngFor="let operator of fieldOperators"
+              <span translate="ifAnswer"></span>
+              <select
+                class="logicCondition"
+                formControlName="operator"
+                (ngModelChange)="operatorChanged(logic.value, i, $event)"
+                [ngClass]="{
+                  'width-15px': logic.value.operator === 'EQ'
+                }"
               >
-                {{ operator.displayName }}
-              </option>
-            </select>
+                <option
+                  class="logicOperator"
+                  value="{{ operator.code }}"
+                  *ngFor="let operator of fieldOperators"
+                >
+                  {{ operator.displayName }}
+                </option>
+              </select>
 
-            <input
-              type="text"
-              class="logicValue"
-              formControlName="operand2"
-              (input)="operand2Changed(logic.value, $event, i)"
-              *ngIf="dropDownTypes.indexOf(fieldType) < 0"
-            />
-            <select
-              class="logicValue"
-              formControlName="operand2"
-              *ngIf="
-                dropDownTypes.indexOf(fieldType) > -1 && fieldType !== 'CB'
-              "
-              (change)="operand2Changed(logic.value, $event, i)"
-            >
-              <!-- <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox"> -->
-              <option
-                class="logicOperator"
-                *ngFor="let option of quickResponseValues"
-                value="{{ option.title }}"
+              <input
+                type="text"
+                class="logicValue"
+                formControlName="operand2"
+                (input)="operand2Changed(logic.value, $event, i)"
+                *ngIf="dropDownTypes.indexOf(fieldType) < 0"
+              />
+              <select
+                class="logicValue"
+                formControlName="operand2"
+                *ngIf="
+                  dropDownTypes.indexOf(fieldType) > -1 && fieldType !== 'CB'
+                "
+                (change)="operand2Changed(logic.value, $event, i)"
               >
-                {{ option.title }}
-              </option>
-              <!-- </ng-container> -->
-              <!-- <ng-template #isCheckBox>
+                <!-- <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox"> -->
+                <option
+                  class="logicOperator"
+                  *ngFor="let option of quickResponseValues"
+                  value="{{ option.title }}"
+                >
+                  {{ option.title }}
+                </option>
+                <!-- </ng-container> -->
+                <!-- <ng-template #isCheckBox>
+                  <option
+                    class="logicOperator"
+                    *ngFor="let option of checkBoxResponses"
+                    value="{{ option }}"
+                  >
+                    {{ option }}
+                  </option>
+                </ng-template> -->
+              </select>
+
+              <select
+                class="logicValue"
+                formControlName="operand2"
+                *ngIf="
+                  dropDownTypes.indexOf(fieldType) > -1 && fieldType === 'CB'
+                "
+                (change)="operand2Changed(logic.value, $event, i)"
+              >
+                <!-- <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox"> -->
+                <!-- <option
+                    class="logicOperator"
+                    *ngFor="let option of quickResponseValues"
+                  >
+                    {{ option.title }}
+                  </option> -->
+                <!-- </ng-container> -->
+                <!-- <ng-template #isCheckBox> -->
                 <option
                   class="logicOperator"
                   *ngFor="let option of checkBoxResponses"
@@ -83,159 +116,137 @@
                 >
                   {{ option }}
                 </option>
-              </ng-template> -->
-            </select>
+                <!-- </ng-template> -->
+              </select>
 
-            <select
-              class="logicValue"
-              formControlName="operand2"
-              *ngIf="
-                dropDownTypes.indexOf(fieldType) > -1 && fieldType === 'CB'
-              "
-              (change)="operand2Changed(logic.value, $event, i)"
-            >
-              <!-- <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox"> -->
-              <!-- <option
-                  class="logicOperator"
-                  *ngFor="let option of quickResponseValues"
-                >
-                  {{ option.title }}
-                </option> -->
-              <!-- </ng-container> -->
-              <!-- <ng-template #isCheckBox> -->
-              <option
-                class="logicOperator"
-                *ngFor="let option of checkBoxResponses"
-                value="{{ option }}"
+              <span translate="then"></span>
+              <span
+                *ngIf="logic.value.mandateAttachment"
+                class="mandateAction"
+                translate="askEvidence"
               >
-                {{ option }}
-              </option>
-              <!-- </ng-template> -->
-            </select>
-
-            <span translate="then"></span>
-            <span
-              *ngIf="logic.value.mandateAttachment"
-              class="mandateAction"
-              translate="askEvidence"
-            >
-            </span>
-            <span
-              *ngIf="logic.value.raiseIssue"
-              class="mandateAction"
-              translate="raiseIssue"
-            >
-            </span>
-            <span
-              *ngIf="logic.value.mandateQuestions.length"
-              class="mandateAction"
-              (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
-            >
-              Mandate ({{ logic.value.mandateQuestions.length }}) Questions
-              <mat-icon>edit</mat-icon>
-            </span>
-            <span
-              *ngIf="logic.value.hideQuestions.length"
-              class="mandateAction"
-              (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
-            >
-              Hide ({{ logic.value.hideQuestions.length }}) Questions
-              <mat-icon>edit</mat-icon>
-            </span>
-            <span
-              *ngIf="logic.value.questions.length"
-              class="mandateAction"
-              (click)="triggerMenuAction('ask_questions', i, logic.value)"
-              translate="askQuestions"
-            >
-            </span>
-            <button
-              [disabled]="!logic.value.operand2 || !logic.value.operand2.length"
-              mat-button
-              [matMenuTriggerFor]="menu"
-              class="actionBtn"
-              translate="logicActionBtn"
-            ></button>
-            <mat-menu #menu="matMenu">
-              <button
-                class="logicActionMenuItem"
-                mat-menu-item
+              </span>
+              <span
+                *ngIf="logic.value.raiseIssue"
+                class="mandateAction"
+                translate="raiseIssue"
+              >
+              </span>
+              <span
+                *ngIf="logic.value.mandateQuestions.length"
+                class="mandateAction"
                 (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
-                translate="mandateQuestions"
-              ></button>
-              <button
-                class="logicActionMenuItem"
-                mat-menu-item
+              >
+                Mandate ({{ logic.value.mandateQuestions.length }}) Questions
+                <mat-icon>edit</mat-icon>
+              </span>
+              <span
+                *ngIf="logic.value.hideQuestions.length"
+                class="mandateAction"
                 (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
-                translate="hideQuestions"
-              ></button>
-              <button
-                class="logicActionMenuItem"
-                mat-menu-item
+              >
+                Hide ({{ logic.value.hideQuestions.length }}) Questions
+                <mat-icon>edit</mat-icon>
+              </span>
+              <span
+                *ngIf="logic.value.questions.length"
+                class="mandateAction"
                 (click)="triggerMenuAction('ask_questions', i, logic.value)"
                 translate="askQuestions"
-              ></button>
+              >
+              </span>
               <button
-                class="logicActionMenuItem"
-                mat-menu-item
-                (click)="
-                  mandateAttachment('mandate_attachment', i, logic.value)
+                [disabled]="
+                  !logic.value.operand2 || !logic.value.operand2.length
                 "
-                translate="askEvidence"
+                mat-button
+                [matMenuTriggerFor]="menu"
+                class="actionBtn"
+                translate="logicActionBtn"
               ></button>
-              <button
-                class="logicActionMenuItem"
-                mat-menu-item
-                (click)="raiseIssue('raise_issue', i, logic.value)"
-                translate="raiseIssue"
-              ></button>
-            </mat-menu>
-          </div>
-          <div
-            *ngIf="getSectionQuestions(pageIndex, logic.value.id).length"
-            class="logicAskQuestions"
-          >
-            <ng-container
-              *ngFor="
-                let questionObj of getSectionQuestions(
-                  pageIndex,
-                  logic.value.id
-                );
-                trackBy: trackByQuestionIndex;
-                let questionIndex = index
+              <mat-menu #menu="matMenu">
+                <button
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
+                  translate="mandateQuestions"
+                ></button>
+                <button
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
+                  translate="hideQuestions"
+                ></button>
+                <button
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="triggerMenuAction('ask_questions', i, logic.value)"
+                  translate="askQuestions"
+                ></button>
+                <button
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="
+                    mandateAttachment('mandate_attachment', i, logic.value)
+                  "
+                  translate="askEvidence"
+                ></button>
+                <button
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="raiseIssue('raise_issue', i, logic.value)"
+                  translate="raiseIssue"
+                ></button>
+              </mat-menu>
+            </div>
+            <div
+              *ngIf="
+                pageWiseLogicSectionAskQuestions[pageIndex][logic.value.id]
+                  ?.length
               "
+              class="logicAskQuestions"
             >
-              <div class="askQuestion">
-                <div class="questionContainer">
-                  <app-question
-                    class="question"
-                    [pageIndex]="pageIndex"
-                    [questionId]="questionObj.id"
-                    [sectionId]="questionObj.sectionId"
-                    [questionName]="questionObj.name"
-                    [questionIndex]="questionIndex"
-                    [isAskQuestion]="true"
-                    [subFormId]="selectedNodeId"
-                    (questionEvent)="
-                      askQuestionEventHandler($event, logic.value, i)
-                    "
-                  ></app-question>
+              <ng-container
+                *ngFor="
+                  let questionObj of pageWiseLogicSectionAskQuestions[
+                    pageIndex
+                  ][logic.value.id];
+                  trackBy: trackByQuestionIndex;
+                  let questionIndex = index
+                "
+              >
+                <div class="askQuestion">
+                  <div class="questionContainer">
+                    <app-question
+                      class="question"
+                      [pageIndex]="pageIndex"
+                      [questionId]="questionObj.id"
+                      [sectionId]="questionObj.sectionId"
+                      [questionName]="questionObj.name"
+                      [questionIndex]="questionIndex"
+                      [isAskQuestion]="true"
+                      [subFormId]="selectedNodeId"
+                      (questionEvent)="
+                        askQuestionEventHandler($event, logic.value, i)
+                      "
+                    ></app-question>
+                  </div>
                 </div>
-              </div>
-            </ng-container>
+              </ng-container>
+            </div>
           </div>
-        </div>
-      </mat-tab>
-      <mat-tab disabled>
-        <ng-template mat-tab-label>
-          <button
-            mat-icon-button
-            (click)="addLogicToQuestion(questionId, pageIndex)"
-          >
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </ng-template>
-      </mat-tab>
-    </mat-tab-group>
+        </mat-tab>
+        <mat-tab disabled>
+          <ng-template mat-tab-label>
+            <button
+              mat-icon-button
+              (click)="addLogicToQuestion(questionId, pageIndex)"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   </div>
-</div>
+</ng-container>
