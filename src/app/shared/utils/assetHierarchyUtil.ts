@@ -266,6 +266,7 @@ export class AssetHierarchyUtil {
           configuredParentId: node.parentId,
           iSDeletedInRoutePlan: false,
           id: node.id ? node.id : uuidv4(),
+          isOriginal: true,
           hierarchyPath: nodePath,
           isExpanded: true,
           numTimesCopied: 0
@@ -280,6 +281,7 @@ export class AssetHierarchyUtil {
             ...node,
             id: node.id ? node.id : uuidv4(),
             isExpanded: true,
+            isOriginal: true,
             isRootNode: !node.parentId ? true : false,
             configuredParentId: node.parentId,
             children: childNodes,
@@ -401,6 +403,7 @@ export const copyNodeToRoutePlan = (
           name: `${nodeToBeCopied.name} (${numTimesCopied})`,
           numTimesCopied: 0,
           hasChildren: false,
+          isOriginal: false,
           children: [] as HierarchyEntity[]
         }
       );

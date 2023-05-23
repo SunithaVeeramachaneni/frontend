@@ -274,11 +274,7 @@ export class HierarchyContainerComponent implements OnInit {
         });
       } else {
         const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
-        const hierarchyUpdated = this.promoteChildren(
-          hierarchyClone,
-          hierarchyClone,
-          event
-        );
+        const hierarchyUpdated = this.promoteChildren(hierarchyClone, event);
         this.hierarchyEvent.emit({
           hierarchy: hierarchyUpdated,
           node: event
@@ -335,7 +331,7 @@ export class HierarchyContainerComponent implements OnInit {
     return array;
   }
 
-  promoteChildren(hierarchyList, list, node): HierarchyEntity[] {
+  promoteChildren(list, node): HierarchyEntity[] {
     list = list.map((l) => {
       if (l.id === node.id) {
         l.isDeletedInRoutePlan = true;
@@ -343,23 +339,23 @@ export class HierarchyContainerComponent implements OnInit {
       if (l.children && l.children.length) {
         const index = l.children.findIndex((i) => i.id === node.id);
         if (index > -1) {
-          const { id, uid, name, ...rest } = l.children[index];
+          const { id, isOriginal, ...rest } = l.children[index];
           l.children = [
             ...l.children.slice(0, index),
             ...node.children,
             ...l.children.slice(index + 1)
           ];
 
-          if (!findIfAnotherNodeInstanceExists({ id, uid }, hierarchyList)) {
+          if (isOriginal) {
             l.children.push({
-              uid,
+              isOriginal,
               ...rest,
               children: [] as HierarchyEntity[],
               isDeletedInRoutePlan: true
             });
           }
         } else {
-          this.promoteChildren(hierarchyList, l.children, node);
+          this.promoteChildren(l.children, node);
         }
       }
       return l;
