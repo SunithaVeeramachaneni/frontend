@@ -59,6 +59,7 @@
               <option
                 class="logicOperator"
                 *ngFor="let option of checkBoxResponses"
+                [selected]="logic.value.operand2 === option"
               >
                 {{ option }}
               </option>
