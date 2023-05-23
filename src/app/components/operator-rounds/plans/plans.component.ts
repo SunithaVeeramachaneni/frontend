@@ -491,7 +491,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         const uniqueAssignTo = filteredRoundPlans
           ?.map((item) => item?.assignedTo)
           .filter((value, index, self) => self.indexOf(value) === index);
-
         const uniqueSchedules = filteredRoundPlans
           ?.map((item) => item?.schedule)
           .filter((value, index, self) => self?.indexOf(value) === index);
@@ -511,7 +510,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             }
           });
         }
-
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
             item.items = this.assignedTo;
@@ -549,7 +547,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
-
     return this.operatorRoundsService
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
@@ -926,10 +923,14 @@ export class PlansComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+      } else if (
+        item.type !== 'daterange' &&
+        item.value &&
+        item.column !== 'schedule'
+      ) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
       } else {
         this.filter[item.column] = item.value ?? '';
       }
