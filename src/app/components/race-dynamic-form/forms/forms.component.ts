@@ -13,6 +13,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -22,6 +23,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -131,7 +133,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -176,7 +180,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -220,7 +226,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -242,7 +248,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -312,7 +318,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-
   plants = [];
   plantsIdNameMap = {};
 
@@ -325,6 +330,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -345,6 +352,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -464,7 +472,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.activatedRoute.params.subscribe((params) => {
+    this.activatedRoute.params.subscribe(() => {
       this.hideFormDetail = true;
       this.hideScheduleConfig = true;
     });
@@ -511,7 +519,10 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;

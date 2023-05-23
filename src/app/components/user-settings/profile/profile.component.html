@@ -66,35 +66,38 @@
   </div>
   <div class="custom-profile-form-fields">
     <div class="input-container">
-      <mat-form-field appearance="outline" class="first-name">
+      <mat-form-field appearance="outline" class="first-name p-t-15">
         <mat-label>{{ 'firstName' | translate }}</mat-label>
         <input matInput formControlName="firstName" />
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="last-name">
+      <mat-form-field appearance="outline" class="last-name p-t-15">
         <mat-label>{{ 'lastName' | translate }}</mat-label>
         <input matInput formControlName="lastName" />
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="input-container width-100">
+    <mat-form-field
+      appearance="outline"
+      class="input-container width-100 p-t-15"
+    >
       <mat-label>{{ 'title' | translate }}</mat-label>
       <input matInput formControlName="title" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100">
+    <mat-form-field appearance="outline" class="width-100 p-t-15">
       <mat-label>{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100">
+    <mat-form-field appearance="outline" class="width-100 p-t-15">
       <mat-label>{{ 'roles' | translate }}</mat-label>
       <input matInput formControlName="roles" />
     </mat-form-field>
 
     <mat-form-field
       appearance="outline"
-      class="width-100"
+      class="width-100 p-t-15"
       [ngClass]="{
         'hide-field':
           profileEditMode === true || this.userInfo?.contact !== null
@@ -106,7 +109,7 @@
 
     <mat-form-field
       appearance="outline"
-      class="width-100"
+      class="width-100 p-t-15"
       [ngClass]="{
         'hide-field':
           profileEditMode === false && this.userInfo?.contact === null

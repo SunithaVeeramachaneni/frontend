@@ -1,9 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
   Input,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -22,6 +24,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
@@ -52,7 +55,7 @@ import { UsersService } from 'src/app/components/user-management/services/users.
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class ActionsListComponent implements OnInit {
+export class ActionsListComponent implements OnInit, OnDestroy {
   @Input() moduleName;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -357,6 +360,7 @@ export class ActionsListComponent implements OnInit {
   isModalOpened = false;
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly observationsService: ObservationsService,
@@ -374,6 +378,7 @@ export class ActionsListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.observationsService.fetchActions$.next({
             data: 'search'
@@ -564,4 +569,9 @@ export class ActionsListComponent implements OnInit {
       default:
     }
   };
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

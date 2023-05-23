@@ -3,10 +3,7 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Input,
-  OnChanges,
-  SimpleChanges
+  Input
 } from '@angular/core';
 
 import { Store } from '@ngrx/store';
@@ -23,16 +20,16 @@ import {
 } from 'src/app/interfaces';
 
 import {
-  getSectionQuestions,
   getPageIndexes,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
-  getPage,
   getQuestionIds,
   State,
   getSubFormPages,
-  getQuestionCounter
+  getQuestionCounter,
+  getPageWiseSectionQuestions,
+  getPageWiseSections
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -43,8 +40,6 @@ import {
 } from '@angular/cdk/drag-drop';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
-import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
-import { isEqual } from 'lodash-es';
 
 @Component({
   selector: 'app-builder',
@@ -52,7 +47,7 @@ import { isEqual } from 'lodash-es';
   styleUrls: ['./builder.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuilderComponent implements OnInit, OnChanges {
+export class BuilderComponent implements OnInit {
   @Input() set selectedNode(node: any) {
     this._selectedNode = node ? node : ({} as any);
     if (Object.keys(node).length) {
@@ -76,9 +71,11 @@ export class BuilderComponent implements OnInit, OnChanges {
   questionIndexes: any;
   isEmptyPage: any = [];
   isEmptyPlan = true;
-
+  pageWiseSections: any;
   questionCounter$: Observable<number>;
   formMetadata$: Observable<FormMetadata>;
+  pageWiseSectionQuestions$: Observable<any>;
+  pageWiseSections$: Observable<any>;
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -86,21 +83,33 @@ export class BuilderComponent implements OnInit, OnChanges {
 
   constructor(
     private store: Store<State>,
-    private roundPlanConfigurationService: RoundPlanConfigurationService,
-    private responseSetService: ResponseSetService,
-    private cdrf: ChangeDetectorRef
+    private roundPlanConfigurationService: RoundPlanConfigurationService
   ) {}
 
   initSubscriptions() {
-    this.subFormPages$ = this.store.select(
-      getSubFormPages(this.selectedNode.id)
-    );
+    this.subFormPages$ = this.store
+      .select(getSubFormPages(this.selectedNode.id))
+      .pipe(
+        tap((pages) => {
+          if (pages && pages.length === 0) {
+            this.isEmptyPlan = true;
+          } else {
+            this.isEmptyPlan = false;
+          }
+        })
+      );
     this.pageIndexes$ = this.store.select(getPageIndexes(this.selectedNode.id));
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes(this.selectedNode.id))
       .pipe(
         tap((sectionIndexes) => {
           this.sectionIndexes = sectionIndexes;
+          for (const index in sectionIndexes) {
+            if (Object.prototype.hasOwnProperty.call(sectionIndexes, index)) {
+              const empty = sectionIndexes[index].length === 0;
+              this.isEmptyPage.push(empty);
+            }
+          }
         })
       );
     this.sectionIds$ = this.store.select(getSectionIds(this.selectedNode.id));
@@ -109,36 +118,14 @@ export class BuilderComponent implements OnInit, OnChanges {
       .select(getQuestionIndexes(this.selectedNode.id))
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
     this.questionCounter$ = this.store.select(getQuestionCounter);
-    this.sectionIndexes$.subscribe((sectionIndexes) => {
-      // eslint-disable-next-line guard-for-in
-      for (const index in sectionIndexes) {
-        const empty = sectionIndexes[index].length === 0;
-        this.isEmptyPage.push(empty);
-      }
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes && changes.selectedNode) {
-      if (
-        !isEqual(
-          changes.selectedNode.previousValue,
-          changes.selectedNode.currentValue
-        )
-      ) {
-        this.subFormPages$
-          .pipe(
-            tap((pages) => {
-              if (pages && pages.length === 0) {
-                this.isEmptyPlan = true;
-              } else {
-                this.isEmptyPlan = false;
-              }
-            })
-          )
-          .subscribe();
-      }
-    }
+    this.pageWiseSectionQuestions$ = this.store.select(
+      getPageWiseSectionQuestions(this.selectedNode.id)
+    );
+    this.pageWiseSections$ = this.store
+      .select(getPageWiseSections(this.selectedNode.id))
+      .pipe(
+        tap((pageWiseSections) => (this.pageWiseSections = pageWiseSections))
+      );
   }
 
   ngOnInit(): void {}
@@ -234,7 +221,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         );
 
         this.isEmptyPage[pageIndex] =
-          this.getSectionsOfPage(pageIndex).length === 0;
+          this.pageWiseSections[pageIndex].length === 0;
         break;
     }
   }
@@ -344,24 +331,6 @@ export class BuilderComponent implements OnInit, OnChanges {
         })
       );
     }
-  }
-
-  getQuestionsOfSection(pageIndex, sectionIndex) {
-    let sectionQuestions;
-    this.store
-      .select(
-        getSectionQuestions(pageIndex, sectionIndex, this.selectedNode.id)
-      )
-      .subscribe((v) => (sectionQuestions = v));
-    return sectionQuestions;
-  }
-
-  getSectionsOfPage(pageIndex) {
-    let pageSections;
-    this.store
-      .select(getPage(pageIndex, this.selectedNode.id))
-      .subscribe((v) => (pageSections = v?.sections));
-    return pageSections;
   }
 
   getFormConfigurationStatuses() {

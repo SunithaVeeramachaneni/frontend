@@ -15,6 +15,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import {
   filter,
   map,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -48,7 +50,6 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultLimit,
   graphQLDefaultMaxLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -356,6 +357,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -377,6 +380,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchInspection$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -552,7 +556,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.fetchInspection$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;

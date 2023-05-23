@@ -16,6 +16,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -24,6 +25,7 @@ import {
   filter,
   map,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -381,6 +383,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -403,6 +406,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchRounds$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -517,7 +521,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
     const { columnId, row } = event;
