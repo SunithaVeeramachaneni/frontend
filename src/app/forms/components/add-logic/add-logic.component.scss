@@ -19,10 +19,9 @@
     background: $white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: initial;
     max-width: 100px;
     width: inherit;
-    font-size: 12px;
+    font-size: 100%;
   }
 
   .logicCondition {
@@ -33,7 +32,7 @@
     padding: 0px 15px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 100%;
     background: none !important;
     border: none !important;
     text-decoration: underline !important;
