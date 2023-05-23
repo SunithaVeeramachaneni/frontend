@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
+import { LoginService } from 'src/app/components/login/services/login.service';
 import {
   FormBuilder,
   FormControl,
@@ -124,7 +125,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
-    private formConfigurationService: FormConfigurationService
+    private formConfigurationService: FormConfigurationService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -277,6 +279,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
+                })
+              );
+              this.store.dispatch(
+                BuilderConfigurationActions.updateFormMetadata({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  ...this.getFormConfigurationStatuses()
+                })
+              );
+
+              this.store.dispatch(
+                BuilderConfigurationActions.updateForm({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  formListDynamoDBVersion: this.formListVersion
                 })
               );
             }

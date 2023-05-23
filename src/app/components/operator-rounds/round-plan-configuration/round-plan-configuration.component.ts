@@ -8,6 +8,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 import {
   FormBuilder,
@@ -148,7 +149,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
-    private operatorRoundsService: OperatorRoundsService
+    private operatorRoundsService: OperatorRoundsService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -338,6 +340,25 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion,
                   hierarchy: selectedHierarchyList
+                })
+              );
+              this.store.dispatch(
+                BuilderConfigurationActions.updateFormMetadata({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  ...this.getFormConfigurationStatuses()
+                })
+              );
+              this.store.dispatch(
+                RoundPlanConfigurationActions.updateRoundPlan({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  formListDynamoDBVersion: this.formListVersion,
+                  ...this.getFormConfigurationStatuses()
                 })
               );
               this.formDetails = formDetails;
