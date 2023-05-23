@@ -96,6 +96,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   questionLogics$: Observable<any>;
   pageWiseLogicSectionAskQuestions$: Observable<any>;
 
+  isAskQuestionFocusId = '';
+
   private _pageIndex: number;
   private _questionId: string;
   private _quickResponseValues: any;
@@ -226,7 +228,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     return el.value.id;
   }
   trackByQuestionIndex(index: number, el: any): number {
-    return index;
+    return el.id;
   }
 
   deleteLogic(logicId, questionId, pageIndex) {
@@ -407,5 +409,9 @@ export class AddLogicComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  setIsAskQuestionFocusId(id) {
+    this.isAskQuestionFocusId = id;
   }
 }
