@@ -1,11 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -14,6 +19,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
@@ -38,7 +44,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class PlantListComponent implements OnInit {
+export class PlantListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   userInfo$: Observable<UserInfo>;
 
@@ -218,6 +224,7 @@ export class PlantListComponent implements OnInit {
   fetchType = 'load';
   nextToken = '';
   parentInformation: any;
+  private onDestroy$ = new Subject();
 
   constructor(
     private loginService: LoginService,
@@ -234,6 +241,7 @@ export class PlantListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.plantService.fetchPlants$.next({ data: 'search' });
         })
@@ -481,5 +489,10 @@ export class PlantListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

@@ -1,4 +1,10 @@
-<div class="node-item" *ngIf="selectedNode">
+<div
+  class="node-item"
+  *ngIf="{
+    selectedNode: selectedNode$ | async,
+    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+  }"
+>
   <div
     class="parentNode node"
     [ngClass]="{ active: selectedNode.id === node.id }"

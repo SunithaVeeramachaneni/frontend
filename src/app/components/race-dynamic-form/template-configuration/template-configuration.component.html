@@ -252,6 +252,55 @@
                   </div>
                 </div>
               </ng-container>
+              <ng-container
+                *ngIf="isEmptyPage[pageIndex]"
+                class="emptyPageContainer"
+              >
+                <div
+                  class="floating-btns"
+                  *ngIf="sectionIds[pageIndex].length !== 0"
+                >
+                  <button
+                    class="questions-btn"
+                    (click)="
+                      addQuestion(pageIndex, sectionIds[pageIndex][0], 0)
+                    "
+                  >
+                    <svg-icon
+                      icon="icon-add-question"
+                      class="add-question-icon"
+                    ></svg-icon>
+                    <p
+                      class="questions-delete-btn-text"
+                      translate="question"
+                    ></p>
+                  </button>
+                  <br />
+
+                  <button class="delete-btn">
+                    <svg-icon
+                      icon="icon-delete-question"
+                      class="add-question-icon"
+                    ></svg-icon>
+                    <p class="questions-delete-btn-text" translate="delete"></p>
+                  </button>
+                </div>
+                <button
+                  class="add-section-btn"
+                  [ngClass]="{
+                    'add-section-btn': sectionIds[pageIndex].length !== 0,
+                    'add-section-without-floating-btns':
+                      sectionIds[pageIndex].length === 0
+                  }"
+                  (click)="addSection(pageIndex)"
+                >
+                  <svg-icon
+                    icon="icon-add-section"
+                    class="add-section-btn-icon"
+                  ></svg-icon>
+                  {{ 'addSection' | translate }}
+                </button>
+              </ng-container>
             </div>
           </ng-container>
         </app-page>

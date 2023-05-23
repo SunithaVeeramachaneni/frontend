@@ -2,15 +2,22 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  takeUntil
+} from 'rxjs/operators';
 
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-create-from-template-modal',
@@ -18,7 +25,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   styleUrls: ['./create-from-template-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateFromTemplateModalComponent implements OnInit {
+export class CreateFromTemplateModalComponent implements OnInit, OnDestroy {
   public searchTemplates: FormControl;
   public displayedTemplates = [];
   public templateLoadingFinished = false;
@@ -32,6 +39,7 @@ export class CreateFromTemplateModalComponent implements OnInit {
     modifiedBy: '',
     createdBy: ''
   };
+  private onDestroy$ = new Subject();
 
   constructor(
     private dialogRef: MatDialogRef<CreateFromTemplateModalComponent>,
@@ -64,6 +72,7 @@ export class CreateFromTemplateModalComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         map((searchTerm: string) => {
           this.applySearchAndFilter(searchTerm);
         })
@@ -153,5 +162,10 @@ export class CreateFromTemplateModalComponent implements OnInit {
       createdBy: ''
     };
     this.applySearchAndFilter(this.searchTemplates.value);
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

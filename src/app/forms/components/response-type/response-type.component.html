@@ -1,6 +1,7 @@
 <div
   class="response-type-modal"
   [hidden]="isGlobalResponseOpen"
+  *ngIf="formMetadata$ | async"
   [ngClass]="{
     'position-left': isPreviewActive === true,
     'position-right': isPreviewActive === false
