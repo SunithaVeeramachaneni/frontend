@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
   tap
 } from 'rxjs/operators';
@@ -116,6 +117,12 @@ export class SectionComponent implements OnInit {
     this.sectionTasksCount$ = this.store.select(
       getTaskCountBySection(this.pageIndex, this.sectionId, this.selectedNodeId)
     );
+  }
+
+  getTasksCountBySectionId(pageIndex, sectionId) {
+    return this.store
+      .select(getTaskCountBySection(pageIndex, sectionId, this.selectedNodeId))
+      .pipe(map((d) => d));
   }
 
   addSection() {

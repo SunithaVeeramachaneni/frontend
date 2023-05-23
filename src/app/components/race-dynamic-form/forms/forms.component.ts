@@ -49,7 +49,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -131,7 +131,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -176,7 +178,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -220,7 +224,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -242,7 +246,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -282,7 +286,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
@@ -403,11 +407,6 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
-          );
-        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -421,7 +420,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         let filteredForms = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
@@ -436,7 +435,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         const uniqueAssignTo = filteredForms
-          ?.map((item) => item?.assignedTo)
+          ?.map((item) => item?.assignedToEmail)
           .filter((value, index, self) => self.indexOf(value) === index);
 
         const uniqueSchedules = filteredForms
@@ -674,6 +673,11 @@ export class FormsComponent implements OnInit, OnDestroy {
       : this.placeHolder;
   }
 
+  getAssignedToEmail(formsScheduleConfiguration: FormScheduleConfiguration) {
+    const { assignmentDetails: { value } = {} } = formsScheduleConfiguration;
+    return value ?? '';
+  }
+
   scheduleConfigHandler(scheduleConfig) {
     const { formsScheduleConfiguration, mode } = scheduleConfig;
     this.formScheduleConfigurations[formsScheduleConfiguration?.formId] =
@@ -691,7 +695,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormattedScheduleDates(
               formsScheduleConfiguration
             ),
-            assignedTo: this.getAssignedTo(formsScheduleConfiguration)
+            assignedTo: this.getAssignedTo(formsScheduleConfiguration),
+            assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
           };
         }
         return data;
@@ -743,7 +748,10 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
-          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id])
+          assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
+          assignedToEmail: this.getAssignedToEmail(
+            formScheduleConfigurations[form.id]
+          )
         };
       }
       return {
@@ -810,9 +818,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe((formsList) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
-          const uniquePlants = formsList.rows
+          const uniquePlants = formsList.items
             .map((item) => {
-              if (item.plantId) {
+              if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
                 return item.plant;
               }
@@ -836,26 +844,15 @@ export class FormsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = item.value ?? '';
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       } else {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = item.value ?? '';
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.scheduledAt &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchForms$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchForms$.next({ data: 'load' });
   }
   clearFilters(): void {
     this.isPopoverOpen = false;

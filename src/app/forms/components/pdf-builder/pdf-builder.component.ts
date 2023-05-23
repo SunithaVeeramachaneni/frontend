@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable no-underscore-dangle */
 import {
   Component,
@@ -12,7 +13,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
-
+import { ToastService } from 'src/app/shared/toast';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
@@ -30,7 +31,7 @@ import {
   getFormPublishStatus,
   getFormDetails
 } from '../../state/builder/builder-state.selectors';
-import { tap } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
@@ -60,7 +61,7 @@ export class PDFBuilderComponent implements OnInit {
   totalQuestionsCount = 0;
   totalAssetsCount = 0;
   totalLocationsCount = 0;
-
+  inDraftState = false;
   pdfBuilderConfigurationsForm: FormGroup = this.fb.group({
     formId: true,
     formTitle: true,
@@ -71,8 +72,6 @@ export class PDFBuilderComponent implements OnInit {
     submittedBy: true,
     pdfGeneratedDate: true,
     customText: true,
-    customTextLabel: '',
-    customTextField: '',
     actions: true,
     issues: true,
     questions: true,
@@ -82,6 +81,11 @@ export class PDFBuilderComponent implements OnInit {
     photos: true,
     skippedQuestions: true
   });
+  pdfBuilderConfigurationsFormCustomText: FormGroup = this.fb.group({
+    customTextLabel: '',
+    customTextField: ''
+  });
+
   formStatus: string;
   isFormDetailPublished: string;
   formDetailPublishStatus: string;
@@ -101,6 +105,7 @@ export class PDFBuilderComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     public dialogRef: MatDialogRef<PDFBuilderComponent>,
     private loginService: LoginService,
+    private toast: ToastService,
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
@@ -124,10 +129,32 @@ export class PDFBuilderComponent implements OnInit {
     this.formDetailPublishStatus$ = this.store
       .select(getFormPublishStatus)
       .pipe(
-        tap(
-          (formDetailPublishStatus) =>
-            (this.formDetailPublishStatus = formDetailPublishStatus)
-        )
+        tap((formDetailPublishStatus) => {
+          if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
+          this.formDetailPublishStatus = formDetailPublishStatus;
+          if (formDetailPublishStatus === 'Published' && this.inDraftState) {
+            if (this.data.moduleName === 'OPERATOR_ROUNDS') {
+              this.toast.show({
+                text: 'Round published successfully',
+                type: 'success'
+              });
+              this.router.navigate(['/operator-rounds']);
+              this.dialogRef.close();
+            } else if (this.data.moduleName === 'RDF') {
+              this.toast.show({
+                text: 'Form published successfully',
+                type: 'success'
+              });
+              this.router.navigate(['/forms']);
+              this.dialogRef.close();
+            }
+          }
+          if (
+            this.inDraftState === false &&
+            this.formDetailPublishStatus === 'Publishing'
+          )
+            this.inDraftState = true;
+        })
       );
 
     if (this.data.moduleName && this.data.moduleName === 'OPERATOR_ROUNDS') {
@@ -156,7 +183,10 @@ export class PDFBuilderComponent implements OnInit {
     this.pdfBuilderConfigurationsForm.valueChanges.subscribe((data) => {
       this.store.dispatch(
         BuilderConfigurationActions.updatePDFBuilderConfiguration({
-          pdfBuilderConfiguration: data
+          pdfBuilderConfiguration: {
+            ...this.pdfBuilderConfigurationsFormCustomText.value,
+            ...data
+          }
         })
       );
 
@@ -178,13 +208,55 @@ export class PDFBuilderComponent implements OnInit {
         );
       }
     });
+
+    this.pdfBuilderConfigurationsFormCustomText.valueChanges
+      .pipe(debounceTime(1000))
+      .subscribe((data) => {
+        const { customTextField, customTextLabel } = data;
+        this.store.dispatch(
+          BuilderConfigurationActions.updatePDFBuilderConfiguration({
+            pdfBuilderConfiguration: {
+              ...this.pdfBuilderConfigurationsForm.value,
+              customTextField,
+              customTextLabel
+            }
+          })
+        );
+
+        if (this.data.moduleName && this.data.moduleName === 'RDF') {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateForm({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        } else {
+          this.store.dispatch(
+            RoundPlanConfigurationActions.updateRoundPlan({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        }
+      });
     this.loadPDFBuilderConfig$ = this.store
       .select(getPDFBuilderConfiguration)
       .pipe(
         tap((config) => {
           this.pdfBuilderConfigurationsForm.patchValue(config, {
             emitEvent: false
-          });
+          }),
+            this.pdfBuilderConfigurationsFormCustomText.patchValue(
+              {
+                customTextField: config?.customTextField || '',
+                customTextLabel: config?.customTextLabel || ''
+              },
+              {
+                emitEvent: false
+              }
+            );
         })
       );
   }
@@ -207,13 +279,6 @@ export class PDFBuilderComponent implements OnInit {
         isFormDetailPublished: true
       })
     );
-    if (this.data.moduleName === 'OPERATOR_ROUNDS') {
-      this.router.navigate(['/operator-rounds']);
-      this.dialogRef.close();
-    } else {
-      this.router.navigate(['/forms']);
-      this.dialogRef.close();
-    }
   }
 
   toggleSelectAll(event) {
@@ -228,8 +293,6 @@ export class PDFBuilderComponent implements OnInit {
         submittedBy: true,
         pdfGeneratedDate: true,
         customText: true,
-        customTextLabel: '',
-        customTextField: '',
         actions: true,
         issues: true,
         questions: true,
@@ -250,8 +313,6 @@ export class PDFBuilderComponent implements OnInit {
         submittedBy: false,
         pdfGeneratedDate: false,
         customText: false,
-        customTextLabel: '',
-        customTextField: '',
         actions: false,
         issues: false,
         questions: false,

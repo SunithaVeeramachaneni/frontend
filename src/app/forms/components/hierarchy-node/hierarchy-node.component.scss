@@ -64,6 +64,7 @@
 
 .child-node {
   margin-left: 35px;
+  width: fit-content;
 }
 
 .arrows {
@@ -97,4 +98,20 @@
   margin-top: 8px;
   display: flex;
   align-items: center;
+}
+
+.node-container {
+  height: 38px;
+}
+
+.node-info {
+  position: relative;
+  top: -7px;
+  margin-right: 20px;
+}
+
+.node-id {
+  position: relative;
+  top: -8px;
+  white-space: nowrap;
 }

@@ -5,7 +5,11 @@
     </div>
     <div *ngIf="selectedPlant">
       <p>
-        <img [src]="selectedPlant?.image" alt="Image" class="image" />
+        <img
+          [src]="selectedPlantImageurl(selectedPlant)"
+          alt="Image"
+          class="image"
+        />
       </p>
       <h1 class="heading">{{ selectedPlant.name }}</h1>
       <hr class="horizon-line" />

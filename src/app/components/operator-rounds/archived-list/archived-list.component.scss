@@ -2,7 +2,7 @@
 
 .list-view {
   background-color: $white;
-  height: calc(100vh - 205px);
+  height: calc(100vh - 80px);
 
   ::ng-deep .table-column {
     width: 40%;
@@ -37,12 +37,12 @@
     font-weight: 500;
     font-size: 110%;
     color: $gray-bg;
+    margin-right: 2px;
   }
   .forms-text {
     font-weight: 500;
     font-size: 110%;
     color: $gray1;
-    margin-left: -1px;
   }
   .padding-lr-20 {
     padding: 0 20px;

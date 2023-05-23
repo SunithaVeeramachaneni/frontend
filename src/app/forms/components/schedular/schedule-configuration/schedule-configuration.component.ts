@@ -35,6 +35,7 @@ import {
   RoundPlanScheduleConfiguration,
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
+  SelectedAssignee,
   UserDetails,
   ValidationError
 } from 'src/app/interfaces';
@@ -679,8 +680,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     });
   }
 
-  selectedAssigneeHandler(event: UserDetails) {
-    const { email: value, firstName, lastName } = event;
+  selectedAssigneeHandler({ user }: SelectedAssignee) {
+    const { email: value, firstName, lastName } = user;
     this.schedulerConfigForm
       .get('assignmentDetails')
       .patchValue({ value, displayValue: `${firstName} ${lastName}` });

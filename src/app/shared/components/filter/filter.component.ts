@@ -8,11 +8,21 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
+import { DatePipeDateAdapter } from '../../utils/DatePipeDateAdapter';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss']
+  styleUrls: ['./filter.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: DatePipeDateAdapter },
+    {
+      provide: MAT_DATE_FORMATS,
+      // Pass any format string you would pass to DatePipe
+      useValue: DatePipeDateAdapter.createCustomMatDateFormats('dd/MM/yyyy')
+    }
+  ]
 })
 export class FilterComponent implements OnInit, OnChanges {
   readonly FilterSidePanelComponent = FilterSidePanelComponent;

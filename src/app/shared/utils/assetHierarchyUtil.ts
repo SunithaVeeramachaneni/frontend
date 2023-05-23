@@ -312,6 +312,7 @@ export class AssetHierarchyUtil {
   ): HierarchyEntity[] =>
     children.map((child) => ({
       ...child,
+      id: selectedChildrenFlatList.find((item) => item.uid === child.uid)?.id,
       isSelected:
         selectedChildrenFlatList.findIndex((item) => item.uid === child.uid) >
         -1,
