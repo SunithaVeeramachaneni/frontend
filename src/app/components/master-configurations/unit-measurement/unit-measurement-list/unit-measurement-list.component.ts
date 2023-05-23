@@ -41,7 +41,7 @@ import {
   UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
-  defaultLimit,
+  graphQLDefaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -231,7 +231,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
       form: {} as any
     });
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchUom: FormControl;
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
@@ -489,6 +489,7 @@ export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   }
 
   addManually(): void {
+    this.unitMeasurementService.getUnitTypes().subscribe();
     this.unitEditData = null;
     this.unitAddOrEditOpenState = 'in';
   }

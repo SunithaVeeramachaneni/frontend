@@ -247,14 +247,17 @@ export class FormConfigurationModalComponent implements OnInit {
             formsUsageCount: this.data.formsUsageCount + 1
           })
           .subscribe(() => {
-            this.router.navigate(['/forms/create'], {
-              state: { selectedTemplate: this.data }
-            });
+            this.router
+              .navigate(['/forms/create'], {
+                state: { selectedTemplate: this.data }
+              })
+              .then(() => this.dialogRef.close());
           });
       } else {
-        this.router.navigate(['/forms/create']);
+        this.router
+          .navigate(['/forms/create'])
+          .then(() => this.dialogRef.close());
       }
-      this.dialogRef.close();
     }
   }
 
