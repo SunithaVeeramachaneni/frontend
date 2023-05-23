@@ -2,6 +2,7 @@
   "locations": "Locations",
   "createNew": "Create New",
   "create": "Create",
+  "update": "Update",
   "name": "Name",
   "nameMandatory": "Name *",
   "locationIdMandatory": "Location Id *",

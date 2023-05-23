@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { groupBy } from 'lodash-es';
 
@@ -15,6 +15,16 @@ import { ToastService } from 'src/app/shared/toast';
 })
 export class UnitMeasurementService {
   measurementList = ['Length', 'Area', 'Volume', 'Temperature', 'Mass'];
+  unitTypes$ = new BehaviorSubject<
+    {
+      id: string;
+      name: string;
+      isDeleted: boolean;
+      _version: number;
+      createdAt: string;
+      updatedAt: string;
+    }[]
+  >([]);
   constructor(
     private readonly _appService: AppService,
     private toastService: ToastService
@@ -54,7 +64,12 @@ export class UnitMeasurementService {
   getUnitTypes() {
     return this._appService
       ._getResp(environment.masterConfigApiUrl, 'unit-of-measurement/types')
-      .pipe(map((data) => data));
+      .pipe(
+        map((data) => {
+          this.unitTypes$.next(data ?? []);
+          return data;
+        })
+      );
   }
 
   uploadExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo) {
