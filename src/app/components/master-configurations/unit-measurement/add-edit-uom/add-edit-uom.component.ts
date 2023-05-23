@@ -77,9 +77,10 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.unitOfMeasurementService
-      .getUnitTypes()
-      .subscribe((units) => (this.measurementList = units));
+    this.unitOfMeasurementService.getUnitTypes().subscribe();
+    this.unitOfMeasurementService.unitTypes$.subscribe(
+      (units) => (this.measurementList = units)
+    );
   }
 
   cancel(): void {
