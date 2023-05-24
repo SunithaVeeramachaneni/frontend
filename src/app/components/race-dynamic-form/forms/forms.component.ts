@@ -428,12 +428,19 @@ export class FormsComponent implements OnInit, OnDestroy {
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => form.schedule
+            (form: ScheduleFormDetail) =>
+              form.schedule && form.schedule !== 'Ad-Hoc'
           );
         } else if (formCategory === 'unscheduled') {
-          filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => !form.schedule
-          );
+          filteredForms = forms.data
+            .filter(
+              (form: ScheduleFormDetail) =>
+                !form.schedule || form.schedule === 'Ad=Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredForms = forms.data;
         }
