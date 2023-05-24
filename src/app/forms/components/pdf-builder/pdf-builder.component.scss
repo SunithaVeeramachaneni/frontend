@@ -138,7 +138,7 @@ ul {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 85%;
+  width: 74%;
   padding: 15px 0px;
 }
 
@@ -180,7 +180,7 @@ ul {
 .publish {
   top: -2px;
   font-style: normal;
-  font-weight: 100;
+  font-weight: 400;
   font-size: 100%;
   line-height: 20px;
   align-items: center;
@@ -192,8 +192,6 @@ ul {
 .publish-btn:active,
 .publish-btn:focus,
 .publish-btn:focus:active {
-  background-image: none;
-  outline: 0;
   box-shadow: none;
 }
 
@@ -603,8 +601,6 @@ ul {
 .form-status {
   display: flex;
   align-items: center;
-  position: relative;
-  left: -46px;
 }
 .save-status {
   font-weight: 500;
