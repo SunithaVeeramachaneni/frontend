@@ -199,7 +199,7 @@
           </mat-form-field>
         </div>
 
-        <div class="addpdf">
+        <div class="add-pdf">
           <br />
           <input
             type="file"
@@ -224,7 +224,8 @@
             <span
               *ngFor="
                 let image of headerDataForm.get('instructions').value.images;
-                index as i
+                index as i;
+                trackBy: trackBySelectedattachments
               "
               class="m-r-10"
             >
@@ -239,7 +240,8 @@
             <span
               *ngFor="
                 let pdf of headerDataForm.get('instructions').value.pdf;
-                index as i
+                index as i;
+                trackBy: trackBySelectedattachments
               "
               class="m-r-10"
             >

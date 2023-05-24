@@ -335,6 +335,9 @@ export class FormConfigurationModalComponent implements OnInit {
       }
     }
   }
+  trackBySelectedattachments(index: number, el: any): string {
+    return el.id;
+  }
 
   onCancel(): void {
     this.dialogRef.close();

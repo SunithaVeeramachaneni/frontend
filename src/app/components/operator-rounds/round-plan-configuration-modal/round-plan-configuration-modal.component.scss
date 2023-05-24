@@ -168,20 +168,6 @@
         color: $black;
       }
     }
-
-    .status {
-      font-family: 'Roboto';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 150%;
-      letter-spacing: 0.15px;
-      color: $light-gray;
-      flex: none;
-      order: 1;
-      flex-grow: 0;
-      padding-right: 10px;
-    }
   }
 
   .additional_details {
