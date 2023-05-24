@@ -23,8 +23,9 @@
 }
 .hierarchy {
   overflow-y: auto;
-  height: 60vh;
+  height: calc(100vh - 255px);
   width: -webkit-fill-available;
+  margin-top: 10px;
 }
 .displayGrid {
   display: grid;
