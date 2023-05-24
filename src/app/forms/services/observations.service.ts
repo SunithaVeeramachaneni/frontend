@@ -139,7 +139,7 @@ export class ObservationsService {
 
   uploadIssueOrActionLogHistoryAttachment$ = (
     issueOrActionId: string,
-    form: FormData,
+    form,
     urlString: string,
     moduleName,
     info: ErrorInfo = {} as ErrorInfo
@@ -305,6 +305,50 @@ export class ObservationsService {
         _version
         _lastChangedAt
         _deleted
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onCreateIssuesAttachments$(input) {
+    const statement = `subscription onCreateIssuesAttachments($filter: ModelSubscriptionIssuesAttachmentsFilterInput) {
+      onCreateIssuesAttachments(filter: $filter) {
+        _deleted
+        _lastChangedAt
+        _version
+        assignedTo
+        createdAt
+        id
+        imageData
+        objectId
+        plantId
+        updatedAt
+      }
+    }`;
+    return API.graphql(
+      graphqlOperation(statement, {
+        input
+      })
+    ) as unknown as Observable<any>;
+  }
+
+  onCreateActionsAttachments$(input) {
+    const statement = `subscription onCreateActionsAttachments($filter: ModelSubscriptionActionsAttachmentsFilterInput) {
+      onCreateActionsAttachments(filter: $filter) {
+        _deleted
+        _lastChangedAt
+        _version
+        createdAt
+        assignedTo
+        id
+        imageData
+        objectId
+        plantId
+        updatedAt
       }
     }`;
     return API.graphql(

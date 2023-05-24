@@ -1511,7 +1511,7 @@
 
 <symbol id="icon-upload-icon-tenant" viewBox="0 0 32 32">
 <path fill="#fff" style="fill: var(--color1, #fff); stroke: var(--color2, #e5e5e5)" stroke="#e5e5e5" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="4" stroke-width="0.8889" d="M31.556 16c0 8.591-6.964 15.556-15.556 15.556s-15.556-6.964-15.556-15.556c0-8.591 6.964-15.556 15.556-15.556s15.556 6.964 15.556 15.556z"></path>
-<path fill="#1351d8" style="fill: var(--color3, #1351d8)" d="M21.333 18.667v2.667h-10.667v-2.667h-1.778v2.667c0 0.978 0.8 1.778 1.778 1.778h10.667c0.978 0 1.778-0.8 1.778-1.778v-2.667h-1.778zM11.556 13.333l1.253 1.253 2.302-2.293v7.262h1.778v-7.262l2.302 2.293 1.253-1.253-4.444-4.444-4.444 4.444z"></path>
+<path fill="#E5E5E5" style="fill: var(--color3, #E5E5E5)" d="M21.333 18.667v2.667h-10.667v-2.667h-1.778v2.667c0 0.978 0.8 1.778 1.778 1.778h10.667c0.978 0 1.778-0.8 1.778-1.778v-2.667h-1.778zM11.556 13.333l1.253 1.253 2.302-2.293v7.262h1.778v-7.262l2.302 2.293 1.253-1.253-4.444-4.444-4.444 4.444z"></path>
 </symbol>
 <symbol id="icon-Profile_Pic" viewBox="0 0 32 32">
 <path fill="#e8e8e8" style="fill: var(--color4, #e8e8e8)" d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16c-8.837 0-16-7.163-16-16s7.163-16 16-16z"></path>

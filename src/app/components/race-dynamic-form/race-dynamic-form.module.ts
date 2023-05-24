@@ -17,7 +17,6 @@ import { FormModule } from 'src/app/forms/form.module';
 import { FormContainerComponent } from './form-container/form-container.component';
 import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { ResponseSetComponent } from './response-set/response-set.component';
 import { PublicLibraryComponent } from './public-library/public-library.component';
 import { FormConfigurationModalComponent } from './form-configuration-modal/form-configuration-modal.component';
@@ -47,8 +46,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
-import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -92,13 +89,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    SubmissionComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SubmissionSliderComponent,
-    SubmissionViewComponent,
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
@@ -182,7 +176,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    SubmissionComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,

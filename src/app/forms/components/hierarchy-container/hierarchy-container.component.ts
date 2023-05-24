@@ -29,10 +29,13 @@ import {
 } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
 import {
-  getTotalTasksCount,
+  getNodeWiseQuestionsCount,
   State
 } from '../../state/builder/builder-state.selectors';
-import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import {
+  AssetHierarchyUtil,
+  findIfAnotherNodeInstanceExists
+} from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -73,6 +76,7 @@ export class HierarchyContainerComponent implements OnInit {
 
   filteredList = [];
   totalTasksCount: number;
+  nodeWiseQuestionsCount$: Observable<any>;
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
@@ -86,6 +90,21 @@ export class HierarchyContainerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.nodeWiseQuestionsCount$ = this.store
+      .select(getNodeWiseQuestionsCount())
+      .pipe(
+        tap((nodeWiseQuestionsCount) => {
+          const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
+          const flatHierarchy =
+            this.assetHierarchyUtil.convertHierarchyToFlatList(hierarchy, 0);
+          const nodeIds = flatHierarchy.map((h) => h.id);
+          this.totalTasksCount = nodeIds.reduce(
+            (acc, curr) => (acc += nodeWiseQuestionsCount[curr] || 0),
+            0
+          );
+        })
+      );
+
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
         if (selectedHierarchy) {
@@ -94,7 +113,6 @@ export class HierarchyContainerComponent implements OnInit {
               selectedHierarchy
             );
           this.hierarchy = JSON.parse(JSON.stringify(selectedHierarchy));
-          this.updateTotalTasksCount();
           const { stitchedHierarchy, instanceIdMappings } =
             this.assetHierarchyUtil.prepareAssetHierarchy(selectedHierarchy);
           this.instanceIdMappings = instanceIdMappings;
@@ -144,8 +162,6 @@ export class HierarchyContainerComponent implements OnInit {
         return this.masterHierarchyList;
       })
     );
-
-    this.masterHierarchyList$.subscribe();
 
     this.searchHierarchyKey = new FormControl('');
 
@@ -205,19 +221,6 @@ export class HierarchyContainerComponent implements OnInit {
     }, 0);
   }
 
-  updateTotalTasksCount() {
-    const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
-    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
-      hierarchy,
-      0
-    );
-    const nodeIds = flatHierarchy.map((h) => h.id);
-    this.store.select(getTotalTasksCount(nodeIds)).subscribe((c) => {
-      this.totalTasksCount = c;
-      this.cdrf.detectChanges();
-    });
-  }
-
   handleCopyNode = (event) => {
     this.store.dispatch(
       HierarchyActions.copyNodeToRoutePlan({
@@ -265,11 +268,9 @@ export class HierarchyContainerComponent implements OnInit {
             instanceIds
           })
         );
-        this.selectedHierarchy$.subscribe((data) => {
-          this.hierarchyEvent.emit({
-            node: event,
-            hierarchy: data
-          });
+        this.hierarchyEvent.emit({
+          node: event,
+          hierarchy: this.hierarchy
         });
       } else {
         const hierarchyClone = JSON.parse(JSON.stringify(this.hierarchy));
@@ -330,7 +331,7 @@ export class HierarchyContainerComponent implements OnInit {
     return array;
   }
 
-  promoteChildren(list, node) {
+  promoteChildren(list, node): HierarchyEntity[] {
     list = list.map((l) => {
       if (l.id === node.id) {
         l.isDeletedInRoutePlan = true;
@@ -338,11 +339,21 @@ export class HierarchyContainerComponent implements OnInit {
       if (l.children && l.children.length) {
         const index = l.children.findIndex((i) => i.id === node.id);
         if (index > -1) {
+          const { id, isOriginal, ...rest } = l.children[index];
           l.children = [
             ...l.children.slice(0, index),
             ...node.children,
             ...l.children.slice(index + 1)
           ];
+
+          if (isOriginal) {
+            l.children.push({
+              isOriginal,
+              ...rest,
+              children: [] as HierarchyEntity[],
+              isDeletedInRoutePlan: true
+            });
+          }
         } else {
           this.promoteChildren(l.children, node);
         }

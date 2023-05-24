@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -11,7 +12,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -20,6 +21,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -54,7 +56,7 @@ import { PlantService } from '../../plants/services/plant.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class LocationsListComponent implements OnInit {
+export class LocationsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   allParentsLocations: any[] = [];
   columns: Column[] = [
@@ -261,6 +263,7 @@ export class LocationsListComponent implements OnInit {
   plantsIdNameMap = {};
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
+  private onDestroy$ = new Subject();
 
   constructor(
     private locationService: LocationService,
@@ -304,6 +307,7 @@ export class LocationsListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
           this.reloadLocationCount(value.toLocaleLowerCase());
@@ -679,5 +683,10 @@ export class LocationsListComponent implements OnInit {
         return count;
       })
     );
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

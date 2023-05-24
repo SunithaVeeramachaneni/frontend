@@ -325,6 +325,67 @@ export const getSectionQuestions = (
       ?.questions.filter((question) => question.sectionId === sectionId);
   });
 
+export const getPageWiseSectionQuestions = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.sections.reduce((sectionAcc, sectionCurr) => {
+        sectionAcc[sectionCurr.id] = curr.questions.filter(
+          (question) => question.sectionId === sectionCurr.id
+        );
+        return sectionAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
+
+export const getPageWiseLogicSectionAskQuestions = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
+        logicAcc[logicCurr.id] = curr.questions.filter(
+          (question) => question.sectionId === `AQ_${logicCurr.id}`
+        );
+        return logicAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
+
+export const getPageWiseSections = (subFormId: string) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.sections;
+      return acc;
+    }, {});
+  });
+
+export const getNodeWiseQuestionsCount = () =>
+  createSelector(selectFormConfigurationState, (state) => {
+    const nodeIds =
+      Object.keys(state).filter((key) => key.indexOf('pages_') === 0) || [];
+    return nodeIds.reduce((acc, curr) => {
+      acc[curr.substring(6)] = state[curr].reduce(
+        (count, page) => (count += page.questions.length),
+        0
+      );
+      return acc;
+    }, {});
+  });
+
 export const getSectionQuestionsCount = (
   pageIndex: number,
   sectionId: string,

@@ -13,11 +13,12 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 
@@ -100,13 +101,14 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  isEmptyPage: any = [];
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
+  private onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private responseSetService: ResponseSetService,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -159,6 +161,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (!this.formConfiguration.invalid) {
@@ -275,6 +278,12 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+    this.sectionIndexes$.subscribe((sectionIndexes) => {
+      // eslint-disable-next-line guard-for-in
+      for (const index in sectionIndexes) {
+        this.isEmptyPage.push(sectionIndexes[index].length === 0);
+      }
+    });
 
     this.authoredTemplateDetail$ = this.store.select(getFormDetails).pipe(
       tap((formDetails) => {
@@ -411,6 +420,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
         break;
 
       case 'delete':
+        this.isEmptyPage[pageIndex] = false;
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({
             pageIndex,
@@ -460,6 +470,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
             subFormId: null
           })
         );
+        this.isEmptyPage[pageIndex] =
+          this.getSectionsOfPage(pageIndex).length === 0;
         break;
     }
   }
@@ -622,6 +634,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
     this.store.dispatch(QuickResponseActions.resetQuickResponses());
@@ -629,12 +643,19 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      this.formConf.counter.value
-    );
+    if(!this.isEmptyPage[pageIndex]) {
+      this.formConfigurationService.addQuestions(
+        pageIndex,
+        sectionIndex,
+        1,
+        questionIndex,
+        this.formConf.counter.value
+      );
+    }
+  }
+
+  addSection(pageIndex) {
+    this.isEmptyPage[pageIndex] = false;
+    this.sectionEventHandler({ pageIndex, type: 'add', sectionIndex: 0 });
   }
 }
