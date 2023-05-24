@@ -479,12 +479,19 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) =>
+              roundPlan.schedule && roundPlan.schedule !== 'Ad-Hoc'
           );
         } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
-          );
+          filteredRoundPlans = roundPlans.data
+            .filter(
+              (roundPlan: RoundPlanDetail) =>
+                !roundPlan.schedule || roundPlan.schedule === 'Ad-Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredRoundPlans = roundPlans.data;
         }
