@@ -14,7 +14,7 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
   FormBuilder,
@@ -150,6 +150,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
     }
+    this.filteredTags = of(
+      this.tagsCtrl.value
+        ? this.filter(this.tagsCtrl.value)
+        : this.allTags.slice()
+    );
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
