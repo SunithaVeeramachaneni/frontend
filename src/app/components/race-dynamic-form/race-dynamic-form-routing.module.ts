@@ -6,7 +6,6 @@ import { FormResolverService } from '../race-dynamic-form/services/form-resolver
 import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { FormContainerComponent } from './form-container/form-container.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';

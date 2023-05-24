@@ -105,7 +105,7 @@ export class RoundPlanResolverService
           pdfTemplateConfiguration
         };
 
-        const subFormsMap = JSON.parse(subForms);
+        const subFormsMap = subForms ? JSON.parse(subForms) : {};
         this.getResponseTypeDetails(id);
 
         return {

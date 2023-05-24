@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  Subject
 } from 'rxjs';
 import {
   debounceTime,
@@ -15,7 +16,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -25,7 +27,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { defaultLimit, routingUrls } from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,7 +46,7 @@ interface FormTableUpdate {
   templateUrl: './archived-list.component.html',
   styleUrls: ['./archived-list.component.scss']
 })
-export class ArchivedListComponent implements OnInit {
+export class ArchivedListComponent implements OnInit, OnDestroy {
   columns: Column[] = [
     {
       id: 'name',
@@ -169,7 +171,7 @@ export class ArchivedListComponent implements OnInit {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
   nextToken = '';
@@ -193,6 +195,7 @@ export class ArchivedListComponent implements OnInit {
   plantsIdNameMap = {};
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -215,6 +218,7 @@ export class ArchivedListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
@@ -426,6 +430,11 @@ export class ArchivedListComponent implements OnInit {
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private onRestoreForm(form: any): void {

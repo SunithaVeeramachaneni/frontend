@@ -3,7 +3,8 @@
     *ngIf="{
       pageIndexes: pageIndexes$ | async,
       subFormPages: subFormPages$ | async,
-      questionCounter: questionCounter$ | async
+      questionCounter: questionCounter$ | async,
+      pageWiseSections: pageWiseSections$ | async
     } as props"
   >
     <ng-container *ngFor="let pageIndex of props.pageIndexes">
@@ -19,7 +20,7 @@
             (cdkDropListDropped)="
               dropSection($event, pageIndex, selectedNode.id)
             "
-            [cdkDropListData]="getSectionsOfPage(pageIndex)"
+            [cdkDropListData]="props.pageWiseSections[pageIndex]"
           >
             <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
               <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
@@ -39,6 +40,10 @@
                     [sectionId]="sectionIds[pageIndex][sectionIndex]"
                     (sectionEvent)="sectionEventHandler($event)"
                     [selectedNodeId]="selectedNode.id"
+                    *ngIf="
+                      pageWiseSectionQuestions$
+                        | async as pageWiseSectionQuestions
+                    "
                   >
                     <div
                       class="sectionMinimumDragArea"
@@ -54,20 +59,18 @@
                         )
                       "
                       [cdkDropListData]="
-                        getQuestionsOfSection(
-                          pageIndex,
+                        pageWiseSectionQuestions[pageIndex][
                           sectionIds[pageIndex][sectionIndex]
-                        )
+                        ]
                       "
                       [id]="sectionIds[pageIndex][sectionIndex]"
                     >
                       <ng-container *ngIf="questionIds$ | async as questionIds">
                         <div
                           *ngIf="
-                            getQuestionsOfSection(
-                              pageIndex,
+                            pageWiseSectionQuestions[pageIndex][
                               sectionIds[pageIndex][sectionIndex]
-                            ).length === 0
+                            ].length === 0
                           "
                         >
                           <span
@@ -111,10 +114,9 @@
                             class="questionContainer"
                             [ngClass]="{
                               'highlight-bg':
-                                getQuestionsOfSection(
-                                  pageIndex,
+                                pageWiseSectionQuestions[pageIndex][
                                   sectionIds[pageIndex][sectionIndex]
-                                )[questionIndex].isOpen === true
+                                ][questionIndex].isOpen === true
                             }"
                           >
                             <div class="question-drag-handler">
@@ -147,7 +149,10 @@
               *ngIf="isEmptyPage[pageIndex]"
               class="emptyPageContainer"
             >
-              <div class="floating-btns">
+              <div
+                class="floating-btns"
+                *ngIf="sectionIds[pageIndex].length !== 0"
+              >
                 <button
                   class="questions-btn"
                   (click)="
@@ -175,7 +180,15 @@
                   <p class="questions-delete-btn-text" translate="delete"></p>
                 </button>
               </div>
-              <button class="add-section-btn" (click)="addSection(pageIndex)">
+              <button
+                class="add-section-btn"
+                [ngClass]="{
+                  'add-section-btn': sectionIds[pageIndex].length !== 0,
+                  'add-section-without-floating-btns':
+                    sectionIds[pageIndex].length === 0
+                }"
+                (click)="addSection(pageIndex)"
+              >
                 <svg-icon
                   icon="icon-add-section"
                   class="add-section-btn-icon"

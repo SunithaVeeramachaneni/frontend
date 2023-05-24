@@ -1,7 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { combineLatest, Observable, BehaviorSubject, of } from 'rxjs';
+import { combineLatest, Observable, BehaviorSubject, of, Subject } from 'rxjs';
 import {
   catchError,
   filter,
@@ -11,7 +16,7 @@ import {
   switchMap,
   debounceTime,
   distinctUntilChanged,
-  shareReplay
+  takeUntil
 } from 'rxjs/operators';
 
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
@@ -48,7 +53,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
   styleUrls: ['./responses-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponsesListComponent implements OnInit {
+export class ResponsesListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   public userInfo$: Observable<UserInfo>;
 
@@ -98,7 +103,7 @@ export class ResponsesListComponent implements OnInit {
     },
     {
       id: 'responseCount',
-      displayName: 'Response',
+      displayName: 'Responses',
       type: 'number',
       order: 2,
       controlType: 'string',
@@ -209,6 +214,7 @@ export class ResponsesListComponent implements OnInit {
   private limit = defaultLimit;
   private fetchType = 'load';
   private nextToken = '';
+  private onDestroy$ = new Subject();
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -246,6 +252,7 @@ export class ResponsesListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.responseSetService.fetchResponses$.next({ data: 'search' });
         })
@@ -546,5 +553,10 @@ export class ResponsesListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

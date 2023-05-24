@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -8,7 +13,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -26,7 +32,7 @@ import {
   UserInfo
 } from 'src/app/interfaces';
 import {
-  LIST_LENGTH,
+  graphQLDefaultLimit,
   formConfigurationStatus,
   permissions as perms
 } from 'src/app/app.constants';
@@ -52,7 +58,7 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class FormListComponent implements OnInit {
+export class FormListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -265,7 +271,7 @@ export class FormListComponent implements OnInit {
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = LIST_LENGTH;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -283,6 +289,7 @@ export class FormListComponent implements OnInit {
   createdBy = [];
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -302,6 +309,7 @@ export class FormListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -696,6 +704,11 @@ export class FormListComponent implements OnInit {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private showFormDetail(row: GetFormList): void {

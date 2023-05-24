@@ -3,7 +3,10 @@
   [formGroup]="questionForm"
   *ngIf="{
     question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async
+    sectionQuestionsCount: sectionQuestionsCount$ | async,
+    formMetadata: formMetadata$ | async,
+    moduleName: moduleName$ | async,
+    uom: uom$ | async
   } as props"
 >
   <div>
@@ -27,6 +30,7 @@
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
+            [id]="questionForm.get('id').value"
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
 
@@ -144,13 +148,13 @@
                       let image of questionForm.get('value').value.images;
                       index as i
                     "
-                    class="m-r-10"
                   >
                     <app-instruction-image
                       [image]="image"
                       [index]="i"
                       (indexEmitter)="instructionsFileDeleteHandler($event)"
                       *ngIf="image !== null"
+                      class="m-r-10"
                     ></app-instruction-image>
                   </span>
 
@@ -218,7 +222,7 @@
                 >
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
-                <mat-menu #menu="matMenu">
+                <mat-menu #menu="matMenu" (closed)="handleMatMenu()">
                   <ng-template matMenuContent>
                     <div (click)="$event.stopPropagation()" class="uomMenu">
                       <span class="searchUOM">

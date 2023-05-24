@@ -98,7 +98,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   private totalCount = 0;
   private allData = [];
-  private amplifySubscription$: Subscription = null;
+  private amplifySubscription$: Subscription[] = [];
+  private attachmentsSubscriptionData = [];
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -148,7 +149,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             Amplify.configure(amplifyConfig);
 
             // 2. Create issue history subscription
-            this.amplifySubscription$ = this.observations
+            const onCreateIssuesLogHistory$ = this.observations
               .onCreateIssuesLogHistory$({
                 issueslistID: {
                   eq: this.data.id
@@ -169,9 +170,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+            if (onCreateIssuesLogHistory$) {
+              this.amplifySubscription$.push(onCreateIssuesLogHistory$);
+            }
 
             // 3. Create actions log history
-            this.amplifySubscription$ = this.observations
+            const onCreateActionsLogHistory$ = this.observations
               .onCreateActionsLogHistory$({
                 actionslistID: {
                   eq: this.data.id
@@ -193,8 +197,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }
               });
 
+            if (onCreateActionsLogHistory$) {
+              this.amplifySubscription$.push(onCreateActionsLogHistory$);
+            }
+
             // 4. Update actions log history
-            this.amplifySubscription$ = this.observations
+            const onUpdateActionsList$ = this.observations
               .onUpdateActionsList$({
                 id: { eq: this.data.id },
                 moduleName: {
@@ -214,8 +222,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                 }
               });
 
+            if (onUpdateActionsList$) {
+              this.amplifySubscription$.push(onUpdateActionsList$);
+            }
+
             // 5. Update issues log history
-            this.amplifySubscription$ = this.observations
+            const onUpdateIssuesList$ = this.observations
               .onUpdateIssuesList$({
                 id: { eq: this.data.id },
                 moduleName: {
@@ -234,6 +246,65 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   }
                 }
               });
+            if (onUpdateIssuesList$) {
+              this.amplifySubscription$.push(onUpdateIssuesList$);
+            }
+
+            // 6. Create issue attachments issues log history
+            // FIXME: Match objectId with this.data.id once you will get from mobile side.
+            const onCreateIssuesAttachments$ = this.observations
+              .onCreateIssuesAttachments$({})
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateIssuesAttachments }
+                  }
+                }) => {
+                  if (onCreateIssuesAttachments) {
+                    const base64Image =
+                      'data:image/jpeg;base64,' +
+                      onCreateIssuesAttachments?.imageData;
+                    this.attachmentsSubscriptionData.push({
+                      objectId: onCreateIssuesAttachments?.objectId,
+                      imageData: base64Image,
+                      id: onCreateIssuesAttachments?.id
+                    });
+                  }
+                }
+              });
+
+            if (onCreateIssuesAttachments$) {
+              this.amplifySubscription$.push(onCreateIssuesAttachments$);
+            }
+
+            // 7. Create action attachments action log history
+            // FIXME: Match objectId with this.data.id once you will get from mobile side.
+            const onCreateActionsAttachments$ = this.observations
+              .onCreateActionsAttachments$({})
+              ?.subscribe({
+                next: ({
+                  _,
+                  value: {
+                    data: { onCreateActionsAttachments }
+                  }
+                }) => {
+                  if (onCreateActionsAttachments) {
+                    const base64Image =
+                      'data:image/jpeg;base64,' +
+                      onCreateActionsAttachments?.imageData;
+                    this.attachmentsSubscriptionData.push({
+                      objectId: onCreateActionsAttachments?.objectId,
+                      imageData: base64Image,
+                      id: onCreateActionsAttachments?.id
+                    });
+                  }
+                }
+              });
+
+            if (onCreateActionsAttachments$) {
+              this.amplifySubscription$.push(onCreateActionsAttachments$);
+            }
           }
         });
     }
@@ -266,16 +337,24 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   uploadFile(event): void {
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
+    const file: File = files[0];
+    const size = file.size;
+    const maxSize = 400000;
+    if (size > maxSize) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Please select file less than 400KB'
+      });
+      return;
+    }
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
-      const attachmentsForm = new FormData();
-      attachmentsForm.append('file', files[0]);
       const { id, type } = this.data;
-
+      const base64result = (reader?.result as string)?.split(';base64,')[1];
       this.observations
         .uploadIssueOrActionLogHistoryAttachment$(
           id,
-          attachmentsForm,
+          { file: base64result },
           type,
           this.moduleName
         )
@@ -496,13 +575,26 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   navigateToRounds() {
     this.dialogRef.close();
-    this.router.navigate(['/operator-rounds/scheduler/1']);
+    if (this.router.url === '/forms/observations') {
+      this.router.navigate(['/forms/scheduler/1'], {
+        queryParams: {
+          roundId: this.data?.roundId
+        }
+      });
+    }
+    if (this.router.url === '/operator-rounds/observations') {
+      this.router.navigate(['/operator-rounds/scheduler/1'], {
+        queryParams: {
+          roundId: this.data?.roundId
+        }
+      });
+    }
   }
 
   openPreviewDialog() {
     const slideshowImages = [];
     this.filteredMediaType.forEach((media) => {
-      slideshowImages.push(this.getS3Url(media.message));
+      slideshowImages.push(media.message);
     });
     if (slideshowImages) {
       this.dialog.open(SlideshowComponent, {
@@ -515,8 +607,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  getUserNameByEmail(email) {
-    return this.userService.getUserFullName(email);
+  getUserNameByEmail(emails: string) {
+    return this.observations.formatUserFullNameDisplay(emails);
   }
 
   onPrevious(): void {
@@ -591,7 +683,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnDestroy(): void {
-    if (this.amplifySubscription$) this.amplifySubscription$?.unsubscribe();
+    if (this.amplifySubscription$?.length > 0) {
+      this.amplifySubscription$.forEach((subscription) => {
+        if (subscription) {
+          subscription.unsubscribe();
+        }
+      });
+    }
+    this.attachmentsSubscriptionData = [];
   }
 
   private getIssuesActionsList(data): void {
@@ -637,6 +736,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private init(): void {
+    this.attachmentsSubscriptionData = [];
     const { id, type, dueDate, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
@@ -672,22 +772,32 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private prepareSubscriptionResponse(data) {
-    this.logHistory = [
-      ...this.logHistory,
-      {
+    const currentChatSelectedId: string =
+      this.data?.type === 'issue' ? data?.issueslistID : data?.actionslistID;
+    if (this.data?.id === currentChatSelectedId) {
+      const newMessage = {
         ...data,
         createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
+      };
+      if (newMessage.type === 'Media') {
+        const foundImageData = this.attachmentsSubscriptionData.find(
+          (a) => a?.id === newMessage?.message
+        );
+        if (foundImageData) {
+          newMessage.message = foundImageData?.imageData || newMessage.message;
+        }
       }
-    ];
-    this.filteredMediaType = this.logHistory.filter(
-      (history) => history?.type === 'Media'
-    );
-    this.logHistory$ = of({
-      nextToken: null,
-      rows: this.logHistory
-    });
+      this.logHistory = [...this.logHistory, newMessage];
+      this.filteredMediaType = this.logHistory.filter(
+        (history) => history?.type === 'Media'
+      );
+      this.logHistory$ = of({
+        nextToken: null,
+        rows: this.logHistory
+      });
+    }
   }
 
   private initJSONData(data = null) {
@@ -722,8 +832,25 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
             ),
+            assignedTo: data?.assignedTo,
+            assignedToDisplay: this.observations.formatUsersDisplay(
+              data?.assignedTo
+            ),
             status: jsonData?.STATUS ?? ''
           };
+          this.issuesActionsDetailViewForm.patchValue({
+            status: this.data.status,
+            priority: this.data.priority,
+            dueDateDisplayValue: this.data.dueDate,
+            dueDate: this.data.dueDate
+              ? new Date(this.data.dueDate)
+              : this.data.dueDate,
+            statusDisplay: this.data.statusDisplay,
+            assignedTo: data?.assignedTo,
+            assignedToDisplay: this.observations.formatUsersDisplay(
+              data?.assignedTo
+            )
+          });
           this.allData[idx] = this.data;
         }
       }

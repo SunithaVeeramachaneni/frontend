@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +12,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -20,6 +21,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -53,7 +55,7 @@ import { PlantService } from '../../plants/services/plant.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class AssetsListComponent implements OnInit {
+export class AssetsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
 
   parentInformation;
@@ -105,14 +107,17 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
       subtitleColumn: 'plantSubId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       }
     },
     {
@@ -132,7 +137,9 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -177,10 +184,13 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -247,6 +257,7 @@ export class AssetsListComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   dataLoadingComplete = false;
+  private onDestroy$ = new Subject();
 
   constructor(
     private assetService: AssetsService,
@@ -291,6 +302,7 @@ export class AssetsListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.reloadAssetCount(value.toLocaleLowerCase());
           this.assetService.fetchAssets$.next({ data: 'search' });
@@ -660,5 +672,10 @@ export class AssetsListComponent implements OnInit {
         return count;
       })
     );
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

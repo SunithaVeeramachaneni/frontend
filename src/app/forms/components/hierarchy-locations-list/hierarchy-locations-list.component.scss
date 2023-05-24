@@ -11,7 +11,7 @@
   }
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-    background-color: $border-color-gray;
+    background-color: $gray;
     border-radius: 4px;
   }
 
@@ -38,7 +38,7 @@
 
   .search {
     margin: 0 10px;
-    padding: 0 80px;
+    padding: 0px 5px 0px 5px;
 
     .icon {
       position: relative;
@@ -118,14 +118,13 @@
 }
 
 .master-checkbox {
-  margin-left: 25px;
   margin-top: 10px;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
 .node-container {
-  padding: 0px 80px;
+  padding: 0px 15px 0px 15px;
 }
 
 .selected-items {

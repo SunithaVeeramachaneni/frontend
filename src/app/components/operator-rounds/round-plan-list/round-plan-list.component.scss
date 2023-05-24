@@ -2,14 +2,14 @@
 
 .list-view {
   background-color: $white;
-  height: calc(100vh - 205px);
+  height: calc(100vh - 80px);
 
   ::ng-deep .table-column {
     width: 15%;
   }
 
   ::ng-deep .mat-column-name {
-    min-width: 250px;
+    min-width: 350px;
   }
 
   ::ng-deep .mat-column-formStatus {

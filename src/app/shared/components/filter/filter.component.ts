@@ -74,7 +74,9 @@ export class FilterComponent implements OnInit, OnChanges {
     let status = true;
     for (const item of this.json) {
       if (item.value || item.itemValue) {
-        status = false;
+        if (typeof item.value === 'string') status = false;
+        else if (typeof item.value === 'object' && item.value.length !== 0)
+          status = false;
       }
     }
     return status;

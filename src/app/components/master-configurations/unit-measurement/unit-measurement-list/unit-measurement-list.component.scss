@@ -8,6 +8,14 @@
     width: 30%;
   }
 
+  ::ng-deep .mat-column-noOfUnits {
+    min-width: 70px;
+  }
+
+  ::ng-deep .mat-column-description {
+    min-width: 200px;
+  }
+
   ::ng-deep .mat-column-unitType,
   ::ng-deep .mat-column-noOfUnits {
     border-right: 1px solid rgba(0, 0, 0, 0.12);

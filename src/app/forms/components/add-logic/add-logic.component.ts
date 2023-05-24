@@ -5,6 +5,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewEncapsulation
@@ -13,19 +14,20 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { merge } from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import {
+  getPageWiseLogicSectionAskQuestions,
   getQuestionLogics,
-  getSectionQuestions,
   State
 } from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
@@ -38,7 +40,7 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddLogicComponent implements OnInit {
+export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -89,14 +91,19 @@ export class AddLogicComponent implements OnInit {
     { title: 'option1', code: 'option1' },
     { title: 'option2', code: 'option2' }
   ];
-
   selectedTabIndex: number;
+  pageWiseLogicSectionAskQuestions: any;
+  questionLogics$: Observable<any>;
+  pageWiseLogicSectionAskQuestions$: Observable<any>;
+
+  isAskQuestionFocusId = '';
 
   private _pageIndex: number;
   private _questionId: string;
   private _quickResponseValues: any;
   private _sectionId: string;
   private _fieldType: string;
+  private onDestroy$ = new Subject();
 
   constructor(
     private store: Store<State>,
@@ -107,111 +114,121 @@ export class AddLogicComponent implements OnInit {
 
   ngOnInit() {
     let logicsFormArray = [];
-    this.store
+    this.pageWiseLogicSectionAskQuestions$ = this.store
+      .select(getPageWiseLogicSectionAskQuestions(this.selectedNodeId))
+      .pipe(
+        tap((pageWiseLogicSectionAskQuestions) => {
+          this.pageWiseLogicSectionAskQuestions =
+            pageWiseLogicSectionAskQuestions;
+        })
+      );
+    this.questionLogics$ = this.store
       .select(
         getQuestionLogics(this.pageIndex, this.questionId, this.selectedNodeId)
       )
-      .subscribe((logicsT) => {
-        // eslint-disable-next-line arrow-body-style
-        logicsFormArray = logicsT.map((logic, index) => {
-          const mandateQuestions = logic.mandateQuestions;
-          const hideQuestions = logic.hideQuestions;
-          const askQuestions = this.getSectionQuestions(
-            this.pageIndex,
-            logic.id
-          );
+      .pipe(
+        tap((logicsT) => {
+          // eslint-disable-next-line arrow-body-style
+          logicsFormArray = logicsT.map((logic, index) => {
+            const mandateQuestions = logic.mandateQuestions;
+            const hideQuestions = logic.hideQuestions;
+            const askQuestions =
+              this.pageWiseLogicSectionAskQuestions[this.pageIndex][logic.id];
 
-          let mandateQuestionsFormArray = [];
-          if (mandateQuestions && mandateQuestions.length) {
-            mandateQuestionsFormArray = mandateQuestions.map((mq) =>
-              this.fb.control(mq)
-            );
-          }
+            let mandateQuestionsFormArray = [];
+            if (mandateQuestions && mandateQuestions.length) {
+              mandateQuestionsFormArray = mandateQuestions.map((mq) =>
+                this.fb.control(mq)
+              );
+            }
 
-          let hideQuestionsFormArray = [];
-          if (hideQuestions && hideQuestions.length) {
-            hideQuestionsFormArray = hideQuestions.map((mq) =>
-              this.fb.control(mq)
-            );
-          }
+            let hideQuestionsFormArray = [];
+            if (hideQuestions && hideQuestions.length) {
+              hideQuestionsFormArray = hideQuestions.map((mq) =>
+                this.fb.control(mq)
+              );
+            }
 
-          let askQuestionsFormArray = [];
-          if (askQuestions && askQuestions.length) {
-            askQuestionsFormArray = askQuestions.map((aq) =>
-              this.fb.group({
-                id: aq.id || '',
-                sectionId: aq.sectionId || '',
-                name: aq.name || '',
-                fieldType: aq.fieldType || 'TF',
-                position: aq.position || '',
-                required: aq.required || false,
-                multi: aq.multi || false,
-                value: aq.value || '',
-                isPublished: aq.isPublished || false,
-                isPublishedTillSave: aq.isPublishedTillSave || false
-              })
-            );
-          }
-
-          return this.fb.group({
-            id: logic.id || '',
-            questionId: logic.questionId || '',
-            pageIndex: logic.pageIndex || 0,
-            operator: logic.operator || '',
-            operand1: logic.operand1 || '',
-            operand2: logic.operand2 || '',
-            action: logic.action || '',
-            mandateAttachment: logic.mandateAttachment || false,
-            raiseIssue: logic.raiseIssue || false,
-            logicTitle: logic.logicTitle || '',
-            expression: logic.expression || '',
-            questions: this.fb.array(askQuestionsFormArray),
-            mandateQuestions: this.fb.array(mandateQuestionsFormArray),
-            hideQuestions: this.fb.array(hideQuestionsFormArray)
-          });
-        });
-        this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
-        this.cdrf.detectChanges();
-
-        merge(
-          // eslint-disable-next-line @typescript-eslint/dot-notation
-          ...this.logicsForm.get('logics')['controls'].map((control, index) => {
-            control.valueChanges
-              .pipe(
-                pairwise(),
-                debounceTime(1000),
-                distinctUntilChanged(),
-                tap(([prev, curr]) => {
-                  if (!isEqual(curr, prev)) {
-                    const logicSymbol = this.fieldOperators.find(
-                      (op) => op.code === curr.operator
-                    );
-                    if (logicSymbol) {
-                      curr.logicTitle = `${logicSymbol.symbol} ${curr.operand2}`;
-                    } else {
-                      curr.logicTitle = `${curr.operator} ${curr.operand2}`;
-                    }
-                    this.logicEvent.emit({
-                      questionId: this.questionId,
-                      pageIndex: this.pageIndex,
-                      logicIndex: index,
-                      type: 'update',
-                      logic: curr
-                    });
-                  }
+            let askQuestionsFormArray = [];
+            if (askQuestions && askQuestions.length) {
+              askQuestionsFormArray = askQuestions.map((aq) =>
+                this.fb.group({
+                  id: aq.id || '',
+                  sectionId: aq.sectionId || '',
+                  name: aq.name || '',
+                  fieldType: aq.fieldType || 'TF',
+                  position: aq.position || '',
+                  required: aq.required || false,
+                  multi: aq.multi || false,
+                  value: aq.value || '',
+                  isPublished: aq.isPublished || false,
+                  isPublishedTillSave: aq.isPublishedTillSave || false
                 })
-              )
-              .subscribe();
-          })
-        );
-      });
+              );
+            }
+
+            return this.fb.group({
+              id: logic.id || '',
+              questionId: logic.questionId || '',
+              pageIndex: logic.pageIndex || 0,
+              operator: logic.operator || '',
+              operand1: logic.operand1 || '',
+              operand2: logic.operand2 || '',
+              action: logic.action || '',
+              mandateAttachment: logic.mandateAttachment || false,
+              raiseIssue: logic.raiseIssue || false,
+              logicTitle: logic.logicTitle || '',
+              expression: logic.expression || '',
+              questions: this.fb.array(askQuestionsFormArray),
+              mandateQuestions: this.fb.array(mandateQuestionsFormArray),
+              hideQuestions: this.fb.array(hideQuestionsFormArray)
+            });
+          });
+          this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
+
+          merge(
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            ...this.logicsForm
+              .get('logics')
+              ['controls'].map((control, index) => {
+                control.valueChanges
+                  .pipe(
+                    pairwise(),
+                    debounceTime(1000),
+                    distinctUntilChanged(),
+                    takeUntil(this.onDestroy$),
+                    tap(([prev, curr]) => {
+                      if (!isEqual(curr, prev)) {
+                        const logicSymbol = this.fieldOperators.find(
+                          (op) => op.code === curr.operator
+                        );
+                        if (logicSymbol) {
+                          curr.logicTitle = `${logicSymbol.symbol} ${curr.operand2}`;
+                        } else {
+                          curr.logicTitle = `${curr.operator} ${curr.operand2}`;
+                        }
+                        this.logicEvent.emit({
+                          questionId: this.questionId,
+                          pageIndex: this.pageIndex,
+                          logicIndex: index,
+                          type: 'update',
+                          logic: curr
+                        });
+                      }
+                    })
+                  )
+                  .subscribe();
+              })
+          );
+        })
+      );
   }
 
   trackByLogicId(index: number, el: any): number {
     return el.value.id;
   }
   trackByQuestionIndex(index: number, el: any): number {
-    return index;
+    return el.id;
   }
 
   deleteLogic(logicId, questionId, pageIndex) {
@@ -224,17 +241,6 @@ export class AddLogicComponent implements OnInit {
 
   getLogicsList() {
     return (this.logicsForm.get('logics') as FormArray).controls;
-  }
-
-  getSectionQuestions(pageIndex, logicId) {
-    const sectionId = `AQ_${logicId}`;
-    let askQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionId, this.selectedNodeId))
-      .subscribe((v) => {
-        askQuestions = v;
-      });
-    return askQuestions;
   }
 
   askQuestionEventHandler(event, logic, logicIndex) {
@@ -398,5 +404,14 @@ export class AddLogicComponent implements OnInit {
     const clickedIndex = event.index;
     this.selectedTabIndex = clickedIndex;
     this.cdrf.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  setIsAskQuestionFocusId(id) {
+    this.isAskQuestionFocusId = id;
   }
 }

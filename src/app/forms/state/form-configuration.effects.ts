@@ -117,7 +117,9 @@ export class FormConfigurationEffects {
                       authoredFormDetail.authoredFormDetailVersion + 1
                     ).toString()
                   },
-                  isEdit: location?.pathname?.startsWith('/forms/edit/')
+                  isEdit:
+                    formDetail.formMetadata.formStatus ===
+                    formConfigurationStatus.published
                 })
               ]).pipe(
                 map(([createAuthoredFormDetail]) =>

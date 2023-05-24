@@ -43,7 +43,6 @@ export class OperatorRoundsService {
   selectedNode$ = this.selectedNodeSubject.asObservable();
   hierarchyMode$ = this.hierarchyModeSubject.asObservable();
   usersInfoByEmail: UsersInfoByEmail;
-  isEdit = location?.pathname?.startsWith('/operator-rounds/edit/');
   constructor(
     public assetHierarchyUtil: AssetHierarchyUtil,
     private toastService: ToastService,
@@ -365,7 +364,7 @@ export class OperatorRoundsService {
           ...roundPlanDetails.authoredFormDetail,
           flatHierarchy
         },
-        isEdit: location?.pathname?.startsWith('/operator-rounds/edit/')
+        isEdit: roundPlanDetails.isEdit
       }
     );
   }
@@ -654,10 +653,14 @@ export class OperatorRoundsService {
     params.set('dueDate', '');
 
     return this.appService
-      ._getResp(environment.operatorRoundsApiUrl, 'round-plans/tasks-rounds', {
-        displayToast: true,
-        failureResponse: {}
-      })
+      ._getResp(
+        environment.operatorRoundsApiUrl,
+        'round-plans/tasks-rounds?' + params.toString(),
+        {
+          displayToast: true,
+          failureResponse: {}
+        }
+      )
       .pipe(
         map((data) => ({ ...data, rows: this.formatRoundPlans(data?.items) }))
       );

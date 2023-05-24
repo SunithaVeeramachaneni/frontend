@@ -11,10 +11,11 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
-  MatAutocompleteSelectedEvent
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
   FormBuilder,
@@ -45,6 +46,7 @@ export class FormConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   visible = true;
   selectable = true;
   removable = true;
@@ -161,6 +163,9 @@ export class FormConfigurationModalComponent implements OnInit {
 
     this.tagsCtrl.setValue(null);
   }
+  openAutoComplete() {
+    this.auto.openPanel();
+  }
 
   remove(tag: string): void {
     this.allTags.push(tag);
@@ -169,6 +174,11 @@ export class FormConfigurationModalComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
     }
+    this.filteredTags = of(
+      this.tagsCtrl.value
+        ? this.filter(this.tagsCtrl.value)
+        : this.allTags.slice()
+    );
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -242,14 +252,17 @@ export class FormConfigurationModalComponent implements OnInit {
             formsUsageCount: this.data.formsUsageCount + 1
           })
           .subscribe(() => {
-            this.router.navigate(['/forms/create'], {
-              state: { selectedTemplate: this.data }
-            });
+            this.router
+              .navigate(['/forms/create'], {
+                state: { selectedTemplate: this.data }
+              })
+              .then(() => this.dialogRef.close());
           });
       } else {
-        this.router.navigate(['/forms/create']);
+        this.router
+          .navigate(['/forms/create'])
+          .then(() => this.dialogRef.close());
       }
-      this.dialogRef.close();
     }
   }
 

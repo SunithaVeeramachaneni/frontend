@@ -13,6 +13,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -22,6 +23,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -49,7 +51,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -131,7 +133,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -176,7 +180,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -220,7 +226,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -242,7 +248,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -282,7 +288,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
@@ -312,7 +318,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-
   plants = [];
   plantsIdNameMap = {};
 
@@ -325,6 +330,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -345,6 +352,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -420,12 +428,19 @@ export class FormsComponent implements OnInit, OnDestroy {
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => form.schedule
+            (form: ScheduleFormDetail) =>
+              form.schedule && form.schedule !== 'Ad-Hoc'
           );
         } else if (formCategory === 'unscheduled') {
-          filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => !form.schedule
-          );
+          filteredForms = forms.data
+            .filter(
+              (form: ScheduleFormDetail) =>
+                !form.schedule || form.schedule === 'Ad=Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredForms = forms.data;
         }
@@ -464,7 +479,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.activatedRoute.params.subscribe((params) => {
+    this.activatedRoute.params.subscribe(() => {
       this.hideFormDetail = true;
       this.hideScheduleConfig = true;
     });
@@ -511,7 +526,10 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -814,9 +832,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       .subscribe((formsList) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
-          const uniquePlants = formsList.rows
+          const uniquePlants = formsList.items
             .map((item) => {
-              if (item.plantId) {
+              if (item.plant) {
                 this.plantsIdNameMap[item.plant] = item.plantId;
                 return item.plant;
               }

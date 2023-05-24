@@ -14,11 +14,12 @@ import {
   Validators
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject, Subscription, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 
@@ -111,11 +112,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   errors: ValidationError = {};
   formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
+  authoredFormDetailSubscription: Subscription;
+  private onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private responseSetService: ResponseSetService,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -149,6 +151,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (!this.formConfiguration.invalid) {
@@ -661,22 +664,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  getQuestionsOfSection(pageIndex, sectionIndex) {
-    let sectionQuestions;
-    this.store
-      .select(getSectionQuestions(pageIndex, sectionIndex))
-      .subscribe((v) => (sectionQuestions = v));
-    return sectionQuestions;
-  }
-
-  getSectionsOfPage(pageIndex) {
-    let pageSections;
-    this.store
-      .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v?.sections));
-    return pageSections;
-  }
-
   getFormConfigurationStatuses() {
     return {
       formStatus: formConfigurationStatus.draft,
@@ -701,6 +688,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.authoredFormDetailSubscription) {
+      this.authoredFormDetailSubscription.unsubscribe();
+    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
     this.store.dispatch(QuickResponseActions.resetQuickResponses());
@@ -719,9 +711,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
       this.selectedFormName = result.selectedFormName;
-      this.authoredFormDetail$.subscribe((pagesData) => {
-        this.currentFormData = pagesData;
-      });
+      this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
+        (pagesData) => {
+          this.currentFormData = pagesData;
+        }
+      );
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
     });

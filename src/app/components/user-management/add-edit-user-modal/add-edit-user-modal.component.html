@@ -1,7 +1,7 @@
 <form class="user-modal" [formGroup]="userForm">
-  <span *ngIf="dialogText === 'editUser'" class="title" translate
-    >editUser</span
-  >
+  <span *ngIf="dialogText === 'editUser'" class="title" translate>
+    editUser
+  </span>
   <span *ngIf="dialogText === 'addUser'" class="title" translate>addUser</span>
   <span class="dialog-close-btn" (click)="close()">
     <mat-icon class="dialog-close">close</mat-icon>
@@ -21,6 +21,7 @@
       type="file"
       (change)="onFileChange($event)"
       accept="image/*"
+      disabled="true"
     />
   </div>
   <div class="custom-form-field-white-color" style="margin-top: 15px">
