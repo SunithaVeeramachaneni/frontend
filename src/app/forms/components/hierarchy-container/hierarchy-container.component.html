@@ -1,11 +1,16 @@
-<div *ngIf="selectedHierarchy$ | async">
+<div
+  *ngIf="{
+    selectedHierarchy: selectedHierarchy$ | async,
+    masterHierarchyList: masterHierarchyList$ | async,
+    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+  }"
+>
   <div class="header">
     <div>
       <span>{{
         'totalAssetsCount' | translate : { count: totalAssetsLocationsCount }
       }}</span>
       <button
-        mat-icon-button
         class="addBtn"
         *ngIf="hierarchy.length"
         (click)="openHierarchyModal()"

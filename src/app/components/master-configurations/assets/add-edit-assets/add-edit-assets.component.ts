@@ -6,7 +6,8 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -14,10 +15,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { AssetsService } from '../services/assets.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -25,7 +27,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
   styleUrls: ['./add-edit-assets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditAssetsComponent implements OnInit {
+export class AddEditAssetsComponent implements OnInit, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
@@ -92,6 +94,7 @@ export class AddEditAssetsComponent implements OnInit {
   allParentsData;
   allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
   allPlantsData;
+  private onDestroy$ = new Subject();
 
   constructor(private fb: FormBuilder, private assetService: AssetsService) {}
 
@@ -120,9 +123,12 @@ export class AddEditAssetsComponent implements OnInit {
     this.plantInformation = this.allPlants;
     this.parentInformation = this.allLocations;
     this.allParentsData = this.allLocations;
-    this.assetForm.get('parentType').valueChanges.subscribe((value) => {
-      this.parentType = value;
-    });
+    this.assetForm
+      .get('parentType')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((value) => {
+        this.parentType = value;
+      });
   }
 
   onSelectPlant(plantId) {
@@ -318,5 +324,10 @@ export class AddEditAssetsComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

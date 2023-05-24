@@ -9,8 +9,18 @@
   font-weight: 700;
   padding: 10px 15px;
   .addBtn {
-    margin-top: -5px;
     color: $blue;
+    margin-top: -15px;
+    background: none;
+    border: none;
+    position: relative;
+    top: 8px;
+    border-radius: 100%;
+    padding: 2px;
+    margin-left: 3px;
+  }
+  .addBtn:hover {
+    background-color: $add-hover-bg;
   }
 }
 .search {
@@ -23,8 +33,9 @@
 }
 .hierarchy {
   overflow-y: auto;
-  height: 60vh;
+  height: calc(100vh - 265px);
   width: -webkit-fill-available;
+  margin-top: 10px;
 }
 .displayGrid {
   display: grid;
@@ -110,7 +121,4 @@ img {
   cursor: pointer;
   height: 12px;
   width: 12px;
-}
-.addIcon {
-  margin-top: -3px;
 }
