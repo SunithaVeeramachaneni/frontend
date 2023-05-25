@@ -465,6 +465,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'add',
           form: locationData.data
         });
+        this.allParentsLocations.push(locationData.data);
       }
       this.toast.show({
         text: 'Location created successfully!',
@@ -481,6 +482,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: locationData.data
         });
+        this.allParentsLocations = this.allParentsLocations.map((loc) =>
+          loc.id === locationData.data.id ? locationData.data : loc
+        );
         this.toast.show({
           text: 'Location updated successfully!',
           type: 'success'

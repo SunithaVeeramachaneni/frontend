@@ -446,6 +446,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           action: 'add',
           form: assetData.data
         });
+        this.allParentsAssets.push(assetData.data);
       }
       this.toast.show({
         text: 'Asset created successfully!',
@@ -462,6 +463,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: assetData.data
         });
+        this.allParentsAssets = this.allParentsAssets.map((asset) =>
+          asset.id === assetData.data.id ? assetData.data : asset
+        );
         this.toast.show({
           text: 'Asset updated successfully!',
           type: 'success'
