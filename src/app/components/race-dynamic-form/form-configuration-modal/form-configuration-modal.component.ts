@@ -15,7 +15,7 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
   FormBuilder,
@@ -174,6 +174,11 @@ export class FormConfigurationModalComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
     }
+    this.filteredTags = of(
+      this.tagsCtrl.value
+        ? this.filter(this.tagsCtrl.value)
+        : this.allTags.slice()
+    );
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
@@ -247,14 +252,17 @@ export class FormConfigurationModalComponent implements OnInit {
             formsUsageCount: this.data.formsUsageCount + 1
           })
           .subscribe(() => {
-            this.router.navigate(['/forms/create'], {
-              state: { selectedTemplate: this.data }
-            });
+            this.router
+              .navigate(['/forms/create'], {
+                state: { selectedTemplate: this.data }
+              })
+              .then(() => this.dialogRef.close());
           });
       } else {
-        this.router.navigate(['/forms/create']);
+        this.router
+          .navigate(['/forms/create'])
+          .then(() => this.dialogRef.close());
       }
-      this.dialogRef.close();
     }
   }
 

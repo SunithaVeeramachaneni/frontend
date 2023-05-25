@@ -120,6 +120,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
   @Input() isPreviewActive;
 
+  @Input() isAskQuestionFocusId: any;
+  @Output() isAskedQuestionFocusId = new EventEmitter<any>();
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -306,7 +309,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
             } else if (!question.isOpen) {
               if (this.isAskQuestion) {
                 if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => this.name.nativeElement.focus());
+                  timer(0).subscribe(() => {
+                    if (
+                      this.name.nativeElement.id ===
+                        this.isAskQuestionFocusId ||
+                      this.isAskQuestionFocusId === ''
+                    ) {
+                      this.name.nativeElement.focus();
+                      this.isAskQuestionFocusId = this.name.nativeElement.id;
+                      this.isAskedQuestionFocusId.emit(
+                        this.name.nativeElement.id
+                      );
+                    }
+                  });
                 }
               } else {
                 if (question.fieldType !== 'INST') {

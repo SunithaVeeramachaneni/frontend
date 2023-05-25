@@ -110,7 +110,7 @@
 
   .submit-response-btn {
     width: 45%;
-     background-color: $blue-main;
+    background-color: $blue-main;
     color: $white;
   }
 
@@ -127,15 +127,14 @@
   }
 
   .actions-footer-view {
-    display: flex;
-    justify-content: right;
-    position: relative;
-    bottom: -30px;
+    float: right;
   }
 
   .edit-button {
     margin-right: 30px;
     width: 35%;
+    background-color: $blue-main;
+    color: $white;
   }
 }
 

@@ -30,6 +30,7 @@
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
+            [id]="questionForm.get('id').value"
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
 
@@ -147,13 +148,13 @@
                       let image of questionForm.get('value').value.images;
                       index as i
                     "
-                    class="m-r-10"
                   >
                     <app-instruction-image
                       [image]="image"
                       [index]="i"
                       (indexEmitter)="instructionsFileDeleteHandler($event)"
                       *ngIf="image !== null"
+                      class="m-r-10"
                     ></app-instruction-image>
                   </span>
 
