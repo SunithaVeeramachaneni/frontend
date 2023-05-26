@@ -13,7 +13,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -156,7 +156,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     name: '',
     fieldType: 'TF',
     position: '',
-    required: false,
+    required: new FormControl(false),
     enableHistory: false,
     multi: false,
     value: 'TF',
@@ -244,8 +244,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.selectedNodeId = this.subFormId;
     }
 
+    this.questionForm
+      .get('required')
+      .valueChanges.subscribe((r) => console.log('Required Changed: ', r));
+
     this.questionForm.valueChanges
       .pipe(
+        tap((d) => console.log('D: ', d)),
         startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
@@ -632,6 +637,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   logicEventHandler(event) {
+    console.log('Event: ', event);
     const { type, questionId, pageIndex } = event;
     switch (type) {
       case 'create':
@@ -838,5 +844,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  testClick() {
+    console.log('Test Click.');
   }
 }

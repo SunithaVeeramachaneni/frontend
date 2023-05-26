@@ -941,6 +941,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     AddLogicActions.askQuestionsCreate,
     (state, action): FormConfigurationState => {
+      console.log('State Builder: ', state, action);
       let key = 'pages';
       const subFormId = action.subFormId;
       if (subFormId) {

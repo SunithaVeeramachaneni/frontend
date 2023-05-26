@@ -800,6 +800,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     AddLogicActions.askQuestionsCreate,
     (state, action): FormConfigurationState => {
+      console.log('State: ', state, action);
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
           page.questions.push(action.question);
@@ -825,6 +826,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   on(
     AddLogicActions.askQuestionsUpdate,
     (state, action): FormConfigurationState => {
+      console.log('State Update: ', state, action);
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
           let questions = JSON.parse(JSON.stringify(page.questions));

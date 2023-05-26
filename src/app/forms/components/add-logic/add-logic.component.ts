@@ -32,6 +32,7 @@ import {
 } from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
+import { NumberRangeMetadata } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-add-logic',
@@ -150,21 +151,32 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             }
 
             let askQuestionsFormArray = [];
+            const askQuestionArray = this.fb.array([]);
             if (askQuestions && askQuestions.length) {
-              askQuestionsFormArray = askQuestions.map((aq) =>
-                this.fb.group({
-                  id: aq.id || '',
-                  sectionId: aq.sectionId || '',
-                  name: aq.name || '',
-                  fieldType: aq.fieldType || 'TF',
-                  position: aq.position || '',
-                  required: aq.required || false,
-                  multi: aq.multi || false,
-                  value: aq.value || '',
-                  isPublished: aq.isPublished || false,
-                  isPublishedTillSave: aq.isPublishedTillSave || false
-                })
-              );
+              askQuestionsFormArray = askQuestions.map((aq) => {
+                console.log('AQ: ', aq);
+                askQuestionArray.push(
+                  this.fb.group({
+                    id: aq.id || '',
+                    sectionId: aq.sectionId || '',
+                    name: aq.name || '',
+                    fieldType: aq.fieldType || 'TF',
+                    position: aq.position || '',
+                    required: aq.required || false,
+                    enableHistory: aq.enableHistory || false,
+                    multi: aq.multi || false,
+                    value: aq.value || '',
+                    isPublished: aq.isPublished || false,
+                    isPublishedTillSave: aq.isPublishedTillSave || false,
+                    isOpen: aq.isOpen || false,
+                    isResponseTypeModalOpen:
+                      aq.isResponseTypeModalOpen || false,
+                    unitOfMeasurement: aq.unitOfMeasurement || 'None',
+                    rangeMetaData:
+                      aq.rangeMetaData || ({} as NumberRangeMetadata)
+                  })
+                );
+              });
             }
 
             return this.fb.group({
@@ -179,7 +191,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
               raiseIssue: logic.raiseIssue || false,
               logicTitle: logic.logicTitle || '',
               expression: logic.expression || '',
-              questions: this.fb.array(askQuestionsFormArray),
+              questions: askQuestionArray,
               mandateQuestions: this.fb.array(mandateQuestionsFormArray),
               hideQuestions: this.fb.array(hideQuestionsFormArray)
             });
