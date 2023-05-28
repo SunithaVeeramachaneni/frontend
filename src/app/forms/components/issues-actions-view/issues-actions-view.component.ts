@@ -375,7 +375,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     formControlDateField: string
   ) {
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, 'dd MMM yyyy')
+      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
     });
     this.updateIssueOrAction({
       field: 'dueDate',
@@ -737,7 +737,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private init(): void {
     this.attachmentsSubscriptionData = [];
-    const { id, type, dueDate, notificationInfo } = this.data;
+    const { id, type, DUEDATE, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -753,9 +753,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: dueDate ? new Date(dueDate) : '',
-      dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy')
+      dueDate: DUEDATE ? new Date(DUEDATE) : '',
+      dueDateDisplayValue: DUEDATE
+        ? format(new Date(DUEDATE), 'dd MMM yyyy hh:mm a')
         : ''
     });
     this.minDate = new Date(this.data.createdAt);
@@ -777,7 +777,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy hh:mm a'),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
@@ -826,7 +826,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             ...data,
             ...jsonData,
             dueDate: jsonData?.DUEDATE
-              ? format(new Date(jsonData?.DUEDATE), 'dd MMM, yyyy')
+              ? format(new Date(jsonData?.DUEDATE), 'dd MMM yyyy hh:mm a')
               : '',
             priority: jsonData.PRIORITY ?? '',
             statusDisplay: this.observations.prepareStatus(
