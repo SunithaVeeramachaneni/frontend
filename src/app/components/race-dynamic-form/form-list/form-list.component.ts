@@ -50,6 +50,7 @@ import { CreateFromTemplateModalComponent } from '../create-from-template-modal/
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
+import { isNull } from 'util';
 
 @Component({
   selector: 'app-form-list',
@@ -310,13 +311,15 @@ export class FormListComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => {
+        tap((value: string) => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+          this.formsListCount$ =
+            this.raceDynamicFormService.getFormsListCount$(value);
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
-    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$(null);
 
     this.getAllForms();
     this.getDisplayedForms();
@@ -409,7 +412,9 @@ export class FormListComponent implements OnInit, OnDestroy {
                 } as any
               });
               this.formsListCount$ =
-                this.raceDynamicFormService.getFormsListCount$();
+                this.raceDynamicFormService.getFormsListCount$(
+                  this.searchForm.value
+                );
             });
         }
       });
@@ -540,12 +545,14 @@ export class FormListComponent implements OnInit, OnDestroy {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm) => {
+      .subscribe(() => {
         this.addEditCopyForm$.next({
           action: 'delete',
           form
         });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$(
+          this.searchForm.value
+        );
       });
   }
 

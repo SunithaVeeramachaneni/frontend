@@ -66,6 +66,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -318,7 +319,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-  plants = [];
   plantsIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
@@ -340,7 +340,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -353,7 +354,15 @@ export class FormsComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => {
+        tap((value: string) => {
+          this.raceDynamicFormService
+            .getFormsForSchedulerCount$(value)
+            .subscribe((count) => {
+              this.formsCount = {
+                scheduled: count.scheduled || 0,
+                unscheduled: count.unscheduled || 0
+              };
+            });
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
@@ -363,6 +372,15 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.raceDynamicFormService
+      .getFormsForSchedulerCount$(null)
+      .subscribe((count) => {
+        this.formsCount = {
+          scheduled: count.scheduled || 0,
+          unscheduled: count.unscheduled || 0
+        };
+      });
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
       .fetchFormScheduleConfigurations$()
@@ -484,7 +502,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
-    this.getAllForms();
+    this.populatePlantsforFilter();
     this.getFilter();
   }
 
@@ -498,18 +516,10 @@ export class FormsComponent implements OnInit, OnDestroy {
     };
 
     return this.raceDynamicFormService
-      .getFormQuestionsFormsList$(obj, this.filter)
+      .getFormsForScheduler$(obj, this.filter)
       .pipe(
-        tap(({ scheduledCount, unscheduledCount, next }) => {
+        tap(({ next }) => {
           this.nextToken = next !== undefined ? next : null;
-          const { scheduled, unscheduled } = this.formsCount;
-          this.formsCount = {
-            ...this.formsCount,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
-          };
           this.isLoading$.next(false);
         })
       );
@@ -711,7 +721,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(this.initial?.data);
       if (mode === 'create') {
         this.formsCount = {
-          ...this.formsCount,
           scheduled: this.formsCount.scheduled + 1,
           unscheduled: this.formsCount.unscheduled - 1
         };
@@ -819,30 +828,20 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllForms() {
-    this.raceDynamicFormService
-      .fetchAllSchedulerForms$()
-      .subscribe((formsList) => {
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniquePlants = formsList.items
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
-          for (const item of this.filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
-          }
-        }
+  populatePlantsforFilter() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      plants.items.forEach((plant) => {
+        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
       });
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = plants.items.map(
+            (plant) => `${plant.plantId} - ${plant.name}`
+          );
+        }
+      }
+    });
   }
 
   applyFilters(data: any): void {

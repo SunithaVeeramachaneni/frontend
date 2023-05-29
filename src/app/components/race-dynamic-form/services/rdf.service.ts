@@ -89,7 +89,7 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormQuestionsFormsList$(
+  getFormsForScheduler$(
     queryParams: FormQueryParam,
     filterData: any = null,
     info: ErrorInfo = {} as ErrorInfo
@@ -234,10 +234,43 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
+  getFormsListCount$(
+    searchTerm: string,
+    isArchived: boolean = false
+  ): Observable<number> {
+    const filter = JSON.stringify(
+      Object.fromEntries(
+        Object.entries({
+          searchTerm: { contains: searchTerm },
+          isArchived: { eq: isArchived },
+          isDeleted: { eq: false }
+        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
+      )
+    );
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms/count?isArchived=' + isArchived)
-      .pipe(map((res) => res.items.length || 0));
+      ._getResp(
+        environment.rdfApiUrl,
+        'forms/count',
+        { displayToast: true, failureResponse: {} },
+        { filter }
+      )
+      .pipe(map((res) => res?.count || 0));
+  }
+
+  getFormsForSchedulerCount$(searchTerm: string): Observable<any> {
+    const filter = JSON.stringify(
+      Object.fromEntries(
+        Object.entries({
+          searchTerm: { contains: searchTerm }
+        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
+      )
+    );
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      'forms/schedule-forms-count',
+      { displayToast: true, failureResponse: {} },
+      { filter }
+    );
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
@@ -900,7 +933,7 @@ export class RaceDynamicFormService {
       info
     );
   }
-  fetchAllRounds$ = () => {
+  fetchAllInspections$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
     params.set('limit', '2000000');

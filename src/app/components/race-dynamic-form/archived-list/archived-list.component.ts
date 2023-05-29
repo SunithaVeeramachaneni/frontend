@@ -219,11 +219,15 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => this.fetchForms$.next({ data: 'search' }))
+        tap((value: string) => {
+          this.fetchForms$.next({ data: 'search' });
+          this.archivedFormsListCount$ =
+            this.raceDynamicFormService.getFormsListCount$(value, true);
+        })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.archivedFormsListCount$ =
-      this.raceDynamicFormService.getFormsListCount$(true);
+      this.raceDynamicFormService.getFormsListCount$(null, true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -456,7 +460,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           form: updatedForm
         });
         this.archivedFormsListCount$ =
-          this.raceDynamicFormService.getFormsListCount$(true);
+          this.raceDynamicFormService.getFormsListCount$(null, true);
       });
   }
 
@@ -484,7 +488,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               form: updatedForm
             });
             this.archivedFormsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$(true);
+              this.raceDynamicFormService.getFormsListCount$(null, true);
           });
       }
     });
