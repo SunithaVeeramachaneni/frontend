@@ -1,7 +1,7 @@
 .user-modal {
-  width: 450px;
+  width: 360px;
   overflow: hidden;
-  padding: 16px;
+  padding: 20px;
   background: #ffffff;
   border-radius: 4px;
 }
@@ -51,10 +51,7 @@
 .permissions-cancel-icon {
   position: relative;
   right: 12px;
-  ::ng-deep svg {
-    width: 15px !important;
-    height: 15px !important;
-  }
+  bottom: 5px;
 }
 
 .custom-mat-form-field-white-color {
@@ -91,16 +88,23 @@
   height: 29px;
   font-weight: normal;
   line-height: normal;
+  margin-top: 10px;
 }
 
 .cancel-btn {
   color: #76767b;
   float: right;
   background: transparent;
-  margin-right: 10px;
   height: 29px;
   font-weight: normal;
   line-height: normal;
+  margin: 10px 10px 0 0;
+}
+
+.widgets-heading {
+  font-weight: bold;
+  margin-left: 15px;
+  font-size: 120%;
 }
 
 .first-name {
@@ -114,11 +118,12 @@
 
 .permissions-modal {
   background-color: #ffffff;
-  border: 1px solid #757575;
-  width: 325px;
-  height: auto;
-  padding: 10px 0 10px 10px;
-  border-radius: 8px;
+  width: 330px;
+  height: 350px;
+  padding: 15px 0px;
+  border-radius: 4px;
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
 }
 
 .permissions-cancel {
@@ -129,7 +134,7 @@
 
 .error-fields {
   white-space: nowrap;
-  margin-left: -10px;
+  margin-left: -5px;
   margin-top: 15px;
 }
 
@@ -149,4 +154,8 @@
 }
 .email-not-verified {
   color: red;
+}
+
+.margin-top-6 {
+  margin-top: 10px;
 }
