@@ -24,39 +24,19 @@ import {
 } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
-import {
-  PageEvent,
-  QuestionEvent,
-  SectionEvent,
-  FormMetadata,
-  Page,
-  Question,
-  Section,
-  ValidationError
-} from 'src/app/interfaces';
+import { FormMetadata, Page, ValidationError } from 'src/app/interfaces';
 
 import {
-  getSectionQuestions,
   getFormMetadata,
-  getPageIndexes,
-  getQuestionIndexes,
-  getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
   getIsFormCreated,
-  getQuestionIds,
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,7 +44,6 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
-import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
 import {
   BuilderConfigurationActions,
@@ -85,13 +64,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
-  pageIndexes$: Observable<number[]>;
   pages$: Observable<Page[]>;
   formDetails$: Observable<any>;
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
-  sectionIds$: Observable<any>;
-  questionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
@@ -99,7 +75,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formDetailPublishStatus$: Observable<string>;
   isFormCreated$: Observable<boolean>;
   questionCounter$: Observable<number>;
-  questionIndexes: any;
   formStatus: string;
   formDetailPublishStatus: string;
   isFormDetailPublished: string;
@@ -219,15 +194,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         );
       })
     );
-    this.pageIndexes$ = this.store.select(getPageIndexes);
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes)
       .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
-    this.sectionIds$ = this.store.select(getSectionIds);
-    this.questionIds$ = this.store.select(getQuestionIds);
-    this.questionIndexes$ = this.store
-      .select(getQuestionIndexes)
-      .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
     this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
       tap((isFormCreated) => {
         if (isFormCreated) {
@@ -462,127 +431,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     return this.formConfiguration.controls;
   }
 
-  pageEventHandler(event: PageEvent) {
-    const { pageIndex, type, page } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addPage(
-            pageIndex,
-            1,
-            1,
-            this.sectionIndexes,
-            this.formConf.counter.value
-          );
-        }
-        break;
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updatePage({
-            page,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deletePage({
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
-  sectionEventHandler(event: SectionEvent) {
-    const { pageIndex, sectionIndex, section, type } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addSections(
-            pageIndex,
-            1,
-            1,
-            sectionIndex,
-            this.sectionIndexes,
-            this.formConf.counter.value
-          );
-        }
-        break;
-
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updateSection({
-            section,
-            sectionIndex,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deleteSection({
-            sectionIndex,
-            sectionId: section.id,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
-  questionEventHandler(event: QuestionEvent) {
-    const { pageIndex, questionIndex, sectionId, question, type } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addQuestions(
-            pageIndex,
-            sectionId,
-            1,
-            questionIndex,
-            this.formConf.counter.value
-          );
-        }
-        break;
-
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updateQuestion({
-            question,
-            questionIndex,
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deleteQuestion({
-            questionIndex,
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
   uploadFormImageFile(e) {
     // uploaded image  file code
   }
@@ -598,70 +446,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
-  }
-
-  dropSection(event: CdkDragDrop<any>, pageIndex: number) {
-    const data = event.container.data.slice();
-
-    if (event.previousContainer === event.container) {
-      moveItemInArray(data, event.previousIndex, event.currentIndex);
-      const sectionPositionMap = {};
-      data.forEach((section: Section, index) => {
-        sectionPositionMap[section.id] = index + 1;
-      });
-      this.store.dispatch(
-        BuilderConfigurationActions.updatePageSections({
-          pageIndex,
-          data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
-    }
-  }
-
-  drop(event: CdkDragDrop<any>, pageIndex, sectionId) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      event.container.data.forEach((question: Question, index) => {
-        this.store.dispatch(
-          BuilderConfigurationActions.updateQuestionBySection({
-            question: Object.assign({}, question, {
-              position: index + 1,
-              sectionId
-            }),
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-      });
-    } else {
-      const questionId = event.previousContainer.data[event.previousIndex].id;
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.transferQuestionFromSection({
-          questionId,
-          currentIndex: event.currentIndex,
-          previousIndex: event.previousIndex,
-          sourceSectionId: event.previousContainer.id,
-          destinationSectionId: event.container.id,
-          pageIndex,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
-    }
   }
 
   getFormConfigurationStatuses() {
@@ -723,16 +507,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
-  }
-
-  addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      this.formConf.counter.value
-    );
   }
 
   goToPDFBuilderConfiguration = () => {

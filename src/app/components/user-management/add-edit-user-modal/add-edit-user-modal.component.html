@@ -24,9 +24,9 @@
       disabled="true"
     />
   </div>
-  <div class="custom-form-field-white-color" style="margin-top: 15px">
+  <div class="custom-form-field-white-color">
     <div class="input-container">
-      <mat-form-field appearance="outline" class="m-b-10 first-name">
+      <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
         <mat-label>{{ 'firstName' | translate }}</mat-label>
         <input matInput formControlName="firstName" />
         <mat-error
@@ -43,7 +43,7 @@
           }}
         </mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="m-b-10 last-name">
+      <mat-form-field appearance="outline" class="m-b-10 last-name m-t-10">
         <mat-label>{{ 'lastName' | translate }}</mat-label>
         <input matInput formControlName="lastName" />
         <mat-error
@@ -64,7 +64,7 @@
 
     <mat-form-field
       appearance="outline"
-      class="input-container width-100 m-b-10"
+      class="input-container width-100 m-b-10 m-t-10"
     >
       <mat-label>{{ 'title' | translate }}</mat-label>
       <input matInput formControlName="title" />
@@ -83,7 +83,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+    <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
       <mat-label>{{ 'emailLabel' | translate }}</mat-label>
       <input matInput formControlName="email" />
       <div matSuffix>
@@ -115,7 +115,7 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+    <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
       <mat-label>{{ 'roles' | translate }}</mat-label>
       <mat-select
         name="priority"
@@ -148,7 +148,7 @@
               #trigger="cdkOverlayOrigin"
               class="material-icons-outlined"
               style="
-                margin-top: 17px;
+                margin-top: 10px;
                 float: right;
                 color: #9e9e9e;
                 font-size: 140%;
@@ -175,10 +175,7 @@
                   (click)="isfilterTooltipOpen[i] = false"
                   class="permissions-cancel"
                 >
-                  <svg-icon
-                    icon="icon-cancel"
-                    class="permissions-cancel-icon"
-                  ></svg-icon>
+                  <mat-icon class="permissions-cancel-icon">close</mat-icon>
                 </button>
                 <app-permissions
                   [selectedRolePermissions$]="selectedRolePermissions$"
@@ -203,7 +200,7 @@
       </mat-error>
     </mat-form-field>
 
-    <div class="width-100 user-date-range m-b-10">
+    <div class="width-100 user-date-range m-b-10 m-t-10">
       <mat-form-field class="width-95 user-date-from" appearance="outline">
         <mat-label>{{ 'validFrom' | translate }}</mat-label>
         <input
@@ -245,7 +242,7 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+    <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
       <mat-label>{{ 'plant' | translate }}</mat-label>
       <mat-select formControlName="plantId">
         <mat-option

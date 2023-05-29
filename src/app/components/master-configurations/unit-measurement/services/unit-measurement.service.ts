@@ -30,12 +30,15 @@ export class UnitMeasurementService {
     private toastService: ToastService
   ) {}
 
-  getUnitOfMeasurementList$(queryParams: {
-    next?: string;
-    limit: any;
-    searchKey: string;
-    fetchType: string;
-  }) {
+  getUnitOfMeasurementList$(
+    queryParams: {
+      next?: string;
+      limit: any;
+      searchKey: string;
+      fetchType: string;
+    },
+    filter?: { [x: string]: string }
+  ) {
     if (
       ['load', 'search'].includes(queryParams?.fetchType) ||
       (['infiniteScroll'].includes(queryParams?.fetchType) &&
@@ -46,6 +49,9 @@ export class UnitMeasurementService {
       params.set('limit', queryParams?.limit);
       params.set('next', queryParams?.next);
       params.set('fetchType', queryParams?.fetchType);
+      params.set('status', filter?.status ?? '');
+      params.set('symbol', filter?.symbol ?? '');
+      params.set('unitType', filter?.unitType ?? '');
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
@@ -54,6 +60,7 @@ export class UnitMeasurementService {
         .pipe(map((data) => this.formatUnitOfMeasurementResponse(data)));
     } else {
       return of({
+        filters: {},
         count: 0,
         rows: [],
         next: null
@@ -183,6 +190,18 @@ export class UnitMeasurementService {
       .pipe(map((response) => (response === null ? id : response)));
   }
 
+  getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<
+    {
+      label: string;
+      items: string[];
+      column: string;
+      type: string;
+      value: string;
+    }[]
+  > {
+    return this._appService._getLocal('', 'assets/json/uom-filter.json', info);
+  }
+
   handleError(error: any) {
     const message = error.errors?.length
       ? error.errors[0].message.split(':')[0]
@@ -193,7 +212,7 @@ export class UnitMeasurementService {
     });
   }
 
-  private formatUnitOfMeasurementResponse(resp: UnitOfMeasurementList) {
+  private formatUnitOfMeasurementResponse(resp) {
     const groupedData: any = groupBy(resp?.items, 'unitList.name');
     const rows = resp?.items
       ?.sort(
@@ -208,10 +227,12 @@ export class UnitMeasurementService {
       }));
     const count = rows?.length || 0;
     const next = resp?.next;
+    const filters = resp?.filters;
     return {
       count,
       rows,
-      next
+      next,
+      filters
     };
   }
 }
