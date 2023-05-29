@@ -430,10 +430,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       }
 
       if (!checked) {
-        previouslyAssignedTo = previouslyAssignedTo
-          .split(',')
-          .push(value)
-          .join(',');
+        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
       }
     }
 

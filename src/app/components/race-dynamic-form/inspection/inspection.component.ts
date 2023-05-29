@@ -753,14 +753,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
     let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
-        ? ` ${assignedToEmail}`
+        ? `,${assignedToEmail}`
         : assignedToEmail;
     }
 
     if (previouslyAssignedTo.includes(assignedTo)) {
       previouslyAssignedTo = previouslyAssignedTo
-        .replace(assignedTo, '')
-        .trim();
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
     }
 
     let { status } = this.selectedForm;
