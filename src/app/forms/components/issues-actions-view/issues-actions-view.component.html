@@ -465,7 +465,7 @@
             />
             <mat-datepicker-toggle
               matIconSuffix
-              [for]="picker"
+              [for]="$any(picker)"
               (click)="picker.open()"
             ></mat-datepicker-toggle>
             <ngx-mat-datetime-picker

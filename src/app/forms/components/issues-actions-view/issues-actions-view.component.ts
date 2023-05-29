@@ -35,8 +35,8 @@ import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { format } from 'date-fns';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ToastService } from 'src/app/shared/toast';
+import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -371,7 +371,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateDate(
-    event: MatDatepickerInputEvent<Date>,
+    event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string
   ) {
     this.issuesActionsDetailViewForm.patchValue({
