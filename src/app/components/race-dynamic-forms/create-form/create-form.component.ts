@@ -964,7 +964,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         hideQuestions: this.fb.array([]),
         validationMessage: [''],
         askEvidence: [''],
-        raiseNotification: [''],
+        raiseNotification: false,
         triggerInfo: [''],
         triggerWhen: ['']
       })
