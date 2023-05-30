@@ -387,13 +387,19 @@ export class AssetsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsAssets = [...newForm, ...this.allParentsAssets];
+                this.cdrf.detectChanges();
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsAssets.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsAssets[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -439,6 +445,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
 
   addOrUpdateAssets(assetData) {
     if (assetData.status === 'add') {
+      this.addEditCopyDeleteAssets = true;
       if (this.searchAssets.value) {
         this.assetService.fetchAssets$.next({ data: 'search' });
       } else {
@@ -446,13 +453,11 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           action: 'add',
           form: assetData.data
         });
-        this.allParentsAssets.push(assetData.data);
       }
       this.toast.show({
         text: 'Asset created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteAssets = true;
       this.assetsCountUpdate$.next(1);
     } else if (assetData.status === 'edit') {
       this.addEditCopyDeleteAssets = true;
@@ -463,9 +468,6 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: assetData.data
         });
-        this.allParentsAssets = this.allParentsAssets.map((asset) =>
-          asset.id === assetData.data.id ? assetData.data : asset
-        );
         this.toast.show({
           text: 'Asset updated successfully!',
           type: 'success'

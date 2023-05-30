@@ -386,13 +386,21 @@ export class LocationsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsLocations = [
+                  ...newForm,
+                  ...this.allParentsLocations
+                ];
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsLocations.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsLocations[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -458,6 +466,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 
   addOrUpdateLocation(locationData) {
     if (locationData?.status === 'add') {
+      this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
         this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
@@ -465,13 +474,11 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'add',
           form: locationData.data
         });
-        this.allParentsLocations.push(locationData.data);
       }
       this.toast.show({
         text: 'Location created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteLocations = true;
       this.locationsCountUpdate$.next(1);
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
