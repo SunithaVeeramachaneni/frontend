@@ -221,6 +221,20 @@
               </div>
             </ng-container>
           </div>
+
+          <ng-container *ngIf="history?.message?.PHOTO?.length > 0">
+            <div class="attachments-container mt-0">
+              <div *ngFor="let photo of history?.message?.PHOTO">
+                <img
+                  alt="images"
+                  [src]="photo"
+                  *ngIf="photo"
+                  class="attachments"
+                />
+              </div>
+            </div>
+          </ng-container>
+
           <div
             class="time"
             [ngClass]="{

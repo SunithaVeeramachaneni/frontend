@@ -187,13 +187,30 @@ export const getTaskCountBySection = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    const allQuestions = state[key]?.find(
-      (page, index) => index === pageIndex
-    )?.questions;
-    const sectionQuestions = allQuestions
-      ? allQuestions.filter((q) => q.sectionId === sectionId)
-      : [];
-    return sectionQuestions.length;
+    const page = state[key]?.find((p, index) => index === pageIndex);
+
+    const questionsInSection = {};
+    const questionIdByLogic = {};
+    for (const logic of page.logics)
+      questionIdByLogic[logic.id] = logic.questionId;
+
+    let count = 0;
+    for (const question of page.questions) {
+      if (question.sectionId === sectionId) {
+        count++;
+        questionsInSection[question.id] = 1;
+      }
+    }
+    for (const question of page.questions) {
+      if (
+        question.sectionId !== sectionId &&
+        question.sectionId.startsWith('AQ_') &&
+        questionsInSection[questionIdByLogic[question.sectionId.substr(3)]] ===
+          1
+      )
+        count++;
+    }
+    return count;
   });
 
 export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
