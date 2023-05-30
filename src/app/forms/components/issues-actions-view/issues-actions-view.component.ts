@@ -405,6 +405,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const { id, type, issueData, actionData, issueOrActionDBVersion } =
       this.data;
     const { field, value, checked } = event;
+    let { previouslyAssignedTo = '' } = this.data;
+
     const updatedIssueData = this.updateIssueOrActionData(
       issueData,
       {
@@ -419,6 +421,19 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
+    if (field === 'assignee') {
+      if (checked && previouslyAssignedTo.includes(value)) {
+        previouslyAssignedTo = previouslyAssignedTo
+          .split(',')
+          .filter((email) => email !== value)
+          .join(',');
+      }
+
+      if (!checked) {
+        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+      }
+    }
+
     if (type === 'issue') {
       this.data.issueData = updatedIssueData;
     } else {
@@ -433,6 +448,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           issueData: updatedIssueData,
           actionData: updatedActionData,
           assignedTo: this.issuesActionsDetailViewForm.get('assignedTo').value,
+          previouslyAssignedTo,
           issueOrActionDBVersion,
           history: {
             type: 'Object',
@@ -449,6 +465,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         tap((response) => {
           if (Object.keys(response).length) {
             this.data.issueOrActionDBVersion += 1;
+            Object.assign(this.data, { previouslyAssignedTo });
           }
           this.updatingDetails = false;
         })
@@ -498,13 +515,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   field.FIELDDESC ? `,${assignee}` : `${assignee}`
                 }`;
               }
+
               this.issuesActionsDetailViewForm.patchValue({
+                assignedTo: field.FIELDDESC,
                 assignedToDisplay: this.observations.formatUsersDisplay(
                   field.FIELDDESC
                 )
-              });
-              this.issuesActionsDetailViewForm.patchValue({
-                assignedTo: field.FIELDDESC
               });
             }
           });
