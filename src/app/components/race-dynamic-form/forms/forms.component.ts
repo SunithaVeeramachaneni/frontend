@@ -762,6 +762,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
+          forms: form.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
           assignedToEmail: this.getAssignedToEmail(
             formScheduleConfigurations[form.id]
@@ -771,7 +772,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        operator: this.placeHolder
+        operator: this.placeHolder,
+        assignedTo: this.placeHolder
       };
     });
   }
