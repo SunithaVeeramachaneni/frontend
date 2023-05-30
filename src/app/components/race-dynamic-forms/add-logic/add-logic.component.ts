@@ -187,11 +187,11 @@ export class AddLogicComponent implements OnInit, OnChanges {
       this.cdrf.detectChanges();
       logic.patchValue({
         action: result.type,
-        raiseNotification: `true`,
+        raiseNotification: true,
         triggerInfo,
         triggerWhen
       });
-      logic.value.raiseNotification = `true`;
+      logic.value.raiseNotification = true;
       logic.value.triggerInfo = triggerInfo;
       logic.value.triggerWhen = triggerWhen;
     });

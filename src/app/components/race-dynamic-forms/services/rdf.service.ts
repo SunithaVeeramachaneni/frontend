@@ -581,7 +581,7 @@ export class RdfService {
 
       // Raise Notification;
       const notificationQuestion = logic.raiseNotification;
-      if (notificationQuestion && notificationQuestion.length) {
+      if (notificationQuestion) {
         globalIndex = globalIndex + 1;
         expression = `${questionId} ${logic.operator} (V)${logic.operand2}`;
       }
@@ -610,7 +610,7 @@ export class RdfService {
     let notificationInfo = [];
     question.logics.forEach((logic) => {
       const raiseNotification = logic.raiseNotification;
-      if (raiseNotification && raiseNotification.length) {
+      if (raiseNotification) {
         const { triggerInfo, triggerWhen } = logic;
         notificationInfo.push({ triggerInfo, triggerWhen });
       }
