@@ -139,6 +139,8 @@ export interface InspectionDetail extends Form {
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
+  assignedToEmail?: string;
+  previouslyAssignedTo: string;
   inspectionDBVersion: number;
   inspectionDetailDBVersion: number;
 }
