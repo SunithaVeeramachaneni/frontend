@@ -548,8 +548,8 @@ export class ActionsListComponent implements OnInit, OnDestroy {
               status,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
-              assignedToDisplay,
-              assignedTo
+              assignedToDisplay: assignedToDisplay || '',
+              assignedTo: assignedTo || ''
             };
           }
           return data;

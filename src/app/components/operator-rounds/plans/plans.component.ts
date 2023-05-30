@@ -479,12 +479,19 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) =>
+              roundPlan.schedule && roundPlan.schedule !== 'Ad-Hoc'
           );
         } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
-          );
+          filteredRoundPlans = roundPlans.data
+            .filter(
+              (roundPlan: RoundPlanDetail) =>
+                !roundPlan.schedule || roundPlan.schedule === 'Ad-Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredRoundPlans = roundPlans.data;
         }
@@ -926,10 +933,14 @@ export class PlansComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+      } else if (
+        item.type !== 'daterange' &&
+        item.value &&
+        item.column !== 'schedule'
+      ) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
       } else {
         this.filter[item.column] = item.value ?? '';
       }

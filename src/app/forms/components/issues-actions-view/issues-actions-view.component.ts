@@ -88,7 +88,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   userInfo: any;
   s3BaseUrl: string;
   logHistory: History[];
-  filteredMediaType: any;
+  filteredMediaType: any[] = [];
   chatPanelHeight;
   isPreviousEnabled = false;
   isNextEnabled = false;
@@ -251,9 +251,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             }
 
             // 6. Create issue attachments issues log history
-            // FIXME: Match objectId with this.data.id once you will get from mobile side.
             const onCreateIssuesAttachments$ = this.observations
-              .onCreateIssuesAttachments$({})
+              .onCreateIssuesAttachments$({
+                objectId: this.data.id
+              })
               ?.subscribe({
                 next: ({
                   _,
@@ -279,9 +280,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             }
 
             // 7. Create action attachments action log history
-            // FIXME: Match objectId with this.data.id once you will get from mobile side.
             const onCreateActionsAttachments$ = this.observations
-              .onCreateActionsAttachments$({})
+              .onCreateActionsAttachments$({
+                objectId: this.data.id
+              })
               ?.subscribe({
                 next: ({
                   _,
@@ -763,10 +765,27 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
-          this.logHistory = logHistory.rows;
-          this.filteredMediaType = this.logHistory.filter(
-            (history) => history.type === 'Media'
-          );
+          this.logHistory = logHistory?.rows || [];
+          this.filteredMediaType = [];
+          if (this.logHistory.length > 0) {
+            this.logHistory.forEach((history) => {
+              if (
+                typeof history?.message === 'object' &&
+                history?.message?.PHOTO?.length > 0
+              ) {
+                history?.message?.PHOTO.forEach((element) => {
+                  if (element) {
+                    this.filteredMediaType.push({
+                      message: element
+                    });
+                  }
+                });
+              }
+              if (history.type === 'Media') {
+                this.filteredMediaType.push(history);
+              }
+            });
+          }
         })
       );
   }
@@ -789,10 +808,27 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           newMessage.message = foundImageData?.imageData || newMessage.message;
         }
       }
+      this.filteredMediaType = [];
       this.logHistory = [...this.logHistory, newMessage];
-      this.filteredMediaType = this.logHistory.filter(
-        (history) => history?.type === 'Media'
-      );
+      if (this.logHistory?.length > 0) {
+        this.logHistory.forEach((history) => {
+          if (
+            typeof history?.message === 'object' &&
+            history?.message?.PHOTO?.length > 0
+          ) {
+            history?.message?.PHOTO.forEach((element) => {
+              if (element) {
+                this.filteredMediaType.push({
+                  message: element
+                });
+              }
+            });
+          }
+          if (history.type === 'Media') {
+            this.filteredMediaType.push(history);
+          }
+        });
+      }
       this.logHistory$ = of({
         nextToken: null,
         rows: this.logHistory
