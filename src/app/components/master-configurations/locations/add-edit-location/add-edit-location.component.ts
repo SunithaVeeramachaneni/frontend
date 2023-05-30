@@ -16,7 +16,6 @@ import {
 import { Observable } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
 import { LocationService } from '../services/location.service';
-import { PlantService } from '../../plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
@@ -28,7 +27,8 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
-  allLocations$: Observable<any>;
+  @Input() allPlants: any[];
+  @Input() allLocations: any[];
   @Input() set locationEditData(data) {
     this.locEditData = data;
     if (!this.locEditData) {
@@ -56,7 +56,6 @@ export class AddEditLocationComponent implements OnInit {
         plantsID: this.locEditData?.plantsID
       };
       this.locationForm?.patchValue(locdata);
-      this.getAllLocations();
     }
   }
   get locationEditData() {
@@ -79,8 +78,7 @@ export class AddEditLocationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private locationService: LocationService,
-    private plantService: PlantService
+    private locationService: LocationService
   ) {}
 
   ngOnInit(): void {
@@ -99,30 +97,13 @@ export class AddEditLocationComponent implements OnInit {
       model: '',
       description: '',
       parentId: '',
-      plantsID: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ])
+      plantsID: new FormControl('', [Validators.required])
     });
-    this.getAllLocations();
-    this.getAllPlants();
-  }
 
-  getAllLocations() {
-    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.parentInformation = allLocations.items.filter(
-        (location) => location.id !== this.locEditData?.id
-      );
-      this.allParentsData = this.parentInformation;
-    });
-  }
-
-  getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
-      this.allPlantsData = allPlants.items || [];
-      this.plantInformation = allPlants.items || [];
-    });
+    this.parentInformation = this.allLocations;
+    this.allParentsData = this.parentInformation;
+    this.plantInformation = this.allPlants;
+    this.allPlantsData = this.plantInformation;
   }
 
   onSelectPlant(event) {

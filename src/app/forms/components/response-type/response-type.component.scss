@@ -85,6 +85,7 @@
   .response-field-types:hover,
   .active {
     background-color: $hover-bg2;
+    border-radius: 3px;
   }
 
   .first-tab {
@@ -160,12 +161,17 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-top: 10px;
+    padding-top: 8px;
   }
 
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
     margin: 12px 10px 5px 5px !important;
   }
+}
+
+.global-response-position {
+  position: relative;
+  right: 7px;
 }
 
 .picklist-scroll {
@@ -185,8 +191,24 @@
   margin-top: 7px;
 }
 
+.global-btn {
+  background-color: transparent;
+  border: none;
+  position: relative;
+  top: -7px;
+}
+
 .multiple-responses {
   margin: 5px 7px;
+}
+
+.global-text {
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100px;
+  line-height: 36px;
 }
 
 .h-36 {
@@ -194,6 +216,7 @@
   .responseBtn {
     padding: 0 0 0 5px;
     height: 36px;
+    width: 80%;
   }
 }
 .m-l-10 {
@@ -210,7 +233,7 @@
 }
 
 ::ng-deep .global-resp .mat-standard-chip {
-  padding: 0 !important;
+  padding: 0px 0px 0px 5px !important;
 }
 
 .edit-icon-img {
@@ -221,7 +244,7 @@
 .mcq-edit {
   padding: 5px;
   position: relative;
-  top: 8px;
+  top: -2px;
 }
 
 .global-resp {

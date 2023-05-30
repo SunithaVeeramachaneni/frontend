@@ -6,6 +6,9 @@ import * as RoundPlanConfigurationApiActions from './round-plan-configuration-ap
 import * as HierarchyActions from './hierarchy.actions';
 import * as BuilderConfigurationActions from '../builder/builder.actions';
 import * as BuilderConfigurationsApiActions from '../builder/builder-configuration-api.actions';
+import * as UnitOfMeasurementActions from './unit-of-measurement.actions';
+import * as QuickResponseActions from './quick-responses.actions';
+import * as GlobalResponseActions from './global-responses.actions';
 
 export {
   FormConfigurationActions,
@@ -15,5 +18,8 @@ export {
   RoundPlanConfigurationApiActions,
   HierarchyActions,
   BuilderConfigurationActions,
-  BuilderConfigurationsApiActions
+  BuilderConfigurationsApiActions,
+  UnitOfMeasurementActions,
+  QuickResponseActions,
+  GlobalResponseActions
 };

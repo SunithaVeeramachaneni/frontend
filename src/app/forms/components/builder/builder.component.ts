@@ -64,6 +64,7 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
   @Input() counter;
   @Input() isPreviewActive;
+  @Input() moduleName;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
@@ -128,7 +129,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         this.subFormPages$
           .pipe(
             tap((pages) => {
-              if (!pages || !pages.length) {
+              if (pages && pages.length === 0) {
                 this.isEmptyPlan = true;
               } else {
                 this.isEmptyPlan = false;
@@ -140,9 +141,7 @@ export class BuilderComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    this.responseSetService.fetchAllGlobalResponses$().subscribe();
-  }
+  ngOnInit(): void {}
 
   addPage() {
     this.isEmptyPlan = false;
@@ -182,6 +181,7 @@ export class BuilderComponent implements OnInit, OnChanges {
         );
         break;
       case 'delete':
+        this.isEmptyPage[pageIndex] = false;
         this.store.dispatch(
           BuilderConfigurationActions.deletePage({
             pageIndex,
@@ -373,14 +373,16 @@ export class BuilderComponent implements OnInit, OnChanges {
   }
 
   addQuestion(pageIndex, sectionIndex, questionIndex, subFormId) {
-    this.roundPlanConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      1,
-      subFormId
-    );
+    if (!this.isEmptyPage[pageIndex]) {
+      this.roundPlanConfigurationService.addQuestions(
+        pageIndex,
+        sectionIndex,
+        1,
+        questionIndex,
+        1,
+        subFormId
+      );
+    }
   }
 
   addSection(pageIndex) {

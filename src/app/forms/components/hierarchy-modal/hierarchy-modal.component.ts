@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
@@ -28,9 +28,8 @@ export class HierarchyModalComponent implements OnInit {
   allLocations$: Observable<any>;
   allLocations = [];
   allAssets$: Observable<any>;
-  masterHierarchyList$: Observable<any>;
+  hierarchyLoaded = false;
   masterHierarchyList = [];
-  selectedHierarchyList$: Observable<any>;
   selectedHierarchyList = [];
   mode = 'location';
   selectedLocationsHierarchy: HierarchyEntity[];
@@ -46,25 +45,19 @@ export class HierarchyModalComponent implements OnInit {
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
 
-    this.masterHierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
-      map((masterHierarchyList) => {
-        this.masterHierarchyList = masterHierarchyList;
-        this.cdrf.detectChanges();
-        return masterHierarchyList;
-      })
-    );
-
-    this.selectedHierarchyList$ = this.store
-      .select(getSelectedHierarchyList)
+    combineLatest([
+      this.store.select(getMasterHierarchyList),
+      this.store.select(getSelectedHierarchyList)
+    ])
       .pipe(
-        map((selectedHierarchy) => {
-          this.selectedHierarchyList = selectedHierarchy;
-          return this.selectedHierarchyList;
+        map(([masterHierarchyList, selectedHierarchyList]) => {
+          this.masterHierarchyList = masterHierarchyList;
+          this.selectedHierarchyList = selectedHierarchyList;
+          this.hierarchyLoaded = true;
+          this.cdrf.detectChanges();
         })
-      );
-
-    this.masterHierarchyList$.subscribe();
-    this.selectedHierarchyList$.subscribe();
+      )
+      .subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (

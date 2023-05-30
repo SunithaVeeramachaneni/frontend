@@ -12,10 +12,13 @@
           <div>
             <span
               class="no-of-location"
-              *ngIf="locationsListCount$ | async as totalCount"
+              *ngIf="
+                locationsCount$ | async as totalCount;
+                else loadingLocations
+              "
             >
               <span class="location-count">
-                {{ totalCount | count }}
+                {{ totalCount }}
               </span>
               <span class="location-text">{{
                 'locations'
@@ -25,6 +28,14 @@
                       }
               }}</span>
             </span>
+            <ng-template #loadingLocations>
+              <ngx-shimmer-loading
+                class="loading-locations"
+                [width]="'100%'"
+                [height]="'30px'"
+              >
+              </ngx-shimmer-loading>
+            </ng-template>
             <span class="custom-form-field-gray-color search">
               <mat-form-field appearance="outline">
                 <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -142,14 +153,18 @@
         </div>
       </div>
 
-      <ng-container *ngIf="locationAddOrEditOpenState">
-        <app-add-edit-location
-          [@slideInOut]="locationAddOrEditOpenState"
-          (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
-          [locationEditData]="locationEditData"
-          (createdLocationData)="addOrUpdateLocation($event)"
-        ></app-add-edit-location>
-      </ng-container>
+      <div *ngIf="dataFetchingComplete">
+        <ng-container *ngIf="locationAddOrEditOpenState">
+          <app-add-edit-location
+            [@slideInOut]="locationAddOrEditOpenState"
+            (slideInOut)="onCloseLocationAddOrEditOpenState($event)"
+            [locationEditData]="locationEditData"
+            (createdLocationData)="addOrUpdateLocation($event)"
+            [allPlants]="allPlants"
+            [allLocations]="allParentsLocations"
+          ></app-add-edit-location>
+        </ng-container>
+      </div>
 
       <ng-container *ngIf="openLocationDetailedView">
         <app-location-detail-view
@@ -159,7 +174,7 @@
         ></app-location-detail-view>
       </ng-container>
 
-      <div *ngIf="isLoading$ | async">
+      <div *ngIf="(isLoading$ | async) || !dataFetchingComplete">
         <div class="ghost-loading">
           <div *ngFor="let number of ghostLoading">
             <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">

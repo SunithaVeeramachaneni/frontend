@@ -4,6 +4,7 @@
   height: 450px;
   width: 600px;
   overflow: hidden;
+  padding: 10px;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
@@ -107,7 +108,7 @@
 }
 
 .template {
-  padding: 4px 0px 4px 0px;
+  padding: 10px 0px;
 }
 
 .template:hover {
@@ -116,4 +117,14 @@
 
 ::ng-deep .template-modal-popover {
   left: 560px !important;
+}
+
+.choose-template-cancel {
+  border: none;
+  background: none;
+}
+
+.cancel-icon {
+  height: 15px;
+  width: 15px;
 }
