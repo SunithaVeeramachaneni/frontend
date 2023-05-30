@@ -67,6 +67,7 @@ export interface ScheduleFormDetail extends Form {
   locations: number;
   assets: number;
   rounds: number;
+  forms: number;
   operator: string;
 }
 
