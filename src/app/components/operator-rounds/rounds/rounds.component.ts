@@ -677,8 +677,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.assignedTo.push(item);
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
               }
             });
           }
