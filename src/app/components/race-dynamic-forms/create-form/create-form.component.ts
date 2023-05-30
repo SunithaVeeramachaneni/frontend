@@ -415,7 +415,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     mandateQuestions: this.fb.array(mandateQuestionsFormArray),
                     hideQuestions: this.fb.array(hideQuestionsFormArray),
                     validationMessage: logic.validationMessage || '',
-                    askEvidence: logic.askEvidence || ''
+                    askEvidence: logic.askEvidence || '',
+                    raiseNotification:logic?.raiseNotification || false,
+                    triggerInfo: logic?.triggerInfo || '',
+                    triggerWhen: logic?.triggerWhen || '',
                   });
                 });
               }
