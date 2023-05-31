@@ -457,7 +457,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),
-            assignedTo: this.userService.getUserFullName(roundDetail.assignedTo)
+            assignedTo: this.userService.getUserFullName(
+              roundDetail.assignedTo
+            ),
+            assignedToEmail: roundDetail.assignedTo
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -466,7 +469,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
               dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
-              )
+              ),
+              assignedToEmail: roundDetail.assignedTo
             }))
           );
         }
@@ -778,13 +782,27 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
-    const { roundId } = this.selectedRound;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
+    let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedRound;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo, status },
+        { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -796,7 +814,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   status,
-                  roundDBVersion: resp.roundDBVersion + 1
+                  roundDBVersion: resp.roundDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
@@ -815,9 +834,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    const { roundId } = this.selectedRound;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
     this.operatorRoundsService
-      .updateRound$(roundId, { ...this.selectedRound, dueDate }, 'due-date')
+      .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
@@ -827,7 +846,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   ...data,
                   dueDate,
                   roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
