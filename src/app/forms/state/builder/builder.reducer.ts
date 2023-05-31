@@ -493,15 +493,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ];
           const questionsInSection = {};
           const questionIdByLogic = {};
-          for (const logic of page.logics)
+          for (const logic of page?.logics)
             questionIdByLogic[logic.id] = logic.questionId;
 
-          for (const question of page.questions) {
+          for (const question of page?.questions) {
             if (question.sectionId === action.sectionId) {
               questionsInSection[question.id] = 1;
             }
           }
-          const questions = page.questions.filter((question) => {
+          const questions = page?.questions.filter((question) => {
             if (question.sectionId !== action.sectionId) {
               if (question.sectionId.startsWith('AQ_')) {
                 if (
@@ -718,15 +718,15 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       const pages = state[key].map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
           const questionIdByLogic = {};
-          for (const logic of page.logics)
+          for (const logic of page?.logics)
             questionIdByLogic[logic.id] = logic.questionId;
 
-          let sectionQuestions = page.questions.filter(
+          let sectionQuestions = page?.questions.filter(
             (question) => question.sectionId === action.sectionId
           );
           const questionToBeDeleted =
             sectionQuestions[action.questionIndex]?.id;
-          const remainingQuestions = page.questions.filter((question) => {
+          const remainingQuestions = page?.questions.filter((question) => {
             if (question.sectionId !== action.sectionId) {
               if (questionToBeDeleted && question.sectionId.startsWith('AQ_')) {
                 if (

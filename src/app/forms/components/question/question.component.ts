@@ -130,6 +130,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   moduleName: string;
 
+  get rangeDisplayText() {
+    return this._rangeDisplayText;
+  }
+
+  set rangeDisplayText(dummy) {
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+    console.log(
+      'Range Display Text: ',
+      this.rangeDisplayText,
+      this._rangeDisplayText
+    );
+  }
+
+  private _rangeDisplayText = 'None';
+
   addLogicNotAppliedFields = [
     'LTV',
     'SF',
@@ -204,6 +222,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    console.log('Rerendering...');
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((event) => {
         this.formId = event.id;
@@ -247,13 +266,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.selectedNodeId = this.subFormId;
     }
 
-    this.questionForm
-      .get('required')
-      .valueChanges.subscribe((r) => console.log('Required Changed: ', r));
-
     this.questionForm.valueChanges
       .pipe(
-        tap((d) => console.log('D: ', d)),
         startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
@@ -281,6 +295,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 prevValue?.type === 'globalResponse'
               )
                 this.handleGlobalResponseRefCount(prevValue, currValue);
+
+              if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
+                this.rangeDisplayText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -338,6 +355,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
               }
             }
             this.question = question;
+            console.log('Question: ', this.question);
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
@@ -512,14 +530,13 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getRangeDisplayText() {
-    let resp = 'None';
-    const rangeMeta = this.questionForm.get('rangeMetadata').value;
-    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
-    }
-    return resp;
-  }
+  // getRangeDisplayText() {
+  //   const rangeMeta = this.questionForm.get('rangeMetadata').value;
+  //   if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+  //     this.rangeDisplayText.patchValue(`${rangeMeta.min} - ${rangeMeta.max}`);
+  //   }
+  //   console.log('Range Display Text: ', this.rangeDisplayText);
+  // }
 
   insertImageHandler(event) {
     let base64: string;
@@ -555,10 +572,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
   updateIsOpen(isOpen: boolean) {
-    const isAskQuestion =
-      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-
-    if (isAskQuestion) {
+    if (this.isAskQuestion) {
       return;
     }
     if (this.questionForm.get('isOpen').value !== isOpen) {

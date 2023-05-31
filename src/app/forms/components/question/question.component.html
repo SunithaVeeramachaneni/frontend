@@ -10,7 +10,7 @@
   } as props"
 >
   <div>
-    <div (click)="!isAskQuestion && updateIsOpen(true)">
+    <div (click)="updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70"
@@ -267,7 +267,7 @@
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
-                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
+                  <span class="rangeValues">{{ rangeDisplayText }}</span>
                 </span>
               </span>
 
