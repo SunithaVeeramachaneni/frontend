@@ -253,7 +253,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
               pages: DEFAULT_TEMPLATE_PAGES,
-              counter: 1
+              counter: 4
             })
             .subscribe(() => {
               this.router

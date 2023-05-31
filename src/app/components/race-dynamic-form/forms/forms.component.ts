@@ -428,12 +428,19 @@ export class FormsComponent implements OnInit, OnDestroy {
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => form.schedule
+            (form: ScheduleFormDetail) =>
+              form.schedule && form.schedule !== 'Ad-Hoc'
           );
         } else if (formCategory === 'unscheduled') {
-          filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => !form.schedule
-          );
+          filteredForms = forms.data
+            .filter(
+              (form: ScheduleFormDetail) =>
+                !form.schedule || form.schedule === 'Ad=Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredForms = forms.data;
         }
@@ -646,7 +653,7 @@ export class FormsComponent implements OnInit, OnDestroy {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
-                  rounds: count
+                  forms: count
                 };
               }
               return data;
@@ -755,6 +762,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
+          forms: form.forms || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
           assignedToEmail: this.getAssignedToEmail(
             formScheduleConfigurations[form.id]
@@ -764,7 +772,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        operator: this.placeHolder
+        forms: this.placeHolder,
+        assignedTo: this.placeHolder
       };
     });
   }

@@ -53,6 +53,8 @@ import { ResponseSetService } from 'src/app/components/master-configurations/res
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -191,6 +193,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject();
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
@@ -833,5 +836,25 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  openPreviewDialog() {
+    const attachments = this.questionForm.get('value').value.images;
+    const filteredMedia = [...attachments];
+    const slideshowImages = [];
+    filteredMedia.forEach((media) => {
+      if (media) {
+        slideshowImages.push(media.objectURL);
+      }
+    });
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
   }
 }

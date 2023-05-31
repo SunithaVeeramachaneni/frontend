@@ -20,6 +20,7 @@ export interface FormMetadata {
   plant: string;
   pdfTemplateConfiguration: any;
   instructions: any;
+  lastModifiedBy: string;
 }
 
 export interface Page {
