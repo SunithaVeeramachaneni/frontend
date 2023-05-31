@@ -183,7 +183,7 @@ export class RdfService {
         .map((question) => {
           index = index + 1;
           if (question?.id.includes('EVIDENCE')) {
-             evidenceQuestionCheck = true;
+            evidenceQuestionCheck = true;
           }
           const {
             id: questionId,
@@ -198,9 +198,12 @@ export class RdfService {
             return null;
           }
 
-          const { expression, validationMessage, askQuestions } =
-            this.getValidationExpression(question, questions);
-
+          const {
+            expression,
+            validationMessage,
+            askQuestions,
+            notificationExpression
+          } = this.getValidationExpression(question, questions);
           const notificationInfo = this.getNotificationInfo(question);
 
           sectionPayloads.push({
@@ -226,11 +229,11 @@ export class RdfService {
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
             SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
-            UIVALIDATION: notificationInfo[0] ? '' : expression, //this.getValidationExpression(question),
+            UIVALIDATION: expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
             BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
             BOSTATUS: notificationInfo[0] ? 'X' : '',
-            BOCONDITION: notificationInfo ? expression : '',
+            BOCONDITION: notificationInfo[0] ? notificationExpression : '',
             TRIGGERON: notificationInfo[0]
               ? notificationInfo[0].triggerWhen
               : '',
@@ -488,12 +491,13 @@ export class RdfService {
 
   getValidationExpression(question: any, sectionQuestions: any): any {
     let expression = '';
+    let notificationExpression = '';
     let validationMessage = '';
     let globalIndex = 0;
+    let notificationGlobalIndex = 0;
     let askQuestions = [];
 
     if (!question.logics || !question.logics.length) return expression;
-
     question.logics.forEach((logic) => {
       if (question.fieldType === 'CB') {
         logic.operand2 = logic.operand2 === 'true' ? 'X' : '';
@@ -582,8 +586,8 @@ export class RdfService {
       // Raise Notification;
       const notificationQuestion = logic.raiseNotification;
       if (notificationQuestion) {
-        globalIndex = globalIndex + 1;
-        expression = `${questionId} ${logic.operator} (V)${logic.operand2}`;
+        notificationGlobalIndex = notificationGlobalIndex + 1;
+        notificationExpression = `${notificationExpression};${notificationGlobalIndex}:${questionId} ${logic.operator} (V)${logic.operand2}`;
       }
     });
 
@@ -592,6 +596,18 @@ export class RdfService {
     }
     if (expression[expression.length - 1] === ';') {
       expression = expression.slice(0, expression.length - 1);
+    }
+    if (notificationExpression[0] === ';') {
+      notificationExpression = notificationExpression.slice(
+        1,
+        notificationExpression.length
+      );
+    }
+    if (notificationExpression[notificationExpression.length - 1] === ';') {
+      notificationExpression = notificationExpression.slice(
+        0,
+        notificationExpression.length - 1
+      );
     }
 
     if (validationMessage[0] === ';') {
@@ -603,7 +619,12 @@ export class RdfService {
         validationMessage.length - 1
       );
     }
-    return { expression, validationMessage, askQuestions };
+    return {
+      expression,
+      validationMessage,
+      askQuestions,
+      notificationExpression
+    };
   }
 
   getNotificationInfo(question) {
