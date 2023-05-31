@@ -441,7 +441,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               : '',
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
-              : ''
+              : '',
+            assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -452,7 +453,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : '',
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
-              )
+              ),
+              assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
         }
@@ -747,13 +749,27 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
+    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedForm;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo, status },
+        { ...rest, inspectionId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -765,7 +781,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  status
+                  status,
+                  assignedToEmail: resp.assignedTo || ''
                 };
               }
               return data;
@@ -784,11 +801,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, dueDate },
+        { ...rest, inspectionId, dueDate },
         'due-date'
       )
       .pipe(
@@ -800,7 +817,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   dueDate,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;

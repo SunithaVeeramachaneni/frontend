@@ -283,6 +283,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plantsIdNameMap = {};
   plants = [];
@@ -621,6 +622,15 @@ export class FormListComponent implements OnInit, OnDestroy {
               .filter((value, index, self) => self.indexOf(value) === index);
             this.lastPublishedBy = [...uniqueLastPublishedBy];
 
+            const uniqueLastModifiedBy = formsList.rows
+              .map((item) => {
+                if (item.lastModifiedBy) {
+                  return item.lastModifiedBy;
+                }
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.lastModifiedBy = [...uniqueLastModifiedBy];
+
             const uniqueCreatedBy = formsList.rows
               .map((item) => item.author)
               .filter((value, index, self) => self.indexOf(value) === index);
@@ -641,7 +651,7 @@ export class FormListComponent implements OnInit, OnDestroy {
               if (item.column === 'status') {
                 item.items = this.status;
               } else if (item.column === 'modifiedBy') {
-                item.items = this.lastPublishedBy;
+                item.items = this.lastModifiedBy;
               } else if (item.column === 'authoredBy') {
                 item.items = this.authoredBy;
               } else if (item.column === 'plant') {

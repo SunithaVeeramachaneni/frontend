@@ -7,7 +7,12 @@
 >
   <div *ngFor="let module of permissions; let i = index" class="sections">
     <ng-container>
-      <div class="headers">
+      <div
+        [ngClass]="{
+          'pop-up-header': rolesWithPermissionsInUsers === userRolePermissions,
+          headers: rolesWithPermissionsInUsers !== userRolePermissions
+        }"
+      >
         <mat-checkbox
           [checked]="module.checked"
           [indeterminate]="fewComplete(module, 'main')"
@@ -42,7 +47,13 @@
         ></svg-icon>
       </div>
       <div class="permissions-body">
-        <ul *ngIf="opened[i].main === true">
+        <ul
+          *ngIf="opened[i].main === true"
+          [ngClass]="{
+            'pop-up-permissions-body':
+              rolesWithPermissionsInUsers === userRolePermissions
+          }"
+        >
           <li
             *ngFor="let permission of module.permissions"
             class="list-element"
@@ -66,7 +77,13 @@
       <ng-container
         *ngFor="let subper of module.subPermissions; let subindex = index"
       >
-        <div class="sub-headers">
+        <div
+          [ngClass]="{
+            'pop-up-sub-headers':
+              rolesWithPermissionsInUsers === userRolePermissions,
+            'sub-headers': rolesWithPermissionsInUsers !== userRolePermissions
+          }"
+        >
           <mat-checkbox
             [checked]="subper.checked"
             [indeterminate]="fewComplete(subper, 'submodule')"
@@ -101,7 +118,13 @@
         </div>
 
         <div class="permissions-body">
-          <ul *ngIf="opened[i]['sub'][subindex] === true">
+          <ul
+            *ngIf="opened[i]['sub'][subindex] === true"
+            [ngClass]="{
+              'pop-up-permissions-body':
+                rolesWithPermissionsInUsers === userRolePermissions
+            }"
+          >
             <li *ngFor="let sub of subper.permissions" class="list-element">
               <mat-checkbox
                 [checked]="sub.checked"

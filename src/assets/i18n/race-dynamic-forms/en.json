@@ -305,6 +305,7 @@
   "categoryCreated": "Category: ",
   "nodeId": "{type} Id: {id}",
   "typePlaceholder": "Type",
+  "selectAll": "Select All",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: "
 }
