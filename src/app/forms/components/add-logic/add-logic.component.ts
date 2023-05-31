@@ -86,6 +86,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   fieldOperators: any[] = [];
   dropDownTypes = ['DD', 'VI', 'DDM', 'CB'];
+  raiseIssueApplicableFields = ['NF', 'VI', 'RT'];
   checkBoxResponses = ['true', 'false'];
   dropdownValues = [
     { title: 'option1', code: 'option1' },
