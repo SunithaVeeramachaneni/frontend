@@ -285,6 +285,7 @@
   "actionCreated": "New Action Created",
   "issue": "Issue: ",
   "action": "Action: ",
+  "issueActionTitle": "Title: ",
   "description": "Description: ",
   "assignedToAction": "Assigned to: ",
   "createdByAction": "Created by: ",

@@ -76,17 +76,7 @@
                   </span>
                   <br />
                   <span class="data">
-                    <span
-                      class="sub-headings"
-                      *ngIf="data.type === 'issue'"
-                      translate="issue"
-                    >
-                    </span>
-                    <span
-                      class="sub-headings"
-                      *ngIf="data.type === 'action'"
-                      translate="actionTitle"
-                    >
+                    <span class="sub-headings" translate="issueActionTitle">
                     </span>
                     {{ history.message.TITLE }}
                   </span>
@@ -99,27 +89,37 @@
                     <br *ngIf="data.type === 'action'"
                   /></ng-container>
                   <ng-container *ngIf="history.message.ANLNR">
-                    <span class="data" *ngIf="data.type === 'action'">
+                    <span class="data">
                       <span
                         class="sub-headings"
                         translate="assetCreated"
                       ></span>
                       {{ history.message.ANLNR }}
                     </span>
-                    <br *ngIf="data.type === 'action'" />
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ASSIGNEE"
-                    ><span class="data" *ngIf="data.type === 'action'">
+                    ><span class="data">
                       <span
                         class="sub-headings"
                         translate="assignedToAction"
                       ></span>
                       {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
-                    <br *ngIf="data.type === 'action'"
+                    <br
                   /></ng-container>
+                  <ng-container *ngIf="history.message.CATEGORY">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="categoryCreated"
+                      ></span>
+                      {{ history.message.CATEGORY }}
+                    </span>
+                    <br />
+                  </ng-container>
                   <ng-container *ngIf="history.message.DUEDATE">
-                    <span class="data" *ngIf="data.type === 'action'">
+                    <span class="data">
                       <span
                         class="sub-headings"
                         translate="dueDateAndTime"
@@ -128,20 +128,20 @@
                         history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
                       }}
                     </span>
-                    <br *ngIf="data.type === 'action'" />
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.PRIORITY">
-                    <span class="data" *ngIf="data.type === 'action'">
+                    <span class="data">
                       <span
                         class="sub-headings"
                         translate="actionPriority"
                       ></span>
                       {{ history.message.PRIORITY }}
                     </span>
-                    <br *ngIf="data.type === 'action'"
+                    <br
                   /></ng-container>
                   <ng-container *ngIf="history.message.STATUS">
-                    <span class="data" *ngIf="data.type === 'action'">
+                    <span class="data">
                       <span
                         class="sub-headings"
                         translate="actionStatus"
@@ -149,13 +149,6 @@
                       {{ history.message.STATUS }}
                     </span>
                   </ng-container>
-                  <span class="data" *ngIf="data.category !== placeholder">
-                    <span
-                      class="sub-headings"
-                      translate="categoryCreated"
-                    ></span>
-                    {{ data.category }}
-                  </span>
                   <br *ngIf="data.round !== placeholder" />
                   <span class="data" *ngIf="data.round !== placeholder">
                     <span class="sub-headings" translate="roundCreated"></span>
