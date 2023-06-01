@@ -9,7 +9,8 @@ import {
   Output,
   ViewChild,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  OnDestroy
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -27,7 +28,7 @@ import {
   getDay,
   weeksToDays
 } from 'date-fns';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { RoundPlanScheduleConfigurationService } from 'src/app/components/operator-rounds/services/round-plan-schedule-configuration.service';
 import {
   AssigneeDetails,
@@ -42,6 +43,7 @@ import {
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
+import { Subject } from 'rxjs';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -60,7 +62,9 @@ export interface ScheduleConfig {
   styleUrls: ['./schedule-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ScheduleConfigurationComponent implements OnInit, OnChanges {
+export class ScheduleConfigurationComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
   @Input() assigneeDetails: AssigneeDetails;
   @Input() moduleName: 'OPERATOR_ROUNDS' | 'RDF';
@@ -110,6 +114,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
   };
   private _roundPlanDetail: any;
   private _formDetail: any;
+  private onDestroy$ = new Subject();
+
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -187,7 +193,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
     });
     this.schedulerConfigForm
       .get('scheduleEndType')
-      .valueChanges.subscribe((scheduleEndType) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((scheduleEndType) => {
         switch (scheduleEndType) {
           case 'on':
             this.schedulerConfigForm.get('scheduleEndOn').enable();
@@ -212,7 +219,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('scheduleType')
-      .valueChanges.subscribe((scheduleType) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((scheduleType) => {
         switch (scheduleType) {
           case 'byFrequency':
             this.schedulerConfigForm.get('repeatEvery').patchValue('day');
@@ -235,7 +243,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('repeatEvery')
-      .valueChanges.subscribe((repeatEvery) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((repeatEvery) => {
         switch (repeatEvery) {
           case 'day':
             this.schedulerConfigForm
@@ -282,7 +291,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('daysOfWeek')
-      .valueChanges.subscribe((daysOfWeek) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((daysOfWeek) => {
         if (daysOfWeek?.length === 0) {
           this.schedulerConfigForm
             .get('daysOfWeek')
@@ -292,7 +302,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('monthlyDaysOfWeek')
-      .valueChanges.subscribe((monthlyDaysOfWeek) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((monthlyDaysOfWeek) => {
         const monthlyDaysOfWeekCount = monthlyDaysOfWeek.reduce(
           (acc: number, curr: number[]) => {
             acc += curr.length;
@@ -307,7 +318,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('scheduleEndOccurrences')
-      .valueChanges.subscribe((occurrences) => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((occurrences) => {
         if (occurrences > 0) {
           let days = 0;
           switch (this.schedulerConfigForm.get('repeatEvery').value) {
@@ -341,7 +353,8 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
 
     this.schedulerConfigForm
       .get('repeatDuration')
-      .valueChanges.subscribe(() => {
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
         this.schedulerConfigForm
           .get('scheduleEndOccurrences')
           .patchValue(
@@ -714,5 +727,10 @@ export class ScheduleConfigurationComponent implements OnInit, OnChanges {
         Validators.max(this.roundsGeneration.max)
       ]);
     this.schedulerConfigForm.get('advanceFormsCount').updateValueAndValidity();
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

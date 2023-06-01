@@ -10,7 +10,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -18,9 +19,10 @@ import {
   distinctUntilChanged,
   pairwise,
   startWith,
+  takeUntil,
   tap
 } from 'rxjs/operators';
-import { Observable, timer } from 'rxjs';
+import { Observable, Subject, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -30,7 +32,8 @@ import {
   Question,
   NumberRangeMetadata,
   FormMetadata,
-  InstructionsFile
+  InstructionsFile,
+  UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
   getQuestionByID,
@@ -45,21 +48,20 @@ import { FormService } from '../../services/form.service';
 import { isEqual } from 'lodash-es';
 import { BuilderConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
-import { ActivatedRoute } from '@angular/router';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { ResponseSetService } from 'src/app/components/master-configurations/response-set/services/response-set.service';
 import { ToastService } from 'src/app/shared/toast';
 import { TranslateService } from '@ngx-translate/core';
-import { UnitMeasurementService } from 'src/app/components/master-configurations/unit-measurement/services';
 import { getUnitOfMeasurementList } from '../../state';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
 
   @ViewChild('name', { static: false }) name: ElementRef;
@@ -120,6 +122,9 @@ export class QuestionComponent implements OnInit {
 
   @Input() isPreviewActive;
 
+  @Input() isAskQuestionFocusId: any;
+  @Output() isAskedQuestionFocusId = new EventEmitter<any>();
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
@@ -174,6 +179,9 @@ export class QuestionComponent implements OnInit {
   isINSTFieldChanged = false;
   instructionTagColours = {};
   instructionTagTextColour = {};
+  formMetadata$: Observable<FormMetadata>;
+  moduleName$: Observable<string>;
+  uom$: Observable<UnitOfMeasurement[]>;
 
   private _pageIndex: number;
   private _id: string;
@@ -182,32 +190,32 @@ export class QuestionComponent implements OnInit {
   private _isAskQuestion: boolean;
   private _questionName: string;
   private _subFormId: string;
+  private onDestroy$ = new Subject();
 
   constructor(
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
     private responseSetService: ResponseSetService,
-    private operatorRoundsService: OperatorRoundsService,
-    private route: ActivatedRoute,
     private toast: ToastService,
-    private translate: TranslateService,
-    private unitServiceOfMeasurement: UnitMeasurementService
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.store.select(getFormMetadata).subscribe((event) => {
-      this.formId = event.id;
-      this.formMetadata = event;
-    });
-    this.store
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap((event) => {
+        this.formId = event.id;
+        this.formMetadata = event;
+      })
+    );
+    this.moduleName$ = this.store
       .select(getModuleName)
-      .subscribe((event) => (this.moduleName = event));
+      .pipe(tap((event) => (this.moduleName = event)));
 
-    this.store
-      .select(getUnitOfMeasurementList)
-      .subscribe((unitOfMeasurements) => {
+    this.uom$ = this.store.select(getUnitOfMeasurementList).pipe(
+      tap((unitOfMeasurements) => {
         this.unitOfMeasurements = unitOfMeasurements.filter(
           (value, index, array) =>
             index ===
@@ -216,7 +224,8 @@ export class QuestionComponent implements OnInit {
               ) && value.isActive === true
         );
         this.unitOfMeasurementsAvailable = [...this.unitOfMeasurements];
-      });
+      })
+    );
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -243,6 +252,7 @@ export class QuestionComponent implements OnInit {
         startWith({}),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
@@ -302,7 +312,19 @@ export class QuestionComponent implements OnInit {
             } else if (!question.isOpen) {
               if (this.isAskQuestion) {
                 if (question.fieldType !== 'INST') {
-                  timer(0).subscribe(() => this.name.nativeElement.focus());
+                  timer(0).subscribe(() => {
+                    if (
+                      this.name.nativeElement.id ===
+                        this.isAskQuestionFocusId ||
+                      this.isAskQuestionFocusId === ''
+                    ) {
+                      this.name.nativeElement.focus();
+                      this.isAskQuestionFocusId = this.name.nativeElement.id;
+                      this.isAskedQuestionFocusId.emit(
+                        this.name.nativeElement.id
+                      );
+                    }
+                  });
                 }
               } else {
                 if (question.fieldType !== 'INST') {
@@ -814,5 +836,30 @@ export class QuestionComponent implements OnInit {
   imagesArrayRemoveNullGaps(images) {
     const nonNullImages = images.filter((image) => image !== null);
     return nonNullImages.concat(Array(3 - nonNullImages.length).fill(null));
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  openPreviewDialog() {
+    const attachments = this.questionForm.get('value').value.images;
+    const filteredMedia = [...attachments];
+    const slideshowImages = [];
+    filteredMedia.forEach((media) => {
+      if (media) {
+        slideshowImages.push(media.objectURL);
+      }
+    });
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
   }
 }

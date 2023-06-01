@@ -22,6 +22,7 @@ import {
   QuickResponseActions
 } from '../../state/actions';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { FormMetadata } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-response-type',
@@ -52,6 +53,7 @@ export class ResponseTypeComponent implements OnInit {
   allResponses: any[] = [];
   quickResponsesData$: Observable<any>;
   formId: string;
+  formMetadata$: Observable<FormMetadata>;
 
   constructor(
     private formService: FormService,
@@ -61,9 +63,11 @@ export class ResponseTypeComponent implements OnInit {
 
   ngOnInit(): void {
     this.globalResponses$ = this.store.select(getGlobalResponses);
-    this.store.select(getFormMetadata).subscribe(({ id }) => {
-      this.formId = id;
-    });
+    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
+      tap(({ id }) => {
+        this.formId = id;
+      })
+    );
 
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),

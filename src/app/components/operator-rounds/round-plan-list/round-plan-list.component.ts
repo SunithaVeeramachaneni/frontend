@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -8,7 +13,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -49,7 +55,7 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class RoundPlanListComponent implements OnInit {
+export class RoundPlanListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -271,6 +277,7 @@ export class RoundPlanListComponent implements OnInit {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plants = [];
   plantsIdNameMap = {};
@@ -278,6 +285,7 @@ export class RoundPlanListComponent implements OnInit {
   plantsObject: { [key: string]: PlantsResponse } = {};
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  private destroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -298,6 +306,7 @@ export class RoundPlanListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.operatorRoundsService.fetchForms$.next({ data: 'search' });
         })
@@ -580,7 +589,7 @@ export class RoundPlanListComponent implements OnInit {
   getAllOperatorRounds() {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
-      .subscribe((formsList) => {
+      .subscribe((formsList: any) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
@@ -588,6 +597,15 @@ export class RoundPlanListComponent implements OnInit {
             .filter((value, index, self) => self.indexOf(value) === index);
           this.lastPublishedBy = [...uniqueLastPublishedBy];
 
+          const uniqueLastModifiedBy = formsList.rows
+            .map((item) => {
+              if (item.lastModifiedBy) {
+                return item.lastModifiedBy;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.lastModifiedBy = [...uniqueLastModifiedBy];
           const uniqueAuthoredBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
@@ -611,7 +629,7 @@ export class RoundPlanListComponent implements OnInit {
             if (item.column === 'status') {
               item.items = this.status;
             } else if (item.column === 'modifiedBy') {
-              item.items = this.lastPublishedBy;
+              item.items = this.lastModifiedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
             } else if (item.column === 'plant') {
@@ -670,6 +688,12 @@ export class RoundPlanListComponent implements OnInit {
     this.nextToken = '';
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private showFormDetail(row: RoundPlan): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;

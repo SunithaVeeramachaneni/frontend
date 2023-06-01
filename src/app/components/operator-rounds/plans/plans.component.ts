@@ -14,6 +14,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -374,6 +376,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private destroy$ = new Subject();
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -396,6 +399,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.fetchPlans$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -475,12 +479,19 @@ export class PlansComponent implements OnInit, OnDestroy {
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) =>
+              roundPlan.schedule && roundPlan.schedule !== 'Ad-Hoc'
           );
         } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
-          );
+          filteredRoundPlans = roundPlans.data
+            .filter(
+              (roundPlan: RoundPlanDetail) =>
+                !roundPlan.schedule || roundPlan.schedule === 'Ad-Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredRoundPlans = roundPlans.data;
         }
@@ -590,7 +601,10 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchPlans$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -919,10 +933,14 @@ export class PlansComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value ?? '';
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+      } else if (
+        item.type !== 'daterange' &&
+        item.value &&
+        item.column !== 'schedule'
+      ) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
       } else {
         this.filter[item.column] = item.value ?? '';
       }

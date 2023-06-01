@@ -179,13 +179,14 @@ export class TemplateConfigurationModalComponent implements OnInit {
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
               pages: DEFAULT_TEMPLATE_PAGES,
-              counter: 1
+              counter: 4
             })
             .subscribe(() => {
-              this.router.navigate(['/forms/templates/edit', template.id], {
-                state: { allTemplates: this.data }
-              });
-              this.dialogRef.close();
+              this.router
+                .navigate(['/forms/templates/edit', template.id], {
+                  state: { allTemplates: this.data }
+                })
+                .then(() => this.dialogRef.close());
             });
         });
     }

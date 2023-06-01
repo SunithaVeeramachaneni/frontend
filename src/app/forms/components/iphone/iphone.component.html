@@ -1,10 +1,15 @@
-<div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
+<div
+  class="bg-iphone"
+  *ngIf="{
+    formMetadata: formMetadata$ | async,
+    pagesCount: pagesCount$ | async
+  }"
+>
   <span class="current-time">
     {{ currentTime }}
   </span>
   <div class="iphone-header">
-
-    <svg-icon icon="icon-Back_Page" class="previous-arrow" ></svg-icon>
+    <svg-icon icon="icon-Back_Page" class="previous-arrow"></svg-icon>
     <p class="form-heading" matTooltip="{{ formMetadata.name }}">
       {{ formMetadata.name }}
     </p>
@@ -34,7 +39,9 @@
   </div>
   <div
     class="iphone-preview"
-    [ngClass]="moduleType === 'operator-rounds' ? 'iphone-preview-operator-rounds' : ''"
+    [ngClass]="
+      moduleType === 'operator-rounds' ? 'iphone-preview-operator-rounds' : ''
+    "
   >
     <app-preview
       (totalPageCount)="changePageCount($event)"
@@ -44,7 +51,13 @@
       [moduleType]="moduleType"
     ></app-preview>
   </div>
-  <div class="iphone-footer" [ngClass]="moduleType === 'operator-rounds' ? 'iphone-footer-operator-rounds' : ''" *ngIf="totalPages">
+  <div
+    class="iphone-footer"
+    [ngClass]="
+      moduleType === 'operator-rounds' ? 'iphone-footer-operator-rounds' : ''
+    "
+    *ngIf="totalPages"
+  >
     <button
       class="previous-page"
       (click)="prevPage()"
@@ -81,10 +94,21 @@
     </button>
   </div>
 
-  <div class="bottom-sheet" [ngClass]="isOpenBottomSheet ? '' : 'hide-bottom-sheet'">
-    <div class="bottom-list-item choose-option" matLine translate="chooseOption"></div>
+  <div
+    class="bottom-sheet"
+    [ngClass]="isOpenBottomSheet ? '' : 'hide-bottom-sheet'"
+  >
+    <div
+      class="bottom-list-item choose-option"
+      matLine
+      translate="chooseOption"
+    ></div>
     <hr />
-    <div class="bottom-list-item" matListItemTitle translate="createIssue"></div>
+    <div
+      class="bottom-list-item"
+      matListItemTitle
+      translate="createIssue"
+    ></div>
     <hr />
     <button
       class="bottom-list-item bottom-btn"
@@ -108,14 +132,13 @@
     ></button>
   </div>
 
-  <div class="history-bottom-sheet"  [ngClass]="isOpenHistoryBottomSheet ? '' : 'hide-history-bottom-sheet'">
+  <div
+    class="history-bottom-sheet"
+    [ngClass]="isOpenHistoryBottomSheet ? '' : 'hide-history-bottom-sheet'"
+  >
     <div class="header">
       <div></div>
-      <div
-        class="title"
-        matLine
-        translate="historyTxt"
-      ></div>
+      <div class="title" matLine translate="historyTxt"></div>
       <button
         (click)="closeHistoryBottomSheet()"
         class="done-btn"
@@ -129,21 +152,22 @@
         matLine
         translate="lastFiveReadingsHeader"
       ></div>
-      <div class="main-question" matLine translate="whatIsPressureReadingHeader"></div>
+      <div
+        class="main-question"
+        matLine
+        translate="whatIsPressureReadingHeader"
+      ></div>
       <div class="history-chart-container">
         <img
-        class="history-chart"
-        src="assets/Images/History_Preview_Graph.png"
-        alt="preview-history-graph"
-      />
+          class="history-chart"
+          src="assets/Images/History_Preview_Graph.png"
+          alt="preview-history-graph"
+        />
       </div>
       <table class="history-table">
         <tr>
           <th class="table-heading" translate="dateLabel"></th>
-          <th
-            class="table-heading"
-            translate="readingLabel"
-          ></th>
+          <th class="table-heading" translate="readingLabel"></th>
           <th class="table-heading" translate="operator"></th>
         </tr>
         <tr>

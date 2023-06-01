@@ -13,8 +13,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  getTasksCountByNodeId,
-  getTasksCountByNodeIds,
+  getNodeWiseQuestionsCount,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
@@ -28,6 +27,8 @@ import {
   HierarchyActions
 } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-route-plan',
@@ -55,6 +56,9 @@ export class RoutePlanComponent implements OnInit {
   dropActionTodo: any = null;
   positions: any;
   selectedNode: any;
+  selectedNode$: Observable<any>;
+  nodeWiseQuestionsCount: any = {};
+  nodeWiseQuestionsCount$: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
 
@@ -65,15 +69,23 @@ export class RoutePlanComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     public dialog: MatDialog,
     private operatorRoundsService: OperatorRoundsService,
-    private cdrf: ChangeDetectorRef,
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
-    this.operatorRoundsService.selectedNode$.subscribe((data) => {
-      this.selectedNode = data;
-      this.cdrf.detectChanges();
-    });
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
+      tap((data) => {
+        this.selectedNode = data;
+      })
+    );
+
+    this.nodeWiseQuestionsCount$ = this.store
+      .select(getNodeWiseQuestionsCount())
+      .pipe(
+        tap((nodeWiseQuestionsCount) => {
+          this.nodeWiseQuestionsCount = nodeWiseQuestionsCount;
+        })
+      );
   }
 
   setSelectedNode(node) {
@@ -83,26 +95,19 @@ export class RoutePlanComponent implements OnInit {
   }
 
   getTasksCountByNodeId(nodeId) {
-    let count = 0;
-    this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
-      count = c;
-    });
-    return count;
+    return this.nodeWiseQuestionsCount[nodeId] || 0;
   }
   getTotalTasksCountByNode(node) {
-    let count = 0;
     const allChildNodeIds =
       this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
     const index = allChildNodeIds.indexOf(node.id);
     if (index > -1) {
       allChildNodeIds.splice(index, 1);
     }
-    this.store
-      .select(getTasksCountByNodeIds(allChildNodeIds))
-      .subscribe((c) => {
-        count = c;
-      });
-    return count;
+    return allChildNodeIds.reduce(
+      (acc, curr) => (acc += this.nodeWiseQuestionsCount[curr] || 0),
+      0
+    );
   }
 
   onRemoveNode(event, node) {
