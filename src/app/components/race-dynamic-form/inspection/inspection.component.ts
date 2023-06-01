@@ -50,7 +50,8 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
+  graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -332,7 +333,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
