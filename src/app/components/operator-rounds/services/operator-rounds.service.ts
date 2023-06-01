@@ -275,7 +275,6 @@ export class OperatorRoundsService {
   }
 
   createForm$(formListQuery) {
-    console.log('formlistquery', formListQuery);
     return this.appService._postData(
       environment.operatorRoundsApiUrl,
       'round-plans',

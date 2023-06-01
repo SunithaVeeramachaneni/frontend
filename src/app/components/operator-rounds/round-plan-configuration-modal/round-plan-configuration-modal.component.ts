@@ -124,35 +124,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
   }
 
-  // maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
-  //   return (control: AbstractControl): { [key: string]: any } | null => {
-  //     const textWithoutBulletPoints = control.value
-  //       .replace('<p>', '')
-  //       .replace('</p>', '')
-  //       .replace('<ul>', '')
-  //       .replace('</ul>', '')
-  //       .replace('<li>', '')
-  //       .replace('</li>', '')
-  //       .replace('<ol>', '')
-  //       .replace('</ol>', '');
-  //     if (textWithoutBulletPoints.length > maxLength) {
-  //       return { maxLength: { value: control.value } };
-  //     }
-  //     return null;
-  //   };
-  // }
-
-  // maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
-  //   const htmlTagsRegex = /<[^>]+>/g;
-  //   return (control: AbstractControl): { [key: string]: any } | null => {
-  //     const textWithoutTags = control.value.replace(htmlTagsRegex, '');
-  //     if (textWithoutTags.length > maxLength) {
-  //       return { maxLength: { value: control.value } };
-  //     }
-  //     return null;
-  //   };
-  // }
-
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
     const htmlTagsRegex = /<[^>]+>/g;
     return (control: AbstractControl): { [key: string]: any } | null => {
@@ -308,29 +279,28 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
-
-      for (const url of newAttachments) {
+      newAttachments.forEach((url) => {
         if (
           url.endsWith('.png') ||
           url.endsWith('.jpeg') ||
           url.endsWith('.jpg')
         ) {
-          if (instructions.attachments.length > 0) {
-            instructions.attachments += ', ';
-          }
-          instructions.attachments += url;
+          instructions.attachments += `${
+            instructions.attachments.length > 0 ? ', ' : ''
+          }${url}`;
         } else if (url.endsWith('.pdf')) {
-          {
-            if (instructions.pdfDocs.length > 0) {
-              instructions.pdfDocs += ',';
-            }
-            instructions.pdfDocs += url;
-          }
+          instructions.pdfDocs += `${
+            instructions.pdfDocs.length > 0 ? ',' : ''
+          }${url}`;
         }
-      }
-      instructions.notes += notesAdd;
-      this.headerDataForm.get('notesAttachment').setValue(notesAdd);
-      this.headerDataForm.get('instructions').setValue(instructions);
+      });
+      this.headerDataForm.patchValue({
+        instructions: {
+          attachments: instructions.attachments,
+          notes: notesAdd,
+          pdfDocs: instructions.pdfDocs
+        }
+      });
       this.store.dispatch(
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
@@ -341,7 +311,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           }
         })
       );
-
       this.router.navigate(['/operator-rounds/create']);
       this.dialogRef.close();
     }
@@ -388,10 +357,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  getS3Url(filePath: string) {
-    return `${this.s3BaseUrl}public/${filePath}`;
-  }
-
   sendFileToS3(file, params): void {
     const { originalValue, isImage } = params;
 
@@ -420,38 +385,32 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       'image/png',
       'application/pdf'
     ];
-
     const originalValue = this.headerDataForm.get('instructions').value;
-
-    for (const file of files) {
-      if (allowedFileTypes.indexOf(file.type) === -1) {
-        this.toast.show({
-          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
-          type: 'warning'
-        });
-        return;
-      }
-
-      if (file.type === 'application/pdf') {
+    const invalidFiles = files.filter(
+      (file) => !allowedFileTypes.includes(file.type)
+    );
+    if (invalidFiles.length > 0) {
+      this.toast.show({
+        text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
+        type: 'warning'
+      });
+    } else {
+      files.forEach((file) => {
+        const isImage = file.type === 'application/pdf' ? false : true;
         this.sendFileToS3(file, {
           originalValue,
-          isImage: false
+          isImage
         });
-      } else {
-        this.sendFileToS3(file, {
-          originalValue,
-          isImage: true
-        });
-      }
+      });
     }
   };
 
   openPreviewDialog() {
     const attachments = this.headerDataForm.get('instructions').value;
-    const filteredMediaType1 = [...attachments.images];
+    const filteredMediaType = [...attachments.images];
 
     const slideshowImages = [];
-    filteredMediaType1.forEach((media) => {
+    filteredMediaType.forEach((media) => {
       slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
     });
 
@@ -468,15 +427,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   roundPlanFileDeleteHandler(index: number): void {
     const attachments = this.headerDataForm.get('instructions').value;
-
     if (attachments) {
-      this.roundPlanConfigurationService.deleteFromS3(
-        attachments.images.objectKey
+      const deleteObservable = of(
+        this.roundPlanConfigurationService.deleteFromS3(
+          attachments.images.objectKey
+        )
       );
-
-      attachments.images.splice(index, 1);
-      this.headerDataForm.get('instructions').setValue(attachments);
+      deleteObservable.subscribe(() => {
+        attachments.images.splice(index, 1);
+      });
     }
+    this.headerDataForm.get('instructions').setValue(attachments);
   }
 
   roundPlanPdfDeleteHandler(index: number): void {
@@ -485,9 +446,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.roundPlanConfigurationService.deleteFromS3(
         attachments.pdf.objectKey
       );
-
-      attachments.pdf.splice(index, 1);
-      this.headerDataForm.get('instructions').setValue(attachments);
+      .subscribe((res) => {
+        console.log('hit', res);
+        if (res) attachments.pdf.splice(index, 1);
+      });
     }
+    this.headerDataForm.get('instructions').setValue(attachments);
   }
 }
