@@ -184,7 +184,7 @@ export class UnitMeasurementService {
     return this._appService
       ._removeData(
         environment.masterConfigApiUrl,
-        `unit-of-measurement/types/${id}`,
+        `unit-of-measurement/${id}`,
         info
       )
       .pipe(map((response) => (response === null ? id : response)));

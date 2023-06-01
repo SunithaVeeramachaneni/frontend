@@ -59,6 +59,8 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.isEditForm = !!this.unitEditData;
+    console.log(`edit form is ${this.isEditForm}`); //edit form
+    console.log(`unit edit data ${this.unitEditData}`);
     if (this.unitEditData?.rows?.length > 0) {
       this.initForm();
       this.unitType = '';
@@ -149,6 +151,7 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
   };
 
   initForm(): void {
+    console.log('inside init form');
     this.unitMeasurementForm = new FormGroup({
       units: new FormArray([])
     });
@@ -210,31 +213,52 @@ export class AddEditUnitOfMeasurementComponent implements OnInit, OnChanges {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  deleteUnitAndUOM(): void {
+  deleteUnitAndUOM(idx: number): void {
+// --------------------------------
+// created side menu
     if (!this.isEditForm) {
+      this.units.removeAt(idx);
       return;
     }
-    const deleteReportRef = this.dialog.open(
-      UnitOfMeasurementDeleteModalComponent,
-      {
-        data: this.unitEditData
-      }
-    );
+// -------------------------------
+// without dailouge box popup
+    const unitId = this.unitEditData?.rows[idx]?.id;
+    if (unitId) {
+      this.unitOfMeasurementService
+        .deleteUnitOfMeasurement$(unitId)
+        .subscribe((response) => {
+          if (Object.keys(response).length) {
+            this.resetFormState();
+            this.createUnitData.emit({
+              status: 'delete'
+            });
+          }
+        });
+    }
+// -------------------------------------------------------------------------
+// dailouge box pop up
+    // const deleteReportRef = this.dialog.open(
+    //   UnitOfMeasurementDeleteModalComponent,
+    //   {
+    //     data: this.unitEditData
+    //   }
+    // );
 
-    deleteReportRef.afterClosed().subscribe((res) => {
-      if (res === 'delete') {
-        this.unitOfMeasurementService
-          .deleteUnitType$(this.unitEditData?.unitList?.id)
-          .subscribe((response) => {
-            if (Object.keys(response).length) {
-              this.resetFormState();
-              this.createUnitData.emit({
-                status: 'delete'
-              });
-            }
-          });
-      }
-    });
+    // deleteReportRef.afterClosed().subscribe((res) => {
+    //   if (res === 'delete') {
+    //     this.unitOfMeasurementService
+    //       .deleteUnitOfMeasurement$(this.unitEditData?.rows[idx]?.id)
+    //       .subscribe((response) => {
+    //         if (Object.keys(response).length) {
+    //           this.resetFormState();
+    //           this.createUnitData.emit({
+    //             status: 'delete'
+    //           });
+    //         }
+    //       });
+    //   }
+    // });
+// ----------------------------------------------------------------------------------
   }
 
   editMeasurement(): void {

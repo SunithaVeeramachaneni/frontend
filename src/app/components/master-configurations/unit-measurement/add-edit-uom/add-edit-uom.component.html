@@ -91,9 +91,9 @@
             </button>
           </p>
         </div>
-        <span class="delete-icon" *ngIf="false" (click)="deleteUnitAndUOM()">
+        <!-- <span class="delete-icon" *ngIf="true" (click)="deleteUnitAndUOM()">
           <svg-icon icon="icon-delete-icon" class="list-icons"></svg-icon>
-        </span>
+        </span> -->
       </div>
 
       <div
@@ -156,6 +156,21 @@
                 }}
               </mat-error>
             </mat-form-field>
+            <!-- -------------------------- -->
+            <!-- <button (click)="deleteUnitAndUOM(i)">delete</button> -->
+
+            <span (click)="deleteUnitAndUOM(i)" class="delete-btn">
+              <svg-icon icon="minus-delete" class="delete-icon"></svg-icon>
+            </span>
+
+            <!-- <span
+              class="delete-icon"
+              *ngIf="unitType"
+              (click)="deleteUnitAndUOM()"
+            >
+              <svg-icon icon="icon-delete-icon" class="delete-icon"></svg-icon>
+            </span> -->
+            <!-- ----------------------------------------- -->
           </div>
         </div>
       </div>
