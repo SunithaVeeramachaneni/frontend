@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -13,7 +15,7 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -22,6 +24,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { slideInOut } from 'src/app/animations';
@@ -43,7 +46,6 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
-import { UsersService } from 'src/app/components/user-management/services/users.service';
 
 @Component({
   selector: 'app-issues-list',
@@ -52,18 +54,16 @@ import { UsersService } from 'src/app/components/user-management/services/users.
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class IssuesListComponent implements OnInit {
+export class IssuesListComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
     );
   }
-
-  @Input() moduleName;
-
   get users$(): Observable<UserDetails[]> {
     return this._users$;
   }
+  @Input() moduleName;
   assigneeDetails: AssigneeDetails;
   columns: Column[] = [
     {
@@ -359,6 +359,7 @@ export class IssuesListComponent implements OnInit {
   placeHolder = '_ _';
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly observationsService: ObservationsService,
@@ -375,6 +376,7 @@ export class IssuesListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.observationsService.fetchIssues$.next({
             data: 'search'
@@ -568,8 +570,8 @@ export class IssuesListComponent implements OnInit {
                 : this.placeHolder,
               priority,
               dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
-              assignedToDisplay,
-              assignedTo
+              assignedToDisplay: assignedToDisplay || '',
+              assignedTo: assignedTo || ''
             };
           }
           return data;
@@ -589,4 +591,9 @@ export class IssuesListComponent implements OnInit {
       default:
     }
   };
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

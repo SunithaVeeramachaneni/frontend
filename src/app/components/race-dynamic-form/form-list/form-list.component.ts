@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -8,7 +13,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -52,7 +58,7 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class FormListComponent implements OnInit {
+export class FormListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -277,12 +283,14 @@ export class FormListComponent implements OnInit {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plantsIdNameMap = {};
   plants = [];
   createdBy = [];
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -302,6 +310,7 @@ export class FormListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -613,6 +622,15 @@ export class FormListComponent implements OnInit {
               .filter((value, index, self) => self.indexOf(value) === index);
             this.lastPublishedBy = [...uniqueLastPublishedBy];
 
+            const uniqueLastModifiedBy = formsList.rows
+              .map((item) => {
+                if (item.lastModifiedBy) {
+                  return item.lastModifiedBy;
+                }
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.lastModifiedBy = [...uniqueLastModifiedBy];
+
             const uniqueCreatedBy = formsList.rows
               .map((item) => item.author)
               .filter((value, index, self) => self.indexOf(value) === index);
@@ -633,7 +651,7 @@ export class FormListComponent implements OnInit {
               if (item.column === 'status') {
                 item.items = this.status;
               } else if (item.column === 'modifiedBy') {
-                item.items = this.lastPublishedBy;
+                item.items = this.lastModifiedBy;
               } else if (item.column === 'authoredBy') {
                 item.items = this.authoredBy;
               } else if (item.column === 'plant') {
@@ -696,6 +714,11 @@ export class FormListComponent implements OnInit {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private showFormDetail(row: GetFormList): void {

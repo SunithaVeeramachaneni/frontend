@@ -1,0 +1,23 @@
+[
+  {
+    "label": "Unit Type",
+    "items": [],
+    "column": "unitType",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Symbol",
+    "items": [],
+    "column": "symbol",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Status",
+    "items": [],
+    "column": "status",
+    "type": "select",
+    "value": ""
+  }
+]

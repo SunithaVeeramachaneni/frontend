@@ -6,12 +6,13 @@ import {
   Inject,
   ChangeDetectionStrategy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ToastService } from 'src/app/shared/toast';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -31,7 +32,12 @@ import {
   getFormPublishStatus,
   getFormDetails
 } from '../../state/builder/builder-state.selectors';
-import { debounceTime, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { format } from 'date-fns';
@@ -42,7 +48,7 @@ import { format } from 'date-fns';
   styleUrls: ['./pdf-builder.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PDFBuilderComponent implements OnInit {
+export class PDFBuilderComponent implements OnInit, OnDestroy {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
 
@@ -97,6 +103,7 @@ export class PDFBuilderComponent implements OnInit {
   currentUserName = '';
 
   readonly formConfigurationStatus = formConfigurationStatus;
+  private onDestroy$ = new Subject();
 
   constructor(
     private fb: FormBuilder,
@@ -180,37 +187,47 @@ export class PDFBuilderComponent implements OnInit {
       });
     }
 
-    this.pdfBuilderConfigurationsForm.valueChanges.subscribe((data) => {
-      this.store.dispatch(
-        BuilderConfigurationActions.updatePDFBuilderConfiguration({
-          pdfBuilderConfiguration: {
-            ...this.pdfBuilderConfigurationsFormCustomText.value,
-            ...data
-          }
-        })
-      );
+    this.pdfBuilderConfigurationsForm.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe((data) => {
+        this.store.dispatch(
+          BuilderConfigurationActions.updatePDFBuilderConfiguration({
+            pdfBuilderConfiguration: {
+              ...this.pdfBuilderConfigurationsFormCustomText.value,
+              ...data
+            }
+          })
+        );
 
-      if (this.data.moduleName && this.data.moduleName === 'RDF') {
-        this.store.dispatch(
-          BuilderConfigurationActions.updateForm({
-            formMetadata: this.formMetadata,
-            formListDynamoDBVersion: this.formListVersion,
-            ...this.getFormConfigurationStatuses()
-          })
-        );
-      } else {
-        this.store.dispatch(
-          RoundPlanConfigurationActions.updateRoundPlan({
-            formMetadata: this.formMetadata,
-            formListDynamoDBVersion: this.formListVersion,
-            ...this.getFormConfigurationStatuses()
-          })
-        );
-      }
-    });
+        if (this.data.moduleName && this.data.moduleName === 'RDF') {
+          this.store.dispatch(
+            BuilderConfigurationActions.updateForm({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        } else {
+          this.store.dispatch(
+            RoundPlanConfigurationActions.updateRoundPlan({
+              formMetadata: this.formMetadata,
+              formListDynamoDBVersion: this.formListVersion,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+        }
+      });
 
     this.pdfBuilderConfigurationsFormCustomText.valueChanges
-      .pipe(debounceTime(1000))
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$)
+      )
       .subscribe((data) => {
         const { customTextField, customTextLabel } = data;
         this.store.dispatch(
@@ -483,5 +500,10 @@ export class PDFBuilderComponent implements OnInit {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

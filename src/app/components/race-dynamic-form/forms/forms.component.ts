@@ -13,6 +13,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -22,6 +23,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -316,7 +318,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-
   plants = [];
   plantsIdNameMap = {};
 
@@ -329,6 +330,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -349,6 +352,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -424,12 +428,19 @@ export class FormsComponent implements OnInit, OnDestroy {
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => form.schedule
+            (form: ScheduleFormDetail) =>
+              form.schedule && form.schedule !== 'Ad-Hoc'
           );
         } else if (formCategory === 'unscheduled') {
-          filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => !form.schedule
-          );
+          filteredForms = forms.data
+            .filter(
+              (form: ScheduleFormDetail) =>
+                !form.schedule || form.schedule === 'Ad=Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredForms = forms.data;
         }
@@ -468,7 +479,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.activatedRoute.params.subscribe((params) => {
+    this.activatedRoute.params.subscribe(() => {
       this.hideFormDetail = true;
       this.hideScheduleConfig = true;
     });
@@ -515,7 +526,10 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -639,7 +653,7 @@ export class FormsComponent implements OnInit, OnDestroy {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
-                  rounds: count
+                  forms: count
                 };
               }
               return data;
@@ -748,6 +762,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
+          forms: form.forms || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
           assignedToEmail: this.getAssignedToEmail(
             formScheduleConfigurations[form.id]
@@ -757,7 +772,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        operator: this.placeHolder
+        forms: this.placeHolder,
+        assignedTo: this.placeHolder
       };
     });
   }
