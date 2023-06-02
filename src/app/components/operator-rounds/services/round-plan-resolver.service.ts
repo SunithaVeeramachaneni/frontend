@@ -2,12 +2,20 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
+import {
+  DEFAULT_PDF_BUILDER_CONFIG,
+  graphQLDefaultMaxLimit
+} from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
 
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  BuilderConfigurationActions,
+  GlobalResponseActions,
+  QuickResponseActions,
+  UnitOfMeasurementActions
+} from 'src/app/forms/state/actions';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { HierarchyState } from 'src/app/forms/state/hierarchy.reducer';
 import { OperatorRoundsService } from './operator-rounds.service';
@@ -30,6 +38,13 @@ export class RoundPlanResolverService
     hierarchyState: HierarchyState;
   }> {
     const id = route.params.id;
+    if (id === undefined) {
+      this.getResponseTypeDetails();
+      return of({
+        formConfigurationState: {} as FormConfigurationState,
+        hierarchyState: {} as HierarchyState
+      });
+    }
     return this.operatorRoundsService.getFormDetailsById$(id).pipe(
       map((response) => {
         if (!Object.keys(response).length) {
@@ -90,7 +105,9 @@ export class RoundPlanResolverService
           pdfTemplateConfiguration
         };
 
-        const subFormsMap = JSON.parse(subForms);
+        const subFormsMap = subForms ? JSON.parse(subForms) : {};
+        this.getResponseTypeDetails(id);
+
         return {
           formConfigurationState: {
             formMetadata,
@@ -113,13 +130,26 @@ export class RoundPlanResolverService
           } as HierarchyState
         };
       })
-      // catchError((error) => {
-      //   this.operatorRoundsService.handleError(error);
-      //   return of({
-      //     formConfigurationState: {} as FormConfigurationState,
-      //     hierarchyState: {} as HierarchyState
-      //   });
-      // })
     );
+  }
+
+  getResponseTypeDetails(id: string = '') {
+    if (id) {
+      this.store.dispatch(
+        QuickResponseActions.fetchFormSpecificQuickResponses({ formId: id })
+      );
+    }
+    this.store.dispatch(
+      UnitOfMeasurementActions.fetchUnitOfMeasurementList({
+        queryParams: {
+          next: '',
+          limit: graphQLDefaultMaxLimit,
+          searchKey: '',
+          fetchType: 'load'
+        }
+      })
+    );
+    this.store.dispatch(QuickResponseActions.fetchDefaultQuickResponses());
+    this.store.dispatch(GlobalResponseActions.fetchGlobalResponses());
   }
 }

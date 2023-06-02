@@ -8,11 +8,21 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
+import { DatePipeDateAdapter } from '../../utils/DatePipeDateAdapter';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss']
+  styleUrls: ['./filter.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: DatePipeDateAdapter },
+    {
+      provide: MAT_DATE_FORMATS,
+      // Pass any format string you would pass to DatePipe
+      useValue: DatePipeDateAdapter.createCustomMatDateFormats('dd/MM/yyyy')
+    }
+  ]
 })
 export class FilterComponent implements OnInit, OnChanges {
   readonly FilterSidePanelComponent = FilterSidePanelComponent;
@@ -64,7 +74,9 @@ export class FilterComponent implements OnInit, OnChanges {
     let status = true;
     for (const item of this.json) {
       if (item.value || item.itemValue) {
-        status = false;
+        if (typeof item.value === 'string') status = false;
+        else if (typeof item.value === 'object' && item.value.length !== 0)
+          status = false;
       }
     }
     return status;

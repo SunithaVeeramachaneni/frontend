@@ -10,10 +10,11 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
-  MatAutocompleteSelectedEvent
+  MatAutocompleteSelectedEvent,
+  MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
   FormBuilder,
@@ -47,6 +48,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   visible = true;
   selectable = true;
   removable = true;
@@ -137,6 +139,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.tagsCtrl.setValue(null);
   }
 
+  openAutoComplete() {
+    this.auto.openPanel();
+  }
+
   remove(tag: string): void {
     this.allTags.push(tag);
     const index = this.tags.indexOf(tag);
@@ -144,6 +150,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     if (index >= 0) {
       this.tags.splice(index, 1);
     }
+    this.filteredTags = of(
+      this.tagsCtrl.value
+        ? this.filter(this.tagsCtrl.value)
+        : this.allTags.slice()
+    );
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {

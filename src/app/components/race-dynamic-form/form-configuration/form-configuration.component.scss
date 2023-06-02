@@ -22,7 +22,7 @@
   .form_title_input {
     border: none;
     cursor: pointer;
-    max-width: 90%;
+    max-width: 55%;
     background: none;
     font-size: 140%;
     font-weight: 500;
@@ -57,6 +57,10 @@
     margin: 0;
     font-size: 80%;
     display: inline;
+  }
+
+  .width-60 {
+    width: 60%;
   }
 
   .form_description_input {

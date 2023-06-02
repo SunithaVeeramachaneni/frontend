@@ -2,10 +2,16 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
 import { FormConfigurationState } from './form-configuration.reducer';
 import { HierarchyState } from './hierarchy.reducer';
+import { UOM } from './unit-of-measurement.reducer';
+import { QuickResponse } from './quick-responses.reducer';
+import { GlobalResponse } from './global-responses.reducer';
 
 export interface FormModuleState {
   formConfiguration: FormConfigurationState;
   hierarchy: HierarchyState;
+  unitOfMeasurement: UOM;
+  quickResponse: QuickResponse;
+  globalResponse: GlobalResponse;
 }
 
 export interface State extends AppState.State {
@@ -22,6 +28,21 @@ const selectFormConfigurationState = createSelector(
 const selectHierarchyState = createSelector(
   selectFeatureState,
   (state) => state.hierarchy
+);
+
+const selectUnitOfMeasurementState = createSelector(
+  selectFeatureState,
+  (state) => state.unitOfMeasurement
+);
+
+const selectQuickResponseState = createSelector(
+  selectFeatureState,
+  (state) => state.quickResponse
+);
+
+const selectGlobalResponseState = createSelector(
+  selectFeatureState,
+  (state) => state.globalResponse
 );
 
 export const getFormMetadata = createSelector(
@@ -235,4 +256,30 @@ export const getMasterHierarchyList = createSelector(
 export const getSelectedHierarchyList = createSelector(
   selectHierarchyState,
   (state) => state.selectedHierarchy
+);
+
+// UOM Selectors
+
+export const getUnitOfMeasurementList = createSelector(
+  selectUnitOfMeasurementState,
+  (state) => state.list
+);
+
+// Quick Responses Selectors
+
+export const getDefaultQuickResponses = createSelector(
+  selectQuickResponseState,
+  (state) => state.defaultResponses
+);
+
+export const getFormSpecificQuickResponses = createSelector(
+  selectQuickResponseState,
+  (state) => state.formSpecificResponses
+);
+
+// Global Response Selectors
+
+export const getGlobalResponses = createSelector(
+  selectGlobalResponseState,
+  (state) => state.list
 );

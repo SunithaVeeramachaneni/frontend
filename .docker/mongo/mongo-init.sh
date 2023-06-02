@@ -201,11 +201,13 @@ db.datasets.insertMany([
     values: [
       {
         color: '#7AF019',
-        title: 'Yes'
+        title: 'Yes',
+         backgroundColor: '#0b6f2433'
       },
       {
         color: '#EA1F1F',
-        title: 'No'
+        title: 'No',
+         backgroundColor: '#ba0d0d33'
       }
     ],
     createdBy: 'dev@innovapptive.com'
@@ -215,17 +217,20 @@ db.datasets.insertMany([
     type: 'quickResponses',
     isMultiColumn: false,
     values: [
-      {
+     {
         color: '#1DAF41',
-        title: 'Good'
+        title: 'Good',
+        backgroundColor: '#08811033'
       },
       {
         color: '#F09124',
-        title: 'Fair'
+        title: 'Fair',
+        backgroundColor: '#e1771433'
       },
       {
         color: '#F00505',
-        title: 'Poor'
+        title: 'Poor',
+        backgroundColor: '#df3a3a33'
       }
     ],
     createdBy: 'dev@innovapptive.com'
@@ -237,11 +242,13 @@ db.datasets.insertMany([
     values: [
       {
         color: '#07A25E',
-        title: 'Safe'
+        title: 'Safe',
+        backgroundColor: '#0d913433'
       },
       {
         color: '#EA0606',
-        title: 'At Risk'
+        title: 'At Risk',
+        backgroundColor: '#c20f0f33'
       }
     ],
     createdBy: 'dev@innovapptive.com'
@@ -251,13 +258,15 @@ db.datasets.insertMany([
     type: 'quickResponses',
     isMultiColumn: false,
     values: [
-      {
+       {
         color: '#1FAC0C',
-        title: 'Pass'
+        title: 'Pass',
+        backgroundColor: '#15841c33'
       },
       {
         color: '#E40C0C',
-        title: 'Fail'
+        title: 'Fail',
+        backgroundColor: '#a2111133'
       }
     ],
     createdBy: 'dev@innovapptive.com'
@@ -269,11 +278,13 @@ db.datasets.insertMany([
     values: [
       {
         color: '#08AA41',
-        title: 'Compliant'
+        title: 'Compliant',
+        backgroundColor: '#47ce2233'
       },
       {
         color: '#DD0E0E',
-        title: 'Non-Compliant'
+        title: 'Non-Compliant',
+        backgroundColor: '#c0161633'
       }
     ],
     createdBy: 'dev@innovapptive.com'

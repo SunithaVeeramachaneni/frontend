@@ -15,6 +15,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import {
   filter,
   map,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -49,7 +51,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
-  graphQLDefaultMaxLimit,
+  graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -314,8 +316,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -331,7 +333,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
@@ -356,6 +358,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -377,6 +381,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchInspection$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -428,7 +433,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
@@ -437,7 +442,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               : '',
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
-              : ''
+              : '',
+            assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -448,14 +454,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : '',
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
-              )
+              ),
+              assignedToEmail: inspectionDetail.assignedTo || ''
             }))
-          );
-        }
-
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -556,7 +557,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.fetchInspection$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -713,19 +717,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchInspection$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchInspection$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -757,13 +750,27 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
+    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedForm;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo, status },
+        { ...rest, inspectionId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -776,7 +783,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   status,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  assignedToEmail: resp.assignedTo || ''
                 };
               }
               return data;
@@ -795,11 +802,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, dueDate },
+        { ...rest, inspectionId, dueDate },
         'due-date'
       )
       .pipe(
@@ -811,12 +818,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   dueDate,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
             });
             this.dataSource = new MatTableDataSource(this.initial.data);
+            this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
               text: 'Due date updated successfully'

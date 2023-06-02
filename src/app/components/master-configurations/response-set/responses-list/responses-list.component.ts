@@ -1,7 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { combineLatest, Observable, BehaviorSubject, of } from 'rxjs';
+import { combineLatest, Observable, BehaviorSubject, of, Subject } from 'rxjs';
 import {
   catchError,
   filter,
@@ -11,7 +16,7 @@ import {
   switchMap,
   debounceTime,
   distinctUntilChanged,
-  shareReplay
+  takeUntil
 } from 'rxjs/operators';
 
 import { downloadFile } from 'src/app/shared/utils/fileUtils';
@@ -48,7 +53,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
   styleUrls: ['./responses-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponsesListComponent implements OnInit {
+export class ResponsesListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   public userInfo$: Observable<UserInfo>;
 
@@ -98,7 +103,7 @@ export class ResponsesListComponent implements OnInit {
     },
     {
       id: 'responseCount',
-      displayName: '#Response',
+      displayName: 'Responses',
       type: 'number',
       order: 2,
       controlType: 'string',
@@ -196,8 +201,6 @@ export class ResponsesListComponent implements OnInit {
   };
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   public searchResponseSet: FormControl;
-
-  public users$: Observable<UserDetails[]>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   private addEditDeleteResponseSet: boolean;
@@ -211,6 +214,7 @@ export class ResponsesListComponent implements OnInit {
   private limit = defaultLimit;
   private fetchType = 'load';
   private nextToken = '';
+  private onDestroy$ = new Subject();
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -242,32 +246,13 @@ export class ResponsesListComponent implements OnInit {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    this.users$ = this.usersService
-      .getUsers$(
-        {
-          includeRoles: false,
-          includeSlackDetails: false
-        },
-        { displayToast: true, failureResponse: { rows: [] } }
-      )
-      .pipe(
-        map(({ rows: users }) =>
-          users.map((user: UserDetails) => ({
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email
-          }))
-        ),
-        shareReplay(1),
-        tap((users) => this.responseSetService.setUsers(users))
-      );
-
     this.getDisplayedResponseSets();
 
     this.searchResponseSet.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.responseSetService.fetchResponses$.next({ data: 'search' });
         })
@@ -307,7 +292,7 @@ export class ResponsesListComponent implements OnInit {
       responseSetOnLoadSearch$,
       this.addEditDeleteResponseSet$,
       onScrollResponseSets$,
-      this.users$
+      this.usersService.getUsersInfo$()
     ]).pipe(
       map(([rows, addEditData, scrollData, users]) => {
         if (this.skip === 0) {
@@ -320,7 +305,7 @@ export class ResponsesListComponent implements OnInit {
             ...item,
             responseCount: JSON.parse(item?.values)?.length,
             createdBy: item?.createdBy || '',
-            creator: this.responseSetService.getUserFullName(item?.createdBy)
+            creator: this.usersService.getUserFullName(item?.createdBy)
           }));
         } else {
           if (this.addEditDeleteResponseSet) {
@@ -331,9 +316,7 @@ export class ResponsesListComponent implements OnInit {
                   {
                     ...form,
                     responseCount: JSON.parse(form.values).length,
-                    creator: this.responseSetService.getUserFullName(
-                      form.createdBy
-                    )
+                    creator: this.usersService.getUserFullName(form.createdBy)
                   },
                   ...initial.data
                 ];
@@ -344,9 +327,7 @@ export class ResponsesListComponent implements OnInit {
                 );
                 initial.data[updatedIdx] = {
                   ...form,
-                  creator: this.responseSetService.getUserFullName(
-                    form.createdBy
-                  ),
+                  creator: this.usersService.getUserFullName(form.createdBy),
                   responseCount: JSON.parse(form.values).length,
                   updatedAt: new Date().toISOString()
                 };
@@ -367,9 +348,7 @@ export class ResponsesListComponent implements OnInit {
                 ...item,
                 responseCount: JSON.parse(item?.values)?.length,
                 createdBy: item.createdBy || '',
-                creator: this.responseSetService.getUserFullName(
-                  item?.createdBy
-                )
+                creator: this.usersService.getUserFullName(item?.createdBy)
               }))
             );
         }
@@ -450,6 +429,7 @@ export class ResponsesListComponent implements OnInit {
           this.responseSetService
             .deleteResponseSet$({
               id: data.id,
+              // eslint-disable-next-line no-underscore-dangle
               _version: data._version
             })
             .subscribe(() => {
@@ -573,5 +553,10 @@ export class ResponsesListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

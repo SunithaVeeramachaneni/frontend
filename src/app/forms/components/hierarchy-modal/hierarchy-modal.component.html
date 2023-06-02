@@ -1,12 +1,12 @@
-<div class="modal-container">
+<div class="modal-container" *ngIf="hierarchy$ | async">
   <app-hierarchy-locations-list
-    *ngIf="mode === 'location'"
+    *ngIf="hierarchyLoaded && mode === 'location'"
     [locationsData]="masterHierarchyList"
     [selectedList]="selectedHierarchyList"
     (handleLocationHierarchy)="prepareHierarchyForSelectedLocations($event)"
   ></app-hierarchy-locations-list>
   <app-hierarchy-assets-list
-    *ngIf="mode === 'assets'"
+    *ngIf="hierarchyLoaded && mode === 'assets'"
     [hierarchyData]="selectedLocationsHierarchy"
     [selectedList]="selectedHierarchyList"
   ></app-hierarchy-assets-list>

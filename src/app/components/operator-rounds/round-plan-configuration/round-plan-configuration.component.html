@@ -206,6 +206,7 @@
             [selectedNode]="selectedNodeInstance"
             [isPreviewActive]="isPreviewActive"
             [counter]="formConfiguration.get('counter').value"
+            [moduleName]="'rounds'"
           ></app-builder>
         </div>
       </div>
@@ -227,7 +228,9 @@
         <app-builder
           *ngIf="selectedNodeLoadStatus"
           [selectedNode]="selectedNode"
+          [isPreviewActive]="isPreviewActive"
           [counter]="formConfiguration.get('counter').value"
+          [moduleName]="'rounds'"
         ></app-builder>
       </div>
     </div>

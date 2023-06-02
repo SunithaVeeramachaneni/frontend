@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -10,6 +10,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormMetadata, TableEvent } from '../../../../interfaces';
@@ -19,16 +20,12 @@ import { RaceDynamicFormService } from '../../services/rdf.service';
 import { getFormMetadata, State } from 'src/app/forms/state';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 
-interface SearchEvent {
-  data: 'search' | 'load' | 'infiniteScroll';
-}
-
 @Component({
   selector: 'app-import-questions-modal',
   templateUrl: './import-questions-modal.component.html',
   styleUrls: ['./import-questions-modal.component.scss']
 })
-export class ImportQuestionsModalComponent implements OnInit {
+export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   searchForm: FormControl;
   skip = 0;
   limit = graphQLDefaultMaxLimit;
@@ -43,6 +40,7 @@ export class ImportQuestionsModalComponent implements OnInit {
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
   ghostLoading = new Array(7).fill(0).map((v, i) => i);
+  private onDestroy$ = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
@@ -59,6 +57,7 @@ export class ImportQuestionsModalComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -172,5 +171,10 @@ export class ImportQuestionsModalComponent implements OnInit {
     this.data.selectedFormData = this.selectedForm;
     this.data.openImportQuestionsSlider = true;
     this.dialogRef.close(this.data);
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

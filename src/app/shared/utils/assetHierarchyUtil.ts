@@ -266,6 +266,7 @@ export class AssetHierarchyUtil {
           configuredParentId: node.parentId,
           iSDeletedInRoutePlan: false,
           id: node.id ? node.id : uuidv4(),
+          isOriginal: true,
           hierarchyPath: nodePath,
           isExpanded: true,
           numTimesCopied: 0
@@ -280,6 +281,7 @@ export class AssetHierarchyUtil {
             ...node,
             id: node.id ? node.id : uuidv4(),
             isExpanded: true,
+            isOriginal: true,
             isRootNode: !node.parentId ? true : false,
             configuredParentId: node.parentId,
             children: childNodes,
@@ -312,6 +314,7 @@ export class AssetHierarchyUtil {
   ): HierarchyEntity[] =>
     children.map((child) => ({
       ...child,
+      id: selectedChildrenFlatList.find((item) => item.uid === child.uid)?.id,
       isSelected:
         selectedChildrenFlatList.findIndex((item) => item.uid === child.uid) >
         -1,
@@ -400,6 +403,7 @@ export const copyNodeToRoutePlan = (
           name: `${nodeToBeCopied.name} (${numTimesCopied})`,
           numTimesCopied: 0,
           hasChildren: false,
+          isOriginal: false,
           children: [] as HierarchyEntity[]
         }
       );
@@ -451,13 +455,17 @@ export const deleteNodeFromHierarchy = (
 
 export const findIfAnotherNodeInstanceExists = (nodeIds, hierarchyList) => {
   const { id, uid } = nodeIds;
+  let exists = false;
+
   for (const node of hierarchyList) {
     if (node.uid === uid && node.id !== id) {
       return true;
-    } else if (node.hasChildren) {
-      return findIfAnotherNodeInstanceExists({ id, uid }, node.children);
+    } else if (node.children.length) {
+      exists = findIfAnotherNodeInstanceExists(nodeIds, node.children);
     }
   }
+
+  return exists;
 };
 
 export const findNodeByUid = (nodeUid, hierarchyList) => {

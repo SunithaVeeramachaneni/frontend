@@ -7,15 +7,17 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ViewChild,
-  ElementRef
+  ElementRef,
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -32,7 +34,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
   styleUrls: ['./page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PageComponent implements OnInit {
+export class PageComponent implements OnInit, OnDestroy {
   @ViewChild('pageName') pageName: ElementRef;
   @Input() selectedNodeId: any;
 
@@ -57,6 +59,8 @@ export class PageComponent implements OnInit {
   pagesCount$: Observable<number>;
   pageTasksCount$: Observable<number>;
   private _pageIndex: number;
+  private onDestroy$ = new Subject();
+
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit() {
@@ -64,6 +68,7 @@ export class PageComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           if (previous !== current) {
@@ -119,5 +124,10 @@ export class PageComponent implements OnInit {
       return value.length;
     }
     return value.length - 1;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

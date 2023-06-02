@@ -14,6 +14,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -78,7 +80,10 @@ import { UsersService } from '../../user-management/services/users.service';
 export class PlansComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -367,9 +372,11 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
+  userFullNameByEmail: {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private destroy$ = new Subject();
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -392,6 +399,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.fetchPlans$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -454,11 +462,6 @@ export class PlansComponent implements OnInit, OnDestroy {
             )
           );
         }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
-          );
-        }
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -472,16 +475,23 @@ export class PlansComponent implements OnInit, OnDestroy {
         let filteredRoundPlans = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) =>
+              roundPlan.schedule && roundPlan.schedule !== 'Ad-Hoc'
           );
         } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
-          );
+          filteredRoundPlans = roundPlans.data
+            .filter(
+              (roundPlan: RoundPlanDetail) =>
+                !roundPlan.schedule || roundPlan.schedule === 'Ad-Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredRoundPlans = roundPlans.data;
         }
@@ -567,7 +577,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   getAllRoundPlans() {
     this.operatorRoundsService.fetchAllPlansList$().subscribe((plansList) => {
       const objectKeys = Object.keys(plansList);
-
       if (objectKeys.length > 0) {
         const uniquePlants = plansList.rows
           .map((item) => {
@@ -592,7 +601,10 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchPlans$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -765,7 +777,10 @@ export class PlansComponent implements OnInit, OnDestroy {
             scheduleDates: this.getFormatedScheduleDates(
               roundPlanScheduleConfiguration
             ),
-            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration)
+            assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
+            assigneeToEmail: this.getAssignedToEmail(
+              roundPlanScheduleConfiguration
+            )
           };
         }
         return data;
@@ -817,6 +832,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
+            roundPlanScheduleConfigurations[roundPlan.id]
+          ),
+          assigneeToEmail: this.getAssignedToEmail(
             roundPlanScheduleConfigurations[roundPlan.id]
           )
         };
@@ -884,37 +902,51 @@ export class PlansComponent implements OnInit, OnDestroy {
     return value ? this.userService.getUserFullName(value) : this.placeHolder;
   }
 
+  getAssignedToEmail(
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+  ) {
+    const { assignmentDetails: { value } = {} } =
+      roundPlanScheduleConfiguration;
+    return value ?? '';
+  }
+
   getFilter() {
     this.operatorRoundsService.getPlanFilter().subscribe((res) => {
       this.filterJson = res;
     });
   }
 
+  getFullNameToEmailArray(data?: any) {
+    let emailArray = [];
+    data.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = this.plantsIdNameMap[item.value] ?? '';
-        this.filter[item.column] = plantId;
-      } else if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+      } else if (
+        item.type !== 'daterange' &&
+        item.value &&
+        item.column !== 'schedule'
+      ) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.type === 'daterange' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+      } else {
+        this.filter[item.column] = item.value ?? '';
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.scheduledAt &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchPlans$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchPlans$.next({ data: 'load' });
   }
 
   resetFilter(): void {

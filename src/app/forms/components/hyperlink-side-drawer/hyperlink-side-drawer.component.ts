@@ -35,13 +35,13 @@ export class HyperlinkSideDrawerComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    const urlValidateRegex =
+      /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
     this.hyperlinkForm = this.fb.group({
       displayText: new FormControl(''),
       hyperlink: new FormControl('', [
         Validators.required,
-        Validators.pattern(
-          '^(http://www.|https://www.|http://|https://|www.)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$'
-        )
+        Validators.pattern(urlValidateRegex)
       ])
     });
 

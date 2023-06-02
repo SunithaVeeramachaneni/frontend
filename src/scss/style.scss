@@ -15,6 +15,10 @@ html * {
   font-size: 12px;
 }
 
+.mat-raised-button:not([class*='mat-elevation-z']) {
+  box-shadow: none;
+}
+
 .modal {
   pointer-events: none;
 }
@@ -34,10 +38,6 @@ li.breadcrumb-item {
 li.breadcrumb-item.active span {
   outline: none;
   border: none;
-}
-
-.mat-select-panel {
-  margin-top: 30px !important;
 }
 
 .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
@@ -629,4 +629,9 @@ button.mat-menu-item {
   mat-icon {
     font-size: 160%;
   }
+}
+
+.table-column {
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
 }

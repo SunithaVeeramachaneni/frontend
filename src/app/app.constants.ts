@@ -65,6 +65,8 @@ export const permissions = Object.freeze({
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
   deleteForm: 'DELETE_FORM',
+  copyForm: 'COPY_FORM',
+  archiveForm: 'ARCHIVE_FORM',
   viewSubmissions: 'VIEW_SUBMISSIONS',
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
@@ -79,6 +81,8 @@ export const permissions = Object.freeze({
   createORPlan: 'CREATE_OR_PLAN',
   updateORPlan: 'UPDATE_OR_PLAN',
   deleteORPlan: 'DELETE_OR_FORM',
+  copyRoundPlan: 'COPY_OR_PLAN',
+  archiveRoundPlan: 'ARCHIVE_OR_PLAN',
   downloadRounds: 'DOWNLOAD_ROUNDS',
   shareRounds: 'SHARE_ROUNDS',
   viewScheduler: 'VIEW_SCHEDULER',
@@ -86,7 +90,7 @@ export const permissions = Object.freeze({
   viewORPTemplates: 'VIEW_ORP_TEMPLATES',
   createORPTemplate: 'CREATE_ORP_TEMPLATES',
   updateORPTemplate: 'UPDATE_ORP_TEMPLATES',
-  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS',
+  viewArchivedORP: 'VIEW_OR_ARCHIVED_PLANS',
   viewORObservations: 'VIEW_OR_OBSERVATIONS',
 
   viewUnitOfMeasurement: 'VIEW_UNIT_OF_MEASUREMENTS',
@@ -99,7 +103,9 @@ export const permissions = Object.freeze({
   createGlobalResponses: 'CREATE_GLOBAL_RESPONSES',
   updateGlobalResponses: 'UPDATE_GLOBAL_RESPONSES',
   deleteGlobalResponses: 'DELETE_GLOBAL_RESPONSES',
-  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES'
+  importGlobalResponses: 'IMPORT_GLOBAL_RESPONSES',
+
+  viewRdfObservations: 'VIEW_RDF_OBSERVATIONS'
 });
 
 export const routingUrls = {
@@ -219,6 +225,11 @@ export const routingUrls = {
     title: 'Scheduler',
     permission: permissions.viewFormScheduler
   },
+  rdfObservations: {
+    url: '/forms/observations',
+    title: 'Observations',
+    permission: permissions.viewRdfObservations
+  },
 
   operatorRoundPlans: {
     url: '/operator-rounds',
@@ -227,7 +238,7 @@ export const routingUrls = {
   },
   myRoundPlans: {
     url: '/operator-rounds',
-    title: 'My Plans',
+    title: 'Round Plans',
     permission: permissions.viewORPlans
   },
   roundPlanScheduler: {
@@ -298,8 +309,9 @@ export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';
 export const defaultLimit = 25;
-export const graphQLDefaultLimit = 100;
+export const graphQLDefaultLimit = 250;
 export const graphQLDefaultMaxLimit = 10000;
+export const graphQLRoundsOrInspectionsLimit = 50;
 export const defaultCountFieldName = 'Record Count';
 export const superAdminIcon =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAwhJREFUSInF1W9o1WUUB/DPubuyDSp0OWbZH4QKGogQRGVYhlEvgmgx96JMUMRtmXvRS7VY9Wq+qBFh907If73QiKKEoJERmAYiSWUEEflCbFqWvkisuXufXtzfvdvdvdYIogM/nt/znPN8v+ec53AO/7HEXIxSwTIsFbpQws+mHItNfvjXBGmXNn8YEgaw5CpmJzGqw+7oU5ozQSq4D/txC5LkuHAYZzAPi7EK3RnK18Lq2Oj7fyRIRasl+9CKd+VsbXYR0pi7lW3HSlwQHo9+n1+VII1ZruxT5ITnot9YA+gbrpf3kVaPxjoXUxIKXhJewHll98Szfqza52oXX9WubH/m+VBT8GF5eQeEa2OdixAhxaAXMYKFwr6Uph2vEWi3GTfj/RhQaJYSi4xglWRPg+6sLfhSWK6op5GgUi1JydZm2OlNT+N5lCRvz9bHsLKcbRVjg3UEWZ0vwYnY5LsG8KK7hJ3Z9pMYdKZphPONS34RHkw7LIB8plqarYcbwN/S6Yr30J55dzoVrc7+S876MIZNQfQppYIjeELenTiaz9Jzg4TkpzrwYXmTDuDW6VzYINmQ7SZ0GsfvM65VMMpunI6gbEogtNS532UNHmqaDibl9MZAHTjVd41KVNVHnsjWm+pMz9mrrKP28dV0eIZio6NNiBfPxKxGcFwLwiMzLWNYGRcgFXRjWQa+JwYVZyOnonmSFbis3claBFlX/FZyW9rh3iZewdps/cIV/U0tynowH4dirUs1gkxeUzkZScN159I7WrAGE67ojSF/Nni/S5vwSrYdrZ5PA3XYrZLjB3TVDCvyq4fRKac3NtdXWk0mjeEOHIwBhxoIok9JSS9+E7akgu2Z5+RckjzV7FHTLm2paK/kGZwS1s/UN7brSkf9AAtxAtt0+Hj2QEmvazVPj/AybscpJY/N7gTNB85OS5Tsw/3Z0XkcEU5L8ipNcQWuy/QHhfXR7/xsrL+dyangScmgsNJ0W6nKZYxLRmPQZ1fDmNvQ32GB0I1FwpSyc67xTbUU/1f5C9zA9dtYdVIPAAAAAElFTkSuQmCC';
@@ -344,39 +356,73 @@ export const DEFAULT_TEMPLATE_PAGES = [
         id: 'S1',
         name: 'Section',
         position: 1,
-        isOpen: true,
-        questions: [
-          {
-            id: 'Q1',
-            sectionId: 'S1',
-            name: '',
-            fieldType: 'TF',
-            position: 1,
-            required: false,
-            enableHistory: false,
-            multi: false,
-            value: 'TF',
-            isPublished: false,
-            isPublishedTillSave: false,
-            isOpen: true,
-            isResponseTypeModalOpen: false,
-            unitOfMeasurement: 'None',
-            rangeMetadata: {}
-          }
-        ]
+        isOpen: true
       }
     ],
     questions: [
       {
         id: 'Q1',
         sectionId: 'S1',
-        name: '',
-        fieldType: 'NF',
+        name: 'Site Conducted',
+        fieldType: 'TF',
         position: 1,
         required: false,
         enableHistory: false,
         multi: false,
-        value: '',
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'Q2',
+        sectionId: 'S1',
+        name: 'Conducted On',
+        fieldType: 'DT',
+        position: 2,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {},
+        date: true,
+        time: true
+      },
+      {
+        id: 'Q3',
+        sectionId: 'S1',
+        name: 'Performed By',
+        fieldType: 'TF',
+        position: 3,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'Q4',
+        sectionId: 'S1',
+        name: 'Location',
+        fieldType: 'GAL',
+        position: 4,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
         isPublished: false,
         isPublishedTillSave: false,
         isOpen: true,

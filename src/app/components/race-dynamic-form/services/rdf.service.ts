@@ -35,12 +35,8 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
-
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-
-  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -48,10 +44,6 @@ export class RaceDynamicFormService {
     private appService: AppService,
     private translate: TranslateService
   ) {}
-
-  setFormCreatedUpdated(data: any) {
-    this.formCreatedUpdatedSubject.next(data);
-  }
 
   createTags$ = (
     tags: any,
@@ -109,7 +101,10 @@ export class RaceDynamicFormService {
     ) {
       const queryParamaters = queryParams;
       if (filterData) {
-        Object.assign(queryParamaters, { plantId: filterData.plant });
+        Object.assign(queryParamaters, {
+          ...filterData,
+          plantId: filterData?.plant
+        });
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -356,18 +351,14 @@ export class RaceDynamicFormService {
   }
 
   createAuthoredFormDetail$(formDetails) {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      `forms/authored?isEdit=${location?.pathname?.startsWith('/forms/edit/')}`,
-      {
-        formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
-      }
-    );
+    return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
+      formStatus: formDetails.formStatus,
+      formDetailPublishStatus: formDetails.formDetailPublishStatus,
+      formlistID: formDetails.formListId,
+      pages: JSON.stringify(formDetails.pages),
+      counter: formDetails.counter,
+      version: formDetails.authoredFormDetailVersion.toString()
+    });
   }
 
   updateAuthoredFormDetail$(formDetails) {
@@ -388,6 +379,14 @@ export class RaceDynamicFormService {
           version: { eq: formDetails.authoredFormDetailVersion.toString() }
         }
       }
+    );
+  }
+
+  publishAuthoredFormDetail$(formDetails) {
+    return this.appService.patchData(
+      environment.rdfApiUrl,
+      `forms/authored/publish/${formDetails.formlistID}`,
+      formDetails
     );
   }
 
