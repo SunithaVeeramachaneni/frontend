@@ -96,6 +96,8 @@ export interface RoundDetail extends RoundPlan {
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
+  assignedToEmail?: string;
+  previouslyAssignedTo: string;
   roundDBVersion: number;
   roundDetailDBVersion: number;
 }
@@ -169,6 +171,7 @@ export interface IssueOrAction {
   priority?: string;
   dueDate?: string;
   assignedTo?: string;
+  previouslyAssignedTo: string;
   issueData?: string;
   actionData?: string;
   issueOrActionDBVersion: number;
@@ -184,6 +187,7 @@ export interface History {
   createdBy?: string;
   assignedTo?: string;
   type: 'Object' | 'Media' | 'Message';
+  isUserAssigned?: string;
 }
 
 export interface HistoryResponse {

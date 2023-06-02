@@ -1,4 +1,10 @@
-<div class="node-item" *ngIf="selectedNode">
+<div
+  class="node-item"
+  *ngIf="{
+    selectedNode: selectedNode$ | async,
+    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+  }"
+>
   <div
     class="parentNode node"
     [ngClass]="{ active: selectedNode.id === node.id }"
@@ -14,7 +20,9 @@
       ></svg-icon>
       <div class="nodeContent" (click)="setSelectedNode(node)">
         <svg-icon
-          [icon]="node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'"
+          [icon]="
+            node?.type === 'location' ? 'icon-locationIcon' : 'icon-asset-icon'
+          "
           class="node-icon"
         ></svg-icon>
         <div class="description">
@@ -84,12 +92,19 @@
           cdkConnectedOverlay
           [cdkConnectedOverlayOrigin]="trigger"
           [cdkConnectedOverlayOpen]="togglePopover"
+          (backdropClick)="togglePopover = true"
         >
-          <app-show-hierarchy-popup
-            class="showHierarchy"
-            [nodeUid]="nodeSelectedForShowHierarchy.uid"
-            (closeHierarchyOverlay)="togglePopover = $event"
-          ></app-show-hierarchy-popup>
+          <div
+            class="show-popup"
+            [ngStyle]="{ top: positions.top, left: positions.left }"
+          >
+            <app-show-hierarchy-popup
+              class="showHierarchy"
+              [nodeUid]="nodeSelectedForShowHierarchy.uid"
+              (closeHierarchyOverlay)="togglePopover = $event"
+              [positions]="positions"
+            ></app-show-hierarchy-popup>
+          </div>
         </ng-template>
         <button
           mat-menu-item

@@ -67,6 +67,7 @@ export interface ScheduleFormDetail extends Form {
   locations: number;
   assets: number;
   rounds: number;
+  forms: number;
   operator: string;
 }
 
@@ -139,6 +140,8 @@ export interface InspectionDetail extends Form {
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;
+  assignedToEmail?: string;
+  previouslyAssignedTo: string;
   inspectionDBVersion: number;
   inspectionDetailDBVersion: number;
 }

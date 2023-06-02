@@ -1,11 +1,6 @@
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { combineLatest, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 import {
@@ -28,43 +23,33 @@ export class HierarchyModalComponent implements OnInit {
   allLocations$: Observable<any>;
   allLocations = [];
   allAssets$: Observable<any>;
-  masterHierarchyList$: Observable<any>;
+  hierarchyLoaded = false;
   masterHierarchyList = [];
-  selectedHierarchyList$: Observable<any>;
   selectedHierarchyList = [];
   mode = 'location';
   selectedLocationsHierarchy: HierarchyEntity[];
+  hierarchy$: Observable<any>;
 
   constructor(
     private locationService: LocationService,
     private assetService: AssetsService,
-    private store: Store<State>,
-    private cdrf: ChangeDetectorRef
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
     this.allLocations$ = this.locationService.fetchAllLocations$();
     this.allAssets$ = this.assetService.fetchAllAssets$();
 
-    this.masterHierarchyList$ = this.store.select(getMasterHierarchyList).pipe(
-      map((masterHierarchyList) => {
+    this.hierarchy$ = combineLatest([
+      this.store.select(getMasterHierarchyList),
+      this.store.select(getSelectedHierarchyList)
+    ]).pipe(
+      tap(([masterHierarchyList, selectedHierarchyList]) => {
         this.masterHierarchyList = masterHierarchyList;
-        this.cdrf.detectChanges();
-        return masterHierarchyList;
+        this.selectedHierarchyList = selectedHierarchyList;
+        this.hierarchyLoaded = true;
       })
     );
-
-    this.selectedHierarchyList$ = this.store
-      .select(getSelectedHierarchyList)
-      .pipe(
-        map((selectedHierarchy) => {
-          this.selectedHierarchyList = selectedHierarchy;
-          return this.selectedHierarchyList;
-        })
-      );
-
-    this.masterHierarchyList$.subscribe();
-    this.selectedHierarchyList$.subscribe();
   }
 
   prepareHierarchyForSelectedLocations = (

@@ -70,7 +70,7 @@
 <div class="app-customizer" *ngIf="multipleChoiceOpenState">
   <mat-card class="p-0" *ngIf="multipleChoiceOpenState === true">
     <mat-card-title class="m-0 light-gray">
-      <div class="mcq-heading" translate="globalResponseHeading"></div>
+      <div class="mcq-heading" translate="multipleChoice"></div>
     </mat-card-title>
     <div [formGroup]="responseForm">
       <div class="margin response-heading" translate="response"></div>
@@ -141,8 +141,9 @@
       (click)="submitResponses()"
       class="submit-response-btn"
       [disabled]="isFormNotUpdated === true || responseForm.pristine"
-      translate="create"
-    ></button>
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
 </div>
 

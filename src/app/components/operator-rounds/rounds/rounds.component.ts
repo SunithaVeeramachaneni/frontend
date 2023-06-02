@@ -16,6 +16,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -24,6 +25,7 @@ import {
   filter,
   map,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -52,6 +54,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
+  graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -78,7 +81,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -337,8 +343,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
         color: '#000000'
       },
       open: {
-        'background-color': '#F56565',
-        color: '#ffffff'
+        'background-color': '#e0e0e0',
+        color: '#000000'
       },
       'to-do': {
         'background-color': '#F56565',
@@ -354,7 +360,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultLimit;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
@@ -372,10 +378,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
-
+  userFullNameByEmail: {};
+  roundId = '';
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -398,6 +406,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchRounds$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -443,12 +452,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 150px)'
           };
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),
-            assignedTo: this.userService.getUserFullName(roundDetail.assignedTo)
+            assignedTo: this.userService.getUserFullName(
+              roundDetail.assignedTo
+            ),
+            assignedToEmail: roundDetail.assignedTo
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -457,13 +469,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
               dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
-              )
+              ),
+              assignedToEmail: roundDetail.assignedTo
             }))
-          );
-        }
-        if (this.filter?.schedule?.length > 0) {
-          this.initial.data = this.dataSource?.data?.filter((d) =>
-            this.filter.schedule.includes(d?.schedule)
           );
         }
         this.skip = this.initial.data.length;
@@ -476,11 +484,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.hideRoundDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ roundPlanId = '' }) => {
-      this.roundPlanId = roundPlanId;
-      this.fetchRounds$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ roundPlanId = '', roundId = '' }) => {
+        this.roundPlanId = roundPlanId;
+        this.roundId = roundId;
+        this.fetchRounds$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
@@ -491,7 +502,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      roundPlanId: this.roundPlanId
+      roundPlanId: this.roundPlanId,
+      roundId: this.roundId
     };
 
     return this.operatorRoundsService
@@ -509,7 +521,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.fetchRounds$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
     const { columnId, row } = event;
@@ -666,8 +681,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.assignedTo.push(item);
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
               }
             });
           }
@@ -710,6 +725,18 @@ export class RoundsComponent implements OnInit, OnDestroy {
     });
   }
 
+  getFullNameToEmailArray(data: any) {
+    let emailArray = [];
+    data?.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
@@ -717,24 +744,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
       } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.type === 'date' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
-    if (
-      !this.filter.assignedTo &&
-      !this.filter.dueDate &&
-      this.filter?.schedule?.length > 0
-    ) {
-      this.initial.data = this.dataSource?.data?.filter((d) =>
-        this.filter.schedule.includes(d?.schedule)
-      );
-      this.dataSource = new MatTableDataSource(this.initial.data);
-    } else {
-      this.nextToken = '';
-      this.fetchRounds$.next({ data: 'load' });
-    }
+    this.nextToken = '';
+    this.fetchRounds$.next({ data: 'load' });
   }
 
   clearFilters(): void {
@@ -746,6 +762,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: ''
     };
+    this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
 
@@ -765,13 +782,27 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
-    const { roundId } = this.selectedRound;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
+    let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedRound;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo, status },
+        { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -784,7 +815,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   status,
                   roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
@@ -803,9 +834,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    const { roundId } = this.selectedRound;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
     this.operatorRoundsService
-      .updateRound$(roundId, { ...this.selectedRound, dueDate }, 'due-date')
+      .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
@@ -815,7 +846,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                   ...data,
                   dueDate,
                   roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;

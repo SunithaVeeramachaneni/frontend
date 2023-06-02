@@ -1,6 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
   Column,
@@ -26,7 +36,7 @@ import { permissions } from 'src/app/app.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class TemplateListComponent implements OnInit {
+export class TemplateListComponent implements OnInit, OnDestroy {
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
@@ -204,7 +214,7 @@ export class TemplateListComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh - 135px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
@@ -233,6 +243,7 @@ export class TemplateListComponent implements OnInit {
   lastPublishedBy = [];
   createdBy = [];
   readonly permissions = permissions;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -271,6 +282,7 @@ export class TemplateListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap((res) => {
           this.applySearchAndFilter(res);
         })
@@ -404,5 +416,10 @@ export class TemplateListComponent implements OnInit {
       panelClass: 'full-screen-modal',
       data: this.allTemplates
     });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

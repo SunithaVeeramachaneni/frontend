@@ -3,11 +3,12 @@ import { RaceDynamicFormService } from './rdf.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { map } from 'rxjs/operators';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { RoundPlanResolverService } from '../../operator-rounds/services/round-plan-resolver.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +16,16 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 export class TemplateResolverService {
   constructor(
     private raceDynamicFormService: RaceDynamicFormService,
+    private roundPlanResolverServive: RoundPlanResolverService,
     private store: Store<State>
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
     const id = route.params.id;
+    if (id === undefined) {
+      this.roundPlanResolverServive.getResponseTypeDetails();
+      return of({} as FormConfigurationState);
+    }
     return this.raceDynamicFormService.fetchTemplateById$(id).pipe(
       map((form) => {
         this.store.dispatch(
@@ -50,6 +56,7 @@ export class TemplateResolverService {
           formType,
           tags
         };
+        this.roundPlanResolverServive.getResponseTypeDetails(id);
 
         return {
           formMetadata,

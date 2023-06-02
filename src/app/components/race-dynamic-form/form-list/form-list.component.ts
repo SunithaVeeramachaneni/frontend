@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -8,7 +13,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -21,9 +27,15 @@ import {
   CellClickActionEvent,
   Count,
   TableEvent,
-  FormTableUpdate
+  FormTableUpdate,
+  Permission,
+  UserInfo
 } from 'src/app/interfaces';
-import { LIST_LENGTH, formConfigurationStatus } from 'src/app/app.constants';
+import {
+  graphQLDefaultLimit,
+  formConfigurationStatus,
+  permissions as perms
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
@@ -37,6 +49,7 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-form-list',
@@ -45,7 +58,7 @@ import { MatDialog } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class FormListComponent implements OnInit {
+export class FormListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -178,6 +191,7 @@ export class FormListComponent implements OnInit {
       subtitleColumn: '',
       searchable: false,
       sortable: true,
+      reverseSort: true,
       hideable: false,
       visible: true,
       movable: false,
@@ -257,7 +271,7 @@ export class FormListComponent implements OnInit {
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
-  limit = LIST_LENGTH;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
@@ -269,16 +283,22 @@ export class FormListComponent implements OnInit {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plantsIdNameMap = {};
   plants = [];
   createdBy = [];
+  userInfo$: Observable<UserInfo>;
+  readonly perms = perms;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private router: Router,
     private readonly store: Store<State>,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -290,6 +310,7 @@ export class FormListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -314,7 +335,9 @@ export class FormListComponent implements OnInit {
       })
     );
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -429,7 +452,7 @@ export class FormListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 130px)'
           };
           initial.data = rows;
         } else {
@@ -550,25 +573,28 @@ export class FormListComponent implements OnInit {
 
   configOptionsChangeHandler = (event): void => {};
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
+  prepareMenuActions(permissions: Permission[]): void {
+    const menuActions = [];
+
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_FORM')) {
+      menuActions.push({
         title: 'Edit',
         action: 'edit'
-      },
-      {
+      });
+    }
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_FORM')) {
+      menuActions.push({
         title: 'Copy',
         action: 'copy'
-      },
-      {
+      });
+    }
+    if (this.loginService.checkUserHasPermission(permissions, 'ARCHIVE_FORM')) {
+      menuActions.push({
         title: 'Archive',
         action: 'archive'
-      }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
-    ];
+      });
+    }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -596,6 +622,15 @@ export class FormListComponent implements OnInit {
               .filter((value, index, self) => self.indexOf(value) === index);
             this.lastPublishedBy = [...uniqueLastPublishedBy];
 
+            const uniqueLastModifiedBy = formsList.rows
+              .map((item) => {
+                if (item.lastModifiedBy) {
+                  return item.lastModifiedBy;
+                }
+              })
+              .filter((value, index, self) => self.indexOf(value) === index);
+            this.lastModifiedBy = [...uniqueLastModifiedBy];
+
             const uniqueCreatedBy = formsList.rows
               .map((item) => item.author)
               .filter((value, index, self) => self.indexOf(value) === index);
@@ -616,7 +651,7 @@ export class FormListComponent implements OnInit {
               if (item.column === 'status') {
                 item.items = this.status;
               } else if (item.column === 'modifiedBy') {
-                item.items = this.lastPublishedBy;
+                item.items = this.lastModifiedBy;
               } else if (item.column === 'authoredBy') {
                 item.items = this.authoredBy;
               } else if (item.column === 'plant') {
@@ -679,6 +714,11 @@ export class FormListComponent implements OnInit {
     };
     this.nextToken = '';
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private showFormDetail(row: GetFormList): void {

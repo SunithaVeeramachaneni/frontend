@@ -3,7 +3,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +12,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -20,6 +21,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -53,7 +55,7 @@ import { PlantService } from '../../plants/services/plant.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class AssetsListComponent implements OnInit {
+export class AssetsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
 
   parentInformation;
@@ -105,14 +107,17 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
       subtitleColumn: 'plantSubId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       }
     },
     {
@@ -132,7 +137,9 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false,
@@ -177,10 +184,13 @@ export class AssetsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       },
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -215,7 +225,7 @@ export class AssetsListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   assets$: Observable<any>;
-  assetsCount$: Observable<Count>;
+  assetsCount$: Observable<number>;
   assetsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   assetsListCount$: Observable<number>;
   allPlants$: Observable<any>;
@@ -233,6 +243,7 @@ export class AssetsListComponent implements OnInit {
   fetchType = 'load';
   nextToken = '';
   userInfo$: Observable<UserInfo>;
+  allPlants: any[];
   allParentsAssets: any[] = [];
   allParentsLocations: any[] = [];
 
@@ -245,6 +256,8 @@ export class AssetsListComponent implements OnInit {
   plants = [];
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
+  dataLoadingComplete = false;
+  private onDestroy$ = new Subject();
 
   constructor(
     private assetService: AssetsService,
@@ -266,21 +279,18 @@ export class AssetsListComponent implements OnInit {
       tap(({ items: allPlants = [] }) => {
         this.plants = allPlants.map((plant) => {
           const { id, name, plantId } = plant;
-          this.plantsIdNameMap[plantId] = id;
+          this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
         });
 
-        const plantFilter = {
-          column: 'plant',
-          items: ['', ...this.plants],
-          label: 'Plants',
-          type: 'select',
-          value: ''
-        };
-
         this.filterJson = [
-          plantFilter,
-          ...this.filterJson.filter((item) => item.column !== 'plant')
+          {
+            column: 'plant',
+            items: this.plants,
+            label: 'Plant',
+            type: 'select',
+            value: ''
+          }
         ];
       })
     );
@@ -292,29 +302,17 @@ export class AssetsListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => {
+        takeUntil(this.onDestroy$),
+        tap((value: string) => {
+          this.reloadAssetCount(value.toLocaleLowerCase());
           this.assetService.fetchAssets$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.assetsListCount$ = this.assetService.getAssetCount$();
-    this.getFilter();
-    this.getAllLocations();
-    this.getAllAssets();
+
+    this.reloadAssetCount(null);
     this.getDisplayedAssets();
 
-    this.assetsCount$ = combineLatest([
-      this.assetsCount$,
-      this.assetsCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addEditCopyDeleteAssets) {
-          count.count += update;
-          this.addEditCopyDeleteAssets = false;
-        }
-        return count;
-      })
-    );
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -352,17 +350,26 @@ export class AssetsListComponent implements OnInit {
       assetsOnLoadSearch$,
       this.addEditCopyDeleteAssets$,
       onScrollAssets$,
-      this.getAllLocations(),
-      this.allPlants$
+      this.allPlants$,
+      this.locationService.fetchAllLocations$(),
+      this.assetService.fetchAllAssets$()
     ]).pipe(
       map(
         ([
           rows,
           { form, action },
           scrollData,
-          allLocations,
-          { items: allPlants = [] }
+          { items: allPlants = [] },
+          { items: allLocations = [] },
+          { items: allAssets = [] }
         ]) => {
+          this.allPlants = allPlants.filter((plant) => !plant._deleted);
+          this.allParentsLocations = allLocations.filter(
+            (location) => !location._deleted
+          );
+          this.allParentsAssets = allAssets.filter((asset) => !asset._deleted);
+          this.dataLoadingComplete = true;
+
           if (this.skip === 0) {
             this.configOptions = {
               ...this.configOptions,
@@ -398,7 +405,6 @@ export class AssetsListComponent implements OnInit {
             );
           }
           this.skip = initial.data.length;
-          this.assetsListCount$ = this.assetService.getAssetCount$();
           this.dataSource = new MatTableDataSource(initial.data);
           this.cdrf.markForCheck();
           return initial;
@@ -420,13 +426,11 @@ export class AssetsListComponent implements OnInit {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.assetsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.assetsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })
@@ -435,7 +439,6 @@ export class AssetsListComponent implements OnInit {
 
   addOrUpdateAssets(assetData) {
     if (assetData.status === 'add') {
-      this.addEditCopyDeleteAssets = true;
       if (this.searchAssets.value) {
         this.assetService.fetchAssets$.next({ data: 'search' });
       } else {
@@ -448,6 +451,8 @@ export class AssetsListComponent implements OnInit {
         text: 'Asset created successfully!',
         type: 'success'
       });
+      this.addEditCopyDeleteAssets = true;
+      this.assetsCountUpdate$.next(1);
     } else if (assetData.status === 'edit') {
       this.addEditCopyDeleteAssets = true;
       if (this.searchAssets.value) {
@@ -463,7 +468,6 @@ export class AssetsListComponent implements OnInit {
         });
       }
     }
-    this.assetsListCount$ = this.assetService.getAssetCount$();
     this.assetService.fetchAssets$.next({ data: 'load' });
   }
 
@@ -524,7 +528,7 @@ export class AssetsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
-      this.assetsListCount$ = this.assetService.getAssetCount$();
+      this.assetsCountUpdate$.next(-1);
     });
   }
 
@@ -563,7 +567,7 @@ export class AssetsListComponent implements OnInit {
 
   uploadFile(event) {
     const file = event.target.files[0];
-    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+    const dialogRef = this.dialog.open(UploadResponseModalComponent, {
       data: {
         file,
         type: 'assets'
@@ -571,13 +575,12 @@ export class AssetsListComponent implements OnInit {
       disableClose: true
     });
 
-    deleteReportRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
-        this.getAllLocations();
         this.getAllAssets();
         this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
-        this.assetsListCount$ = this.assetService.getAssetCount$();
+        this.reloadAssetCount(this.searchAssets.value.toLocaleLowerCase());
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',
@@ -590,22 +593,6 @@ export class AssetsListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-  }
-
-  getAllLocations() {
-    return this.locationService.fetchAllLocations$().pipe(
-      tap((allLocations) => {
-        const objectKeys = Object.keys(allLocations);
-        if (objectKeys.length > 0) {
-          this.parentInformation = allLocations.items.filter(
-            (loc) => loc._deleted !== true
-          );
-          this.allParentsLocations = this.parentInformation;
-        } else {
-          this.allParentsLocations = [];
-        }
-      })
-    );
   }
 
   getAllAssets() {
@@ -621,18 +608,11 @@ export class AssetsListComponent implements OnInit {
     });
   }
 
-  getFilter() {
-    this.assetService.getFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
-  }
-
   applyFilters(data: any) {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = item.value.split('-')[0].trim();
-        const plantsID = this.plantsIdNameMap[plantId];
+        const plantsID = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantsID;
       }
     }
@@ -677,4 +657,25 @@ export class AssetsListComponent implements OnInit {
 
     return tableData;
   };
+
+  reloadAssetCount(searchTerm: string) {
+    this.assetsListCount$ = this.assetService.getAssetCount$(searchTerm);
+    this.assetsCount$ = combineLatest([
+      this.assetsListCount$,
+      this.assetsCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addEditCopyDeleteAssets) {
+          count += update;
+          this.addEditCopyDeleteAssets = false;
+        }
+        return count;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

@@ -6,7 +6,8 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -14,12 +15,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ValidationError } from 'src/app/interfaces';
-import { LocationService } from '../../locations/services/location.service';
 import { AssetsService } from '../services/assets.service';
-import { PlantService } from '../../plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-assets',
@@ -27,13 +27,14 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
   styleUrls: ['./add-edit-assets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditAssetsComponent implements OnInit {
+export class AddEditAssetsComponent implements OnInit, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
+  @Input() allPlants: any[];
+  @Input() allLocations: any[];
+  @Input() allAssets: any[];
   allLocations$: Observable<any>;
   private assetEditData = null;
-  allLocationsData: any = [];
-  allAssetsData: any = [];
   parentType: any = 'location';
   @Input() set assetsEditData(data) {
     this.assetEditData = data || null;
@@ -67,11 +68,11 @@ export class AddEditAssetsComponent implements OnInit {
       this.assetEditData === null ||
       this.assetEditData.parentType?.toLowerCase() === 'location'
     ) {
-      this.parentInformation = this.allLocationsData;
-      this.allParentsData$.next(this.allLocationsData);
+      this.parentInformation = this.allLocations;
+      this.allParentsData$.next(this.allLocations);
     } else if (this.assetEditData.parentType?.toLowerCase() === 'asset') {
-      this.parentInformation = this.allAssetsData;
-      this.allParentsData$.next(this.allAssetsData);
+      this.parentInformation = this.allAssets;
+      this.allParentsData$.next(this.allAssets);
     }
   }
   get assetsEditData() {
@@ -93,13 +94,9 @@ export class AddEditAssetsComponent implements OnInit {
   allParentsData;
   allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
   allPlantsData;
+  private onDestroy$ = new Subject();
 
-  constructor(
-    private fb: FormBuilder,
-    private plantService: PlantService,
-    private assetService: AssetsService,
-    private locationService: LocationService
-  ) {}
+  constructor(private fb: FormBuilder, private assetService: AssetsService) {}
 
   ngOnInit(): void {
     this.assetForm = this.fb.group({
@@ -119,18 +116,19 @@ export class AddEditAssetsComponent implements OnInit {
       parentType: 'location',
       parentId: '',
       locationId: '',
-      plantsID: new FormControl('', [
-        Validators.required,
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ])
+      plantsID: new FormControl('', [Validators.required])
     });
-    this.getAllLocations();
-    this.getAllAssets();
-    this.getAllPlants();
-    this.assetForm.get('parentType').valueChanges.subscribe((value) => {
-      this.parentType = value;
-    });
+
+    this.allPlantsData = this.allPlants;
+    this.plantInformation = this.allPlants;
+    this.parentInformation = this.allLocations;
+    this.allParentsData = this.allLocations;
+    this.assetForm
+      .get('parentType')
+      .valueChanges.pipe(takeUntil(this.onDestroy$))
+      .subscribe((value) => {
+        this.parentType = value;
+      });
   }
 
   onSelectPlant(plantId) {
@@ -138,9 +136,9 @@ export class AddEditAssetsComponent implements OnInit {
     const parentType = this.assetForm.get('parentType').value;
 
     if (parentType === 'location') {
-      this.parentInformation = this.allLocationsData;
+      this.parentInformation = this.allLocations;
     } else if (parentType === 'asset') {
-      this.parentInformation = this.allAssetsData;
+      this.parentInformation = this.allAssets;
     }
 
     if (parentId) {
@@ -160,9 +158,9 @@ export class AddEditAssetsComponent implements OnInit {
 
     // select parentData
     if (parentType === 'location') {
-      this.parentInformation = this.allLocationsData;
+      this.parentInformation = this.allLocations;
     } else if (parentType === 'asset') {
-      this.parentInformation = this.allAssetsData;
+      this.parentInformation = this.allAssets;
     }
 
     // if plant is selected already
@@ -180,9 +178,9 @@ export class AddEditAssetsComponent implements OnInit {
 
     if (parentType === 'location') {
       this.assetForm.get('locationId').setValue(parentId);
-      this.parentInformation = this.allLocationsData;
+      this.parentInformation = this.allLocations;
     } else if (parentType === 'asset') {
-      this.parentInformation = this.allAssetsData;
+      this.parentInformation = this.allAssets;
     }
     if (!plantsID) {
       // set plant value if plant field was not selected first
@@ -313,40 +311,6 @@ export class AddEditAssetsComponent implements OnInit {
     this.slideInOut.emit('out');
   }
 
-  getAllLocations() {
-    this.locationService.fetchAllLocations$().subscribe((allLocations) => {
-      this.allLocationsData = allLocations.items || [];
-      this.parentInformation = this.allLocationsData;
-      this.allParentsData = this.allLocationsData;
-      this.allParentsData$.next(this.allParentsData);
-    });
-  }
-
-  getAllAssets() {
-    this.assetService.fetchAllAssets$().subscribe((allAssets) => {
-      if (allAssets.items) {
-        this.allAssetsData = allAssets.items.filter(
-          (asset) => asset.id !== this.assetEditData?.id && !asset._deleted
-        );
-        this.parentInformation = this.allAssetsData;
-        this.allParentsData = this.allAssetsData;
-        this.allParentsData$.next(this.allParentsData);
-      } else {
-        this.allAssetsData = [];
-        this.parentInformation = [];
-        this.allParentsData = [];
-        this.allParentsData$.next([]);
-      }
-    });
-  }
-
-  getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((allPlants) => {
-      this.allPlantsData = allPlants.items || [];
-      this.plantInformation = allPlants.items || [];
-    });
-  }
-
   processValidationErrors(controlName: string): boolean {
     const touched = this.assetForm.get(controlName).touched;
     const errors = this.assetForm.get(controlName).errors;
@@ -360,5 +324,10 @@ export class AddEditAssetsComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

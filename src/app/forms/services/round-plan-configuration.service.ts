@@ -9,6 +9,7 @@ import {
   SectionQuestions
 } from 'src/app/interfaces';
 import { State } from '../state/builder/builder-state.selectors';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -225,7 +226,7 @@ export class RoundPlanConfigurationService {
 
   private getSection(sectionIndex: number, section: Section) {
     return {
-      id: `S${sectionIndex}`,
+      id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
       isOpen: true

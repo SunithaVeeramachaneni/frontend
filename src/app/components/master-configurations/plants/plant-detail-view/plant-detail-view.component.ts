@@ -27,4 +27,8 @@ export class PlantDetailViewComponent implements OnInit {
   cancel() {
     this.slideInOut.emit({ status: 'out', data: '' });
   }
+
+  selectedPlantImageurl(plant: any) {
+    return plant.image || 'assets/master-configurations/default-plant.svg';
+  }
 }

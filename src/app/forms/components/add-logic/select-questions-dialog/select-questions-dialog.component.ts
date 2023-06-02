@@ -14,7 +14,8 @@ import {
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Observable } from 'rxjs';
-import { Question } from 'src/app/interfaces';
+import { Page, Question } from 'src/app/interfaces';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-select-questions-dialog',
@@ -26,8 +27,8 @@ export class SelectQuestionsDialogComponent implements OnInit {
   sections = [];
   selectedQuestions = [];
   operatorSymbolMap = {};
-
   question$: Observable<Question>;
+  page$: Observable<Page>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -44,20 +45,34 @@ export class SelectQuestionsDialogComponent implements OnInit {
       getQuestionByQuestionID(this.data.pageIndex, this.data.questionId)
     );
 
-    this.store
+    this.page$ = this.store
       .select(getPage(this.data.pageIndex, this.data.subFormId))
-      .subscribe((pageObj) => {
-        const page = Object.assign({}, pageObj);
-        page.sections.map((section) => {
-          const sectionQuestions = page.questions.filter(
-            (q) => q.sectionId === section.id
-          );
-          this.sections.push({
-            ...section,
-            questions: sectionQuestions || []
+      .pipe(
+        tap((pageObj) => {
+          const page = Object.assign({}, pageObj);
+          const hideQuestion = page.logics
+            .map((logic) => logic.hideQuestions)
+            .flat();
+          const mandateQuestion = page.logics
+            .map((logic) => logic.mandateQuestions)
+            .flat();
+          page.sections.map((section) => {
+            const sectionQuestions = page.questions.filter((q) => {
+              if (q.required === false) {
+                return this.data.viewMode === 'HIDE'
+                  ? q.sectionId === section.id &&
+                      !mandateQuestion.includes(q.id)
+                  : q.sectionId === section.id && !hideQuestion.includes(q.id);
+              }
+            });
+
+            this.sections.push({
+              ...section,
+              questions: sectionQuestions || []
+            });
           });
-        });
-      });
+        })
+      );
 
     if (this.data.viewMode === 'MANDATE') {
       const mandatedQuestions = this.data.logic.mandateQuestions || [];
@@ -66,6 +81,7 @@ export class SelectQuestionsDialogComponent implements OnInit {
       const hideQuestions = this.data.logic.hideQuestions || [];
       this.selectedQuestions = this.selectedQuestions.concat(hideQuestions);
     }
+    console.log(this.data);
   }
 
   selectQuestion(checked: boolean, questionId: string) {

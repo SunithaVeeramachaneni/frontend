@@ -5,15 +5,17 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { isEqual } from 'lodash-es';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -30,7 +32,7 @@ import { ToastService } from 'src/app/shared/toast';
   styleUrls: ['./response-type-side-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponseTypeSideDrawerComponent implements OnInit {
+export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Input() formId;
 
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
@@ -62,6 +64,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
+  isCreate = true;
+  private onDestroy$ = new Subject();
 
   constructor(
     private formService: FormService,
@@ -71,6 +75,21 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.responseForm = this.fb.group({
+      id: new FormControl(''),
+      name: new FormControl(''),
+      responses: this.fb.array([])
+    });
+
+    this.rangeMetadataForm = this.fb.group({
+      min: undefined,
+      max: undefined,
+      minMsg: '',
+      maxMsg: '',
+      minAction: 'None',
+      maxAction: 'None'
+    });
+
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
     this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
@@ -83,6 +102,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       if (state.isOpen) {
         state.response.values = state.response.values || [];
         const responsesArray = [];
+        this.isCreate = state.response.values.length ? false : true;
         state.response.values.map((response) => {
           responsesArray.push(this.fb.group(response));
         });
@@ -104,26 +124,12 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       }
     });
 
-    this.responseForm = this.fb.group({
-      id: new FormControl(''),
-      name: new FormControl(''),
-      responses: this.fb.array([])
-    });
-
-    this.rangeMetadataForm = this.fb.group({
-      min: undefined,
-      max: undefined,
-      minMsg: '',
-      maxMsg: '',
-      minAction: 'None',
-      maxAction: 'None'
-    });
-
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (
             isEqual(prev.responses, curr.responses) ||
@@ -143,6 +149,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) {
             this.isFormNotUpdated = true;
@@ -261,6 +268,11 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-     return `icon-${action.toLowerCase()}`;
+    return `icon-${action.toLowerCase()}`;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

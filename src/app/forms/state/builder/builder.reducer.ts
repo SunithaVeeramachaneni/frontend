@@ -491,9 +491,30 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
               position: section.position - 1
             }))
           ];
-          const questions = page.questions.filter(
-            (question) => question.sectionId !== action.sectionId
-          );
+          const questionsInSection = {};
+          const questionIdByLogic = {};
+          for (const logic of page.logics)
+            questionIdByLogic[logic.id] = logic.questionId;
+
+          for (const question of page.questions) {
+            if (question.sectionId === action.sectionId) {
+              questionsInSection[question.id] = 1;
+            }
+          }
+          const questions = page.questions.filter((question) => {
+            if (question.sectionId !== action.sectionId) {
+              if (question.sectionId.startsWith('AQ_')) {
+                if (
+                  !questionsInSection[
+                    questionIdByLogic[question.sectionId.substr(3)]
+                  ]
+                )
+                  return true;
+              } else {
+                return true;
+              }
+            }
+          });
           return {
             ...page,
             sections,
@@ -696,15 +717,32 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       const pages = state[key].map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
+          const questionIdByLogic = {};
+          for (const logic of page.logics)
+            questionIdByLogic[logic.id] = logic.questionId;
+
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
           );
+          const questionToBeDeleted =
+            sectionQuestions[action.questionIndex]?.id;
+          const remainingQuestions = page.questions.filter((question) => {
+            if (question.sectionId !== action.sectionId) {
+              if (questionToBeDeleted && question.sectionId.startsWith('AQ_')) {
+                if (
+                  questionIdByLogic[question.sectionId.substr(3)] !==
+                  questionToBeDeleted
+                )
+                  return true;
+              } else {
+                return true;
+              }
+            }
+          });
           if (action.questionIndex > 0) {
             sectionQuestions[action.questionIndex - 1].isOpen = true;
           }
-          const remainingQuestions = page.questions.filter(
-            (question) => question.sectionId !== action.sectionId
-          );
+
           sectionQuestions = [
             ...sectionQuestions.slice(0, action.questionIndex),
             ...sectionQuestions
@@ -918,12 +956,17 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       const pages = state[key].map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
+          const questions = state[key][action.pageIndex]?.questions.filter(
+            (question) => question.sectionId !== `AQ_${action.logicId}`
+          );
+
           const filteredLogics = page.logics.filter(
             (l) => l.id !== action.logicId
           );
           return {
             ...page,
-            logics: [...filteredLogics]
+            logics: [...filteredLogics],
+            questions
           };
         }
         return page;
@@ -948,13 +991,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       const pages = state[key].map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
-          page.questions.push(action.question);
-          // const questions = JSON.parse(JSON.stringify(page.questions));
-          // questions.push(action.question);
-          return {
-            ...page
-            // questions
-          };
+          return { ...page, questions: [...page.questions, action.question] };
         }
         return page;
       });
