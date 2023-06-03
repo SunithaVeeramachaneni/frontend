@@ -7,7 +7,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -69,6 +70,7 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-rounds',
@@ -78,7 +80,7 @@ import { UsersService } from '../../user-management/services/users.service';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
@@ -91,7 +93,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
@@ -204,10 +205,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'date-picker',
+      controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
@@ -371,6 +372,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedRound: RoundDetail;
+  selectedRoundInfo: RoundDetail;
+  selectedDate = null;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
@@ -378,7 +381,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   roundId = '';
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -537,11 +540,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
-        this.selectedRound = row;
+        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        this.selectedRoundInfo = row;
         break;
-      case 'dueDate':
-        this.selectedRound = row;
+      case 'dueDateDisplay':
+        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedRoundInfo = row;
         break;
       default:
         this.openRoundHandler(row);
@@ -782,8 +787,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
-    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
-    let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    let previouslyAssignedTo =
+      this.selectedRoundInfo.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
         ? `,${assignedToEmail}`
@@ -797,7 +803,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedRound;
+    let { status } = this.selectedRoundInfo;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
@@ -830,11 +836,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.trigger.closeMenu();
+    this.trigger.toArray()[0].closeMenu();
   }
 
-  onChangeDueDateHandler(dueDate: Date) {
-    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
+  dateChangeHandler(dueDate: Date) {
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
     this.operatorRoundsService
       .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
@@ -845,6 +851,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   dueDate,
+                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
@@ -862,5 +869,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  dueDateClosedHandler() {
+    this.trigger.toArray()[1].closeMenu();
   }
 }

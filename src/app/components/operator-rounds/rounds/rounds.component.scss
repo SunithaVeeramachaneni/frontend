@@ -34,6 +34,10 @@
   }
 }
 
+.hide-mat-menu {
+  display: none;
+}
+
 .rounds-list {
   ::ng-deep .table-column {
     width: 15%;
