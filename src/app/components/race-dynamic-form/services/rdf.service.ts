@@ -125,7 +125,7 @@ export class RaceDynamicFormService {
   getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/rdf-form-filter.json',
+      '/assets/json/rdf-form-filter.json',
       info
     );
   }
@@ -133,7 +133,7 @@ export class RaceDynamicFormService {
   getTemplateFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/template-filter.json',
+      '/assets/json/template-filter.json',
       info
     );
   }
@@ -143,7 +143,7 @@ export class RaceDynamicFormService {
   ): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/create-from-template-filter.json',
+      '/assets/json/create-from-template-filter.json',
       info
     );
   }
@@ -296,17 +296,15 @@ export class RaceDynamicFormService {
     formId: string,
     inspectionId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Blob> => {
-    const apiURL = `${environment.rdfApiUrl}inspections/${formId}/${inspectionId}`;
-    return this.appService.downloadFile(
-      apiURL,
-      '',
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.rdfApiUrl,
+      `inspections/${formId}/${inspectionId}`,
       info,
       true,
       {},
       'arraybuffer'
     );
-  };
 
   getFormById$(id: string) {
     return this.appService._getRespById(
@@ -883,20 +881,20 @@ export class RaceDynamicFormService {
   };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this.appService._getLocal('', 'assets/json/rdf-filter.json', info);
+    return this.appService._getLocal('', '/assets/json/rdf-filter.json', info);
   }
 
   getInspectionFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/forms-inspection-filter.json',
+      '/assets/json/forms-inspection-filter.json',
       info
     );
   }
   getArchivedFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/rdf-archived-filter.json',
+      '/assets/json/rdf-archived-filter.json',
       info
     );
   }

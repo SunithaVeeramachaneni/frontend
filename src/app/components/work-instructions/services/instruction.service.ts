@@ -19,7 +19,6 @@ import {
   User,
   Step,
   StepOptional,
-  Mail,
   DeleteFileResponse,
   UploadS3FileResponse,
   Files,

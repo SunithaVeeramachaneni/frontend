@@ -686,28 +686,28 @@ export class OperatorRoundsService {
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-filter.json',
+      '/assets/json/operator-rounds-filter.json',
       info
     );
   }
   getPlanFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-plan-filter.json',
+      '/assets/json/operator-rounds-plan-filter.json',
       info
     );
   }
   getRoundFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-round-filter.json',
+      '/assets/json/operator-rounds-round-filter.json',
       info
     );
   }
   getArchivedFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
     return this.appService._getLocal(
       '',
-      'assets/json/operator-rounds-archived-filter.json',
+      '/assets/json/operator-rounds-archived-filter.json',
       info
     );
   }
@@ -731,15 +731,13 @@ export class OperatorRoundsService {
     roundPlanId: string,
     roundId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Blob> => {
-    const apiURL = `${environment.operatorRoundsApiUrl}rounds/${roundPlanId}/${roundId}`;
-    return this.appService.downloadFile(
-      apiURL,
-      '',
+  ): Observable<Blob> =>
+    this.appService.downloadFile(
+      environment.operatorRoundsApiUrl,
+      `rounds/${roundPlanId}/${roundId}`,
       info,
       true,
       {},
       'arraybuffer'
     );
-  };
 }
