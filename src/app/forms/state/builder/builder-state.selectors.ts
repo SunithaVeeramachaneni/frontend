@@ -191,17 +191,17 @@ export const getTaskCountBySection = (
 
     const questionsInSection = {};
     const questionIdByLogic = {};
-    for (const logic of page?.logics)
+    for (const logic of page.logics)
       questionIdByLogic[logic.id] = logic.questionId;
 
     let count = 0;
-    for (const question of page?.questions) {
+    for (const question of page.questions) {
       if (question.sectionId === sectionId) {
         count++;
         questionsInSection[question.id] = 1;
       }
     }
-    for (const question of page?.questions) {
+    for (const question of page.questions) {
       if (
         question.sectionId !== sectionId &&
         question.sectionId.startsWith('AQ_') &&
