@@ -21,7 +21,8 @@ import {
 import {
   NumberRangeMetadata,
   RangeSelectorState,
-  ResponseTypeOpenState
+  ResponseTypeOpenState,
+  SliderSelectorState
 } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -41,7 +42,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() question;
-  sliderOpenState$: Observable<boolean>;
+  sliderOpenState$: Observable<SliderSelectorState>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
 
@@ -53,7 +54,16 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
-  rangeSelectorOpenState = false;
+  rangeSelectorOpenState: RangeSelectorState = {
+    isOpen: false,
+    questionId: '',
+    rangeMetadata: {} as NumberRangeMetadata
+  };
+  sliderOpenState: SliderSelectorState = {
+    isOpen: false,
+    questionId: '',
+    value: 'TF'
+  };
 
   sliderOptions = {
     value: 0,
@@ -117,10 +127,18 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     });
 
     this.rangeSelectorOpenState$.subscribe((state) => {
-      this.rangeSelectorOpenState = state.isOpen;
+      this.rangeSelectorOpenState = state;
       this.cdrf.detectChanges();
       if (state.isOpen) {
         this.rangeMetadataForm.patchValue(state.rangeMetadata);
+      }
+    });
+
+    this.sliderOpenState$.subscribe((state) => {
+      this.sliderOpenState = state;
+      this.cdrf.detectChanges();
+      if (this.question.value !== 'TF') {
+        this.sliderOptions = this.question.value;
       }
     });
 
@@ -229,16 +247,25 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
 
   applySliderOptions(values) {
     this.setSliderValues.emit(values);
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   }
 
   cancelSlider = () => {
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   };
 
   cancelRangeSelection = () => {
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };
@@ -257,6 +284,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     });
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };

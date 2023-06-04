@@ -139,11 +139,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
     if (rangeMeta && rangeMeta.min && rangeMeta.max) {
       this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
     }
-    console.log(
-      'Range Display Text: ',
-      this.rangeDisplayText,
-      this._rangeDisplayText
-    );
   }
 
   private _rangeDisplayText = 'None';
@@ -222,7 +217,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Rerendering...');
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((event) => {
         this.formId = event.id;
@@ -355,7 +349,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
               }
             }
             this.question = question;
-            console.log('Question: ', this.question);
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
@@ -521,22 +514,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sliderOpen() {
-    this.formService.setsliderOpenState(true);
+    this.formService.setsliderOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      value: {
+        value: 0,
+        min: 0,
+        max: 100,
+        increment: 1
+      }
+    });
   }
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
+      questionId: question.id,
       rangeMetadata: question.rangeMetadata
     });
   }
-
-  // getRangeDisplayText() {
-  //   const rangeMeta = this.questionForm.get('rangeMetadata').value;
-  //   if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-  //     this.rangeDisplayText.patchValue(`${rangeMeta.min} - ${rangeMeta.max}`);
-  //   }
-  //   console.log('Range Display Text: ', this.rangeDisplayText);
-  // }
 
   insertImageHandler(event) {
     let base64: string;
@@ -654,7 +649,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   logicEventHandler(event) {
-    console.log('Event: ', event);
     const { type, questionId, pageIndex } = event;
     switch (type) {
       case 'create':
@@ -861,10 +855,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  testClick() {
-    console.log('Test Click.');
   }
 
   openPreviewDialog() {

@@ -155,7 +155,6 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             const askQuestionArray = this.fb.array([]);
             if (askQuestions && askQuestions.length) {
               askQuestionsFormArray = askQuestions.map((aq) => {
-                // console.log('AQ: ', aq);
                 askQuestionArray.push(
                   this.fb.group({
                     id: aq.id || '',
