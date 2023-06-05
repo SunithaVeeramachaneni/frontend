@@ -76,6 +76,9 @@
             {{ 'plantMandatory' | translate }}
           </p>
           <mat-form-field appearance="outline" class="width-100 form-field">
+
+          <!-- ---------------------------------------------------------------------------- -->
+
             <mat-select
               formControlName="plantId"
               [placeholder]="'plant' | translate"
@@ -84,6 +87,7 @@
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKeyPlant($event)"
+
               />
               <div class="scrollable-area">
                 <mat-option
@@ -93,6 +97,8 @@
                 >
               </div>
             </mat-select>
+
+          <!-- --------------------------------------------------------------------------- -->
             <mat-error
               *ngIf="processValidationErrors('plantId')"
               class="m-t-5 error-fields"

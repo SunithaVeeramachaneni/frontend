@@ -241,10 +241,16 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     } else {
       this.plantInformation = this.allPlantsData;
     }
+
+    const isSearchEmpty = this.plantInformation.length;
+    if (isSearchEmpty < 1) {
+      this.plantInformation = this.allPlantsData;
+    }
   }
 
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
+    console.log(searchValue);
     return this.plantInformation.filter(
       (plant) =>
         (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
