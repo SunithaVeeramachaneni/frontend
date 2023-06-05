@@ -137,7 +137,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
     this.sliderOpenState$.subscribe((state) => {
       this.sliderOpenState = state;
       this.cdrf.detectChanges();
-      if (this.question.value !== 'TF') {
+      if (this.question && typeof this.question.value !== 'string') {
         this.sliderOptions = this.question.value;
       }
     });
