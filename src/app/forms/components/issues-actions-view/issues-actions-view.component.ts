@@ -755,7 +755,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private init(): void {
     this.attachmentsSubscriptionData = [];
-    const { id, type, DUEDATE, notificationInfo } = this.data;
+    const { id, type, dueDate, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -771,9 +771,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: DUEDATE ? new Date(DUEDATE) : '',
-      dueDateDisplayValue: DUEDATE
-        ? format(new Date(DUEDATE), 'dd MMM yyyy hh:mm a')
+      dueDate: dueDate ? new Date(dueDate) : '',
+      dueDateDisplayValue: dueDate
+        ? format(new Date(dueDate), 'dd MMM yyyy hh:mm a')
         : ''
     });
     this.minDate = new Date(this.data.createdAt);
