@@ -13,7 +13,7 @@ import {
   ViewChild,
   OnDestroy
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -171,7 +171,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     name: '',
     fieldType: 'TF',
     position: '',
-    required: new FormControl(false),
+    required: false,
     enableHistory: false,
     multi: false,
     value: 'TF',
