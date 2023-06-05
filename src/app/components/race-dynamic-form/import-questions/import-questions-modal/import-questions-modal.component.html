@@ -54,16 +54,17 @@
 
   <div mat-dialog-actions class="actions">
     <button
-      mat-raised-button
-      color="primary"
-      [disabled]="disableSelectBtn"
-      (click)="selectFormElement()"
-      translate="select"
-    ></button>
-    <button
       mat-stroked-button
       mat-dialog-close="true"
       translate="close"
+      class="close-btn"
+    ></button>
+    <button
+      mat-raised-button
+      [disabled]="disableSelectBtn"
+      (click)="selectFormElement()"
+      translate="select"
+      class="select-btn"
     ></button>
   </div>
 </div>

@@ -26,6 +26,12 @@
 
     .cancel-button {
       margin-right: 10px;
+      color: $blue-main;
+    }
+
+    .import-btn {
+      background-color: $blue-main;
+      color: $white;
     }
   }
 

@@ -347,6 +347,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
   formId: string;
+  inspectionId = '';
 
   plants = [];
   plantsIdNameMap = {};
@@ -469,11 +470,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideInspectionDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
-      this.formId = formId;
-      this.fetchInspection$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ formId = '', inspectionId = '' }) => {
+        this.formId = formId;
+        this.inspectionId = inspectionId;
+        this.fetchInspection$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
@@ -484,7 +488,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: this.formId
+      formId: this.formId,
+      inspectionId: this.inspectionId
     };
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
