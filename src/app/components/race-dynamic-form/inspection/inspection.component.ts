@@ -491,8 +491,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       formId: this.formId,
       inspectionId: this.inspectionId
     };
-    console.log(obj.formId);
-    console.log(obj.limit);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
