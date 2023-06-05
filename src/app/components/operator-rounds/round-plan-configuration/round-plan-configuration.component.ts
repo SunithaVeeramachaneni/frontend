@@ -608,6 +608,13 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             selectedHierarchy: selectedHierarchyList
           })
         );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormStatuses({
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
         this.formService.setSelectedHierarchyList(selectedHierarchyList);
       });
   };

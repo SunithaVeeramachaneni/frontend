@@ -596,7 +596,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.router.url === '/forms/observations') {
       this.router.navigate(['/forms/scheduler/1'], {
         queryParams: {
-          roundId: this.data?.roundId
+          inspectionId: this.data?.roundId
         }
       });
     }
