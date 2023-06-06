@@ -154,15 +154,11 @@
         </div>
 
         <div class="additional-details">
-          <p class="form-name-description m-b-0 m-t-20">
-            <mat-label translate="additionalDetails"></mat-label>
-          </p>
-
+          <p translate="additionalDetails" class="additional-details-text"></p>
           <button class="add-button" (click)="addAdditionalDetails()">
             {{ 'add' | translate }}
           </button>
         </div>
-
         <div
           class="label-value-text"
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length > 0"

@@ -141,13 +141,29 @@
 .add-button {
   color: $blue-main;
   border: none;
-  margin-left: 560px;
   background: none;
+  float: right;
+  position: relative;
+  bottom: 14px;
+  right: 5px;
 }
 .additional-details {
   background-color: $blue7;
   border-radius: 8px;
+  margin-top: 33px;
+  height: 40px;
 }
+
+.additional-details-text {
+  font-weight: bold;
+  font-size: 120%;
+  position: relative;
+  top: 13px;
+  left: 10px;
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
 .label-value {
   display: flex;
   align-items: center;
