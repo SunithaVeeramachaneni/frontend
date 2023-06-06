@@ -100,6 +100,11 @@ import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 
 @NgModule({
   declarations: [
@@ -181,6 +186,9 @@ import { ObservationsComponent } from './components/observations/observations.co
     MatInputModule,
     MatButtonModule,
     MatBottomSheetModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule,
     MatListModule,
     MatIconModule,
     MatCardModule,
