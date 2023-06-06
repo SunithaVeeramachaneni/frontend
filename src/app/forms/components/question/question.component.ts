@@ -134,7 +134,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._rangeDisplayText;
   }
 
-  set rangeDisplayText(dummy) {
+  set rangeDisplayText(d) {
     const rangeMeta = this.questionForm.get('rangeMetadata').value;
     if (rangeMeta && rangeMeta.min && rangeMeta.max) {
       this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;

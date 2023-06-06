@@ -153,7 +153,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
             let askQuestionsFormArray = [];
             if (askQuestions && askQuestions.length) {
-              askQuestionsFormArray = askQuestions.map((aq) => {
+              askQuestionsFormArray = askQuestions.map((aq) =>
                 this.fb.group({
                   id: aq.id || '',
                   sectionId: aq.sectionId || '',
@@ -170,8 +170,8 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                   isResponseTypeModalOpen: aq.isResponseTypeModalOpen || false,
                   unitOfMeasurement: aq.unitOfMeasurement || 'None',
                   rangeMetaData: aq.rangeMetaData || ({} as NumberRangeMetadata)
-                });
-              });
+                })
+              );
             }
 
             return this.fb.group({
