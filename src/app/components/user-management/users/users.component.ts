@@ -251,6 +251,7 @@ export class UsersComponent implements OnInit {
   plantsList: Plant[];
   plantsObject = {};
   isOpenAddEditModal = false;
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   constructor(
     private usersService: UsersService,

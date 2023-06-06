@@ -45,6 +45,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   selectedDashboard: Dashboard;
   defaultDashboard: Dashboard;
   skipSetDefaultDashboard = false;
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   dashboards$: Observable<Dashboard[]>;
   dashboardDataInitial$: Observable<DashboardData>;
   createUpdateDeleteDashboard$ =

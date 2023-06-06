@@ -47,6 +47,7 @@ export class ReportsComponent implements OnInit {
   );
   isExportInProgress = false;
   searchValue = '';
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
   finalData;
   reportsInitial$: Observable<Report>;
   reportsOnScroll$: Observable<Report>;
