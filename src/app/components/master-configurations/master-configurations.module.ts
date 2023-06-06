@@ -52,6 +52,7 @@ import { ResponsesListComponent } from './response-set/responses-list/responses-
 import { AddEditShiftComponent } from './shifts/add-edit-shift/add-edit-shift.component';
 import { ShiftListComponent } from './shifts/shift-list/shift-list.component';
 import { AppMaterialModules } from 'src/app/material.module';
+import { ShiftOverlapModalComponent } from './plants/shift-overlap-modal/shift-overlap-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -79,7 +80,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditShiftComponent,
     ShiftListComponent,
     UploadResponseModalComponent,
-    ResponsesListComponent
+    ResponsesListComponent,
+    ShiftOverlapModalComponent
   ],
   imports: [
     FormsModule,
