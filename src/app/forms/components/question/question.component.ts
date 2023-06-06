@@ -352,6 +352,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
+            this.rangeDisplayText = '';
           }
         })
       );
