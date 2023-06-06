@@ -58,7 +58,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-
+  labels: string[] = [];
+  values: string[] = [];
+  labelCtrl = new FormControl();
+  valueCtrl = new FormControl();
+  filteredLabels: Observable<string[]>;
+  filteredValues: Observable<string[]>;
   allTags: string[] = [];
   originalTags: string[] = [];
 

@@ -134,7 +134,7 @@
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="add($event)"
                 (click)="openAutoComplete()"
-                #tagsInput
+                #labelsInput
                 [formControl]="tagsCtrl"
               />
             </mat-chip-list>
@@ -162,6 +162,14 @@
             {{ 'add' | translate }}
           </button>
         </div>
+
+        <div
+          class="label-value-text"
+          *ngIf="headerDataForm.get('additionalDetails')['controls'].length > 0"
+        >
+          {{ 'label' | translate }}
+          {{ 'value' | translate }}
+        </div>
         <div
           class="label-value"
           *ngFor="
@@ -173,31 +181,86 @@
           [formGroup]="additionalDetails"
         >
           <div>
-            <label>{{ 'label' | translate }}</label>
-            <input formControlName="label" />
+            <mat-form-field
+              class="chips-list width-100 form-field"
+              appearance="outline"
+            >
+              <mat-chip-list #chipList>
+                <mat-chip
+                  *ngFor="let label of labels"
+                  [selectable]="selectable"
+                  [removable]="removable"
+                  (removed)="remove(label)"
+                  class="labels-mat-chips"
+                >
+                  {{ label }}
+                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input
+                  [matChipInputFor]="chipList"
+                  [matAutocomplete]="auto"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="add($event)"
+                  (click)="openAutoComplete()"
+                  [formControl]="labelCtrl"
+                />
+              </mat-chip-list>
+
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                (optionSelected)="selected($event)"
+              >
+                <mat-option
+                  *ngFor="let label of filteredLabels | async"
+                  [value]="label"
+                >
+                  {{ label }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
           </div>
 
           <div>
-            <label>{{ 'value' | translate }}</label>
-            <input formControlName="value" />
+            <mat-form-field
+              class="chips-list width-100 form-field"
+              appearance="outline"
+            >
+              <mat-chip-list #chipList>
+                <mat-chip
+                  *ngFor="let value of values"
+                  [selectable]="selectable"
+                  [removable]="removable"
+                  (removed)="remove(value)"
+                  class="tags-mat-chips"
+                >
+                  {{ value }}
+                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input
+                  [matChipInputFor]="chipList"
+                  [matAutocomplete]="auto"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="add($event)"
+                  (click)="openAutoComplete()"
+                  #valuesInput
+                  [formControl]="valueCtrl"
+                />
+              </mat-chip-list>
+
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                (optionSelected)="selected($event)"
+              >
+                <mat-option
+                  *ngFor="let value of filteredValues | async"
+                  [value]="value"
+                >
+                  {{ value }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
           </div>
         </div>
-        <!-- <span class="m-2">
-          <mat-form-field appearance="outline" class="width-100" class="m-5">
-            <input
-              matInput
-              [placeholder]="'label' | translate"
-              formControlName="label"
-            />
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="width-100" class="m-5">
-            <input
-              matInput
-              [placeholder]="'field' | translate"
-              formControlName="field"
-            />
-          </mat-form-field>
-        </span> -->
 
         <div mat-dialog-actions align="end" class="buttons">
           <button
