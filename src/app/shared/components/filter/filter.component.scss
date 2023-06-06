@@ -130,6 +130,7 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
 }
 .mat-field {
   width: 100%;
+  overflow: hidden;
 }
 .schedule-wrap {
   display: flex;
@@ -140,4 +141,21 @@ mat-datepicker-toggle.mat-datepicker-toggle.arrow-toggle button {
   .width100 {
     width: 100%;
   }
+}
+.multiple-header {
+  height: 16px;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.done-filters-btn {
+  border: 0;
+  float: right;
+  background-color: $white;
+  color: $blue2;
+}
+
+.scrollable-area {
+  overflow: auto;
+  max-height: 200px;
 }
