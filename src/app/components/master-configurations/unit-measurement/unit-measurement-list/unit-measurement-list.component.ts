@@ -1,11 +1,17 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  Subject
 } from 'rxjs';
 import {
   debounceTime,
@@ -15,7 +21,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -34,7 +41,7 @@ import {
   UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
-  defaultLimit,
+  graphQLDefaultLimit,
   permissions as perms,
   routingUrls
 } from 'src/app/app.constants';
@@ -61,7 +68,7 @@ export interface FormTableUpdate {
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class UnitMeasurementListComponent implements OnInit {
+export class UnitMeasurementListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   columns: Column[] = [
     {
@@ -224,9 +231,9 @@ export class UnitMeasurementListComponent implements OnInit {
       form: {} as any
     });
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchUom: FormControl;
-  ghostLoading = new Array(12).fill(0).map((v, i) => i);
+  ghostLoading = new Array(16).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -241,7 +248,21 @@ export class UnitMeasurementListComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
+  isPopoverOpen = false;
+  filterJson: {
+    label: string;
+    items: string[];
+    column: string;
+    type: string;
+    value: string;
+  }[] = [];
+  filter = {
+    status: '',
+    unitType: '',
+    symbol: ''
+  };
   private allUnitData: UnitOfMeasurement[] = [];
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly toast: ToastService,
@@ -265,11 +286,13 @@ export class UnitMeasurementListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(() => {
           this.fetchUOM$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
+    this.getFilter();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
@@ -417,17 +440,21 @@ export class UnitMeasurementListComponent implements OnInit {
 
   getUnitOfMeasurementList() {
     return this.unitMeasurementService
-      .getUnitOfMeasurementList$({
-        next: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchUom.value,
-        fetchType: this.fetchType
-      })
+      .getUnitOfMeasurementList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchUom.value,
+          fetchType: this.fetchType
+        },
+        this.filter
+      )
       .pipe(
-        mergeMap(({ count, rows, next }) => {
+        mergeMap(({ count, rows, next, filters }) => {
           this.formsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
+          this.prepareFilters(filters);
           return of(rows);
         }),
         catchError((err) => {
@@ -480,6 +507,7 @@ export class UnitMeasurementListComponent implements OnInit {
   }
 
   addManually(): void {
+    this.unitMeasurementService.getUnitTypes().subscribe();
     this.unitEditData = null;
     this.unitAddOrEditOpenState = 'in';
   }
@@ -546,6 +574,52 @@ export class UnitMeasurementListComponent implements OnInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  applyFilters(data = []): void {
+    if (this.searchUom.value) {
+      this.searchUom.patchValue('');
+    }
+    this.isPopoverOpen = false;
+    data?.forEach((item) => (this.filter[item?.column] = item.value ?? ''));
+    this.nextToken = '';
+    this.fetchUOM$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+    this.filter = {
+      status: '',
+      unitType: '',
+      symbol: ''
+    };
+    this.nextToken = '';
+    this.fetchUOM$.next({ data: 'load' });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.unitMeasurementService
+      .getFilter()
+      .subscribe((res) => (this.filterJson = res || []));
+  }
+
+  private prepareFilters(filters): void {
+    this.filterJson?.forEach((item) => {
+      if (item?.column === 'status') {
+        item.items = filters?.status || [];
+      }
+      if (item?.column === 'unitType') {
+        item.items = filters?.unitTypes || [];
+      }
+      if (item?.column === 'symbol') {
+        item.items = filters?.symbol || [];
+      }
+    });
   }
 
   private onDeleteUnit(data: UnitOfMeasurement): void {

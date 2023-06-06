@@ -23,6 +23,9 @@
                 <svg-icon
                   matSuffix
                   icon="icon-filterIcon"
+                  cdkOverlayOrigin
+                  #trigger="cdkOverlayOrigin"
+                  (click)="isPopoverOpen = !isPopoverOpen"
                   class="filter-icon"
                 ></svg-icon>
               </mat-form-field>
@@ -103,6 +106,24 @@
             class="width-100"
           ></cwp-dynamictable>
         </div>
+
+        <ng-template
+          cdkConnectedOverlay
+          cdkConnectedOverlayPanelClass="custom-popover"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayOpen]="isPopoverOpen"
+          [cdkConnectedOverlayOrigin]="trigger"
+          cdkConnectedOverlayWidth="400px"
+          (backdropClick)="isPopoverOpen = false"
+        >
+          <app-filter
+            [json]="filterJson"
+            (close)="isPopoverOpen = false"
+            (apply)="applyFilters($event)"
+            (reset)="clearFilters()"
+          ></app-filter>
+        </ng-template>
       </div>
 
       <ng-container *ngIf="unitAddOrEditOpenState">

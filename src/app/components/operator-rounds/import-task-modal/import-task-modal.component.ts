@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -10,6 +10,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
@@ -25,7 +26,7 @@ import { FormMetadata } from 'src/app/interfaces/form-configuration';
   templateUrl: './import-task-modal.component.html',
   styleUrls: ['./import-task-modal.component.scss']
 })
-export class ImportTaskModalComponent implements OnInit {
+export class ImportTaskModalComponent implements OnInit, OnDestroy {
   searchRoundPlan: FormControl;
   skip = 0;
   fetchType = 'load';
@@ -38,6 +39,7 @@ export class ImportTaskModalComponent implements OnInit {
   selectedRoundPlan;
   selectedItem;
   disableSelectBtn = true;
+  private destroy$ = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<ImportTaskModalComponent>,
@@ -55,6 +57,7 @@ export class ImportTaskModalComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.operatorRoundsService.fetchForms$.next({ data: 'search' });
         })
@@ -174,5 +177,10 @@ export class ImportTaskModalComponent implements OnInit {
       .subscribe((response) => {
         this.selectedRoundPlan = response;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
