@@ -153,6 +153,52 @@
           </mat-form-field>
         </div>
 
+        <div class="additional-details">
+          <p class="form-name-description m-b-0 m-t-20">
+            <mat-label translate="additionalDetails"></mat-label>
+          </p>
+
+          <button class="add-button" (click)="addAdditionalDetails()">
+            {{ 'add' | translate }}
+          </button>
+        </div>
+        <div
+          class="label-value"
+          *ngFor="
+            let additionalDetails of headerDataForm.get('additionalDetails')[
+              'controls'
+            ];
+            let i = index
+          "
+          [formGroup]="additionalDetails"
+        >
+          <div>
+            <label>{{ 'label' | translate }}</label>
+            <input formControlName="label" />
+          </div>
+
+          <div>
+            <label>{{ 'value' | translate }}</label>
+            <input formControlName="value" />
+          </div>
+        </div>
+        <!-- <span class="m-2">
+          <mat-form-field appearance="outline" class="width-100" class="m-5">
+            <input
+              matInput
+              [placeholder]="'label' | translate"
+              formControlName="label"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="width-100" class="m-5">
+            <input
+              matInput
+              [placeholder]="'field' | translate"
+              formControlName="field"
+            />
+          </mat-form-field>
+        </span> -->
+
         <div mat-dialog-actions align="end" class="buttons">
           <button
             mat-stroked-button

@@ -17,6 +17,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -119,7 +120,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
-      plantId: ['', Validators.required]
+      plantId: ['', Validators.required],
+      additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
   }
@@ -266,5 +268,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  addAdditionalDetails() {
+    const add = this.headerDataForm.get('additionalDetails') as FormArray;
+    add.push(
+      this.fb.group({
+        label: ['', [Validators.maxLength(25)]],
+        value: ['', [Validators.maxLength(40)]]
+      })
+    );
+  }
+
+  deleteAdditionalDetails(index: number) {
+    const add = this.headerDataForm.get('additionalDetails') as FormArray;
+    add.removeAt(index);
   }
 }

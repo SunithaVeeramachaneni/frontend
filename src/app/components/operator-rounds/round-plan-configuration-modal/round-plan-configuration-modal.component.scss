@@ -137,3 +137,29 @@
   font-weight: normal;
   line-height: normal;
 }
+
+.add-button {
+  color: $blue-main;
+  border: none;
+  margin-left: 560px;
+  background: none;
+}
+.additional-details {
+  background-color: $blue7;
+  border-radius: 8px;
+}
+.label-value {
+  display: flex;
+  align-items: center;
+}
+
+.form-header-modal[_ngcontent-lii-c407]
+  .form-content[_ngcontent-lii-c407]
+  .form-detials[_ngcontent-lii-c407]
+  .form-name-description[_ngcontent-lii-c407] {
+  font-size: 18px;
+  line-height: 21px;
+
+  display: flex;
+  align-items: center;
+}
