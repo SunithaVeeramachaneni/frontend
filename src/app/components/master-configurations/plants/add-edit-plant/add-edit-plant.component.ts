@@ -74,23 +74,7 @@ export class AddEditPlantComponent implements OnInit {
   plantForm: FormGroup;
   parentInformation;
   allParentsData;
-  activeShiftsMaster = [
-    {
-      name: 'Shift A',
-      startTime: '10:00 AM',
-      endTime: '12:00PM'
-    },
-    {
-      name: 'Shift B',
-      startTime: '12:00 PM',
-      endTime: '2:00PM'
-    },
-    {
-      name: 'Shift C',
-      startTime: '2:00 PM',
-      endTime: '4:00PM'
-    }
-  ];
+
   activeShifts$: Observable<any>;
   private plantsEditData;
   constructor(
@@ -164,25 +148,31 @@ export class AddEditPlantComponent implements OnInit {
         selectedShifts.push({ start: e.startTime, end: e.endTime });
       });
     }
-    this.isOverlapping(selectedShifts);
-    if (this.isOverlapping(selectedShifts) === true) {
+    const isOverlapping = this.isOverlapping(selectedShifts);
+    if (isOverlapping) {
       this.dialog.open(ShiftOverlapModalComponent);
-    } else if (this.isOverlapping(selectedShifts) === false) {
+    } else {
       if (this.plantStatus === 'add') {
         this.plantForm.get('image').setValue('');
         const { id, ...payload } = this.plantForm.value;
-        this.plantService.createPlant$(payload).subscribe((res) => {
-          this.createdPlantData.emit({
-            status: this.plantStatus,
-            data: res
+        const shiftsStr = JSON.stringify(payload.shifts);
+        this.plantService
+          .createPlant$({ ...payload, shifts: shiftsStr })
+          .subscribe((res) => {
+            this.createdPlantData.emit({
+              status: this.plantStatus,
+              data: res
+            });
+            this.plantForm.reset();
+            this.slideInOut.emit('out');
           });
-          this.plantForm.reset();
-          this.slideInOut.emit('out');
-        });
       } else if (this.plantStatus === 'edit') {
+        const payload = this.plantForm.getRawValue();
+        const shiftsStr = JSON.stringify(payload.shifts);
         this.plantService
           .updatePlant$({
-            ...this.plantForm.getRawValue(),
+            ...payload,
+            shifts: shiftsStr,
             _version: this.plantsEditData._version,
             id: this.plantsEditData?.id
           })

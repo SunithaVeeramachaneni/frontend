@@ -109,7 +109,7 @@ export class ShiftListComponent implements OnInit, OnDestroy {
       showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
-      sortable: true,
+      sortable: false,
       hideable: false,
       visible: true,
       movable: false,
@@ -332,12 +332,10 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    console.log(event);
     this.shiftService.fetchShifts$.next(event);
   };
 
   rowLevelActionHandler = (event): void => {
-    console.log(event);
     const { data, action } = event;
     switch (action) {
       case 'edit':
@@ -353,7 +351,6 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   configOptionsChangeHandler = (event): void => {};
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    console.log(event);
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':

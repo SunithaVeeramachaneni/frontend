@@ -5,11 +5,7 @@
     </div>
     <div *ngIf="selectedPlant">
       <p>
-        <img
-          [src]="selectedPlantImageurl(selectedPlant)"
-          alt="Image"
-          class="image"
-        />
+        <img [src]="selectedPlantImageurl(selectedPlant)" alt="Image" class="image" />
       </p>
       <h1 class="heading">{{ selectedPlant.name }}</h1>
       <hr class="horizon-line" />
@@ -31,6 +27,11 @@
         {{ selectedPlant.state ? selectedPlant.state : '--' }}
       </p>
       <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="shifts"></p>
+      <p class="m-0 sub-headings-value">
+        {{ selectedPlant.shiftNames ? selectedPlant.shiftNames?.join(', ') : '--' }}
+      </p>
+      <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="additionalDetails"></p>
       <p class="m-0 sub-headings-value">
         {{ selectedPlant.label ? selectedPlant.label : '--' }}
@@ -38,12 +39,7 @@
         {{ selectedPlant.field ? selectedPlant.field : '--' }}
       </p>
       <hr class="horizon-line" />
-      <button
-        mat-raised-button
-        class="edit-btn"
-        (click)="edit()"
-        translate="editBtn"
-      ></button>
+      <button mat-raised-button class="edit-btn" (click)="edit()" translate="editBtn"></button>
     </div>
   </mat-card>
 </div>

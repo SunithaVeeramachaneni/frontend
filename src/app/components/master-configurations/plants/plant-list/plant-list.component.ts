@@ -171,10 +171,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'shifts',
+      id: 'shiftNames',
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
+      isMultiValued: true,
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
