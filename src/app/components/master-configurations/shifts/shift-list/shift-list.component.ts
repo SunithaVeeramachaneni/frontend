@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
+  ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
@@ -26,37 +27,35 @@ import {
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
   UserInfo
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
-import { downloadFile } from 'src/app/shared/utils/fileUtils';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { PlantService } from '../services/plant.service';
+import { ShiftService } from '../services/shift.service';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 @Component({
-  selector: 'app-plant-list',
-  templateUrl: './plant-list.component.html',
-  styleUrls: ['./plant-list.component.scss'],
+  selector: 'app-shift-list',
+  templateUrl: './shift-list.component.html',
+  styleUrls: ['./shift-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class PlantListComponent implements OnInit, OnDestroy {
+export class ShiftListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   userInfo$: Observable<UserInfo>;
 
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Name',
+      displayName: 'Shift Name',
       type: 'string',
       controlType: 'string',
       order: 1,
-      searchable: false,
+      searchable: true,
       sortable: false,
       hideable: false,
       visible: true,
@@ -72,18 +71,14 @@ export class PlantListComponent implements OnInit, OnDestroy {
       },
       hasSubtitle: false,
       showMenuOptions: false,
-      subtitleColumn: 'plantId',
-      subtitleStyle: {
-        'font-size': '80%',
-        color: 'darkgray',
-        'overflow-wrap': 'anywhere'
-      },
-      hasPreTextImage: true,
+      subtitleColumn: '',
+      subtitleStyle: {},
+      hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'plantId',
-      displayName: 'Plant Id',
+      id: 'startAndEndTime',
+      displayName: 'Start & End Time',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -91,7 +86,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
-      sortable: true,
+      sortable: false,
       hideable: false,
       visible: true,
       movable: false,
@@ -105,10 +100,10 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'country',
-      displayName: 'Country',
+      id: 'isActive',
+      displayName: 'Active',
       type: 'string',
-      controlType: 'string',
+      controlType: 'slide-toggle',
       order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -125,77 +120,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
-    },
-    {
-      id: 'state',
-      displayName: 'State',
-      type: 'string',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'zipCode',
-      displayName: 'Zip Code',
-      type: 'number',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'shifts',
-      displayName: 'Shift',
-      type: 'string',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: false,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
     }
   ];
 
   configOptions: ConfigOptions = {
-    tableID: 'plantsTable',
+    tableID: 'shiftsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -208,39 +137,29 @@ export class PlantListComponent implements OnInit, OnDestroy {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
-    conditionalStyles: {
-      draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
-      },
-      published: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
-      }
-    }
+    groupLevelColors: [],
+    conditionalStyles: {}
   };
 
-  searchPlant: FormControl;
+  searchShift: FormControl;
   dataSource: MatTableDataSource<any>;
-  openPlantDetailedView = 'out';
-  plantAddOrEditOpenState = 'out';
-  plantEditData;
+  openShiftDetailedView = 'out';
+  shiftAddOrEditOpenState = 'out';
+  shiftEditData;
+  shiftMode = 'CREATE';
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
-  plants$: Observable<any>;
-  plantsCount$: Observable<Count>;
-  plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  shifts$: Observable<any>;
 
-  addEditCopyDeletePlants = false;
-  addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
+  addEditCopyDeleteShifts = false;
+  addEditCopyDeleteShifts$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
       form: {} as any
     });
-  selectedPlant;
+  selectedShift;
 
   skip = 0;
   limit = defaultLimit;
@@ -252,60 +171,49 @@ export class PlantListComponent implements OnInit, OnDestroy {
   constructor(
     private loginService: LoginService,
     private readonly toast: ToastService,
-    private plantService: PlantService
+    private shiftService: ShiftService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.plantService.fetchPlants$.next({ data: 'load' });
-    this.plantService.fetchPlants$.next({} as TableEvent);
-    this.searchPlant = new FormControl('');
+    this.shiftService.fetchShifts$.next({ data: 'load' });
+    this.shiftService.fetchShifts$.next({} as TableEvent);
+    this.searchShift = new FormControl('');
 
-    this.searchPlant.valueChanges
+    this.searchShift.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap(() => {
-          this.plantService.fetchPlants$.next({ data: 'search' });
+          this.shiftService.fetchShifts$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.getDisplayedPlants();
-    this.plantsCount$ = combineLatest([
-      this.plantsCount$,
-      this.plantsCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addEditCopyDeletePlants) {
-          count.count += update;
-          this.addEditCopyDeletePlants = false;
-        }
-        return count;
-      })
-    );
+    this.getDisplayedShifts();
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
   }
 
-  getDisplayedPlants(): void {
-    const plantsOnLoadSearch$ = this.plantService.fetchPlants$.pipe(
+  getDisplayedShifts(): void {
+    const shiftsOnLoadSearch$ = this.shiftService.fetchShifts$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
         this.nextToken = '';
-        return this.getPlants();
+        return this.getShifts();
       })
     );
 
-    const onScrollPlants$ = this.plantService.fetchPlants$.pipe(
+    const onScrollShifts$ = this.shiftService.fetchShifts$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getPlants();
+          return this.getShifts();
         } else {
           return of([]);
         }
@@ -316,10 +224,10 @@ export class PlantListComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.plants$ = combineLatest([
-      plantsOnLoadSearch$,
-      this.addEditCopyDeletePlants$,
-      onScrollPlants$
+    this.shifts$ = combineLatest([
+      shiftsOnLoadSearch$,
+      this.addEditCopyDeleteShifts$,
+      onScrollShifts$
     ]).pipe(
       map(([rows, { form, action }, scrollData]) => {
         if (this.skip === 0) {
@@ -328,17 +236,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows;
-        } else if (this.addEditCopyDeletePlants) {
+        } else if (this.addEditCopyDeleteShifts) {
           switch (action) {
-            case 'delete':
-              initial.data = initial.data.filter((d) => d.id !== form.id);
-              this.toast.show({
-                text: 'Plant deleted successfully!',
-                type: 'success'
-              });
-              break;
             case 'add':
-              // case 'copy':
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
@@ -350,7 +250,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
             default:
             // Do nothing
           }
-          this.addEditCopyDeletePlants = false;
+          this.addEditCopyDeleteShifts = false;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
@@ -362,80 +262,69 @@ export class PlantListComponent implements OnInit, OnDestroy {
     );
   }
 
-  getPlants() {
-    return this.plantService
-      .getPlantsList$({
+  getShifts() {
+    return this.shiftService
+      .getShiftsList$({
         next: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchPlant.value,
+        searchKey: this.searchShift.value,
         fetchType: this.fetchType
       })
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.plantsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.plantsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })
       );
   }
 
-  addOrUpdatePlant(plantData) {
-    if (plantData.status === 'add') {
-      this.addEditCopyDeletePlants = true;
-      if (this.searchPlant.value) {
-        this.plantService.fetchPlants$.next({ data: 'search' });
+  addOrUpdateShift(shiftData) {
+    if (shiftData.status === 'add') {
+      this.addEditCopyDeleteShifts = true;
+      if (this.searchShift.value) {
+        this.shiftService.fetchShifts$.next({ data: 'search' });
       } else {
-        this.addEditCopyDeletePlants$.next({
+        this.addEditCopyDeleteShifts$.next({
           action: 'add',
-          form: plantData.data
+          form: shiftData.data
         });
       }
       this.toast.show({
-        text: 'Plant created successfully!',
+        text: 'Shift created successfully!',
         type: 'success'
       });
-    } else if (plantData.status === 'edit') {
-      this.addEditCopyDeletePlants = true;
-      if (this.searchPlant.value) {
-        this.plantService.fetchPlants$.next({ data: 'search' });
+    } else if (shiftData.status === 'edit') {
+      this.addEditCopyDeleteShifts = true;
+      if (this.searchShift.value) {
+        this.shiftService.fetchShifts$.next({ data: 'search' });
       } else {
-        this.addEditCopyDeletePlants$.next({
+        this.addEditCopyDeleteShifts$.next({
           action: 'edit',
-          form: plantData.data
+          form: shiftData.data
         });
         this.toast.show({
-          text: 'Plant updated successfully!',
+          text: 'Shift updated successfully!',
           type: 'success'
         });
       }
     }
-    this.plantService.fetchPlants$.next({ data: 'load' });
+    this.shiftService.fetchShifts$.next({ data: 'load' });
   }
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
 
-    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_PLANT')) {
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_SHIFT')) {
       menuActions.push({
         title: 'Edit',
         action: 'edit'
       });
     }
-
-    // if (
-    //   this.loginService.checkUserHasPermission(permissions, 'DELETE_PLANT')
-    // ) {
-    //   menuActions.push({
-    //     title: 'Delete',
-    //     action: 'delete'
-    //   });
-    // } Implementation is done but required validations based on parent
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -443,17 +332,19 @@ export class PlantListComponent implements OnInit, OnDestroy {
   }
 
   handleTableEvent = (event): void => {
-    this.plantService.fetchPlants$.next(event);
+    console.log(event);
+    this.shiftService.fetchShifts$.next(event);
   };
 
-  rowLevelActionHandler = ({ data, action }): void => {
+  rowLevelActionHandler = (event): void => {
+    console.log(event);
+    const { data, action } = event;
     switch (action) {
       case 'edit':
-        this.plantEditData = { ...data };
-        this.plantAddOrEditOpenState = 'in';
-        break;
-      case 'delete':
-        this.deletePlant(data);
+        this.shiftMode = 'EDIT';
+        this.shiftEditData = { ...data };
+        this.selectedShift = { ...data };
+        this.openShiftDetailedView = 'in';
         break;
       default:
     }
@@ -462,56 +353,48 @@ export class PlantListComponent implements OnInit, OnDestroy {
   configOptionsChangeHandler = (event): void => {};
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
+    console.log(event);
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
-      case 'plantId':
-      case 'country':
-      case 'zipCode':
-      case 'state':
-        this.showPlantDetail(row);
+      case 'startAndEndTime':
+      case 'startTime':
+      case 'endTime':
+        this.showShiftDetail(row);
         break;
       default:
     }
   };
 
-  deletePlant(plant: any): void {
-    const deleteData = {
-      id: plant.id,
-      _version: plant._version
-    };
-    this.plantService.deletePlant$(deleteData).subscribe((data: any) => {
-      this.addEditCopyDeletePlants$.next({
-        action: 'delete',
-        form: data
-      });
-    });
-  }
-
   addManually() {
-    this.plantAddOrEditOpenState = 'in';
-    this.plantEditData = null;
+    this.openShiftDetailedView = 'in';
+    this.shiftEditData = null;
+    this.selectedShift = null;
+    this.shiftMode = 'CREATE';
   }
 
-  showPlantDetail(row: GetFormList): void {
-    this.selectedPlant = row;
-    this.openPlantDetailedView = 'in';
+  showShiftDetail(row: GetFormList): void {
+    this.shiftMode = 'VIEW';
+    this.selectedShift = row;
+    this.openShiftDetailedView = 'in';
   }
 
-  onClosePlantAddOrEditOpenState(event) {
-    this.plantAddOrEditOpenState = event;
+  onCloseShiftAddOrEditOpenState(event) {
+    this.openShiftDetailedView = event;
+  }
+  onShiftModeUpdate(event) {
+    this.shiftMode = event.mode;
+    this.shiftEditData = event.data;
   }
 
-  onClosePlantDetailedView(event) {
-    this.openPlantDetailedView = event.status;
+  onCloseShiftDetailedView(event) {
+    this.openShiftDetailedView = event.status;
     if (event.data !== '') {
-      this.plantEditData = event.data;
-      this.plantAddOrEditOpenState = 'in';
+      this.shiftEditData = event.data;
+      this.selectedShift = event.data;
+      this.shiftAddOrEditOpenState = 'in';
+      this.cdrf.detectChanges();
     }
-  }
-  resetFile(event: Event) {
-    const file = event.target as HTMLInputElement;
-    file.value = '';
   }
 
   ngOnDestroy(): void {

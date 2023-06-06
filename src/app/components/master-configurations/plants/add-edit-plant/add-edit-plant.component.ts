@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   EventEmitter,
@@ -15,6 +16,9 @@ import {
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { ShiftService } from '../../shifts/services/shift.service';
+import { Observable, of } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -68,8 +72,30 @@ export class AddEditPlantComponent implements OnInit {
   plantForm: FormGroup;
   parentInformation;
   allParentsData;
+  activeShiftsMaster = [
+    {
+      name: 'Shift A',
+      startTime: '10:00 AM',
+      endTime: '12:00PM'
+    },
+    {
+      name: 'Shift B',
+      startTime: '12:00 PM',
+      endTime: '2:00PM'
+    },
+    {
+      name: 'Shift C',
+      startTime: '2:00 PM',
+      endTime: '4:00PM'
+    }
+  ];
+  activeShifts$: Observable<any>;
   private plantsEditData;
-  constructor(private fb: FormBuilder, private plantService: PlantService) {}
+  constructor(
+    private fb: FormBuilder,
+    private plantService: PlantService,
+    private shiftService: ShiftService
+  ) {}
 
   ngOnInit(): void {
     const regex = '^[A-Za-z0-9 ]*$';
@@ -104,9 +130,25 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
+      shifts: new FormControl('', []),
       label: '',
       field: ''
     });
+
+    this.activeShifts$ = this.shiftService
+      .getShiftsList$(
+        {
+          next: '',
+          limit: 100000,
+          searchKey: '',
+          fetchType: 'load'
+        },
+        { isActive: 'true' }
+      )
+      .pipe(
+        mergeMap(({ count, rows, next }) => of(rows)),
+        catchError(() => of([]))
+      );
   }
 
   create() {
