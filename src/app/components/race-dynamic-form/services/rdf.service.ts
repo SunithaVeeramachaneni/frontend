@@ -184,6 +184,10 @@ export class RaceDynamicFormService {
       'plantId',
       filterData && filterData.plant ? filterData.plant : ''
     );
+    params.set(
+      'formType',
+      filterData && filterData.formType ? filterData.formType : ''
+    );
     return this.appService
       ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
