@@ -101,7 +101,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
 import { SchedulersComponent } from './components/schedulers/schedulers.component';
-
+import { FormsComponent } from './components/forms/forms.component';
+import { InspectionComponent } from './inspection/inspection.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -166,7 +167,9 @@ import { SchedulersComponent } from './components/schedulers/schedulers.componen
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    SchedulersComponent
+    SchedulersComponent,
+    FormsComponent,
+    InspectionComponent
   ],
   imports: [
     SharedModule,
