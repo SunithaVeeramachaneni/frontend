@@ -359,6 +359,9 @@ export class ShiftListComponent implements OnInit, OnDestroy {
       case 'endTime':
         this.showShiftDetail(row);
         break;
+      case 'isActive':
+        this.selectedShift = row;
+        break;
       default:
     }
   };
@@ -392,6 +395,24 @@ export class ShiftListComponent implements OnInit, OnDestroy {
       this.shiftAddOrEditOpenState = 'in';
       this.cdrf.detectChanges();
     }
+  }
+
+  onToggleChangeHandler(event) {
+    this.shiftService
+      .updateShift$({
+        id: this.selectedShift.id,
+        name: this.selectedShift.name,
+        startTime: this.selectedShift.startTime,
+        endTime: this.selectedShift.endTime,
+        isActive: event,
+        _version: this.selectedShift._version
+      })
+      .subscribe((res) => {
+        this.toast.show({
+          text: 'Shift updated successfully!',
+          type: 'success'
+        });
+      });
   }
 
   ngOnDestroy(): void {

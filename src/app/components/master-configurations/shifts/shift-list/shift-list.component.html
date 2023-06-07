@@ -9,26 +9,50 @@
           <span class="custom-form-field-gray-color search">
             <mat-form-field appearance="outline">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input matInput type="text" [placeholder]="'searchShift' | translate" autocomplete="off"
-                [formControl]="searchShift" />
-              <svg-icon matSuffix icon="icon-filterIcon" class="filter-icon"></svg-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'searchShift' | translate"
+                autocomplete="off"
+                [formControl]="searchShift"
+              />
+              <svg-icon
+                matSuffix
+                icon="icon-filterIcon"
+                class="filter-icon"
+              ></svg-icon>
             </mat-form-field>
           </span>
-          <button mat-raised-button translate="createNew" class="create-new-btn"
-            *appCheckUserHasPermission="[perms.createShift]" (click)="addManually()"></button>
+          <button
+            mat-raised-button
+            translate="createNew"
+            class="create-new-btn"
+            *appCheckUserHasPermission="[perms.createShift]"
+            (click)="addManually()"
+          ></button>
         </div>
       </div>
       <div *ngIf="(shifts$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable [dataSource]="dataSource" [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)" (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
           (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)" class="width-100"></cwp-dynamictable>
+          (onToggleChangeHandler)="onToggleChangeHandler($event)"
+          (cellClickActionHandler)="cellClickActionHandler($event)"
+          class="width-100"
+        ></cwp-dynamictable>
       </div>
       <ng-container *ngIf="openShiftDetailedView">
-        <app-add-edit-shift [@slideInOut]="openShiftDetailedView" [shiftMode]="shiftMode"
-          (slideInOut)="onCloseShiftAddOrEditOpenState($event)" [shiftEditData]="selectedShift"
+        <app-add-edit-shift
+          [@slideInOut]="openShiftDetailedView"
+          [shiftMode]="shiftMode"
+          (slideInOut)="onCloseShiftAddOrEditOpenState($event)"
+          [shiftEditData]="selectedShift"
           (shiftModeUpdated)="onShiftModeUpdate($event)"
-          (createdShiftData)="addOrUpdateShift($event)"></app-add-edit-shift>
+          (createdShiftData)="addOrUpdateShift($event)"
+        ></app-add-edit-shift>
       </ng-container>
       <div *ngIf="isLoading$ | async">
         <div class="ghost-loading">
