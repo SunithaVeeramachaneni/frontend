@@ -7,7 +7,7 @@
     pageTasksCount: pageTasksCount$ | async
   } as props"
 >
-  <div class="page-header">
+  <div class="page-header" *ngIf="!isEmbeddedForms">
     <mat-icon
       (click)="toggleIsOpenState()"
       *ngIf="pageForm.get('isOpen').value === true"
@@ -65,11 +65,15 @@
       </mat-menu>
     </div>
   </div>
-  <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
+  <div
+    *ngIf="pageForm.get('isOpen').value === true"
+    class="section-content"
+    [ngClass]="{ 'page-header-embedded': isEmbeddedForms }"
+  >
     <ng-content></ng-content>
   </div>
 
-  <button class="add-page-btn" (click)="addPage()">
+  <button class="add-page-btn" (click)="addPage()" *ngIf="!isEmbeddedForms">
     <svg-icon icon="icon-add-page" class="add-page-btn-icon"></svg-icon>
     {{ 'addPage' | translate }}
   </button>

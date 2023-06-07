@@ -135,6 +135,7 @@
       <button
         mat-stroked-button
         class="import-btn"
+        [disabled]="isEmbeddedForms"
         translate="saveAsTemplate"
         (click)="openSaveTemplateDialog()"
       ></button>
@@ -152,6 +153,7 @@
       <app-builder
         [selectedNode]="selectedNode"
         [isPreviewActive]="true"
+        [isEmbeddedForms]="isEmbeddedForms"
         [counter]="formConfiguration.get('counter').value"
         [moduleName]="'forms'"
       ></app-builder>

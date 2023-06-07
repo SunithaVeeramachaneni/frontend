@@ -10,6 +10,7 @@
     <ng-container *ngFor="let pageIndex of props.pageIndexes">
       <app-page
         [pageIndex]="pageIndex"
+        [isEmbeddedForms]="isEmbeddedForms"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
         [selectedNodeId]="selectedNode.id"

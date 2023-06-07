@@ -60,6 +60,7 @@ export class BuilderComponent implements OnInit {
   @Input() counter;
   @Input() isPreviewActive;
   @Input() moduleName;
+  @Input() isEmbeddedForms;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
