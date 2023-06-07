@@ -85,6 +85,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
+  isEmbeddedForms: boolean;
   errors: ValidationError = {};
   formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -167,8 +168,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
+        const { name, description, id, formLogo, formStatus, formType } =
+          formMetadata;
         this.formMetadata = formMetadata;
+        this.isEmbeddedForms = formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,

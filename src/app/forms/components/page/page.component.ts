@@ -37,6 +37,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
 export class PageComponent implements OnInit, OnDestroy {
   @ViewChild('pageName') pageName: ElementRef;
   @Input() selectedNodeId: any;
+  @Input() isEmbeddedForms: boolean;
 
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
