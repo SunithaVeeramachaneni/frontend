@@ -79,6 +79,7 @@ import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measuremen
 import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
+import { RdfSchedulerComponent } from './rdf-scheduler/rdf-scheduler.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -110,7 +111,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFromTemplateModalComponent,
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
-    InspectionObservationsComponent
+    InspectionObservationsComponent,
+    RdfSchedulerComponent
   ],
   imports: [
     FormsModule,
