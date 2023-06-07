@@ -64,11 +64,23 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="countryMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'countryMandatory' | translate"
+          <mat-select
             formControlName="country"
-          />
+            [placeholder]="'countryMandatory' | translate"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyCountry($event)"
+            />
+            <div class="scrollable-area">
+              <mat-option
+                *ngFor="let country of this.countryData"
+                [value]="country.countryCode"
+                >{{ country.countryName }}
+              </mat-option>
+            </div>
+          </mat-select>
           <mat-error
             *ngIf="processValidationErrors('country')"
             class="m-t-5 error-fields"
@@ -109,11 +121,22 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="stateMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'stateMandatory' | translate"
+          <mat-select
             formControlName="state"
-          />
+            [placeholder]="'stateMandatory' | translate"
+            [disabled]="this.stateDropDownHidden"
+          >
+            <input
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyState($event)"
+            />
+            <div class="scrollable-area">
+              <mat-option *ngFor="let state of this.states" [value]="state">{{
+                state
+              }}</mat-option>
+            </div>
+          </mat-select>
           <mat-error
             *ngIf="processValidationErrors('state')"
             class="m-t-5 error-fields"
@@ -123,6 +146,36 @@
                 | translate
                   : {
                       name: 'state' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="timeZoneMandatory"></mat-label>
+          <mat-select
+            formControlName="timeZone"
+            [placeholder]="'timeZoneMandatory' | translate"
+            [disabled]="this.timeZoneDropDownHidden"
+          >
+            <div class="scrollable-area">
+              <mat-option *ngFor="let time of this.timeZones" [value]="time"
+                ><span
+                  >(UTC {{ time.utcOffset }}) {{ time.description }}</span
+                ></mat-option
+              >
+            </div>
+          </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('timeZone')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.timeZone.name
+                | translate
+                  : {
+                      name: 'timeZone' | translate
                     }
             }}
           </mat-error>

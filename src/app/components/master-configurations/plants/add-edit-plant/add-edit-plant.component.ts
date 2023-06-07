@@ -12,9 +12,11 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { countriesMasterData } from './countriesMasterData.mock';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -60,6 +62,14 @@ export class AddEditPlantComponent implements OnInit {
   get plantEditData() {
     return this.plantsEditData;
   }
+  stateDropDownHidden = true;
+  timeZoneDropDownHidden = true;
+  selectedCountry: any;
+  countryAllStates: any = [];
+  countryAllTimeZones: any = [];
+  states: any = [];
+  timeZones: any = [];
+  countryData = Object.values(countriesMasterData);
   errors: ValidationError = {};
   plantStatus;
   plantTitle;
@@ -104,9 +114,28 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
+      timeZone: new FormControl('', [Validators.required]),
       label: '',
       field: ''
     });
+    this.plantForm
+      .get('country')
+      .valueChanges.pipe(distinctUntilChanged())
+      .subscribe((countryCode) => {
+        if (countryCode) {
+          this.selectedCountry = countriesMasterData[countryCode];
+          [this.states, this.countryAllStates] = [
+            this.selectedCountry['states'],
+            this.selectedCountry['states']
+          ];
+          [this.timeZones, this.countryAllTimeZones] = [
+            this.selectedCountry['timeZones'],
+            this.selectedCountry['timeZones']
+          ];
+          (this.stateDropDownHidden = false),
+            (this.timeZoneDropDownHidden = false);
+        }
+      });
   }
 
   create() {
@@ -141,6 +170,44 @@ export class AddEditPlantComponent implements OnInit {
   cancel() {
     this.plantForm.reset();
     this.slideInOut.emit('out');
+  }
+
+  onKeyCountry(event: any) {
+    const value = event.target.value || '';
+    if (value) {
+      this.countryData = this.searchCountry(value);
+    } else {
+      this.countryData = Object.values(countriesMasterData);
+    }
+  }
+
+  onKeyState(event: any) {
+    const value = event.target.value || '';
+    if (value) {
+      this.states = this.searchStates(value);
+    } else {
+      this.states = this.countryAllStates;
+    }
+  }
+
+  searchCountry(value: string) {
+    const searchValue = value.toLowerCase();
+    return Object.values(countriesMasterData).filter(
+      (country) =>
+        (country.countryCode &&
+          country.countryCode.toLowerCase().indexOf(searchValue) !== -1) ||
+        (country.countryName &&
+          country.countryName.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+
+  searchStates(value: string) {
+    const searchValue = value.toLowerCase();
+    if (searchValue) {
+      return this.countryAllStates.filter(
+        (state: any) => state && state.toLowerCase().indexOf(searchValue) !== -1
+      );
+    }
   }
 
   processValidationErrors(controlName: string): boolean {
