@@ -72,6 +72,7 @@ import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effect
 import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
+import { RoundsSchedulerComponent } from './rounds-scheduler/rounds-scheduler.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -96,7 +97,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoundPlanScheduleSuccessModalComponent,
     RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
-    RoundObservationsComponent
+    RoundObservationsComponent,
+    RoundsSchedulerComponent
   ],
   imports: [
     FormsModule,
