@@ -100,7 +100,7 @@ import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
-import { SchedulerComponent } from './components/scheduler/scheduler.component';
+import { SchedulersComponent } from './components/schedulers/schedulers.component';
 
 @NgModule({
   declarations: [
@@ -166,7 +166,7 @@ import { SchedulerComponent } from './components/scheduler/scheduler.component';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    SchedulerComponent
+    SchedulersComponent
   ],
   imports: [
     SharedModule,
@@ -238,7 +238,8 @@ import { SchedulerComponent } from './components/scheduler/scheduler.component';
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    SchedulersComponent
   ]
 })
 export class FormModule {}

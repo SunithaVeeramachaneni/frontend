@@ -13,12 +13,12 @@ import { SelectTab, UserDetails } from 'src/app/interfaces';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
 @Component({
-  selector: 'app-scheduler',
-  templateUrl: './scheduler.component.html',
-  styleUrls: ['./scheduler.component.scss'],
+  selector: 'app-schedulers',
+  templateUrl: './schedulers.component.html',
+  styleUrls: ['./schedulers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SchedulerComponent implements OnInit, OnDestroy {
+export class SchedulersComponent implements OnInit, OnDestroy {
   tabIndex: number;
   Id: string;
   users$: Observable<UserDetails[]>;
