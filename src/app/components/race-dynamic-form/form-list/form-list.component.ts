@@ -281,7 +281,8 @@ export class FormListComponent implements OnInit, OnDestroy {
     modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
-    plant: ''
+    plant: '',
+    formType: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
@@ -680,6 +681,11 @@ export class FormListComponent implements OnInit, OnDestroy {
                 item.items = this.plants;
               } else if (item.column === 'createdBy') {
                 item.items = this.createdBy;
+              } else if (item.column === 'formType') {
+                item.items = [
+                  formConfigurationStatus.embedded,
+                  formConfigurationStatus.standalone
+                ];
               }
             }
           }
