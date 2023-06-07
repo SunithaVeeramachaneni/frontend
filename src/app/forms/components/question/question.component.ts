@@ -121,6 +121,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   @Input() isPreviewActive;
+  @Input() isEmbeddedForms;
 
   @Input() isAskQuestionFocusId: any;
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();

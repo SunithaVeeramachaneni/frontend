@@ -141,7 +141,12 @@
                 <span translate="addLogicBtn"></span>
               </button>
 
-              <div *ngIf="questionForm.get('fieldType').value === 'INST'">
+              <div
+                *ngIf="
+                  questionForm.get('fieldType').value === 'INST' &&
+                  !isEmbeddedForms
+                "
+              >
                 <div class="dis-flex">
                   <span
                     *ngFor="
@@ -212,7 +217,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForms
+                "
                 class="action"
               >
                 <span translate="unitTxt"></span>
@@ -251,7 +259,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForms
+                "
                 class="action"
               >
                 <span translate="rangeTxt"></span>
@@ -266,8 +277,9 @@
               <span
                 class="action"
                 *ngIf="
-                  questionForm.get('fieldType').value === 'NF' ||
-                  questionForm.get('fieldType').value === 'RT'
+                  (questionForm.get('fieldType').value === 'NF' ||
+                    questionForm.get('fieldType').value === 'RT') &&
+                  !isEmbeddedForms
                 "
               >
                 <mat-checkbox

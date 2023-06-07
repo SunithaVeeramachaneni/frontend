@@ -158,7 +158,7 @@
         [moduleName]="'forms'"
       ></app-builder>
     </div>
-    <div class="iphone-width m-t-20">
+    <div class="iphone-width m-t-20" *ngIf="!isEmbeddedForms">
       <app-iphone [moduleType]="'forms'" [subFormId]="''"></app-iphone>
     </div>
   </div>
