@@ -411,6 +411,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
   }
 
   addOrUpdatePlant(plantData) {
+    if (plantData.data.id && plantData.data.timeZone) {
+      const timeZoneMapping = this.plantService.plantTimeZoneMapping$.value;
+      timeZoneMapping[plantData.data.id] = plantData.data.timeZone;
+      this.plantService.plantTimeZoneMapping$.next(timeZoneMapping);
+    }
     if (plantData.status === 'add') {
       this.addEditCopyDeletePlants = true;
       if (this.searchPlant.value) {

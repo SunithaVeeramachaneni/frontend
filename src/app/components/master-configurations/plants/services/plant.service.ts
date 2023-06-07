@@ -19,6 +19,8 @@ export class PlantService {
   fetchPlants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
+  plantTimeZoneMapping$ = new BehaviorSubject<any>({});
+
   private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
@@ -30,6 +32,17 @@ export class PlantService {
       environment.masterConfigApiUrl,
       'plants/list?' + params.toString()
     );
+  };
+
+  getPlantTimeZoneMapping = () => {
+    this.fetchAllPlants$().subscribe((res) => {
+      const timeZoneMapping = {};
+      for (const plant of res.items) {
+        if (plant.id && plant.timeZone)
+          timeZoneMapping[plant.id] = plant.timeZone;
+      }
+      this.plantTimeZoneMapping$.next(timeZoneMapping);
+    });
   };
 
   getPlantsList$(queryParams: {
