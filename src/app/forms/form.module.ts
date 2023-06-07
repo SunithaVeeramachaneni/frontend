@@ -101,6 +101,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 
 @NgModule({
   declarations: [
@@ -183,6 +188,9 @@ import { DatePickerComponent } from './components/date-picker/date-picker.compon
     MatInputModule,
     MatButtonModule,
     MatBottomSheetModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule,
     MatListModule,
     MatIconModule,
     MatCardModule,

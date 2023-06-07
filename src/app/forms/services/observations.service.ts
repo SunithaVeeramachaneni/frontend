@@ -446,7 +446,7 @@ export class ObservationsService {
           condition: true
         },
         dueDate: item?.DUEDATE
-          ? format(new Date(item?.DUEDATE), 'dd MMM, yyyy')
+          ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
           : '',
         title: item.TITLE,
         description: item.DESCRIPTION,
