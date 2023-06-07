@@ -1,1 +1,37 @@
-<p>scheduler works!</p>
+<div class="list-view">
+  <div class="main-container">
+    <mat-tab-group
+      animationDuration="0ms"
+      [selectedIndex]="getSelectedIndex()"
+      (selectedTabChange)="onTabChange($event)"
+    >
+      <mat-tab *ngIf="moduleName === 'Forms'" [label]="'Forms' | translate">
+        <app-forms
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-forms>
+      </mat-tab>
+      <mat-tab
+        *ngIf="moduleName === 'Forms'"
+        [label]="'Inspections' | translate"
+      >
+        <app-inspection
+          [users$]="users$"
+          (selectTab)="selectTabHandler($event)"
+        ></app-inspection>
+      </mat-tab>
+      <mat-tab *ngIf="moduleName === 'Rounds'" [label]="'plans' | translate">
+        <app-plans
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-plans>
+      </mat-tab>
+      <mat-tab *ngIf="moduleName === 'Rounds'" [label]="'rounds' | translate">
+        <app-rounds
+          (selectTab)="selectTabHandler($event)"
+          [users$]="users$"
+        ></app-rounds>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
