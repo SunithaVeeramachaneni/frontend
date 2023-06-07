@@ -1,11 +1,45 @@
 export interface GetPlants {
   searchTerm?: FilterInput;
 }
+
+export interface PlantTableUpdate {
+  action: 'add' | 'delete' | 'edit' | 'copy' | null;
+  form: PlantDetails;
+}
+
+export interface PlantDetails {
+  id: string;
+  name: string;
+  plantId: string;
+  country: string;
+  zipCode: string;
+  timeZone: {
+    utcOffset: string;
+    timeZone: string;
+    description: string;
+  };
+  countryDisplay?: string;
+  timeZoneDisplay?: string;
+  field?: string;
+  label?: string;
+  state?: string;
+  image?: string;
+  searchTerm?: string;
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface CreatePlants {
   name: string;
   plantId: string;
   country: string;
   zipCode: string;
+  timeZone: {
+    utcOffset: string;
+    timeZone: string;
+    description: string;
+  };
   state?: string;
   image?: string;
   searchTerm?: string;

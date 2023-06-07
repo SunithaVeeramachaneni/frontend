@@ -37,6 +37,8 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { PlantTableUpdate } from 'src/app/interfaces/master-data-management/plants';
+import { countriesMasterData } from '../add-edit-plant/countriesMasterData.mock';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
@@ -104,7 +106,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'country',
+      id: 'countryDisplay',
       displayName: 'Country',
       type: 'string',
       controlType: 'string',
@@ -126,7 +128,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'timeZone',
+      id: 'timeZoneDisplay',
       displayName: 'Time Zone',
       type: 'string',
       controlType: 'string',
@@ -234,8 +236,8 @@ export class PlantListComponent implements OnInit, OnDestroy {
   plantsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   addEditCopyDeletePlants = false;
-  addEditCopyDeletePlants$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
+  addEditCopyDeletePlants$: BehaviorSubject<PlantTableUpdate> =
+    new BehaviorSubject<PlantTableUpdate>({
       action: null,
       form: {} as any
     });
@@ -326,6 +328,13 @@ export class PlantListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
+          initial.data = rows.map((row) => {
+            if (row.country && countriesMasterData[row.country])
+              row.countryDisplay = countriesMasterData[row.country].countryName;
+            if (row.timeZone)
+              row.timeZoneDisplay = 'UTC' + row.timeZone.utcOffset;
+            return row;
+          });
           initial.data = rows;
         } else if (this.addEditCopyDeletePlants) {
           switch (action) {
@@ -338,9 +347,19 @@ export class PlantListComponent implements OnInit, OnDestroy {
               break;
             case 'add':
               // case 'copy':
+              if (form.country && countriesMasterData[form.country])
+                form.countryDisplay =
+                  countriesMasterData[form.country].countryName;
+              if (form.timeZone)
+                form.timeZoneDisplay = 'UTC' + form.timeZone.utcOffset;
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
+              if (form.country && countriesMasterData[form.country])
+                form.countryDisplay =
+                  countriesMasterData[form.country].countryName;
+              if (form.timeZone)
+                form.timeZoneDisplay = 'UTC' + form.timeZone.utcOffset;
               initial.data = [
                 form,
                 ...initial.data.filter((item) => item.id !== form.id)
@@ -351,6 +370,13 @@ export class PlantListComponent implements OnInit, OnDestroy {
           }
           this.addEditCopyDeletePlants = false;
         } else {
+          scrollData = scrollData.map((row) => {
+            if (row.country && countriesMasterData[row.country])
+              row.country = countriesMasterData[row.country].countryName;
+            if (row.timeZone)
+              row.timeZoneDisplay = 'UTC' + row.timeZone.utcOffset;
+            return row;
+          });
           initial.data = initial.data.concat(scrollData);
         }
 
@@ -477,6 +503,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   deletePlant(plant: any): void {
     const deleteData = {
       id: plant.id,
+      // eslint-disable-next-line no-underscore-dangle
       _version: plant._version
     };
     this.plantService.deletePlant$(deleteData).subscribe((data: any) => {

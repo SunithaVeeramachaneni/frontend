@@ -158,11 +158,15 @@
             formControlName="timeZone"
             [placeholder]="'timeZoneMandatory' | translate"
             [disabled]="this.timeZoneDropDownHidden"
+            [compareWith]="compareTimeZones"
           >
             <div class="scrollable-area">
-              <mat-option *ngFor="let time of this.timeZones" [value]="time"
+              <mat-option
+                *ngFor="let timeZone of this.timeZones"
+                [value]="timeZone"
                 ><span
-                  >(UTC {{ time.utcOffset }}) {{ time.description }}</span
+                  >(UTC {{ timeZone.utcOffset }})
+                  {{ timeZone.description }}</span
                 ></mat-option
               >
             </div>

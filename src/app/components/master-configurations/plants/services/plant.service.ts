@@ -74,7 +74,13 @@ export class PlantService {
   createPlant$(
     formPlantQuery: Pick<
       CreatePlants,
-      'name' | 'image' | 'country' | 'zipCode' | 'plantId' | 'state'
+      | 'name'
+      | 'image'
+      | 'country'
+      | 'zipCode'
+      | 'timeZone'
+      | 'plantId'
+      | 'state'
     >
   ) {
     return this._appService._postData(

@@ -53,7 +53,8 @@ export class AddEditPlantComponent implements OnInit {
         state: this.plantsEditData?.state,
         zipCode: this.plantsEditData?.zipCode,
         label: this.plantEditData?.label,
-        field: this.plantEditData?.field
+        field: this.plantEditData?.field,
+        timeZone: this.plantEditData?.timeZone
       };
       this.plantForm?.patchValue(plantdata);
       this.plantForm?.get('plantId').disable();
@@ -125,15 +126,15 @@ export class AddEditPlantComponent implements OnInit {
         if (countryCode) {
           this.selectedCountry = countriesMasterData[countryCode];
           [this.states, this.countryAllStates] = [
-            this.selectedCountry['states'],
-            this.selectedCountry['states']
+            this.selectedCountry.states,
+            this.selectedCountry.states
           ];
           [this.timeZones, this.countryAllTimeZones] = [
-            this.selectedCountry['timeZones'],
-            this.selectedCountry['timeZones']
+            this.selectedCountry.timeZones,
+            this.selectedCountry.timeZones
           ];
-          (this.stateDropDownHidden = false),
-            (this.timeZoneDropDownHidden = false);
+          this.stateDropDownHidden = false;
+          this.timeZoneDropDownHidden = false;
         }
       });
   }
@@ -154,6 +155,7 @@ export class AddEditPlantComponent implements OnInit {
       this.plantService
         .updatePlant$({
           ...this.plantForm.getRawValue(),
+          // eslint-disable-next-line no-underscore-dangle
           _version: this.plantsEditData._version,
           id: this.plantsEditData?.id
         })
@@ -223,5 +225,13 @@ export class AddEditPlantComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  compareTimeZones(o1: any, o2: any): boolean {
+    return (
+      o1.utcOffset === o2.utcOffset &&
+      o1.description === o2.description &&
+      o1.timeZone === o2.timeZone
+    );
   }
 }

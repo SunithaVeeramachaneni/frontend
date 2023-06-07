@@ -31,6 +31,15 @@
         {{ selectedPlant.state ? selectedPlant.state : '--' }}
       </p>
       <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="timeZone"></p>
+      <p class="m-0 sub-headings-value">
+        <span *ngIf="selectedPlant.timeZone"
+          >(UTC{{ selectedPlant.timeZone.utcOffset }})
+          {{ selectedPlant.timeZone.description }}</span
+        >
+        <span *ngIf="!selectedPlant.timeZone">--</span>
+      </p>
+      <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="additionalDetails"></p>
       <p class="m-0 sub-headings-value">
         {{ selectedPlant.label ? selectedPlant.label : '--' }}
