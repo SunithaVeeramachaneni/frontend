@@ -242,6 +242,7 @@ export class ScheduleConfigurationComponent
         switch (scheduleType) {
           case 'byFrequency':
             this.schedulerConfigForm.get('repeatEvery').patchValue('day');
+            this.schedulerConfigForm.get('scheduleEndType').patchValue('on'); // never
             this.scheduleByDates = [];
             break;
           case 'byDate':

@@ -176,6 +176,7 @@
               [matDatepicker]="startDate"
               (dateChange)="updateDate($event, 'startDate')"
               [min]="currentDate"
+              formControlName="startDatePicker"
               hidden
             />
             <mat-datepicker-toggle

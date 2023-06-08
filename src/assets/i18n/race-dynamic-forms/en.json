@@ -309,5 +309,6 @@
   "typePlaceholder": "Type",
   "selectAll": "Select All",
   "actionPriority": "Priority: ",
-  "actionStatus": "Status: "
+  "actionStatus": "Status: ",
+  "advanceRoundsCountInfo": "How many rounds would you like to generate in advance?"
 }

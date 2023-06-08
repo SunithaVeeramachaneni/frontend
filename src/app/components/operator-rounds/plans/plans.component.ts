@@ -63,12 +63,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { DatePipe } from '@angular/common';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { UsersService } from '../../user-management/services/users.service';
 import {
   ScheduleConfig,
   ScheduleConfigEvent
-} from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
-import { formConfigurationStatus } from 'src/app/app.constants';
-import { UsersService } from '../../user-management/services/users.service';
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 
 @Component({
   selector: 'app-plans',
@@ -372,7 +372,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -918,8 +918,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data?: any) {
-    let emailArray = [];
-    data.forEach((data: any) => {
+    const emailArray = [];
+    data.forEach((d: string) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
           (email) => this.userFullNameByEmail[email].fullName === data

@@ -25,7 +25,7 @@ import {
   RoundDetail
 } from 'src/app/interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 
 interface FrequencyDetail {
   info: string;

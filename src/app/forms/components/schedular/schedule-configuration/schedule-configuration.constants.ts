@@ -12,5 +12,5 @@ export const scheduleConfigs = Object.freeze({
     'saturday'
   ],
   weeksOfMonth: ['1st Week', '2nd Week', '3rd Week', '4th Week', '5th Week'],
-  assignTypes: ['User', 'User Group', 'Plant']
+  assignTypes: ['user'] // ['user', 'userGroup', 'plant']
 });
