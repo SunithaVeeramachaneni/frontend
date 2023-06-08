@@ -58,7 +58,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  labels: string[] = [];
+  labels: string[] = ['Champs-Élysées', 'Lombard Street', 'Abbey Road'];
   values: string[] = [];
   labelCtrl = new FormControl();
   valueCtrl = new FormControl();
@@ -66,10 +66,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   filteredValues: Observable<string[]>;
   allTags: string[] = [];
   originalTags: string[] = [];
-
+  options: string[] = ['Option 1', 'Option 2', 'Option 3'];
+  selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
-
+  // showFields: boolean = true;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -98,6 +99,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
+
+    this.filteredLabels = this.labelCtrl.valueChanges.pipe(
+      startWith(''),
+      map((value) => this.filterLabel(value || ''))
+    );
+    console.log('label ctrl', this.filteredLabels);
   }
 
   getAllPlantsData() {
@@ -130,7 +137,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
     this.getAllPlantsData();
   }
+  lowerValue(value: string): string {
+    return value.toLowerCase().replace(/\s/g, '');
+  }
 
+  filterLabel(value: string): string[] {
+    const filterValue = this.lowerValue(value);
+    console.log('filter', filterValue);
+    return this.labels.filter((label) =>
+      this.lowerValue(label).includes(filterValue)
+    );
+  }
   add(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
@@ -185,11 +202,16 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   next() {
     const newTags = [];
+    console.log('all tags', this.allTags);
+    console.log('filtered tags', this.filteredTags);
     this.tags.forEach((selectedTag) => {
+      console.log('selected tags', selectedTag);
+      console.log('original tags', this.originalTags);
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
       }
     });
+    console.log('tags', newTags);
     if (newTags.length) {
       const dataSet = {
         type: 'tags',
@@ -285,8 +307,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
   }
 
-  deleteAdditionalDetails(index: number) {
-    const add = this.headerDataForm.get('additionalDetails') as FormArray;
-    add.removeAt(index);
+  // deleteAdditionalDetails(index: number) {
+  //   const add = this.headerDataForm.get('additionalDetails') as FormArray;
+  //   add.removeAt(index);
+  // }
+
+  deleteAdditionalDetails() {
+    // this.showFields = false;
+  }
+  addNewOption() {
+    // if (this.selectedValue && !this.dropdownValues.includes(this.selectedValue)) {
+    //   this.dropdownValues.push(this.selectedValue);
+    // }
   }
 }

@@ -134,7 +134,7 @@
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 (matChipInputTokenEnd)="add($event)"
                 (click)="openAutoComplete()"
-                #labelsInput
+                #tagsInput
                 [formControl]="tagsCtrl"
               />
             </mat-chip-list>
@@ -163,8 +163,8 @@
           class="label-value-text"
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length > 0"
         >
-          {{ 'label' | translate }}
-          {{ 'value' | translate }}
+          <span class="label">{{ 'label' | translate }}</span>
+          <!-- <span class="value">{{ 'value' | translate }}</span> -->
         </div>
         <div
           class="label-value"
@@ -177,84 +177,65 @@
           [formGroup]="additionalDetails"
         >
           <div>
-            <mat-form-field
-              class="chips-list width-100 form-field"
-              appearance="outline"
-            >
-              <mat-chip-list #chipList>
-                <mat-chip
-                  *ngFor="let label of labels"
-                  [selectable]="selectable"
-                  [removable]="removable"
-                  (removed)="remove(label)"
-                  class="labels-mat-chips"
-                >
-                  {{ label }}
-                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                </mat-chip>
-                <input
-                  [matChipInputFor]="chipList"
-                  [matAutocomplete]="auto"
-                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                  (matChipInputTokenEnd)="add($event)"
-                  (click)="openAutoComplete()"
-                  [formControl]="labelCtrl"
-                />
-              </mat-chip-list>
+            <div class="dropdown-label">
+              <div class="example-form">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    [formControl]="labelCtrl"
+                    class="example-input"
+                  />
+                </mat-form-field>
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option
+                    *ngFor="let label of filteredLabels | async"
+                    [value]="label"
+                  >
+                    {{ label }}
+                  </mat-option>
+                  <mat-option *ngIf="labelCtrl.value">
+                    <ng-container *ngIf="filteredLabels | async as labels">
+                      <ng-container *ngIf="!labels.includes(labelCtrl.value)">
+                        Add new option: {{ labelCtrl.value }}
+                      </ng-container>
+                    </ng-container>
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
 
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="selected($event)"
-              >
-                <mat-option
-                  *ngFor="let label of filteredLabels | async"
-                  [value]="label"
-                >
-                  {{ label }}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
+              <div class="example-form">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    [formControl]="labelCtrl"
+                    class="example-input"
+                  />
+                </mat-form-field>
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option
+                    *ngFor="let label of filteredLabels | async"
+                    [value]="label"
+                  >
+                    {{ label }}
+                  </mat-option>
+                  <mat-option *ngIf="labelCtrl.value">
+                    <ng-container *ngIf="filteredLabels | async as labels">
+                      <ng-container *ngIf="!labels.includes(labelCtrl.value)">
+                        Add new option: {{ labelCtrl.value }}
+                      </ng-container>
+                    </ng-container>
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
 
-          <div>
-            <mat-form-field
-              class="chips-list width-100 form-field"
-              appearance="outline"
-            >
-              <mat-chip-list #chipList>
-                <mat-chip
-                  *ngFor="let value of values"
-                  [selectable]="selectable"
-                  [removable]="removable"
-                  (removed)="remove(value)"
-                  class="tags-mat-chips"
-                >
-                  {{ value }}
-                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                </mat-chip>
-                <input
-                  [matChipInputFor]="chipList"
-                  [matAutocomplete]="auto"
-                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                  (matChipInputTokenEnd)="add($event)"
-                  (click)="openAutoComplete()"
-                  #valuesInput
-                  [formControl]="valueCtrl"
-                />
-              </mat-chip-list>
-
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="selected($event)"
-              >
-                <mat-option
-                  *ngFor="let value of filteredValues | async"
-                  [value]="value"
-                >
-                  {{ value }}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
+              <svg-icon
+                icon="icon-closeIcon"
+                class="close-icon"
+                (click)="deleteAdditionalDetails()"
+              ></svg-icon>
+            </div>
           </div>
         </div>
 
