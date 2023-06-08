@@ -39,7 +39,7 @@ export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
-  ghostLoading = new Array(7).fill(0).map((v, i) => i);
+  ghostLoading = new Array(8).fill(0).map((v, i) => i);
   private onDestroy$ = new Subject();
 
   constructor(

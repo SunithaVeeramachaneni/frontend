@@ -35,8 +35,8 @@ import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { format } from 'date-fns';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ToastService } from 'src/app/shared/toast';
+import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -373,11 +373,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateDate(
-    event: MatDatepickerInputEvent<Date>,
+    event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string
   ) {
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, 'dd MMM yyyy')
+      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
     });
     this.updateIssueOrAction({
       field: 'dueDate',
@@ -596,7 +596,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.router.url === '/forms/observations') {
       this.router.navigate(['/forms/scheduler/1'], {
         queryParams: {
-          roundId: this.data?.roundId
+          inspectionId: this.data?.roundId
         }
       });
     }
@@ -773,7 +773,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',
       dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy')
+        ? format(new Date(dueDate), 'dd MMM yyyy hh:mm a')
         : ''
     });
     this.minDate = new Date(this.data.createdAt);
@@ -812,7 +812,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy hh:mm a'),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
@@ -878,7 +878,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             ...data,
             ...jsonData,
             dueDate: jsonData?.DUEDATE
-              ? format(new Date(jsonData?.DUEDATE), 'dd MMM, yyyy')
+              ? format(new Date(jsonData?.DUEDATE), 'dd MMM yyyy hh:mm a')
               : '',
             priority: jsonData.PRIORITY ?? '',
             statusDisplay: this.observations.prepareStatus(

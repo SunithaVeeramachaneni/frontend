@@ -199,6 +199,7 @@
                   translate="askEvidence"
                 ></button>
                 <button
+                  *ngIf="raiseIssueApplicableFields.includes(fieldType)"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="raiseIssue('raise_issue', i, logic.value)"
