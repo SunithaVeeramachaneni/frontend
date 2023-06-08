@@ -140,12 +140,11 @@
         (click)="openSaveTemplateDialog()"
       ></button>
 
-      <button
-        mat-stroked-button
-        class="next-btn"
-        translate="next"
-        (click)="goToPDFBuilderConfiguration()"
-      ></button>
+      <button mat-stroked-button class="next-btn" (click)="publishOrShowPdf()">
+        {{
+          isEmbeddedForms ? ('publishBtn' | translate) : ('next' | translate)
+        }}
+      </button>
     </div>
   </div>
   <div class="dis-flex form">

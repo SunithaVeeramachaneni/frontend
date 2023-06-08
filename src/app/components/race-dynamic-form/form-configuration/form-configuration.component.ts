@@ -533,6 +533,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.openAppSider$ = of(event);
   }
 
+  publishOrShowPdf() {
+    if (!this.isEmbeddedForms) {
+      this.goToPDFBuilderConfiguration();
+    } else {
+      // PUBLISH FORM TO SAP AND DYNAMODB
+      this.publishFormDetail();
+    }
+  }
+
   goToPDFBuilderConfiguration = () => {
     this.dialog.open(PDFBuilderComponent, {
       data: {
