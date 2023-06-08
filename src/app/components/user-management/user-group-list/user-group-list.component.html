@@ -1,0 +1,82 @@
+<ng-container>
+  <div>
+    <div class="main-container">
+      <ngx-spinner
+        size="medium"
+        bdColor="rgba(0, 0, 0, 0.6)"
+        type="ball-clip-rotate-pulse"
+        [fullScreen]="false"
+      >
+      </ngx-spinner>
+      <div class="usergroup-header">
+        <div class="width-30 left-pannel-header">
+          <h2 class="heading" translate="userGroups"></h2>
+          <button mat-icon-button>
+            <svg-icon icon="icon-add-user" class="add-btn"></svg-icon>
+          </button>
+        </div>
+
+        <div class="right-pannel-header">
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            class="more-usergroup"
+            aria-label="More Options"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              class="text-red"
+              translate="deleteBtn"
+            ></button>
+          </mat-menu>
+          <span class="count-of-usergroup">
+            <span class="usergroup-count">{{ usergrp }}</span>
+            <span class="usergroup-text">{{
+              'userGroupCount' | translate
+            }}</span>
+          </span>
+        </div>
+      </div>
+      <div class="dis-flex usergroup-content">
+        <div class="width-25 custom-form-field-gray-color usergroup-left-panel">
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchUserGroup' | translate"
+              autocomplete="off"
+            />
+          </mat-form-field>
+        </div>
+        <div class="width-70">
+          <div class="width-30 custom-form-field-gray-color">
+            <mat-form-field
+              appearance="outline"
+              class="search-form-field usergroup-right-pannel"
+            >
+              <mat-icon matPrefix class="searchIcon">search</mat-icon>
+              <input
+                matInput
+                type="text"
+                [placeholder]="'searchUserGroup' | translate"
+                autocomplete="off"
+              />
+            </mat-form-field>
+          </div>
+          <button
+            mat-raised-button
+            class="add-role-btn"
+            translate="addUsersBtn"
+          ></button>
+
+          <div class="custom-form-field-white-color"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+</ng-container>
