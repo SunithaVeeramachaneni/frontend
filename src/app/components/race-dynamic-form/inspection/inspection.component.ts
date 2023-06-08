@@ -50,7 +50,8 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
+  graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -332,7 +333,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
@@ -346,6 +347,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
   formId: string;
+  inspectionId = '';
 
   plants = [];
   plantsIdNameMap = {};
@@ -441,7 +443,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               : '',
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
-              : ''
+              : '',
+            assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -452,7 +455,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : '',
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
-              )
+              ),
+              assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
         }
@@ -466,11 +470,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideInspectionDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
-      this.formId = formId;
-      this.fetchInspection$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ formId = '', inspectionId = '' }) => {
+        this.formId = formId;
+        this.inspectionId = inspectionId;
+        this.fetchInspection$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
@@ -481,7 +488,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: this.formId
+      formId: this.formId,
+      inspectionId: this.inspectionId
     };
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
@@ -747,13 +755,27 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
+    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
     let { status } = this.selectedForm;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, assignedTo, status },
+        { ...rest, inspectionId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
@@ -765,7 +787,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  status
+                  status,
+                  assignedToEmail: resp.assignedTo || ''
                 };
               }
               return data;
@@ -784,11 +807,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   onChangeDueDateHandler(dueDate: Date) {
-    const { inspectionId } = this.selectedForm;
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
-        { ...this.selectedForm, dueDate },
+        { ...rest, inspectionId, dueDate },
         'due-date'
       )
       .pipe(
@@ -800,7 +823,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                   ...data,
                   dueDate,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1
+                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;

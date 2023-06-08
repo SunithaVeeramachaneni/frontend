@@ -35,8 +35,8 @@ import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { format } from 'date-fns';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ToastService } from 'src/app/shared/toast';
+import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -88,7 +88,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   userInfo: any;
   s3BaseUrl: string;
   logHistory: History[];
-  filteredMediaType: any;
+  filteredMediaType: any[] = [];
   chatPanelHeight;
   isPreviousEnabled = false;
   isNextEnabled = false;
@@ -251,9 +251,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             }
 
             // 6. Create issue attachments issues log history
-            // FIXME: Match objectId with this.data.id once you will get from mobile side.
             const onCreateIssuesAttachments$ = this.observations
-              .onCreateIssuesAttachments$({})
+              .onCreateIssuesAttachments$({
+                objectId: this.data.id
+              })
               ?.subscribe({
                 next: ({
                   _,
@@ -279,9 +280,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             }
 
             // 7. Create action attachments action log history
-            // FIXME: Match objectId with this.data.id once you will get from mobile side.
             const onCreateActionsAttachments$ = this.observations
-              .onCreateActionsAttachments$({})
+              .onCreateActionsAttachments$({
+                objectId: this.data.id
+              })
               ?.subscribe({
                 next: ({
                   _,
@@ -371,11 +373,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateDate(
-    event: MatDatepickerInputEvent<Date>,
+    event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string
   ) {
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, 'dd MMM yyyy')
+      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
     });
     this.updateIssueOrAction({
       field: 'dueDate',
@@ -403,6 +405,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const { id, type, issueData, actionData, issueOrActionDBVersion } =
       this.data;
     const { field, value, checked } = event;
+    let { previouslyAssignedTo = '' } = this.data;
+
     const updatedIssueData = this.updateIssueOrActionData(
       issueData,
       {
@@ -417,6 +421,19 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       },
       checked
     );
+    if (field === 'assignee') {
+      if (checked && previouslyAssignedTo?.includes(value)) {
+        previouslyAssignedTo = previouslyAssignedTo
+          .split(',')
+          .filter((email) => email !== value)
+          .join(',');
+      }
+
+      if (!checked) {
+        previouslyAssignedTo += previouslyAssignedTo ? `,${value}` : value;
+      }
+    }
+
     if (type === 'issue') {
       this.data.issueData = updatedIssueData;
     } else {
@@ -431,6 +448,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           issueData: updatedIssueData,
           actionData: updatedActionData,
           assignedTo: this.issuesActionsDetailViewForm.get('assignedTo').value,
+          previouslyAssignedTo,
           issueOrActionDBVersion,
           history: {
             type: 'Object',
@@ -447,6 +465,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         tap((response) => {
           if (Object.keys(response).length) {
             this.data.issueOrActionDBVersion += 1;
+            Object.assign(this.data, { previouslyAssignedTo });
           }
           this.updatingDetails = false;
         })
@@ -496,13 +515,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
                   field.FIELDDESC ? `,${assignee}` : `${assignee}`
                 }`;
               }
+
               this.issuesActionsDetailViewForm.patchValue({
+                assignedTo: field.FIELDDESC,
                 assignedToDisplay: this.observations.formatUsersDisplay(
                   field.FIELDDESC
                 )
-              });
-              this.issuesActionsDetailViewForm.patchValue({
-                assignedTo: field.FIELDDESC
               });
             }
           });
@@ -578,7 +596,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.router.url === '/forms/observations') {
       this.router.navigate(['/forms/scheduler/1'], {
         queryParams: {
-          roundId: this.data?.roundId
+          inspectionId: this.data?.roundId
         }
       });
     }
@@ -755,7 +773,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',
       dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy')
+        ? format(new Date(dueDate), 'dd MMM yyyy hh:mm a')
         : ''
     });
     this.minDate = new Date(this.data.createdAt);
@@ -763,10 +781,27 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       .getIssueOrActionLogHistory$(id, type, {}, this.moduleName)
       .pipe(
         tap((logHistory) => {
-          this.logHistory = logHistory.rows;
-          this.filteredMediaType = this.logHistory.filter(
-            (history) => history.type === 'Media'
-          );
+          this.logHistory = logHistory?.rows || [];
+          this.filteredMediaType = [];
+          if (this.logHistory.length > 0) {
+            this.logHistory.forEach((history) => {
+              if (
+                typeof history?.message === 'object' &&
+                history?.message?.PHOTO?.length > 0
+              ) {
+                history?.message?.PHOTO.forEach((element) => {
+                  if (element) {
+                    this.filteredMediaType.push({
+                      message: element
+                    });
+                  }
+                });
+              }
+              if (history.type === 'Media') {
+                this.filteredMediaType.push(history);
+              }
+            });
+          }
         })
       );
   }
@@ -777,7 +812,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy, hh:mm a'),
+        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy hh:mm a'),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };
@@ -789,10 +824,27 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           newMessage.message = foundImageData?.imageData || newMessage.message;
         }
       }
+      this.filteredMediaType = [];
       this.logHistory = [...this.logHistory, newMessage];
-      this.filteredMediaType = this.logHistory.filter(
-        (history) => history?.type === 'Media'
-      );
+      if (this.logHistory?.length > 0) {
+        this.logHistory.forEach((history) => {
+          if (
+            typeof history?.message === 'object' &&
+            history?.message?.PHOTO?.length > 0
+          ) {
+            history?.message?.PHOTO.forEach((element) => {
+              if (element) {
+                this.filteredMediaType.push({
+                  message: element
+                });
+              }
+            });
+          }
+          if (history.type === 'Media') {
+            this.filteredMediaType.push(history);
+          }
+        });
+      }
       this.logHistory$ = of({
         nextToken: null,
         rows: this.logHistory
@@ -826,7 +878,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             ...data,
             ...jsonData,
             dueDate: jsonData?.DUEDATE
-              ? format(new Date(jsonData?.DUEDATE), 'dd MMM, yyyy')
+              ? format(new Date(jsonData?.DUEDATE), 'dd MMM yyyy hh:mm a')
               : '',
             priority: jsonData.PRIORITY ?? '',
             statusDisplay: this.observations.prepareStatus(

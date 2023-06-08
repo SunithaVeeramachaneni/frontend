@@ -277,6 +277,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plants = [];
   plantsIdNameMap = {};
@@ -588,7 +589,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   getAllOperatorRounds() {
     this.operatorRoundsService
       .fetchAllOperatorRounds$()
-      .subscribe((formsList) => {
+      .subscribe((formsList: any) => {
         const objectKeys = Object.keys(formsList);
         if (objectKeys.length > 0) {
           const uniqueLastPublishedBy = formsList.rows
@@ -596,6 +597,15 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             .filter((value, index, self) => self.indexOf(value) === index);
           this.lastPublishedBy = [...uniqueLastPublishedBy];
 
+          const uniqueLastModifiedBy = formsList.rows
+            .map((item) => {
+              if (item.lastModifiedBy) {
+                return item.lastModifiedBy;
+              }
+              return '';
+            })
+            .filter((value, index, self) => self.indexOf(value) === index);
+          this.lastModifiedBy = [...uniqueLastModifiedBy];
           const uniqueAuthoredBy = formsList.rows
             .map((item) => item.author)
             .filter((value, index, self) => self.indexOf(value) === index);
@@ -619,7 +629,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             if (item.column === 'status') {
               item.items = this.status;
             } else if (item.column === 'modifiedBy') {
-              item.items = this.lastPublishedBy;
+              item.items = this.lastModifiedBy;
             } else if (item.column === 'authoredBy') {
               item.items = this.authoredBy;
             } else if (item.column === 'plant') {

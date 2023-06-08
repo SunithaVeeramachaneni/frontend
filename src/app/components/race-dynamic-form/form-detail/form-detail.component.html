@@ -168,7 +168,7 @@
               <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.updatedAt) }}
+                {{ formateDate(selectedForm?.publishedDate) }}
               </p>
             </div>
           </div>
@@ -178,8 +178,8 @@
                 {{ 'lastModifiedBy' | translate }}
               </p>
             </div>
-            <div class="flex-custom" *ngIf="selectedForm?.lastPublishedBy">
-              <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
+            <div class="flex-custom" *ngIf="selectedForm?.lastModifiedBy">
+              <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
                 {{ formateDate(selectedForm?.updatedAt) }}
