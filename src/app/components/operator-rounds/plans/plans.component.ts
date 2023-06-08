@@ -759,8 +759,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  scheduleConfigHandler(scheduleConfig: ScheduleConfig) {
-    const { roundPlanScheduleConfiguration, mode } = scheduleConfig;
+  scheduleConfigHandler(scheduleConfig) {
+    const { roundPlanScheduleConfiguration, mode } =
+      scheduleConfig as ScheduleConfig;
     this.roundPlanScheduleConfigurations[
       roundPlanScheduleConfiguration.roundPlanId
     ] = roundPlanScheduleConfiguration;
@@ -959,5 +960,9 @@ export class PlansComponent implements OnInit, OnDestroy {
     };
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });
+  }
+
+  viewFormsHandler(id: any) {
+    this.selectTab.emit({ index: 1, queryParams: { id } });
   }
 }

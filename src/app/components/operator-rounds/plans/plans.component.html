@@ -15,14 +15,16 @@
     ></app-form-detail>
   </div>
   <ng-container *ngIf="users$ | async">
-    <app-round-plan-schedule-configuration
+    <app-schedule-configuration
       [@slideInOut]="scheduleConfigState"
       [roundPlanDetail]="scheduleRoundPlanDetail"
       [hidden]="hideScheduleConfig"
+      [moduleName]="'OPERATOR_ROUNDS'"
       [assigneeDetails]="assigneeDetails"
       (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
       (scheduleConfig)="scheduleConfigHandler($event)"
-    ></app-round-plan-schedule-configuration>
+      (viewForms)="viewFormsHandler($event)"
+    ></app-schedule-configuration>
   </ng-container>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group

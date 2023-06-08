@@ -112,6 +112,7 @@ export class ScheduleConfigurationComponent
     min: 0,
     max: 30
   };
+  dropdownPosition: any;
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -140,6 +141,15 @@ export class ScheduleConfigurationComponent
     } else {
       this.formName = this.roundPlanDetail?.name || '';
     }
+    const position = document
+      .getElementById('assignDropdownPosition')
+      ?.getBoundingClientRect();
+
+    this.dropdownPosition = {
+      left: `${position?.left - 30}px`,
+      top: `${position?.top + 20}px`,
+      modalTop: `-${position?.top - 20}px`
+    };
   }
 
   ngOnInit(): void {
@@ -183,6 +193,14 @@ export class ScheduleConfigurationComponent
         displayValue: ''
       }),
       advanceFormsCount: [
+        0,
+        [
+          Validators.required,
+          Validators.min(this.roundsGeneration.min),
+          Validators.max(this.roundsGeneration.max)
+        ]
+      ],
+      advanceRoundsCount: [
         0,
         [
           Validators.required,
@@ -398,7 +416,6 @@ export class ScheduleConfigurationComponent
         schedularConfigFormValue.scheduleType === 'byDate'
           ? this.prepareScheduleByDates()
           : [];
-
       if (id) {
         const payload = {
           ...rest,
@@ -409,6 +426,7 @@ export class ScheduleConfigurationComponent
         };
         if (this.isFormModule) {
           delete payload.roundPlanId;
+          delete payload.advanceRoundsCount;
           this.formScheduleConfigurationService
             .updateFormScheduleConfiguration$(id, payload)
             .pipe(
@@ -428,6 +446,7 @@ export class ScheduleConfigurationComponent
             .subscribe();
         } else {
           delete payload.formId;
+          delete payload.advanceFormsCount;
           this.rpscService
             .updateRoundPlanScheduleConfiguration$(id, payload)
             .pipe(
@@ -456,6 +475,7 @@ export class ScheduleConfigurationComponent
         };
         if (this.isFormModule) {
           delete payload.roundPlanId;
+          delete payload.advanceRoundsCount;
           this.formScheduleConfigurationService
             .createFormScheduleConfiguration$(payload)
             .pipe(
@@ -478,6 +498,7 @@ export class ScheduleConfigurationComponent
             .subscribe();
         } else {
           delete payload.formId;
+          delete payload.advanceFormsCount;
           this.rpscService
             .createRoundPlanScheduleConfiguration$(payload)
             .pipe(
@@ -589,7 +610,14 @@ export class ScheduleConfigurationComponent
       startDatePicker: new Date(),
       endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
       endDatePicker: new Date(addDays(new Date(), 30)),
-      scheduledTill: null
+      scheduledTill: null,
+      assignmentDetails: {
+        type: this.assignTypes[0],
+        value: '',
+        displayValue: ''
+      },
+      advanceFormsCount: 0,
+      advanceRoundsCount: 0
     });
     this.schedulerConfigForm.markAsDirty();
   }
@@ -719,14 +747,15 @@ export class ScheduleConfigurationComponent
 
   updateAdvanceRoundsCountValidation(roundsCount: number) {
     this.roundsGeneration.max = roundsCount;
+    const key = this.isFormModule ? 'advanceFormsCount' : 'advanceRoundsCount';
     this.schedulerConfigForm
-      .get('advanceFormsCount')
+      .get(key)
       .setValidators([
         Validators.required,
         Validators.min(this.roundsGeneration.min),
         Validators.max(this.roundsGeneration.max)
       ]);
-    this.schedulerConfigForm.get('advanceFormsCount').updateValueAndValidity();
+    this.schedulerConfigForm.get(key).updateValueAndValidity();
   }
 
   ngOnDestroy(): void {

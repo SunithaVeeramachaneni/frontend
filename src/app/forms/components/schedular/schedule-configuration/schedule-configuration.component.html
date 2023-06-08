@@ -258,18 +258,47 @@
             <div class="info" translate>assignToInfo</div>
           </div>
           <div class="forms-count">
-            <p translate class="title">InspectionsGeneration</p>
-            <div class="info m-b-5" translate>advanceInspectionsCountInfo</div>
+            <p class="title">
+              {{
+                (isFormModule ? 'InspectionsGeneration' : 'roundsGeneration')
+                  | translate
+              }}
+            </p>
+            <div class="info m-b-5">
+              {{
+                (isFormModule
+                  ? 'advanceInspectionsCountInfo'
+                  : 'advanceRoundsCountInfo'
+                ) | translate
+              }}
+            </div>
             <mat-form-field appearance="outline" class="width-100">
-              <mat-label translate="inspectionsCount"></mat-label>
+              <mat-label>
+                {{
+                  (isFormModule ? 'inspectionsCount' : 'advanceRoundsCount')
+                    | translate
+                }}
+              </mat-label>
               <input
                 type="number"
                 matInput
                 min="0"
+                *ngIf="isFormModule"
                 formControlName="advanceFormsCount"
               />
+              <input
+                type="number"
+                matInput
+                min="0"
+                *ngIf="!isFormModule"
+                formControlName="advanceRoundsCount"
+              />
             </mat-form-field>
-            <mat-error *ngIf="processValidationErrors('advanceFormsCount')">
+            <mat-error
+              *ngIf="
+                isFormModule && processValidationErrors('advanceFormsCount')
+              "
+            >
               {{
                 errors?.advanceFormsCount.name
                   | translate
@@ -284,10 +313,30 @@
                       }
               }}
             </mat-error>
+            <mat-error
+              *ngIf="
+                !isFormModule && processValidationErrors('advanceRoundsCount')
+              "
+            >
+              {{
+                errors.advanceRoundsCount.name
+                  | translate
+                    : {
+                        name: 'advanceRoundsCount' | translate,
+                        count:
+                          errors.advanceRoundsCount.name === 'min'
+                            ? roundsGeneration.min
+                            : errors.advanceRoundsCount.name === 'max'
+                            ? roundsGeneration.max
+                            : 0
+                      }
+              }}
+            </mat-error>
           </div>
           <mat-menu #menu="matMenu" backdropClass="assign-menu">
             <app-assigned-to
               [assigneeDetails]="assigneeDetails"
+              [dropdownPosition]="dropdownPosition"
               (selectedAssignee)="selectedAssigneeHandler($event)"
             ></app-assigned-to>
           </mat-menu>
