@@ -26,6 +26,7 @@ import {
 } from 'src/app/interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 interface FrequencyDetail {
   info: string;
@@ -75,11 +76,13 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
+  plantTimezoneMap: any;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private readonly plantService: PlantService
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
@@ -146,7 +149,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
+  }
 
   cancelForm() {
     this.slideInOut.emit('in');

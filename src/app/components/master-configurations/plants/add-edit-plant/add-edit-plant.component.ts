@@ -111,7 +111,6 @@ export class AddEditPlantComponent implements OnInit {
         Validators.pattern(regex)
       ]),
       state: new FormControl('', [
-        Validators.required,
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),

@@ -66,6 +66,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -340,10 +341,12 @@ export class FormsComponent implements OnInit, OnDestroy {
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');

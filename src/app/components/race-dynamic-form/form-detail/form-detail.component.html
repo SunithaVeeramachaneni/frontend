@@ -200,6 +200,27 @@
               </p>
             </div>
           </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'timeZone' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]"
+                  >(UTC{{
+                    this.plantTimezoneMap[selectedForm?.plantId].utcOffset
+                  }})
+                  {{
+                    this.plantTimezoneMap[selectedForm?.plantId].description
+                  }}</span
+                ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
+                  this.placeHolder
+                }}</span>
+              </h4>
+            </div>
+          </div>
         </ng-container>
         <ng-template #submitted>
           <div class="name-heading">
@@ -246,6 +267,27 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">{{ selectedForm?.assignedTo }}</h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'timeZone' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]"
+                  >(UTC{{
+                    this.plantTimezoneMap[selectedForm?.plantId].utcOffset
+                  }})
+                  {{
+                    this.plantTimezoneMap[selectedForm?.plantId].description
+                  }}</span
+                ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
+                  this.placeHolder
+                }}</span>
+              </h4>
             </div>
           </div>
         </ng-template>

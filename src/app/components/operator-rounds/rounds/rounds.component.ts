@@ -69,6 +69,7 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-rounds',
@@ -394,10 +395,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastService: ToastService,
     private userService: UsersService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();

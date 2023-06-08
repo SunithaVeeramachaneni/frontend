@@ -50,6 +50,7 @@ import { CreateFromTemplateModalComponent } from '../create-from-template-modal/
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-form-list',
@@ -298,10 +299,12 @@ export class FormListComponent implements OnInit, OnDestroy {
     private router: Router,
     private readonly store: Store<State>,
     private dialog: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');

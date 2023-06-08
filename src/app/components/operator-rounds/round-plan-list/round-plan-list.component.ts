@@ -298,6 +298,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.operatorRoundsService.fetchForms$.next({ data: 'load' });
     this.operatorRoundsService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');

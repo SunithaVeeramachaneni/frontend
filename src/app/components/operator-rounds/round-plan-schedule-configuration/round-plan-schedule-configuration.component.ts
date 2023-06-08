@@ -41,6 +41,7 @@ import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-s
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
 import { Subject } from 'rxjs';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -95,6 +96,8 @@ export class RoundPlanScheduleConfigurationComponent
     max: 30
   };
   dropdownPosition: any;
+  plantTimezoneMap: any;
+  placeHolder = '_ _';
   private _roundPlanDetail: any;
   private destroy$ = new Subject();
 
@@ -103,10 +106,14 @@ export class RoundPlanScheduleConfigurationComponent
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.roundPlanSchedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: this.roundPlanDetail?.id,
