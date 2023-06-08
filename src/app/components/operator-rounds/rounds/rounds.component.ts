@@ -379,7 +379,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   roundId = '';
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -729,11 +729,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data: any) {
-    let emailArray = [];
-    data?.forEach((data: any) => {
+    const emailArray = [];
+    data?.forEach((name: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
-          (email) => this.userFullNameByEmail[email].fullName === data
+          (email) => this.userFullNameByEmail[email].fullName === name
         )
       );
     });

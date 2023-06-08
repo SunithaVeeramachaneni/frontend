@@ -44,6 +44,7 @@ import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedul
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
 import { Subject } from 'rxjs';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -112,6 +113,8 @@ export class ScheduleConfigurationComponent
     min: 0,
     max: 30
   };
+  plantTimezoneMap: any;
+  placeHolder = '_ _';
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -121,7 +124,8 @@ export class ScheduleConfigurationComponent
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog,
-    private readonly formScheduleConfigurationService: FormScheduleConfigurationService
+    private readonly formScheduleConfigurationService: FormScheduleConfigurationService,
+    private plantService: PlantService
   ) {
     if (this.isFormModule) {
       this.formName = this.formDetail?.name || '';
@@ -143,6 +147,9 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: this.roundPlanDetail?.id,

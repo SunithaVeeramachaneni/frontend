@@ -110,10 +110,7 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace,
         Validators.pattern(regex)
       ]),
-      state: new FormControl('', [
-        WhiteSpaceValidator.whiteSpace,
-        WhiteSpaceValidator.trimWhiteSpace
-      ]),
+      state: new FormControl(''),
       timeZone: new FormControl('', [Validators.required]),
       label: '',
       field: ''
@@ -122,8 +119,23 @@ export class AddEditPlantComponent implements OnInit {
       .get('country')
       .valueChanges.pipe(distinctUntilChanged())
       .subscribe((countryCode) => {
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        this.plantForm.patchValue({ state: null, timeZone: null });
         if (countryCode) {
           this.selectedCountry = countriesMasterData[countryCode];
+          if (this.selectedCountry.states.length === 0) {
+            this.stateDropDownHidden = true;
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            this.plantForm.controls['state'].clearValidators();
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            this.plantForm.controls['state'].updateValueAndValidity();
+          } else {
+            this.stateDropDownHidden = false;
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            this.plantForm.controls['state'].setValidators(Validators.required);
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            this.plantForm.controls['state'].updateValueAndValidity();
+          }
           [this.states, this.countryAllStates] = [
             this.selectedCountry.states,
             this.selectedCountry.states
@@ -132,7 +144,7 @@ export class AddEditPlantComponent implements OnInit {
             this.selectedCountry.timeZones,
             this.selectedCountry.timeZones
           ];
-          this.stateDropDownHidden = false;
+
           this.timeZoneDropDownHidden = false;
         }
       });
@@ -171,6 +183,8 @@ export class AddEditPlantComponent implements OnInit {
   cancel() {
     this.plantForm.reset();
     this.slideInOut.emit('out');
+    this.stateDropDownHidden = true;
+    this.timeZoneDropDownHidden = true;
   }
 
   onKeyCountry(event: any) {
@@ -227,6 +241,7 @@ export class AddEditPlantComponent implements OnInit {
   }
 
   compareTimeZones(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return false;
     return (
       o1.utcOffset === o2.utcOffset &&
       o1.description === o2.description &&
