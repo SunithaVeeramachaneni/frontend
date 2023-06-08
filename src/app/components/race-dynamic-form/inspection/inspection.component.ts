@@ -360,6 +360,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: this.columns,
     data: []
   };
+  sliceCount = 100;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -465,7 +466,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
           );
         }
         this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
+        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
+        const dataSource = this.dataSource
+          ? this.dataSource.data.concat(
+              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
+            )
+          : this.initial.data.slice(sliceStart, this.sliceCount);
+        this.dataSource = new MatTableDataSource(dataSource);
         return this.initial;
       })
     );
@@ -787,7 +795,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
@@ -799,7 +807,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -823,7 +831,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
@@ -836,7 +844,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',

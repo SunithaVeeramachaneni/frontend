@@ -372,7 +372,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
