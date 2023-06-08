@@ -146,7 +146,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'ARD',
     'DT',
     'HL',
-    'INST'
+    'INST',
+    'DF',
+    'TIF'
   ];
 
   unitOfMeasurementsAvailable: any[] = [];
@@ -237,7 +239,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF'
+        fieldType.type !== 'TAF' &&
+        (this.isEmbeddedForms
+          ? fieldType.type !== 'DT'
+          : fieldType.type !== 'DF' && fieldType.type !== 'TIF')
     );
 
     // isAskQuestion true set question id and section id
