@@ -291,11 +291,20 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'LF' ||
+                  (isEmbeddedForms &&
+                    questionForm.get('fieldType').value === 'HL')
+                "
                 class="action"
               >
                 <app-read-only
                   [question]="questionForm"
+                  [translateValue]="
+                    questionForm.get('fieldType').value === 'LF'
+                      ? 'defaultValue'
+                      : 'link'
+                  "
                   (defaultValue)="questionForm.get('value').setValue($event)"
                 ></app-read-only>
               </span>
@@ -323,7 +332,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'HL'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'HL' &&
+                  !isEmbeddedForms
+                "
                 class="action"
               >
                 <button
