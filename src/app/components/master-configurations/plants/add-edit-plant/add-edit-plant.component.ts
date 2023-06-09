@@ -4,7 +4,9 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ElementRef,
+  ViewChild
 } from '@angular/core';
 import {
   FormBuilder,
@@ -25,6 +27,7 @@ import { countriesMasterData } from './countriesMasterData.mock';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditPlantComponent implements OnInit {
+  @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(data) {
@@ -63,6 +66,7 @@ export class AddEditPlantComponent implements OnInit {
   get plantEditData() {
     return this.plantsEditData;
   }
+  countrySearch: any;
   stateDropDownHidden = true;
   timeZoneDropDownHidden = true;
   selectedCountry: any;
@@ -70,7 +74,8 @@ export class AddEditPlantComponent implements OnInit {
   countryAllTimeZones: any = [];
   states: any = [];
   timeZones: any = [];
-  countryData = Object.values(countriesMasterData);
+  allCountries = Object.values(countriesMasterData);
+  countryData = [];
   errors: ValidationError = {};
   plantStatus;
   plantTitle;
@@ -83,6 +88,7 @@ export class AddEditPlantComponent implements OnInit {
   constructor(private fb: FormBuilder, private plantService: PlantService) {}
 
   ngOnInit(): void {
+    this.countryData = this.allCountries;
     const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
@@ -110,11 +116,17 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace,
         Validators.pattern(regex)
       ]),
-      state: new FormControl(''),
+      state: new FormControl('', [
+        Validators.required,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
+      ]),
       timeZone: new FormControl('', [Validators.required]),
       label: '',
       field: ''
     });
+    this.plantForm.get('state').disable();
+    this.plantForm.get('timeZone').disable();
     this.plantForm
       .get('country')
       .valueChanges.pipe(distinctUntilChanged())
@@ -123,18 +135,10 @@ export class AddEditPlantComponent implements OnInit {
         this.plantForm.patchValue({ state: null, timeZone: null });
         if (countryCode) {
           this.selectedCountry = countriesMasterData[countryCode];
-          if (this.selectedCountry.states.length === 0) {
-            this.stateDropDownHidden = true;
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            this.plantForm.controls['state'].clearValidators();
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            this.plantForm.controls['state'].updateValueAndValidity();
+          if (!this.selectedCountry.states.length) {
+            this.plantForm.get('state').disable();
           } else {
-            this.stateDropDownHidden = false;
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            this.plantForm.controls['state'].setValidators(Validators.required);
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            this.plantForm.controls['state'].updateValueAndValidity();
+            this.plantForm.get('state').enable();
           }
           [this.states, this.countryAllStates] = [
             this.selectedCountry.states,
@@ -144,8 +148,7 @@ export class AddEditPlantComponent implements OnInit {
             this.selectedCountry.timeZones,
             this.selectedCountry.timeZones
           ];
-
-          this.timeZoneDropDownHidden = false;
+          this.plantForm.get('timeZone').enable();
         }
       });
   }
@@ -183,11 +186,12 @@ export class AddEditPlantComponent implements OnInit {
   cancel() {
     this.plantForm.reset();
     this.slideInOut.emit('out');
-    this.stateDropDownHidden = true;
-    this.timeZoneDropDownHidden = true;
+    this.plantForm.get('state').disable();
+    this.plantForm.get('timeZone').disable();
   }
 
   onKeyCountry(event: any) {
+    console.log('on click :', this.countrySearch);
     const value = event.target.value || '';
     if (value) {
       this.countryData = this.searchCountry(value);
@@ -247,5 +251,10 @@ export class AddEditPlantComponent implements OnInit {
       o1.description === o2.description &&
       o1.timeZone === o2.timeZone
     );
+  }
+  onSelectBlur() {
+    this.countryData = Object.values(countriesMasterData);
+    const input = this.inputRef.nativeElement;
+    input.value = '';
   }
 }

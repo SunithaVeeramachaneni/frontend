@@ -67,8 +67,11 @@
           <mat-select
             formControlName="country"
             [placeholder]="'countryMandatory' | translate"
+            (closed)="onSelectBlur()"
           >
             <input
+              #inputRef
+              [(ngModel)]="this.countrySearch"
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKeyCountry($event)"
@@ -124,7 +127,6 @@
           <mat-select
             formControlName="state"
             [placeholder]="'stateMandatory' | translate"
-            [disabled]="this.stateDropDownHidden"
           >
             <input
               class="searchable-input"
@@ -157,7 +159,6 @@
           <mat-select
             formControlName="timeZone"
             [placeholder]="'timeZoneMandatory' | translate"
-            [disabled]="this.timeZoneDropDownHidden"
             [compareWith]="compareTimeZones"
           >
             <div class="scrollable-area">
