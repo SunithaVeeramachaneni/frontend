@@ -24,7 +24,11 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  routingUrls
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   FormTableUpdate,
@@ -37,6 +41,8 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { ShiftService } from '../services/shift.service';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 @Component({
   selector: 'app-shift-list',
   templateUrl: './shift-list.component.html',
@@ -147,6 +153,8 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   shiftAddOrEditOpenState = 'out';
   shiftEditData;
   shiftMode = 'CREATE';
+  currentRouteUrl$: Observable<string>;
+  readonly routingUrls = routingUrls;
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -172,10 +180,15 @@ export class ShiftListComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private readonly toast: ToastService,
     private shiftService: ShiftService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.shifts.title))
+    );
     this.shiftService.fetchShifts$.next({ data: 'load' });
     this.shiftService.fetchShifts$.next({} as TableEvent);
     this.searchShift = new FormControl('');

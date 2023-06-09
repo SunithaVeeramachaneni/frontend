@@ -1,67 +1,72 @@
-<div class="locations-list-view">
-  <ng-container *ngIf="userInfo$ | async">
-    <div class="main-container">
-      <div class="locations-header">
-        <div>
-          <h2 class="heading" translate="shifts"></h2>
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div
+    class="locations-list-view"
+    *ngIf="currentRouteUrl === routingUrls.shifts.url"
+  >
+    <ng-container *ngIf="userInfo$ | async">
+      <div class="main-container">
+        <div class="locations-header">
+          <div>
+            <h2 class="heading" translate="shifts"></h2>
+          </div>
+          <div>
+            <span class="custom-form-field-gray-color search">
+              <mat-form-field appearance="outline">
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="'searchShift' | translate"
+                  autocomplete="off"
+                  [formControl]="searchShift"
+                />
+                <svg-icon
+                  matSuffix
+                  icon="icon-filterIcon"
+                  class="filter-icon"
+                ></svg-icon>
+              </mat-form-field>
+            </span>
+            <button
+              mat-raised-button
+              translate="createNew"
+              class="create-new-btn"
+              *appCheckUserHasPermission="[perms.createShift]"
+              (click)="addManually()"
+            ></button>
+          </div>
         </div>
-        <div>
-          <span class="custom-form-field-gray-color search">
-            <mat-form-field appearance="outline">
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'searchShift' | translate"
-                autocomplete="off"
-                [formControl]="searchShift"
-              />
-              <svg-icon
-                matSuffix
-                icon="icon-filterIcon"
-                class="filter-icon"
-              ></svg-icon>
-            </mat-form-field>
-          </span>
-          <button
-            mat-raised-button
-            translate="createNew"
-            class="create-new-btn"
-            *appCheckUserHasPermission="[perms.createShift]"
-            (click)="addManually()"
-          ></button>
+        <div *ngIf="(shifts$ | async) && (isLoading$ | async) === false">
+          <cwp-dynamictable
+            [dataSource]="dataSource"
+            [configOptions]="configOptions"
+            (fetchDataCallback)="handleTableEvent($event)"
+            (rowLevelActionHandler)="rowLevelActionHandler($event)"
+            (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+            (onToggleChangeHandler)="onToggleChangeHandler($event)"
+            (cellClickActionHandler)="cellClickActionHandler($event)"
+            class="width-100"
+          ></cwp-dynamictable>
         </div>
-      </div>
-      <div *ngIf="(shifts$ | async) && (isLoading$ | async) === false">
-        <cwp-dynamictable
-          [dataSource]="dataSource"
-          [configOptions]="configOptions"
-          (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
-          (onToggleChangeHandler)="onToggleChangeHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
-          class="width-100"
-        ></cwp-dynamictable>
-      </div>
-      <ng-container *ngIf="openShiftDetailedView">
-        <app-add-edit-shift
-          [@slideInOut]="openShiftDetailedView"
-          [shiftMode]="shiftMode"
-          (slideInOut)="onCloseShiftAddOrEditOpenState($event)"
-          [shiftEditData]="selectedShift"
-          (shiftModeUpdated)="onShiftModeUpdate($event)"
-          (createdShiftData)="addOrUpdateShift($event)"
-        ></app-add-edit-shift>
-      </ng-container>
-      <div *ngIf="isLoading$ | async">
-        <div class="ghost-loading">
-          <div *ngFor="let number of ghostLoading">
-            <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
-            </ngx-shimmer-loading>
+        <ng-container *ngIf="openShiftDetailedView">
+          <app-add-edit-shift
+            [@slideInOut]="openShiftDetailedView"
+            [shiftMode]="shiftMode"
+            (slideInOut)="onCloseShiftAddOrEditOpenState($event)"
+            [shiftEditData]="selectedShift"
+            (shiftModeUpdated)="onShiftModeUpdate($event)"
+            (createdShiftData)="addOrUpdateShift($event)"
+          ></app-add-edit-shift>
+        </ng-container>
+        <div *ngIf="isLoading$ | async">
+          <div class="ghost-loading">
+            <div *ngFor="let number of ghostLoading">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+              </ngx-shimmer-loading>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-</div>
+    </ng-container>
+  </div>
+</ng-container>
