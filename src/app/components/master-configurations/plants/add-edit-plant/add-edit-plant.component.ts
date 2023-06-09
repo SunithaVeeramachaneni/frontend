@@ -191,7 +191,6 @@ export class AddEditPlantComponent implements OnInit {
   }
 
   onKeyCountry(event: any) {
-    console.log('on click :', this.countrySearch);
     const value = event.target.value || '';
     if (value) {
       this.countryData = this.searchCountry(value);
