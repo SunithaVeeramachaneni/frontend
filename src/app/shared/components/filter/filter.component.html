@@ -29,10 +29,23 @@
         class="mat-field"
       >
         <mat-label>{{ item.label }}</mat-label>
-        <mat-select multiple [(ngModel)]="item.value" name="showStatus">
-          <mat-option *ngFor="let showdue of item.items" [value]="showdue">
-            {{ showdue }}
-          </mat-option>
+        <mat-select
+          #matSelect
+          multiple
+          [(ngModel)]="item.value"
+          name="showStatus"
+        >
+          <div class="multiple-header">
+            <span>{{ item.label }}</span>
+            <button class="done-filters-btn" (click)="closeSelect(matSelect)">
+              {{ 'done' | translate }}
+            </button>
+          </div>
+          <div class="scrollable-area">
+            <mat-option *ngFor="let showDue of item.items" [value]="showDue">
+              {{ showDue }}
+            </mat-option>
+          </div>
         </mat-select>
       </mat-form-field>
       <div class="schedule-wrap" *ngIf="item.type === 'schedule'">
