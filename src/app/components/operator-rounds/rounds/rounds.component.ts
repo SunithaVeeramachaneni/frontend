@@ -70,6 +70,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-rounds',
@@ -381,6 +382,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   userFullNameByEmail = {};
   roundId = '';
+  plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -400,7 +402,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.getPlantTimeZoneMapping();
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -457,9 +461,17 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
+          console.log('Round 0: ', rounds.rows[0]);
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-            dueDate: new Date(roundDetail.dueDate),
+            dueDate:
+              this.plantTimezoneMap[roundDetail.plantId] &&
+              this.plantTimezoneMap[roundDetail.plantId].timeZone
+                ? localToTimezoneDate(
+                    new Date(roundDetail.dueDate),
+                    this.plantTimezoneMap[roundDetail.plantId]
+                  )
+                : new Date(roundDetail.dueDate),
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
@@ -469,7 +481,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-              dueDate: new Date(roundDetail.dueDate),
+              dueDate:
+                this.plantTimezoneMap[roundDetail.plantId] &&
+                this.plantTimezoneMap[roundDetail.plantId].timeZone
+                  ? localToTimezoneDate(
+                      new Date(roundDetail.dueDate),
+                      this.plantTimezoneMap[roundDetail.plantId]
+                    )
+                  : new Date(roundDetail.dueDate),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
@@ -847,7 +866,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  dueDate,
+                  dueDate:
+                    this.plantTimezoneMap[this.selectedRound.plantId] &&
+                    this.plantTimezoneMap[this.selectedRound.plantId].timeZone
+                      ? localToTimezoneDate(
+                          new Date(this.selectedRound.dueDate),
+                          this.plantTimezoneMap[this.selectedRound.plantId]
+                        )
+                      : new Date(this.selectedRound.dueDate),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo

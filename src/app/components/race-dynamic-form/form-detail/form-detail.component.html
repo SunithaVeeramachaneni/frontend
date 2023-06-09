@@ -168,7 +168,12 @@
               <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.publishedDate) }}
+                {{
+                  formateDate(
+                    selectedForm?.publishedDate,
+                    selectedForm?.plantId
+                  )
+                }}
               </p>
             </div>
           </div>
@@ -182,7 +187,9 @@
               <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.updatedAt) }}
+                {{
+                  formateDate(selectedForm?.updatedAt, selectedForm?.plantId)
+                }}
               </p>
             </div>
           </div>
@@ -196,7 +203,9 @@
               <h4 class="create-name">{{ selectedForm?.author }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.createdAt) }}
+                {{
+                  formateDate(selectedForm?.createdAt, selectedForm?.plantId)
+                }}
               </p>
             </div>
           </div>

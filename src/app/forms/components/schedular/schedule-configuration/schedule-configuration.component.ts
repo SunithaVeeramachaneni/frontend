@@ -45,6 +45,7 @@ import { FormScheduleConfigurationService } from './../../../../components/race-
 import { scheduleConfigs } from './schedule-configuration.constants';
 import { Subject } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -406,12 +407,48 @@ export class ScheduleConfigurationComponent
           ? this.prepareScheduleByDates()
           : [];
 
+      console.log(
+        'Schedule Config Form Value',
+        schedularConfigFormValue,
+        scheduleByDates
+      );
+
+      let startDateByPlantTimezone = new Date(
+        `${startDate} ${time}`
+      ).toISOString();
+      let endDateByPlantTimezone = new Date(`${endDate} ${time}`).toISOString();
+      let scheduleEndOnByPlantTimezone = new Date(
+        `${scheduleEndOn} ${time}`
+      ).toISOString();
+
+      if (
+        this.formDetail &&
+        this.formDetail.plantId &&
+        this.plantTimezoneMap[this.formDetail.plantId] &&
+        this.plantTimezoneMap[this.formDetail.plantId].timeZone
+      ) {
+        startDateByPlantTimezone = localToTimezoneDate(
+          new Date(`${startDate} ${time}`),
+          this.plantTimezoneMap[this.formDetail.plantId]
+        ).toISOString();
+
+        endDateByPlantTimezone = localToTimezoneDate(
+          new Date(`${endDate} ${time}`),
+          this.plantTimezoneMap[this.formDetail.plantId]
+        ).toISOString();
+
+        scheduleEndOnByPlantTimezone = localToTimezoneDate(
+          new Date(`${scheduleEndOn} ${time}`),
+          this.plantTimezoneMap[this.formDetail.plantId]
+        ).toISOString();
+      }
+
       if (id) {
         const payload = {
           ...rest,
-          startDate: new Date(`${startDate} ${time}`).toISOString(),
-          endDate: new Date(`${endDate} ${time}`).toISOString(),
-          scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
+          startDate: startDateByPlantTimezone,
+          endDate: endDateByPlantTimezone,
+          scheduleEndOn: scheduleEndOnByPlantTimezone,
           scheduleByDates
         };
         if (this.isFormModule) {
@@ -456,9 +493,9 @@ export class ScheduleConfigurationComponent
       } else {
         const payload = {
           ...rest,
-          startDate: new Date(`${startDate} ${time}`).toISOString(),
-          endDate: new Date(`${endDate} ${time}`).toISOString(),
-          scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
+          startDate: startDateByPlantTimezone,
+          endDate: endDateByPlantTimezone,
+          scheduleEndOn: scheduleEndOnByPlantTimezone,
           scheduleByDates
         };
         if (this.isFormModule) {
@@ -655,10 +692,27 @@ export class ScheduleConfigurationComponent
   };
 
   prepareScheduleByDates() {
-    return this.scheduleByDates.map((scheduleByDate) => ({
-      ...scheduleByDate,
-      date: new Date(format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'))
-    }));
+    return this.scheduleByDates.map((scheduleByDate) => {
+      let dateByPlantTimezone = new Date(
+        format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00')
+      );
+      if (
+        this.formDetail &&
+        this.formDetail.plantId &&
+        this.plantTimezoneMap[this.formDetail.plantId] &&
+        this.plantTimezoneMap[this.formDetail.plantId].timeZone
+      ) {
+        console.log('doing something...');
+        dateByPlantTimezone = localToTimezoneDate(
+          dateByPlantTimezone,
+          this.plantTimezoneMap[this.formDetail.plantId]
+        );
+      }
+      return {
+        ...scheduleByDate,
+        date: dateByPlantTimezone
+      };
+    });
   }
 
   openScheduleSuccessModal(dialogMode: 'create' | 'update') {

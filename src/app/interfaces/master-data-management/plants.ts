@@ -17,6 +17,7 @@ export interface PlantDetails {
     utcOffset: string;
     timeZone: string;
     description: string;
+    isDstObserved: boolean;
   };
   countryDisplay?: string;
   timeZoneDisplay?: string;

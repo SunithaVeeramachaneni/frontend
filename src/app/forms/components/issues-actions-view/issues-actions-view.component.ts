@@ -103,6 +103,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -131,6 +132,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const { users$, totalCount$, allData, notificationInfo, moduleName } =
       this.data;
     this.allData = allData;
+    // console.log('Issue Actions Data: ', this.data);
     this.moduleName = moduleName;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {

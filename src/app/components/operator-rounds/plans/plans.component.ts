@@ -69,6 +69,8 @@ import {
 } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-plans',
@@ -373,6 +375,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   userFullNameByEmail: {};
+  plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -387,10 +390,14 @@ export class PlansComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
+    private plantService: PlantService,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -775,7 +782,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             ...data,
             schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
             scheduleDates: this.getFormatedScheduleDates(
-              roundPlanScheduleConfiguration
+              roundPlanScheduleConfiguration,
+              data.plantId
             ),
             assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
             assigneeToEmail: this.getAssignedToEmail(
@@ -828,7 +836,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlanScheduleConfigurations[roundPlan.id]
           ),
           scheduleDates: this.getFormatedScheduleDates(
-            roundPlanScheduleConfigurations[roundPlan.id]
+            roundPlanScheduleConfigurations[roundPlan.id],
+            roundPlan.plantId
           ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
@@ -849,23 +858,48 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFormatedScheduleDates(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration,
+    plantId
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       roundPlanScheduleConfiguration;
     const formatedStartDate =
       scheduleType === 'byFrequency'
         ? this.datePipe.transform(
-            roundPlanScheduleConfiguration.startDate,
+            this.plantTimezoneMap[plantId] &&
+              this.plantTimezoneMap[plantId].timeZone
+              ? localToTimezoneDate(
+                  new Date(roundPlanScheduleConfiguration.startDate),
+                  this.plantTimezoneMap[plantId]
+                )
+              : new Date(roundPlanScheduleConfiguration.startDate),
             'MMM dd, yy'
           )
         : '';
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, 'MMM dd, yy')
+          ? this.datePipe.transform(
+              this.plantTimezoneMap[plantId] &&
+                this.plantTimezoneMap[plantId].timeZone
+                ? localToTimezoneDate(
+                    new Date(scheduleEndOn),
+                    this.plantTimezoneMap[plantId]
+                  )
+                : new Date(scheduleEndOn),
+              'MMM dd, yy'
+            )
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, 'MMM dd, yy')
+          ? this.datePipe.transform(
+              this.plantTimezoneMap[plantId] &&
+                this.plantTimezoneMap[plantId].timeZone
+                ? localToTimezoneDate(
+                    new Date(endDate),
+                    this.plantTimezoneMap[plantId]
+                  )
+                : new Date(endDate),
+              'MMM dd, yy'
+            )
           : 'Never'
         : '';
 

@@ -41,7 +41,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:30',
         timeZone: 'Afghanistan Standard Time',
-        description: 'Kabul'
+        description: 'Kabul',
+        isDstObserved: false
       }
     ]
   },
@@ -101,7 +102,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -172,7 +174,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -184,7 +187,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-11:00',
         timeZone: 'UTC-11',
-        description: 'Coordinated Universal Time-11'
+        description: 'Coordinated Universal Time-11',
+        isDstObserved: true
       }
     ]
   },
@@ -204,7 +208,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -234,7 +239,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -246,7 +252,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -258,7 +265,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Pacific SA Standard Time',
-        description: 'Santiago'
+        description: 'Santiago',
+        isDstObserved: true
       }
     ]
   },
@@ -279,7 +287,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -316,7 +325,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Argentina Standard Time',
-        description: 'City of Buenos Aires'
+        description: 'City of Buenos Aires',
+        isDstObserved: true
       }
     ]
   },
@@ -340,7 +350,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Caucasus Standard Time',
-        description: 'Yerevan'
+        description: 'Yerevan',
+        isDstObserved: true
       }
     ]
   },
@@ -352,7 +363,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -373,7 +385,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+10:00',
         timeZone: 'AUS Eastern Standard Time',
-        description: 'Canberra, Melbourne, Sydney'
+        description: 'Canberra, Melbourne, Sydney',
+        isDstObserved: true
       }
     ]
   },
@@ -395,7 +408,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -483,7 +497,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Azerbaijan Standard Time',
-        description: 'Baku'
+        description: 'Baku',
+        isDstObserved: true
       }
     ]
   },
@@ -538,7 +553,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'Eastern Standard Time',
-        description: 'Eastern Time (US & Canada)'
+        description: 'Eastern Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -550,7 +566,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arab Standard Time',
-        description: 'Kuwait, Riyadh'
+        description: 'Kuwait, Riyadh',
+        isDstObserved: false
       }
     ]
   },
@@ -633,7 +650,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:00',
         timeZone: 'Bangladesh Standard Time',
-        description: 'Dhaka'
+        description: 'Dhaka',
+        isDstObserved: false
       }
     ]
   },
@@ -657,7 +675,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -677,7 +696,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Belarus Standard Time',
-        description: 'Minsk'
+        description: 'Minsk',
+        isDstObserved: true
       }
     ]
   },
@@ -703,7 +723,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Romance Standard Time',
-        description: 'Brussels, Copenhagen, Madrid, Paris'
+        description: 'Brussels, Copenhagen, Madrid, Paris',
+        isDstObserved: true
       }
     ]
   },
@@ -722,7 +743,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -747,7 +769,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -769,7 +792,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'Atlantic Standard Time',
-        description: 'Atlantic Time (Canada)'
+        description: 'Atlantic Time (Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -801,7 +825,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:00',
         timeZone: 'Bangladesh Standard Time',
-        description: 'Dhaka'
+        description: 'Dhaka',
+        isDstObserved: false
       }
     ]
   },
@@ -823,7 +848,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -835,7 +861,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -861,7 +888,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -884,7 +912,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -924,7 +953,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'E. South America Standard Time',
-        description: 'Brasilia'
+        description: 'Brasilia',
+        isDstObserved: true
       }
     ]
   },
@@ -936,7 +966,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:00',
         timeZone: 'Central Asia Standard Time',
-        description: 'Astana'
+        description: 'Astana',
+        isDstObserved: true
       }
     ]
   },
@@ -953,7 +984,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Singapore Standard Time',
-        description: 'Kuala Lumpur, Singapore'
+        description: 'Kuala Lumpur, Singapore',
+        isDstObserved: false
       }
     ]
   },
@@ -994,7 +1026,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -1064,7 +1097,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -1095,7 +1129,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -1133,7 +1168,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -1156,7 +1192,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -1182,7 +1219,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'Eastern Standard Time',
-        description: 'Eastern Time (US & Canada)'
+        description: 'Eastern Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -1218,7 +1256,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-01:00',
         timeZone: 'Cape Verde Standard Time',
-        description: 'Cabo Verde Is.'
+        description: 'Cabo Verde Is.',
+        isDstObserved: false
       }
     ]
   },
@@ -1230,7 +1269,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -1260,7 +1300,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -1296,7 +1337,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -1325,7 +1367,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Pacific SA Standard Time',
-        description: 'Santiago'
+        description: 'Santiago',
+        isDstObserved: true
       }
     ]
   },
@@ -1372,7 +1415,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'China Standard Time',
-        description: 'Beijing, Chongqing, Hong Kong, Urumqi'
+        description: 'Beijing, Chongqing, Hong Kong, Urumqi',
+        isDstObserved: false
       }
     ]
   },
@@ -1384,7 +1428,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -1396,7 +1441,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:30',
         timeZone: 'Myanmar Standard Time',
-        description: 'Yangon (Rangoon)'
+        description: 'Yangon (Rangoon)',
+        isDstObserved: false
       }
     ]
   },
@@ -1442,7 +1488,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -1454,7 +1501,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -1479,7 +1527,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -1518,7 +1567,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -1530,7 +1580,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-10:00',
         timeZone: 'Hawaiian Standard Time',
-        description: 'Hawaii'
+        description: 'Hawaii',
+        isDstObserved: false
       }
     ]
   },
@@ -1550,7 +1601,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -1584,7 +1636,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -1613,7 +1666,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'Eastern Standard Time',
-        description: 'Eastern Time (US & Canada)'
+        description: 'Eastern Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -1625,7 +1679,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -1644,7 +1699,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'E. Europe Standard Time',
-        description: 'E. Europe'
+        description: 'E. Europe',
+        isDstObserved: true
       }
     ]
   },
@@ -1747,7 +1803,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -1791,7 +1848,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -1809,7 +1867,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Romance Standard Time',
-        description: 'Brussels, Copenhagen, Madrid, Paris'
+        description: 'Brussels, Copenhagen, Madrid, Paris',
+        isDstObserved: true
       }
     ]
   },
@@ -1828,7 +1887,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -1851,7 +1911,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -1895,7 +1956,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -1932,7 +1994,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -1972,7 +2035,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Egypt Standard Time',
-        description: 'Cairo'
+        description: 'Cairo',
+        isDstObserved: true
       }
     ]
   },
@@ -1999,7 +2063,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -2021,7 +2086,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -2040,7 +2106,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -2068,7 +2135,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -2092,7 +2160,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -2104,7 +2173,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'SA Eastern Standard Time',
-        description: 'Cayenne, Fortaleza'
+        description: 'Cayenne, Fortaleza',
+        isDstObserved: false
       }
     ]
   },
@@ -2116,7 +2186,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -2148,7 +2219,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'Fiji Standard Time',
-        description: 'Fiji'
+        description: 'Fiji',
+        isDstObserved: true
       }
     ]
   },
@@ -2180,7 +2252,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -2316,7 +2389,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Romance Standard Time',
-        description: 'Brussels, Copenhagen, Madrid, Paris'
+        description: 'Brussels, Copenhagen, Madrid, Paris',
+        isDstObserved: true
       }
     ]
   },
@@ -2328,7 +2402,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'SA Eastern Standard Time',
-        description: 'Cayenne, Fortaleza'
+        description: 'Cayenne, Fortaleza',
+        isDstObserved: false
       }
     ]
   },
@@ -2340,7 +2415,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-10:00',
         timeZone: 'Hawaiian Standard Time',
-        description: 'Hawaii'
+        description: 'Hawaii',
+        isDstObserved: false
       }
     ]
   },
@@ -2352,7 +2428,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'West Asia Standard Time',
-        description: 'Ashgabat, Tashkent'
+        description: 'Ashgabat, Tashkent',
+        isDstObserved: true
       }
     ]
   },
@@ -2374,7 +2451,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -2393,7 +2471,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -2420,7 +2499,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Georgian Standard Time',
-        description: 'Tbilisi'
+        description: 'Tbilisi',
+        isDstObserved: false
       }
     ]
   },
@@ -2449,7 +2529,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -2478,7 +2559,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -2490,7 +2572,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -2541,7 +2624,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'GTB Standard Time',
-        description: 'Athens, Bucharest'
+        description: 'Athens, Bucharest',
+        isDstObserved: true
       }
     ]
   },
@@ -2553,7 +2637,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Greenland Standard Time',
-        description: 'Greenland'
+        description: 'Greenland',
+        isDstObserved: true
       }
     ]
   },
@@ -2573,7 +2658,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -2585,7 +2671,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -2597,7 +2684,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+10:00',
         timeZone: 'West Pacific Standard Time',
-        description: 'Guam, Port Moresby'
+        description: 'Guam, Port Moresby',
+        isDstObserved: false
       }
     ]
   },
@@ -2631,7 +2719,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -2643,7 +2732,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -2696,7 +2786,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -2720,7 +2811,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -2743,7 +2835,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -2766,7 +2859,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'Eastern Standard Time',
-        description: 'Eastern Time (US & Canada)'
+        description: 'Eastern Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -2778,7 +2872,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -2809,7 +2904,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -2839,7 +2935,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'China Standard Time',
-        description: 'Beijing, Chongqing, Hong Kong, Urumqi'
+        description: 'Beijing, Chongqing, Hong Kong, Urumqi',
+        isDstObserved: false
       }
     ]
   },
@@ -2895,7 +2992,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -2916,7 +3014,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -2965,7 +3064,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:30',
         timeZone: 'India Standard Time',
-        description: 'Chennai, Kolkata, Mumbai, New Delhi'
+        description: 'Chennai, Kolkata, Mumbai, New Delhi',
+        isDstObserved: false
       }
     ]
   },
@@ -3012,7 +3112,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -3056,7 +3157,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:30',
         timeZone: 'Iran Standard Time',
-        description: 'Tehran'
+        description: 'Tehran',
+        isDstObserved: true
       }
     ]
   },
@@ -3087,7 +3189,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arabic Standard Time',
-        description: 'Baghdad'
+        description: 'Baghdad',
+        isDstObserved: false
       }
     ]
   },
@@ -3129,7 +3232,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -3141,7 +3245,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -3160,7 +3265,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Israel Standard Time',
-        description: 'Jerusalem'
+        description: 'Jerusalem',
+        isDstObserved: true
       }
     ]
   },
@@ -3284,7 +3390,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -3311,7 +3418,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -3371,7 +3479,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+09:00',
         timeZone: 'Tokyo Standard Time',
-        description: 'Osaka, Sapporo, Tokyo'
+        description: 'Osaka, Sapporo, Tokyo',
+        isDstObserved: false
       }
     ]
   },
@@ -3383,7 +3492,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -3408,7 +3518,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Jordan Standard Time',
-        description: 'Amman'
+        description: 'Amman',
+        isDstObserved: true
       }
     ]
   },
@@ -3438,7 +3549,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:00',
         timeZone: 'Central Asia Standard Time',
-        description: 'Astana'
+        description: 'Astana',
+        isDstObserved: true
       }
     ]
   },
@@ -3498,7 +3610,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -3510,7 +3623,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'UTC+12',
-        description: 'Coordinated Universal Time+12'
+        description: 'Coordinated Universal Time+12',
+        isDstObserved: false
       }
     ]
   },
@@ -3534,7 +3648,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+09:00',
         timeZone: 'Korea Standard Time',
-        description: 'Seoul'
+        description: 'Seoul',
+        isDstObserved: false
       }
     ]
   },
@@ -3564,7 +3679,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+09:00',
         timeZone: 'Korea Standard Time',
-        description: 'Seoul'
+        description: 'Seoul',
+        isDstObserved: false
       }
     ]
   },
@@ -3583,7 +3699,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arab Standard Time',
-        description: 'Kuwait, Riyadh'
+        description: 'Kuwait, Riyadh',
+        isDstObserved: false
       }
     ]
   },
@@ -3605,7 +3722,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:00',
         timeZone: 'Central Asia Standard Time',
-        description: 'Astana'
+        description: 'Astana',
+        isDstObserved: true
       }
     ]
   },
@@ -3637,7 +3755,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -3768,7 +3887,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -3789,7 +3909,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Middle East Standard Time',
-        description: 'Beirut'
+        description: 'Beirut',
+        isDstObserved: true
       }
     ]
   },
@@ -3812,7 +3933,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -3840,7 +3962,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -3874,7 +3997,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'E. Europe Standard Time',
-        description: 'E. Europe'
+        description: 'E. Europe',
+        isDstObserved: true
       }
     ]
   },
@@ -3898,7 +4022,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -3980,7 +4105,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -4008,7 +4134,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -4020,7 +4147,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'China Standard Time',
-        description: 'Beijing, Chongqing, Hong Kong, Urumqi'
+        description: 'Beijing, Chongqing, Hong Kong, Urumqi',
+        isDstObserved: false
       }
     ]
   },
@@ -4117,7 +4245,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -4136,7 +4265,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -4179,7 +4309,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -4208,7 +4339,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Singapore Standard Time',
-        description: 'Kuala Lumpur, Singapore'
+        description: 'Kuala Lumpur, Singapore',
+        isDstObserved: false
       }
     ]
   },
@@ -4247,7 +4379,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'West Asia Standard Time',
-        description: 'Ashgabat, Tashkent'
+        description: 'Ashgabat, Tashkent',
+        isDstObserved: true
       }
     ]
   },
@@ -4271,7 +4404,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -4351,7 +4485,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -4363,7 +4498,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'UTC+12',
-        description: 'Coordinated Universal Time+12'
+        description: 'Coordinated Universal Time+12',
+        isDstObserved: false
       }
     ]
   },
@@ -4375,7 +4511,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -4403,7 +4540,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -4428,7 +4566,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Mauritius Standard Time',
-        description: 'Port Louis'
+        description: 'Port Louis',
+        isDstObserved: false
       }
     ]
   },
@@ -4440,7 +4579,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -4485,7 +4625,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central Standard Time (Mexico)',
-        description: 'Guadalajara, Mexico City, Monterrey'
+        description: 'Guadalajara, Mexico City, Monterrey',
+        isDstObserved: true
       }
     ]
   },
@@ -4497,7 +4638,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+10:00',
         timeZone: 'West Pacific Standard Time',
-        description: 'Guam, Port Moresby'
+        description: 'Guam, Port Moresby',
+        isDstObserved: false
       }
     ]
   },
@@ -4546,7 +4688,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'GTB Standard Time',
-        description: 'Athens, Bucharest'
+        description: 'Athens, Bucharest',
+        isDstObserved: true
       }
     ]
   },
@@ -4558,7 +4701,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -4592,7 +4736,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Ulaanbaatar Standard Time',
-        description: 'Ulaanbaatar'
+        description: 'Ulaanbaatar',
+        isDstObserved: false
       }
     ]
   },
@@ -4627,7 +4772,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -4639,7 +4785,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -4739,7 +4886,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Morocco Standard Time',
-        description: 'Casablanca'
+        description: 'Casablanca',
+        isDstObserved: true
       }
     ]
   },
@@ -4763,7 +4911,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -4791,7 +4940,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+06:30',
         timeZone: 'Myanmar Standard Time',
-        description: 'Yangon (Rangoon)'
+        description: 'Yangon (Rangoon)',
+        isDstObserved: false
       }
     ]
   },
@@ -4818,7 +4968,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Namibia Standard Time',
-        description: 'Windhoek'
+        description: 'Windhoek',
+        isDstObserved: true
       }
     ]
   },
@@ -4845,7 +4996,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'UTC+12',
-        description: 'Coordinated Universal Time+12'
+        description: 'Coordinated Universal Time+12',
+        isDstObserved: false
       }
     ]
   },
@@ -4877,7 +5029,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:45',
         timeZone: 'Nepal Standard Time',
-        description: 'Kathmandu'
+        description: 'Kathmandu',
+        isDstObserved: false
       }
     ]
   },
@@ -4905,7 +5058,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -4917,7 +5071,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+11:00',
         timeZone: 'Central Pacific Standard Time',
-        description: 'Solomon Is., New Caledonia'
+        description: 'Solomon Is., New Caledonia',
+        isDstObserved: true
       }
     ]
   },
@@ -4947,7 +5102,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'New Zealand Standard Time',
-        description: 'Auckland, Wellington'
+        description: 'Auckland, Wellington',
+        isDstObserved: true
       }
     ]
   },
@@ -4977,7 +5133,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-06:00',
         timeZone: 'Central America Standard Time',
-        description: 'Central America'
+        description: 'Central America',
+        isDstObserved: false
       }
     ]
   },
@@ -4997,7 +5154,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -5047,7 +5205,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -5059,7 +5218,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-11:00',
         timeZone: 'UTC-11',
-        description: 'Coordinated Universal Time-11'
+        description: 'Coordinated Universal Time-11',
+        isDstObserved: true
       }
     ]
   },
@@ -5071,7 +5231,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+11:00',
         timeZone: 'Central Pacific Standard Time',
-        description: 'Solomon Is., New Caledonia'
+        description: 'Solomon Is., New Caledonia',
+        isDstObserved: true
       }
     ]
   },
@@ -5083,7 +5244,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+10:00',
         timeZone: 'West Pacific Standard Time',
-        description: 'Guam, Port Moresby'
+        description: 'Guam, Port Moresby',
+        isDstObserved: false
       }
     ]
   },
@@ -5109,7 +5271,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -5135,7 +5298,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Arabian Standard Time',
-        description: 'Abu Dhabi, Muscat'
+        description: 'Abu Dhabi, Muscat',
+        isDstObserved: false
       }
     ]
   },
@@ -5156,7 +5320,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'Pakistan Standard Time',
-        description: 'Islamabad, Karachi'
+        description: 'Islamabad, Karachi',
+        isDstObserved: false
       }
     ]
   },
@@ -5185,7 +5350,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+09:00',
         timeZone: 'Tokyo Standard Time',
-        description: 'Osaka, Sapporo, Tokyo'
+        description: 'Osaka, Sapporo, Tokyo',
+        isDstObserved: false
       }
     ]
   },
@@ -5214,7 +5380,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Egypt Standard Time',
-        description: 'Cairo'
+        description: 'Cairo',
+        isDstObserved: true
       }
     ]
   },
@@ -5240,7 +5407,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -5274,7 +5442,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+10:00',
         timeZone: 'West Pacific Standard Time',
-        description: 'Guam, Port Moresby'
+        description: 'Guam, Port Moresby',
+        isDstObserved: false
       }
     ]
   },
@@ -5304,7 +5473,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'Paraguay Standard Time',
-        description: 'Asuncion'
+        description: 'Asuncion',
+        isDstObserved: true
       }
     ]
   },
@@ -5342,7 +5512,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'SA Pacific Standard Time',
-        description: 'Bogota, Lima, Quito, Rio Branco'
+        description: 'Bogota, Lima, Quito, Rio Branco',
+        isDstObserved: true
       }
     ]
   },
@@ -5453,7 +5624,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Singapore Standard Time',
-        description: 'Kuala Lumpur, Singapore'
+        description: 'Kuala Lumpur, Singapore',
+        isDstObserved: false
       }
     ]
   },
@@ -5465,7 +5637,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-08:00',
         timeZone: 'Pacific Standard Time',
-        description: 'Pacific Time (US & Canada)'
+        description: 'Pacific Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -5494,7 +5667,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -5527,7 +5701,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -5628,7 +5803,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5649,7 +5825,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arab Standard Time',
-        description: 'Kuwait, Riyadh'
+        description: 'Kuwait, Riyadh',
+        isDstObserved: false
       }
     ]
   },
@@ -5704,7 +5881,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'GTB Standard Time',
-        description: 'Athens, Bucharest'
+        description: 'Athens, Bucharest',
+        isDstObserved: true
       }
     ]
   },
@@ -5801,7 +5979,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Russian Standard Time',
-        description: 'Moscow, St. Petersburg, Volgograd (RTZ 2)'
+        description: 'Moscow, St. Petersburg, Volgograd (RTZ 2)',
+        isDstObserved: true
       }
     ]
   },
@@ -5819,7 +5998,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -5831,7 +6011,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Mauritius Standard Time',
-        description: 'Port Louis'
+        description: 'Port Louis',
+        isDstObserved: false
       }
     ]
   },
@@ -5843,7 +6024,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5855,7 +6037,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -5883,7 +6066,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5908,7 +6092,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5920,7 +6105,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5932,7 +6118,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Greenland Standard Time',
-        description: 'Greenland'
+        description: 'Greenland',
+        isDstObserved: true
       }
     ]
   },
@@ -5951,7 +6138,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -5975,7 +6163,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+13:00',
         timeZone: 'Samoa Standard Time',
-        description: 'Samoa'
+        description: 'Samoa',
+        isDstObserved: true
       }
     ]
   },
@@ -5997,7 +6186,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -6009,7 +6199,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -6035,7 +6226,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arab Standard Time',
-        description: 'Kuwait, Riyadh'
+        description: 'Kuwait, Riyadh',
+        isDstObserved: false
       }
     ]
   },
@@ -6062,7 +6254,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -6101,7 +6294,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -6138,7 +6332,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Mauritius Standard Time',
-        description: 'Port Louis'
+        description: 'Port Louis',
+        isDstObserved: false
       }
     ]
   },
@@ -6155,7 +6350,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -6173,7 +6369,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Singapore Standard Time',
-        description: 'Kuala Lumpur, Singapore'
+        description: 'Kuala Lumpur, Singapore',
+        isDstObserved: false
       }
     ]
   },
@@ -6185,7 +6382,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -6206,7 +6404,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -6430,7 +6629,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central Europe Standard Time',
-        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague'
+        description: 'Belgrade, Bratislava, Budapest, Ljubljana, Prague',
+        isDstObserved: true
       }
     ]
   },
@@ -6453,7 +6653,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+11:00',
         timeZone: 'Central Pacific Standard Time',
-        description: 'Solomon Is., New Caledonia'
+        description: 'Solomon Is., New Caledonia',
+        isDstObserved: true
       }
     ]
   },
@@ -6482,7 +6683,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -6504,7 +6706,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -6516,7 +6719,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-02:00',
         timeZone: 'UTC-02',
-        description: 'Coordinated Universal Time-02'
+        description: 'Coordinated Universal Time-02',
+        isDstObserved: false
       }
     ]
   },
@@ -6539,7 +6743,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -6602,7 +6807,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Romance Standard Time',
-        description: 'Brussels, Copenhagen, Madrid, Paris'
+        description: 'Brussels, Copenhagen, Madrid, Paris',
+        isDstObserved: true
       }
     ]
   },
@@ -6648,7 +6854,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:30',
         timeZone: 'Sri Lanka Standard Time',
-        description: 'Sri Jayawardenepura'
+        description: 'Sri Jayawardenepura',
+        isDstObserved: false
       }
     ]
   },
@@ -6679,7 +6886,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -6702,7 +6910,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'SA Eastern Standard Time',
-        description: 'Cayenne, Fortaleza'
+        description: 'Cayenne, Fortaleza',
+        isDstObserved: false
       }
     ]
   },
@@ -6714,12 +6923,14 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       },
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -6736,7 +6947,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -6770,7 +6982,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -6809,7 +7022,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Europe Standard Time',
-        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna'
+        description: 'Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna',
+        isDstObserved: true
       }
     ]
   },
@@ -6836,7 +7050,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Syria Standard Time',
-        description: 'Damascus'
+        description: 'Damascus',
+        isDstObserved: true
       }
     ]
   },
@@ -6871,7 +7086,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+08:00',
         timeZone: 'Taipei Standard Time',
-        description: 'Taipei'
+        description: 'Taipei',
+        isDstObserved: false
       }
     ]
   },
@@ -6888,7 +7104,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'West Asia Standard Time',
-        description: 'Ashgabat, Tashkent'
+        description: 'Ashgabat, Tashkent',
+        isDstObserved: true
       }
     ]
   },
@@ -6932,7 +7149,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -7023,7 +7241,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -7048,7 +7267,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+09:00',
         timeZone: 'Tokyo Standard Time',
-        description: 'Osaka, Sapporo, Tokyo'
+        description: 'Osaka, Sapporo, Tokyo',
+        isDstObserved: false
       }
     ]
   },
@@ -7066,7 +7286,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'Greenwich Standard Time',
-        description: 'Monrovia, Reykjavik'
+        description: 'Monrovia, Reykjavik',
+        isDstObserved: false
       }
     ]
   },
@@ -7078,7 +7299,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+13:00',
         timeZone: 'Tonga Standard Time',
-        description: "Nuku'alofa"
+        description: "Nuku'alofa",
+        isDstObserved: false
       }
     ]
   },
@@ -7090,7 +7312,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+13:00',
         timeZone: 'Tonga Standard Time',
-        description: "Nuku'alofa"
+        description: "Nuku'alofa",
+        isDstObserved: false
       }
     ]
   },
@@ -7119,7 +7342,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -7156,7 +7380,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'W. Central Africa Standard Time',
-        description: 'West Central Africa'
+        description: 'West Central Africa',
+        isDstObserved: false
       }
     ]
   },
@@ -7250,7 +7475,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'Turkey Standard Time',
-        description: 'Istanbul'
+        description: 'Istanbul',
+        isDstObserved: true
       }
     ]
   },
@@ -7269,7 +7495,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'West Asia Standard Time',
-        description: 'Ashgabat, Tashkent'
+        description: 'Ashgabat, Tashkent',
+        isDstObserved: true
       }
     ]
   },
@@ -7281,7 +7508,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-05:00',
         timeZone: 'Eastern Standard Time',
-        description: 'Eastern Time (US & Canada)'
+        description: 'Eastern Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -7302,7 +7530,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'UTC+12',
-        description: 'Coordinated Universal Time+12'
+        description: 'Coordinated Universal Time+12',
+        isDstObserved: false
       }
     ]
   },
@@ -7440,7 +7669,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'E. Africa Standard Time',
-        description: 'Nairobi'
+        description: 'Nairobi',
+        isDstObserved: false
       }
     ]
   },
@@ -7479,7 +7709,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -7499,7 +7730,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Arabian Standard Time',
-        description: 'Abu Dhabi, Muscat'
+        description: 'Abu Dhabi, Muscat',
+        isDstObserved: false
       }
     ]
   },
@@ -7759,7 +7991,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'GMT Standard Time',
-        description: 'Dublin, Edinburgh, Lisbon, London'
+        description: 'Dublin, Edinburgh, Lisbon, London',
+        isDstObserved: true
       }
     ]
   },
@@ -7838,12 +8071,14 @@ export const countriesMasterData = {
       {
         utcOffset: '-07:00',
         timeZone: 'Mountain Standard Time',
-        description: 'Mountain Time (US & Canada)'
+        description: 'Mountain Time (US & Canada)',
+        isDstObserved: true
       },
       {
         utcOffset: '-08:00',
         timeZone: 'Pacific Standard Time',
-        description: 'Pacific Time (US & Canada)'
+        description: 'Pacific Time (US & Canada)',
+        isDstObserved: true
       }
     ]
   },
@@ -7865,7 +8100,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-11:00',
         timeZone: 'UTC-11',
-        description: 'Coordinated Universal Time-11'
+        description: 'Coordinated Universal Time-11',
+        isDstObserved: true
       }
     ]
   },
@@ -7897,7 +8133,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-03:00',
         timeZone: 'Montevideo Standard Time',
-        description: 'Montevideo'
+        description: 'Montevideo',
+        isDstObserved: true
       }
     ]
   },
@@ -7924,7 +8161,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+05:00',
         timeZone: 'West Asia Standard Time',
-        description: 'Ashgabat, Tashkent'
+        description: 'Ashgabat, Tashkent',
+        isDstObserved: true
       }
     ]
   },
@@ -7936,7 +8174,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+11:00',
         timeZone: 'Central Pacific Standard Time',
-        description: 'Solomon Is., New Caledonia'
+        description: 'Solomon Is., New Caledonia',
+        isDstObserved: true
       }
     ]
   },
@@ -7974,7 +8213,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:30',
         timeZone: 'Venezuela Standard Time',
-        description: 'Caracas'
+        description: 'Caracas',
+        isDstObserved: false
       }
     ]
   },
@@ -8050,7 +8290,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+07:00',
         timeZone: 'SE Asia Standard Time',
-        description: 'Bangkok, Hanoi, Jakarta'
+        description: 'Bangkok, Hanoi, Jakarta',
+        isDstObserved: false
       }
     ]
   },
@@ -8062,7 +8303,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -8074,7 +8316,8 @@ export const countriesMasterData = {
       {
         utcOffset: '-04:00',
         timeZone: 'SA Western Standard Time',
-        description: 'Georgetown, La Paz, Manaus, San Juan'
+        description: 'Georgetown, La Paz, Manaus, San Juan',
+        isDstObserved: false
       }
     ]
   },
@@ -8086,15 +8329,10 @@ export const countriesMasterData = {
       {
         utcOffset: '+12:00',
         timeZone: 'UTC+12',
-        description: 'Coordinated Universal Time+12'
+        description: 'Coordinated Universal Time+12',
+        isDstObserved: false
       }
     ]
-  },
-  EH: {
-    countryCode: 'EH',
-    countryName: 'Western Sahara',
-    states: [],
-    timeZones: []
   },
   YE: {
     countryCode: 'YE',
@@ -8126,7 +8364,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+03:00',
         timeZone: 'Arab Standard Time',
-        description: 'Kuwait, Riyadh'
+        description: 'Kuwait, Riyadh',
+        isDstObserved: false
       }
     ]
   },
@@ -8149,7 +8388,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -8172,7 +8412,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'South Africa Standard Time',
-        description: 'Harare, Pretoria'
+        description: 'Harare, Pretoria',
+        isDstObserved: false
       }
     ]
   },
@@ -8184,7 +8425,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+02:00',
         timeZone: 'FLE Standard Time',
-        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius'
+        description: 'Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius',
+        isDstObserved: true
       }
     ]
   },
@@ -8204,7 +8446,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+01:00',
         timeZone: 'Central European Standard Time',
-        description: 'Sarajevo, Skopje, Warsaw, Zagreb'
+        description: 'Sarajevo, Skopje, Warsaw, Zagreb',
+        isDstObserved: true
       }
     ]
   },
@@ -8216,7 +8459,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+00:00',
         timeZone: 'UTC',
-        description: 'Coordinated Universal Time'
+        description: 'Coordinated Universal Time',
+        isDstObserved: false
       }
     ]
   },
@@ -8228,7 +8472,8 @@ export const countriesMasterData = {
       {
         utcOffset: '+04:00',
         timeZone: 'Mauritius Standard Time',
-        description: 'Port Louis'
+        description: 'Port Louis',
+        isDstObserved: false
       }
     ]
   }
