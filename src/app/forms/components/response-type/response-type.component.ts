@@ -103,7 +103,16 @@ export class ResponseTypeComponent implements OnInit {
   selectFieldType(fieldType) {
     this.selectFieldTypeEvent.emit(fieldType);
     if (fieldType.type === 'RT') {
-      this.formService.setsliderOpenState(true);
+      this.formService.setsliderOpenState({
+        isOpen: true,
+        questionId: this.question.id,
+        value: {
+          value: 0,
+          min: 0,
+          max: 100,
+          increment: 1
+        }
+      });
     }
     this.responseTypeCloseEvent.emit(true);
   }

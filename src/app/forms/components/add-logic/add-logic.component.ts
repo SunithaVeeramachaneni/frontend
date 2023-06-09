@@ -32,6 +32,7 @@ import {
 } from '../../state/builder/builder-state.selectors';
 import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
+import { NumberRangeMetadata } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-add-logic',
@@ -160,10 +161,15 @@ export class AddLogicComponent implements OnInit, OnDestroy {
                   fieldType: aq.fieldType || 'TF',
                   position: aq.position || '',
                   required: aq.required || false,
+                  enableHistory: aq.enableHistory || false,
                   multi: aq.multi || false,
                   value: aq.value || '',
                   isPublished: aq.isPublished || false,
-                  isPublishedTillSave: aq.isPublishedTillSave || false
+                  isPublishedTillSave: aq.isPublishedTillSave || false,
+                  isOpen: aq.isOpen || false,
+                  isResponseTypeModalOpen: aq.isResponseTypeModalOpen || false,
+                  unitOfMeasurement: aq.unitOfMeasurement || 'None',
+                  rangeMetaData: aq.rangeMetaData || ({} as NumberRangeMetadata)
                 })
               );
             }
