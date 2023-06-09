@@ -391,6 +391,40 @@
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
+        <div class="titles" translate="timeZone"></div>
+        <div class="values">
+          <span
+            *ngIf="
+              this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ]
+            "
+          >
+            (UTC
+            {{
+              this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ].utcOffset
+            }})
+            {{
+              this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ].description
+            }}
+          </span>
+          <span
+            *ngIf="
+              !this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ]
+            "
+          >
+            {{ placeholder }}
+          </span>
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
           {{ this.issuesActionsDetailViewForm.get('location').value }}

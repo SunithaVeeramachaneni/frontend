@@ -37,6 +37,7 @@ import { SlideshowComponent } from 'src/app/shared/components/slideshow/slidesho
 import { format } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -74,6 +75,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     assignedToDisplay: '',
     assignedTo: '',
     raisedBy: '',
+    plantId: '',
     attachments: this.fb.array([]),
     message: ''
   });
@@ -96,6 +98,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   placeholder = '_ _';
   isCreateNotification = false;
   moduleName: string;
+  plantTimezoneMap: any;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -112,7 +115,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     private dialog: MatDialog,
     private router: Router,
     private cdRef: ChangeDetectorRef,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private plantService: PlantService
   ) {}
 
   getAttachmentsList() {
@@ -121,6 +125,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     const { users$, totalCount$, allData, notificationInfo, moduleName } =
       this.data;
     this.allData = allData;

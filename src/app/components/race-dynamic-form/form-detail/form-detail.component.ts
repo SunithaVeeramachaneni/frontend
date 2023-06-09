@@ -73,10 +73,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
+  plantTimezoneMap: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
-  plantTimezoneMap: any;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,

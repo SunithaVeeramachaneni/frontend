@@ -15,6 +15,7 @@ import { UserDetails } from 'src/app/interfaces';
 import { routingUrls } from 'src/app/app.constants';
 import { ObservationsService } from 'src/app/forms/services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 interface IPriority {
   high: number;
@@ -102,10 +103,12 @@ export class ObservationsComponent implements OnInit {
     private userService: UsersService,
     private headerService: HeaderService,
     private commonService: CommonService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
         this.headerService.setHeaderTitle(
