@@ -217,10 +217,7 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
-                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]"
-                  >(UTC{{
-                    this.plantTimezoneMap[selectedForm?.plantId].utcOffset
-                  }})
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]">
                   {{
                     this.plantTimezoneMap[selectedForm?.plantId].description
                   }}</span

@@ -15,9 +15,8 @@ export interface PlantDetails {
   zipCode: string;
   timeZone: {
     utcOffset: string;
-    timeZone: string;
+    timeZoneIdentifier: string;
     description: string;
-    isDstObserved: boolean;
   };
   countryDisplay?: string;
   timeZoneDisplay?: string;

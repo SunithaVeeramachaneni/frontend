@@ -166,10 +166,7 @@
               <mat-option
                 *ngFor="let timeZone of this.timeZones"
                 [value]="timeZone"
-                ><span
-                  >(UTC {{ timeZone.utcOffset }})
-                  {{ timeZone.description }}</span
-                ></mat-option
+                ><span> {{ timeZone.description }}</span></mat-option
               >
             </div>
           </mat-select>

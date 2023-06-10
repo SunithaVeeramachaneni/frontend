@@ -331,8 +331,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
           initial.data = rows.map((row) => {
             if (row.country && countriesMasterData[row.country])
               row.countryDisplay = countriesMasterData[row.country].countryName;
-            if (row.timeZone)
-              row.timeZoneDisplay = 'UTC' + row.timeZone.utcOffset;
+            if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
             return row;
           });
           initial.data = rows;
@@ -350,8 +349,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
               if (form.country && countriesMasterData[form.country])
                 form.countryDisplay =
                   countriesMasterData[form.country].countryName;
-              if (form.timeZone)
-                form.timeZoneDisplay = 'UTC' + form.timeZone.utcOffset;
+              if (form.timeZone) form.timeZoneDisplay = form.timeZone.utcOffset;
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
@@ -373,8 +371,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
           scrollData = scrollData.map((row) => {
             if (row.country && countriesMasterData[row.country])
               row.country = countriesMasterData[row.country].countryName;
-            if (row.timeZone)
-              row.timeZoneDisplay = 'UTC' + row.timeZone.utcOffset;
+            if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
             return row;
           });
           initial.data = initial.data.concat(scrollData);

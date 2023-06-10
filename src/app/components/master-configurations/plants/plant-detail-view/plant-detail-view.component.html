@@ -33,12 +33,9 @@
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="timeZone"></p>
       <p class="m-0 sub-headings-value">
-        <span *ngIf="selectedPlant.timeZone"
-          >(UTC{{ selectedPlant.timeZone.utcOffset }})
-          {{ selectedPlant.timeZone.description }}</span
-        >
-        <span *ngIf="!selectedPlant.timeZone">--</span>
+        {{ selectedPlant.timeZone ? selectedPlant.timeZone.description : '--' }}
       </p>
+
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="additionalDetails"></p>
       <p class="m-0 sub-headings-value">

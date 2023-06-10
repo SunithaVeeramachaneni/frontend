@@ -130,8 +130,9 @@ export class AddEditPlantComponent implements OnInit {
     this.plantForm.get('timeZone').disable();
     this.plantForm
       .get('country')
-      .valueChanges.pipe(distinctUntilChanged())
+      .valueChanges.pipe()
       .subscribe((countryCode) => {
+        console.log('countryCode :', countryCode);
         // eslint-disable-next-line @typescript-eslint/dot-notation
         this.plantForm.patchValue({ state: null, timeZone: null });
         if (countryCode) {
@@ -252,7 +253,7 @@ export class AddEditPlantComponent implements OnInit {
     return (
       o1.utcOffset === o2.utcOffset &&
       o1.description === o2.description &&
-      o1.timeZone === o2.timeZone
+      o1.timeZoneIdentifier === o2.timeZoneIdentifier
     );
   }
   onSelectBlur() {

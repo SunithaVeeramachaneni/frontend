@@ -22,6 +22,7 @@ export class PlantDetailViewComponent implements OnInit {
 
   edit() {
     this.slideInOut.emit({ status: 'out', data: this.selectedPlant });
+    console.log(this.selectedPlant);
   }
 
   cancel() {
