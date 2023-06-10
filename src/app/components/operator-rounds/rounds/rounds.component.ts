@@ -7,7 +7,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -71,6 +72,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-rounds',
@@ -80,7 +82,7 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
@@ -93,7 +95,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
@@ -206,10 +207,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'date-picker',
+      controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
@@ -373,6 +374,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedRound: RoundDetail;
+  selectedRoundInfo: RoundDetail;
+  selectedDate = null;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
@@ -382,6 +385,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   userFullNameByEmail = {};
   roundId = '';
+  sliceCount = 100;
   plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -483,7 +487,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
           );
         }
         this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
+        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
+        const dataSource = this.dataSource
+          ? this.dataSource.data.concat(
+              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
+            )
+          : this.initial.data.slice(sliceStart, this.sliceCount);
+        this.dataSource = new MatTableDataSource(dataSource);
         return this.initial;
       })
     );
@@ -545,11 +556,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
-        this.selectedRound = row;
+        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        this.selectedRoundInfo = row;
         break;
-      case 'dueDate':
-        this.selectedRound = row;
+      case 'dueDateDisplay':
+        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedRoundInfo = row;
         break;
       default:
         this.openRoundHandler(row);
@@ -790,8 +803,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
-    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
-    let previouslyAssignedTo = this.selectedRound.previouslyAssignedTo || '';
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    let previouslyAssignedTo =
+      this.selectedRoundInfo.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
         ? `,${assignedToEmail}`
@@ -805,7 +819,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedRound;
+    let { status } = this.selectedRoundInfo;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
@@ -816,7 +830,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
@@ -828,7 +842,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -838,21 +852,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.trigger.closeMenu();
+    this.trigger.toArray()[0].closeMenu();
   }
 
-  onChangeDueDateHandler(dueDate: Date) {
-    const { roundId, assignedToEmail, ...rest } = this.selectedRound;
+  dateChangeHandler(dueDate: Date) {
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
     this.operatorRoundsService
       .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
                   dueDate: new Date(this.selectedRound.dueDate),
+                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
@@ -860,7 +875,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -870,5 +885,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  dueDateClosedHandler() {
+    this.trigger.toArray()[1].closeMenu();
   }
 }

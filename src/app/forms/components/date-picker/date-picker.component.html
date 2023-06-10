@@ -1,0 +1,8 @@
+<input
+  matInput
+  [matDatepicker]="picker"
+  (dateChange)="onDateChange($event)"
+  [value]="selectedDate?.date"
+  hidden
+/>
+<mat-datepicker (closed)="closedEvent()" #picker></mat-datepicker>
