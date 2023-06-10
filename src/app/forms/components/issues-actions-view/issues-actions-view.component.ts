@@ -38,6 +38,7 @@ import { format } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -719,6 +720,25 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
     this.attachmentsSubscriptionData = [];
   }
+  formatDate(date) {
+    let dateByPlantTimezone = new Date(date);
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ] &&
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ].timeZone
+    ) {
+      dateByPlantTimezone = localToTimezoneDate(
+        dateByPlantTimezone,
+        this.plantTimezoneMap[
+          this.issuesActionsDetailViewForm.get('plantId').value
+        ]
+      );
+    }
+    return format(dateByPlantTimezone, 'dd MMM yyyy hh:mm a');
+  }
 
   private getIssuesActionsList(data): void {
     let observable: Observable<{ count: number; next: string; rows: any[] }>;
@@ -781,9 +801,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
       dueDate: dueDate ? new Date(dueDate) : '',
-      dueDateDisplayValue: dueDate
-        ? format(new Date(dueDate), 'dd MMM yyyy hh:mm a')
-        : ''
+      dueDateDisplayValue: dueDate ? this.formatDate(dueDate) : ''
     });
     this.minDate = new Date(this.data.createdAt);
     this.logHistory$ = this.observations
@@ -902,7 +920,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.issuesActionsDetailViewForm.patchValue({
             status: this.data.status,
             priority: this.data.priority,
-            dueDateDisplayValue: this.data.dueDate,
+            dueDateDisplayValue: this.formatDate(this.data.dueDate),
             dueDate: this.data.dueDate
               ? new Date(this.data.dueDate)
               : this.data.dueDate,

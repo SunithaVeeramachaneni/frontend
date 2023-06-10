@@ -124,9 +124,7 @@
                         class="sub-headings"
                         translate="issueActionDueDateAndTime"
                       ></span>
-                      {{
-                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
-                      }}
+                      {{ formatDate(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
@@ -231,9 +229,7 @@
                         translate="dueDateAndTimeUpdated"
                       >
                       </span>
-                      {{
-                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
-                      }}
+                      {{ formatDate(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
@@ -276,7 +272,7 @@
               'text-align-right': history.username === userInfo.email
             }"
           >
-            {{ history.createdAt }}
+            {{ formatDate(history.createdAt) }}
           </div>
         </ng-container>
       </div>
@@ -517,15 +513,6 @@
         </div>
       </div>
       <hr class="line" />
-      <!-- <div class="right-div">
-        <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]"
-          >(UTC{{ this.plantTimezoneMap[selectedForm?.plantId].utcOffset }})
-          {{ this.plantTimezoneMap[selectedForm?.plantId].description }}</span
-        ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
-          this.placeholder
-        }}</span>
-      </div>
-      <hr class="line" /> -->
 
       <div class="right-div">
         <div class="titles m-t-15" translate="assignedTo"></div>

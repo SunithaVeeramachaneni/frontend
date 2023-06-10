@@ -74,6 +74,7 @@ export class AddEditPlantComponent implements OnInit {
   countryAllTimeZones: any = [];
   states: any = [];
   timeZones: any = [];
+  noState = false;
   allCountries = Object.values(countriesMasterData);
   countryData = [];
   errors: ValidationError = {};
@@ -137,8 +138,10 @@ export class AddEditPlantComponent implements OnInit {
           this.selectedCountry = countriesMasterData[countryCode];
           if (!this.selectedCountry.states.length) {
             this.plantForm.get('state').disable();
+            this.noState = true;
           } else {
             this.plantForm.get('state').enable();
+            this.noState = false;
           }
           [this.states, this.countryAllStates] = [
             this.selectedCountry.states,
@@ -188,6 +191,7 @@ export class AddEditPlantComponent implements OnInit {
     this.slideInOut.emit('out');
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
+    this.noState = false;
   }
 
   onKeyCountry(event: any) {

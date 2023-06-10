@@ -80,5 +80,6 @@
   "trimWhiteSpace": "{name} must not start or end with spaces",
   "status": "Status",
   "timeZone": "Time Zone",
-  "timeZoneMandatory": "Time Zone *"
+  "timeZoneMandatory": "Time Zone *",
+  "stateNotMandatory": "No states for selected country"
 }
