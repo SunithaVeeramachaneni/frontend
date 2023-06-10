@@ -429,18 +429,21 @@ export class ScheduleConfigurationComponent
       ) {
         startDateByPlantTimezone = localToTimezoneDate(
           new Date(`${startDate} ${time}`),
-          this.plantTimezoneMap[this.formDetail.plantId]
-        ).toISOString();
+          this.plantTimezoneMap[this.formDetail.plantId],
+          ''
+        );
 
         endDateByPlantTimezone = localToTimezoneDate(
           new Date(`${endDate} ${time}`),
-          this.plantTimezoneMap[this.formDetail.plantId]
-        ).toISOString();
+          this.plantTimezoneMap[this.formDetail.plantId],
+          ''
+        );
 
         scheduleEndOnByPlantTimezone = localToTimezoneDate(
           new Date(`${scheduleEndOn} ${time}`),
-          this.plantTimezoneMap[this.formDetail.plantId]
-        ).toISOString();
+          this.plantTimezoneMap[this.formDetail.plantId],
+          ''
+        );
       }
 
       if (id) {
@@ -693,21 +696,22 @@ export class ScheduleConfigurationComponent
 
   prepareScheduleByDates() {
     return this.scheduleByDates.map((scheduleByDate) => {
-      let dateByPlantTimezone = new Date(
+      const dateByPlantTimezone = new Date(
         format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00')
       );
-      if (
-        this.formDetail &&
-        this.formDetail.plantId &&
-        this.plantTimezoneMap[this.formDetail.plantId] &&
-        this.plantTimezoneMap[this.formDetail.plantId].timeZone
-      ) {
-        console.log('doing something...');
-        dateByPlantTimezone = localToTimezoneDate(
-          dateByPlantTimezone,
-          this.plantTimezoneMap[this.formDetail.plantId]
-        );
-      }
+      // if (
+      //   this.formDetail &&
+      //   this.formDetail.plantId &&
+      //   this.plantTimezoneMap[this.formDetail.plantId] &&
+      //   this.plantTimezoneMap[this.formDetail.plantId].timeZone
+      // ) {
+      //   console.log('doing something...');
+      //   dateByPlantTimezone = localToTimezoneDate(
+      //     dateByPlantTimezone,
+      //     this.plantTimezoneMap[this.formDetail.plantId],
+      //     ''
+      //   );
+      // }
       return {
         ...scheduleByDate,
         date: dateByPlantTimezone

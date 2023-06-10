@@ -710,6 +710,26 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
+  formatDate(date) {
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ] &&
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ].timeZone
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[
+          this.issuesActionsDetailViewForm.get('plantId').value
+        ],
+        'dd MMM yyyy hh:mm a'
+      );
+    }
+    return format(new Date(date), 'dd MMM yyyy hh:mm a');
+  }
+
   ngOnDestroy(): void {
     if (this.amplifySubscription$?.length > 0) {
       this.amplifySubscription$.forEach((subscription) => {
@@ -719,25 +739,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       });
     }
     this.attachmentsSubscriptionData = [];
-  }
-  formatDate(date) {
-    let dateByPlantTimezone = new Date(date);
-    if (
-      this.plantTimezoneMap[
-        this.issuesActionsDetailViewForm.get('plantId').value
-      ] &&
-      this.plantTimezoneMap[
-        this.issuesActionsDetailViewForm.get('plantId').value
-      ].timeZone
-    ) {
-      dateByPlantTimezone = localToTimezoneDate(
-        dateByPlantTimezone,
-        this.plantTimezoneMap[
-          this.issuesActionsDetailViewForm.get('plantId').value
-        ]
-      );
-    }
-    return format(dateByPlantTimezone, 'dd MMM yyyy hh:mm a');
   }
 
   private getIssuesActionsList(data): void {

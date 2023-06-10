@@ -374,7 +374,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -865,41 +865,38 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfiguration;
     const formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.datePipe.transform(
-            this.plantTimezoneMap[plantId] &&
-              this.plantTimezoneMap[plantId].timeZone
-              ? localToTimezoneDate(
-                  new Date(roundPlanScheduleConfiguration.startDate),
-                  this.plantTimezoneMap[plantId]
-                )
-              : new Date(roundPlanScheduleConfiguration.startDate),
-            'MMM dd, yy'
-          )
+        ? this.plantTimezoneMap[plantId] &&
+          this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? localToTimezoneDate(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              this.plantTimezoneMap[plantId],
+              'MMM dd, yy'
+            )
+          : this.datePipe.transform(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              'MMM dd, yy'
+            )
         : '';
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(
-              this.plantTimezoneMap[plantId] &&
-                this.plantTimezoneMap[plantId].timeZone
-                ? localToTimezoneDate(
-                    new Date(scheduleEndOn),
-                    this.plantTimezoneMap[plantId]
-                  )
-                : new Date(scheduleEndOn),
-              'MMM dd, yy'
-            )
+          ? this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(scheduleEndOn),
+                this.plantTimezoneMap[plantId],
+                'MMM dd, yy'
+              )
+            : this.datePipe.transform(new Date(scheduleEndOn), 'MMM dd, yy')
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(
-              this.plantTimezoneMap[plantId] &&
-                this.plantTimezoneMap[plantId].timeZone
-                ? localToTimezoneDate(
-                    new Date(endDate),
-                    this.plantTimezoneMap[plantId]
-                  )
-                : new Date(endDate),
-              'MMM dd, yy'
-            )
+          ? this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(endDate),
+                this.plantTimezoneMap[plantId],
+                'MMM dd, yy'
+              )
+            : this.datePipe.transform(new Date(endDate), 'MMM dd, yy')
           : 'Never'
         : '';
 

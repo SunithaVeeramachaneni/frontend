@@ -28,10 +28,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
-import {
-  localToTimezoneDate,
-  utcToTimezoneDate
-} from 'src/app/shared/utils/timezoneDate';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 interface FrequencyDetail {
   info: string;
@@ -182,13 +179,18 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   formateDate(date: string, plantId: string) {
     if (!date) return '';
+    if (
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        'M/d/yy, h:mm a'
+      );
+    }
 
-    return format(
-      this.plantTimezoneMap[plantId] && this.plantTimezoneMap[plantId].timeZone
-        ? localToTimezoneDate(new Date(date), this.plantTimezoneMap[plantId])
-        : new Date(date),
-      'M/d/yy, h:mm a'
-    );
+    return format(new Date(date), 'M/d/yy, h:mm a');
   }
 
   onNavigateToDetailPage() {

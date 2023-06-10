@@ -464,14 +464,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           console.log('Round 0: ', rounds.rows[0]);
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-            dueDate:
-              this.plantTimezoneMap[roundDetail.plantId] &&
-              this.plantTimezoneMap[roundDetail.plantId].timeZone
-                ? localToTimezoneDate(
-                    new Date(roundDetail.dueDate),
-                    this.plantTimezoneMap[roundDetail.plantId]
-                  )
-                : new Date(roundDetail.dueDate),
+            dueDate: new Date(roundDetail.dueDate),
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
@@ -481,14 +474,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-              dueDate:
-                this.plantTimezoneMap[roundDetail.plantId] &&
-                this.plantTimezoneMap[roundDetail.plantId].timeZone
-                  ? localToTimezoneDate(
-                      new Date(roundDetail.dueDate),
-                      this.plantTimezoneMap[roundDetail.plantId]
-                    )
-                  : new Date(roundDetail.dueDate),
+              dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
@@ -866,14 +852,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  dueDate:
-                    this.plantTimezoneMap[this.selectedRound.plantId] &&
-                    this.plantTimezoneMap[this.selectedRound.plantId].timeZone
-                      ? localToTimezoneDate(
-                          new Date(this.selectedRound.dueDate),
-                          this.plantTimezoneMap[this.selectedRound.plantId]
-                        )
-                      : new Date(this.selectedRound.dueDate),
+                  dueDate: new Date(this.selectedRound.dueDate),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
