@@ -137,7 +137,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       this.data;
     this.allData = allData;
 
-    console.log('Issue Actions Data: ', this.data);
+    // console.log('Issue Actions Data: ', this.data);
     this.moduleName = moduleName;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
@@ -390,9 +390,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     event: MatDatetimePickerInputEvent<Date>,
     formControlDateField: string
   ) {
-    this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
-    });
     if (
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
@@ -416,6 +413,9 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         value: new Date(event.value).toISOString()
       });
     }
+    this.issuesActionsDetailViewForm.patchValue({
+      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
+    });
     this.issuesActionsDetailViewForm.markAsDirty();
   }
 
@@ -942,7 +942,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.issuesActionsDetailViewForm.patchValue({
             status: this.data.status,
             priority: this.data.priority,
-            dueDateDisplayValue: this.data.dueDateDisplay,
+            dueDateDisplayValue: this.formatDate(this.data.dueDate),
             dueDate: this.data.dueDate
               ? new Date(this.data.dueDate)
               : this.data.dueDate,

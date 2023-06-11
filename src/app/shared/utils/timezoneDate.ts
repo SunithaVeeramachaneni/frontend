@@ -18,7 +18,7 @@ export const getTimezoneUTC = (date, timezone) => {
   let id = y + '-';
   if (m < 10) id += '0' + m + '-';
   else id += m + '-';
-  if (day < 10) id += '0' + m + '-';
+  if (day < 10) id += '0' + m + 'T';
   else id += day + 'T';
   if (h < 10) id += '0' + h + ':';
   else id += h + ':';
@@ -26,6 +26,7 @@ export const getTimezoneUTC = (date, timezone) => {
   else id += min + ':00';
   const offset = moment.tz(id, timezone.timeZoneIdentifier).format().substr(-6);
   id = id + offset;
+
   const du = moment.tz(id, timezone.timeZoneIdentifier);
   // console.log(du.format());
   // console.log(du.utc().format());
