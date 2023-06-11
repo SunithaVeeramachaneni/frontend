@@ -38,7 +38,10 @@ import { format } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
-import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import {
+  localToTimezoneDate,
+  getTimezoneUTC
+} from 'src/app/shared/utils/timezoneDate';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -133,7 +136,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     const { users$, totalCount$, allData, notificationInfo, moduleName } =
       this.data;
     this.allData = allData;
-    // console.log('Issue Actions Data: ', this.data);
+
+    console.log('Issue Actions Data: ', this.data);
     this.moduleName = moduleName;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {
@@ -389,10 +393,29 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     this.issuesActionsDetailViewForm.patchValue({
       [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
     });
-    this.updateIssueOrAction({
-      field: 'dueDate',
-      value: new Date(event.value).toISOString()
-    });
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ] &&
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ].timeZoneIdentifier
+    ) {
+      this.updateIssueOrAction({
+        field: 'dueDate',
+        value: getTimezoneUTC(
+          event.value,
+          this.plantTimezoneMap[
+            this.issuesActionsDetailViewForm.get('plantId').value
+          ]
+        )
+      });
+    } else {
+      this.updateIssueOrAction({
+        field: 'dueDate',
+        value: new Date(event.value).toISOString()
+      });
+    }
     this.issuesActionsDetailViewForm.markAsDirty();
   }
 
@@ -717,14 +740,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       ] &&
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
-      ].timeZone
+      ].timeZoneIdentifier
     ) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        'dd MMM yyyy hh:mm a'
+        'DD MMM yyyy hh:mm a'
       );
     }
     return format(new Date(date), 'dd MMM yyyy hh:mm a');
@@ -785,7 +808,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private init(): void {
     this.attachmentsSubscriptionData = [];
-    const { id, type, dueDate, notificationInfo } = this.data;
+    const { id, type, dueDate, dueDateDisplay, notificationInfo } = this.data;
     const idx = this.allData?.findIndex((a) => a?.id === id);
     if (idx === -1) {
       this.isPreviousEnabled = false;
@@ -801,8 +824,8 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: dueDate ? new Date(dueDate) : '',
-      dueDateDisplayValue: dueDate ? this.formatDate(dueDate) : ''
+      dueDate: dueDate ? this.formatDate(dueDate) : '',
+      dueDateDisplayValue: dueDateDisplay ? dueDateDisplay : ''
     });
     this.minDate = new Date(this.data.createdAt);
     this.logHistory$ = this.observations
@@ -905,9 +928,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
             ...this.data,
             ...data,
             ...jsonData,
-            dueDate: jsonData?.DUEDATE
-              ? format(new Date(jsonData?.DUEDATE), 'dd MMM yyyy hh:mm a')
-              : '',
+            dueDate: jsonData?.DUEDATE ? new Date(jsonData?.DUEDATE) : '',
             priority: jsonData.PRIORITY ?? '',
             statusDisplay: this.observations.prepareStatus(
               jsonData.STATUS ?? ''
@@ -921,7 +942,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
           this.issuesActionsDetailViewForm.patchValue({
             status: this.data.status,
             priority: this.data.priority,
-            dueDateDisplayValue: this.formatDate(this.data.dueDate),
+            dueDateDisplayValue: this.data.dueDateDisplay,
             dueDate: this.data.dueDate
               ? new Date(this.data.dueDate)
               : this.data.dueDate,

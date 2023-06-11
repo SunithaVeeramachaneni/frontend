@@ -47,6 +47,8 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-actions-list',
@@ -66,6 +68,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
+  plantTimezoneMap = {};
   columns: Column[] = [
     {
       id: 'title',
@@ -222,7 +225,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
@@ -366,11 +369,15 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
     private readonly userService: UsersService,
+    private plantService: PlantService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.observationsService.fetchActions$.next({ data: 'load' });
     this.observationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
@@ -450,6 +457,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       const { assignedTo, createdBy } = action;
       return {
         ...action,
+        dueDateDisplay: this.formatDate(action.dueDate, action),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
@@ -457,6 +465,22 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         createdBy: this.userService.getUserFullName(createdBy)
       };
     });
+  }
+
+  formatDate(date, action) {
+    if (date === '') return '';
+    if (
+      action.plantId &&
+      this.plantTimezoneMap[action.plantId] &&
+      this.plantTimezoneMap[action.plantId].timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[action.plantId],
+        'DD MMM yyyy hh:mm a'
+      );
+    }
+    return format(new Date(date), 'dd MMM yyyy hh:mm a');
   }
 
   getActionsList() {

@@ -370,7 +370,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
         } else {
           scrollData = scrollData.map((row) => {
             if (row.country && countriesMasterData[row.country])
-              row.country = countriesMasterData[row.country].countryName;
+              row.countryDisplay = countriesMasterData[row.country].countryName;
             if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
             return row;
           });

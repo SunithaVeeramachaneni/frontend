@@ -465,7 +465,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
           };
-          console.log('Round 0: ', rounds.rows[0]);
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),

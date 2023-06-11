@@ -1,9 +1,35 @@
 import * as moment from 'moment-timezone';
 
 export const localToTimezoneDate = (date, timezone, format) => {
+  // console.log(date, timezone, format);
   // console.log(moment.tz(date, timezone.timeZoneIdentifier).format(''));
   // console.log(moment.tz(date, timezone.timeZoneIdentifier).format());
-  return moment.tz(date, timezone.timeZoneIdentifier).format(format);
+  // console.log(moment.tz(date, timezone.timeZoneIdentifier).format(format));
+  return moment.tz(new Date(date), timezone.timeZoneIdentifier).format(format);
+};
+
+export const getTimezoneUTC = (date, timezone) => {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const h = d.getHours();
+  const min = d.getMinutes();
+  let id = y + '-';
+  if (m < 10) id += '0' + m + '-';
+  else id += m + '-';
+  if (day < 10) id += '0' + m + '-';
+  else id += day + 'T';
+  if (h < 10) id += '0' + h + ':';
+  else id += h + ':';
+  if (min < 10) id += '0' + min + ':00';
+  else id += min + ':00';
+  const offset = moment.tz(id, timezone.timeZoneIdentifier).format().substr(-6);
+  id = id + offset;
+  const du = moment.tz(id, timezone.timeZoneIdentifier);
+  // console.log(du.format());
+  // console.log(du.utc().format());
+  return du.utc().format();
 };
 
 // const getDestOffset = (timezone) => {

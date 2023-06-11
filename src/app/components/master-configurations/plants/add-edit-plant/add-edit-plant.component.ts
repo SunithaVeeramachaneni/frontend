@@ -132,7 +132,6 @@ export class AddEditPlantComponent implements OnInit {
       .get('country')
       .valueChanges.pipe()
       .subscribe((countryCode) => {
-        console.log('countryCode :', countryCode);
         // eslint-disable-next-line @typescript-eslint/dot-notation
         this.plantForm.patchValue({ state: null, timeZone: null });
         if (countryCode) {

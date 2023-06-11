@@ -186,11 +186,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        'M/d/yy, h:mm a'
+        'M/D/yy, h:mm a'
       );
     }
 
-    return format(new Date(date), 'M/d/yy, h:mm a');
+    return format(new Date(date), 'M/D/yy, h:mm a');
   }
 
   onNavigateToDetailPage() {

@@ -46,6 +46,8 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-issues-list',
@@ -220,7 +222,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
@@ -357,6 +359,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   initial: any;
   isModalOpened = false;
   placeHolder = '_ _';
+  plantTimezoneMap = {};
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
@@ -364,11 +367,15 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
+    private plantService: PlantService,
     private readonly dialog: MatDialog,
     private readonly cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantService.plantTimeZoneMapping$.subscribe(
+      (data) => (this.plantTimezoneMap = data)
+    );
     this.observationsService.fetchIssues$.next({ data: 'load' });
     this.observationsService.fetchIssues$.next({} as TableEvent);
     this.searchIssue = new FormControl('');
@@ -463,12 +470,29 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       const { assignedTo } = issue;
       return {
         ...issue,
+        dueDateDisplay: this.formatDate(issue.dueDate, issue),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
             : assignedTo
       };
     });
+  }
+
+  formatDate(date, issue) {
+    if (date === '') return '';
+    if (
+      issue.plantId &&
+      this.plantTimezoneMap[issue.plantId] &&
+      this.plantTimezoneMap[issue.plantId].timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[issue.plantId],
+        'DD MMM yyyy hh:mm a'
+      );
+    }
+    return format(new Date(date), 'dd MMM yyyy hh:mm a');
   }
 
   getIssuesList() {
