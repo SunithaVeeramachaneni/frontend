@@ -102,8 +102,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
     this.filteredLabels = this.labelCtrl.valueChanges.pipe(
       startWith(''),
-      map((value) => this.filterLabel(value || '')),
-      tap(console.log)
+      map((value) => this.filterLabel(value || ''))
     );
   }
 
@@ -136,7 +135,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
-    this.retrieveDetails();
+    //this.retrieveDetails();
+    //this.storeDetails();
   }
 
   filterLabel(value: string): string[] {
@@ -304,7 +304,22 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   addNewOption() {
     const newOption = this.labelCtrl.value;
-    this.labels.push(newOption);
+    this.labelCtrl.setValue(newOption);
+  }
+  storeDetails() {
+    const additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.operatorRoundsService
+      .createAdditionalDetails$(additionalDetails.value)
+      .subscribe(
+        (response) => {
+          console.log('Additional details stored successfully:', response);
+        },
+        (error) => {
+          console.error('Error storing additional details:', error);
+        }
+      );
   }
 
   retrieveDetails() {
