@@ -113,7 +113,7 @@
             {{ 'tags' | translate }}
           </p>
           <mat-form-field
-            class="chips-list width-100 form-field"
+            class="chips-list width-100 fo rm-field"
             appearance="outline"
           >
             <mat-chip-list #chipList>
@@ -164,7 +164,7 @@
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length > 0"
         >
           <span class="label">{{ 'label' | translate }}</span>
-          <!-- <span class="value">{{ 'value' | translate }}</span> -->
+          <span class="value">{{ 'value' | translate }}</span>
         </div>
         <div
           class="label-value"
@@ -179,15 +179,19 @@
           <div>
             <div class="dropdown-label">
               <div class="example-form">
-                <mat-form-field>
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-5 symbol m-b-10"
+                >
                   <input
                     matInput
                     type="text"
                     [formControl]="labelCtrl"
                     class="example-input"
+                    [matAutocomplete]="auto1"
                   />
                 </mat-form-field>
-                <mat-autocomplete #auto="matAutocomplete">
+                <mat-autocomplete #auto1="matAutocomplete">
                   <mat-option
                     *ngFor="let label of filteredLabels | async"
                     [value]="label"
@@ -205,15 +209,19 @@
               </div>
 
               <div class="example-form">
-                <mat-form-field>
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-5 symbol m-b-10"
+                >
                   <input
                     matInput
                     type="text"
                     [formControl]="labelCtrl"
+                    [matAutocomplete]="auto2"
                     class="example-input"
                   />
                 </mat-form-field>
-                <mat-autocomplete #auto="matAutocomplete">
+                <mat-autocomplete #auto2="matAutocomplete">
                   <mat-option
                     *ngFor="let label of filteredLabels | async"
                     [value]="label"
@@ -233,7 +241,7 @@
               <svg-icon
                 icon="icon-closeIcon"
                 class="close-icon"
-                (click)="deleteAdditionalDetails()"
+                (click)="deleteAdditionalDetails(i)"
               ></svg-icon>
             </div>
           </div>
