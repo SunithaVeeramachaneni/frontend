@@ -130,6 +130,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   moduleName: string;
 
+  get rangeDisplayText() {
+    return this._rangeDisplayText;
+  }
+
+  set rangeDisplayText(d) {
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+  }
+
+  private _rangeDisplayText = 'None';
+
   addLogicNotAppliedFields = [
     'LTV',
     'SF',
@@ -277,6 +290,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
               )
                 this.handleGlobalResponseRefCount(prevValue, currValue);
 
+              if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
+                this.rangeDisplayText = '';
+
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
                 sectionId: this.sectionId,
@@ -336,6 +352,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
+            this.rangeDisplayText = '';
           }
         })
       );
@@ -498,22 +515,23 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sliderOpen() {
-    this.formService.setsliderOpenState(true);
+    this.formService.setsliderOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      value: {
+        value: 0,
+        min: 0,
+        max: 100,
+        increment: 1
+      }
+    });
   }
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
+      questionId: question.id,
       rangeMetadata: question.rangeMetadata
     });
-  }
-
-  getRangeDisplayText() {
-    let resp = 'None';
-    const rangeMeta = this.questionForm.get('rangeMetadata').value;
-    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
-    }
-    return resp;
   }
 
   insertImageHandler(event) {
@@ -550,10 +568,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
   updateIsOpen(isOpen: boolean) {
-    const isAskQuestion =
-      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-
-    if (isAskQuestion) {
+    if (this.isAskQuestion) {
       return;
     }
     if (this.questionForm.get('isOpen').value !== isOpen) {
