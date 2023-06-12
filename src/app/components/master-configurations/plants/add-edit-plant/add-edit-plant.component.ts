@@ -48,6 +48,15 @@ export class AddEditPlantComponent implements OnInit {
         this.plantEditData && this.plantsEditData.image
           ? this.plantEditData.image
           : '';
+
+      this.selectedShiftIDs = this.plantEditData?.shifts;
+      this.selectedShiftIDs?.forEach((id) => {
+        const index = this.allShiftsMaster.findIndex((sm) => sm.id === id);
+        if (index > -1) {
+          this.selectedShiftsDetails.push(this.allShiftsMaster[index]);
+        }
+      });
+
       const plantdata = {
         id: this.plantsEditData?.id,
         image: this.plantsEditData?.image,
@@ -57,8 +66,10 @@ export class AddEditPlantComponent implements OnInit {
         state: this.plantsEditData?.state,
         zipCode: this.plantsEditData?.zipCode,
         label: this.plantEditData?.label,
-        field: this.plantEditData?.field
+        field: this.plantEditData?.field,
+        shifts: this.selectedShiftIDs
       };
+
       this.plantForm?.patchValue(plantdata);
       this.plantForm?.get('plantId').disable();
     }
@@ -66,6 +77,10 @@ export class AddEditPlantComponent implements OnInit {
   get plantEditData() {
     return this.plantsEditData;
   }
+
+  selectedShiftIDs: any[];
+  selectedShiftsDetails = [];
+  allShiftsMaster: any[];
   errors: ValidationError = {};
   plantStatus;
   plantTitle;
@@ -133,9 +148,24 @@ export class AddEditPlantComponent implements OnInit {
         { isActive: 'true' }
       )
       .pipe(
-        mergeMap(({ count, rows, next }) => of(rows)),
+        mergeMap(({ count, rows, next }) => {
+          this.allShiftsMaster = rows;
+          return of(rows);
+        }),
         catchError(() => of([]))
       );
+  }
+
+  shiftSelectionChanged(event) {
+    this.selectedShiftIDs = event.value;
+    this.selectedShiftsDetails = [];
+    this.selectedShiftIDs?.forEach((id) => {
+      const index = this.allShiftsMaster.findIndex((sm) => sm.id === id);
+      if (index > -1) {
+        this.selectedShiftsDetails.push(this.allShiftsMaster[index]);
+      }
+    });
+    this.plantForm?.patchValue({ shifts: this.selectedShiftIDs });
   }
 
   create() {
@@ -144,7 +174,15 @@ export class AddEditPlantComponent implements OnInit {
       this.plantForm.get('shifts').value !== null &&
       this.plantForm.get('shifts').value !== ''
     ) {
-      this.plantForm.get('shifts').value.forEach((e) => {
+      const selectedShiftIdsTemp = this.plantForm.get('shifts').value;
+      const selectedShiftDetailsTemp = [];
+      selectedShiftIdsTemp.forEach((sid) => {
+        const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+        if (index > -1) {
+          selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+        }
+      });
+      selectedShiftDetailsTemp.forEach((e) => {
         selectedShifts.push({ start: e.startTime, end: e.endTime });
       });
     }
