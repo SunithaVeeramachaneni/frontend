@@ -29,6 +29,8 @@
       padding: 50px;
       background-color: $white;
       box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      max-height: calc(100vh - 220px);
 
       .heading {
         font-size: 130%;
@@ -168,48 +170,41 @@
   padding-bottom: 10px;
 }
 
-.label-value {
-  display: flex;
-  align-items: center;
-}
-
-.form-header-modal[_ngcontent-lii-c407]
-  .form-content[_ngcontent-lii-c407]
-  .form-detials[_ngcontent-lii-c407]
-  .form-name-description[_ngcontent-lii-c407] {
-  font-size: 18px;
-  line-height: 21px;
-
-  display: flex;
-  align-items: center;
-}
-.dropdown-label {
-  display: flex;
-  justify-content: space-between;
-}
-
-.mat-form-field {
-  margin-right: 140px;
-}
 .label-value-text {
   display: flex;
+  margin: 15px 0 5px 10px;
 }
 
 .label,
 .value {
-  margin-right: 240px;
+  font-size: 120%;
+  font-weight: 500;
 }
+
+.cancel-icon {
+  position: relative;
+  top: 15px;
+  left: 35px;
+}
+
+.arrow {
+  font-size: 260%;
+  position: relative;
+  top: 5px;
+}
+
 .mat-dialog-container {
   height: 10px;
   width: 10px;
   float: left;
 }
-.example-form {
-  min-width: 150px;
-  max-width: 500px;
-  width: 100%;
+
+.remove-txt {
+  color: $disabled-color;
+  float: right;
+  cursor: pointer;
 }
 
-.example-full-width {
-  width: 100%;
+::ng-deep .mat-option-text {
+  font-size: 100%;
 }

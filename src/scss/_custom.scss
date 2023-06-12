@@ -1,7 +1,7 @@
 @import 'colors.scss';
 
 .p-0 {
-  padding: 0;
+  padding: 0 !important;
 }
 
 .p-10 {
@@ -62,7 +62,7 @@
 }
 
 .m-r-5 {
-  margin-right: 5px;
+  margin-right: 5px !important;
 }
 
 .m-r-10 {

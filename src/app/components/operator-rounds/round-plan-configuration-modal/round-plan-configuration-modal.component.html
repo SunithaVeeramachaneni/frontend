@@ -163,11 +163,11 @@
           class="label-value-text"
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length > 0"
         >
-          <span class="label">{{ 'label' | translate }}</span>
-          <span class="value">{{ 'value' | translate }}</span>
+          <div class="width-45 label">{{ 'label' | translate }}</div>
+          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
         </div>
         <div
-          class="label-value"
+          class="dis-flex"
           *ngFor="
             let additionalDetails of headerDataForm.get('additionalDetails')[
               'controls'
@@ -176,81 +176,89 @@
           "
           [formGroup]="additionalDetails"
         >
-          <div>
-            <div class="dropdown-label">
-              <div class="example-form">
-                <mat-form-field
-                  appearance="outline"
-                  class="m-l-5 symbol m-b-10"
-                >
-                  <input
-                    matInput
-                    type="text"
-                    [formControl]="labelCtrl"
-                    class="example-input"
-                    [matAutocomplete]="auto1"
-                  />
-                </mat-form-field>
-                <mat-autocomplete #auto1="matAutocomplete">
-                  <mat-option
-                    *ngFor="let label of filteredLabels | async"
-                    [value]="label"
-                  >
-                    {{ label }}
-                  </mat-option>
-                  <mat-option *ngIf="labelCtrl.value">
-                    <ng-container *ngIf="filteredLabels | async as labels">
-                      <ng-container *ngIf="!labels.includes(labelCtrl.value)">
-                        Add new option: {{ labelCtrl.value }}
-                      </ng-container>
-                    </ng-container>
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
+          <div class="width-45">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-5 symbol m-b-10 width-100"
+            >
+              <input
+                matInput
+                type="text"
+                [formControl]="labelCtrl"
+                class="example-input"
+                [matAutocomplete]="auto1"
+              />
+              <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <mat-autocomplete #auto1="matAutocomplete">
+              <mat-option
+                *ngFor="let label of filteredLabels | async"
+                [value]="label"
+              >
+                {{ label }}
+                <span class="remove-txt">Remove</span>
+              </mat-option>
+              <mat-option *ngIf="labelCtrl.value">
+                <ng-container *ngIf="filteredLabels | async as labels">
+                  <ng-container *ngIf="!labels.includes(labelCtrl.value)">
+                    Add new option: {{ labelCtrl.value }}
+                  </ng-container>
+                </ng-container>
+              </mat-option>
+            </mat-autocomplete>
+          </div>
 
-              <div class="example-form">
-                <mat-form-field
-                  appearance="outline"
-                  class="m-l-5 symbol m-b-10"
+          <div class="width-45">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-20 symbol m-b-10 width-100"
+            >
+              <input
+                matInput
+                type="text"
+                [formControl]="labelCtrl"
+                [matAutocomplete]="auto2"
+                class="example-input"
+              />
+              <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <mat-autocomplete #auto2="matAutocomplete">
+              <mat-option
+                *ngFor="let label of filteredLabels | async"
+                [value]="label"
+              >
+                {{ label }}
+                <span class="remove-txt">Remove</span>
+              </mat-option>
+              <!-- <mat-option>
+                <button
+                  mat-button
+                  color="primary"
+                  class="p-0"
+                  (click)="addNewOption()"
                 >
-                  <input
-                    matInput
-                    type="text"
-                    [formControl]="labelCtrl"
-                    [matAutocomplete]="auto2"
-                    class="example-input"
-                  />
-                </mat-form-field>
-                <mat-autocomplete #auto2="matAutocomplete">
-                  <mat-option
-                    *ngFor="let label of filteredLabels | async"
-                    [value]="label"
-                  >
-                    {{ label }}
-                  </mat-option>
-                  <mat-option *ngIf="labelCtrl.value">
-                    <ng-container *ngIf="filteredLabels | async as labels">
-                      <ng-container *ngIf="!labels.includes(labelCtrl.value)">
-                        Add new option: {{ labelCtrl.value }}
-                        <button
-                          mat-button
-                          color="primary"
-                          (click)="addNewOption()"
-                        >
-                          Add
-                        </button>
-                      </ng-container>
-                    </ng-container>
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-
-              <svg-icon
-                icon="icon-closeIcon"
-                class="close-icon"
-                (click)="deleteAdditionalDetails(i)"
-              ></svg-icon>
-            </div>
+                  <mat-icon class="m-r-5">add</mat-icon>
+                  <span>Add New ( T )</span>
+                </button>
+              </mat-option> -->
+              <mat-option *ngIf="labelCtrl.value">
+                <ng-container *ngIf="filteredLabels | async as labels">
+                  <ng-container *ngIf="!labels.includes(labelCtrl.value)">
+                    Add new option: {{ labelCtrl.value }}
+                    <button mat-button color="primary" (click)="addNewOption()">
+                      Add
+                    </button>
+                  </ng-container>
+                </ng-container>
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+          <div class="width-10 cancel-icon">
+            <svg-icon
+              icon="icon-closeIcon"
+              class="close-icon"
+              (click)="deleteAdditionalDetails(i)"
+            ></svg-icon>
           </div>
         </div>
 
