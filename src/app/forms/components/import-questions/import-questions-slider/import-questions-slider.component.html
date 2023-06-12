@@ -16,7 +16,7 @@
         {{ selectedFormName }}
       </div>
       <div *ngFor="let page of selectedFormData">
-        <p>
+        <p *ngIf="!isEmbeddedForms">
           <mat-icon
             (click)="toggleIsOpen(page)"
             *ngIf="page.isOpen === false"
@@ -40,7 +40,7 @@
           </mat-checkbox>
           {{ page.name }} {{ page.position }}
         </p>
-        <div *ngIf="page.isOpen === true">
+        <div *ngIf="page.isOpen === true || isEmbeddedForms">
           <div *ngFor="let section of page.sections; let i = index">
             <p class="section-div">
               <mat-icon

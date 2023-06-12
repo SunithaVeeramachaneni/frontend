@@ -403,6 +403,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
+          this.store.select(getFormMetadata).subscribe((data) => {
+            this.isEmbeddedForms = data.formType === 'Embedded';
+          });
           const section = {
             id: 'S1',
             name: 'Section',
@@ -418,7 +421,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               return {
                 ...df,
                 name: 'Conducted On',
-                fieldType: 'DT',
+                fieldType: this.isEmbeddedForms ? 'DF' : 'DT',
                 date: true,
                 time: true
               };
@@ -524,7 +527,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       data: {
         selectedFormData: '',
         selectedFormName: '',
-        openImportQuestionsSlider: false
+        openImportQuestionsSlider: false,
+        isEmbeddedForms: this.isEmbeddedForms
       }
     });
 
