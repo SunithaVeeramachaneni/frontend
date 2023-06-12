@@ -136,6 +136,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
+    this.retrieveDetails();
   }
 
   filterLabel(value: string): string[] {
@@ -302,11 +303,19 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   addNewOption() {
-    if (
-      this.selectedValue &&
-      !this.dropdownValues.includes(this.selectedValue)
-    ) {
-      this.dropdownValues.push(this.selectedValue);
-    }
+    const newOption = this.labelCtrl.value;
+    this.labels.push(newOption);
+  }
+
+  retrieveDetails() {
+    this.operatorRoundsService.getAdditionalDetails$().subscribe(
+      (details: any[]) => {
+        this.labels = [...details];
+        console.log('labels', this.labels);
+      },
+      (error) => {
+        console.log('Error retrieving details:', error);
+      }
+    );
   }
 }

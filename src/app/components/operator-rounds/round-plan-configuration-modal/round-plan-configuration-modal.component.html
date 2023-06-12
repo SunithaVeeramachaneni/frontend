@@ -232,6 +232,13 @@
                     <ng-container *ngIf="filteredLabels | async as labels">
                       <ng-container *ngIf="!labels.includes(labelCtrl.value)">
                         Add new option: {{ labelCtrl.value }}
+                        <button
+                          mat-button
+                          color="primary"
+                          (click)="addNewOption()"
+                        >
+                          Add
+                        </button>
                       </ng-container>
                     </ng-container>
                   </mat-option>

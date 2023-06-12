@@ -55,12 +55,31 @@ export class OperatorRoundsService {
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
   }
-
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  createAdditionalDetails$ = (
+    details: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/storeAdditionalDetails`,
+      details,
+      info
+    );
+
+  getAdditionalDetails$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      '/round-plans/storeAdditionalDetails',
+      info
+    );
 
   createDataSet$ = (
     dataset: any,
