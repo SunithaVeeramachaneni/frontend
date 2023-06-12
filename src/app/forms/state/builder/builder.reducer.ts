@@ -894,12 +894,19 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       }
       const pages = state[key].map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
-          const filteredLogics = page.logics.filter(
-            (logic) => logic.questionId !== action.questionId
+          const logicsToBeDeleted = {};
+          const filteredLogics = page.logics.filter((logic) => {
+            if (logic.questionId === action.questionId)
+              logicsToBeDeleted['AQ_' + logic.id] = 1;
+            return logic.questionId !== action.questionId;
+          });
+          const filteredQuestions = page.questions.filter(
+            (question) => !logicsToBeDeleted[question.sectionId]
           );
           return {
             ...page,
-            logics: [...filteredLogics]
+            logics: [...filteredLogics],
+            questions: [...filteredQuestions]
           };
         }
         return page;
