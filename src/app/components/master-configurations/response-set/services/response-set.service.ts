@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
-import { map, catchError, shareReplay } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { formatDistance } from 'date-fns';
 
@@ -52,10 +52,13 @@ export class ResponseSetService {
     const params = new URLSearchParams();
     params.set('limit', this.maxLimit);
     params.set('next', '');
+    const info: ErrorInfo = {} as ErrorInfo;
+    const { displayToast, failureResponse = {} } = info;
     return this._appService
       ._getResp(
         environment.masterConfigApiUrl,
-        'response-set/list?' + params.toString()
+        'response-set/list?' + params.toString(),
+        { displayToast, failureResponse }
       )
       .pipe(shareReplay(1));
   };
@@ -131,13 +134,6 @@ export class ResponseSetService {
       `response-set/delete/${JSON.stringify(deleteResponsePayload)}`
     );
 
-  setUsers(users: UserDetails[]) {
-    this.usersInfoByEmail = users.reduce((acc, curr) => {
-      acc[curr.email] = { fullName: `${curr.firstName} ${curr.lastName}` };
-      return acc;
-    }, {});
-  }
-
   downloadSampleResponseSetTemplate(
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
@@ -158,10 +154,6 @@ export class ResponseSetService {
         'response-set/list?' + params.toString()
       )
       .pipe(map((res) => res.items.length || 0));
-  }
-
-  getUserFullName(email: string): string {
-    return this.usersInfoByEmail[email]?.fullName;
   }
 
   downloadFailure(

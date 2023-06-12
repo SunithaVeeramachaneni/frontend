@@ -15,6 +15,7 @@ export interface HierarchyEntity {
   hierarchyPath?: string[];
   isExpanded?: boolean;
   parentId?: string;
+  isOriginal?: boolean;
   isRootNode?: boolean;
   iSDeletedInRoutePlan?: boolean;
   configuredParentId?: string;

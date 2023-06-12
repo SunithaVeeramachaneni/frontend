@@ -3,13 +3,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
-import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 import { SchedulerComponent } from './scheduler/scheduler.component';
-import { ObservationsComponent } from './observations/observations.component';
+import { RoundObservationsComponent } from './round-observations/round-observations.component';
 
 const routes: Routes = [
   {
@@ -25,6 +24,7 @@ const routes: Routes = [
         path: 'create',
         component: RoundPlanConfigurationComponent,
         canActivate: [AuthGuard],
+        resolve: { form: RoundPlanResolverService },
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
           permissions: [permissions.createORPlan],
@@ -52,15 +52,6 @@ const routes: Routes = [
         }
       },
       {
-        path: 'submissions/view/:id',
-        component: SubmissionViewComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: { label: 'View Form', alias: 'formName' },
-          permissions: [permissions.viewORPlans]
-        }
-      },
-      {
         path: 'archived',
         component: ArchivedListComponent,
         canActivate: [AuthGuard],
@@ -71,7 +62,7 @@ const routes: Routes = [
       },
       {
         path: 'observations',
-        component: ObservationsComponent,
+        component: RoundObservationsComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Observations' },

@@ -1,25 +1,12 @@
 @import '../../../../../../scss/colors.scss';
 
 .tag-text {
-  padding: 8px 12px;
   border-radius: 16px;
   width: fit-content;
-  margin: 0 0 4px 0;
-}
-
-.warning {
-  background-color: $warning-bg;
-  color: $warning-text;
-}
-
-.danger {
-  background-color: $danger-bg;
-  color: $danger-text;
-}
-
-.caution {
-  background-color: $caution-bg;
-  color: $caution-text;
+  margin: 0px 0px 4px 0;
+  padding: 4px 13px;
+  position: relative;
+  right: 5px;
 }
 
 .instruction {
@@ -38,4 +25,19 @@
   margin: 3px;
   height: 56px;
   border-radius: 8px;
+}
+
+.information {
+  background-color: $information-bg;
+  color: $information-text;
+}
+
+.danger {
+  background-color: $danger-bg;
+  color: $danger-text;
+}
+
+.caution {
+  background-color: $caution-bg;
+  color: $caution-text;
 }

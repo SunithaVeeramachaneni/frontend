@@ -13,6 +13,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -22,6 +23,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -49,7 +51,7 @@ import {
 } from 'src/app/interfaces';
 import {
   dateFormat,
-  graphQLDefaultMaxLimit,
+  graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -64,6 +66,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
 import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -131,7 +134,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -176,7 +181,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -220,7 +227,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -242,7 +249,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: {},
+      titleStyle: { 'overflow-wrap': 'anywhere' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -282,7 +289,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   formsCount = {
@@ -312,8 +319,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-
-  plants = [];
   plantsIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
@@ -325,6 +330,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   private _users$: Observable<UserDetails[]>;
+  private onDestroy$ = new Subject();
+
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -333,7 +340,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -345,7 +353,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => {
+        takeUntil(this.onDestroy$),
+        tap((value: string) => {
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
@@ -416,16 +425,23 @@ export class FormsComponent implements OnInit, OnDestroy {
         let filteredForms = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (formCategory === 'scheduled') {
           filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => form.schedule
+            (form: ScheduleFormDetail) =>
+              form.schedule && form.schedule !== 'Ad-Hoc'
           );
         } else if (formCategory === 'unscheduled') {
-          filteredForms = forms.data.filter(
-            (form: ScheduleFormDetail) => !form.schedule
-          );
+          filteredForms = forms.data
+            .filter(
+              (form: ScheduleFormDetail) =>
+                !form.schedule || form.schedule === 'Ad=Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredForms = forms.data;
         }
@@ -464,7 +480,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.activatedRoute.params.subscribe((params) => {
+    this.activatedRoute.params.subscribe(() => {
       this.hideFormDetail = true;
       this.hideScheduleConfig = true;
     });
@@ -476,7 +492,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
-    this.getAllForms();
+    this.populatePlantsforFilter();
     this.getFilter();
   }
 
@@ -490,18 +506,16 @@ export class FormsComponent implements OnInit, OnDestroy {
     };
 
     return this.raceDynamicFormService
-      .getFormQuestionsFormsList$(obj, this.filter)
+      .getFormsForScheduler$(obj, this.filter)
       .pipe(
-        tap(({ scheduledCount, unscheduledCount, next }) => {
+        tap(({ next, scheduledCount, unscheduledCount }) => {
           this.nextToken = next !== undefined ? next : null;
-          const { scheduled, unscheduled } = this.formsCount;
-          this.formsCount = {
-            ...this.formsCount,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
-          };
+          if (scheduledCount !== undefined) {
+            this.formsCount = {
+              scheduled: scheduledCount,
+              unscheduled: unscheduledCount
+            };
+          }
           this.isLoading$.next(false);
         })
       );
@@ -511,7 +525,10 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -635,7 +652,7 @@ export class FormsComponent implements OnInit, OnDestroy {
               if (data.id === this.scheduleFormDetail?.id) {
                 return {
                   ...data,
-                  rounds: count
+                  forms: count
                 };
               }
               return data;
@@ -700,7 +717,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(this.initial?.data);
       if (mode === 'create') {
         this.formsCount = {
-          ...this.formsCount,
           scheduled: this.formsCount.scheduled + 1,
           unscheduled: this.formsCount.unscheduled - 1
         };
@@ -744,6 +760,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           scheduleDates: this.getFormattedScheduleDates(
             formScheduleConfigurations[form?.id]
           ),
+          forms: form.forms || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
           assignedToEmail: this.getAssignedToEmail(
             formScheduleConfigurations[form.id]
@@ -753,7 +770,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       return {
         ...form,
         scheduleDates: this.placeHolder,
-        operator: this.placeHolder
+        forms: this.placeHolder,
+        assignedTo: this.placeHolder
       };
     });
   }
@@ -808,30 +826,20 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllForms() {
-    this.raceDynamicFormService
-      .fetchAllSchedulerForms$()
-      .subscribe((formsList) => {
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniquePlants = formsList.rows
-            .map((item) => {
-              if (item.plantId) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
-          for (const item of this.filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
-          }
-        }
+  populatePlantsforFilter() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      plants.items.forEach((plant) => {
+        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
       });
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = plants.items.map(
+            (plant) => `${plant.plantId} - ${plant.name}`
+          );
+        }
+      }
+    });
   }
 
   applyFilters(data: any): void {

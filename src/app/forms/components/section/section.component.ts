@@ -7,16 +7,19 @@ import {
   OnInit,
   Output,
   ViewChild,
-  ElementRef
+  ElementRef,
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -34,7 +37,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
   styleUrls: ['./section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SectionComponent implements OnInit {
+export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -74,6 +77,7 @@ export class SectionComponent implements OnInit {
   private _pageIndex: number;
   private _sectionIndex: number;
   private _sectionId: string;
+  private onDestroy$ = new Subject();
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
@@ -82,6 +86,7 @@ export class SectionComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
           const { isOpen, ...prev } = previous;
@@ -116,6 +121,12 @@ export class SectionComponent implements OnInit {
     this.sectionTasksCount$ = this.store.select(
       getTaskCountBySection(this.pageIndex, this.sectionId, this.selectedNodeId)
     );
+  }
+
+  getTasksCountBySectionId(pageIndex, sectionId) {
+    return this.store
+      .select(getTaskCountBySection(pageIndex, sectionId, this.selectedNodeId))
+      .pipe(map((d) => d));
   }
 
   addSection() {
@@ -159,5 +170,10 @@ export class SectionComponent implements OnInit {
       return value.length;
     }
     return value.length - 1;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

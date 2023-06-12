@@ -14,6 +14,7 @@ import {
   Observable,
   of,
   ReplaySubject,
+  Subject,
   timer
 } from 'rxjs';
 import {
@@ -23,6 +24,7 @@ import {
   map,
   startWith,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -78,7 +80,10 @@ import { UsersService } from '../../user-management/services/users.service';
 export class PlansComponent implements OnInit, OnDestroy {
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -367,10 +372,11 @@ export class PlansComponent implements OnInit, OnDestroy {
   roundPlanId: string;
   plants = [];
   plantsIdNameMap = {};
-  userObj = {};
+  userFullNameByEmail = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
+  private destroy$ = new Subject();
 
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
@@ -393,6 +399,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.destroy$),
         tap(() => {
           this.fetchPlans$.next({ data: 'search' });
           this.isLoading$.next(true);
@@ -475,21 +482,28 @@ export class PlansComponent implements OnInit, OnDestroy {
         let filteredRoundPlans = [];
         this.configOptions = {
           ...this.configOptions,
-          tableHeight: 'calc(80vh - 20px)'
+          tableHeight: 'calc(100vh - 150px)'
         };
         if (planCategory === 'scheduled') {
           filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => roundPlan.schedule
+            (roundPlan: RoundPlanDetail) =>
+              roundPlan.schedule && roundPlan.schedule !== 'Ad-Hoc'
           );
         } else if (planCategory === 'unscheduled') {
-          filteredRoundPlans = roundPlans.data.filter(
-            (roundPlan: RoundPlanDetail) => !roundPlan.schedule
-          );
+          filteredRoundPlans = roundPlans.data
+            .filter(
+              (roundPlan: RoundPlanDetail) =>
+                !roundPlan.schedule || roundPlan.schedule === 'Ad-Hoc'
+            )
+            .map((item) => {
+              item.schedule = '';
+              return item;
+            });
         } else {
           filteredRoundPlans = roundPlans.data;
         }
         const uniqueAssignTo = filteredRoundPlans
-          ?.map((item) => item?.assigneeToEmail)
+          ?.map((item) => item?.assignedTo)
           .filter((value, index, self) => self.indexOf(value) === index);
 
         const uniqueSchedules = filteredRoundPlans
@@ -594,7 +608,10 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.fetchPlans$.next(event);
   };
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
@@ -906,20 +923,33 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
   }
 
+  getFullNameToEmailArray(data?: any) {
+    let emailArray = [];
+    data.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
+  }
+
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = this.plantsIdNameMap[item.value] ?? '';
-        this.filter[item.column] = plantId;
-      } else if (item.type !== 'date' && item.value) {
-        if (item.column === 'assignedTo') {
-          this.filter[item.column] = this.userObj[item.value];
-        } else {
-          this.filter[item.column] = item.value;
-        }
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+      } else if (
+        item.type !== 'daterange' &&
+        item.value &&
+        item.column !== 'schedule'
+      ) {
+        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+      } else if (item.type === 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
+      } else {
+        this.filter[item.column] = item.value ?? '';
       }
     }
     this.nextToken = '';

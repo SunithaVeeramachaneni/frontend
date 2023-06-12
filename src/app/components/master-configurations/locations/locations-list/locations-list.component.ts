@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -11,7 +12,7 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -20,6 +21,7 @@ import {
   map,
   mergeMap,
   switchMap,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
@@ -54,7 +56,7 @@ import { PlantService } from '../../plants/services/plant.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class LocationsListComponent implements OnInit {
+export class LocationsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
   allParentsLocations: any[] = [];
   columns: Column[] = [
@@ -104,14 +106,17 @@ export class LocationsListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        'overflow-wrap': 'anywhere'
+      },
       hasPreTextImage: false,
       hasPostTextImage: false,
       hasSubtitle: true,
       subtitleColumn: 'plantId',
       subtitleStyle: {
         'font-size': '80%',
-        color: 'darkgray'
+        color: 'darkgray',
+        'overflow-wrap': 'anywhere'
       }
     },
     {
@@ -223,9 +228,8 @@ export class LocationsListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
 
   locations$: Observable<any>;
-  allLocations$: Observable<any>;
   allPlants$: Observable<any>;
-  locationsCount$: Observable<Count>;
+  locationsCount$: Observable<number>;
   locationsCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
@@ -250,16 +254,16 @@ export class LocationsListComponent implements OnInit {
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted'];
   filter = {
-    status: '',
-    assignedTo: '',
-    dueDate: '',
     plant: ''
   };
+  allPlants: any[] = [];
+  dataFetchingComplete = false;
 
   plants = [];
   plantsIdNameMap = {};
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
+  private onDestroy$ = new Subject();
 
   constructor(
     private locationService: LocationService,
@@ -282,57 +286,40 @@ export class LocationsListComponent implements OnInit {
       tap(({ items: allPlants = [] }) => {
         this.plants = allPlants.map((plant) => {
           const { id, name, plantId } = plant;
-          this.plantsIdNameMap[plantId] = id;
+          this.plantsIdNameMap[`${plantId} - ${name}`] = id;
           return `${plantId} - ${name}`;
         });
 
-        const plantFilter = {
-          column: 'plant',
-          items: ['', ...this.plants],
-          label: 'Plants',
-          type: 'select',
-          value: ''
-        };
-
         this.filterJson = [
-          plantFilter,
-          ...this.filterJson.filter((item) => item.column !== 'plant')
+          {
+            column: 'plant',
+            items: this.plants,
+            label: 'Plant',
+            type: 'select',
+            value: ''
+          }
         ];
       })
     );
-    this.allLocations$ = this.locationService.fetchAllLocations$();
     this.searchLocation = new FormControl('');
 
     this.searchLocation.valueChanges
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => {
+        takeUntil(this.onDestroy$),
+        tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
+          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.getDisplayedLocations();
-    this.locationsCount$ = combineLatest([
-      this.locationsCount$,
-      this.locationsCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addEditCopyDeleteLocations) {
-          count.count += update;
-          this.addEditCopyDeleteLocations = false;
-        }
-        return count;
-      })
-    );
+    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.getFilter();
-    this.getAllLocations();
   }
 
   getDisplayedLocations(): void {
@@ -366,7 +353,7 @@ export class LocationsListComponent implements OnInit {
       locationsOnLoadSearch$,
       this.addEditCopyDeleteLocations$,
       onScrollLocations$,
-      this.allLocations$,
+      this.locationService.fetchAllLocations$(),
       this.allPlants$
     ]).pipe(
       map(
@@ -374,13 +361,14 @@ export class LocationsListComponent implements OnInit {
           rows,
           { form, action },
           scrollData,
-          allLocations,
+          { items: allLocations = [] },
           { items: allPlants = [] }
         ]) => {
-          const { items: unfilteredParentLocations } = allLocations;
-          this.allParentsLocations = unfilteredParentLocations.filter(
-            (location) => location._deleted !== true
+          this.allPlants = allPlants.filter((plant) => !plant._deleted);
+          this.allParentsLocations = allLocations.filter(
+            (location) => !location._deleted
           );
+          this.dataFetchingComplete = true;
           if (this.skip === 0) {
             this.configOptions = {
               ...this.configOptions,
@@ -424,23 +412,12 @@ export class LocationsListComponent implements OnInit {
     );
   }
 
-  getFilter() {
-    this.locationService.getFilter().subscribe((res) => {
-      this.filterJson = res;
-    });
-  }
-
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
       if (item.column === 'plant') {
-        const plantId = item.value.split('-')[0].trim();
-        const plantsID = this.plantsIdNameMap[plantId];
+        const plantsID = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantsID;
-      } else if (item.type !== 'date' && item.value) {
-        this.filter[item.column] = item.value;
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
       }
     }
     this.nextToken = '';
@@ -450,9 +427,6 @@ export class LocationsListComponent implements OnInit {
   clearFilters(): void {
     this.isPopoverOpen = false;
     this.filter = {
-      status: '',
-      assignedTo: '',
-      dueDate: '',
       plant: ''
     };
     this.locationService.fetchLocations$.next({ data: 'load' });
@@ -471,13 +445,11 @@ export class LocationsListComponent implements OnInit {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.locationsCount$ = of({ count });
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.locationsCount$ = of({ count: 0 });
           this.isLoading$.next(false);
           return of([]);
         })
@@ -486,7 +458,6 @@ export class LocationsListComponent implements OnInit {
 
   addOrUpdateLocation(locationData) {
     if (locationData?.status === 'add') {
-      this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
         this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
@@ -499,6 +470,8 @@ export class LocationsListComponent implements OnInit {
         text: 'Location created successfully!',
         type: 'success'
       });
+      this.addEditCopyDeleteLocations = true;
+      this.locationsCountUpdate$.next(1);
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
@@ -514,7 +487,6 @@ export class LocationsListComponent implements OnInit {
         });
       }
     }
-    this.locationsListCount$ = this.locationService.getLocationCount$();
     this.locationService.fetchLocations$.next({ data: 'load' });
   }
 
@@ -586,8 +558,9 @@ export class LocationsListComponent implements OnInit {
         action: 'delete',
         form: data
       });
+      this.addEditCopyDeleteLocations = true;
+      this.locationsCountUpdate$.next(-1);
     });
-    this.locationsListCount$ = this.locationService.getLocationCount$();
   }
 
   addManually() {
@@ -622,12 +595,13 @@ export class LocationsListComponent implements OnInit {
       )
       .subscribe();
   }
+
   getAllLocations() {
     this.locationService.fetchAllLocations$().subscribe((allLocations) => {
       const objectKeys = Object.keys(allLocations);
       if (objectKeys.length > 0) {
         this.parentInformation = allLocations.items.filter(
-          (location) => location._deleted !== true
+          (location) => !location._deleted
         );
         this.allParentsLocations = this.parentInformation;
       } else {
@@ -635,9 +609,10 @@ export class LocationsListComponent implements OnInit {
       }
     });
   }
+
   uploadFile(event) {
     const file = event.target.files[0];
-    const deleteReportRef = this.dialog.open(UploadResponseModalComponent, {
+    const dialogRef = this.dialog.open(UploadResponseModalComponent, {
       data: {
         file,
         type: 'locations'
@@ -645,13 +620,13 @@ export class LocationsListComponent implements OnInit {
       disableClose: true
     });
 
-    deleteReportRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().subscribe((res) => {
       if (res.data) {
         this.getAllLocations();
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.locationsListCount$ = this.locationService.getLocationCount$();
+        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -684,7 +659,7 @@ export class LocationsListComponent implements OnInit {
             parent: parent.name,
             parentID: parent.locationId
           });
-        } else Object.assign(data, { parent: '', parendId: '' });
+        } else Object.assign(data, { parent: '', parentId: '' });
       }
 
       return data;
@@ -692,4 +667,26 @@ export class LocationsListComponent implements OnInit {
 
     return tableData;
   };
+
+  reloadLocationCount(searchTerm: string) {
+    this.locationsListCount$ =
+      this.locationService.getLocationCount$(searchTerm);
+    this.locationsCount$ = combineLatest([
+      this.locationsListCount$,
+      this.locationsCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addEditCopyDeleteLocations) {
+          count += update;
+          this.addEditCopyDeleteLocations = false;
+        }
+        return count;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

@@ -113,6 +113,6 @@
   "secretAccessKey": "Secret Access Key",
   "bucket": "Bucket",
   "region": "Region",
-  "amplifyConfig": "Amplify config",
+  "amplifyConfig": "Amplify Config",
   "configs": "Configurations"
 }

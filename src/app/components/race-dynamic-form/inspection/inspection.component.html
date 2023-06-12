@@ -5,7 +5,7 @@
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
       [moduleName]="'RDF'"
-      [showPDFDownload]="false"
+      [showPDFDownload]="true"
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
@@ -85,7 +85,6 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      (onDateChangeHandler)="onChangeDueDateHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>
@@ -100,7 +99,7 @@
   </div>
   <ng-container *ngIf="users$ | async">
     <button
-      style="display: none"
+      class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="assigneeMenu"
       #assigneeMenuTrigger="matMenuTrigger"
@@ -113,4 +112,17 @@
       ></app-assign-inspection>
     </mat-menu>
   </ng-container>
+  <button
+    class="hide-mat-menu"
+    mat-button
+    [matMenuTriggerFor]="dueDateMenu"
+    #dueDateMenuTrigger="matMenuTrigger"
+  ></button>
+  <mat-menu #dueDateMenu="matMenu">
+    <app-date-picker
+      [selectedDate]="selectedDate"
+      (dateChange)="dateChangeHandler($event)"
+      (closed)="dueDateClosedHandler()"
+    ></app-date-picker>
+  </mat-menu>
 </ng-container>

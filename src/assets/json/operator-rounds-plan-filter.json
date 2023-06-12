@@ -18,12 +18,12 @@
     "items": [],
     "column": "scheduledAt",
     "type": "daterange",
-    "startDate": "",
-    "endDate": "",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "value": ""
   },
   {
-    "label": "Plants",
+    "label": "Plant",
     "items": [],
     "column": "plant",
     "type": "select",

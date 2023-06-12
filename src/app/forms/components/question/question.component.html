@@ -3,11 +3,14 @@
   [formGroup]="questionForm"
   *ngIf="{
     question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async
+    sectionQuestionsCount: sectionQuestionsCount$ | async,
+    formMetadata: formMetadata$ | async,
+    moduleName: moduleName$ | async,
+    uom: uom$ | async
   } as props"
 >
   <div>
-    <div (click)="!isAskQuestion && updateIsOpen(true)">
+    <div (click)="updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70"
@@ -27,6 +30,7 @@
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(false, false)"
+            [id]="questionForm.get('id').value"
             *ngIf="questionForm.get('fieldType').value !== 'INST'"
           />
 
@@ -101,7 +105,7 @@
           ></svg-icon>
         </div>
       </div>
-      <hr class="question-line" *ngIf="!isAskQuestion" />
+      <hr [ngClass]="!isAskQuestion ? 'question-line' : 'ask-question-line'" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input
@@ -115,7 +119,11 @@
 
       <div
         class="dis-flex justify-content"
-        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+        *ngIf="
+          (isAskQuestion &&
+            questionForm.get('id').value === isAskQuestionFocusId) ||
+          (!isAskQuestion && questionForm.get('isOpen').value)
+        "
       >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
@@ -125,6 +133,7 @@
                 color="primary"
                 class="addLogicBtn"
                 *ngIf="
+                  !isAskQuestion &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
@@ -144,13 +153,14 @@
                       let image of questionForm.get('value').value.images;
                       index as i
                     "
-                    class="m-r-10"
                   >
                     <app-instruction-image
                       [image]="image"
                       [index]="i"
                       (indexEmitter)="instructionsFileDeleteHandler($event)"
                       *ngIf="image !== null"
+                      class="m-r-10"
+                      (click)="openPreviewDialog()"
                     ></app-instruction-image>
                   </span>
 
@@ -176,7 +186,9 @@
                 <button
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-inst-btn' : 'addLogicBtn'
+                  "
                   *ngIf="questionForm.get('fieldType').value === 'INST'"
                   (click)="instructionsFileUpload.click()"
                 >
@@ -218,7 +230,7 @@
                 >
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
-                <mat-menu #menu="matMenu">
+                <mat-menu #menu="matMenu" (closed)="handleMatMenu()">
                   <ng-template matMenuContent>
                     <div (click)="$event.stopPropagation()" class="uomMenu">
                       <span class="searchUOM">
@@ -254,7 +266,7 @@
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
-                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
+                  <span class="rangeValues">{{ rangeDisplayText }}</span>
                 </span>
               </span>
 
@@ -312,7 +324,9 @@
                 <button
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-hl-btn' : 'addLogicBtn'
+                  "
                   (click)="toggleHyperLink()"
                   [matTooltip]="
                     questionForm.get('value').value &&
@@ -342,7 +356,6 @@
                 </span>
               </span>
               <app-response-type-side-drawer
-                (responseTypeHandler)="quickResponseTypeHandler($event)"
                 (rangeSelectionHandler)="rangeSelectionHandler($event)"
                 [question]="question"
                 [formId]="formId"

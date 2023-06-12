@@ -5,14 +5,21 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  takeUntil
+} from 'rxjs/operators';
 
 import { HierarchyEntity } from 'src/app/interfaces';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-hierarchy-locations-list',
@@ -20,7 +27,7 @@ import { HierarchyEntity } from 'src/app/interfaces';
   styleUrls: ['./hierarchy-locations-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HierarchyLocationsListComponent implements OnInit {
+export class HierarchyLocationsListComponent implements OnInit, OnDestroy {
   @Output() handleLocationHierarchy: EventEmitter<any> =
     new EventEmitter<any>();
   @Input() set locationsData(data: HierarchyEntity[]) {
@@ -48,6 +55,8 @@ export class HierarchyLocationsListComponent implements OnInit {
   public allItems = [];
   public searchFilterItems = [];
   public initialSelectedItems = [] as HierarchyEntity[];
+  private onDestroy$ = new Subject();
+
   constructor(
     private dialogRef: MatDialogRef<HierarchyLocationsListComponent>,
     private cdrf: ChangeDetectorRef
@@ -60,6 +69,7 @@ export class HierarchyLocationsListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         map((searchInput: string) => {
           this.searchFilterItems = this.allItems.filter(
             (item: HierarchyEntity) =>
@@ -68,6 +78,7 @@ export class HierarchyLocationsListComponent implements OnInit {
                 .trim()
                 .includes(searchInput.toLowerCase().trim())
           );
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();
@@ -109,4 +120,9 @@ export class HierarchyLocationsListComponent implements OnInit {
   submitSelectedLocations = () => {
     this.handleLocationHierarchy.emit(this.selectedItems);
   };
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
 }

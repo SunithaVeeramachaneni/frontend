@@ -5,21 +5,24 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { isEqual } from 'lodash-es';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  takeUntil,
   tap
 } from 'rxjs/operators';
 import {
   NumberRangeMetadata,
   RangeSelectorState,
-  ResponseTypeOpenState
+  ResponseTypeOpenState,
+  SliderSelectorState
 } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -30,7 +33,7 @@ import { ToastService } from 'src/app/shared/toast';
   styleUrls: ['./response-type-side-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponseTypeSideDrawerComponent implements OnInit {
+export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Input() formId;
 
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
@@ -39,7 +42,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() question;
-  sliderOpenState$: Observable<boolean>;
+  sliderOpenState$: Observable<SliderSelectorState>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
 
@@ -51,7 +54,16 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
-  rangeSelectorOpenState = false;
+  rangeSelectorOpenState: RangeSelectorState = {
+    isOpen: false,
+    questionId: '',
+    rangeMetadata: {} as NumberRangeMetadata
+  };
+  sliderOpenState: SliderSelectorState = {
+    isOpen: false,
+    questionId: '',
+    value: 'TF'
+  };
 
   sliderOptions = {
     value: 0,
@@ -62,6 +74,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
+  isCreate = true;
+  private onDestroy$ = new Subject();
 
   constructor(
     private formService: FormService,
@@ -71,39 +85,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sliderOpenState$ = this.formService.sliderOpenState$;
-    this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
-    this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
-
-    this.multipleChoiceOpenState$.subscribe((state) => {
-      this.multipleChoiceOpenState = state.isOpen;
-      this.responseId = state.response.id;
-      this.cdrf.detectChanges();
-
-      if (state.isOpen) {
-        state.response.values = state.response.values || [];
-        const responsesArray = [];
-        state.response.values.map((response) => {
-          responsesArray.push(this.fb.group(response));
-        });
-        this.responseForm.setControl(
-          'responses',
-          this.fb.array(responsesArray || [])
-        );
-        this.responseForm.patchValue({ id: state.response.id });
-        this.isFormNotUpdated = false;
-        this.cdrf.detectChanges();
-      }
-    });
-
-    this.rangeSelectorOpenState$.subscribe((state) => {
-      this.rangeSelectorOpenState = state.isOpen;
-      this.cdrf.detectChanges();
-      if (state.isOpen) {
-        this.rangeMetadataForm.patchValue(state.rangeMetadata);
-      }
-    });
-
     this.responseForm = this.fb.group({
       id: new FormControl(''),
       name: new FormControl(''),
@@ -119,11 +100,54 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       maxAction: 'None'
     });
 
+    this.sliderOpenState$ = this.formService.sliderOpenState$;
+    this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
+    this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
+
+    this.multipleChoiceOpenState$.subscribe((state) => {
+      this.multipleChoiceOpenState = state.isOpen;
+      this.responseId = state.response.id;
+      this.cdrf.detectChanges();
+
+      if (state.isOpen) {
+        state.response.values = state.response.values || [];
+        const responsesArray = [];
+        this.isCreate = state.response.values.length ? false : true;
+        state.response.values.map((response) => {
+          responsesArray.push(this.fb.group(response));
+        });
+        this.responseForm.setControl(
+          'responses',
+          this.fb.array(responsesArray || [])
+        );
+        this.responseForm.patchValue({ id: state.response.id });
+        this.isFormNotUpdated = false;
+        this.cdrf.detectChanges();
+      }
+    });
+
+    this.rangeSelectorOpenState$.subscribe((state) => {
+      this.rangeSelectorOpenState = state;
+      this.cdrf.detectChanges();
+      if (state.isOpen) {
+        this.rangeMetadataForm.patchValue(state.rangeMetadata);
+      }
+    });
+
+    this.sliderOpenState$.subscribe((state) => {
+      this.sliderOpenState = state;
+      this.cdrf.detectChanges();
+      if (this.question && typeof this.question.value !== 'string') {
+        this.sliderOptions = this.question.value;
+      }
+    });
+
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (
             isEqual(prev.responses, curr.responses) ||
@@ -143,6 +167,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
+        takeUntil(this.onDestroy$),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) {
             this.isFormNotUpdated = true;
@@ -222,16 +247,25 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
 
   applySliderOptions(values) {
     this.setSliderValues.emit(values);
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   }
 
   cancelSlider = () => {
-    this.formService.setsliderOpenState(false);
+    this.formService.setsliderOpenState({
+      isOpen: false,
+      questionId: '',
+      value: 'TF'
+    });
   };
 
   cancelRangeSelection = () => {
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };
@@ -250,6 +284,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     });
     this.formService.setRangeSelectorOpenState({
       isOpen: false,
+      questionId: '',
       rangeMetadata: {} as NumberRangeMetadata
     });
   };
@@ -261,6 +296,11 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   getImage(action) {
-     return `icon-${action.toLowerCase()}`;
+    return `icon-${action.toLowerCase()}`;
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

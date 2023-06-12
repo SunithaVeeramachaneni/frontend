@@ -1,6 +1,7 @@
 <div
   class="response-type-modal"
   [hidden]="isGlobalResponseOpen"
+  *ngIf="formMetadata$ | async"
   [ngClass]="{
     'position-left': isPreviewActive === true,
     'position-right': isPreviewActive === false
@@ -15,7 +16,11 @@
 
   <div class="list-view">
     <div class="main-container">
-      <mat-tab-group animationDuration="0ms">
+      <mat-tab-group
+        animationDuration="0ms"
+        [selectedIndex]="getSelectedIndex(question)"
+        (selectedTabChange)="onTabChange($event)"
+      >
         <mat-tab [label]="'responseHeading' | translate">
           <div class="first-tab">
             <div class="response-container">
@@ -30,7 +35,8 @@
                 <svg-icon
                   [icon]="getFieldTypeImage(fieldType.type)"
                   class="response-type-icons"
-                ></svg-icon>&nbsp;
+                ></svg-icon
+                >&nbsp;
                 <span class="response-type-description">
                   {{ fieldType.description }}
                 </span>
@@ -62,6 +68,9 @@
                       handleMCQRepsonseSelection('quickResponse', resp);
                       closeResponseType()
                     "
+                    [ngClass]="{
+                      active: question.value.id === resp.id
+                    }"
                   >
                     <mat-chip-list
                       *ngFor="let val of resp.values; let i = index"
@@ -120,34 +129,44 @@
                 <span translate="addMore"></span>
               </button>
             </div>
-            <p class="orange-color global-picklist" translate="globalPicklist"></p>
+            <p
+              class="orange-color global-picklist"
+              translate="globalPicklist"
+            ></p>
             <div class="multiple-responses global-resp">
               <div
                 *ngIf="globalResponses$ | async as globalResponses"
-                class="response-container"
+                class="response-container global-response-position"
               >
                 <mat-chip-list
                   *ngFor="let response of globalResponses"
                   style="flex: 45%"
                 >
-                  <mat-chip
-                    (click)="
-                      handleMCQRepsonseSelection('globalResponse', response);
-                      closeResponseType()
-                    "
-                    style="background-color: none"
+                  <div
+                    [ngClass]="{
+                      active: question.value.id === response.id
+                    }"
                   >
-                    {{ response?.name }}
-                  </mat-chip>
-                  <button
-                    mat-flat-button
-                    (click)="handleEditGlobalResponse(response)"
-                  >
-                    <svg-icon
-                      icon="icon-edit-icon"
-                      class="edit-icon-img"
-                    ></svg-icon>
-                  </button>
+                    <mat-chip
+                      (click)="
+                        handleMCQRepsonseSelection('globalResponse', response);
+                        closeResponseType()
+                      "
+                      style="background-color: none"
+                      class="global-text"
+                    >
+                      {{ response?.name }}
+                    </mat-chip>
+                    <button
+                      (click)="handleEditGlobalResponse(response)"
+                      class="global-btn"
+                    >
+                      <svg-icon
+                        icon="icon-edit-icon"
+                        class="edit-icon-img"
+                      ></svg-icon>
+                    </button>
+                  </div>
                 </mat-chip-list>
               </div>
 

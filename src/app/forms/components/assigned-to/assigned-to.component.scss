@@ -1,0 +1,127 @@
+@import '../../../../scss/colors.scss';
+
+:host {
+  position: relative;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  width: 340px;
+  min-width: 340px;
+  height: 60%;
+  z-index: 9999;
+  background-color: $white;
+}
+
+#assign-to {
+  .mat-card {
+    margin: 0;
+    border-radius: 4px;
+    height: 100%;
+    padding: 10px 0;
+
+    .title {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .cancel-side-drawer {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .heading {
+      padding: 3px 16px;
+      font-size: 65%;
+    }
+
+    .mat-card-content {
+      padding: 0 12px;
+      width: 316px;
+      height: calc(100vh - 290px);
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .user-menu-item {
+        display: flex;
+        flex-direction: row;
+        padding-left: 0;
+
+        .profile-image {
+          height: 35px;
+          width: 35px;
+          margin-top: 7px;
+          margin-right: 7px;
+          border-radius: 50%;
+        }
+
+        .user-info {
+          display: flex;
+          flex-direction: column;
+          margin-top: 7px;
+          width: 195px;
+
+          .name {
+            font-size: 93%;
+            font-weight: 700;
+            line-height: 19px;
+          }
+
+          .email {
+            font-size: 72%;
+            font-weight: 400;
+            line-height: 15px;
+          }
+        }
+      }
+
+      .disable-events {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .enable-events {
+        pointer-events: all;
+        user-select: auto;
+        cursor: pointer;
+      }
+
+      .jsutify-content {
+        padding-right: 0;
+
+        .mat-ripple-element {
+          display: none !important;
+        }
+      }
+
+      .no-results {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 340px);
+      }
+
+      ::ng-deep .cancel-side-drawer .mat-icon-button,
+      ::ng-deep mat-datepicker-toggle .mat-icon-button {
+        position: absolute;
+        top: -3px;
+        right: -10px;
+      }
+    }
+  }
+
+  .mat-card:not([class*='mat-elevation-z']) {
+    box-shadow: none;
+  }
+}
+
+::ng-deep .cdk-overlay-pane #assign-rounds {
+  min-width: 340px;
+}
+
+.width-94 {
+  width: 94%;
+  padding: 0px 10px;
+}

@@ -83,7 +83,6 @@
       (fetchDataCallback)="handleTableEvent($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      (onDateChangeHandler)="onChangeDueDateHandler($event)"
       class="width-100"
     ></cwp-dynamictable>
   </div>
@@ -98,17 +97,30 @@
   </div>
   <ng-container *ngIf="users$ | async">
     <button
-      style="display: none"
+      class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="assigneeMenu"
       #assigneeMenuTrigger="matMenuTrigger"
     ></button>
     <mat-menu #assigneeMenu="matMenu" backdropClass="assign-menu-list">
-      <app-assign-to
+      <app-assigned-to
         [assigneeDetails]="assigneeDetails"
         [dropdownPosition]="assigneePosition"
         (selectedAssignee)="selectedAssigneeHandler($event)"
-      ></app-assign-to>
+      ></app-assigned-to>
     </mat-menu>
   </ng-container>
+  <button
+    class="hide-mat-menu"
+    mat-button
+    [matMenuTriggerFor]="dueDateMenu"
+    #dueDateMenuTrigger="matMenuTrigger"
+  ></button>
+  <mat-menu #dueDateMenu="matMenu">
+    <app-date-picker
+      [selectedDate]="selectedDate"
+      (dateChange)="dateChangeHandler($event)"
+      (closed)="dueDateClosedHandler()"
+    ></app-date-picker>
+  </mat-menu>
 </ng-container>

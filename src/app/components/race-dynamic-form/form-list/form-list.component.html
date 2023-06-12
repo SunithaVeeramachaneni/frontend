@@ -1,10 +1,10 @@
-<div class="list-view">
+<div class="list-view" *ngIf="userInfo$ | async">
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="myForms"></h2>
       <div class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
-          <span class="forms-count"> {{ totalCount | count }} &nbsp; </span>
+          <span class="forms-count"> {{ totalCount }} &nbsp; </span>
           <span class="forms-text">{{
             'forms'
               | translate
@@ -34,8 +34,8 @@
           ></svg-icon>
         </mat-form-field>
         <button
+          *appCheckUserHasPermission="[perms.createForm]"
           class="create-new-btn"
-          mat-raised-button
           [matMenuTriggerFor]="menu"
           translate="createNew"
         ></button>

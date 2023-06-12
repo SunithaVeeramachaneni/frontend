@@ -16,23 +16,6 @@
   margin: 5px;
 }
 
-.m-1 {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 9px 16px;
-
-  width: 93%;
-  height: 39px;
-
-  background: rgba(61, 90, 254, 0.15);
-  border-radius: 8px;
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-}
-
 .m-2 {
   display: flex;
   flex-direction: row;
@@ -220,6 +203,10 @@
 
 .m-b-5 {
   margin-bottom: 5px;
+}
+
+.m-b-20 {
+  margin-bottom: 20px;
 }
 
 .m-t-0 {
@@ -734,8 +721,8 @@ body {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
-  padding: 10px 15px 10px 15px;
-  min-width: 300px;
+  padding: 10px 10px 10px 15px;
+  min-width: auto;
   width: auto;
   overflow: hidden;
   background: #000000;

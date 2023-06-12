@@ -1,5 +1,11 @@
-<div class="app-customizer" *ngIf="sliderOpenState$ | async as sliderState">
-  <mat-card class="p-0" *ngIf="sliderState === true">
+<div
+  class="app-customizer"
+  *ngIf="sliderOpenState.isOpen && sliderOpenState.questionId === question.id"
+>
+  <mat-card
+    class="p-0"
+    *ngIf="sliderOpenState.isOpen && question.id === sliderOpenState.questionId"
+  >
     <mat-card-title class="m-0 light-gray">
       <div class="mcq-heading" translate="slider"></div>
     </mat-card-title>
@@ -141,13 +147,26 @@
       (click)="submitResponses()"
       class="submit-response-btn"
       [disabled]="isFormNotUpdated === true || responseForm.pristine"
-      translate="create"
-    ></button>
+    >
+      {{ (isCreate ? 'create' : 'update') | translate }}
+    </button>
   </div>
 </div>
 
-<div class="app-customizer" *ngIf="rangeSelectorOpenState">
-  <mat-card class="p-0" *ngIf="rangeSelectorOpenState === true">
+<div
+  class="app-customizer"
+  *ngIf="
+    rangeSelectorOpenState.isOpen &&
+    rangeSelectorOpenState.questionId === question.id
+  "
+>
+  <mat-card
+    class="p-0"
+    *ngIf="
+      rangeSelectorOpenState.isOpen === true &&
+      rangeSelectorOpenState.questionId === question.id
+    "
+  >
     <mat-card-title class="m-0 light-gray">
       <div class="mcq-heading" translate="rangeSelectorHeading"></div>
     </mat-card-title>

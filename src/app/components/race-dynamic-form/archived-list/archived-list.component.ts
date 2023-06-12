@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
   Observable,
   of,
-  ReplaySubject
+  ReplaySubject,
+  Subject
 } from 'rxjs';
 import {
   debounceTime,
@@ -15,7 +16,8 @@ import {
   map,
   switchMap,
   tap,
-  catchError
+  catchError,
+  takeUntil
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -25,7 +27,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { defaultLimit, routingUrls } from 'src/app/app.constants';
+import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,7 +46,7 @@ interface FormTableUpdate {
   templateUrl: './archived-list.component.html',
   styleUrls: ['./archived-list.component.scss']
 })
-export class ArchivedListComponent implements OnInit {
+export class ArchivedListComponent implements OnInit, OnDestroy {
   columns: Column[] = [
     {
       id: 'name',
@@ -169,7 +171,7 @@ export class ArchivedListComponent implements OnInit {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = defaultLimit;
+  limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
   nextToken = '';
@@ -193,6 +195,7 @@ export class ArchivedListComponent implements OnInit {
   plantsIdNameMap = {};
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
+  private onDestroy$ = new Subject();
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -215,11 +218,12 @@ export class ArchivedListComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => this.fetchForms$.next({ data: 'search' }))
+        takeUntil(this.onDestroy$),
+        tap((value: string) => {
+          this.fetchForms$.next({ data: 'search' });
+        })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.archivedFormsListCount$ =
-      this.raceDynamicFormService.getFormsListCount$(true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
@@ -263,7 +267,7 @@ export class ArchivedListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 20px)'
+            tableHeight: 'calc(100vh - 130px)'
           };
           initial.data = rows;
         } else {
@@ -315,13 +319,17 @@ export class ArchivedListComponent implements OnInit {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, next }) => {
+        mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
+          if (count !== undefined) {
+            this.archivedFormsListCount$ = of(count);
+          }
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.isLoading$.next(false);
+          this.archivedFormsListCount$ = of(0);
           return of([]);
         }),
         map((data) =>
@@ -428,6 +436,11 @@ export class ArchivedListComponent implements OnInit {
     this.fetchForms$.next({ data: 'load' });
   }
 
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   private onRestoreForm(form: any): void {
     this.raceDynamicFormService
       .updateForm$({
@@ -446,8 +459,6 @@ export class ArchivedListComponent implements OnInit {
           action: 'restore',
           form: updatedForm
         });
-        this.archivedFormsListCount$ =
-          this.raceDynamicFormService.getFormsListCount$(true);
       });
   }
 
@@ -474,8 +485,6 @@ export class ArchivedListComponent implements OnInit {
               action: 'delete',
               form: updatedForm
             });
-            this.archivedFormsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$(true);
           });
       }
     });

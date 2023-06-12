@@ -6,12 +6,12 @@ import { FormResolverService } from '../race-dynamic-form/services/form-resolver
 import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { FormContainerComponent } from './form-container/form-container.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { SchedulerComponent } from './scheduler/scheduler.component';
 import { TemplateConfigurationComponent } from './template-configuration/template-configuration.component';
 import { TemplateResolverService } from './services/template-resolver.service';
 import { TemplateContainerComponent } from './template-container/template-container.component';
+import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 
 const routes: Routes = [
   {
@@ -27,6 +27,7 @@ const routes: Routes = [
         path: 'create',
         component: FormConfigurationComponent,
         canActivate: [AuthGuard],
+        resolve: { form: FormResolverService },
         data: {
           breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForm]
@@ -80,6 +81,15 @@ const routes: Routes = [
             }
           }
         ]
+      },
+      {
+        path: 'observations',
+        component: InspectionObservationsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Observations' },
+          permissions: [permissions.viewRdfObservations]
+        }
       }
     ]
   }

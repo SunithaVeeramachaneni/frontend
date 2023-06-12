@@ -17,7 +17,6 @@ import { FormModule } from 'src/app/forms/form.module';
 import { FormContainerComponent } from './form-container/form-container.component';
 import { FormListComponent } from './form-list/form-list.component';
 import { FormDetailComponent } from './form-detail/form-detail.component';
-import { SubmissionComponent } from './submission/submission.component';
 import { ResponseSetComponent } from './response-set/response-set.component';
 import { PublicLibraryComponent } from './public-library/public-library.component';
 import { FormConfigurationModalComponent } from './form-configuration-modal/form-configuration-modal.component';
@@ -47,8 +46,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
-import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -75,6 +72,13 @@ import { SaveTemplateContainerComponent } from './save-template-container/save-t
 import { CreateFromTemplateModalComponent } from './create-from-template-modal/create-from-template-modal.component';
 import { TemplateContainerComponent } from './template-container/template-container.component';
 import { EditTemplateNameModalComponent } from './edit-template-name-modal/edit-template-name-modal.component';
+import { unitOfMeasurementReducer } from 'src/app/forms/state/unit-of-measurement.reducer';
+import { quickResponseReducer } from 'src/app/forms/state/quick-responses.reducer';
+import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
+import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measurement.effects';
+import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effects';
+import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
+import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -84,13 +88,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    SubmissionComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SubmissionSliderComponent,
-    SubmissionViewComponent,
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
@@ -108,7 +109,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SaveTemplateContainerComponent,
     CreateFromTemplateModalComponent,
     TemplateContainerComponent,
-    EditTemplateNameModalComponent
+    EditTemplateNameModalComponent,
+    InspectionObservationsComponent
   ],
   imports: [
     FormsModule,
@@ -155,16 +157,23 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatTabsModule,
     MatRadioModule,
     StoreModule.forFeature('feature', {
-      formConfiguration: formConfigurationReducer
+      formConfiguration: formConfigurationReducer,
+      unitOfMeasurement: unitOfMeasurementReducer,
+      quickResponse: quickResponseReducer,
+      globalResponse: globalResponseReducer
     }),
     StoreDevtoolsModule.instrument({ logOnly: environment.production }),
-    EffectsModule.forFeature([FormConfigurationEffects])
+    EffectsModule.forFeature([
+      FormConfigurationEffects,
+      UnitOfMeasurementEffects,
+      QuickResponseEffects,
+      GlobalResponseEffects
+    ])
   ],
   exports: [
     FormContainerComponent,
     FormListComponent,
     FormDetailComponent,
-    SubmissionComponent,
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,

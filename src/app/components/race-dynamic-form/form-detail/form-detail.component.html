@@ -1,11 +1,4 @@
-<div
-  id="opendetail"
-  *ngIf="
-    selectedForm &&
-    (selectedFormDetail$ | async) &&
-    (isLoading$ | async) === false
-  "
->
+<div id="opendetail" *ngIf="selectedForm && (isLoading$ | async) === false">
   <mat-card>
     <ng-container>
       <div>
@@ -16,127 +9,233 @@
         ></svg-icon>
         <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
-      <ng-container *ngIf="formStatus === formConfigurationStatus.published">
-        <ng-container *ngIf="scheduleConfiguration">
+      <div *ngIf="selectedFormDetail$ | async">
+        <ng-container *ngIf="formStatus === formConfigurationStatus.published">
+          <ng-container *ngIf="scheduleConfiguration">
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">
+                  {{ 'frequency' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4
+                  class="create-name"
+                  *ngIf="selectedForm?.schedule; else schedule"
+                >
+                  <ng-container
+                    *ngIf="
+                      scheduleConfiguration?.scheduleType !== 'byDate';
+                      else byDate
+                    "
+                  >
+                    {{ selectedForm.schedule }}
+                    <span *ngIf="scheduleConfiguration?.repeatEvery !== 'day'"
+                      >, {{ 'every' | translate }}
+                    </span>
+                    {{ frequencyDetail.info | translate }}
+                    <a class="link" [matMenuTriggerFor]="menu">{{
+                      frequencyDetail.more
+                    }}</a>
+                  </ng-container>
+                  <ng-template #byDate>
+                    {{ selectedForm.schedule }},
+                    {{ frequencyDetail.info | date : 'dd MMM yyyy' }}
+                    <a class="link" [matMenuTriggerFor]="menu">{{
+                      frequencyDetail.more
+                    }}</a>
+                  </ng-template>
+                </h4>
+                <ng-template #schedule>
+                  <button
+                    mat-button
+                    class="schedule-btn"
+                    translate="schedule"
+                    (click)="scheduleRoundPlanEvent()"
+                  ></button>
+                </ng-template>
+                <mat-menu #menu="matMenu" backdropClass="custom-dates-menu">
+                  <div
+                    *ngIf="
+                      frequencyDetail.scheduleType === 'byDate';
+                      else byFrequency
+                    "
+                    class="custom-dates"
+                  >
+                    <p *ngFor="let data of frequencyDetail.data">
+                      {{ data.date | date : 'dd MMM yyyy' }}
+                    </p>
+                  </div>
+                  <ng-template #byFrequency>
+                    <mat-button-toggle-group
+                      multiple
+                      class="week-buttons"
+                      *ngIf="frequencyDetail.repeatEvery === 'week'"
+                    >
+                      <mat-button-toggle
+                        *ngFor="
+                          let dayOfWeek of scheduleConfigs.daysOfWeek;
+                          let i = index
+                        "
+                        [ngClass]="{
+                          active: isDayOfWeekSelected(frequencyDetail.data, i)
+                        }"
+                        [value]="i"
+                        >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                      </mat-button-toggle>
+                    </mat-button-toggle-group>
+                    <div *ngIf="frequencyDetail.repeatEvery === 'month'">
+                      <div
+                        *ngFor="
+                          let filteredWeek of frequencyDetail.data;
+                          let i = index
+                        "
+                        class="weeks-of-month"
+                      >
+                        <div
+                          class="row-title"
+                          class="m-r-20"
+                          [ngClass]="{ 'm-r-36': i === 1 }"
+                        >
+                          {{ scheduleConfigs.weeksOfMonth[filteredWeek.index] }}
+                        </div>
+                        <div>
+                          <mat-button-toggle-group
+                            multiple
+                            class="week-buttons"
+                          >
+                            <mat-button-toggle
+                              *ngFor="
+                                let dayOfWeek of scheduleConfigs.daysOfWeek;
+                                let i = index
+                              "
+                              [ngClass]="{
+                                active: isDayOfWeekSelected(
+                                  filteredWeek.week,
+                                  i
+                                )
+                              }"
+                              [value]="i"
+                              >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
+                            </mat-button-toggle>
+                          </mat-button-toggle-group>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </mat-menu>
+              </div>
+            </div>
+            <div
+              class="name-heading"
+              *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
+            >
+              <div>
+                <p class="color-gray">
+                  {{ 'startEnds' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4 class="create-name">{{ selectedForm?.scheduleDates }}</h4>
+              </div>
+            </div>
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">
+                  {{ 'assignedTo' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4 class="create-name">
+                  {{
+                    selectedForm?.assignedTo
+                      ? selectedForm?.assignedTo
+                      : placeHolder
+                  }}
+                </h4>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="formDetailType === 'Authored'; else submitted">
           <div class="name-heading">
             <div>
               <p class="color-gray">
-                {{ 'frequency' | translate }}
+                {{ 'lastPublishedBy' | translate }}
               </p>
             </div>
-            <div class="flex-custom">
-              <h4
-                class="create-name"
-                *ngIf="selectedForm?.schedule; else schedule"
-              >
-                <ng-container
-                  *ngIf="
-                    scheduleConfiguration?.scheduleType !== 'byDate';
-                    else byDate
-                  "
-                >
-                  {{ selectedForm.schedule }}
-                  <span *ngIf="scheduleConfiguration?.repeatEvery !== 'day'"
-                    >, {{ 'every' | translate }}
-                  </span>
-                  {{ frequencyDetail.info | translate }}
-                  <a class="link" [matMenuTriggerFor]="menu">{{
-                    frequencyDetail.more
-                  }}</a>
-                </ng-container>
-                <ng-template #byDate>
-                  {{ selectedForm.schedule }},
-                  {{ frequencyDetail.info | date : 'dd MMM yyyy' }}
-                  <a class="link" [matMenuTriggerFor]="menu">{{
-                    frequencyDetail.more
-                  }}</a>
-                </ng-template>
-              </h4>
-              <ng-template #schedule>
-                <button
-                  mat-button
-                  class="schedule-btn"
-                  translate="schedule"
-                  (click)="scheduleRoundPlanEvent()"
-                ></button>
-              </ng-template>
-              <mat-menu #menu="matMenu" backdropClass="custom-dates-menu">
-                <div
-                  *ngIf="
-                    frequencyDetail.scheduleType === 'byDate';
-                    else byFrequency
-                  "
-                  class="custom-dates"
-                >
-                  <p *ngFor="let data of frequencyDetail.data">
-                    {{ data.date | date : 'dd MMM yyyy' }}
-                  </p>
-                </div>
-                <ng-template #byFrequency>
-                  <mat-button-toggle-group
-                    multiple
-                    class="week-buttons"
-                    *ngIf="frequencyDetail.repeatEvery === 'week'"
-                  >
-                    <mat-button-toggle
-                      *ngFor="
-                        let dayOfWeek of scheduleConfigs.daysOfWeek;
-                        let i = index
-                      "
-                      [ngClass]="{
-                        active: isDayOfWeekSelected(frequencyDetail.data, i)
-                      }"
-                      [value]="i"
-                      >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
-                    </mat-button-toggle>
-                  </mat-button-toggle-group>
-                  <div *ngIf="frequencyDetail.repeatEvery === 'month'">
-                    <div
-                      *ngFor="
-                        let filteredWeek of frequencyDetail.data;
-                        let i = index
-                      "
-                      class="weeks-of-month"
-                    >
-                      <div
-                        class="row-title"
-                        class="m-r-20"
-                        [ngClass]="{ 'm-r-36': i === 1 }"
-                      >
-                        {{ scheduleConfigs.weeksOfMonth[filteredWeek.index] }}
-                      </div>
-                      <div>
-                        <mat-button-toggle-group multiple class="week-buttons">
-                          <mat-button-toggle
-                            *ngFor="
-                              let dayOfWeek of scheduleConfigs.daysOfWeek;
-                              let i = index
-                            "
-                            [ngClass]="{
-                              active: isDayOfWeekSelected(filteredWeek.week, i)
-                            }"
-                            [value]="i"
-                            >{{ dayOfWeek.slice(0, 1).toUpperCase() }}
-                          </mat-button-toggle>
-                        </mat-button-toggle-group>
-                      </div>
-                    </div>
-                  </div>
-                </ng-template>
-              </mat-menu>
+            <div class="flex-custom" *ngIf="selectedForm?.lastPublishedBy">
+              <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
+              <span class="dots"></span>
+              <p class="date-name color-gray">
+                {{ formateDate(selectedForm?.publishedDate) }}
+              </p>
             </div>
           </div>
-          <div
-            class="name-heading"
-            *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
-          >
+          <div class="name-heading">
             <div>
               <p class="color-gray">
-                {{ 'startEnds' | translate }}
+                {{ 'lastModifiedBy' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom" *ngIf="selectedForm?.lastModifiedBy">
+              <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
+              <span class="dots"></span>
+              <p class="date-name color-gray">
+                {{ formateDate(selectedForm?.updatedAt) }}
+              </p>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'createdBy' | translate }}
               </p>
             </div>
             <div class="flex-custom">
-              <h4 class="create-name">{{ selectedForm?.scheduleDates }}</h4>
+              <h4 class="create-name">{{ selectedForm?.author }}</h4>
+              <span class="dots"></span>
+              <p class="date-name color-gray">
+                {{ formateDate(selectedForm?.createdAt) }}
+              </p>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #submitted>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'status' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name text-transform">
+                {{ selectedForm?.status }}
+              </h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'tasksCompleted' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{ selectedForm?.tasksCompleted.split(',')[0] }}
+              </h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'dueDate' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{ selectedForm?.dueDate | date : 'dd MMM yyyy' }}
+              </h4>
             </div>
           </div>
           <div class="name-heading">
@@ -146,109 +245,11 @@
               </p>
             </div>
             <div class="flex-custom">
-              <h4 class="create-name">
-                {{
-                  selectedForm?.assignedTo
-                    ? selectedForm?.assignedTo
-                    : placeHolder
-                }}
-              </h4>
+              <h4 class="create-name">{{ selectedForm?.assignedTo }}</h4>
             </div>
           </div>
-        </ng-container>
-      </ng-container>
-      <ng-container *ngIf="formDetailType === 'Authored'; else submitted">
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'lastPublishedBy' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom" *ngIf="selectedForm?.lastPublishedBy">
-            <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
-            <span class="dots"></span>
-            <p class="date-name color-gray">
-              {{ formateDate(selectedForm?.updatedAt) }}
-            </p>
-          </div>
-        </div>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'lastModifiedBy' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom" *ngIf="selectedForm?.lastPublishedBy">
-            <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
-            <span class="dots"></span>
-            <p class="date-name color-gray">
-              {{ formateDate(selectedForm?.updatedAt) }}
-            </p>
-          </div>
-        </div>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'authoredBy' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom">
-            <h4 class="create-name">{{ selectedForm?.author }}</h4>
-            <span class="dots"></span>
-            <p class="date-name color-gray">
-              {{ formateDate(selectedForm?.createdAt) }}
-            </p>
-          </div>
-        </div>
-      </ng-container>
-      <ng-template #submitted>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'status' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom">
-            <h4 class="create-name text-transform">
-              {{ selectedForm?.status }}
-            </h4>
-          </div>
-        </div>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'tasksCompleted' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom">
-            <h4 class="create-name">
-              {{ selectedForm?.tasksCompleted.split(',')[0] }}
-            </h4>
-          </div>
-        </div>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'dueDate' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom">
-            <h4 class="create-name">
-              {{ selectedForm?.dueDate | date : 'dd MMM yyyy' }}
-            </h4>
-          </div>
-        </div>
-        <div class="name-heading">
-          <div>
-            <p class="color-gray">
-              {{ 'assignedTo' | translate }}
-            </p>
-          </div>
-          <div class="flex-custom">
-            <h4 class="create-name">{{ selectedForm?.assignedTo }}</h4>
-          </div>
-        </div>
-      </ng-template>
+        </ng-template>
+      </div>
     </ng-container>
     <div
       *ngIf="

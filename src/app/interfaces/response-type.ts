@@ -7,5 +7,12 @@ export interface ResponseTypeOpenState {
 
 export interface RangeSelectorState {
   isOpen: boolean;
+  questionId: string;
   rangeMetadata: NumberRangeMetadata;
+}
+
+export interface SliderSelectorState {
+  isOpen: boolean;
+  questionId: string;
+  value: any;
 }

@@ -1,0 +1,303 @@
+@import '../../../../scss/colors.scss';
+
+.disable-detail-interactions {
+  pointer-events: none;
+  user-select: none;
+}
+
+.back-arrow {
+  height: 17px;
+  width: 17px;
+}
+
+.form-header-modal {
+  background: $white;
+  overflow: hidden;
+
+  .form-toolbar {
+    height: 65px;
+    background-color: $white;
+    border-bottom: 1px solid $border-color;
+
+    .heading {
+      margin: 0 auto;
+      font-size: 90%;
+    }
+
+    .arrows {
+      color: $blue-main;
+      position: relative;
+      top: 7px;
+      font-size: 140%;
+      cursor: pointer;
+    }
+
+    .disabled-arrow {
+      color: $gray1;
+      cursor: pointer;
+    }
+
+    .back-btn {
+      border: none;
+      background-color: transparent;
+    }
+  }
+
+  .form-content {
+    height: calc(100vh - 65px);
+
+    .form-fields {
+      ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+        padding: 0.2em 0px 0.6em 0px !important;
+        display: flex;
+        height: 16px;
+      }
+
+      ::ng-deep .mat-form-field-label-wrapper {
+        top: -1.5em;
+      }
+
+      ::ng-deep
+        .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+        .mat-form-field-label {
+        transform: translateY(-1.1em) scale(0.75);
+        width: 133.33333%;
+      }
+
+      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+        background: #ffffff;
+        border-radius: 4px;
+      }
+
+      ::ng-deep .mat-select-arrow {
+        margin-top: 10px !important;
+      }
+
+      ::ng-deep .mat-datepicker-toggle {
+        position: relative;
+        top: -13px;
+        left: 15px;
+      }
+
+      ::ng-deep .mat-button-focus-overlay {
+        background-color: transparent !important;
+      }
+    }
+
+    .chat-div {
+      border: 1px solid rgba(61, 90, 254, 0.5);
+      margin: 12px;
+      border-radius: 7px;
+
+      .chat-panel {
+        overflow-y: auto;
+        padding-bottom: 15px;
+
+        .username {
+          margin: 10px 15px 0;
+          letter-spacing: 0.15px;
+          font-size: 105%;
+          color: $black;
+        }
+
+        .issue-created {
+          background: $chat-yellow-bg;
+          border-radius: 6px;
+          padding: 10px;
+          width: 40%;
+          margin: 10px;
+        }
+
+        .main-heading {
+          font-weight: 600;
+          font-size: 100%;
+        }
+
+        .sub-headings {
+          font-weight: 500;
+          font-size: 100%;
+        }
+
+        .data {
+          color: $black;
+          font-size: 95%;
+          letter-spacing: 0.15px;
+          line-height: 15px;
+        }
+
+        .text-align-right {
+          justify-content: flex-end;
+        }
+
+        .username-top {
+          margin: 10px 0 0 20px;
+        }
+
+        .message-created {
+          background: $blue-main;
+          border-radius: 6px;
+          padding: 10px;
+          width: 40%;
+          margin: 10px;
+          color: $white;
+        }
+
+        .media-created {
+          border: 5px solid $border-color;
+          border-radius: 4px;
+          width: 300px;
+          height: 280px;
+          margin: 10px;
+        }
+
+        .media-image {
+          width: 300px;
+          height: 280px;
+        }
+
+        .time {
+          font-size: 75%;
+          color: $gray1;
+          margin: 0 15px;
+          line-height: 0;
+          display: flex;
+        }
+
+        ::ng-deep .left-chat .ngx-shimmer {
+          margin: 3px 10px;
+        }
+
+        ::ng-deep .right-chat .ngx-shimmer {
+          margin: 3px 10px;
+          float: right;
+        }
+      }
+
+      .footer {
+        background-color: rgba(61, 90, 254, 0.08);
+        border-top: 1px solid rgba(61, 90, 254, 0.5);
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+        position: absolute;
+        bottom: 11px;
+        padding: 5px 0 10px 0;
+        width: 58%;
+      }
+
+      .add-attachment-icon {
+        color: $blue-main;
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+      }
+
+      .margin {
+        margin: 0 15px;
+      }
+
+      .send-message {
+        position: relative;
+        top: 10px;
+        cursor: pointer;
+        height: 30px;
+        width: 30px;
+      }
+    }
+
+    .details-div {
+      padding: 20px 0;
+      overflow-y: auto;
+
+      .right-div {
+        display: flex;
+        justify-content: space-between;
+
+        .create-erp-notification {
+          background-color: $blue-main;
+          color: $white;
+          width: 102px;
+          height: 34px;
+          font-size: 115%;
+          line-height: 143%;
+        }
+
+        .create-erp-notification:disabled {
+          background-color: $gray2-bg;
+          color: $light-gray;
+        }
+      }
+
+      .p-5-0 {
+        padding: 5px 0;
+      }
+
+      .titles {
+        font-weight: 400;
+        font-size: 100%;
+        letter-spacing: 0.15px;
+        color: $light-gray;
+        padding-left: 10px;
+        margin-right: 80px;
+      }
+      .values {
+        font-weight: 500;
+        font-size: 90%;
+        color: $black;
+        padding-right: 20px;
+      }
+
+      .round-title {
+        color: $blue-main;
+        cursor: pointer;
+      }
+
+      .dropdowns {
+        height: 48px;
+      }
+
+      .line {
+        border-bottom: 1px solid $border-color;
+        border-top: none;
+        margin-right: 12px;
+      }
+    }
+  }
+
+  .attachments-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+
+  .attachments {
+    width: 110px;
+    height: 100px;
+    margin-right: 15px;
+    margin-bottom: 10px;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .mt-0 {
+    margin-top: 0px;
+  }
+}
+
+.searchable-input {
+  width: 85%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 5px 12px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding-bottom: 20px;
+}
+
+::ng-deep .ngx-mat-timepicker-spacer {
+  padding-bottom: 8px;
+}

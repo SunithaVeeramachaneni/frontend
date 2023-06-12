@@ -10,6 +10,7 @@ import {
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
 import { DatePipeDateAdapter } from '../../utils/DatePipeDateAdapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-filter',
@@ -74,7 +75,9 @@ export class FilterComponent implements OnInit, OnChanges {
     let status = true;
     for (const item of this.json) {
       if (item.value || item.itemValue) {
-        status = false;
+        if (typeof item.value === 'string') status = false;
+        else if (typeof item.value === 'object' && item.value.length !== 0)
+          status = false;
       }
     }
     return status;
@@ -86,5 +89,9 @@ export class FilterComponent implements OnInit, OnChanges {
       const endDate = new Date(item.endDate).toISOString();
       item.value = [startDate, endDate];
     }
+  }
+
+  closeSelect(select: MatSelect): void {
+    select.close();
   }
 }

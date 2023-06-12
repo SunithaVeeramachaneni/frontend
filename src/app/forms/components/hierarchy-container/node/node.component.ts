@@ -8,17 +8,16 @@ import {
   ChangeDetectorRef,
   ViewChild
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import {
-  getTasksCountByNodeId,
-  getTasksCountByNodeIds,
+  getNodeWiseQuestionsCount,
   State
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormService } from 'src/app/forms/services/form.service';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-node',
@@ -34,6 +33,10 @@ export class NodeComponent implements OnInit {
 
   @ViewChild('hierarchyMenuTrigger') hierarchyMenuTrigger: MatMenuTrigger;
   selectedNode: any;
+  selectedNode$: any;
+  nodeWiseQuestionsCount: any = {};
+  nodeWiseQuestionsCount$: any;
+  positions: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
 
@@ -41,43 +44,42 @@ export class NodeComponent implements OnInit {
     public assetHierarchyUtil: AssetHierarchyUtil,
     private operatorRoundsService: OperatorRoundsService,
     private formService: FormService,
-    private cdrf: ChangeDetectorRef,
     private store: Store<State>
   ) {}
 
   ngOnInit(): void {
-    this.operatorRoundsService.selectedNode$.subscribe((data) => {
-      this.selectedNode = data;
-      this.cdrf.detectChanges();
-    });
+    this.selectedNode$ = this.operatorRoundsService.selectedNode$.pipe(
+      tap((data) => {
+        this.selectedNode = data;
+      })
+    );
+
+    this.nodeWiseQuestionsCount$ = this.store
+      .select(getNodeWiseQuestionsCount())
+      .pipe(
+        tap((nodeWiseQuestionsCount) => {
+          this.nodeWiseQuestionsCount = nodeWiseQuestionsCount;
+        })
+      );
   }
 
   getTasksCountByNode(node) {
     let nodeId = node.id;
-    let count = 0;
     if (this.hierarchyMode === 'asset_hierarchy') {
       nodeId = node.uid;
       const instanceIdMappings = this.formService.getInstanceIdMappings();
       const instances = instanceIdMappings[nodeId];
       const instanceIds = instances.map((i) => i.id);
-      this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
-        count = c;
-      });
-      // commented due to performance regression while editing round plan.
-      // setTimeout(() => this.cdrf.detectChanges(), 0);
-      return count;
+      return instanceIds.reduce(
+        (acc, curr) => (acc += this.nodeWiseQuestionsCount[curr] || 0),
+        0
+      );
     } else {
-      this.store.select(getTasksCountByNodeId(nodeId)).subscribe((c) => {
-        count = c;
-      });
-      // commented due to performance regression while editing round plan.
-      // setTimeout(() => this.cdrf.detectChanges(), 0);
-      return count;
+      return this.nodeWiseQuestionsCount[nodeId] || 0;
     }
   }
 
   getTotalTasksCountByNode(node) {
-    let count = 0;
     if (this.hierarchyMode === 'asset_hierarchy') {
       let instanceIds = [];
       const instanceIdMappings = this.formService.getInstanceIdMappings();
@@ -90,19 +92,17 @@ export class NodeComponent implements OnInit {
           instanceIds = [...instanceIds, ...instanceIdArr];
         }
       });
-      this.store.select(getTasksCountByNodeIds(instanceIds)).subscribe((c) => {
-        count = c;
-      });
-      return count;
+      return instanceIds.reduce(
+        (acc, curr) => (acc += this.nodeWiseQuestionsCount[curr] || 0),
+        0
+      );
     } else {
       const allChildNodeIds =
         this.assetHierarchyUtil.getAllChildrenIDsByNode(node);
-      this.store
-        .select(getTasksCountByNodeIds(allChildNodeIds))
-        .subscribe((c) => {
-          count = c;
-        });
-      return count;
+      return allChildNodeIds.reduce(
+        (acc, curr) => (acc += this.nodeWiseQuestionsCount[curr] || 0),
+        0
+      );
     }
   }
 
@@ -123,9 +123,15 @@ export class NodeComponent implements OnInit {
   }
 
   toggleShowHierarchyPopover = (node) => {
-    const nodeCoordinates = document
+    const position = document
       .getElementById(`node-${node.id}`)
       .getBoundingClientRect();
+    this.positions = {
+      left: `${position.right + 10}px`,
+      top: `${position.top - 220}px`,
+      arrowleft: `${position.right}px`,
+      arrowtop: `${position.top + 10}px`
+    };
     this.nodeSelectedForShowHierarchy = node;
     this.togglePopover = !this.togglePopover;
   };
