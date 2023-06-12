@@ -158,8 +158,17 @@
               <span
                 *ngIf="logic.value.questions.length"
                 class="mandateAction"
-                (click)="triggerMenuAction('ask_questions', i, logic.value)"
+                (click)="triggerMenuAction('ask_questions', i, logic)"
                 translate="askQuestions"
+              >
+              </span>
+              <span
+                *ngIf="logic.value.raiseNotification"
+                class="mandateAction"
+                translate="raiseNotification"
+                (click)="
+                  openRaiseNotificationDialog('raise_notification', i, logic)
+                "
               >
               </span>
               <button
@@ -204,6 +213,15 @@
                   mat-menu-item
                   (click)="raiseIssue('raise_issue', i, logic.value)"
                   translate="raiseIssue"
+                ></button>
+                <button
+                  *ngIf="isEmbeddedForms"
+                  class="logicActionMenuItem"
+                  mat-menu-item
+                  (click)="
+                    openRaiseNotificationDialog('raise_notification', i, logic)
+                  "
+                  translate="raiseNotification"
                 ></button>
               </mat-menu>
             </div>

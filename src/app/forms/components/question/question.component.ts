@@ -634,6 +634,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
       raiseIssue: false,
       logicTitle: '',
       expression: '',
+      raiseNotification: false,
+      triggerInfo: '',
+      triggerWhen: '',
       questions: [],
       mandateQuestions: [],
       hideQuestions: []

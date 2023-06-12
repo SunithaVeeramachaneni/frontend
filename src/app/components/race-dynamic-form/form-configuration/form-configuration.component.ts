@@ -53,6 +53,7 @@ import {
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -88,6 +89,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   isEmbeddedForms: boolean;
   errors: ValidationError = {};
   formDetails: any;
+  pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   private onDestroy$ = new Subject();
@@ -102,7 +104,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
     private formConfigurationService: FormConfigurationService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -233,6 +236,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
+        this.pages = pages;
 
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
@@ -470,6 +474,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
+
+    const form = { formMetadata: this.formMetadata, pages: this.pages };
+
+    if (this.isEmbeddedForms) {
+      this.rdfService.publishEmbeddedForms$(form).subscribe(() => {
+        this.router.navigate(['/operator-rounds']);
+      });
+    }
   }
 
   getFormConfigurationStatuses() {
@@ -531,6 +543,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
+  }
+
+  publishOrShowPdf() {
+    if (!this.isEmbeddedForms) {
+      this.goToPDFBuilderConfiguration();
+    } else {
+      // PUBLISH FORM TO SAP AND DYNAMODB
+      this.publishFormDetail();
+    }
   }
 
   goToPDFBuilderConfiguration = () => {
