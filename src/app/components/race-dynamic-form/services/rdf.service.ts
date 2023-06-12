@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, mergeMap, toArray } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -325,40 +325,6 @@ export class RaceDynamicFormService {
     );
   }
 
-  createFormDetail$(formDetails) {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/inspection',
-      {
-        name: formDetails.formMetadata.name,
-        description: formDetails.formMetadata.description,
-        formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
-        pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration
-      }
-    );
-  }
-
-  updateFormDetail$(formDetails) {
-    return this.appService.patchData(
-      environment.rdfApiUrl,
-      `forms/inspection/${formDetails.formDetailId}`,
-      {
-        formlistID: formDetails.formListId,
-        name: formDetails.formMetadata.name,
-        description: formDetails.formMetadata.description,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
-        _version: formDetails.formDetailDynamoDBVersion
-      }
-    );
-  }
-
   createAuthoredFormDetail$(formDetails) {
     return this.appService._postData(environment.rdfApiUrl, `forms/authored`, {
       formStatus: formDetails.formStatus,
@@ -443,201 +409,12 @@ export class RaceDynamicFormService {
     });
   }
 
-  formatFormData = (form, pages): string => {
-    const forms = [];
-    const arrayFieldTypeQuestions = [];
-    const formData = {
-      FORMNAME: form.name,
-      PAGES: []
-    };
-    formData.PAGES = pages.map((page) => {
-      // eslint-disable-next-line prefer-const
-      let { sections, questions, logics } = page;
-
-      const pageItem = {
-        PAGENAME: page.name,
-        SECTIONS: sections.map((section) => {
-          let questionsBySection = questions.filter(
-            (item) => item.sectionId === section.id
-          );
-          const logicQuestions = [];
-
-          questionsBySection.forEach((question) => {
-            const questionLogics = logics.filter(
-              (l) => l.questionId === question.id
-            );
-
-            if (questionLogics && questionLogics.length) {
-              questionLogics.forEach((logic) => {
-                questions.forEach((q) => {
-                  if (q.sectionId === `AQ_${logic.id}`) {
-                    logicQuestions.push(q);
-                  }
-                });
-              });
-            }
-          });
-
-          questionsBySection = [...questionsBySection, ...logicQuestions];
-          const sectionItem = {
-            SECTIONNAME: section.name,
-            FIELDS: questionsBySection.map((question) => {
-              if (question.fieldType === 'TF') {
-                question.fieldType = question.value;
-              }
-              const questionItem = {
-                UNIQUEKEY: question.id,
-                FIELDLABEL: question.name,
-                UIFIELDTYPE: question.fieldType,
-                UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '' as any,
-                UIVALIDATION: this.getValidationExpression(
-                  question.id,
-                  question,
-                  questions,
-                  logics
-                ),
-                MANDATORY: question.required === true ? 'X' : ''
-              };
-
-              if (question.fieldType === 'ARD') {
-                Object.assign(questionItem, { SUBFORMNAME: question.name }); // Might be name or id.
-                arrayFieldTypeQuestions.push(question);
-              }
-
-              if (
-                question.fieldType === 'VI' ||
-                question.value?.type === 'quickResponse'
-              ) {
-                const viVALUE = this.prepareDDValue(question.value?.value);
-                Object.assign(questionItem, {
-                  DDVALUE: viVALUE
-                });
-              }
-
-              if (question.fieldType === 'NF') {
-                Object.assign(questionItem, {
-                  MEASUREMENT:
-                    question.unitOfMeasurement !== 'None'
-                      ? question.unitOfMeasurement
-                      : ''
-                });
-                if (question.rangeMetadata.min && question.rangeMetadata.max) {
-                  Object.assign(questionItem, {
-                    DEFAULTVALUE: JSON.stringify({
-                      min: question.rangeMetadata.min + '',
-                      max: question.rangeMetadata.max + '',
-                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
-                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
-                      value: ''
-                    })
-                  });
-                }
-              }
-
-              if (
-                question.fieldType === 'DD' &&
-                question.value?.type === 'globalResponse'
-              ) {
-                let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.responseSetService
-                  .fetchAllGlobalResponses$()
-                  .pipe(
-                    tap((responses) => {
-                      currentGlobalResponseValues = JSON.parse(
-                        responses.items.find(
-                          (item) => item.id === question.value.id
-                        )
-                      );
-                    })
-                  );
-                currenGlobalResponse$.subscribe();
-                questionItem.UIFIELDTYPE = question.multi
-                  ? 'DDM'
-                  : question.fieldType;
-                Object.assign(questionItem, {
-                  DDVALUE: currentGlobalResponseValues
-                    ? this.prepareDDValue(currentGlobalResponseValues)
-                    : []
-                });
-              }
-
-              if (question.fieldType === 'RT') {
-                const { min, max, increment } = question.value;
-                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
-              }
-
-              if (question.fieldType === 'LF') {
-                questionItem.DEFAULTVALUE = question.value;
-              }
-
-              if (question.fieldType === 'DT') {
-                questionItem.UIFIELDTYPE =
-                  question.value.date && question.value.time
-                    ? 'DT'
-                    : question.value.date
-                    ? 'DF'
-                    : 'TIF';
-                questionItem.DEFAULTVALUE =
-                  question.value.date && question.value.time
-                    ? 'CDT'
-                    : question.value.date
-                    ? 'CD'
-                    : 'CT';
-              }
-
-              if (question.fieldType === 'HL') {
-                questionItem.DEFAULTVALUE = question.value.title;
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.link
-                });
-              }
-
-              if (question.fieldType === 'INST') {
-                if (
-                  question.value.tag.title !== this.translate.instant('noneTag')
-                ) {
-                  Object.assign(questionItem, {
-                    TAG: JSON.stringify({
-                      title: question.value.tag.title,
-                      colour: question.value.tag.colour
-                    })
-                  });
-                } else {
-                  Object.assign(questionItem, {
-                    TAG: null
-                  });
-                }
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.images
-                    .filter((image) => image !== null)
-                    .map((image) => image.objectKey.substring('public/'.length))
-                    .join(';'),
-                  DOCFILE:
-                    question.value.pdf?.objectKey.substring('public/'.length) ||
-                    ''
-                });
-              }
-              return questionItem;
-            })
-          };
-
-          return sectionItem;
-        })
-      };
-
-      return pageItem;
-    });
-
-    forms.push(formData);
-    return JSON.stringify({ FORMS: forms });
-  };
-
-  getValidationExpression(questionId, question, questions, logics) {
-    console.log(logics);
+  getValidationExpression(questionId, question, questions, logics): any {
     let expression = '';
+    let validationMessage = '';
     let notificationExpression = '';
     let globalIndex = 0;
+    let askQuestions = [];
     let notificationGlobalIndex = 0;
     const logicsT = JSON.parse(JSON.stringify(logics));
     const questionLogics = logicsT.filter(
@@ -689,9 +466,7 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      const askQuestions = questions.filter(
-        (q) => q.sectionId === `AQ_${logic.id}`
-      );
+      askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
@@ -721,139 +496,6 @@ export class RaceDynamicFormService {
       notificationExpression = notificationExpression.slice(
         0,
         notificationExpression.length - 1
-      );
-    }
-    return expression;
-  }
-
-  getValidationExpressionEmbedded(question: any, sectionQuestions: any): any {
-    let expression = '';
-    let notificationExpression = '';
-    let validationMessage = '';
-    let globalIndex = 0;
-    let notificationGlobalIndex = 0;
-    let askQuestions = [];
-
-    if (!question.logics || !question.logics.length) return expression;
-    question.logics.forEach((logic) => {
-      if (question.fieldType === 'CB') {
-        logic.operand2 = logic.operand2 === 'true' ? 'X' : '';
-      }
-      const isEmpty = !logic.operand2.length;
-      const questionId = question.id;
-
-      // Mandate Questions;
-      const mandatedQuestions = logic.mandateQuestions;
-      if (mandatedQuestions && mandatedQuestions.length) {
-        mandatedQuestions.forEach((mq, index) => {
-          globalIndex = globalIndex + 1;
-          if (isEmpty) {
-            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
-          } else {
-            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
-          }
-
-          const questionIndex = sectionQuestions.findIndex(
-            (sq) => sq.id === mq
-          );
-          if (questionIndex > -1) {
-            const mQuestion = sectionQuestions[questionIndex];
-            validationMessage = `${validationMessage};${globalIndex}:Please answer the question ${mQuestion.name}`;
-          }
-        });
-      }
-
-      // Hide Questions;
-      const hiddenQuestions = logic.hideQuestions;
-      if (hiddenQuestions && hiddenQuestions.length) {
-        hiddenQuestions.forEach((hq, index) => {
-          globalIndex = globalIndex + 1;
-          if (isEmpty) {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
-          } else {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
-          }
-        });
-      }
-
-      // Ask Evidence;
-      const evidenceQuestion = logic.askEvidence;
-      const oppositeOperator = this.getOppositeOperator(logic.operator);
-      if (evidenceQuestion && evidenceQuestion.length) {
-        let isEvidenceMandatory = false;
-        if (sectionQuestions.findIndex((q) => q.id === evidenceQuestion) > -1) {
-          isEvidenceMandatory = sectionQuestions.filter(
-            (q) => q.id === evidenceQuestion
-          )[0].required;
-        }
-        globalIndex = globalIndex + 1;
-        if (question.fieldType === 'CB') {
-          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
-        } else {
-          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
-        }
-        globalIndex = globalIndex + 1;
-        if (isEvidenceMandatory) {
-          if (isEmpty) {
-            expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
-          } else {
-            if (question.fieldType === 'CB') {
-              expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
-            } else {
-              expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
-            }
-          }
-          validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
-        }
-      }
-
-      // Ask Questions;
-      const questionsToBeAsked = logic.questions || [];
-      askQuestions = askQuestions.concat(questionsToBeAsked);
-      questionsToBeAsked.forEach((q) => {
-        globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
-        if (q?.required) {
-          globalIndex = globalIndex + 1;
-          expression = `${expression};${globalIndex}:(E) ${q.id} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
-          validationMessage = `${validationMessage};${globalIndex}:Please answer the question ${q.name}`;
-        }
-      });
-
-      // Raise Notification;
-      const notificationQuestion = logic.raiseNotification;
-      if (notificationQuestion) {
-        notificationGlobalIndex = notificationGlobalIndex + 1;
-        notificationExpression = `${notificationExpression};${notificationGlobalIndex}:${questionId} ${logic.operator} (V)${logic.operand2}`;
-      }
-    });
-
-    if (expression[0] === ';') {
-      expression = expression.slice(1, expression.length);
-    }
-    if (expression[expression.length - 1] === ';') {
-      expression = expression.slice(0, expression.length - 1);
-    }
-    if (notificationExpression[0] === ';') {
-      notificationExpression = notificationExpression.slice(
-        1,
-        notificationExpression.length
-      );
-    }
-    if (notificationExpression[notificationExpression.length - 1] === ';') {
-      notificationExpression = notificationExpression.slice(
-        0,
-        notificationExpression.length - 1
-      );
-    }
-
-    if (validationMessage[0] === ';') {
-      validationMessage = validationMessage.slice(1, validationMessage.length);
-    }
-    if (validationMessage[validationMessage.length - 1] === ';') {
-      validationMessage = validationMessage.slice(
-        0,
-        validationMessage.length - 1
       );
     }
     return {
@@ -1037,6 +679,7 @@ export class RaceDynamicFormService {
     params.set('limit', LIST_LENGTH.toString());
     params.set('next', '');
     params.set('fetchType', 'load');
+    params.set('formType', formConfigurationStatus.standalone);
     params.set('isArchived', 'false');
     params.set('modifiedBy', '');
     params.set('formStatus', '');
@@ -1258,186 +901,168 @@ export class RaceDynamicFormService {
       `templates/${templateId}`
     );
 
-  postPutFormFieldPayload(form) {
+  postPutFormFieldPayloadEmbedded(form) {
+    const {
+      formMetadata: { id, name },
+      pages
+    } = form;
     let payloads = [];
-    const { sections, name, id } = form;
-    sections.forEach((section) => {
-      const {
-        questions,
-        name: sectionName,
-        position: sectionPosition
-      } = section;
 
-      let index = 0;
-      let evidenceQuestionCheck = false;
-      const sectionPayloads = [];
-      questions
-        .map((question) => {
-          index = index + 1;
-          if (question?.id.includes('EVIDENCE')) {
-            evidenceQuestionCheck = true;
-          }
-          const {
-            id: questionId,
-            name: questionName,
-            position: questionPosition,
-            required,
-            isPublished,
-            isPublishedTillSave
-          } = question;
+    pages.forEach((page) => {
+      let { questions, sections, logics } = page;
 
-          if (isPublishedTillSave) {
-            return null;
-          }
+      sections.forEach((section) => {
+        const { name: sectionName, position: sectionPosition } = section;
+        let questionsBySection = questions.filter(
+          (item) => item.sectionId === section.id
+        );
 
-          const {
-            expression,
-            validationMessage,
-            askQuestions,
-            notificationExpression
-          } = this.getValidationExpressionEmbedded(question, questions);
-          const notificationInfo = this.getNotificationInfo(question);
+        const logicQuestions = [];
 
-          sectionPayloads.push({
-            UNIQUEKEY: questionId,
-            VALIDFROM,
-            VALIDTO,
-            VERSION,
-            SECTIONNAME: sectionName,
-            FIELDLABEL: questionName,
-            UIPOSITION: index.toString(),
-            UIFIELDTYPE: this.getFieldType(question),
-            ACTIVE: 'X',
-            INSTRUCTION: '',
-            TEXTSTYLE: '',
-            TEXTCOLOR: '',
-            MANDATORY: required && !evidenceQuestionCheck ? 'X' : '',
-            SECTIONPOSITION: sectionPosition.toString(),
-            DEFAULTVALUE: this.getDefaultValue(question),
-            APPNAME,
-            FORMNAME: id,
-            FORMTITLE: name,
-            STATUS: 'PUBLISHED',
-            ELEMENTTYPE: 'MULTIFORMTAB',
-            PUBLISHED: isPublished,
-            SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
-            UIVALIDATION: expression, //this.getValidationExpression(question),
-            UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
-            BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
-            BOSTATUS: notificationInfo[0] ? 'X' : '',
-            BOCONDITION: notificationInfo[0] ? notificationExpression : '',
-            TRIGGERON: notificationInfo[0]
-              ? notificationInfo[0].triggerWhen
-              : '',
-            TRIGGERINFO: notificationInfo[0]
-              ? notificationInfo[0].triggerInfo
-              : '',
-            ...this.getProperties(question, id)
-          });
+        questionsBySection.forEach((question) => {
+          const questionLogics = logics.filter(
+            (l) => l.questionId === question.id
+          );
 
-          if (question.table.length) {
-            question.table.forEach((row, tableIndex) => {
-              if (row.isPublishedTillSave) {
-                return null;
-              }
-              sectionPayloads.push({
-                UNIQUEKEY: row.id,
-                VALIDFROM,
-                VALIDTO,
-                VERSION,
-                SECTIONNAME: '',
-                FIELDLABEL: row.name,
-                UIPOSITION: (tableIndex + 1).toString(),
-                UIFIELDTYPE: this.getFieldType(row),
-                ACTIVE: 'X',
-                INSTRUCTION: '',
-                TEXTSTYLE: '',
-                TEXTCOLOR: '',
-                MANDATORY: '',
-                SECTIONPOSITION: sectionPosition.toString(),
-                DEFAULTVALUE: this.getDefaultValue(row),
-                APPNAME,
-                STATUS: 'PUBLISHED',
-                FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
-                FORMTITLE: '',
-                OVERVIEW: question.fieldType === 'ARD' ? 'X' : '',
-                ELEMENTTYPE: 'MULTIFORMTAB',
-                PUBLISHED: row.isPublished,
-                ...this.getProperties(row)
+          if (questionLogics && questionLogics.length) {
+            questionLogics.forEach((logic) => {
+              questions.forEach((q) => {
+                if (q.sectionId === `AQ_${logic.id}`) {
+                  logicQuestions.push(q);
+                }
               });
             });
           }
+        });
 
-          if (askQuestions && askQuestions.length) {
-            askQuestions.forEach((aq) => {
-              index = index + 1;
-              sectionPayloads.push({
-                UNIQUEKEY: aq.id,
-                VALIDFROM,
-                VALIDTO,
-                VERSION,
-                SECTIONNAME: sectionName,
-                FIELDLABEL: aq.name,
-                UIPOSITION: index.toString(),
-                UIFIELDTYPE: this.getFieldType(aq),
-                ACTIVE: 'X',
-                INSTRUCTION: '',
-                TEXTSTYLE: '',
-                TEXTCOLOR: '',
-                MANDATORY: required ? 'X' : '',
-                SECTIONPOSITION: sectionPosition.toString(),
-                DEFAULTVALUE: this.getDefaultValue(aq),
-                APPNAME,
-                FORMNAME: id,
-                FORMTITLE: name,
-                STATUS: 'PUBLISHED',
-                ELEMENTTYPE: 'MULTIFORMTAB',
-                PUBLISHED: aq.isPublished,
-                UIVALIDATION: '', //this.getValidationExpression(question),
-                UIVALIDATIONMSG: '', //this.getValidationMessage(question),
-                ...this.getProperties(aq)
-              });
+        questionsBySection = [...questionsBySection, ...logicQuestions];
+
+        let index = 0;
+        let evidenceQuestionCheck = false;
+        const sectionPayloads = [];
+
+        questionsBySection
+          .map((question) => {
+            index += 1;
+
+            const {
+              id: questionId,
+              name: questionName,
+              position: questionPosition,
+              required,
+              isPublished,
+              isPublishedTillSave
+            } = question;
+
+            if (isPublishedTillSave) {
+              return null;
+            }
+
+            const {
+              expression,
+              validationMessage,
+              askQuestions,
+              notificationExpression
+            } = this.getValidationExpression(
+              questionId,
+              question,
+              questions,
+              logics
+            );
+
+            const notificationInfo = this.getNotificationInfo(question, logics);
+
+            sectionPayloads.push({
+              UNIQUEKEY: questionId,
+              VALIDFROM,
+              VALIDTO,
+              VERSION,
+              SECTIONNAME: sectionName,
+              FIELDLABEL: questionName,
+              UIPOSITION: index.toString(),
+              UIFIELDTYPE: question.fieldType,
+              ACTIVE: 'X',
+              INSTRUCTION: '',
+              TEXTSTYLE: '',
+              TEXTCOLOR: '',
+              MANDATORY: required && !evidenceQuestionCheck ? 'X' : '',
+              SECTIONPOSITION: sectionPosition.toString(),
+              DEFAULTVALUE: this.getDefaultValue(question),
+              APPNAME,
+              FORMNAME: id.slice(0, 20),
+              FORMTITLE: name,
+              STATUS: 'PUBLISHED',
+              ELEMENTTYPE: 'MULTIFORMTAB',
+              PUBLISHED: isPublished,
+              SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
+              UIVALIDATION: expression,
+              UIVALIDATIONMSG: validationMessage,
+              BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
+              BOSTATUS: notificationInfo[0] ? 'X' : '',
+              BOCONDITION: notificationInfo[0] ? notificationExpression : '',
+              TRIGGERON: notificationInfo[0]
+                ? notificationInfo[0].triggerWhen
+                : '',
+              TRIGGERINFO: notificationInfo[0]
+                ? notificationInfo[0].triggerInfo
+                : '',
+              ...this.getProperties(question, id)
             });
-          }
-        })
-        .filter((payload) => payload);
-      payloads = [...payloads, ...sectionPayloads];
+
+            if (askQuestions && askQuestions.length) {
+              askQuestions.forEach((aq) => {
+                index = index + 1;
+                sectionPayloads.push({
+                  UNIQUEKEY: aq.id.slice(0, 20),
+                  VALIDFROM,
+                  VALIDTO,
+                  VERSION,
+                  SECTIONNAME: sectionName,
+                  FIELDLABEL: aq.name,
+                  UIPOSITION: index.toString(),
+                  UIFIELDTYPE: aq.fieldType,
+                  ACTIVE: 'X',
+                  INSTRUCTION: '',
+                  TEXTSTYLE: '',
+                  TEXTCOLOR: '',
+                  MANDATORY: required ? 'X' : '',
+                  SECTIONPOSITION: sectionPosition.toString(),
+                  DEFAULTVALUE: this.getDefaultValue(aq),
+                  APPNAME,
+                  FORMNAME: id,
+                  FORMTITLE: name,
+                  STATUS: 'PUBLISHED',
+                  ELEMENTTYPE: 'MULTIFORMTAB',
+                  PUBLISHED: aq.isPublished,
+                  UIVALIDATION: '',
+                  UIVALIDATIONMSG: '',
+                  ...this.getProperties(aq)
+                });
+              });
+            }
+          })
+          .filter((payload) => payload);
+        payloads = [...payloads, ...sectionPayloads];
+      });
     });
     return payloads;
   }
 
-  getNotificationInfo(question) {
+  getNotificationInfo(question, logics) {
     let notificationInfo = [];
-    question.logics.forEach((logic) => {
-      const raiseNotification = logic.raiseNotification;
+
+    const questionLogics = logics.filter(
+      (logic) => logic.questionId === question.id
+    );
+
+    questionLogics.forEach((logic) => {
+      const raiseNotification = logic?.raiseNotification;
       if (raiseNotification) {
         const { triggerInfo, triggerWhen } = logic;
         notificationInfo.push({ triggerInfo, triggerWhen });
       }
     });
     return notificationInfo;
-  }
-
-  getOppositeOperator = (operator) => {
-    const oppositeOperatorMap = new Map([
-      ['LE', 'GT'],
-      ['GE', 'LT'],
-      ['LT', 'GE'],
-      ['GT', 'LE'],
-      ['EQ', 'NE'],
-      ['NE', 'EQ']
-    ]);
-    return oppositeOperatorMap.get(operator);
-  };
-
-  getFieldType(question) {
-    const { value, fieldType } = question;
-    switch (fieldType) {
-      case 'TF':
-        return value;
-      default:
-        return fieldType;
-    }
   }
 
   getDefaultValue(question) {
@@ -1593,4 +1218,45 @@ export class RaceDynamicFormService {
     }
     return properties;
   }
+
+  publishEmbeddedForms$ = (form: any, info: ErrorInfo = {} as ErrorInfo) =>
+    from(this.postPutFormFieldPayloadEmbedded(form)).pipe(
+      mergeMap((payload) => {
+        const { PUBLISHED, ...rest } = payload;
+        if (!PUBLISHED) {
+          return this.createAbapFormField$(rest, info).pipe(
+            map((resp) =>
+              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
+            )
+          );
+        } else {
+          return this.updateAbapFormField$(rest, info).pipe(
+            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
+          );
+        }
+      }),
+      toArray()
+    );
+
+  createAbapFormField$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'abap/forms/fields',
+      form,
+      info
+    );
+
+  updateAbapFormField$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms/fields`,
+      form,
+      info
+    );
 }

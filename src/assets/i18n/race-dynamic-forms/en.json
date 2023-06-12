@@ -310,5 +310,6 @@
   "selectAll": "Select All",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
-  "link":"Link"
+  "link": "Link",
+  "raiseNotification": "Raise Notification"
 }

@@ -105,6 +105,8 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -169,7 +171,8 @@ import {
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    RaiseNotificationDailogComponent
   ],
   imports: [
     SharedModule,
@@ -203,6 +206,7 @@ import {
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
