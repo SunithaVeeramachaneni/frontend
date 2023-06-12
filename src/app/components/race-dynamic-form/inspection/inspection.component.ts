@@ -504,6 +504,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       formId: this.formId,
       inspectionId: this.inspectionId
     };
+    this.isLoading$.next(true);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
@@ -517,7 +518,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   getAllInspections() {
     this.isLoading$.next(true);
-    this.raceDynamicFormService.fetchAllRounds$().subscribe(
+    this.raceDynamicFormService.fetchAllInspections$().subscribe(
       (formsList) => {
         this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);

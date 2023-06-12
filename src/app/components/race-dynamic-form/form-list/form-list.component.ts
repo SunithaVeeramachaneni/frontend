@@ -50,6 +50,8 @@ import { CreateFromTemplateModalComponent } from '../create-from-template-modal/
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
+import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-form-list',
@@ -298,7 +300,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     private router: Router,
     private readonly store: Store<State>,
     private dialog: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private usersService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -311,15 +315,14 @@ export class FormListComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => {
+        tap((value: string) => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
-    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
 
-    this.getAllForms();
+    this.populateFilter();
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -409,8 +412,6 @@ export class FormListComponent implements OnInit, OnDestroy {
                   oldId: form.id
                 } as any
               });
-              this.formsListCount$ =
-                this.raceDynamicFormService.getFormsListCount$();
             });
         }
       });
@@ -502,13 +503,15 @@ export class FormListComponent implements OnInit, OnDestroy {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.formsCount$ = of({ count });
+          if (count !== undefined) {
+            this.formsListCount$ = of(count);
+          }
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.formsCount$ = of({ count: 0 });
+          this.formsListCount$ = of(0);
           this.isLoading$.next(false);
           return of([]);
         }),
@@ -541,12 +544,11 @@ export class FormListComponent implements OnInit, OnDestroy {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm) => {
+      .subscribe(() => {
         this.addEditCopyForm$.next({
           action: 'delete',
           form
         });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
   }
 
@@ -610,60 +612,34 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  getAllForms() {
-    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
-    this.formsList$
-      .pipe(
-        tap((formsList) => {
-          const objectKeys = Object.keys(formsList);
-          if (objectKeys.length > 0) {
-            const uniqueLastPublishedBy = formsList.rows
-              .map((item) => item.lastPublishedBy)
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.lastPublishedBy = [...uniqueLastPublishedBy];
+  populateFilter() {
+    combineLatest([
+      this.usersService.getUsersInfo$(),
+      this.plantService.fetchAllPlants$()
+    ]).subscribe(([usersList, { items: plantsList }]) => {
+      this.createdBy = usersList.map(
+        (user) => `${user.firstName} ${user.lastName}`
+      );
+      this.lastModifiedBy = usersList.map(
+        (user) => `${user.firstName} ${user.lastName}`
+      );
+      this.plants = plantsList.map((plant) => {
+        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        return `${plant.plantId} - ${plant.name}`;
+      });
 
-            const uniqueLastModifiedBy = formsList.rows
-              .map((item) => {
-                if (item.lastModifiedBy) {
-                  return item.lastModifiedBy;
-                }
-              })
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.lastModifiedBy = [...uniqueLastModifiedBy];
-
-            const uniqueCreatedBy = formsList.rows
-              .map((item) => item.author)
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.createdBy = [...uniqueCreatedBy];
-
-            const uniquePlants = formsList.rows
-              .map((item) => {
-                if (item.plantId) {
-                  this.plantsIdNameMap[item.plant] = item.plantId;
-                  return item.plant;
-                }
-                return '';
-              })
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.plants = [...uniquePlants];
-
-            for (const item of this.filterJson) {
-              if (item.column === 'status') {
-                item.items = this.status;
-              } else if (item.column === 'modifiedBy') {
-                item.items = this.lastModifiedBy;
-              } else if (item.column === 'authoredBy') {
-                item.items = this.authoredBy;
-              } else if (item.column === 'plant') {
-                item.items = this.plants;
-              } else if (item.column === 'createdBy') {
-                item.items = this.createdBy;
-              }
-            }
-          }
-        })
-      )
-      .subscribe();
+      for (const item of this.filterJson) {
+        if (item.column === 'status') {
+          item.items = this.status;
+        } else if (item.column === 'modifiedBy') {
+          item.items = this.lastModifiedBy;
+        } else if (item.column === 'plant') {
+          item.items = this.plants;
+        } else if (item.column === 'createdBy') {
+          item.items = this.createdBy;
+        }
+      }
+    });
   }
 
   getFilter() {
