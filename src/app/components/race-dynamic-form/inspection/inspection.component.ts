@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -66,6 +67,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '../../user-management/services/users.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-inspection',
@@ -75,8 +77,8 @@ import { UsersService } from '../../user-management/services/users.service';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -178,10 +180,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
     },
 
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'date-picker',
+      controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
@@ -344,6 +346,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedForm: InspectionDetail;
+  selectedFormInfo: InspectionDetail;
+  selectedDate = null;
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
   formId: string;
@@ -356,6 +360,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: this.columns,
     data: []
   };
+  sliceCount = 100;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -461,7 +466,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
           );
         }
         this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
+        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
+        const dataSource = this.dataSource
+          ? this.dataSource.data.concat(
+              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
+            )
+          : this.initial.data.slice(sliceStart, this.sliceCount);
+        this.dataSource = new MatTableDataSource(dataSource);
         return this.initial;
       })
     );
@@ -578,11 +590,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
-        this.selectedForm = row;
+        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        this.selectedFormInfo = row;
         break;
-      case 'dueDate':
-        this.selectedForm = row;
+      case 'dueDateDisplay':
+        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedFormInfo = row;
         break;
       default:
         this.openInspectionHandler(row);
@@ -755,8 +769,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
-    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+    let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
         ? `,${assignedToEmail}`
@@ -770,7 +784,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedForm;
+    let { status } = this.selectedFormInfo;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.raceDynamicFormService
       .updateInspection$(
@@ -781,7 +795,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
@@ -793,7 +807,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -803,11 +817,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.assigneeMenuTrigger.closeMenu();
+    this.trigger.toArray()[0].closeMenu();
   }
 
-  onChangeDueDateHandler(dueDate: Date) {
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
+  dateChangeHandler(dueDate: Date) {
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -817,11 +831,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
                   dueDate,
+                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
@@ -829,7 +844,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -839,5 +854,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  dueDateClosedHandler() {
+    this.trigger.toArray()[1].closeMenu();
   }
 }

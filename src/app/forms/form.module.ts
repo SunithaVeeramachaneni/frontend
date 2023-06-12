@@ -100,6 +100,7 @@ import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
+import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import {
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
@@ -169,7 +170,8 @@ import {
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    DatePickerComponent
   ],
   imports: [
     SharedModule,
@@ -244,7 +246,8 @@ import {
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    DatePickerComponent
   ]
 })
 export class FormModule {}
