@@ -49,7 +49,9 @@ export class AddEditPlantComponent implements OnInit {
           ? this.plantEditData.image
           : '';
 
-      this.selectedShiftIDs = this.plantEditData?.shifts;
+      this.selectedShiftIDs = this.plantEditData?.shifts?.map(
+        (shift) => shift.id
+      );
       this.selectedShiftIDs?.forEach((id) => {
         const index = this.allShiftsMaster.findIndex((sm) => sm.id === id);
         if (index > -1) {
@@ -193,7 +195,14 @@ export class AddEditPlantComponent implements OnInit {
       if (this.plantStatus === 'add') {
         this.plantForm.get('image').setValue('');
         const { id, ...payload } = this.plantForm.value;
-        const shiftsStr = JSON.stringify(payload.shifts);
+        const selectedShiftDetailsTemp = [];
+        payload?.shifts.forEach((sid) => {
+          const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+          if (index > -1) {
+            selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+          }
+        });
+        const shiftsStr = JSON.stringify(selectedShiftDetailsTemp);
         this.plantService
           .createPlant$({ ...payload, shifts: shiftsStr })
           .subscribe((res) => {
@@ -206,7 +215,15 @@ export class AddEditPlantComponent implements OnInit {
           });
       } else if (this.plantStatus === 'edit') {
         const payload = this.plantForm.getRawValue();
-        const shiftsStr = JSON.stringify(payload.shifts);
+        const selectedShiftDetailsTemp = [];
+        payload?.shifts.forEach((sid) => {
+          const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+          if (index > -1) {
+            selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+          }
+        });
+        const shiftsStr = JSON.stringify(selectedShiftDetailsTemp);
+
         this.plantService
           .updatePlant$({
             ...payload,
