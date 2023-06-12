@@ -67,10 +67,10 @@
           <mat-select
             formControlName="country"
             [placeholder]="'countryMandatory' | translate"
-            (closed)="onSelectBlur()"
+            (closed)="onCountryClosed()"
           >
             <input
-              #inputRef
+              #countryInputSearch
               [(ngModel)]="this.countrySearch"
               [ngModelOptions]="{ standalone: true }"
               class="searchable-input"
@@ -124,13 +124,19 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label *ngIf="noState" translate="stateNotMandatory"></mat-label>
-          <mat-label *ngIf="!noState" translate="stateMandatory"></mat-label>
+          <mat-label>{{
+            noState
+              ? ('stateNotMandatory' | translate)
+              : ('stateMandatory' | translate)
+          }}</mat-label>
+          <!-- <mat-label *ngIf="!noState" translate="stateMandatory"></mat-label> -->
           <mat-select
             formControlName="state"
             [placeholder]="'stateMandatory' | translate"
+            (closed)="onStateClosed()"
           >
             <input
+              #stateInputSearch
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKeyState($event)"

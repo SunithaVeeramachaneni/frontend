@@ -489,7 +489,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[issue.plantId],
-        'DD MMM yyyy hh:mm a'
+        'dd MMM yyyy hh:mm a'
       );
     }
     return format(new Date(date), 'dd MMM yyyy hh:mm a');

@@ -51,6 +51,7 @@ import {
   AssigneeDetails
 } from 'src/app/interfaces';
 import {
+  dateFormat,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -395,6 +396,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.plantService.plantTimeZoneMapping$.subscribe(
       (data) => (this.plantTimezoneMap = data)
     );
@@ -870,11 +872,11 @@ export class PlansComponent implements OnInit, OnDestroy {
           ? localToTimezoneDate(
               new Date(roundPlanScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
-              'MMM dd, yy'
+              dateFormat
             )
           : this.datePipe.transform(
               new Date(roundPlanScheduleConfiguration.startDate),
-              'MMM dd, yy'
+              dateFormat
             )
         : '';
     const formatedEndDate =
@@ -948,7 +950,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data?: any) {
-    let emailArray = [];
+    const emailArray = [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     data.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(

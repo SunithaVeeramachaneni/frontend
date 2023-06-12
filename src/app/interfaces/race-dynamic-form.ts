@@ -69,6 +69,8 @@ export interface ScheduleFormDetail extends Form {
   rounds: number;
   forms: number;
   operator: string;
+  plantId: string;
+  plant: string;
 }
 
 export interface FormDetail extends Form {

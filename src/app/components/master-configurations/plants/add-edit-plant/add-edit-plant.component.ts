@@ -27,7 +27,10 @@ import { countriesMasterData } from './countriesMasterData.mock';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditPlantComponent implements OnInit {
-  @ViewChild('inputRef', { static: false }) inputRef: ElementRef;
+  @ViewChild('countryInputSearch', { static: false })
+  countryInputSearch: ElementRef;
+  @ViewChild('stateInputSearch', { static: false })
+  stateInputSearch: ElementRef;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(data) {
@@ -130,7 +133,7 @@ export class AddEditPlantComponent implements OnInit {
     this.plantForm.get('timeZone').disable();
     this.plantForm
       .get('country')
-      .valueChanges.pipe()
+      .valueChanges.pipe(distinctUntilChanged())
       .subscribe((countryCode) => {
         // eslint-disable-next-line @typescript-eslint/dot-notation
         this.plantForm.patchValue({ state: null, timeZone: null });
@@ -167,6 +170,10 @@ export class AddEditPlantComponent implements OnInit {
         });
         this.plantForm.reset();
         this.slideInOut.emit('out');
+        this.plantForm.get('state').disable();
+        this.plantForm.get('timeZone').disable();
+        this.clearCountryInput();
+        this.clearStateInput();
       });
     } else if (this.plantStatus === 'edit') {
       this.plantService
@@ -183,6 +190,10 @@ export class AddEditPlantComponent implements OnInit {
           });
           this.plantForm.reset();
           this.slideInOut.emit('out');
+          this.plantForm.get('state').disable();
+          this.plantForm.get('timeZone').disable();
+          this.clearCountryInput();
+          this.clearStateInput();
         });
     }
   }
@@ -191,6 +202,8 @@ export class AddEditPlantComponent implements OnInit {
     this.slideInOut.emit('out');
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
+    this.clearCountryInput();
+    this.clearStateInput();
     this.noState = false;
   }
 
@@ -255,9 +268,18 @@ export class AddEditPlantComponent implements OnInit {
       o1.timeZoneIdentifier === o2.timeZoneIdentifier
     );
   }
-  onSelectBlur() {
+  onCountryClosed() {
     this.countryData = Object.values(countriesMasterData);
-    const input = this.inputRef.nativeElement;
+  }
+  onStateClosed() {
+    this.states = this.countryAllStates;
+  }
+  clearCountryInput() {
+    const input = this.countryInputSearch.nativeElement;
+    input.value = '';
+  }
+  clearStateInput() {
+    const input = this.stateInputSearch.nativeElement;
     input.value = '';
   }
 }

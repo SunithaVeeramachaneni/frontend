@@ -477,7 +477,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[action.plantId],
-        'DD MMM yyyy hh:mm a'
+        'dd MMM yyyy hh:mm a'
       );
     }
     return format(new Date(date), 'dd MMM yyyy hh:mm a');

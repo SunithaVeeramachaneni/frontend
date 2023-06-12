@@ -1,11 +1,16 @@
-import * as moment from 'moment-timezone';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
+// eslint-disable-next-line arrow-body-style
 export const localToTimezoneDate = (date, timezone, format) => {
   // console.log(date, timezone, format);
   // console.log(moment.tz(date, timezone.timeZoneIdentifier).format(''));
   // console.log(moment.tz(date, timezone.timeZoneIdentifier).format());
   // console.log(moment.tz(date, timezone.timeZoneIdentifier).format(format));
-  return moment.tz(new Date(date), timezone.timeZoneIdentifier).format(format);
+  // return moment.tz(new Date(date), timezone.timeZoneIdentifier).format(format);
+  // console.log(
+  //   formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, format)
+  // );
+  return formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, format);
 };
 
 export const getTimezoneUTC = (date, timezone) => {
@@ -18,19 +23,20 @@ export const getTimezoneUTC = (date, timezone) => {
   let id = y + '-';
   if (m < 10) id += '0' + m + '-';
   else id += m + '-';
-  if (day < 10) id += '0' + m + 'T';
-  else id += day + 'T';
+  if (day < 10) id += '0' + m + ' ';
+  else id += day + ' ';
   if (h < 10) id += '0' + h + ':';
   else id += h + ':';
   if (min < 10) id += '0' + min + ':00';
   else id += min + ':00';
-  const offset = moment.tz(id, timezone.timeZoneIdentifier).format().substr(-6);
-  id = id + offset;
+  return zonedTimeToUtc(id, timezone.timeZoneIdentifier).toISOString();
+  // const offset = moment.tz(id, timezone.timeZoneIdentifier).format().substr(-6);
+  // id = id + offset;
 
-  const du = moment.tz(id, timezone.timeZoneIdentifier);
+  // const du = moment.tz(id, timezone.timeZoneIdentifier);
   // console.log(du.format());
   // console.log(du.utc().format());
-  return du.utc().format();
+  // return du.utc().format();
 };
 
 // const getDestOffset = (timezone) => {

@@ -39,8 +39,8 @@ import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import {
-  localToTimezoneDate,
-  getTimezoneUTC
+  getTimezoneUTC,
+  localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
 
 @Directive({
@@ -747,7 +747,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        'DD MMM yyyy hh:mm a'
+        'dd MMM yyyy hh:mm a'
       );
     }
     return format(new Date(date), 'dd MMM yyyy hh:mm a');
@@ -824,7 +824,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       notificationInfo !== this.placeholder ? notificationInfo : '';
     this.issuesActionsDetailViewForm.patchValue({
       ...this.data,
-      dueDate: dueDate ? this.formatDate(dueDate) : '',
+      dueDate: dueDateDisplay
+        ? new Date(dueDateDisplay)
+        : dueDate
+        ? new Date(dueDate)
+        : '',
       dueDateDisplayValue: dueDateDisplay ? dueDateDisplay : ''
     });
     this.minDate = new Date(this.data.createdAt);
