@@ -1,24 +1,94 @@
 <div id="scheduler-customizer">
-  <mat-card>
+  <mat-card class="bg-white">
     <mat-card-title class="m-0 light-gray">
       <span class="cancel-side-drawer" (click)="cancel()">
         <mat-icon class="dialog-close">close</mat-icon>
+        <h2>{{ 'close' | translate }}</h2>
       </span>
-      <div class="heading">
-        {{ (isFormModule ? 'scheduleForm' : 'schedulePlan') | translate }}
+      <h2 class="center">{{ 'scheduling' | translate }}</h2>
+      <div class="heading-schedule" translate>
+        <div class="left">
+          <div>
+            <img
+              alt="Form logo"
+              class="plus-icon ng-star-inserted"
+              [src]="selectedDetails?.formLogo"
+            />
+          </div>
+          <div>
+            <p class="form-name">{{ selectedDetails?.name }}</p>
+            <p class="form-description">{{ selectedDetails?.description }}</p>
+          </div>
+        </div>
+        <div class="mt-12">
+          <button
+            [disabled]="
+              schedulerConfigForm?.pristine ||
+              schedulerConfigForm?.invalid ||
+              (schedulerConfigForm?.get('scheduleType')?.value === 'byDate' &&
+                scheduleByDates?.length === 0) ||
+              disableSchedule
+            "
+            mat-raised-button
+            color="primary"
+            class="schedule-button"
+            type="submit"
+            translate="schedule"
+          ></button>
+        </div>
       </div>
     </mat-card-title>
-    <mat-card-content>
+    <mat-card-content class="content">
       <form
         [formGroup]="schedulerConfigForm"
+        class="form-padding p-2"
         (ngSubmit)="scheduleConfiguration()"
         autocomplete="off"
       >
-        <p class="field-info">
-          {{ (isFormModule ? 'forms' : 'plan') | translate }}
-        </p>
-        <div class="field-name">{{ formName }}</div>
-        <div class="schedule">{{ 'schedule' | translate }}</div>
+        <div>
+          <p class="field-info">
+            {{ 'planName' | translate }}
+          </p>
+          <div class="field-name">{{ selectedDetails?.plantName }}</div>
+        </div>
+        <div>
+          <p class="field-info">
+            {{ 'planDescription' | translate }}
+          </p>
+          <div class="field-name">{{ selectedDetails?.plantDescription }}</div>
+        </div>
+        <!-- Plant and time zone -->
+        <ng-container>
+          <div>
+            <br />
+            <mat-label translate>plant</mat-label>
+            <mat-form-field appearance="outline" class="width-100 cursor">
+              <input
+                disabled
+                type="text"
+                matInput
+                class="cursor"
+                [value]="selectedDetails?.plant"
+              />
+              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+            </mat-form-field>
+          </div>
+          <br />
+          <div>
+            <mat-label translate>timeZone</mat-label>
+            <mat-form-field appearance="outline" class="width-100 cursor">
+              <input
+                disabled
+                type="text"
+                matInput
+                class="cursor"
+                [value]="currentDate"
+              />
+              <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
+            </mat-form-field>
+          </div>
+        </ng-container>
+        <div class="schedule">{{ 'scheduleBy' | translate }}</div>
         <mat-radio-group formControlName="scheduleType">
           <mat-radio-button
             color="primary"
@@ -225,7 +295,6 @@
             ></mat-calendar>
           </div>
         </ng-container>
-
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">
             <div class="dis-flex">
@@ -342,30 +411,6 @@
             ></app-assigned-to>
           </mat-menu>
         </ng-container>
-
-        <div class="footer">
-          <button
-            mat-stroked-button
-            type="button"
-            class="cancel-button"
-            (click)="cancel()"
-            translate="cancel"
-          ></button>
-          <button
-            [disabled]="
-              schedulerConfigForm?.pristine ||
-              schedulerConfigForm?.invalid ||
-              (schedulerConfigForm?.get('scheduleType')?.value === 'byDate' &&
-                scheduleByDates?.length === 0) ||
-              disableSchedule
-            "
-            mat-raised-button
-            color="primary"
-            class="schedule-button"
-            type="submit"
-            translate="schedule"
-          ></button>
-        </div>
       </form>
     </mat-card-content>
   </mat-card>

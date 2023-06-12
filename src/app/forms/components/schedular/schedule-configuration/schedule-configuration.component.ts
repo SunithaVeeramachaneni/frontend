@@ -113,6 +113,7 @@ export class ScheduleConfigurationComponent
     max: 30
   };
   dropdownPosition: any;
+  selectedDetails: any = {};
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -124,10 +125,16 @@ export class ScheduleConfigurationComponent
     private dialog: MatDialog,
     private readonly formScheduleConfigurationService: FormScheduleConfigurationService
   ) {
+    this.initDetails();
+  }
+
+  initDetails(): void {
     if (this.isFormModule) {
       this.formName = this.formDetail?.name || '';
+      this.selectedDetails = this.formDetail;
     } else {
       this.formName = this.roundPlanDetail?.name || '';
+      this.selectedDetails = this.roundPlanDetail;
     }
   }
 
@@ -135,12 +142,8 @@ export class ScheduleConfigurationComponent
     if (changes?.moduleName?.currentValue === 'RDF') {
       this.isFormModule = true;
     }
+    this.initDetails();
 
-    if (this.isFormModule) {
-      this.formName = this.formDetail?.name || '';
-    } else {
-      this.formName = this.roundPlanDetail?.name || '';
-    }
     const position = document
       .getElementById('assignDropdownPosition')
       ?.getBoundingClientRect();
