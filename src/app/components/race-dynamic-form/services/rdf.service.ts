@@ -4,14 +4,13 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
-import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
+import { from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
   InspectionDetailResponse,
-  InspectionQueryParam,
   Form,
   FormQueryParam,
   LoadEvent,
@@ -29,6 +28,7 @@ import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings'
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { isEmpty, omitBy } from 'lodash-es';
 
 const limit = 10000;
 @Injectable({
@@ -99,20 +99,20 @@ export class RaceDynamicFormService {
       ['load', 'search'].includes(fetchType) ||
       (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
-      const queryParamaters = queryParams;
-      if (filterData) {
-        Object.assign(queryParamaters, {
+      const queryParameters = Object.fromEntries(
+        Object.entries({
           ...filterData,
+          ...queryParams,
           plantId: filterData?.plant
-        });
-      }
+        }).filter(([k, v]) => k === 'next' || v !== '')
+      );
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
           environment.rdfApiUrl,
           'forms/schedule-forms',
           { displayToast, failureResponse },
-          queryParamaters
+          queryParameters
         )
         .pipe(
           map((data) => ({ ...data, rows: this.formatForms(data?.items) }))
@@ -158,34 +158,26 @@ export class RaceDynamicFormService {
     isArchived: boolean = false,
     filterData: any = null
   ) {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', queryParams?.searchKey);
-    params.set('limit', queryParams?.limit.toString());
-    params.set('next', queryParams?.next);
-    params.set('fetchType', queryParams?.fetchType);
-    params.set('isArchived', String(isArchived));
-    params.set(
-      'formStatus',
-      filterData && filterData.status ? filterData.status : ''
-    );
-    params.set(
-      'modifiedBy',
-      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
-    );
-    params.set(
-      'createdBy',
-      filterData && filterData.createdBy ? filterData.createdBy : ''
-    );
-    params.set(
-      'lastModifiedOn',
-      filterData && filterData.lastModifiedOn ? filterData.lastModifiedOn : ''
-    );
-    params.set(
-      'plantId',
-      filterData && filterData.plant ? filterData.plant : ''
-    );
+    const rawParams = {
+      searchTerm: queryParams?.searchKey,
+      limit: queryParams?.limit.toString(),
+      isArchived: String(isArchived),
+      formStatus: filterData?.status,
+      modifiedBy: filterData?.modifiedBy,
+      createdBy: filterData?.createdBy,
+      lastModifiedOn: filterData?.lastModifiedOn,
+      plantId: filterData?.plant
+    };
+    const params = new URLSearchParams({
+      next: queryParams.next,
+      ...omitBy(rawParams, isEmpty)
+    });
+
     return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString())
+      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
+        displayToast: true,
+        failureResponse: {}
+      })
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
   }
 
@@ -233,45 +225,6 @@ export class RaceDynamicFormService {
       `${formId}/count`,
       info
     );
-
-  getFormsListCount$(
-    searchTerm: string,
-    isArchived: boolean = false
-  ): Observable<number> {
-    const filter = JSON.stringify(
-      Object.fromEntries(
-        Object.entries({
-          searchTerm: { contains: searchTerm },
-          isArchived: { eq: isArchived },
-          isDeleted: { eq: false }
-        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
-      )
-    );
-    return this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        'forms/count',
-        { displayToast: true, failureResponse: {} },
-        { filter }
-      )
-      .pipe(map((res) => res?.count || 0));
-  }
-
-  getFormsForSchedulerCount$(searchTerm: string): Observable<any> {
-    const filter = JSON.stringify(
-      Object.fromEntries(
-        Object.entries({
-          searchTerm: { contains: searchTerm }
-        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
-      )
-    );
-    return this.appService._getResp(
-      environment.rdfApiUrl,
-      'forms/schedule-forms-count',
-      { displayToast: true, failureResponse: {} },
-      { filter }
-    );
-  }
 
   getSubmissionFormsListCount$(): Observable<number> {
     return this.appService
@@ -669,7 +622,7 @@ export class RaceDynamicFormService {
     const fieldType = question.fieldType;
 
     questionLogics.forEach((logic) => {
-      const isEmpty = !logic.operand2.length;
+      const logicIsEmpty = !logic.operand2.length;
 
       if (fieldType === 'CB') {
         logic.operand2 = logic.operand2 ? 'X' : '';
@@ -680,7 +633,7 @@ export class RaceDynamicFormService {
       if (mandatedQuestions && mandatedQuestions.length) {
         mandatedQuestions.forEach((mq) => {
           globalIndex = globalIndex + 1;
-          if (isEmpty) {
+          if (logicIsEmpty) {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
@@ -693,7 +646,7 @@ export class RaceDynamicFormService {
       if (hiddenQuestions && hiddenQuestions.length) {
         hiddenQuestions.forEach((hq) => {
           globalIndex = globalIndex + 1;
-          if (isEmpty) {
+          if (logicIsEmpty) {
             if (fieldType === 'CB') {
               expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
             } else {
@@ -772,12 +725,10 @@ export class RaceDynamicFormService {
           publishedDate: p.publishedDate ? p.publishedDate : '',
           isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
         })) || [];
-    const count = resp?.items.length || 0;
-    const next = resp?.next;
     return {
-      count,
+      count: resp?.count,
       rows,
-      next
+      next: resp?.next
     };
   }
 
@@ -859,24 +810,6 @@ export class RaceDynamicFormService {
     return `${updatedResponse.count}/${updatedResponse.total}`;
   }
 
-  fetchAllForms$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', '');
-    params.set('limit', LIST_LENGTH.toString());
-    params.set('next', '');
-    params.set('fetchType', 'load');
-    params.set('isArchived', 'false');
-    params.set('modifiedBy', '');
-    params.set('formStatus', '');
-    params.set('authoredBy', '');
-    params.set('lastModifiedOn', '');
-    return this.appService
-      ._getResp(environment.rdfApiUrl, 'forms?' + params.toString(), {
-        displayToast: true,
-        failureResponse: {}
-      })
-      .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
-  };
   fetchAllArchivedForms$ = () => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', '');
@@ -894,25 +827,6 @@ export class RaceDynamicFormService {
         failureResponse: {}
       })
       .pipe(map((res) => this.formatGetRdfFormsResponse(res)));
-  };
-  fetchAllSchedulerForms$ = () => {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', '');
-    params.set('limit', LIST_LENGTH.toString());
-    params.set('next', '');
-    params.set('fetchType', 'load');
-    params.set('isArchived', 'false');
-    params.set('modifiedBy', '');
-    params.set('formStatus', '');
-    params.set('authoredBy', '');
-    params.set('lastModifiedOn', '');
-    return this.appService
-      ._getResp(
-        environment.rdfApiUrl,
-        'forms/schedule-forms?' + params.toString(),
-        { displayToast: true, failureResponse: {} }
-      )
-      .pipe(map((data) => ({ ...data, rows: this.formatForms(data?.rows) })));
   };
 
   getFilter(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
@@ -935,13 +849,8 @@ export class RaceDynamicFormService {
   }
   fetchAllInspections$ = () => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', '');
     params.set('limit', '2000000');
     params.set('next', '');
-    params.set('formId', '');
-    params.set('status', '');
-    params.set('assignedTo', '');
-    params.set('dueDate', '');
     return this.appService
       ._getResp(environment.rdfApiUrl, 'inspections?' + params.toString(), {
         displayToast: true,
@@ -951,14 +860,14 @@ export class RaceDynamicFormService {
   };
 
   getInspectionsList$(
-    queryParams: InspectionQueryParam,
+    queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetailResponse> {
-    const { fetchType, ...rest } = queryParams;
+    const { fetchType, next, limit: gLimit, ...rawParams } = queryParams;
+
     if (
-      ['load', 'search'].includes(queryParams.fetchType) ||
-      (['infiniteScroll'].includes(queryParams.fetchType) &&
-        queryParams.next !== null)
+      ['load', 'search'].includes(fetchType) ||
+      (['infiniteScroll'].includes(fetchType) && queryParams.next !== null)
     ) {
       const { displayToast, failureResponse = {} } = info;
       return this.appService
@@ -966,7 +875,7 @@ export class RaceDynamicFormService {
           environment.rdfApiUrl,
           'inspections',
           { displayToast, failureResponse },
-          rest
+          { next, limit: gLimit.toString(), ...omitBy(rawParams, isEmpty) }
         )
         .pipe(
           map((data) => ({ ...data, rows: this.formatInspections(data.items) }))

@@ -355,14 +355,6 @@ export class FormsComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap((value: string) => {
-          this.raceDynamicFormService
-            .getFormsForSchedulerCount$(value)
-            .subscribe((count) => {
-              this.formsCount = {
-                scheduled: count.scheduled || 0,
-                unscheduled: count.unscheduled || 0
-              };
-            });
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
@@ -372,15 +364,6 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.raceDynamicFormService
-      .getFormsForSchedulerCount$(null)
-      .subscribe((count) => {
-        this.formsCount = {
-          scheduled: count.scheduled || 0,
-          unscheduled: count.unscheduled || 0
-        };
-      });
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
       .fetchFormScheduleConfigurations$()
@@ -525,8 +508,14 @@ export class FormsComponent implements OnInit, OnDestroy {
     return this.raceDynamicFormService
       .getFormsForScheduler$(obj, this.filter)
       .pipe(
-        tap(({ next }) => {
+        tap(({ next, scheduledCount, unscheduledCount }) => {
           this.nextToken = next !== undefined ? next : null;
+          if (scheduledCount !== undefined) {
+            this.formsCount = {
+              scheduled: scheduledCount,
+              unscheduled: unscheduledCount
+            };
+          }
           this.isLoading$.next(false);
         })
       );
