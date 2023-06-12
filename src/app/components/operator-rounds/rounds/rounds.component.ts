@@ -454,7 +454,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([rounds, scrollData]) => {
-        this.isLoading$.next(false);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
