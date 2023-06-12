@@ -6,16 +6,24 @@
       (selectedTabChange)="onTabChange($event)"
     >
       <mat-tab [label]="'Forms' | translate">
-        <app-forms
-          (selectTab)="selectTabHandler($event)"
-          [users$]="users$"
-        ></app-forms>
+        <app-lazy-load-container>
+          <ng-template #body>
+            <app-forms
+              (selectTab)="selectTabHandler($event)"
+              [users$]="users$"
+            ></app-forms>
+          </ng-template>
+        </app-lazy-load-container>
       </mat-tab>
       <mat-tab [label]="'Inspections' | translate">
-        <app-inspection
-          [users$]="users$"
-          (selectTab)="selectTabHandler($event)"
-        ></app-inspection>
+        <app-lazy-load-container>
+          <ng-template #body>
+            <app-inspection
+              [users$]="users$"
+              (selectTab)="selectTabHandler($event)"
+            ></app-inspection>
+          </ng-template>
+        </app-lazy-load-container>
       </mat-tab>
     </mat-tab-group>
   </div>
