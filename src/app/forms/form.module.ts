@@ -105,6 +105,7 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
 
 @NgModule({
   declarations: [
@@ -169,7 +170,8 @@ import {
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    ShiftChartComponent
   ],
   imports: [
     SharedModule,
@@ -244,7 +246,8 @@ import {
     ActionsListComponent,
     IssuesActionsViewComponent,
     AssignedToComponent,
-    ObservationsComponent
+    ObservationsComponent,
+    ShiftChartComponent
   ]
 })
 export class FormModule {}
