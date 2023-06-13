@@ -18,7 +18,7 @@ import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ShiftService } from '../../shifts/services/shift.service';
 import { Observable, of } from 'rxjs';
-import { catchError, mergeMap } from 'rxjs/operators';
+import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -150,7 +150,7 @@ export class AddEditPlantComponent implements OnInit {
         { isActive: 'true' }
       )
       .pipe(
-        mergeMap(({ count, rows, next }) => {
+        tap(({ count, rows, next }) => {
           this.allShiftsMaster = rows;
           return of(rows);
         }),

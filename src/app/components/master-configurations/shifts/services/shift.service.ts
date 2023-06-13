@@ -1,17 +1,16 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LoadEvent, SearchEvent, TableEvent } from '../../../../interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
-  GetShifts,
   CreateShifts,
   ShiftsResponse
 } from 'src/app/interfaces/master-data-management/shifts';
-import { formatDistance } from 'date-fns';
+import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -20,13 +19,11 @@ export class ShiftService {
   fetchShifts$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
-  private MAX_FETCH_LIMIT = '1000000';
-
   constructor(private _appService: AppService) {}
 
   fetchAllShifts$ = () => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', this.MAX_FETCH_LIMIT);
+    params.set('limit', graphQLDefaultMaxLimit.toString());
     return this._appService._getResp(
       environment.masterConfigApiUrl,
       'shifts?' + params.toString()
