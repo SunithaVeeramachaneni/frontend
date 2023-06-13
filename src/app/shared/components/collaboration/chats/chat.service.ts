@@ -95,13 +95,16 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
-    let featureURI = `conversations/${userId}`;
+    let featureURI = `${userInfo.collaborationType}/conversations/${userId}`;
     if (skipToken) {
       skipToken = encodeURIComponent(skipToken);
       featureURI = `${featureURI}?skipToken=${skipToken}`;
     }
-    return this.appService._getResp(apiURL, featureURI, info);
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      featureURI,
+      info
+    );
   };
 
   getConversationHistory$ = (
@@ -110,13 +113,16 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
-    let featureURI = `conversations/${conversationId}/history`;
+    let featureURI = `${userInfo.collaborationType}/conversations/${conversationId}/history`;
     if (skipToken) {
       skipToken = encodeURIComponent(skipToken);
       featureURI = `${featureURI}?skipToken=${skipToken}`;
     }
-    return this.appService._getResp(apiURL, featureURI, info);
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      featureURI,
+      info
+    );
   };
 
   sendMessage$ = (
@@ -126,10 +132,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
-      apiURL,
-      `channels/${userId}/messages`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/channels/${userId}/messages`,
       formData,
       info
     );
@@ -142,10 +147,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
-      apiURL,
-      `conversations`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/conversations`,
       { groupName, invitedUsers, chatType },
       info
     );
@@ -158,10 +162,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
-      apiURL,
-      `conversations/open`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/conversations/open`,
       { groupName, invitedUsers, chatType },
       info
     );
@@ -173,10 +176,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
-      apiURL,
-      `conversations/${chatId}/members`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/conversations/${chatId}/members`,
       { members },
       info
     );
@@ -188,10 +190,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService.uploadFile(
-      apiURL,
-      `channels/${conversationId}/messages/files`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/channels/${conversationId}/messages/files`,
       formData,
       info
     );
@@ -202,7 +203,6 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Blob> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     let fileId: string;
     if (userInfo.collaborationType === 'msteams') {
       fileId = file.name;
@@ -210,8 +210,8 @@ export class ChatService {
       fileId = file.url_private;
     }
     return this.appService.downloadFile(
-      apiURL,
-      `files/download?url=${fileId}`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/files/download?url=${fileId}`,
       info
     );
   };
@@ -221,10 +221,9 @@ export class ChatService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
-    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService.patchData(
-      apiURL,
-      `sse/events`,
+      environment.userRoleManagementApiUrl,
+      `${userInfo.collaborationType}/sse/events`,
       { messageIds },
       info
     );
@@ -233,87 +232,82 @@ export class ChatService {
   getJaaSJWTToken$ = (
     isCreateConferenceEvent: boolean,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService._getResp(
-      apiURL,
-      `jaasToken?isCreator=${isCreateConferenceEvent}`,
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `jitsi/jaasToken?isCreator=${isCreateConferenceEvent}`,
       info
     );
-  };
 
   createJitsiConference$ = (
     event: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService._postData(apiURL, `conferences`, event, info);
-  };
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences`,
+      event,
+      info
+    );
 
   initiateConference$ = (
     conferenceId: any,
     invitees: string[],
     metadata: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService._postData(
-      apiURL,
-      `conferences/${conferenceId}/init`,
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences/${conferenceId}/init`,
       { invitees, metadata },
       info
     );
-  };
 
   joinConference$ = (
     conferenceId: any,
     joinedParticipant: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService.patchData(
-      apiURL,
-      `conferences/${conferenceId}/join`,
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences/${conferenceId}/join`,
       { joinedParticipant },
       info
     );
-  };
 
   leaveConference$ = (
     conferenceId: any,
     leavingParticipant: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService.patchData(
-      apiURL,
-      `conferences/${conferenceId}/leave`,
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences/${conferenceId}/leave`,
       { leavingParticipant },
       info
     );
-  };
 
   inviteParticipants$ = (
     conferenceId: any,
     participants: string[],
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService.patchData(
-      apiURL,
-      `conferences/${conferenceId}/invite`,
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences/${conferenceId}/invite`,
       { participants },
       info
     );
-  };
 
   deleteJitsiEvent$ = (
     eventId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService._removeData(apiURL, `sse/${eventId}`, info);
-  };
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.userRoleManagementApiUrl,
+      `jitsi/sse/${eventId}`,
+      info
+    );
 
   getConferenceDetails$ = (
     conferenceId: string,
