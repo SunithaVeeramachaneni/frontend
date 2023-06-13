@@ -1,0 +1,29 @@
+@import '../../../../../scss/colors.scss';
+
+.shift-overlap-modal {
+  padding: 15px;
+  width: 500px;
+  height: 170px;
+  overflow: hidden;
+
+  h3 {
+    font-weight: 600;
+    margin-bottom: 7px;
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 120%;
+  }
+
+  .back {
+    border: none;
+    background-color: $blue-main;
+    color: $white;
+    padding: 12px 15px;
+    font-size: 120%;
+    font-weight: 500;
+    border-radius: 5px;
+    letter-spacing: 0.55px;
+  }
+}

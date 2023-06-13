@@ -78,5 +78,16 @@
   "editResponses": "Edit Responses",
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
-  "status": "Status"
+  "status": "Status",
+  "shifts": "Shifts",
+  "shiftName": "Shift Name",
+  "searchShift": "Search by Shift Name",
+  "max25Chars": "Maximum 25 Characters",
+  "startTime": "Start Time *",
+  "endTime": "End Time *",
+  "active": "Active",
+  "editShift": "Edit Shift",
+  "startAndEndTime": "Start & End Time",
+  "createdOn": "Created On",
+  "createdBy": "Created By"
 }
