@@ -128,7 +128,10 @@
 
               <span translate="then"></span>
               <span
-                *ngIf="logic.value.mandateAttachment"
+                *ngIf="
+                  logic.value.mandateAttachment ||
+                  logic.value.evidenceQuestions.length
+                "
                 class="mandateAction"
                 translate="askEvidence"
               >
@@ -208,7 +211,10 @@
                   translate="askEvidence"
                 ></button>
                 <button
-                  *ngIf="raiseIssueApplicableFields.includes(fieldType)"
+                  *ngIf="
+                    raiseIssueApplicableFields.includes(fieldType) &&
+                    !isEmbeddedForms
+                  "
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="raiseIssue('raise_issue', i, logic.value)"
@@ -224,6 +230,45 @@
                   translate="raiseNotification"
                 ></button>
               </mat-menu>
+            </div>
+            <div
+              *ngIf="
+                pageWiseLogicSectionAskEvidenceQuestions[pageIndex][
+                  logic.value.id
+                ]?.length
+              "
+              class="logicAskQuestions"
+            >
+              <ng-container
+                *ngFor="
+                  let questionObj of pageWiseLogicSectionAskEvidenceQuestions[
+                    pageIndex
+                  ][logic.value.id];
+                  trackBy: trackByQuestionIndex;
+                  let questionIndex = index
+                "
+              >
+                <div class="askQuestion">
+                  <div class="questionContainer">
+                    <app-question
+                      class="question"
+                      [pageIndex]="pageIndex"
+                      [questionId]="questionObj.id"
+                      [sectionId]="questionObj.sectionId"
+                      [questionName]="questionObj.name"
+                      [questionIndex]="questionIndex"
+                      [isAskQuestion]="true"
+                      [subFormId]="selectedNodeId"
+                      [isAskQuestionFocusId]="isAskQuestionFocusId"
+                      (click)="setIsAskQuestionFocusId(questionObj.id)"
+                      (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
+                      (questionEvent)="
+                        askQuestionEventHandler($event, logic.value, i)
+                      "
+                    ></app-question>
+                  </div>
+                </div>
+              </ng-container>
             </div>
             <div
               *ngIf="
