@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -161,6 +162,16 @@ export class PlantService {
               })
             : ''
         })) || [];
+
+    rows = rows.map((r: any) => {
+      try {
+        r.shifts = JSON.parse(r.shifts);
+        r.shiftNames = r.shifts.map((s) => s.name);
+      } catch (err) {
+        r.shiftNames = [];
+      }
+      return r;
+    });
     const count = resp?.items.length || 0;
     const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);

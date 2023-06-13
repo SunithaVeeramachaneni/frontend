@@ -54,13 +54,14 @@ export const permissions = Object.freeze({
   updateAsset: 'UPDATE_ASSET',
   deleteAsset: 'DELETE_ASSET',
   importAssets: 'IMPORT_ASSETS',
-
   viewPlants: 'VIEW_PLANTS',
   createPlant: 'CREATE_PLANT',
   updatePlant: 'UPDATE_PLANT',
   deletePlant: 'DELETE_PLANT',
   importPlants: 'IMPORT_PLANTS',
-
+  viewShifts: 'VIEW_SHIFTS',
+  createShift: 'CREATE_SHIFT',
+  updateShift: 'UPDATE_SHIFT',
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -265,6 +266,11 @@ export const routingUrls = {
     url: '/master-configuration',
     title: 'Plants',
     permission: permissions.viewPlants
+  },
+  shifts: {
+    url: '/master-configuration/shifts',
+    title: 'Shifts',
+    permission: permissions.viewShifts
   },
   locations: {
     url: '/master-configuration/locations',

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   EventEmitter,
@@ -19,6 +20,11 @@ import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { countriesMasterData } from './countriesMasterData.mock';
+import { ShiftService } from '../../shifts/services/shift.service';
+import { Observable, of } from 'rxjs';
+import { catchError, mergeMap, tap } from 'rxjs/operators';
+import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-edit-plant',
@@ -50,6 +56,17 @@ export class AddEditPlantComponent implements OnInit {
         this.plantEditData && this.plantsEditData.image
           ? this.plantEditData.image
           : '';
+
+      this.selectedShiftIDs = this.plantEditData?.shifts?.map(
+        (shift) => shift.id
+      );
+      this.selectedShiftIDs?.forEach((id) => {
+        const index = this.allShiftsMaster.findIndex((sm) => sm.id === id);
+        if (index > -1) {
+          this.selectedShiftsDetails.push(this.allShiftsMaster[index]);
+        }
+      });
+
       const plantdata = {
         id: this.plantsEditData?.id,
         image: this.plantsEditData?.image,
@@ -60,8 +77,10 @@ export class AddEditPlantComponent implements OnInit {
         zipCode: this.plantsEditData?.zipCode,
         label: this.plantEditData?.label,
         field: this.plantEditData?.field,
-        timeZone: this.plantEditData?.timeZone
+        timeZone: this.plantEditData?.timeZone,
+        shifts: this.selectedShiftIDs
       };
+
       this.plantForm?.patchValue(plantdata);
       this.plantForm?.get('plantId').disable();
     }
@@ -80,6 +99,10 @@ export class AddEditPlantComponent implements OnInit {
   noState = false;
   allCountries = Object.values(countriesMasterData);
   countryData = [];
+
+  selectedShiftIDs: any[];
+  selectedShiftsDetails = [];
+  allShiftsMaster: any[];
   errors: ValidationError = {};
   plantStatus;
   plantTitle;
@@ -88,8 +111,15 @@ export class AddEditPlantComponent implements OnInit {
   plantForm: FormGroup;
   parentInformation;
   allParentsData;
+
+  activeShifts$: Observable<any>;
   private plantsEditData;
-  constructor(private fb: FormBuilder, private plantService: PlantService) {}
+  constructor(
+    private fb: FormBuilder,
+    private plantService: PlantService,
+    private shiftService: ShiftService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.countryData = this.allCountries;
@@ -126,6 +156,7 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       timeZone: new FormControl('', [Validators.required]),
+      shifts: new FormControl('', []),
       label: '',
       field: ''
     });
@@ -157,44 +188,117 @@ export class AddEditPlantComponent implements OnInit {
           this.plantForm.get('timeZone').enable();
         }
       });
+
+    this.activeShifts$ = this.shiftService
+      .getShiftsList$(
+        {
+          next: '',
+          limit: 100000,
+          searchKey: '',
+          fetchType: 'load'
+        },
+        { isActive: 'true' }
+      )
+      .pipe(
+        tap(({ count, rows, next }) => {
+          this.allShiftsMaster = rows;
+          return of(rows);
+        }),
+        catchError(() => of([]))
+      );
+  }
+
+  shiftSelectionChanged(event) {
+    this.selectedShiftIDs = event.value;
+    this.selectedShiftsDetails = [];
+    this.selectedShiftIDs?.forEach((id) => {
+      const index = this.allShiftsMaster.findIndex((sm) => sm.id === id);
+      if (index > -1) {
+        this.selectedShiftsDetails.push(this.allShiftsMaster[index]);
+      }
+    });
+    this.plantForm?.patchValue({ shifts: this.selectedShiftIDs });
   }
 
   create() {
-    if (this.plantStatus === 'add') {
-      this.plantForm.get('image').setValue('');
-      const { id, ...payload } = this.plantForm.value;
-      this.plantService.createPlant$(payload).subscribe((res) => {
-        this.createdPlantData.emit({
-          status: this.plantStatus,
-          data: res
-        });
-        this.plantForm.reset();
-        this.slideInOut.emit('out');
-        this.plantForm.get('state').disable();
-        this.plantForm.get('timeZone').disable();
-        this.clearCountryInput();
-        this.clearStateInput();
+    const selectedShifts = [];
+    if (
+      this.plantForm.get('shifts').value !== null &&
+      this.plantForm.get('shifts').value !== ''
+    ) {
+      const selectedShiftIdsTemp = this.plantForm.get('shifts').value;
+      const selectedShiftDetailsTemp = [];
+      selectedShiftIdsTemp.forEach((sid) => {
+        const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+        if (index > -1) {
+          selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+        }
       });
-    } else if (this.plantStatus === 'edit') {
-      this.plantService
-        .updatePlant$({
-          ...this.plantForm.getRawValue(),
-          // eslint-disable-next-line no-underscore-dangle
-          _version: this.plantsEditData._version,
-          id: this.plantsEditData?.id
-        })
-        .subscribe((res) => {
-          this.createdPlantData.emit({
-            status: this.plantStatus,
-            data: res
-          });
-          this.plantForm.reset();
-          this.slideInOut.emit('out');
-          this.plantForm.get('state').disable();
-          this.plantForm.get('timeZone').disable();
-          this.clearCountryInput();
-          this.clearStateInput();
+      selectedShiftDetailsTemp.forEach((e) => {
+        selectedShifts.push({ start: e.startTime, end: e.endTime });
+      });
+    }
+    const isOverlapping = this.isOverlapping(selectedShifts);
+    if (isOverlapping) {
+      this.dialog.open(ShiftOverlapModalComponent);
+    } else {
+      if (this.plantStatus === 'add') {
+        this.plantForm.get('image').setValue('');
+        const { id, ...payload } = this.plantForm.value;
+        const selectedShiftDetailsTemp = [];
+        payload?.shifts.forEach((sid) => {
+          const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+          if (index > -1) {
+            selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+          }
         });
+        const shiftsStr = JSON.stringify(selectedShiftDetailsTemp);
+        this.plantService
+          .createPlant$({ ...payload, shifts: shiftsStr })
+          .subscribe((res) => {
+            this.createdPlantData.emit({
+              status: this.plantStatus,
+              data: res
+            });
+            this.plantForm.reset();
+            this.slideInOut.emit('out');
+            this.plantForm.get('state').disable();
+            this.plantForm.get('timeZone').disable();
+            this.clearCountryInput();
+            this.clearStateInput();
+          });
+      } else if (this.plantStatus === 'edit') {
+        const payload = this.plantForm.getRawValue();
+        const selectedShiftDetailsTemp = [];
+        payload?.shifts.forEach((sid) => {
+          const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
+          if (index > -1) {
+            selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
+          }
+        });
+        const shiftsStr = JSON.stringify(selectedShiftDetailsTemp);
+
+        this.plantService
+          .updatePlant$({
+            ...payload,
+            shifts: shiftsStr,
+            // eslint-disable-next-line no-underscore-dangle
+            _version: this.plantsEditData._version,
+            id: this.plantsEditData?.id
+          })
+          .subscribe((res) => {
+            this.createdPlantData.emit({
+              status: this.plantStatus,
+              data: res
+            });
+            this.plantForm.reset();
+            this.slideInOut.emit('out');
+            this.plantForm.get('state').disable();
+            this.plantForm.get('timeZone').disable();
+            this.clearCountryInput();
+            this.clearStateInput();
+          });
+      }
     }
   }
   cancel() {
@@ -282,4 +386,26 @@ export class AddEditPlantComponent implements OnInit {
     const input = this.stateInputSearch.nativeElement;
     input.value = '';
   }
+
+  overlapping = (a, b) => {
+    const getMinutes = (s) => {
+      const p = s.split(':').map(Number);
+      return p[0] * 60 + p[1];
+    };
+    return (
+      getMinutes(a.end) > getMinutes(b.start) &&
+      getMinutes(b.end) > getMinutes(a.start)
+    );
+  };
+
+  isOverlapping = (arr) => {
+    for (let i = 0; i < arr.length - 1; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+        if (this.overlapping(arr[i], arr[j])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
 }
