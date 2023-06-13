@@ -9,11 +9,7 @@
         <p class="m-10-5">
           <mat-form-field appearance="outline" class="width-100 m-b-10">
             <mat-label translate="nameMandatory"></mat-label>
-            <input
-              matInput
-              [placeholder]="'nameMandatory' | translate"
-              formControlName="name"
-            />
+            <input matInput [placeholder]="'nameMandatory' | translate" formControlName="name" />
             <mat-hint align="start" translate="max25Chars" class="m-t-15">
             </mat-hint>
           </mat-form-field>
@@ -22,30 +18,17 @@
         <span class="m-2">
           <mat-form-field appearance="outline" class="width-100" class="m-5">
             <mat-label translate="startTime"></mat-label>
-            <input
-              type="time"
-              matInput
-              [placeholder]="'startTime' | translate"
-              formControlName="startTime"
-            />
+            <input type="time" matInput [placeholder]="'startTime' | translate" formControlName="startTime" />
           </mat-form-field>
           <mat-form-field appearance="outline" class="width-100" class="m-5">
             <mat-label translate="endTime"></mat-label>
-            <input
-              type="time"
-              matInput
-              [placeholder]="'endTime' | translate"
-              formControlName="endTime"
-            />
+            <input type="time" matInput [placeholder]="'endTime' | translate" formControlName="endTime" />
           </mat-form-field>
         </span>
         <p class="m-10-5 activeToggleBtn">
           <mat-label translate="active"></mat-label>
           <span class="slide-toggle">
-            <mat-slide-toggle
-              [labelPosition]="'before'"
-              formControlName="isActive"
-            >
+            <mat-slide-toggle [labelPosition]="'before'" formControlName="isActive">
             </mat-slide-toggle>
           </span>
         </p>
@@ -91,30 +74,12 @@
     </ng-template>
   </mat-card>
   <div class="actions-footer">
-    <button
-      mat-stroked-button
-      class="cancel-btn"
-      type="button"
-      (click)="cancel()"
-      translate="cancelBtn"
-    ></button>
-    <button
-      mat-raised-button
-      class="create-btn"
-      type="submit"
-      [disabled]="shiftForm.invalid"
-      (click)="create()"
-      *ngIf="shiftMode !== 'VIEW'"
-    >
+    <button mat-stroked-button class="cancel-btn" type="button" (click)="cancel()" translate="cancelBtn"></button>
+    <button mat-raised-button class="create-btn" type="submit" [disabled]="shiftForm.invalid" (click)="create()"
+      *ngIf="shiftMode !== 'VIEW'">
       {{ shiftButton }}
     </button>
-    <button
-      mat-raised-button
-      class="create-btn"
-      type="submit"
-      (click)="goToEditMode()"
-      translate="editShift"
-      *ngIf="shiftMode === 'VIEW'"
-    ></button>
+    <button mat-raised-button class="create-btn" type="submit" (click)="goToEditMode()" translate="editShift"
+      *ngIf="shiftMode === 'VIEW'"></button>
   </div>
 </div>
