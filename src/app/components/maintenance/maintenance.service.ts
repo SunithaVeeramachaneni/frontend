@@ -58,10 +58,8 @@ export class MaintenanceService {
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable((observer) => {
       const eventSource = this.sseService.getEventSourceWithGet(
-        this._appService.prepareUrl(
-          environment.mccAbapApiUrl,
-          'updateWorkOrders'
-        ),
+        environment.mccAbapApiUrl,
+        'updateWorkOrders',
         null
       );
       eventSource.stream();
