@@ -451,7 +451,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
       }),
       catchError(() => {
         this.isLoading$.next(false);
-        return [];
+        return of([]);
       })
     );
   }
