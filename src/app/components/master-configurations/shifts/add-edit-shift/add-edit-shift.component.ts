@@ -85,7 +85,6 @@ export class AddEditShiftComponent implements OnInit {
   constructor(private fb: FormBuilder, private shiftService: ShiftService) {}
 
   ngOnInit(): void {
-    const regex = '^[A-Za-z0-9 ]*$';
     this.shiftForm = this.fb.group({
       id: '',
       name: new FormControl('', [

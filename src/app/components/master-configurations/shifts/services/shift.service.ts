@@ -29,7 +29,7 @@ export class ShiftService {
     params.set('limit', this.MAX_FETCH_LIMIT);
     return this._appService._getResp(
       environment.masterConfigApiUrl,
-      'shifts/list?' + params.toString()
+      'shifts?' + params.toString()
     );
   };
 
@@ -54,10 +54,7 @@ export class ShiftService {
       params.set('isActive', filter?.isActive ?? '');
 
       return this._appService
-        ._getResp(
-          environment.masterConfigApiUrl,
-          'shifts/list?' + params.toString()
-        )
+        ._getResp(environment.masterConfigApiUrl, 'shifts?' + params.toString())
         .pipe(
           map((res) => {
             res.startAndEndTime = `${res.startTime} - ${res.endTime}`;
@@ -85,7 +82,7 @@ export class ShiftService {
   ) {
     return this._appService._postData(
       environment.masterConfigApiUrl,
-      `shifts/create`,
+      `shifts`,
       {
         data: {
           ...formShiftQuery,
@@ -100,7 +97,7 @@ export class ShiftService {
   updateShift$(shiftData) {
     return this._appService.patchData(
       environment.masterConfigApiUrl,
-      `shifts/${shiftData.id}/update`,
+      `shifts/${shiftData.id}`,
       {
         data: {
           ...shiftData,
