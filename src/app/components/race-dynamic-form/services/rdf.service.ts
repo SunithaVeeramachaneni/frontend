@@ -1301,4 +1301,14 @@ export class RaceDynamicFormService {
       form,
       info
     );
+
+  getEmbeddedFormId$ = (
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/embedded/${formId}`,
+      info
+    );
 }
