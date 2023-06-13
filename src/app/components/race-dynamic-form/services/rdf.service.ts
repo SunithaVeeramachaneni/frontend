@@ -29,6 +29,7 @@ import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings'
 import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { TranslateService } from '@ngx-translate/core';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { Buffer } from 'buffer';
 
 const limit = 10000;
 
@@ -42,6 +43,7 @@ const APPNAME = 'MWORKORDER';
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  embeddedFormId;
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -287,7 +289,8 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { plant, ...formMetadata } = formMetaDataDetails.formMetadata;
+    const { plant, embeddedFormId, ...formMetadata } =
+      formMetaDataDetails.formMetadata;
     if (!formMetadata.id) {
       return;
     }
@@ -415,6 +418,7 @@ export class RaceDynamicFormService {
     let notificationExpression = '';
     let globalIndex = 0;
     let askQuestions = [];
+    let evidenceQuestions = [];
     let notificationGlobalIndex = 0;
     const logicsT = JSON.parse(JSON.stringify(logics));
     const questionLogics = logicsT.filter(
@@ -468,6 +472,7 @@ export class RaceDynamicFormService {
       // Ask Questions;
       askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
       askQuestions.forEach((q) => {
+        q.id = `AQ_${Date.now()}`;
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
@@ -478,6 +483,28 @@ export class RaceDynamicFormService {
       if (notificationQuestion) {
         notificationGlobalIndex = notificationGlobalIndex + 1;
         notificationExpression = `${notificationExpression};${notificationGlobalIndex}:${questionId} ${logic.operator} (V)${logic.operand2}`;
+      }
+
+      // Ask Evidence;
+      evidenceQuestions = questions.filter(
+        (q) => q.sectionId === `EVIDENCE_${logic.id}`
+      );
+      const evidenceQuestion = logic.askEvidence;
+      const oppositeOperator = oppositeOperatorMap[logic.operator];
+      if (evidenceQuestion && evidenceQuestion.length) {
+        let isEvidenceMandatory = false;
+        if (questions.findIndex((q) => q.id === evidenceQuestion) > -1) {
+          isEvidenceMandatory = questions.filter(
+            (q) => q.id === evidenceQuestion
+          )[0].required;
+        }
+        globalIndex = globalIndex + 1;
+        if (question.fieldType === 'CB') {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        } else {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        }
+        globalIndex = globalIndex + 1;
       }
     });
     if (expression[0] === ';') {
@@ -502,6 +529,7 @@ export class RaceDynamicFormService {
       expression,
       validationMessage,
       askQuestions,
+      evidenceQuestions,
       notificationExpression
     };
   }
@@ -903,11 +931,10 @@ export class RaceDynamicFormService {
 
   postPutFormFieldPayloadEmbedded(form) {
     const {
-      formMetadata: { id, name },
+      formMetadata: { id, name, embeddedFormId },
       pages
     } = form;
     let payloads = [];
-
     pages.forEach((page) => {
       let { questions, sections, logics } = page;
 
@@ -917,26 +944,6 @@ export class RaceDynamicFormService {
           (item) => item.sectionId === section.id
         );
 
-        const logicQuestions = [];
-
-        questionsBySection.forEach((question) => {
-          const questionLogics = logics.filter(
-            (l) => l.questionId === question.id
-          );
-
-          if (questionLogics && questionLogics.length) {
-            questionLogics.forEach((logic) => {
-              questions.forEach((q) => {
-                if (q.sectionId === `AQ_${logic.id}`) {
-                  logicQuestions.push(q);
-                }
-              });
-            });
-          }
-        });
-
-        questionsBySection = [...questionsBySection, ...logicQuestions];
-
         let index = 0;
         let evidenceQuestionCheck = false;
         const sectionPayloads = [];
@@ -944,6 +951,9 @@ export class RaceDynamicFormService {
         questionsBySection
           .map((question) => {
             index += 1;
+            if (question?.id.includes('EVIDENCE')) {
+              evidenceQuestionCheck = true;
+            }
 
             const {
               id: questionId,
@@ -962,6 +972,7 @@ export class RaceDynamicFormService {
               expression,
               validationMessage,
               askQuestions,
+              evidenceQuestions,
               notificationExpression
             } = this.getValidationExpression(
               questionId,
@@ -989,7 +1000,7 @@ export class RaceDynamicFormService {
               SECTIONPOSITION: sectionPosition.toString(),
               DEFAULTVALUE: this.getDefaultValue(question),
               APPNAME,
-              FORMNAME: id.slice(0, 20),
+              FORMNAME: embeddedFormId,
               FORMTITLE: name,
               STATUS: 'PUBLISHED',
               ELEMENTTYPE: 'MULTIFORMTAB',
@@ -1013,7 +1024,7 @@ export class RaceDynamicFormService {
               askQuestions.forEach((aq) => {
                 index = index + 1;
                 sectionPayloads.push({
-                  UNIQUEKEY: aq.id.slice(0, 20),
+                  UNIQUEKEY: aq.id,
                   VALIDFROM,
                   VALIDTO,
                   VERSION,
@@ -1029,7 +1040,7 @@ export class RaceDynamicFormService {
                   SECTIONPOSITION: sectionPosition.toString(),
                   DEFAULTVALUE: this.getDefaultValue(aq),
                   APPNAME,
-                  FORMNAME: id,
+                  FORMNAME: embeddedFormId,
                   FORMTITLE: name,
                   STATUS: 'PUBLISHED',
                   ELEMENTTYPE: 'MULTIFORMTAB',
@@ -1037,6 +1048,37 @@ export class RaceDynamicFormService {
                   UIVALIDATION: '',
                   UIVALIDATIONMSG: '',
                   ...this.getProperties(aq)
+                });
+              });
+            }
+            if (evidenceQuestions && evidenceQuestions.length) {
+              evidenceQuestions.forEach((eq) => {
+                index = index + 1;
+                sectionPayloads.push({
+                  UNIQUEKEY: eq.id,
+                  VALIDFROM,
+                  VALIDTO,
+                  VERSION,
+                  SECTIONNAME: sectionName,
+                  FIELDLABEL: eq.name,
+                  UIPOSITION: index.toString(),
+                  UIFIELDTYPE: eq.fieldType,
+                  ACTIVE: 'X',
+                  INSTRUCTION: '',
+                  TEXTSTYLE: '',
+                  TEXTCOLOR: '',
+                  MANDATORY: required ? 'X' : '',
+                  SECTIONPOSITION: sectionPosition.toString(),
+                  DEFAULTVALUE: this.getDefaultValue(eq),
+                  APPNAME,
+                  FORMNAME: embeddedFormId,
+                  FORMTITLE: name,
+                  STATUS: 'PUBLISHED',
+                  ELEMENTTYPE: 'MULTIFORMTAB',
+                  PUBLISHED: eq.isPublished,
+                  UIVALIDATION: '',
+                  UIVALIDATIONMSG: '',
+                  ...this.getProperties(eq)
                 });
               });
             }

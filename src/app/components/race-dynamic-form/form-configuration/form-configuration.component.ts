@@ -482,7 +482,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     if (this.isEmbeddedForms) {
       this.rdfService.publishEmbeddedForms$(form).subscribe(() => {
-        this.router.navigate(['/operator-rounds']);
+        this.router.navigate(['/forms']);
       });
     }
   }

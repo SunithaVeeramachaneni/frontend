@@ -377,6 +377,25 @@ export const getPageWiseLogicSectionAskQuestions = (subFormId: string) =>
     }, {});
   });
 
+export const getPageWiseLogicSectionAskEvidenceQuestions = (
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
+        logicAcc[logicCurr.id] = curr.questions.filter(
+          (question) => question.sectionId === `EVIDENCE_${logicCurr.id}`
+        );
+        return logicAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
+
 export const getPageWiseSections = (subFormId: string) =>
   createSelector(selectFormConfigurationState, (state) => {
     let key = 'pages';
