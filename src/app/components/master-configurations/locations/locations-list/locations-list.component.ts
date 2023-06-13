@@ -19,7 +19,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeMap,
   switchMap,
   takeUntil,
   tap
@@ -31,7 +30,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
@@ -310,12 +308,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
-          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedLocations();
-    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -374,6 +370,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
             };
+            console.log(rows);
             initial.data = this.injectPlantAndParentInfo(rows, allPlants);
           } else if (this.addEditCopyDeleteLocations) {
             const newForm = this.injectPlantAndParentInfo([form], allPlants);
@@ -433,8 +430,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   getLocations() {
-    return this.locationService
-      .getLocationsList$(
+    return (
+      this.locationService.getLocationsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -442,18 +439,21 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          this.nextToken = next;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined) {
+          this.reloadLocationCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return [];
+      })
+    );
   }
 
   addOrUpdateLocation(locationData) {
@@ -626,7 +626,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -668,9 +667,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     return tableData;
   };
 
-  reloadLocationCount(searchTerm: string) {
-    this.locationsListCount$ =
-      this.locationService.getLocationCount$(searchTerm);
+  reloadLocationCount(rawCount: number) {
+    this.locationsListCount$ = of(rawCount);
     this.locationsCount$ = combineLatest([
       this.locationsListCount$,
       this.locationsCountUpdate$
