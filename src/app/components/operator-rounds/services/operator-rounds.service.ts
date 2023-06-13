@@ -67,7 +67,7 @@ export class OperatorRoundsService {
   ): Observable<any> =>
     this.appService._postData(
       environment.operatorRoundsApiUrl,
-      `round-plans/storeAdditionalDetails`,
+      `round-plans/store-additional-details`,
       details,
       info
     );
@@ -77,7 +77,7 @@ export class OperatorRoundsService {
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.rdfApiUrl,
-      '/round-plans/storeAdditionalDetails',
+      'round-plans/store-additional-details',
       info
     );
 

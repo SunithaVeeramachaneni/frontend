@@ -136,7 +136,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
     this.getAllPlantsData();
     //this.retrieveDetails();
-    //this.storeDetails();
+    this.storeDetails();
   }
 
   filterLabel(value: string): string[] {

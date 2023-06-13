@@ -186,11 +186,11 @@
                 type="text"
                 [formControl]="labelCtrl"
                 class="example-input"
-                [matAutocomplete]="auto1"
+                [matAutocomplete]="autolabel"
               />
               <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
             </mat-form-field>
-            <mat-autocomplete #auto1="matAutocomplete">
+            <mat-autocomplete #autolabel="matAutocomplete">
               <mat-option
                 *ngFor="let label of filteredLabels | async"
                 [value]="label"
@@ -201,7 +201,15 @@
               <mat-option *ngIf="labelCtrl.value">
                 <ng-container *ngIf="filteredLabels | async as labels">
                   <ng-container *ngIf="!labels.includes(labelCtrl.value)">
-                    Add new option: {{ labelCtrl.value }}
+                    <button
+                      mat-button
+                      color="primary"
+                      class="p-0"
+                      (click)="addNewOption()"
+                    >
+                      <mat-icon class="m-r-5">add</mat-icon>
+                      <span>Add New {{ labelCtrl.value }}</span>
+                    </button>
                   </ng-container>
                 </ng-container>
               </mat-option>
@@ -216,37 +224,37 @@
               <input
                 matInput
                 type="text"
-                [formControl]="labelCtrl"
-                [matAutocomplete]="auto2"
+                [formControl]="valueCtrl"
+                [matAutocomplete]="autoValue"
                 class="example-input"
               />
               <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
             </mat-form-field>
-            <mat-autocomplete #auto2="matAutocomplete">
+            <mat-autocomplete #autoValue="matAutocomplete">
               <mat-option
-                *ngFor="let label of filteredLabels | async"
-                [value]="label"
+                *ngFor="let value of filteredValues | async"
+                [value]="value"
               >
-                {{ label }}
+                {{ value }}
                 <span class="remove-txt">Remove</span>
               </mat-option>
-              <!-- <mat-option>
-                <button
-                  mat-button
-                  color="primary"
-                  class="p-0"
-                  (click)="addNewOption()"
-                >
-                  <mat-icon class="m-r-5">add</mat-icon>
-                  <span>Add New ( T )</span>
-                </button>
-              </mat-option> -->
-              <mat-option *ngIf="labelCtrl.value">
-                <ng-container *ngIf="filteredLabels | async as labels">
+
+              <mat-option *ngIf="valueCtrl.value">
+                <ng-container *ngIf="filteredLabels | async as values">
                   <ng-container *ngIf="!labels.includes(labelCtrl.value)">
-                    Add new option: {{ labelCtrl.value }}
+                    <!-- Add new option: {{ labelCtrl.value }}
                     <button mat-button color="primary" (click)="addNewOption()">
                       Add
+                    </button> -->
+
+                    <button
+                      mat-button
+                      color="primary"
+                      class="p-0"
+                      (click)="addNewOption()"
+                    >
+                      <mat-icon class="m-r-5">add</mat-icon>
+                      <span>Add New {{ valueCtrl.value }}</span>
                     </button>
                   </ng-container>
                 </ng-container>
