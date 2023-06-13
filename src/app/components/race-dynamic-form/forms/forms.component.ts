@@ -68,7 +68,7 @@ import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
+
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',

@@ -76,6 +76,7 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKeyCountry($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option
@@ -140,6 +141,7 @@
               class="searchable-input"
               [placeholder]="'search' | translate"
               (keyup)="onKeyState($event)"
+              (keydown)="$event.stopPropagation()"
             />
             <div class="scrollable-area">
               <mat-option *ngFor="let state of this.states" [value]="state">{{

@@ -406,6 +406,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.plantService.plantTimeZoneMapping$.subscribe(
       (data) => (this.plantTimezoneMap = data)
     );
@@ -468,7 +469,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           };
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-            dueDate: new Date(roundDetail.dueDate),
+
+            dueDateDisplay: this.formatDate(
+              roundDetail.dueDate,
+              roundDetail.plantId
+            ),
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
@@ -478,7 +483,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-              dueDate: new Date(roundDetail.dueDate),
+
+              dueDateDisplay: this.formatDate(
+                roundDetail.dueDate,
+                roundDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
@@ -543,6 +552,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+  formatDate(date, plantId) {
+    if (
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        'dd MMM yyyy'
+      );
+    }
+    return format(new Date(date), 'dd MMM yyyy');
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -864,14 +886,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.operatorRoundsService
       .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
-        tap((resp) => {
+        tap((resp: any) => {
           if (Object.keys(resp).length) {
             this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
                   dueDate: new Date(this.selectedRound.dueDate),
-                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
+                  dueDateDisplay: this.formatDate(dueDate, resp.plantId),
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo

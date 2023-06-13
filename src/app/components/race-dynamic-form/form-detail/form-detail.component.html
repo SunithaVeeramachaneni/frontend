@@ -169,9 +169,10 @@
               <span class="dots"></span>
               <p class="date-name color-gray">
                 {{
-                  formateDate(
+                  formatDate(
                     selectedForm?.publishedDate,
-                    selectedForm?.plantId
+                    selectedForm?.plantId,
+                    'dd MMM yyyy hh:mm a'
                   )
                 }}
               </p>
@@ -188,7 +189,11 @@
               <span class="dots"></span>
               <p class="date-name color-gray">
                 {{
-                  formateDate(selectedForm?.updatedAt, selectedForm?.plantId)
+                  formatDate(
+                    selectedForm?.updatedAt,
+                    selectedForm?.plantId,
+                    'dd MMM yyyy hh:mm a'
+                  )
                 }}
               </p>
             </div>
@@ -204,7 +209,11 @@
               <span class="dots"></span>
               <p class="date-name color-gray">
                 {{
-                  formateDate(selectedForm?.createdAt, selectedForm?.plantId)
+                  formatDate(
+                    selectedForm?.createdAt,
+                    selectedForm?.plantId,
+                    'dd MMM yyyy hh:mm a'
+                  )
                 }}
               </p>
             </div>
@@ -261,7 +270,13 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
-                {{ selectedForm?.dueDate | date : 'dd MMM yyyy' }}
+                {{
+                  formatDate(
+                    selectedForm?.dueDate,
+                    selectedForm.plantId,
+                    'dd MMM yyyy hh:mm a'
+                  )
+                }}
               </h4>
             </div>
           </div>
@@ -283,10 +298,7 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
-                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]"
-                  >(UTC{{
-                    this.plantTimezoneMap[selectedForm?.plantId].utcOffset
-                  }})
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]">
                   {{
                     this.plantTimezoneMap[selectedForm?.plantId].description
                   }}</span

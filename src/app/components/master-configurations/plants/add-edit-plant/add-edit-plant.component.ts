@@ -162,32 +162,29 @@ export class AddEditPlantComponent implements OnInit {
     });
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
-    this.plantForm
-      .get('country')
-      .valueChanges.pipe(distinctUntilChanged())
-      .subscribe((countryCode) => {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        this.plantForm.patchValue({ state: null, timeZone: null });
-        if (countryCode) {
-          this.selectedCountry = countriesMasterData[countryCode];
-          if (!this.selectedCountry.states.length) {
-            this.plantForm.get('state').disable();
-            this.noState = true;
-          } else {
-            this.plantForm.get('state').enable();
-            this.noState = false;
-          }
-          [this.states, this.countryAllStates] = [
-            this.selectedCountry.states,
-            this.selectedCountry.states
-          ];
-          [this.timeZones, this.countryAllTimeZones] = [
-            this.selectedCountry.timeZones,
-            this.selectedCountry.timeZones
-          ];
-          this.plantForm.get('timeZone').enable();
+    this.plantForm.get('country').valueChanges.subscribe((countryCode) => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      this.plantForm.patchValue({ state: null, timeZone: null });
+      if (countryCode) {
+        this.selectedCountry = countriesMasterData[countryCode];
+        if (!this.selectedCountry.states.length) {
+          this.plantForm.get('state').disable();
+          this.noState = true;
+        } else {
+          this.plantForm.get('state').enable();
+          this.noState = false;
         }
-      });
+        [this.states, this.countryAllStates] = [
+          this.selectedCountry.states,
+          this.selectedCountry.states
+        ];
+        [this.timeZones, this.countryAllTimeZones] = [
+          this.selectedCountry.timeZones,
+          this.selectedCountry.timeZones
+        ];
+        this.plantForm.get('timeZone').enable();
+      }
+    });
 
     this.activeShifts$ = this.shiftService
       .getShiftsList$(

@@ -177,7 +177,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  formateDate(date: string, plantId: string) {
+  formatDate(date: string, plantId: string, dateFormat: string) {
     if (!date) return '';
     if (
       this.plantTimezoneMap[plantId] &&
@@ -186,11 +186,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        'm/d/yy, h:mm a'
+        dateFormat
       );
     }
 
-    return format(new Date(date), 'm/d/yy, h:mm a');
+    return format(new Date(date), dateFormat);
   }
 
   onNavigateToDetailPage() {
