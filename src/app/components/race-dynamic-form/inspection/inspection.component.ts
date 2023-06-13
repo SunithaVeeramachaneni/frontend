@@ -51,7 +51,6 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';

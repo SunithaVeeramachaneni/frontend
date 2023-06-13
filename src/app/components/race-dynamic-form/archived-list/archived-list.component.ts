@@ -328,8 +328,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           return of(rows);
         }),
         catchError(() => {
-          this.isLoading$.next(false);
           this.archivedFormsListCount$ = of(0);
+          this.isLoading$.next(false);
           return of([]);
         }),
         map((data) =>

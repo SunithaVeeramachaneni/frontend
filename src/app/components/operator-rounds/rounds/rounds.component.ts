@@ -517,7 +517,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId,
       roundId: this.roundId
     };
-
+    this.isLoading$.next(true);
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
@@ -757,9 +757,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
-      } else if (item.type !== 'date' && item.value) {
+      } else if (item.column === 'status' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'schedule' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
-      } else if (item.type === 'date' && item.value) {
+      } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
