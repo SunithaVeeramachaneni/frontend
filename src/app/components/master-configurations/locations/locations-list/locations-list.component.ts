@@ -370,7 +370,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
               ...this.configOptions,
               tableHeight: 'calc(100vh - 140px)'
             };
-            console.log(rows);
             initial.data = this.injectPlantAndParentInfo(rows, allPlants);
           } else if (this.addEditCopyDeleteLocations) {
             const newForm = this.injectPlantAndParentInfo([form], allPlants);
