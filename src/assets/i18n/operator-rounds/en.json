@@ -320,5 +320,7 @@
   "actionStatus": "Status: ",
   "additionalDetails": "Additional Details",
   "value": "Value",
-  "add": "Add"
+  "add": "Add",
+  "errorExceedLabelMessage": "Label exceeded 25 characters limit",
+  "errorExceedValueMessage": "Value exceeded 40 characters limit"
 }

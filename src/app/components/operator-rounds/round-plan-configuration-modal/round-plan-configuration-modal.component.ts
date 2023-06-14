@@ -135,8 +135,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
-    //this.retrieveDetails();
-    this.storeDetails();
+    // this.retrieveDetails();
   }
 
   filterLabel(value: string): string[] {
@@ -196,6 +195,22 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   next() {
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    const updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => ({
+        FIELDLABEL: additionalinfo.label,
+        DEFAULTVALUE: additionalinfo.value,
+        UIFIELDTYPE: 'LF'
+      })
+    );
+
+    this.headerDataForm.setControl(
+      'additionalDetails',
+      this.fb.array(updatedAdditionalDetails)
+    );
+
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -305,6 +320,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   addNewOption() {
     const newOption = this.labelCtrl.value;
     this.labelCtrl.setValue(newOption);
+    this.storeDetails();
   }
   storeDetails() {
     const additionalDetails = this.headerDataForm.get(
