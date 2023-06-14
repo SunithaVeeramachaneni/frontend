@@ -849,7 +849,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   dueDate,
-                  // dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
                   dueDateDisplay: this.formatDate(dueDate, resp.plantId),
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,

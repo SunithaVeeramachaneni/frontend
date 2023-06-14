@@ -89,8 +89,6 @@ export class AddEditPlantComponent implements OnInit {
     return this.plantsEditData;
   }
   countrySearch: any;
-  stateDropDownHidden = true;
-  timeZoneDropDownHidden = true;
   selectedCountry: any;
   countryAllStates: any = [];
   countryAllTimeZones: any = [];
@@ -99,7 +97,6 @@ export class AddEditPlantComponent implements OnInit {
   noState = false;
   allCountries = Object.values(countriesMasterData);
   countryData = [];
-
   selectedShiftIDs: any[];
   selectedShiftsDetails = [];
   allShiftsMaster: any[];
@@ -263,6 +260,7 @@ export class AddEditPlantComponent implements OnInit {
             this.plantForm.get('timeZone').disable();
             this.clearCountryInput();
             this.clearStateInput();
+            this.noState = false;
           });
       } else if (this.plantStatus === 'edit') {
         const payload = this.plantForm.getRawValue();
@@ -294,6 +292,7 @@ export class AddEditPlantComponent implements OnInit {
             this.plantForm.get('timeZone').disable();
             this.clearCountryInput();
             this.clearStateInput();
+            this.noState = false;
           });
       }
     }
