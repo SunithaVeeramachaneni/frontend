@@ -5,7 +5,7 @@
 import { Injectable } from '@angular/core';
 import { format, formatDistance } from 'date-fns';
 import { from, Observable, of, ReplaySubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, mergeMap, toArray } from 'rxjs/operators';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
@@ -31,12 +31,18 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { isEmpty, omitBy } from 'lodash-es';
 
 const limit = 10000;
+
+const VALIDFROM = '20221002135512';
+const VALIDTO = '99991230183000';
+const VERSION = '001';
+const APPNAME = 'MWORKORDER';
 @Injectable({
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+  embeddedFormId;
 
   constructor(
     private responseSetService: ResponseSetService,
@@ -166,7 +172,8 @@ export class RaceDynamicFormService {
       modifiedBy: filterData?.modifiedBy,
       createdBy: filterData?.createdBy,
       lastModifiedOn: filterData?.lastModifiedOn,
-      plantId: filterData?.plant
+      plantId: filterData?.plant,
+      formType: filterData?.formType
     };
     const params = new URLSearchParams({
       next: queryParams.next,
@@ -264,7 +271,8 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { plant, ...formMetadata } = formMetaDataDetails.formMetadata;
+    const { plant, embeddedFormId, ...formMetadata } =
+      formMetaDataDetails.formMetadata;
     if (!formMetadata.id) {
       return;
     }
@@ -297,40 +305,6 @@ export class RaceDynamicFormService {
       environment.rdfApiUrl,
       `forms/list/`,
       id
-    );
-  }
-
-  createFormDetail$(formDetails) {
-    return this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/inspection',
-      {
-        name: formDetails.formMetadata.name,
-        description: formDetails.formMetadata.description,
-        formlistID: formDetails.formListId,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
-        pdfBuilderConfiguration: formDetails.pdfBuilderConfiguration
-      }
-    );
-  }
-
-  updateFormDetail$(formDetails) {
-    return this.appService.patchData(
-      environment.rdfApiUrl,
-      `forms/inspection/${formDetails.formDetailId}`,
-      {
-        formlistID: formDetails.formListId,
-        name: formDetails.formMetadata.name,
-        description: formDetails.formMetadata.description,
-        formData: this.formatFormData(
-          formDetails.formMetadata,
-          formDetails.pages
-        ),
-        _version: formDetails.formDetailDynamoDBVersion
-      }
     );
   }
 
@@ -418,199 +392,14 @@ export class RaceDynamicFormService {
     });
   }
 
-  formatFormData = (form, pages): string => {
-    const forms = [];
-    const arrayFieldTypeQuestions = [];
-    const formData = {
-      FORMNAME: form.name,
-      PAGES: []
-    };
-    formData.PAGES = pages.map((page) => {
-      // eslint-disable-next-line prefer-const
-      let { sections, questions, logics } = page;
-
-      const pageItem = {
-        PAGENAME: page.name,
-        SECTIONS: sections.map((section) => {
-          let questionsBySection = questions.filter(
-            (item) => item.sectionId === section.id
-          );
-          const logicQuestions = [];
-
-          questionsBySection.forEach((question) => {
-            const questionLogics = logics.filter(
-              (l) => l.questionId === question.id
-            );
-
-            if (questionLogics && questionLogics.length) {
-              questionLogics.forEach((logic) => {
-                questions.forEach((q) => {
-                  if (q.sectionId === `AQ_${logic.id}`) {
-                    logicQuestions.push(q);
-                  }
-                });
-              });
-            }
-          });
-
-          questionsBySection = [...questionsBySection, ...logicQuestions];
-          const sectionItem = {
-            SECTIONNAME: section.name,
-            FIELDS: questionsBySection.map((question) => {
-              if (question.fieldType === 'TF') {
-                question.fieldType = question.value;
-              }
-              const questionItem = {
-                UNIQUEKEY: question.id,
-                FIELDLABEL: question.name,
-                UIFIELDTYPE: question.fieldType,
-                UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '' as any,
-                UIVALIDATION: this.getValidationExpression(
-                  question.id,
-                  question,
-                  questions,
-                  logics
-                ),
-                MANDATORY: question.required === true ? 'X' : ''
-              };
-
-              if (question.fieldType === 'ARD') {
-                Object.assign(questionItem, { SUBFORMNAME: question.name }); // Might be name or id.
-                arrayFieldTypeQuestions.push(question);
-              }
-
-              if (
-                question.fieldType === 'VI' ||
-                question.value?.type === 'quickResponse'
-              ) {
-                const viVALUE = this.prepareDDValue(question.value?.value);
-                Object.assign(questionItem, {
-                  DDVALUE: viVALUE
-                });
-              }
-
-              if (question.fieldType === 'NF') {
-                Object.assign(questionItem, {
-                  MEASUREMENT:
-                    question.unitOfMeasurement !== 'None'
-                      ? question.unitOfMeasurement
-                      : ''
-                });
-                if (question.rangeMetadata.min && question.rangeMetadata.max) {
-                  Object.assign(questionItem, {
-                    DEFAULTVALUE: JSON.stringify({
-                      min: question.rangeMetadata.min + '',
-                      max: question.rangeMetadata.max + '',
-                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
-                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
-                      value: ''
-                    })
-                  });
-                }
-              }
-
-              if (
-                question.fieldType === 'DD' &&
-                question.value?.type === 'globalResponse'
-              ) {
-                let currentGlobalResponseValues;
-                const currenGlobalResponse$ = this.responseSetService
-                  .fetchAllGlobalResponses$()
-                  .pipe(
-                    tap((responses) => {
-                      currentGlobalResponseValues = JSON.parse(
-                        responses.items.find(
-                          (item) => item.id === question.value.id
-                        )
-                      );
-                    })
-                  );
-                currenGlobalResponse$.subscribe();
-                questionItem.UIFIELDTYPE = question.multi
-                  ? 'DDM'
-                  : question.fieldType;
-                Object.assign(questionItem, {
-                  DDVALUE: currentGlobalResponseValues
-                    ? this.prepareDDValue(currentGlobalResponseValues)
-                    : []
-                });
-              }
-
-              if (question.fieldType === 'RT') {
-                const { min, max, increment } = question.value;
-                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
-              }
-
-              if (question.fieldType === 'LF') {
-                questionItem.DEFAULTVALUE = question.value;
-              }
-
-              if (question.fieldType === 'DT') {
-                questionItem.UIFIELDTYPE =
-                  question.value.date && question.value.time
-                    ? 'DT'
-                    : question.value.date
-                    ? 'DF'
-                    : 'TIF';
-                questionItem.DEFAULTVALUE =
-                  question.value.date && question.value.time
-                    ? 'CDT'
-                    : question.value.date
-                    ? 'CD'
-                    : 'CT';
-              }
-
-              if (question.fieldType === 'HL') {
-                questionItem.DEFAULTVALUE = question.value.title;
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.link
-                });
-              }
-
-              if (question.fieldType === 'INST') {
-                if (
-                  question.value.tag.title !== this.translate.instant('noneTag')
-                ) {
-                  Object.assign(questionItem, {
-                    TAG: JSON.stringify({
-                      title: question.value.tag.title,
-                      colour: question.value.tag.colour
-                    })
-                  });
-                } else {
-                  Object.assign(questionItem, {
-                    TAG: null
-                  });
-                }
-                Object.assign(questionItem, {
-                  FIELDVALUE: question.value.images
-                    .filter((image) => image !== null)
-                    .map((image) => image.objectKey.substring('public/'.length))
-                    .join(';'),
-                  DOCFILE:
-                    question.value.pdf?.objectKey.substring('public/'.length) ||
-                    ''
-                });
-              }
-              return questionItem;
-            })
-          };
-
-          return sectionItem;
-        })
-      };
-
-      return pageItem;
-    });
-
-    forms.push(formData);
-    return JSON.stringify({ FORMS: forms });
-  };
-
-  getValidationExpression(questionId, question, questions, logics) {
+  getValidationExpression(questionId, question, questions, logics): any {
     let expression = '';
+    let validationMessage = '';
+    let notificationExpression = '';
     let globalIndex = 0;
+    let askQuestions = [];
+    let evidenceQuestions = [];
+    let notificationGlobalIndex = 0;
     const logicsT = JSON.parse(JSON.stringify(logics));
     const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
@@ -661,14 +450,42 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      const askQuestions = questions.filter(
-        (q) => q.sectionId === `AQ_${logic.id}`
-      );
+      askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
       askQuestions.forEach((q) => {
+        q.id = q.isPublished ? q.id : `AQ_${Date.now()}`;
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
       });
+
+      // Raise Notification;
+      const notificationQuestion = logic.raiseNotification;
+      if (notificationQuestion) {
+        notificationGlobalIndex = notificationGlobalIndex + 1;
+        notificationExpression = `${notificationExpression};${notificationGlobalIndex}:${questionId} ${logic.operator} (V)${logic.operand2}`;
+      }
+
+      // Ask Evidence;
+      evidenceQuestions = questions.filter(
+        (q) => q.sectionId === `EVIDENCE_${logic.id}`
+      );
+      const evidenceQuestion = logic.askEvidence;
+      const oppositeOperator = oppositeOperatorMap[logic.operator];
+      if (evidenceQuestion && evidenceQuestion.length) {
+        let isEvidenceMandatory = false;
+        if (questions.findIndex((q) => q.id === evidenceQuestion) > -1) {
+          isEvidenceMandatory = questions.filter(
+            (q) => q.id === evidenceQuestion
+          )[0].required;
+        }
+        globalIndex = globalIndex + 1;
+        if (question.fieldType === 'CB') {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        } else {
+          expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
+        }
+        globalIndex = globalIndex + 1;
+      }
     });
     if (expression[0] === ';') {
       expression = expression.slice(1, expression.length);
@@ -676,7 +493,25 @@ export class RaceDynamicFormService {
     if (expression[expression.length - 1] === ';') {
       expression = expression.slice(0, expression.length - 1);
     }
-    return expression;
+    if (notificationExpression[0] === ';') {
+      notificationExpression = notificationExpression.slice(
+        1,
+        notificationExpression.length
+      );
+    }
+    if (notificationExpression[notificationExpression.length - 1] === ';') {
+      notificationExpression = notificationExpression.slice(
+        0,
+        notificationExpression.length - 1
+      );
+    }
+    return {
+      expression,
+      validationMessage,
+      askQuestions,
+      evidenceQuestions,
+      notificationExpression
+    };
   }
 
   fetchAllFormListNames$() {
@@ -1029,5 +864,383 @@ export class RaceDynamicFormService {
     this.appService._removeData(
       environment.rdfApiUrl,
       `templates/${templateId}`
+    );
+
+  postPutFormFieldPayloadEmbedded(form) {
+    const {
+      formMetadata: { id, name, embeddedFormId },
+      pages
+    } = form;
+    let payloads = [];
+    pages.forEach((page) => {
+      let { questions, sections, logics } = page;
+
+      sections.forEach((section) => {
+        const { name: sectionName, position: sectionPosition } = section;
+        let questionsBySection = questions.filter(
+          (item) => item.sectionId === section.id
+        );
+
+        let index = 0;
+        let evidenceQuestionCheck = false;
+        const sectionPayloads = [];
+
+        questionsBySection
+          .map((question) => {
+            index += 1;
+            if (question?.id.includes('EVIDENCE')) {
+              evidenceQuestionCheck = true;
+            }
+
+            const {
+              id: questionId,
+              name: questionName,
+              position: questionPosition,
+              required,
+              isPublished
+            } = question;
+
+            const {
+              expression,
+              validationMessage,
+              askQuestions,
+              evidenceQuestions,
+              notificationExpression
+            } = this.getValidationExpression(
+              questionId,
+              question,
+              questions,
+              logics
+            );
+
+            const notificationInfo = this.getNotificationInfo(question, logics);
+
+            sectionPayloads.push({
+              UNIQUEKEY: questionId,
+              VALIDFROM,
+              VALIDTO,
+              VERSION,
+              SECTIONNAME: sectionName,
+              FIELDLABEL: questionName,
+              UIPOSITION: index.toString(),
+              UIFIELDTYPE: question.fieldType,
+              ACTIVE: 'X',
+              INSTRUCTION: '',
+              TEXTSTYLE: '',
+              TEXTCOLOR: '',
+              MANDATORY: required && !evidenceQuestionCheck ? 'X' : '',
+              SECTIONPOSITION: sectionPosition.toString(),
+              DEFAULTVALUE: this.getDefaultValue(question),
+              APPNAME,
+              FORMNAME: embeddedFormId,
+              FORMTITLE: name,
+              STATUS: 'PUBLISHED',
+              ELEMENTTYPE: 'MULTIFORMTAB',
+              PUBLISHED: isPublished,
+              SUBFORMNAME: notificationInfo[0] ? 'NOTIFICATION' : '',
+              UIVALIDATION: expression,
+              UIVALIDATIONMSG: validationMessage,
+              BOBJECT: notificationInfo[0] ? 'NO-Notification' : '',
+              BOSTATUS: notificationInfo[0] ? 'X' : '',
+              BOCONDITION: notificationInfo[0] ? notificationExpression : '',
+              TRIGGERON: notificationInfo[0]
+                ? notificationInfo[0].triggerWhen
+                : '',
+              TRIGGERINFO: notificationInfo[0]
+                ? notificationInfo[0].triggerInfo
+                : '',
+              ...this.getProperties(question, id)
+            });
+
+            if (askQuestions && askQuestions.length) {
+              askQuestions.forEach((aq) => {
+                index = index + 1;
+                sectionPayloads.push({
+                  UNIQUEKEY: aq.id,
+                  VALIDFROM,
+                  VALIDTO,
+                  VERSION,
+                  SECTIONNAME: sectionName,
+                  FIELDLABEL: aq.name,
+                  UIPOSITION: index.toString(),
+                  UIFIELDTYPE: aq.fieldType,
+                  ACTIVE: 'X',
+                  INSTRUCTION: '',
+                  TEXTSTYLE: '',
+                  TEXTCOLOR: '',
+                  MANDATORY: required ? 'X' : '',
+                  SECTIONPOSITION: sectionPosition.toString(),
+                  DEFAULTVALUE: this.getDefaultValue(aq),
+                  APPNAME,
+                  FORMNAME: embeddedFormId,
+                  FORMTITLE: name,
+                  STATUS: 'PUBLISHED',
+                  ELEMENTTYPE: 'MULTIFORMTAB',
+                  PUBLISHED: aq.isPublished,
+                  UIVALIDATION: '',
+                  UIVALIDATIONMSG: '',
+                  ...this.getProperties(aq)
+                });
+              });
+            }
+            if (evidenceQuestions && evidenceQuestions.length) {
+              evidenceQuestions.forEach((eq) => {
+                index = index + 1;
+                sectionPayloads.push({
+                  UNIQUEKEY: eq.id,
+                  VALIDFROM,
+                  VALIDTO,
+                  VERSION,
+                  SECTIONNAME: sectionName,
+                  FIELDLABEL: eq.name,
+                  UIPOSITION: index.toString(),
+                  UIFIELDTYPE: eq.fieldType,
+                  ACTIVE: 'X',
+                  INSTRUCTION: '',
+                  TEXTSTYLE: '',
+                  TEXTCOLOR: '',
+                  MANDATORY: required ? 'X' : '',
+                  SECTIONPOSITION: sectionPosition.toString(),
+                  DEFAULTVALUE: this.getDefaultValue(eq),
+                  APPNAME,
+                  FORMNAME: embeddedFormId,
+                  FORMTITLE: name,
+                  STATUS: 'PUBLISHED',
+                  ELEMENTTYPE: 'MULTIFORMTAB',
+                  PUBLISHED: eq.isPublished,
+                  UIVALIDATION: '',
+                  UIVALIDATIONMSG: '',
+                  ...this.getProperties(eq)
+                });
+              });
+            }
+          })
+          .filter((payload) => payload);
+        payloads = [...payloads, ...sectionPayloads];
+      });
+    });
+    return payloads;
+  }
+
+  getNotificationInfo(question, logics) {
+    let notificationInfo = [];
+
+    const questionLogics = logics.filter(
+      (logic) => logic.questionId === question.id
+    );
+
+    questionLogics.forEach((logic) => {
+      const raiseNotification = logic?.raiseNotification;
+      if (raiseNotification) {
+        const { triggerInfo, triggerWhen } = logic;
+        notificationInfo.push({ triggerInfo, triggerWhen });
+      }
+    });
+    return notificationInfo;
+  }
+
+  getDefaultValue(question) {
+    return question.fieldType === 'LF' ? question.value : '';
+  }
+
+  getProperties(question, formId = null) {
+    let properties = {};
+    const { fieldType, readOnly, value } = question;
+    switch (fieldType) {
+      case 'DF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: value ? 'CD' : ''
+        };
+        break;
+      }
+      case 'TIF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: value ? 'CT' : ''
+        };
+        break;
+      }
+      case 'USR': {
+        properties = {
+          ...properties,
+          UIFIELDTYPE: 'LF',
+          DEFAULTVALUE: 'CU'
+        };
+        break;
+      }
+      case 'LLF': {
+        const { name } = question;
+        properties = {
+          ...properties,
+          FIELDLABEL: `<html>${name}</html>`,
+          DEFAULTVALUE: ''
+          //,INSTRUCTION: this.getDOMStringFromHTML(name)
+        };
+        break;
+      }
+      case 'RT': {
+        const {
+          value: { min, max, increment }
+        } = question;
+        properties = {
+          ...properties,
+          MINVAL: min.toString(),
+          MAXVAL: max.toString(),
+          RINTERVAL: increment.toString()
+        };
+        break;
+      }
+      case 'IMG': {
+        const {
+          value: { base64, name }
+        } = question;
+        properties = {
+          ...properties,
+          IMAGECONTENT: base64,
+          IMAGETYPE: `.${name?.split('.').slice(-1)[0].toLowerCase()}`
+        };
+        break;
+      }
+      case 'VI':
+      case 'DD': {
+        const {
+          value: {
+            values,
+            responseType,
+            dependsOn,
+            location,
+            latitudeColumn: lat,
+            longitudeColumn: lan,
+            radius,
+            pins: pinsCount,
+            autoSelectColumn: autoFill,
+            fileName,
+            globalDataset,
+            children
+          },
+          multi
+        } = question;
+        if (!globalDataset) {
+          const viVALUE = values.map((item, idx) => ({
+            [`label${idx + 1}`]: item.title,
+            key: item.title,
+            color: item.color,
+            description: item.title
+          }));
+          properties = {
+            ...properties,
+            DDVALUE: JSON.stringify(viVALUE),
+            UIFIELDTYPE: multi ? 'DDM' : fieldType
+          };
+        } else {
+          if (location) {
+            properties = {
+              ...properties,
+              MAPDATA: JSON.stringify({
+                lat,
+                lan,
+                radius,
+                pinsCount: pinsCount.toString(),
+                autoFill: autoFill.toString(),
+                parent: responseType
+              })
+            };
+          }
+          if (readOnly) {
+            properties = {
+              ...properties,
+              UIFIELDTYPE: 'LF'
+            };
+          }
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependsOn,
+            CHILDREN: JSON.stringify(children),
+            COLUMNNAME: responseType
+          };
+        }
+        break;
+      }
+      case 'ARD': {
+        properties = {
+          ...properties,
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      case 'TAF': {
+        const {
+          value: { dependsOn, fileName, globalDataset }
+        } = question;
+        if (globalDataset) {
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependsOn
+          };
+        }
+        properties = {
+          ...properties,
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      default:
+      // do nothing
+    }
+    return properties;
+  }
+
+  publishEmbeddedForms$ = (form: any, info: ErrorInfo = {} as ErrorInfo) =>
+    from(this.postPutFormFieldPayloadEmbedded(form)).pipe(
+      mergeMap((payload) => {
+        const { PUBLISHED, ...rest } = payload;
+        if (!PUBLISHED) {
+          return this.createAbapFormField$(rest, info).pipe(
+            map((resp) =>
+              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
+            )
+          );
+        } else {
+          return this.updateAbapFormField$(rest, info).pipe(
+            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
+          );
+        }
+      }),
+      toArray()
+    );
+
+  createAbapFormField$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'abap/forms/fields',
+      form,
+      info
+    );
+
+  updateAbapFormField$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms/fields`,
+      form,
+      info
+    );
+
+  getEmbeddedFormId$ = (
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `forms/embedded/${formId}`,
+      info
     );
 }
