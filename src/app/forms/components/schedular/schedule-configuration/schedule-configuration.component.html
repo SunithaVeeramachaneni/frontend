@@ -296,7 +296,78 @@
           </div>
         </ng-container>
         <ng-container>
-          <app-shift-chart></app-shift-chart>
+          <ng-container>
+            <h2>Shifts</h2>
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-select
+                formControlName="shiftSlot"
+                [placeholder]="'Shift' | translate"
+                [multiple]="true"
+              >
+                <div class="scrollable-area">
+                  <mat-option
+                    [value]="shift?.id"
+                    *ngFor="let shift of shiftDetails"
+                    >{{ shift.name }}
+                    <span class="fload-right"
+                      >{{ shift?.startTime }} - {{ shift?.endTime }}</span
+                    >
+                  </mat-option>
+                </div>
+              </mat-select>
+            </mat-form-field>
+
+            <p>Do not select any Shift if you wish to run for whole day.</p>
+
+            <div
+              class="mt-12"
+              *ngIf="schedulerConfigForm?.value?.shiftSlot?.length === 0"
+            >
+              <h1>When to Run Rounds</h1>
+              <p class="margin-3">Select slots below</p>
+            </div>
+            <div
+              class="mt-12"
+              *ngIf="schedulerConfigForm?.value?.shiftSlot?.length > 0"
+            >
+              <h1>Round Generation Slots</h1>
+              <p class="margin-3">
+                You can split default slot into multiple slots without
+                overlapping.
+              </p>
+            </div>
+          </ng-container>
+
+          <!-- <app-shift-chart
+            [col]="0"
+            [slots]="[
+              '12:00 AM',
+              '1:00 AM',
+              '2:00 AM',
+              '3:00 AM',
+              '4:00 AM',
+              '5:00 AM',
+              '6:00 AM',
+              '7:00 AM',
+              '8:00 AM',
+              '9:00 AM',
+              '10:00 AM',
+              '11:00 AM',
+              '12:00 PM',
+              '1:00 PM',
+              '2:00 PM',
+              '3:00 PM',
+              '4:00 PM',
+              '5:00 PM',
+              '6:00 PM',
+              '7:00 PM',
+              '8:00 PM',
+              '9:00 PM',
+              '10:00 PM',
+              '11:00 PM',
+              '12:00 AM'
+            ]"
+          ></app-shift-chart> -->
         </ng-container>
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">

@@ -329,6 +329,13 @@
   .mt-12 {
     margin-top: 12px;
   }
+  .margin-3 {
+    margin: 3px;
+  }
+  .f-right {
+    float: right;
+    color: #757575;
+  }
 }
 
 ::ng-deep .assign-menu + * .mat-menu-panel {

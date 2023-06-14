@@ -114,6 +114,31 @@ export class ScheduleConfigurationComponent
   };
   dropdownPosition: any;
   selectedDetails: any = {};
+  shiftDetails: {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+  }[] = [
+    {
+      id: '1',
+      name: 'Shift A',
+      startTime: '6:00 AM',
+      endTime: '1:59 PM'
+    },
+    {
+      id: '2',
+      name: 'Shift B',
+      startTime: '2:00 PM',
+      endTime: '9:59 PM'
+    },
+    {
+      id: '3',
+      name: 'Shift C',
+      startTime: '10:00 AM',
+      endTime: '5:59 PM'
+    }
+  ];
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -143,6 +168,7 @@ export class ScheduleConfigurationComponent
       this.isFormModule = true;
     }
     this.initDetails();
+    console.log(this.schedulerConfigForm.value.shfitSlot);
 
     const position = document
       .getElementById('assignDropdownPosition')
@@ -158,6 +184,7 @@ export class ScheduleConfigurationComponent
   ngOnInit(): void {
     this.schedulerConfigForm = this.fb.group({
       id: '',
+      shiftSlot: '',
       roundPlanId: this.roundPlanDetail?.id,
       formId: this.formDetail?.id,
       scheduleType: 'byFrequency',
