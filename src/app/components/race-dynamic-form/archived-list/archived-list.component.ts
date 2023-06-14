@@ -174,9 +174,12 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
+  archivedFormsListCountRaw$: Observable<number>;
+  archivedFormsListCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   nextToken = '';
   public menuState = 'out';
-  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  ghostLoading = Array.from(Array(13).keys());
   submissionDetail: any;
   fetchType = 'load';
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
@@ -275,6 +278,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
                 'Form "' +
@@ -288,6 +292,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
                 'Form "' +
@@ -322,7 +327,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
           if (count !== undefined) {
-            this.archivedFormsListCount$ = of(count);
+            this.reloadArchivedRoundPlanCount(count);
           }
           this.isLoading$.next(false);
           return of(rows);
@@ -488,5 +493,18 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           });
       }
     });
+  }
+
+  private reloadArchivedRoundPlanCount(rawCount: number) {
+    this.archivedFormsListCountRaw$ = of(rawCount);
+    this.archivedFormsListCount$ = combineLatest([
+      this.archivedFormsListCountRaw$,
+      this.archivedFormsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        count += update;
+        return count;
+      })
+    );
   }
 }

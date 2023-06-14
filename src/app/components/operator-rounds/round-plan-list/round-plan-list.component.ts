@@ -268,6 +268,10 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   formsListCount$: Observable<number>;
+  formsListCountRaw$: Observable<number> = of(0);
+  formsListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: RoundPlan = null;
@@ -313,7 +317,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
-    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$('All');
     this.getDisplayedForms();
     this.getAllOperatorRounds();
     this.configOptions.allColumns = this.columns;
@@ -420,6 +423,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               plant: this.plantsObject[obj.plantId]
             });
             form.action = 'add';
+            this.formsListCountUpdate$.next(1);
             this.toast.show({
               text: 'Round Plan copied successfully!',
               type: 'success'
@@ -457,10 +461,13 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, next }) => {
+        mergeMap(({ count, rows, next }) => {
           // if next token turns null from not null, that means all records have been fetched with the given limit.
           if (next === null && this.nextToken !== null) {
             this.infiniteScrollEnabled = false;
+          }
+          if (count !== undefined) {
+            this.reloadRoundPlanCount(count);
           }
           this.nextToken = next;
           this.isLoading$.next(false);
@@ -517,8 +524,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
           action: 'delete',
           form
         });
-        this.formsListCount$ =
-          this.operatorRoundsService.getFormsListCount$('All');
+        this.formsListCountUpdate$.next(-1);
       });
   }
 
@@ -698,5 +704,18 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
+  }
+
+  private reloadRoundPlanCount(rawCount: number) {
+    this.formsListCountRaw$ = of(rawCount);
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        count += update;
+        return count;
+      })
+    );
   }
 }
