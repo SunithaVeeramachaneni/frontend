@@ -178,8 +178,9 @@
             let i = index
           "
           [formGroup]="additionalDetails"
+          formArrayName="additionalDetails"
         >
-          <div class="width-45">
+          <div class="width-45" formGroupName="{{ i }}">
             <mat-form-field
               appearance="outline"
               class="m-l-5 symbol m-b-10 width-100"
@@ -187,7 +188,7 @@
               <input
                 matInput
                 type="text"
-                [formControl]="labelCtrl"
+                formControlName="label"
                 class="example-input"
                 [matAutocomplete]="autolabel"
               />
@@ -201,9 +202,18 @@
                 {{ label }}
                 <span class="remove-txt">{{ 'removeBtn' | translate }}</span>
               </mat-option>
-              <mat-option *ngIf="labelCtrl.value">
+              <mat-option
+                *ngIf="headerDataForm.get('additionalDetails')['controls']"
+              >
                 <ng-container *ngIf="filteredLabels | async as labels">
-                  <ng-container *ngIf="!labels.includes(labelCtrl.value)">
+                  <ng-container
+                    *ngIf="
+                      !labels.includes(
+                        headerDataForm.get('additionalDetails')['controls'][i]
+                          .label
+                      )
+                    "
+                  >
                     <button
                       mat-button
                       color="primary"
@@ -213,7 +223,8 @@
                       <mat-icon class="m-r-5">add</mat-icon>
                       <span
                         >{{ 'addNew' | translate }} ({{
-                          labelCtrl.value
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .label
                         }})</span
                       >
                     </button>
@@ -234,7 +245,7 @@
               <input
                 matInput
                 type="text"
-                [formControl]="valueCtrl"
+                formControlName="value"
                 [matAutocomplete]="autoValue"
                 class="example-input"
               />
@@ -261,7 +272,8 @@
                       <mat-icon class="m-r-5">add</mat-icon>
                       <span
                         >{{ 'addNew' | translate }} ({{
-                          valueCtrl.value
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .value
                         }})</span
                       >
                     </button>

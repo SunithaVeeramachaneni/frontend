@@ -100,10 +100,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       )
     );
 
-    this.filteredLabels = this.labelCtrl.valueChanges.pipe(
-      startWith(''),
-      map((value) => this.filterLabel(value || ''))
-    );
+    // this.filteredLabels = this.labelCtrl.valueChanges.pipe(
+    //   startWith(''),
+    //   map((value) => this.filterLabel(value || ''))
+    // );
   }
 
   getAllPlantsData() {
@@ -136,10 +136,24 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
     this.getAllPlantsData();
     // this.retrieveDetails();
+
+    this.headerDataForm
+      .get('additionalDetails')
+      .valueChanges.subscribe((data) => {
+        this.filteredLabels = of(
+          data.map((detail) => this.filterLabel(detail.label))
+        );
+        this.filteredValues = of(
+          data.map((detail) => this.filterValue(detail.value))
+        );
+      });
   }
 
   filterLabel(value: string): string[] {
     return this.labels.filter((label) => label.includes(value));
+  }
+  filterValue(value: string): string[] {
+    return this.values.filter((label) => label.includes(value));
   }
 
   add(event: MatChipInputEvent): void {
@@ -326,6 +340,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     const additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
+
     this.operatorRoundsService
       .createAdditionalDetails$(additionalDetails.value)
       .subscribe(
