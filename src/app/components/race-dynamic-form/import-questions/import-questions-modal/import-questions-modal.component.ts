@@ -39,7 +39,7 @@ export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
-  ghostLoading = new Array(7).fill(0).map((v, i) => i);
+  ghostLoading = new Array(8).fill(0).map((v, i) => i);
   private onDestroy$ = new Subject();
 
   constructor(
@@ -113,13 +113,20 @@ export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   }
 
   getForms() {
+    const filterData = {
+      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
+    };
     return this.raceDynamicFormService
-      .getFormsList$({
-        next: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        filterData
+      )
       .pipe(
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;

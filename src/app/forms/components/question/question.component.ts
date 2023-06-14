@@ -120,7 +120,16 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._subFormId;
   }
 
+  @Input() set isQuestionPublished(value: boolean) {
+    this._isQuestionPublished = value;
+  }
+
+  get isQuestionPublished() {
+    return this._isQuestionPublished;
+  }
+
   @Input() isPreviewActive;
+  @Input() isEmbeddedForm;
 
   @Input() isAskQuestionFocusId: any;
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();
@@ -129,6 +138,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+
+  get rangeDisplayText() {
+    return this._rangeDisplayText;
+  }
+
+  set rangeDisplayText(d) {
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+  }
+
+  private _rangeDisplayText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -145,7 +167,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'ARD',
     'DT',
     'HL',
-    'INST'
+    'INST',
+    'DF',
+    'TIF'
   ];
 
   unitOfMeasurementsAvailable: any[] = [];
@@ -191,6 +215,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _questionName: string;
   private _subFormId: string;
   private onDestroy$ = new Subject();
+  private _isQuestionPublished: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -236,7 +261,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF'
+        fieldType.type !== 'TAF' &&
+        (this.isEmbeddedForm
+          ? fieldType.type !== 'DT'
+          : fieldType.type !== 'DF' && fieldType.type !== 'TIF')
     );
 
     // isAskQuestion true set question id and section id
@@ -244,6 +272,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.questionForm.get('isPublished').setValue(this.isQuestionPublished);
       this.selectedNodeId = this.subFormId;
     }
 
@@ -276,6 +305,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 prevValue?.type === 'globalResponse'
               )
                 this.handleGlobalResponseRefCount(prevValue, currValue);
+
+              if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
+                this.rangeDisplayText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -336,6 +368,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
+            this.rangeDisplayText = '';
           }
         })
       );
@@ -498,22 +531,23 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sliderOpen() {
-    this.formService.setsliderOpenState(true);
+    this.formService.setsliderOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      value: {
+        value: 0,
+        min: 0,
+        max: 100,
+        increment: 1
+      }
+    });
   }
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
+      questionId: question.id,
       rangeMetadata: question.rangeMetadata
     });
-  }
-
-  getRangeDisplayText() {
-    let resp = 'None';
-    const rangeMeta = this.questionForm.get('rangeMetadata').value;
-    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
-    }
-    return resp;
   }
 
   insertImageHandler(event) {
@@ -550,10 +584,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
   updateIsOpen(isOpen: boolean) {
-    const isAskQuestion =
-      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-
-    if (isAskQuestion) {
+    if (this.isAskQuestion) {
       return;
     }
     if (this.questionForm.get('isOpen').value !== isOpen) {
@@ -625,10 +656,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       operand2: '',
       action: '',
       mandateAttachment: false,
+      askEvidence: '',
       raiseIssue: false,
       logicTitle: '',
       expression: '',
+      raiseNotification: false,
+      triggerInfo: '',
+      triggerWhen: '',
       questions: [],
+      evidenceQuestions: [],
       mandateQuestions: [],
       hideQuestions: []
     };
@@ -668,7 +704,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         );
         break;
       case 'ask_question_create':
-        const newQuestion = {
+        let newQuestion = {
           id: `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
@@ -678,6 +714,33 @@ export class QuestionComponent implements OnInit, OnDestroy {
           enableHistory: false,
           multi: false,
           value: 'TF',
+          isPublished: false,
+          isPublishedTillSave: false,
+          isOpen: false,
+          isResponseTypeModalOpen: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion,
+            subFormId: this.selectedNodeId
+          })
+        );
+        break;
+      case 'ask_evidence_create':
+        newQuestion = {
+          id: event.askEvidence,
+          sectionId: `EVIDENCE_${event.logic.id}`,
+          name: `Attach Evidence for ${event.questionName}`,
+          fieldType: 'ATT',
+          position: 0,
+          required: true,
+          enableHistory: false,
+          multi: false,
+          value: 'ATT',
           isPublished: false,
           isPublishedTillSave: false,
           isOpen: false,

@@ -49,6 +49,9 @@ import { PlantDetailViewComponent } from './plants/plant-detail-view/plant-detai
 import { PlantListComponent } from './plants/plant-list/plant-list.component';
 import { UploadResponseModalComponent } from './upload-response-modal/upload-response-modal.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
+import { AddEditShiftComponent } from './shifts/add-edit-shift/add-edit-shift.component';
+import { ShiftListComponent } from './shifts/shift-list/shift-list.component';
+import { ShiftOverlapModalComponent } from './plants/shift-overlap-modal/shift-overlap-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(
@@ -73,8 +76,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditPlantComponent,
     PlantDetailViewComponent,
     PlantListComponent,
+    AddEditShiftComponent,
+    ShiftListComponent,
     UploadResponseModalComponent,
-    ResponsesListComponent
+    ResponsesListComponent,
+    ShiftOverlapModalComponent
   ],
   imports: [
     FormsModule,

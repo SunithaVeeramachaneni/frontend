@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   ErrorInfo,
@@ -12,7 +12,6 @@ import { formatDistance } from 'date-fns';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
-  GetLocations,
   CreateLocation,
   DeleteLocation,
   LocationsResponse
@@ -34,12 +33,12 @@ export class LocationService {
   fetchAllLocations$ = (plantsID = null) => {
     const params: URLSearchParams = new URLSearchParams();
     if (plantsID) {
-      const filter = {
+      const locationsListFilter = {
         plantsID: {
           eq: plantsID
         }
       };
-      params.set('filter', JSON.stringify(filter));
+      params.set('filter', JSON.stringify(locationsListFilter));
     }
     return this._appService._getResp(
       environment.masterConfigApiUrl,
@@ -47,26 +46,6 @@ export class LocationService {
       { displayToast: true, failureResponse: {} }
     );
   };
-  getLocationCount$(searchTerm: string): Observable<number> {
-    const filter = JSON.stringify(
-      Object.fromEntries(
-        Object.entries({
-          searchTerm: { contains: searchTerm }
-        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
-      )
-    );
-    return this._appService
-      ._getResp(
-        environment.masterConfigApiUrl,
-        'location/count',
-        { displayToast: true, failureResponse: {} },
-        {
-          limit: this.MAX_FETCH_LIMIT,
-          filter
-        }
-      )
-      .pipe(map((res) => res?.count || 0));
-  }
 
   getLocationsList$(
     queryParams: {
@@ -82,28 +61,27 @@ export class LocationService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-
-      params.set('limit', `${queryParams.limit}`);
-
-      params.set('next', queryParams.next);
-
-      if (queryParams.searchKey) {
-        const filter: GetLocations = {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        };
-        params.set('filter', JSON.stringify(filter));
-      }
-      if (filterData.plant) {
-        let filter = JSON.parse(params.get('filter'));
-        filter = { ...filter, plantsID: { eq: filterData.plant } };
-        params.set('filter', JSON.stringify(filter));
-      }
+      const locationsListFilter = JSON.stringify(
+        Object.fromEntries(
+          Object.entries({
+            searchTerm: { contains: queryParams.searchKey.toLocaleLowerCase() },
+            plantsID: { eq: filterData.plant }
+          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
+        )
+      );
 
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'location/list?' + params.toString()
+          'location/list',
+          { displayToast: true, failureResponse: {} },
+          {
+            limit: `${queryParams.limit}`,
+            next: queryParams.next,
+            ...(Object.keys(locationsListFilter).length > 0 && {
+              filter: locationsListFilter
+            })
+          }
         )
         .pipe(map((res) => this.formatGraphQLocationResponse(res)));
     } else {
@@ -227,13 +205,11 @@ export class LocationService {
               })
             : ''
         })) || [];
-    const count = resp?.items.length || 0;
-    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
-      count,
+      count: resp?.count,
       rows,
-      next
+      next: resp?.next
     };
   }
 }
