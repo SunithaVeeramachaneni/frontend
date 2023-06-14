@@ -173,7 +173,11 @@ export class OperatorRoundsService {
           environment.operatorRoundsApiUrl,
           'rounds',
           { displayToast, failureResponse },
-          { next: queryParameters.next, limit: queryParameters.limit, ...omitBy(queryParameters, isEmpty) }
+          {
+            next: queryParameters.next,
+            limit: queryParameters.limit.toString(),
+            ...omitBy(queryParameters, isEmpty)
+          }
         )
         .pipe(
           map((data) => ({ ...data, rows: this.formatRounds(data.items) }))
