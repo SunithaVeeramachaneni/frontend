@@ -120,6 +120,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._subFormId;
   }
 
+  @Input() set isQuestionPublished(value: boolean) {
+    this._isQuestionPublished = value;
+  }
+
+  get isQuestionPublished() {
+    return this._isQuestionPublished;
+  }
+
   @Input() isPreviewActive;
   @Input() isEmbeddedForm;
 
@@ -207,6 +215,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _questionName: string;
   private _subFormId: string;
   private onDestroy$ = new Subject();
+  private _isQuestionPublished: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -263,6 +272,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.questionForm.get('isPublished').setValue(this.isQuestionPublished);
       this.selectedNodeId = this.subFormId;
     }
 

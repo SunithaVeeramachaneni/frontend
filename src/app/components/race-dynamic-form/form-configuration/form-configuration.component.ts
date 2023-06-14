@@ -481,8 +481,37 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     const form = { formMetadata: this.formMetadata, pages: this.pages };
 
     if (this.isEmbeddedForm) {
-      this.rdfService.publishEmbeddedForms$(form).subscribe(() => {
-        this.router.navigate(['/forms']);
+      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
+        form.pages[0].questions.forEach((question) => {
+          if (response.includes(question.id)) {
+            question.isPublished = true;
+            question.isPublishedTillSave = true;
+          }
+        });
+
+        const {
+          formMetadata,
+          formStatus,
+          counter,
+          authoredFormDetailId,
+          authoredFormDetailVersion,
+          formDetailPublishStatus,
+          authoredFormDetailDynamoDBVersion
+        } = this.formDetails;
+        this.store.dispatch(
+          BuilderConfigurationActions.updateAuthoredFormDetail({
+            formStatus: formStatus,
+            formDetailPublishStatus,
+            formListId: formMetadata.id,
+            counter,
+            pages: form.pages,
+            authoredFormDetailId,
+            authoredFormDetailVersion,
+            authoredFormDetailDynamoDBVersion
+          })
+        );
+
+        // this.router.navigate(['/forms']);
       });
     }
   }
