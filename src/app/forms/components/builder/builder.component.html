@@ -10,7 +10,7 @@
     <ng-container *ngFor="let pageIndex of props.pageIndexes">
       <app-page
         [pageIndex]="pageIndex"
-        [isEmbeddedForms]="isEmbeddedForms"
+        [isEmbeddedForm]="isEmbeddedForm"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
         [selectedNodeId]="selectedNode.id"
@@ -137,7 +137,7 @@
                               (questionEvent)="questionEventHandler($event)"
                               [selectedNodeId]="selectedNode.id"
                               [isPreviewActive]="isPreviewActive"
-                              [isEmbeddedForms]="isEmbeddedForms"
+                              [isEmbeddedForm]="isEmbeddedForm"
                             ></app-question>
                           </div>
                         </ng-container>

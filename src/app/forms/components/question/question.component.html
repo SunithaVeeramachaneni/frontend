@@ -149,7 +149,7 @@
               <div
                 *ngIf="
                   questionForm.get('fieldType').value === 'INST' &&
-                  !isEmbeddedForms
+                  !isEmbeddedForm
                 "
               >
                 <div class="dis-flex">
@@ -226,7 +226,7 @@
               <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'NF' &&
-                  !isEmbeddedForms
+                  !isEmbeddedForm
                 "
                 class="action"
               >
@@ -268,7 +268,7 @@
               <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'NF' &&
-                  !isEmbeddedForms
+                  !isEmbeddedForm
                 "
                 class="action"
               >
@@ -286,7 +286,7 @@
                 *ngIf="
                   (questionForm.get('fieldType').value === 'NF' ||
                     questionForm.get('fieldType').value === 'RT') &&
-                  !isEmbeddedForms
+                  !isEmbeddedForm
                 "
               >
                 <mat-checkbox
@@ -300,7 +300,7 @@
               <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'LF' ||
-                  (isEmbeddedForms &&
+                  (isEmbeddedForm &&
                     questionForm.get('fieldType').value === 'HL')
                 "
                 class="action"
@@ -341,7 +341,7 @@
               <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'HL' &&
-                  !isEmbeddedForms
+                  !isEmbeddedForm
                 "
                 class="action"
               >
@@ -435,7 +435,7 @@
                 [sectionId]="sectionId"
                 (logicEvent)="logicEventHandler($event)"
                 [selectedNodeId]="selectedNodeId"
-                [isEmbeddedForms]="isEmbeddedForms"
+                [isEmbeddedForm]="isEmbeddedForm"
                 [questionName]="questionForm.get('name').value"
               ></app-add-logic>
             </div>

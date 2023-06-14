@@ -121,7 +121,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   @Input() isPreviewActive;
-  @Input() isEmbeddedForms;
+  @Input() isEmbeddedForm;
 
   @Input() isAskQuestionFocusId: any;
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();
@@ -253,7 +253,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
-        (this.isEmbeddedForms
+        (this.isEmbeddedForm
           ? fieldType.type !== 'DT'
           : fieldType.type !== 'DF' && fieldType.type !== 'TIF')
     );

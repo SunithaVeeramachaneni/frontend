@@ -113,9 +113,8 @@ export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   }
 
   getForms() {
-
     const filterData = {
-      formType: this.data.isEmbeddedForms ? 'Embedded' : 'Standalone'
+      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
     };
     return this.raceDynamicFormService
       .getFormsList$(

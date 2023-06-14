@@ -45,7 +45,7 @@ import { NumberRangeMetadata } from 'src/app/interfaces';
 })
 export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
-  @Input() isEmbeddedForms: boolean;
+  @Input() isEmbeddedForm: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set questionId(id: string) {
@@ -445,7 +445,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
       type: 'update',
       logic
     };
-    if (this.isEmbeddedForms) {
+    if (this.isEmbeddedForm) {
       logic.action = action;
       logic.askEvidence = `${this.questionId}_${index}_EVIDENCE`;
       let newEmitObject = {

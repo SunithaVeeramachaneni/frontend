@@ -213,7 +213,7 @@
                 <button
                   *ngIf="
                     raiseIssueApplicableFields.includes(fieldType) &&
-                    !isEmbeddedForms
+                    !isEmbeddedForm
                   "
                   class="logicActionMenuItem"
                   mat-menu-item
@@ -221,7 +221,7 @@
                   translate="raiseIssue"
                 ></button>
                 <button
-                  *ngIf="isEmbeddedForms"
+                  *ngIf="isEmbeddedForm"
                   class="logicActionMenuItem"
                   mat-menu-item
                   (click)="

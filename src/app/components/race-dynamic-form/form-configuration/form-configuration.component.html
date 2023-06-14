@@ -135,15 +135,13 @@
       <button
         mat-stroked-button
         class="import-btn"
-        [disabled]="isEmbeddedForms"
+        [disabled]="isEmbeddedForm"
         translate="saveAsTemplate"
         (click)="openSaveTemplateDialog()"
       ></button>
 
       <button mat-stroked-button class="next-btn" (click)="publishOrShowPdf()">
-        {{
-          isEmbeddedForms ? ('publishBtn' | translate) : ('next' | translate)
-        }}
+        {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
       </button>
     </div>
   </div>
@@ -152,12 +150,12 @@
       <app-builder
         [selectedNode]="selectedNode"
         [isPreviewActive]="true"
-        [isEmbeddedForms]="isEmbeddedForms"
+        [isEmbeddedForm]="isEmbeddedForm"
         [counter]="formConfiguration.get('counter').value"
         [moduleName]="'forms'"
       ></app-builder>
     </div>
-    <div class="iphone-width m-t-20" *ngIf="!isEmbeddedForms">
+    <div class="iphone-width m-t-20" *ngIf="!isEmbeddedForm">
       <app-iphone [moduleType]="'forms'" [subFormId]="''"></app-iphone>
     </div>
   </div>
@@ -170,7 +168,7 @@
       [isFooter]="true"
       [selectedFormName]="selectedFormName"
       [selectedFormData]="selectedFormData"
-      [isEmbeddedForms]="isEmbeddedForms"
+      [isEmbeddedForm]="isEmbeddedForm"
       [currentFormData]="currentFormData"
       (cancelSliderEvent)="cancelSlider($event)"
     ></app-import-questions-slider>

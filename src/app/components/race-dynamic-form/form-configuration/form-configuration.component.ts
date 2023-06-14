@@ -86,7 +86,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
-  isEmbeddedForms: boolean;
+  isEmbeddedForm: boolean;
   errors: ValidationError = {};
   formDetails: any;
   pages: any;
@@ -174,7 +174,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         const { name, description, id, formLogo, formStatus, formType } =
           formMetadata;
         this.formMetadata = formMetadata;
-        this.isEmbeddedForms = formType === formConfigurationStatus.embedded;
+        this.isEmbeddedForm = formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,
@@ -404,7 +404,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           );
         } else {
           this.store.select(getFormMetadata).subscribe((data) => {
-            this.isEmbeddedForms = data.formType === 'Embedded';
+            this.isEmbeddedForm = data.formType === 'Embedded';
           });
           const section = {
             id: 'S1',
@@ -421,7 +421,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               return {
                 ...df,
                 name: 'Conducted On',
-                fieldType: this.isEmbeddedForms ? 'DF' : 'DT',
+                fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
                 date: true,
                 time: true
               };
@@ -480,7 +480,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     const form = { formMetadata: this.formMetadata, pages: this.pages };
 
-    if (this.isEmbeddedForms) {
+    if (this.isEmbeddedForm) {
       this.rdfService.publishEmbeddedForms$(form).subscribe(() => {
         this.router.navigate(['/forms']);
       });
@@ -528,7 +528,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         selectedFormData: '',
         selectedFormName: '',
         openImportQuestionsSlider: false,
-        isEmbeddedForms: this.isEmbeddedForms
+        isEmbeddedForm: this.isEmbeddedForm
       }
     });
 
@@ -550,7 +550,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishOrShowPdf() {
-    if (!this.isEmbeddedForms) {
+    if (!this.isEmbeddedForm) {
       this.goToPDFBuilderConfiguration();
     } else {
       // PUBLISH FORM TO SAP AND DYNAMODB

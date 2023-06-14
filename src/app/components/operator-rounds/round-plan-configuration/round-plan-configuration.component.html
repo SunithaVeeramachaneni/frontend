@@ -204,7 +204,7 @@
           <app-builder
             *ngIf="selectedNodeLoadStatus"
             [selectedNode]="selectedNodeInstance"
-            [isEmbeddedForms]="false"
+            [isEmbeddedForm]="false"
             [isPreviewActive]="isPreviewActive"
             [counter]="formConfiguration.get('counter').value"
             [moduleName]="'rounds'"
@@ -228,7 +228,7 @@
         </div>
         <app-builder
           *ngIf="selectedNodeLoadStatus"
-          [isEmbeddedForms]="false"
+          [isEmbeddedForm]="false"
           [selectedNode]="selectedNode"
           [isPreviewActive]="isPreviewActive"
           [counter]="formConfiguration.get('counter').value"
