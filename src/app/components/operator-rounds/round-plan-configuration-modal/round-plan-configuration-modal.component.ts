@@ -39,6 +39,7 @@ import {
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { Hash } from 'crypto';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -58,8 +59,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  labels: string[] = ['abc', 'def', 'tataadx'];
-  values: string[] = [''];
+  // labels: string[] = ['abc', 'def', 'tataadx'];
+  labels = {
+    abc: 1,
+    def: 1,
+    tataadx: 1
+  };
+  // values: string[] = [''];
+  values = {
+    cde: 1,
+    efg: 1
+  };
   labelCtrl = new FormControl();
   valueCtrl = new FormControl();
   filteredLabels: Observable<string[]>;
@@ -70,6 +80,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
+  changedValues: string = '';
   // showFields: boolean = true;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
@@ -140,20 +151,31 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.headerDataForm
       .get('additionalDetails')
       .valueChanges.subscribe((data) => {
-        this.filteredLabels = of(
-          data.map((detail) => this.filterLabel(detail.label))
-        );
-        this.filteredValues = of(
-          data.map((detail) => this.filterValue(detail.value))
-        );
+        data.map((detail) => {
+          if (detail.label && !this.labels[detail.label]) {
+            this.changedValues = detail.label;
+            this.filteredLabels = of(
+              Object.keys(this.labels).filter((lab) =>
+                lab.includes(this.changedValues)
+              )
+            );
+            return;
+          }
+          if (detail.value && !this.values[detail.value]) {
+            this.changedValues = detail.value;
+            this.filteredValues = of(
+              Object.keys(this.values).filter((lab) =>
+                lab.includes(this.changedValues)
+              )
+            );
+            return;
+          }
+        });
       });
-  }
-
-  filterLabel(value: string): string[] {
-    return this.labels.filter((label) => label.includes(value));
-  }
-  filterValue(value: string): string[] {
-    return this.values.filter((label) => label.includes(value));
+    if (!this.changedValues) {
+      this.filteredLabels = of(Object.keys(this.labels));
+      this.filteredValues = of(Object.keys(this.values));
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -356,7 +378,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   retrieveDetails() {
     this.operatorRoundsService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
-        this.labels = [...details];
+        // this.labels = [...details];
         console.log('labels', this.labels);
       },
       (error) => {
