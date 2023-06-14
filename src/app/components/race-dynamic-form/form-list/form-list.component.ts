@@ -275,7 +275,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
-  formsListCountRaw$: Observable<number> = of(0);
+  formsListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   formsListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
@@ -293,6 +293,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   plants = [];
   createdBy = [];
   userInfo$: Observable<UserInfo>;
+  triggerCountUpdate = false;
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -330,6 +331,18 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
     );
   }
 
@@ -455,6 +468,7 @@ export class FormListComponent implements OnInit, OnDestroy {
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
             initial.data.splice(newIdx, 0, obj);
             form.action = 'add';
+            this.triggerCountUpdate = true;
             this.formsListCountUpdate$.next(1);
             this.toast.show({
               text: 'Form copied successfully!',
@@ -464,6 +478,7 @@ export class FormListComponent implements OnInit, OnDestroy {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             form.action = 'add';
+            this.triggerCountUpdate = true;
             this.formsListCountUpdate$.next(-1);
             this.toast.show({
               text: 'Form "' + form.form.name + '" archive successfully!',
@@ -496,7 +511,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       .pipe(
         mergeMap(({ count, rows, next }) => {
           if (count !== undefined) {
-            this.reloadFormCount(count);
+            this.formsListCountRaw$.next(count);
           }
           this.nextToken = next;
           this.isLoading$.next(false);
@@ -712,18 +727,5 @@ export class FormListComponent implements OnInit, OnDestroy {
       };
     }
     return null;
-  }
-
-  private reloadFormCount(rawCount: number) {
-    this.formsListCountRaw$ = of(rawCount);
-    this.formsListCount$ = combineLatest([
-      this.formsListCountRaw$,
-      this.formsListCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        count += update;
-        return count;
-      })
-    );
   }
 }

@@ -268,7 +268,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   formsListCount$: Observable<number>;
-  formsListCountRaw$: Observable<number> = of(0);
+  formsListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   formsListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
     0
   );
@@ -288,6 +288,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   createdBy = [];
   plantsObject: { [key: string]: PlantsResponse } = {};
   userInfo$: Observable<UserInfo>;
+  triggerCountUpdate = false;
   readonly perms = perms;
   private destroy$ = new Subject();
 
@@ -322,6 +323,18 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
     );
   }
 
@@ -423,6 +436,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               plant: this.plantsObject[obj.plantId]
             });
             form.action = 'add';
+            this.triggerCountUpdate = true;
             this.formsListCountUpdate$.next(1);
             this.toast.show({
               text: 'Round Plan copied successfully!',
@@ -467,7 +481,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
             this.infiniteScrollEnabled = false;
           }
           if (count !== undefined) {
-            this.reloadRoundPlanCount(count);
+            this.formsListCountRaw$.next(count);
           }
           this.nextToken = next;
           this.isLoading$.next(false);
@@ -524,6 +538,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
           action: 'delete',
           form
         });
+        this.triggerCountUpdate = true;
         this.formsListCountUpdate$.next(-1);
       });
   }
@@ -704,18 +719,5 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
-  }
-
-  private reloadRoundPlanCount(rawCount: number) {
-    this.formsListCountRaw$ = of(rawCount);
-    this.formsListCount$ = combineLatest([
-      this.formsListCountRaw$,
-      this.formsListCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        count += update;
-        return count;
-      })
-    );
   }
 }

@@ -174,7 +174,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
-  archivedFormsListCountRaw$: Observable<number>;
+  archivedFormsListCountRaw$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   archivedFormsListCountUpdate$: BehaviorSubject<number> =
     new BehaviorSubject<number>(0);
   nextToken = '';
@@ -196,6 +197,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   };
   plants = [];
   plantsIdNameMap = {};
+  triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
   private onDestroy$ = new Subject();
@@ -232,6 +234,18 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     this.prepareMenuActions();
     this.getFilters();
     this.getAllArchivedForms();
+    this.archivedFormsListCount$ = combineLatest([
+      this.archivedFormsListCountRaw$,
+      this.archivedFormsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
+    );
   }
 
   getDisplayedForms(): void {
@@ -278,6 +292,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.triggerCountUpdate = true;
             this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
@@ -292,6 +307,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.triggerCountUpdate = true;
             this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
@@ -327,7 +343,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
           if (count !== undefined) {
-            this.reloadArchivedRoundPlanCount(count);
+            this.archivedFormsListCountRaw$.next(count);
           }
           this.isLoading$.next(false);
           return of(rows);
@@ -493,18 +509,5 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           });
       }
     });
-  }
-
-  private reloadArchivedRoundPlanCount(rawCount: number) {
-    this.archivedFormsListCountRaw$ = of(rawCount);
-    this.archivedFormsListCount$ = combineLatest([
-      this.archivedFormsListCountRaw$,
-      this.archivedFormsListCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        count += update;
-        return count;
-      })
-    );
   }
 }

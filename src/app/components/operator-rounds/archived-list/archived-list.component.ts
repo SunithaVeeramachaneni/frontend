@@ -179,7 +179,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
-  archivedFormsListCountRaw$: Observable<number>;
+  archivedFormsListCountRaw$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   archivedFormsListCountUpdate$: BehaviorSubject<number> =
     new BehaviorSubject<number>(0);
   nextToken = '';
@@ -209,6 +210,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plants = [];
   currentRouteUrl$: Observable<string>;
+  triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   private destroy$ = new Subject();
 
@@ -244,6 +246,18 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     this.prepareMenuActions();
     this.getFilter();
     this.getAllArchivedRoundPlans();
+    this.archivedFormsListCount$ = combineLatest([
+      this.archivedFormsListCountRaw$,
+      this.archivedFormsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
+    );
   }
 
   getDisplayedForms(): void {
@@ -326,7 +340,9 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
       )
       .pipe(
         mergeMap(({ rows, next, count }) => {
-          this.reloadArchivedRoundPlanCount(count);
+          if (count !== undefined) {
+            this.archivedFormsListCountRaw$.next(count);
+          }
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
@@ -468,6 +484,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           action: 'restore',
           form
         });
+        this.triggerCountUpdate = true;
         this.archivedFormsListCountUpdate$.next(-1);
       });
   }
@@ -495,22 +512,10 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               action: 'delete',
               form
             });
+            this.triggerCountUpdate = true;
             this.archivedFormsListCountUpdate$.next(-1);
           });
       }
     });
-  }
-
-  private reloadArchivedRoundPlanCount(rawCount: number) {
-    this.archivedFormsListCountRaw$ = of(rawCount);
-    this.archivedFormsListCount$ = combineLatest([
-      this.archivedFormsListCountRaw$,
-      this.archivedFormsListCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        count += update;
-        return count;
-      })
-    );
   }
 }
