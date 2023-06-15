@@ -427,7 +427,6 @@ export class ObservationsService {
         new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
     );
     const rows = items.map((item) => {
-      // console.log('Issue Action Item: ', item);
       const location =
         item.SWERK?.replace(dataPlaceHolder, placeHolder) || placeHolder;
       const asset =

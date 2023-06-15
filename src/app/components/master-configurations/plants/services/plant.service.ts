@@ -43,7 +43,6 @@ export class PlantService {
         if (plant.id && plant.timeZone)
           timeZoneMapping[plant.id] = plant.timeZone;
       }
-      // console.log(timeZoneMapping);
       this.plantTimeZoneMapping$.next(timeZoneMapping);
     });
   };

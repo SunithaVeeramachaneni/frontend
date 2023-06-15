@@ -137,7 +137,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       this.data;
     this.allData = allData;
 
-    // console.log('Issue Actions Data: ', this.data);
     this.moduleName = moduleName;
     totalCount$?.subscribe((count: number) => (this.totalCount = count || 0));
     const {

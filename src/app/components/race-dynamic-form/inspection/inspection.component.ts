@@ -874,7 +874,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       )
       .pipe(
         tap((resp: any) => {
-          console.log('resp :', resp);
           if (Object.keys(resp).length) {
             this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {

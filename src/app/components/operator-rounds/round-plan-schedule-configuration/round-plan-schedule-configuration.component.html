@@ -206,7 +206,12 @@
           >
             <mat-label translate>endDate</mat-label>
             <input matInput formControlName="endDate" readonly />
-            <input matInput [matDatepicker]="endDate" hidden />
+            <input
+              matInput
+              [matDatepicker]="endDate"
+              formControlName="endDatePicker"
+              hidden
+            />
             <mat-datepicker-toggle
               matIconSuffix
               [for]="endDate"
