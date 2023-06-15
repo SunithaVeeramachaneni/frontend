@@ -196,7 +196,7 @@ export class AddEditPlantComponent implements OnInit {
         this.plantForm.get('image').setValue('');
         const { id, ...payload } = this.plantForm.value;
         const selectedShiftDetailsTemp = [];
-        payload?.shifts.forEach((sid) => {
+        payload?.shifts?.forEach((sid) => {
           const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
           if (index > -1) {
             selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);
