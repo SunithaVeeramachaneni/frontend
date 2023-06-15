@@ -19,15 +19,14 @@ import {
   RoundDetailResponse,
   RoundDetail,
   RoundPlanQueryParam,
-  UserDetails,
   UsersInfoByEmail,
   Count
 } from '../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import { isEmpty, omitBy } from 'lodash-es';
 
 const limit = 10000;
 @Injectable({
@@ -163,17 +162,21 @@ export class OperatorRoundsService {
       if (isSearch) {
         rest.next = '';
       }
-      let queryParamaters: any = rest;
+      let queryParameters: any = rest;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        queryParameters = { ...rest, plantId: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
           environment.operatorRoundsApiUrl,
-          'rounds/',
+          'rounds',
           { displayToast, failureResponse },
-          queryParamaters
+          {
+            next: queryParameters.next,
+            limit: queryParameters.limit.toString(),
+            ...omitBy(queryParameters, isEmpty)
+          }
         )
         .pipe(
           map((data) => ({ ...data, rows: this.formatRounds(data.items) }))
@@ -243,26 +246,6 @@ export class OperatorRoundsService {
         'round-plans/submissions?' + params.toString()
       )
       .pipe(map((res) => this.formatSubmittedListResponse(res)));
-  }
-
-  getFormsListCount$(
-    formStatus: 'Published' | 'Draft' | 'All',
-    isArchived: boolean = false
-  ): Observable<number> {
-    const params: URLSearchParams = new URLSearchParams();
-    params.set('formStatus', formStatus);
-    params.set('limit', String(limit));
-    params.set('isArchived', String(isArchived));
-    return this.appService
-      ._getResp(
-        environment.operatorRoundsApiUrl,
-        'round-plans/count?' + params.toString()
-      )
-      .pipe(map(({ count }) => count || 0));
-  }
-
-  getRoundsListCount$(): Observable<number> {
-    return of(0);
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
@@ -460,12 +443,11 @@ export class OperatorRoundsService {
               })
             : ''
         })) || [];
-    const count = resp?.items.length || 0;
-    const next = resp?.next;
+
     return {
-      count,
+      count: resp?.count,
       rows,
-      next
+      next: resp?.next
     };
   }
 
@@ -627,13 +609,8 @@ export class OperatorRoundsService {
 
   fetchAllRounds$ = () => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', '');
     params.set('limit', '2000000');
     params.set('next', '');
-    params.set('roundPlanId', '');
-    params.set('status', '');
-    params.set('assignedTo', '');
-    params.set('dueDate', '');
 
     return this.appService
       ._getResp(
@@ -736,7 +713,7 @@ export class OperatorRoundsService {
   ): Observable<Blob> =>
     this.appService.downloadFile(
       environment.operatorRoundsApiUrl,
-      `rounds/${roundPlanId}/${roundId}`,
+      `rounds/download-pdf/${roundPlanId}/${roundId}`,
       info,
       true,
       {},

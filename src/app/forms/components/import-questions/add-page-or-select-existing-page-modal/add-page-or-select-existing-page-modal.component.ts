@@ -22,6 +22,14 @@ export class AddPageOrSelectExistingPageModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedPageControl.setValue(this.data.pages[0]);
+    setTimeout(() => {
+      if (this.data?.formMetadata?.formType?.toLowerCase() === 'embedded') {
+        this.dialogRef.close({
+          selectedPage: this.selectedPageControl.value,
+          selectedPageOption: 'existing'
+        });
+      }
+    }, 0);
   }
 
   cancel() {
