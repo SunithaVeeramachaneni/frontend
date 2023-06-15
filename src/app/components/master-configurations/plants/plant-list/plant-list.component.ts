@@ -282,6 +282,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
+    this.plantService.getPlantMasterData();
     this.plantService.fetchPlants$.next({} as TableEvent);
     this.searchPlant = new FormControl('');
 

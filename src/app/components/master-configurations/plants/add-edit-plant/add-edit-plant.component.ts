@@ -19,7 +19,6 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { countriesMasterData } from './countriesMasterData.mock';
 import { ShiftService } from '../../shifts/services/shift.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -95,7 +94,8 @@ export class AddEditPlantComponent implements OnInit {
   states: any = [];
   timeZones: any = [];
   noState = false;
-  allCountries = Object.values(countriesMasterData);
+  plantMasterData = {};
+  allCountries = [];
   countryData = [];
   selectedShiftIDs: any[];
   selectedShiftsDetails = [];
@@ -119,7 +119,11 @@ export class AddEditPlantComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.countryData = this.allCountries;
+    this.plantService.plantMasterData$.subscribe((res) => {
+      this.plantMasterData = res;
+      this.allCountries = Object.values(this.plantMasterData);
+      this.countryData = this.allCountries;
+    });
     const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
@@ -163,7 +167,7 @@ export class AddEditPlantComponent implements OnInit {
       // eslint-disable-next-line @typescript-eslint/dot-notation
       this.plantForm.patchValue({ state: null, timeZone: null });
       if (countryCode) {
-        this.selectedCountry = countriesMasterData[countryCode];
+        this.selectedCountry = this.plantMasterData[countryCode];
         if (!this.selectedCountry.states.length) {
           this.plantForm.get('state').disable();
           this.noState = true;
@@ -312,7 +316,7 @@ export class AddEditPlantComponent implements OnInit {
     if (value) {
       this.countryData = this.searchCountry(value);
     } else {
-      this.countryData = Object.values(countriesMasterData);
+      this.countryData = Object.values(this.plantMasterData);
     }
   }
 
@@ -327,8 +331,8 @@ export class AddEditPlantComponent implements OnInit {
 
   searchCountry(value: string) {
     const searchValue = value.toLowerCase();
-    return Object.values(countriesMasterData).filter(
-      (country) =>
+    return Object.values(this.plantMasterData).filter(
+      (country: any) =>
         (country.countryCode &&
           country.countryCode.toLowerCase().indexOf(searchValue) !== -1) ||
         (country.countryName &&
@@ -369,7 +373,7 @@ export class AddEditPlantComponent implements OnInit {
     );
   }
   onCountryClosed() {
-    this.countryData = Object.values(countriesMasterData);
+    this.countryData = Object.values(this.plantMasterData);
   }
   onStateClosed() {
     this.states = this.countryAllStates;

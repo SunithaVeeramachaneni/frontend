@@ -21,6 +21,7 @@ export class PlantService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
+  plantMasterData$ = new BehaviorSubject<any>({});
 
   private MAX_FETCH_LIMIT = '1000000';
 
@@ -45,6 +46,14 @@ export class PlantService {
       // console.log(timeZoneMapping);
       this.plantTimeZoneMapping$.next(timeZoneMapping);
     });
+  };
+
+  getPlantMasterData = () => {
+    this._appService
+      ._getResp(environment.masterConfigApiUrl, 'plants/masterdata')
+      .subscribe((res) => {
+        this.plantMasterData$.next(res.plantMasterData);
+      });
   };
 
   getPlantsList$(queryParams: {
