@@ -1,15 +1,27 @@
 <form class="userGroupModal" [formGroup]="userGroupForm">
-  <span class="title" translate>createUserGroup</span>
-  <span class="dialog-close-btn" (click)="close()">
-    <mat-icon class="dialog-close">close</mat-icon>
-  </span>
-  <hr class="divider1" />
+  <div class="modal-header">
+    <span
+      *ngIf="dialogText === 'editUserGroup'"
+      class="title"
+      translate="editUserGroup"
+    >
+    </span>
+    <span
+      *ngIf="dialogText === 'createUserGroup'"
+      class="title"
+      translate="createUserGroup"
+    ></span>
+    <span class="dialog-close-btn" (click)="close()">
+      <mat-icon class="dialog-close">close</mat-icon>
+    </span>
+  </div>
+  <hr class="divider width-100 m-t-10" />
   <div class="input-container">
-    <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
-      <mat-label>{{ 'name2' | translate }}</mat-label>
+    <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
+      <mat-label>{{ 'enterName' | translate }}</mat-label>
       <input matInput formControlName="name" />
-      <!-- <mat-error
-        *ngIf="processValidationErrors('firstName')"
+      <mat-error
+        *ngIf="processValidationErrors('name')"
         class="m-t-5 error-fields"
       >
         {{
@@ -20,12 +32,12 @@
                   length: errors.firstName.length
                 }
         }}
-      </mat-error> -->
+      </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
-      <mat-label>{{ 'description2' | translate }}</mat-label>
-      <input matInput formControlName="description2" />
+    <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
+      <mat-label>{{ 'roleDescription' | translate }}</mat-label>
+      <input matInput formControlName="description" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
@@ -50,7 +62,7 @@
         {{ 'plantsEmpty' | translate }}
       </mat-error>
     </mat-form-field>
-    <hr class="divider2" />
+    <hr class="divider width-100" />
   </div>
 
   <button

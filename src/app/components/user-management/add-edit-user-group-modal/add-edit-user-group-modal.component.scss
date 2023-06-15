@@ -1,8 +1,19 @@
 @import '../../../../scss/colors.scss';
 
+.modal-header {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .userGroupModal {
-  height: 315px;
-  width: 388px;
+  width: 360px;
+  overflow: hidden;
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 4px;
 }
 .input-container {
   position: relative;
@@ -16,20 +27,13 @@
   float: right;
   cursor: pointer;
 }
-.divider1 {
+
+.divider {
   border: 1px solid $border-color;
-  margin: 0px 0px 0px -29px;
-  position: relative;
-  top: 4vh;
-  width: 414px;
+  margin-left: -12px;
+  width: 110%;
 }
 
-.divider2 {
-  border: 1px solid $border-color;
-  margin: 0px 0px 0px -29px;
-  position: relative;
-  width: 414px;
-}
 .title {
   font-size: 120%;
   font-weight: 500;

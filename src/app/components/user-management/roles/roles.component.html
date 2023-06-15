@@ -87,7 +87,7 @@
             <form [formGroup]="roleForm" class="dis-flex m-b-5">
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
-                  <mat-label translate="roleName"></mat-label>
+                  <mat-label translate="role"></mat-label>
                   <input matInput formControlName="name" autofocus />
                   <mat-error *ngIf="processValidationErrors('name')" class="m-t-8 error-fields">
                     {{

@@ -31,6 +31,7 @@ export class UserGroupListComponent implements OnInit {
       AddEditUserGroupModalComponent,
       {
         data: {
+          dialogText: 'createUserGroup',
           name: this.name,
           description: this.description,
           plantList: this.plantList
