@@ -113,13 +113,20 @@ export class ImportQuestionsModalComponent implements OnInit, OnDestroy {
   }
 
   getForms() {
+    const filterData = {
+      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
+    };
     return this.raceDynamicFormService
-      .getFormsList$({
-        next: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        filterData
+      )
       .pipe(
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;

@@ -310,5 +310,7 @@
   "selectAll": "Select All",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
+  "link": "Link",
+  "raiseNotification": "Raise Notification",
   "timeZone": "Plant Timezone"
 }
