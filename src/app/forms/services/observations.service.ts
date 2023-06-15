@@ -358,14 +358,25 @@ export class ObservationsService {
     ) as unknown as Observable<any>;
   }
 
-  formatUsersDisplay(users: string) {
-    const assignee = users.split(',');
-    const formatedDisplay = assignee[0]
-      ? this.userService.getUserFullName(assignee[0])
-      : '';
-    return assignee.length === 1
-      ? formatedDisplay
-      : `${formatedDisplay} + ${assignee.length - 1} more`;
+  formatUsersDisplay(users: string): string {
+    const assignee: string[] = users?.split(',')?.filter(Boolean) || [];
+    if (assignee?.length > 0) {
+      const formattedDisplayNames: string[] = [];
+      assignee.forEach((a) => {
+        const foundAssignee = this.userService.getUserFullName(a);
+        if (foundAssignee) {
+          formattedDisplayNames.push(foundAssignee);
+        }
+      });
+      if (formattedDisplayNames?.length > 0) {
+        if (formattedDisplayNames?.length > 1) {
+          return `${formattedDisplayNames[0]} + ${assignee?.length - 1} more`;
+        }
+        return formattedDisplayNames[0];
+      }
+    } else {
+      return '';
+    }
   }
 
   formatUserFullNameDisplay(emailList): string {
@@ -445,9 +456,10 @@ export class ObservationsService {
           },
           condition: true
         },
-        dueDate: item?.DUEDATE
-          ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
-          : '',
+        dueDate:
+          item?.DUEDATE && this.isValidDate(new Date(item?.DUEDATE))
+            ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
+            : '',
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,
@@ -478,5 +490,9 @@ export class ObservationsService {
       next: resp?.next,
       count: resp?.count
     };
+  }
+
+  private isValidDate(date): boolean {
+    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }
