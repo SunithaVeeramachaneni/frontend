@@ -1,0 +1,63 @@
+@import '../../../../scss/colors.scss';
+
+.userGroupModal {
+  height: 315px;
+  width: 388px;
+}
+.input-container {
+  position: relative;
+  top: 15px;
+}
+::ng-deep .mat-form-field-infix {
+  padding: 0.5em 0;
+  border: 0.59375em solid transparent;
+}
+.dialog-close-btn {
+  float: right;
+  cursor: pointer;
+}
+.divider1 {
+  border: 1px solid $border-color;
+  margin: 0px 0px 0px -29px;
+  position: relative;
+  top: 4vh;
+  width: 414px;
+}
+
+.divider2 {
+  border: 1px solid $border-color;
+  margin: 0px 0px 0px -29px;
+  position: relative;
+  width: 414px;
+}
+.title {
+  font-size: 120%;
+  font-weight: 500;
+  position: relative;
+  top: 13px;
+}
+
+.next-btn {
+  text-transform: capitalize;
+  float: right;
+  background: #3d5afe;
+  color: #ffffff;
+  height: 29px;
+  font-weight: normal;
+  line-height: normal;
+  margin-top: 10px;
+}
+
+.cancel-btn {
+  color: #76767b;
+  float: right;
+  background: transparent;
+  height: 29px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px 10px 0 0;
+}
+
+::ng-deep .roles-select .mat-option-text {
+  display: flex;
+}

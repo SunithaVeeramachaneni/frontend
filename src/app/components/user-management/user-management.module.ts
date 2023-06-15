@@ -43,6 +43,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { UserGroupListComponent } from './user-group-list/user-group-list.component';
+import { AddEditUserGroupModalComponent } from './add-edit-user-group-modal/add-edit-user-group-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -95,7 +96,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     CancelModalComponent,
     RoleDeleteModalComponent,
     InactiveUsersComponent,
-    UserGroupListComponent
+    UserGroupListComponent,
+    AddEditUserGroupModalComponent
   ],
   schemas: [],
   providers: [],
