@@ -511,7 +511,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           })
         );
 
-        // this.router.navigate(['/forms']);
+        this.router.navigate(['/forms']);
       });
     }
   }
