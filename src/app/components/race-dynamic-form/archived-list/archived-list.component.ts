@@ -174,9 +174,13 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   archivedFormsListCount$: Observable<number>;
+  archivedFormsListCountRaw$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
+  archivedFormsListCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
   nextToken = '';
   public menuState = 'out';
-  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  ghostLoading = Array.from(Array(13).keys());
   submissionDetail: any;
   fetchType = 'load';
   restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
@@ -193,6 +197,7 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
   };
   plants = [];
   plantsIdNameMap = {};
+  triggerCountUpdate = false;
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
   private onDestroy$ = new Subject();
@@ -219,16 +224,28 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => this.fetchForms$.next({ data: 'search' }))
+        tap((value: string) => {
+          this.fetchForms$.next({ data: 'search' });
+        })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.archivedFormsListCount$ =
-      this.raceDynamicFormService.getFormsListCount$(true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
     this.getFilters();
     this.getAllArchivedForms();
+    this.archivedFormsListCount$ = combineLatest([
+      this.archivedFormsListCountRaw$,
+      this.archivedFormsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
+    );
   }
 
   getDisplayedForms(): void {
@@ -275,6 +292,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.triggerCountUpdate = true;
+            this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
                 'Form "' +
@@ -288,6 +307,8 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
             initial.data = initial.data.filter(
               (d) => d.id !== form.data.updateFormList.id
             );
+            this.triggerCountUpdate = true;
+            this.archivedFormsListCountUpdate$.next(-1);
             this.toast.show({
               text:
                 'Form "' +
@@ -319,12 +340,16 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         this.filter
       )
       .pipe(
-        mergeMap(({ rows, next }) => {
+        mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
+          if (count !== undefined) {
+            this.archivedFormsListCountRaw$.next(count);
+          }
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
+          this.archivedFormsListCount$ = of(0);
           this.isLoading$.next(false);
           return of([]);
         }),
@@ -455,8 +480,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
           action: 'restore',
           form: updatedForm
         });
-        this.archivedFormsListCount$ =
-          this.raceDynamicFormService.getFormsListCount$(true);
       });
   }
 
@@ -483,8 +506,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
               action: 'delete',
               form: updatedForm
             });
-            this.archivedFormsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$(true);
           });
       }
     });

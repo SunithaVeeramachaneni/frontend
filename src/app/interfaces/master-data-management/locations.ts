@@ -24,6 +24,7 @@ export interface LocationsResponse {
     createdAt: string;
   } | null>;
   next?: string;
+  count?: string;
 }
 
 export interface FilterInput {
