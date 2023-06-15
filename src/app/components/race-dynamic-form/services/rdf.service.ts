@@ -293,7 +293,7 @@ export class RaceDynamicFormService {
   ): Observable<Blob> =>
     this.appService.downloadFile(
       environment.rdfApiUrl,
-      `inspections/${formId}/${inspectionId}`,
+      `inspections/download-pdf/${formId}/${inspectionId}`,
       info,
       true,
       {},
