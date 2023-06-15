@@ -39,7 +39,6 @@ import { PlantService } from '../services/plant.service';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { PlantTableUpdate } from 'src/app/interfaces/master-data-management/plants';
-import { countriesMasterData } from '../add-edit-plant/countriesMasterData.mock';
 @Component({
   selector: 'app-plant-list',
   templateUrl: './plant-list.component.html',
@@ -251,6 +250,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   openPlantDetailedView = 'out';
   plantAddOrEditOpenState = 'out';
   plantEditData;
+  plantMasterData = {};
 
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -283,6 +283,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
     this.plantService.getPlantMasterData();
+    this.plantService.plantMasterData$.subscribe(
+      (res) => (this.plantMasterData = res)
+    );
     this.plantService.fetchPlants$.next({} as TableEvent);
     this.searchPlant = new FormControl('');
 
@@ -354,8 +357,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows.map((row) => {
-            if (row.country && countriesMasterData[row.country])
-              row.countryDisplay = countriesMasterData[row.country].countryName;
+            if (row.country && this.plantMasterData[row.country])
+              row.countryDisplay =
+                this.plantMasterData[row.country].countryName;
             if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
             return row;
           });
@@ -371,16 +375,16 @@ export class PlantListComponent implements OnInit, OnDestroy {
               break;
             case 'add':
               // case 'copy':
-              if (form.country && countriesMasterData[form.country])
+              if (form.country && this.plantMasterData[form.country])
                 form.countryDisplay =
-                  countriesMasterData[form.country].countryName;
+                  this.plantMasterData[form.country].countryName;
               if (form.timeZone) form.timeZoneDisplay = form.timeZone.utcOffset;
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
-              if (form.country && countriesMasterData[form.country])
+              if (form.country && this.plantMasterData[form.country])
                 form.countryDisplay =
-                  countriesMasterData[form.country].countryName;
+                  this.plantMasterData[form.country].countryName;
               if (form.timeZone)
                 form.timeZoneDisplay = 'UTC' + form.timeZone.utcOffset;
               initial.data = [
@@ -394,8 +398,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
           this.addEditCopyDeletePlants = false;
         } else {
           scrollData = scrollData.map((row) => {
-            if (row.country && countriesMasterData[row.country])
-              row.countryDisplay = countriesMasterData[row.country].countryName;
+            if (row.country && this.plantMasterData[row.country])
+              row.countryDisplay =
+                this.plantMasterData[row.country].countryName;
             if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
             return row;
           });
