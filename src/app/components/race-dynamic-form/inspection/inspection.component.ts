@@ -69,6 +69,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { format } from 'date-fns';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-inspection',
@@ -607,6 +608,20 @@ export class InspectionComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (
+          row.plantId &&
+          this.plantTimezoneMap[row.plantId] &&
+          this.plantTimezoneMap[row.plantId].timeZoneIdentifier
+        ) {
+          const dueDate = new Date(
+            formatInTimeZone(
+              row.dueDate,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              'yyyy-MM-dd 00:00:00'
+            )
+          );
+          this.selectedDate = { ...this.selectedDate, date: dueDate };
+        }
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedFormInfo = row;
         break;
@@ -833,7 +848,24 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   dateChangeHandler(dueDate: Date) {
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+    const { inspectionId, assignedToEmail, plantId, ...rest } =
+      this.selectedFormInfo;
+    const dueDateDisplayFormat = format(dueDate, 'dd MMM yyyy');
+    if (
+      plantId &&
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      const time = localToTimezoneDate(
+        this.selectedFormInfo.dueDate,
+        this.plantTimezoneMap[this.selectedFormInfo.plantId],
+        'HH:00:00'
+      );
+      dueDate = zonedTimeToUtc(
+        format(dueDate, 'yyyy-MM-dd') + ` ${time}`,
+        this.plantTimezoneMap[this.selectedFormInfo.plantId].timeZoneIdentifier
+      );
+    }
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -849,7 +881,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 return {
                   ...data,
                   dueDate,
-                  dueDateDisplay: this.formatDate(dueDate, resp.plantId),
+                  dueDateDisplay: dueDateDisplayFormat,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo

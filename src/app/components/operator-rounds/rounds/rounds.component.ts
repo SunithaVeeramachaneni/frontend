@@ -73,6 +73,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { format } from 'date-fns';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-rounds',
@@ -583,6 +584,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (
+          row.plantId &&
+          this.plantTimezoneMap[row.plantId] &&
+          this.plantTimezoneMap[row.plantId].timeZoneIdentifier
+        ) {
+          const dueDate = new Date(
+            formatInTimeZone(
+              row.dueDate,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              'yyyy-MM-dd 00:00:00'
+            )
+          );
+          this.selectedDate = { ...this.selectedDate, date: dueDate };
+        }
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedRoundInfo = row;
         break;
@@ -882,7 +897,24 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   dateChangeHandler(dueDate: Date) {
-    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    const { roundId, assignedToEmail, plantId, ...rest } =
+      this.selectedRoundInfo;
+    const dueDateDisplayFormat = format(dueDate, 'dd MMM yyyy');
+    if (
+      plantId &&
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      const time = localToTimezoneDate(
+        this.selectedRoundInfo.dueDate,
+        this.plantTimezoneMap[this.selectedRoundInfo.plantId],
+        'HH:00:00'
+      );
+      dueDate = zonedTimeToUtc(
+        format(dueDate, 'yyyy-MM-dd') + ` ${time}`,
+        this.plantTimezoneMap[this.selectedRoundInfo.plantId].timeZoneIdentifier
+      );
+    }
     this.operatorRoundsService
       .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
@@ -892,8 +924,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
               if (data.roundId === roundId) {
                 return {
                   ...data,
-                  dueDate: new Date(this.selectedRound.dueDate),
-                  dueDateDisplay: this.formatDate(dueDate, resp.plantId),
+                  dueDate,
+                  dueDateDisplay: dueDateDisplayFormat,
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo

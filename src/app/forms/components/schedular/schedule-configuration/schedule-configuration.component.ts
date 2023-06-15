@@ -46,6 +46,7 @@ import { scheduleConfigs } from './schedule-configuration.constants';
 import { Subject } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { zonedTimeToUtc, formatInTimeZone } from 'date-fns-tz';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -82,6 +83,20 @@ export class ScheduleConfigurationComponent
   }
   @Input() set formDetail(formDetail) {
     this._formDetail = formDetail;
+    if (
+      this.formDetail &&
+      this.formDetail.plantId &&
+      this.plantTimezoneMap[this.formDetail.plantId] &&
+      this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+    ) {
+      this.currentDate = new Date(
+        localToTimezoneDate(
+          new Date(),
+          this.plantTimezoneMap[this.formDetail.plantId],
+          'yyyy-MM-dd HH:mm:ss'
+        )
+      );
+    }
     if (formDetail) {
       this.getFormsSchedulerConfigurationByFormId(formDetail?.id);
     }
@@ -399,19 +414,13 @@ export class ScheduleConfigurationComponent
       const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         schedularConfigFormValue;
-      const time = format(new Date(), 'HH:00:00');
+      let time = format(new Date(), 'HH:00:00');
       const { startDatePicker, endDatePicker, scheduleEndOnPicker, ...rest } =
         schedularConfigFormValue;
       const scheduleByDates =
         schedularConfigFormValue.scheduleType === 'byDate'
           ? this.prepareScheduleByDates()
           : [];
-
-      console.log(
-        'Schedule Config Form Value',
-        schedularConfigFormValue,
-        scheduleByDates
-      );
 
       let startDateByPlantTimezone = new Date(
         `${startDate} ${time}`
@@ -425,25 +434,28 @@ export class ScheduleConfigurationComponent
         this.formDetail &&
         this.formDetail.plantId &&
         this.plantTimezoneMap[this.formDetail.plantId] &&
-        this.plantTimezoneMap[this.formDetail.plantId].timeZone
+        this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
       ) {
-        startDateByPlantTimezone = localToTimezoneDate(
-          new Date(`${startDate} ${time}`),
+        time = localToTimezoneDate(
+          new Date(),
           this.plantTimezoneMap[this.formDetail.plantId],
-          ''
+          'HH:00:00'
         );
 
-        endDateByPlantTimezone = localToTimezoneDate(
-          new Date(`${endDate} ${time}`),
-          this.plantTimezoneMap[this.formDetail.plantId],
-          ''
-        );
+        startDateByPlantTimezone = zonedTimeToUtc(
+          format(new Date(startDate), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+        ).toISOString();
 
-        scheduleEndOnByPlantTimezone = localToTimezoneDate(
-          new Date(`${scheduleEndOn} ${time}`),
-          this.plantTimezoneMap[this.formDetail.plantId],
-          ''
-        );
+        endDateByPlantTimezone = zonedTimeToUtc(
+          format(new Date(endDate), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+        ).toISOString();
+
+        scheduleEndOnByPlantTimezone = zonedTimeToUtc(
+          format(new Date(scheduleEndOn), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+        ).toISOString();
       }
 
       if (id) {
@@ -696,22 +708,20 @@ export class ScheduleConfigurationComponent
 
   prepareScheduleByDates() {
     return this.scheduleByDates.map((scheduleByDate) => {
-      const dateByPlantTimezone = new Date(
+      let dateByPlantTimezone = new Date(
         format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00')
       );
-      // if (
-      //   this.formDetail &&
-      //   this.formDetail.plantId &&
-      //   this.plantTimezoneMap[this.formDetail.plantId] &&
-      //   this.plantTimezoneMap[this.formDetail.plantId].timeZone
-      // ) {
-      //   console.log('doing something...');
-      //   dateByPlantTimezone = localToTimezoneDate(
-      //     dateByPlantTimezone,
-      //     this.plantTimezoneMap[this.formDetail.plantId],
-      //     ''
-      //   );
-      // }
+      if (
+        this.formDetail &&
+        this.formDetail.plantId &&
+        this.plantTimezoneMap[this.formDetail.plantId] &&
+        this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+      ) {
+        dateByPlantTimezone = zonedTimeToUtc(
+          format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'),
+          this.plantTimezoneMap[this.formDetail.plantId].timeZoneIdentifier
+        );
+      }
       return {
         ...scheduleByDate,
         date: dateByPlantTimezone

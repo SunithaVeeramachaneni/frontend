@@ -22,7 +22,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { countriesMasterData } from './countriesMasterData.mock';
 import { ShiftService } from '../../shifts/services/shift.service';
 import { Observable, of } from 'rxjs';
-import { catchError, mergeMap, tap } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -194,9 +194,9 @@ export class AddEditPlantComponent implements OnInit {
         { isActive: 'true' }
       )
       .pipe(
-        tap(({ count, rows, next }) => {
+        map(({ rows }) => {
           this.allShiftsMaster = rows;
-          return of(rows);
+          return rows;
         }),
         catchError(() => of([]))
       );
@@ -240,7 +240,7 @@ export class AddEditPlantComponent implements OnInit {
         this.plantForm.get('image').setValue('');
         const { id, ...payload } = this.plantForm.value;
         const selectedShiftDetailsTemp = [];
-        payload?.shifts.forEach((sid) => {
+        payload?.shifts?.forEach((sid) => {
           const index = this.allShiftsMaster.findIndex((sm) => sm.id === sid);
           if (index > -1) {
             selectedShiftDetailsTemp.push(this.allShiftsMaster[index]);

@@ -42,6 +42,8 @@ import { RoundPlanScheduleConfigurationService } from '../services/round-plan-sc
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
 import { Subject } from 'rxjs';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -65,6 +67,20 @@ export class RoundPlanScheduleConfigurationComponent
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
+    if (
+      this.roundPlanDetail &&
+      this.roundPlanDetail.plantId &&
+      this.plantTimezoneMap[this.roundPlanDetail.plantId] &&
+      this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+    ) {
+      this.currentDate = new Date(
+        localToTimezoneDate(
+          new Date(),
+          this.plantTimezoneMap[this.roundPlanDetail.plantId],
+          'yyyy-MM-dd HH:mm:ss'
+        )
+      );
+    }
     if (roundPlanDetail) {
       this.getRoundPlanSchedulerConfigurationByRoundPlanId(roundPlanDetail.id);
     }
@@ -404,7 +420,7 @@ export class RoundPlanScheduleConfigurationComponent
         this.roundPlanSchedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         roundPlanSchedulerConfig;
-      const time = format(new Date(), 'HH:00:00');
+      let time = format(new Date(), 'HH:00:00');
       const {
         startDatePicker,
         scheduleEndOnPicker,
@@ -416,14 +432,50 @@ export class RoundPlanScheduleConfigurationComponent
           ? this.prepareScheduleByDates()
           : [];
 
+      let startDateByPlantTimezone = new Date(
+        `${startDate} ${time}`
+      ).toISOString();
+      let endDateByPlantTimezone = new Date(`${endDate} ${time}`).toISOString();
+      let scheduleEndOnByPlantTimezone = new Date(
+        `${scheduleEndOn} ${time}`
+      ).toISOString();
+
+      if (
+        this.roundPlanDetail &&
+        this.roundPlanDetail.plantId &&
+        this.plantTimezoneMap[this.roundPlanDetail.plantId] &&
+        this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+      ) {
+        time = localToTimezoneDate(
+          new Date(),
+          this.plantTimezoneMap[this.roundPlanDetail.plantId],
+          'HH:00:00'
+        );
+
+        startDateByPlantTimezone = zonedTimeToUtc(
+          format(new Date(startDate), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+        ).toISOString();
+
+        endDateByPlantTimezone = zonedTimeToUtc(
+          format(new Date(endDate), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+        ).toISOString();
+
+        scheduleEndOnByPlantTimezone = zonedTimeToUtc(
+          format(new Date(scheduleEndOn), 'yyyy-MM-dd') + ` ${time}`,
+          this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+        ).toISOString();
+      }
+
       if (id) {
         this.rpscService
           .updateRoundPlanScheduleConfiguration$(id, {
             ...rest,
             assignmentDetails: restAssignmentDetails,
-            startDate: new Date(`${startDate} ${time}`).toISOString(),
-            endDate: new Date(`${endDate} ${time}`).toISOString(),
-            scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
+            startDate: startDateByPlantTimezone,
+            endDate: endDateByPlantTimezone,
+            scheduleEndOn: scheduleEndOnByPlantTimezone,
             scheduleByDates
           })
           .pipe(
@@ -446,9 +498,9 @@ export class RoundPlanScheduleConfigurationComponent
           .createRoundPlanScheduleConfiguration$({
             ...rest,
             assignmentDetails: restAssignmentDetails,
-            startDate: new Date(`${startDate} ${time}`).toISOString(),
-            endDate: new Date(`${endDate} ${time}`).toISOString(),
-            scheduleEndOn: new Date(`${scheduleEndOn} ${time}`).toISOString(),
+            startDate: startDateByPlantTimezone,
+            endDate: endDateByPlantTimezone,
+            scheduleEndOn: scheduleEndOnByPlantTimezone,
             scheduleByDates
           })
           .pipe(
@@ -591,10 +643,26 @@ export class RoundPlanScheduleConfigurationComponent
   };
 
   prepareScheduleByDates() {
-    return this.scheduleByDates.map((scheduleByDate) => ({
-      ...scheduleByDate,
-      date: new Date(format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'))
-    }));
+    return this.scheduleByDates.map((scheduleByDate) => {
+      let dateByPlantTimezone = new Date(
+        format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00')
+      );
+      if (
+        this.roundPlanDetail &&
+        this.roundPlanDetail.plantId &&
+        this.plantTimezoneMap[this.roundPlanDetail.plantId] &&
+        this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+      ) {
+        dateByPlantTimezone = zonedTimeToUtc(
+          format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'),
+          this.plantTimezoneMap[this.roundPlanDetail.plantId].timeZoneIdentifier
+        );
+      }
+      return {
+        ...scheduleByDate,
+        date: dateByPlantTimezone
+      };
+    });
   }
 
   openRoundPlanScheduleSuccessModal(dialogMode: 'create' | 'update') {

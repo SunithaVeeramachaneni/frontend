@@ -131,6 +131,7 @@ export interface FormSuccessModalData {
 }
 
 export interface InspectionDetail extends Form {
+  plantId?: string;
   inspectionId: string;
   inspectionDetailId: string;
   scheduledType: string;
