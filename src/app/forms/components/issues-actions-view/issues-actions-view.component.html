@@ -47,7 +47,7 @@
             <ng-container *ngIf="history.type === 'Object'">
               <ng-container *ngIf="i === 0">
                 <div class="username-top">
-                  {{ getUserNameByEmail(history.username) }}
+                  {{ history?.username | userNameByEmail }}
                 </div>
               </ng-container>
             </ng-container>
@@ -104,7 +104,7 @@
                         class="sub-headings"
                         translate="assignedToAction"
                       ></span>
-                      {{ getUserNameByEmail(history.message.ASSIGNEE) }}
+                      {{ history?.message?.ASSIGNEE | userNameByEmail }}
                     </span>
                     <br
                   /></ng-container>
@@ -542,9 +542,8 @@
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
           {{
-            getUserNameByEmail(
-              this.issuesActionsDetailViewForm.get('raisedBy').value
-            )
+            this.issuesActionsDetailViewForm.get('raisedBy')?.value
+              | userNameByEmail
           }}
         </div>
       </div>
