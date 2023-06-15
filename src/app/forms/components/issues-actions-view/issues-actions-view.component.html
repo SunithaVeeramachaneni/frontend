@@ -47,7 +47,7 @@
             <ng-container *ngIf="history.type === 'Object'">
               <ng-container *ngIf="i === 0">
                 <div class="username-top">
-                  {{ getUserNameByEmail(history.username) }}
+                  {{ history?.username | userNameByEmail }}
                 </div>
               </ng-container>
             </ng-container>
@@ -91,34 +91,74 @@
                     {{ history.message.TITLE }}
                   </span>
                   <br />
-                  <span class="data" *ngIf="data.type === 'action'">
-                    <span class="sub-headings" translate="description"></span>
-                    {{ history.message.DESCRIPTION }}
-                  </span>
-                  <br *ngIf="data.type === 'action'" />
-                  <span class="data" *ngIf="data.type === 'action'">
-                    <span
-                      class="sub-headings"
-                      translate="assignedToAction"
-                    ></span>
-                    {{ history.message.ASSIGNEE }}
-                  </span>
-                  <br *ngIf="data.type === 'action'" />
-                  <span class="data">
-                    <span
-                      class="sub-headings"
-                      translate="createdByAction"
-                    ></span>
-                    {{ getUserNameByEmail(history.username) }}
-                  </span>
-                  <br *ngIf="data.category !== placeholder" />
-                  <span class="data" *ngIf="data.category !== placeholder">
-                    <span
-                      class="sub-headings"
-                      translate="categoryCreated"
-                    ></span>
-                    {{ data.category }}
-                  </span>
+                  <ng-container *ngIf="history.message.DESCRIPTION">
+                    <span class="data" *ngIf="data.type === 'action'">
+                      <span class="sub-headings" translate="description"></span>
+                      {{ history.message.DESCRIPTION }}
+                    </span>
+                    <br *ngIf="data.type === 'action'"
+                  /></ng-container>
+                  <ng-container *ngIf="history.message.ANLNR">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="assetCreated"
+                      ></span>
+                      {{ history.message.ANLNR }}
+                    </span>
+                    <br />
+                  </ng-container>
+                  <ng-container *ngIf="history.message.ASSIGNEE"
+                    ><span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="assignedToAction"
+                      ></span>
+                      {{ history?.message?.ASSIGNEE | userNameByEmail }}
+                    </span>
+                    <br
+                  /></ng-container>
+                  <ng-container *ngIf="history.message.CATEGORY">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="categoryCreated"
+                      ></span>
+                      {{ history.message.CATEGORY }}
+                    </span>
+                    <br />
+                  </ng-container>
+                  <ng-container *ngIf="history.message.DUEDATE">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="issueActionDueDateAndTime"
+                      ></span>
+                      {{
+                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
+                      }}
+                    </span>
+                    <br />
+                  </ng-container>
+                  <ng-container *ngIf="history.message.PRIORITY">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="actionPriority"
+                      ></span>
+                      {{ history.message.PRIORITY }}
+                    </span>
+                    <br
+                  /></ng-container>
+                  <ng-container *ngIf="history.message.STATUS">
+                    <span class="data">
+                      <span
+                        class="sub-headings"
+                        translate="actionStatus"
+                      ></span>
+                      {{ history.message.STATUS }}
+                    </span>
+                  </ng-container>
                   <br *ngIf="data.round !== placeholder" />
                   <span class="data" *ngIf="data.round !== placeholder">
                     <span class="sub-headings" translate="roundCreated"></span>
@@ -504,9 +544,8 @@
         <div class="titles" translate="raisedBy"></div>
         <div class="values">
           {{
-            getUserNameByEmail(
-              this.issuesActionsDetailViewForm.get('raisedBy').value
-            )
+            this.issuesActionsDetailViewForm.get('raisedBy')?.value
+              | userNameByEmail
           }}
         </div>
       </div>
