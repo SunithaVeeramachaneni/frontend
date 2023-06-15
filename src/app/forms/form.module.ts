@@ -106,7 +106,8 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
-
+import { MatDialogModule } from '@angular/material/dialog';
+import { UserNameByEmailPipe } from './pipes';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -171,7 +172,8 @@ import {
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    UserNameByEmailPipe
   ],
   imports: [
     SharedModule,
@@ -244,7 +246,8 @@ import {
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    UserNameByEmailPipe
   ]
 })
 export class FormModule {}
