@@ -108,7 +108,7 @@ import {
 } from '@angular-material-components/datetime-picker';
 import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { UserNameByEmailPipe } from './pipes';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -174,7 +174,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     AssignedToComponent,
     ObservationsComponent,
     RaiseNotificationDailogComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    UserNameByEmailPipe
   ],
   imports: [
     SharedModule,
@@ -251,7 +252,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    UserNameByEmailPipe
   ]
 })
 export class FormModule {}
