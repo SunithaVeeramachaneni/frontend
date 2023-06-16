@@ -76,17 +76,7 @@
                   </span>
                   <br />
                   <span class="data">
-                    <span
-                      class="sub-headings"
-                      *ngIf="data.type === 'issue'"
-                      translate="issue"
-                    >
-                    </span>
-                    <span
-                      class="sub-headings"
-                      *ngIf="data.type === 'action'"
-                      translate="action"
-                    >
+                    <span class="sub-headings" translate="issueActionTitle">
                     </span>
                     {{ history.message.TITLE }}
                   </span>
@@ -164,11 +154,6 @@
                     <span class="sub-headings" translate="roundCreated"></span>
                     {{ data.round }}
                   </span>
-                  <br *ngIf="data.asset !== placeholder" />
-                  <span class="data" *ngIf="data.asset !== placeholder">
-                    <span class="sub-headings" translate="assetCreated"></span>
-                    {{ data.asset }}
-                  </span>
                   <br *ngIf="data.location !== placeholder" />
                   <span class="data" *ngIf="data.location !== placeholder">
                     <span
@@ -201,6 +186,7 @@
                       </span>
                       {{ history.message.STATUS }}
                     </span>
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ASSIGNEE">
                     <span class="data">
@@ -221,12 +207,14 @@
                       ></span>
                       {{ getUserNameByEmail(history.message.ASSIGNEE) }}
                     </span>
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.ERPNOTIF">
                     <span class="data">
                       <span class="sub-headings" translate="erpNotif"> </span>
                       {{ history.message.ERPNOTIF }}
                     </span>
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.PRIORITY">
                     <span class="data">
@@ -234,13 +222,20 @@
                       </span>
                       {{ history.message.PRIORITY }}
                     </span>
+                    <br />
                   </ng-container>
                   <ng-container *ngIf="history.message.DUEDATE">
                     <span class="data">
-                      <span class="sub-headings" translate="dueDateUpdated">
+                      <span
+                        class="sub-headings"
+                        translate="dueDateAndTimeUpdated"
+                      >
                       </span>
-                      {{ history.message.DUEDATE | date : 'longDate' }}
+                      {{
+                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
+                      }}
                     </span>
+                    <br />
                   </ng-container>
                 </ng-container>
               </div>
@@ -458,7 +453,7 @@
       </div>
       <hr class="line" />
       <div class="right-div">
-        <div class="titles m-t-15" translate="dueDate"></div>
+        <div class="titles m-t-15" translate="dueDateAndTime"></div>
         <div class="values dropdowns">
           <mat-form-field appearance="outline">
             <input
@@ -469,7 +464,7 @@
             />
             <input
               matInput
-              [matDatepicker]="picker"
+              [ngxMatDatetimePicker]="picker"
               [min]="minDate"
               formControlName="dueDate"
               (dateChange)="updateDate($event, 'dueDateDisplayValue')"
@@ -477,10 +472,13 @@
             />
             <mat-datepicker-toggle
               matIconSuffix
-              [for]="picker"
+              [for]="$any(picker)"
               (click)="picker.open()"
             ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <ngx-mat-datetime-picker
+              #picker
+              [enableMeridian]="true"
+            ></ngx-mat-datetime-picker>
           </mat-form-field>
         </div>
       </div>
