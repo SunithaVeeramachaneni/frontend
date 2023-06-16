@@ -502,13 +502,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
-  get getAssetsLocationsTasksAdded(): boolean {
-    return (
-      (this.totalLocationsCount === 0 || this.totalAssetsCount === 0) &&
-      this.totalQuestionsCount === 0
-    );
-  }
-
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
