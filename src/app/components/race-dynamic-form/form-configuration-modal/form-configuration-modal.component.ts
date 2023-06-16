@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -40,7 +41,8 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
-  styleUrls: ['./form-configuration-modal.component.scss']
+  styleUrls: ['./form-configuration-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
