@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -40,7 +41,8 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
-  styleUrls: ['./form-configuration-modal.component.scss']
+  styleUrls: ['./form-configuration-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
@@ -63,6 +65,8 @@ export class FormConfigurationModalComponent implements OnInit {
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+
+  plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -130,23 +134,23 @@ export class FormConfigurationModalComponent implements OnInit {
     }
   }
 
+  resetPlantSearchFilter = () => {
+    this.plantFilterInput = '';
+    this.plantInformation = this.allPlantsData;
+  };
+
   onKeyPlant(event) {
-    const value = event.target.value || '';
-    if (value) {
-      this.plantInformation = this.searchPlant(value);
+    this.plantFilterInput = event.target.value.trim() || '';
+
+    if (this.plantFilterInput) {
+      this.plantInformation = this.allPlantsData.filter(
+        (plant) =>
+          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
+          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+      );
     } else {
       this.plantInformation = this.allPlantsData;
     }
-  }
-
-  searchPlant(value: string) {
-    const searchValue = value.toLowerCase();
-    return this.plantInformation.filter(
-      (plant) =>
-        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (plant.plantId &&
-          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
-    );
   }
 
   add(event: MatChipInputEvent): void {

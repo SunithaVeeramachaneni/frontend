@@ -740,7 +740,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data: any) {
-    let emailArray = [];
+    const emailArray = [];
     data?.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(

@@ -34,6 +34,7 @@ export class AddEditShiftComponent implements OnInit {
       this.shiftTitle = 'Shift Details';
       this.shiftForm?.disable();
     } else if (mode === 'CREATE') {
+      this.shiftForm?.reset();
       this.shiftTitle = 'Create Shift';
       this.shiftButton = 'Create';
       this.shiftForm?.enable();
@@ -70,6 +71,8 @@ export class AddEditShiftComponent implements OnInit {
 
   checked = false;
   disabled = false;
+
+  isCreateUpdateInprogress = false;
 
   errors: ValidationError = {};
   shiftStatus;
@@ -109,15 +112,22 @@ export class AddEditShiftComponent implements OnInit {
 
   create() {
     if (this.shiftStatus === 'add') {
+      this.isCreateUpdateInprogress = true;
       const { id, ...payload } = this.shiftForm.value;
       this.shiftService.createShift$(payload).subscribe((res) => {
+        this.isCreateUpdateInprogress = false;
         this.createdShiftData.emit({
           status: this.shiftStatus,
-          data: res
+          data: {
+            ...payload,
+            startAndEndTime: `${payload?.startTime} - ${payload?.endTime}`
+          }
         });
         this.slideInOut.emit('out');
+        this.shiftForm?.reset();
       });
     } else if (this.shiftStatus === 'edit') {
+      this.isCreateUpdateInprogress = true;
       this.shiftService
         .updateShift$({
           ...this.shiftForm.getRawValue(),
@@ -125,9 +135,15 @@ export class AddEditShiftComponent implements OnInit {
           id: this.shiftsEditData?.id
         })
         .subscribe((res) => {
+          this.isCreateUpdateInprogress = false;
           this.createdShiftData.emit({
             status: this.shiftStatus,
-            data: res
+            data: {
+              ...this.shiftForm.getRawValue(),
+              _version: this.shiftsEditData._version,
+              id: this.shiftsEditData?.id,
+              startAndEndTime: `${this.shiftsEditData?.startTime} - ${this.shiftsEditData?.endTime}`
+            }
           });
           this.slideInOut.emit('out');
         });
