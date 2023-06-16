@@ -8,7 +8,12 @@ import { environment } from 'src/environments/environment';
 import { superAdminIcon } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 
-import { UserGroup, UserGroupDetails, ErrorInfo } from './../../../interfaces';
+import {
+  UserGroup,
+  UserGroupDetails,
+  ErrorInfo,
+  UserGroupQueryParam
+} from './../../../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -28,4 +33,25 @@ export class UserGroupService {
       info
     );
   };
+
+  getUserGroupList$(
+    queryParams: UserGroupQueryParam,
+    filterData: any = null,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<UserGroupDetails> {
+    const { fetchType, ...rest } = queryParams;
+
+    let queryParamaters: any = rest;
+    if (filterData) {
+      queryParamaters = { ...rest, plantId: filterData.plant };
+    }
+    return this.appService
+      ._getResp(
+        environment.userRoleManagementApiUrl,
+        'userGroup',
+        info,
+        queryParamaters
+      )
+      .pipe(map((data) => ({ ...data })));
+  }
 }
