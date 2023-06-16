@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  HostBinding,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatDateRangePicker } from '@angular/material/datepicker';
 const customPresets = [
@@ -15,7 +10,7 @@ const customPresets = [
   'Last 3 months'
 ] as const;
 
-type CustomPreset = (typeof customPresets)[number];
+type CustomPreset = typeof customPresets[number];
 
 @Component({
   selector: 'app-custom-range-panel',
@@ -66,20 +61,21 @@ export class CustomRangePanelComponent<D> {
       }
       case 'Last 3 months': {
         const thisDayLastMonth = this.dateAdapter.addCalendarMonths(today, -3);
-        return this.calculateMonth(thisDayLastMonth, 3);
+        return this.calculateMonth(thisDayLastMonth);
       }
       default:
         return rangeName;
     }
   }
 
-  private calculateMonth(forDay: D, day: number = 1): [start: D, end: D] {
+  private calculateMonth(forDay: D): [start: D, end: D] {
     const year = this.dateAdapter.getYear(forDay);
     const month = this.dateAdapter.getMonth(forDay);
     const start = this.dateAdapter.createDate(year, month, 1);
-    const daysInMonth = this.dateAdapter.getNumDaysInMonth(forDay) * day;
-    const days = day === 3 ? daysInMonth - 2 : daysInMonth - 1;
-    const end = this.dateAdapter.addCalendarDays(start, days);
+    const end = this.dateAdapter.addCalendarDays(
+      start,
+      this.dateAdapter.getNumDaysInMonth(forDay) - 1
+    );
     return [start, end];
   }
 
