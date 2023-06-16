@@ -16,7 +16,7 @@ import { UserGroup, UserGroupDetails, ErrorInfo } from './../../../interfaces';
 export class UserGroupService {
   constructor(private appService: AppService) {}
 
-  createUserGroup1$ = (
+  createUserGroup$ = (
     userGroup: UserGroupDetails,
     info: ErrorInfo = {} as ErrorInfo
   ) => {

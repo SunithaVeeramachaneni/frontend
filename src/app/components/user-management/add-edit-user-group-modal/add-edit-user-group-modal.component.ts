@@ -1,21 +1,13 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { PlantService } from '../../master-configurations/plants/services/plant.service';
-import {
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  first,
-  map,
-  switchMap,
-  tap
-} from 'rxjs/operators';
 import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
   Input,
   Inject,
-  ChangeDetectorRef
+  Output,
+  ChangeDetectorRef,
+  EventEmitter
 } from '@angular/core';
 import {
   FormControl,
@@ -23,12 +15,11 @@ import {
   Validators,
   ValidatorFn,
   AbstractControl,
-  ValidationErrors,
-  AsyncValidatorFn
+  ValidationErrors
 } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { ValidationError } from 'src/app/interfaces';
+import { UserGroupEvent, ValidationError } from 'src/app/interfaces';
 @Component({
   selector: 'app-add-edit-user-group-modal',
   templateUrl: './add-edit-user-group-modal.component.html',
@@ -36,13 +27,15 @@ import { ValidationError } from 'src/app/interfaces';
 })
 export class AddEditUserGroupModalComponent implements OnInit {
   dialogText: string;
+  plants: any[];
+  plantInformation: any[];
   userGroupForm: any;
   errors: ValidationError = {};
 
   constructor(
     private dailogRef: MatDialogRef<AddEditUserGroupModalComponent>,
-    private plantService: PlantService,
     private fb: FormBuilder,
+    private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -53,15 +46,17 @@ export class AddEditUserGroupModalComponent implements OnInit {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(40),
-        Validators.pattern('^[a-zA-Z0-9 ]+$'),
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
+      description: new FormControl(''),
       plantId: new FormControl('', [this.matSelectValidator()])
     });
 
     const { name, description, plantList, dialogText } = this.data;
     this.dialogText = dialogText;
+    this.plantInformation = plantList;
+    this.plants = this.plantInformation;
   }
 
   matSelectValidator(): ValidatorFn {
@@ -73,7 +68,31 @@ export class AddEditUserGroupModalComponent implements OnInit {
     this.dailogRef.close();
   }
 
-  save() {}
+  next() {
+    console.log(this.userGroupForm.value);
+    this.dailogRef.close({
+      data: this.userGroupForm.value
+    });
+  }
+
+  onKeyPlant(event) {
+    const value = event.target.value || '';
+    if (!value) {
+      this.plants = this.plantInformation;
+    } else {
+      this.plants = this.searchPlant(value);
+    }
+  }
+
+  searchPlant(value: string) {
+    const searchValue = value.toLowerCase();
+    return this.plantInformation.filter(
+      (plant) =>
+        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
+        (plant.plantId &&
+          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
 
   processValidationErrors(controlName: string): boolean {
     const touched = this.userGroupForm.get(controlName).touched;

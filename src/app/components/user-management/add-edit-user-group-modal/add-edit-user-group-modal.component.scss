@@ -12,17 +12,44 @@
   width: 360px;
   overflow: hidden;
   padding: 12px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 }
+
 .input-container {
   position: relative;
   top: 15px;
+
+  ::ng-deep .mat-form-field-infix {
+    padding: 0.5em 0;
+    border: 0.59375em solid transparent;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 4px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
 }
-::ng-deep .mat-form-field-infix {
-  padding: 0.5em 0;
-  border: 0.59375em solid transparent;
-}
+
 .dialog-close-btn {
   float: right;
   cursor: pointer;
@@ -37,15 +64,13 @@
 .title {
   font-size: 120%;
   font-weight: 500;
-  position: relative;
-  top: 13px;
 }
 
 .next-btn {
   text-transform: capitalize;
   float: right;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   height: 29px;
   font-weight: normal;
   line-height: normal;
@@ -53,8 +78,7 @@
 }
 
 .cancel-btn {
-  color: #76767b;
-  float: right;
+  color: $gray4;
   background: transparent;
   height: 29px;
   font-weight: normal;
@@ -64,4 +88,17 @@
 
 ::ng-deep .roles-select .mat-option-text {
   display: flex;
+}
+
+.searchable-input {
+  width: 92%;
+  border: 1px solid $border-color;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 10px 10px 10px 12px;
+}
+
+.max-char {
+  font-size: 10px;
+  margin-left: 12px;
 }

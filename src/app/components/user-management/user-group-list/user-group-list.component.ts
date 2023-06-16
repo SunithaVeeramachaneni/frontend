@@ -16,7 +16,7 @@ export class UserGroupListComponent implements OnInit {
   isOpenAddEditUserGroupModal = false;
   name;
   description;
-  plantList: Plant[];
+  plants: Plant[];
   plantsObject = {};
   constructor(
     public dialog: MatDialog,
@@ -24,7 +24,9 @@ export class UserGroupListComponent implements OnInit {
     private userGroupService: UserGroupService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getAllPlants();
+  }
 
   openAddEditUserGroupModal(): void {
     const addEditUserGroupRef = this.dialog.open(
@@ -34,25 +36,26 @@ export class UserGroupListComponent implements OnInit {
           dialogText: 'createUserGroup',
           name: this.name,
           description: this.description,
-          plantList: this.plantList
+          plantList: this.plants
         }
       }
     );
     addEditUserGroupRef.afterClosed().subscribe((resp) => {
-      if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
+      if (!resp || Object.keys(resp).length === 0) return;
 
       this.userGroupService
-        .createUserGroup1$(resp.user)
+        .createUserGroup$(resp.user)
         .subscribe((createdUserGroup) => {
           console.log(createdUserGroup);
         });
     });
   }
 
-  getPlantsObject(plants) {
-    return plants.reduce((acc, cur) => {
-      acc[cur.id] = cur.plantId;
-      return acc;
-    }, {});
+  getAllPlants() {
+    this.plantService.fetchAllPlants$().subscribe((data) => {
+      if (data && Object.keys(data).length > 0) {
+        this.plants = data.items;
+      }
+    });
   }
 }

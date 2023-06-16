@@ -72,5 +72,6 @@
   "validThrough": "Valid Through",
   "validFromInvalid": "Valid from is required",
   "validThroughInvalid": "Valid through is required",
-  "userGroups": "User Groups "
+  "userGroups": "User Groups ",
+  "maxCharacters": "Max Characters: {limit}"
 }
