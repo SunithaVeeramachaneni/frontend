@@ -713,7 +713,7 @@ export class OperatorRoundsService {
   ): Observable<Blob> =>
     this.appService.downloadFile(
       environment.operatorRoundsApiUrl,
-      `rounds/${roundPlanId}/${roundId}`,
+      `rounds/download-pdf/${roundPlanId}/${roundId}`,
       info,
       true,
       {},
