@@ -183,6 +183,7 @@ export class AddEditUserModalComponent implements OnInit {
       let base64;
       if (this.data.user.title === superAdminText) {
         this.userForm.disable();
+        this.userForm.get('plantId').enable();
       }
       if (typeof userDetails.profileImage === 'string') {
         base64 = this.data.user.profileImage;
