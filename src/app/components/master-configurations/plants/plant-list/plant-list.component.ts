@@ -318,6 +318,13 @@ export class PlantListComponent implements OnInit, OnDestroy {
     );
   }
 
+  formatTimeZoneMapping(data, plantMasterData) {
+    if (data.country && plantMasterData[data.country])
+      data.countryDisplay = plantMasterData[data.country].countryName;
+    if (data.timeZone) data.timeZoneDisplay = data.timeZone.utcOffset;
+    return data;
+  }
+
   getDisplayedPlants(): void {
     const plantsOnLoadSearch$ = this.plantService.fetchPlants$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -356,13 +363,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
-          initial.data = rows.map((row) => {
-            if (row.country && this.plantMasterData[row.country])
-              row.countryDisplay =
-                this.plantMasterData[row.country].countryName;
-            if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
-            return row;
-          });
+          initial.data = rows.map((row) =>
+            this.formatTimeZoneMapping(row, this.plantMasterData)
+          );
           initial.data = rows;
         } else if (this.addEditCopyDeletePlants) {
           switch (action) {
@@ -375,18 +378,15 @@ export class PlantListComponent implements OnInit, OnDestroy {
               break;
             case 'add':
               // case 'copy':
-              if (form.country && this.plantMasterData[form.country])
-                form.countryDisplay =
-                  this.plantMasterData[form.country].countryName;
-              if (form.timeZone) form.timeZoneDisplay = form.timeZone.utcOffset;
+              // if (form.country && this.plantMasterData[form.country])
+              //   form.countryDisplay =
+              //     this.plantMasterData[form.country].countryName;
+              // if (form.timeZone) form.timeZoneDisplay = form.timeZone.utcOffset;
+              form = this.formatTimeZoneMapping(form, this.plantMasterData);
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
-              if (form.country && this.plantMasterData[form.country])
-                form.countryDisplay =
-                  this.plantMasterData[form.country].countryName;
-              if (form.timeZone)
-                form.timeZoneDisplay = 'UTC' + form.timeZone.utcOffset;
+              form = this.formatTimeZoneMapping(form, this.plantMasterData);
               initial.data = [
                 form,
                 ...initial.data.filter((item) => item.id !== form.id)
@@ -397,13 +397,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
           }
           this.addEditCopyDeletePlants = false;
         } else {
-          scrollData = scrollData.map((row) => {
-            if (row.country && this.plantMasterData[row.country])
-              row.countryDisplay =
-                this.plantMasterData[row.country].countryName;
-            if (row.timeZone) row.timeZoneDisplay = row.timeZone.utcOffset;
-            return row;
-          });
+          scrollData = scrollData.map((row) =>
+            this.formatTimeZoneMapping(row, this.plantMasterData)
+          );
           initial.data = initial.data.concat(scrollData);
         }
 

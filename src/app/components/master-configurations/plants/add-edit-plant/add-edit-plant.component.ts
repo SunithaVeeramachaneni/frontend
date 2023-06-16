@@ -262,8 +262,7 @@ export class AddEditPlantComponent implements OnInit {
             this.slideInOut.emit('out');
             this.plantForm.get('state').disable();
             this.plantForm.get('timeZone').disable();
-            this.clearCountryInput();
-            this.clearStateInput();
+            this.clearSearchInputs();
             this.noState = false;
           });
       } else if (this.plantStatus === 'edit') {
@@ -294,8 +293,7 @@ export class AddEditPlantComponent implements OnInit {
             this.slideInOut.emit('out');
             this.plantForm.get('state').disable();
             this.plantForm.get('timeZone').disable();
-            this.clearCountryInput();
-            this.clearStateInput();
+            this.clearSearchInputs();
             this.noState = false;
           });
       }
@@ -306,8 +304,7 @@ export class AddEditPlantComponent implements OnInit {
     this.slideInOut.emit('out');
     this.plantForm.get('state').disable();
     this.plantForm.get('timeZone').disable();
-    this.clearCountryInput();
-    this.clearStateInput();
+    this.clearSearchInputs();
     this.noState = false;
   }
 
@@ -378,13 +375,10 @@ export class AddEditPlantComponent implements OnInit {
   onStateClosed() {
     this.states = this.countryAllStates;
   }
-  clearCountryInput() {
-    const input = this.countryInputSearch.nativeElement;
-    input.value = '';
-  }
-  clearStateInput() {
-    const input = this.stateInputSearch.nativeElement;
-    input.value = '';
+
+  clearSearchInputs() {
+    this.countryInputSearch.nativeElement.value = '';
+    this.stateInputSearch.nativeElement.value = '';
   }
 
   overlapping = (a, b) => {
