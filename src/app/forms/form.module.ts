@@ -108,6 +108,8 @@ import {
 } from '@angular-material-components/datetime-picker';
 import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
+import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 
 @NgModule({
   declarations: [
@@ -174,7 +176,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     AssignedToComponent,
     ObservationsComponent,
     RaiseNotificationDailogComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent
   ],
   imports: [
     SharedModule,
@@ -251,7 +255,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent
   ]
 })
 export class FormModule {}

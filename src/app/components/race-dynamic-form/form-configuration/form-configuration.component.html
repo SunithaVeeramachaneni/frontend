@@ -158,6 +158,13 @@
     <div class="iphone-width m-t-20" *ngIf="!isEmbeddedForm">
       <app-iphone [moduleType]="'forms'" [subFormId]="''"></app-iphone>
     </div>
+
+    <div class="iphone-width m-t-20" *ngIf="isEmbeddedForm">
+      <app-iphone-for-embedded-forms
+        [moduleType]="'forms'"
+        [subFormId]="''"
+      ></app-iphone-for-embedded-forms>
+    </div>
   </div>
 </div>
 

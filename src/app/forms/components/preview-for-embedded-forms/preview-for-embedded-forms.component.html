@@ -1,0 +1,368 @@
+<div *ngIf="previewFormData$ | async as pageData">
+  <div *ngFor="let section of pageData[0].sections; let i = index">
+    <p class="section-name">
+      {{ section.name ? section.name : 'Section Name' }}
+      <mat-icon class="section-arrow"> keyboard_arrow_down </mat-icon>
+    </p>
+    <div *ngFor="let question of section.questions">
+      <div class="dis-flex m-b-10 m-r-15">
+        <div
+          class="width-100 question-name dis-flex dis-flex-center"
+          *ngIf="question.fieldType === 'USR'"
+        >
+          <span class="font-90">{{ question.name }}</span>
+          <span class="font-90">User</span>
+        </div>
+        <div
+          class="width-100 question-name dis-flex dis-flex-center"
+          *ngIf="question.fieldType === 'SGF'"
+        >
+          <span class="font-90"
+            >{{ question.name ? question.name : 'Type Question'
+            }}{{ question.required ? '*' : '' }}</span
+          >
+          <span>
+            <img
+              src="assets/rdf-forms-icons/fieldType-icons/SGF.svg"
+              alt="signature-icon"
+              class="signature-icon"
+            />
+          </span>
+        </div>
+
+        <div
+          class="width-100 dis-flex dis-flex-center question-name"
+          *ngIf="question.fieldType === 'DFR'"
+        >
+          <span class="font-90">
+            {{ question.name ? question.name : 'Type Question'
+            }}{{ question.required ? '*' : '' }}
+          </span>
+          <span class="width-min">
+            <input type="date" class="input-fields" />
+            <input type="date" class="input-fields" />
+          </span>
+        </div>
+
+        <div
+          class="width-100 question-name"
+          *ngIf="question.fieldType === 'GAL'"
+        >
+          <span class="font-90"
+            >{{ question.name ? question.name : 'Type Question'
+            }}{{ question.required ? '*' : '' }}
+          </span>
+          <span class="">
+            <img
+              src="assets/rdf-forms-icons/location.svg"
+              alt="location-icon"
+              class="location-icon"
+            />
+          </span>
+        </div>
+
+        <div
+          class="width-40 question-name"
+          *ngIf="
+            question.fieldType !== 'USR' &&
+            question.fieldType !== 'LLF' &&
+            question.fieldType !== 'VI' &&
+            question.fieldType !== 'DD' &&
+            question.fieldType !== 'SGF' &&
+            question.fieldType !== 'GAL' &&
+            question.fieldType !== 'ATT' &&
+            question.fieldType !== 'IMG' &&
+            question.fieldType !== 'RT' &&
+            question.fieldType !== 'ARD' &&
+            question.fieldType !== 'DFR'
+          "
+        >
+          {{ question.name ? question.name : 'Type Question'
+          }}{{ question.required ? '*' : '' }}
+        </div>
+
+        <div
+          class="width-100 question-name"
+          *ngIf="
+            question.fieldType !== 'LLF' &&
+            (question.fieldType === 'VI' ||
+              question.fieldType === 'DD' ||
+              question.fieldType === 'ATT' ||
+              question.fieldType === 'IMG' ||
+              question.fieldType === 'RT' ||
+              question.fieldType === 'ARD')
+          "
+        >
+          {{ question.name ? question.name : 'Type Question'
+          }}{{ question.required ? '*' : '' }}
+
+          <mat-icon
+            *ngIf="question.fieldType === 'ARD'"
+            style="
+              font-size: 160%;
+              float: right;
+              margin-right: -15px;
+              color: #3f7591;
+            "
+          >
+            add
+          </mat-icon>
+        </div>
+        <div
+          class="width-100 question-name"
+          *ngIf="question.fieldType === 'LLF'"
+        >
+          <div [innerHTML]="question.name"></div>
+        </div>
+        <div
+          class="width-40 text-left"
+          *ngIf="
+            question.fieldType !== 'LLF' &&
+            question.fieldType !== 'VI' &&
+            question.fieldType !== 'DD' &&
+            question.fieldType !== 'SGF' &&
+            question.fieldType !== 'ATT' &&
+            question.fieldType !== 'IMG' &&
+            question.fieldType !== 'RT' &&
+            question.fieldType !== 'ARD' &&
+            question.fieldType !== 'DFR' &&
+            question.fieldType !== 'GAL' &&
+            question.fieldType !== 'USR'
+          "
+        >
+          <p
+            class="m-0"
+            *ngIf="question.fieldType === 'TF' && question.value !== 'LTV'"
+          >
+            <input type="text" class="input-fields" />
+          </p>
+
+          <p class="m-0" *ngIf="question.fieldType === 'DF'">
+            <input type="date" class="input-fields" />
+          </p>
+
+          <p *ngIf="question.fieldType === 'CB'" class="m-0 cb-input">
+            <input type="checkbox" id="option1" class="radio-checkbox" />
+            <label for="option1" class="radio-label"></label>
+          </p>
+
+          <p *ngIf="question.fieldType === 'TIF'" class="m-0">
+            <input type="time" class="input-fields" />
+          </p>
+
+          <textarea
+            rows="3"
+            cols="10"
+            *ngIf="question.value === 'LTV' && question.fieldType === 'TF'"
+            class="input-fields"
+          ></textarea>
+
+          <p *ngIf="question.fieldType === 'NF'" class="m-0">
+            <input type="number" class="input-fields" />
+          </p>
+
+          <p
+            *ngIf="question.fieldType === 'LF'"
+            class="default-value m-0 m-r-minus40"
+          >
+            {{ question.value }}
+          </p>
+
+          <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
+            <input type="text" class="input-fields-with-icons" />
+            <img
+              src="assets/rdf-forms-icons/scan.svg"
+              alt="scan"
+              class="scan-icon"
+            />
+          </p>
+        </div>
+      </div>
+      <div class="width-100">
+        <div *ngIf="question.fieldType === 'ATT'" class="attachment-div">
+          <a class="attachment-btn">
+            <img
+              class="attachment-btn-img"
+              src="assets/rdf-forms-icons/take-a-photo.svg"
+              alt="take-a-photo-icon"
+            />
+          </a>
+        </div>
+
+        <div *ngIf="question.fieldType === 'IMG'">
+          <img
+            [src]="getImageSrc(question.value.base64)"
+            *ngIf="question.value.base64"
+            alt="image"
+            class="image-field"
+          />
+        </div>
+
+        <div *ngIf="question.fieldType === 'RT'">
+          <mat-slider
+            class="range-field"
+            min="{{ question.value.min }}"
+            max="{{ question.value.max }}"
+            step="{{ question.value.increment }}"
+            thumbLabel
+            [displayWith]="formatLabel"
+          >
+          </mat-slider>
+          <span style="float: left; margin: -20px 0 0 10px">{{
+            question.value.min
+          }}</span>
+          <span style="float: right; margin: -20px 10px 0 0">{{
+            question.value.max
+          }}</span>
+        </div>
+
+        <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
+          <div *ngIf="question.value?.values?.length > 0">
+            <div *ngIf="4 >= question.value.values.length">
+              <mat-button-toggle-group class="vi-input">
+                <mat-button-toggle
+                  class="vi-values"
+                  [value]="ques.title"
+                  [ngStyle]="{
+                    color: ques.color
+                  }"
+                  *ngFor="let ques of question.value.values"
+                >
+                  {{ ques.title }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="question.fieldType === 'DD'" class="m-b-10">
+          <div *ngIf="question.value?.values?.length > 0">
+            <div *ngIf="question.value.values.length > 4">
+              <mat-select class="dropdown" [multiple]="question.multi">
+                <mat-option
+                  *ngFor="let ques of question.value.values"
+                  [value]="ques.title"
+                  [ngStyle]="{
+                    color: ques.color
+                  }"
+                >
+                  {{ ques.title }}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+
+          <div *ngIf="question.value?.globalDataset === true">
+            <mat-select class="dropdown">
+              <mat-option> 1 </mat-option>
+            </mat-select>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="question.fieldType === 'TAF'">
+        <div style="overflow-x: auto">
+          <table>
+            <tr>
+              <th style="width: 20px; background: #e7ecef"></th>
+              <th
+                *ngFor="let columns of question.table; let i = index"
+                style="width: 100px; background: #e7ecef; padding: 5px"
+              >
+                {{ columns.name }}
+              </th>
+            </tr>
+            <tr>
+              <td style="padding: 10px">1.</td>
+              <td
+                style="padding: 5px"
+                *ngFor="let columns of question.table; let i = index"
+              >
+                <input type="text" size="10" />
+              </td>
+            </tr>
+          </table>
+        </div>
+        <button
+          style="color: #3678af; background: none; border: none; float: left"
+        >
+          <img
+            src="../../../../assets/rdf-forms-icons/add-row.svg"
+            alt="add row"
+            style="position: relative; top: 4px; margin-right: 3px"
+          />
+          <span>Add row</span>
+        </button>
+      </div>
+
+      <div
+        *ngIf="question.fieldType === 'ARD'"
+        style="
+          margin: -10px 10px 10px 10px;
+          background-color: #f6f6f6;
+          padding: 10px 5px;
+        "
+      >
+        <p
+          style="
+            font-weight: 500;
+            margin: 0;
+            text-align: left;
+            font-size: 90%;
+            margin-left: 10px;
+          "
+        >
+          Line Item 1
+        </p>
+        <mat-icon
+          style="
+            font-size: 120%;
+            float: right;
+            position: relative;
+            top: -15px;
+            right: -5px;
+          "
+        >
+          keyboard_arrow_right
+        </mat-icon>
+        <div
+          *ngFor="let column of question.table; let i = index"
+          style="text-align: left"
+        >
+          <div class="question-name">{{ column.name }}:</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div *ngFor="let section of pageData[0].sections" class="preview-content">
+    <div class="section-header">
+      <mat-icon
+        (click)="toggleSectionOpenState()"
+        *ngIf="isSectionOpenState === true"
+        class="fix-arrow"
+      >
+        expand_more
+      </mat-icon>
+      <mat-icon
+        (click)="toggleSectionOpenState()"
+        *ngIf="isSectionOpenState === false"
+        class="fix-arrow"
+      >
+        chevron_right
+      </mat-icon>
+
+      <span class="section-name">{{ section.name }}</span>
+      <span class="section-count">0/{{ section.questions.length }}</span>
+    </div>
+
+    <div *ngIf="isSectionOpenState === true">
+      <div id="preview" *ngFor="let question of section.questions">
+        <app-preview-question
+          [moduleType]="moduleType"
+          [question]="question"
+          (isOpenBottomSheet)="openBottomSheet($event)"
+        ></app-preview-question>
+      </div>
+    </div>
+  </div> -->
+</div>

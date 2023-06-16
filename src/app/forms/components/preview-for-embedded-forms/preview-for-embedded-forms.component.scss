@@ -1,0 +1,594 @@
+.iphone-view {
+  background: url('../../../../assets/Images/iphonep.png') top left no-repeat;
+  background-size: 260px 550px;
+  width: 270px;
+  min-height: 100%;
+  overflow: hidden;
+  position: fixed;
+  right: 50px;
+  margin: 0px auto 0;
+}
+
+@media only screen and (max-width: 2049px) {
+  .iphone-view {
+    background-size: 295px 63vh;
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 1825px) {
+  .iphone-view {
+    background-size: 295px 500px;
+    width: 300px;
+    height: 500px;
+  }
+}
+
+@media only screen and (max-width: 1710px) {
+  .iphone-view {
+    background-size: 295px 500px;
+    width: 300px;
+    height: 500px;
+  }
+}
+
+@media only screen and (max-width: 1520px) {
+  .iphone-view {
+    background-size: 281px 500px;
+    width: 290px;
+    height: 500px;
+  }
+}
+
+@media only screen and (max-width: 1370px) {
+  .iphone-view {
+    background-size: 260px 435px;
+    width: 270px;
+    height: 435px;
+  }
+}
+
+@media only screen and (max-width: 1245px) {
+  .iphone-view {
+    background-size: 260px 415px;
+    width: 270px;
+    height: 415px;
+    position: relative;
+    right: 0;
+  }
+}
+
+@media only screen and (max-width: 1095px) {
+  .iphone-view {
+    background-size: 260px 450px;
+    width: 270px;
+    height: 450px;
+    position: relative;
+    right: 0;
+  }
+}
+
+@media only screen and (max-width: 1042px) {
+  .iphone-view {
+    background-size: 260px 450px;
+    width: 270px;
+    height: 450px;
+    position: relative;
+    right: 0;
+  }
+}
+
+.ipad-view-default-content {
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+  top: 55px;
+  position: relative;
+  height: 100%;
+}
+
+.main-carosuel-iphone {
+  background-color: #ffffff;
+  margin-top: -42px;
+  margin-left: 15px;
+  margin-right: 25px;
+  height: 450px;
+  border-radius: 25px;
+}
+
+@media only screen and (max-width: 2049px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 58vh;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1825px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 460px;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1710px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 460px;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1520px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -42px;
+    margin-left: 15px;
+    margin-right: 25px;
+    height: 465px;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1370px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -42px;
+    margin-left: 15px;
+    margin-right: 25px;
+    height: 400px;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1245px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -42px;
+    margin-left: 15px;
+    margin-right: 25px;
+    height: 380px;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1095px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -42px;
+    margin-left: 15px;
+    margin-right: 25px;
+    height: 415px;
+    border-radius: 25px;
+  }
+}
+
+.iphone-body-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 360px;
+  border-bottom: 1px solid #d3d3d3;
+}
+
+@media only screen and (max-width: 5120px) {
+  .iphone-body-content {
+    height: 19vh;
+  }
+}
+
+@media only screen and (max-width: 3840px) {
+  .iphone-body-content {
+    height: 29vh;
+  }
+}
+
+@media only screen and (max-width: 2560px) {
+  .iphone-body-content {
+    height: 31vh;
+  }
+}
+
+@media only screen and (max-width: 2049px) {
+  .iphone-body-content {
+    height: 43vh;
+  }
+}
+
+@media only screen and (max-width: 1825px) {
+  .iphone-body-content {
+    height: 320px;
+  }
+}
+
+@media only screen and (max-width: 1710px) {
+  .iphone-body-content {
+    height: 320px;
+  }
+}
+
+@media only screen and (max-width: 1520px) {
+  .iphone-body-content {
+    height: 325px;
+  }
+}
+
+@media only screen and (max-width: 1370px) {
+  .iphone-body-content {
+    height: 260px;
+  }
+}
+
+@media only screen and (max-width: 1245px) {
+  .iphone-body-content {
+    height: 245px;
+  }
+}
+
+@media only screen and (max-width: 1095px) {
+  .iphone-body-content {
+    height: 275px;
+  }
+}
+
+@media only screen and (max-width: 1042px) {
+  .iphone-body-content {
+    height: 275px;
+  }
+}
+
+.iphone-header {
+  background: #3a6175;
+  border-top-right-radius: 23px;
+  border-top-left-radius: 23px;
+  height: 100px;
+}
+
+.p-5 {
+  padding: 5px;
+}
+
+.status-bar-left {
+  text-align: left;
+  font-size: 80%;
+  font-weight: 500;
+  margin-left: 10px;
+  margin-top: 2px;
+  color: #ffffff;
+}
+
+.status-bar-right {
+  text-align: right;
+  margin-left: -20px;
+}
+
+.iphone-status-bar-right {
+  text-align: right;
+}
+
+.status-bar-icons {
+  font-size: 95%;
+  font-weight: 500;
+  width: 12px;
+  margin-right: 3px;
+  color: #ffffff;
+}
+
+.battery_full-icon {
+  transform: rotate(90deg);
+  position: relative;
+  top: -5px;
+  left: -3px;
+}
+
+.status-bar-icons-battery {
+  transform: rotate(90deg);
+  font-size: 90%;
+  font-weight: bolder;
+  width: 15px;
+  height: 10px;
+  position: relative;
+  top: 1px;
+}
+
+.status-bar-text {
+  font-size: 50%;
+  font-weight: bolder;
+  position: relative;
+  top: -2px;
+  margin-right: 3px;
+}
+
+.in-progress-text {
+  color: #ffffff;
+  font-size: 90%;
+}
+
+.back-button {
+  color: #ffffff;
+  float: left;
+  margin-left: 5px;
+  position: relative;
+  top: -5px;
+}
+
+.file-icon {
+  width: 30px;
+  float: left;
+  margin-left: -20px;
+  margin-top: 5px;
+}
+
+.width-45 {
+  width: 45%;
+}
+
+.form-div {
+  position: relative;
+  left: -7px;
+  top: 20px;
+}
+
+.form-name {
+  float: left;
+  color: #ffffff;
+  font-size: 100%;
+}
+
+.form-description {
+  float: left;
+  color: #ffffff;
+  font-size: 80%;
+  margin-top: 3px;
+}
+
+.section-name {
+  text-align: left;
+  color: #000000;
+  font-weight: 500;
+  padding-left: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #d3d3d3;
+}
+
+.section-arrow {
+  float: right;
+  position: relative;
+  top: -2px;
+}
+
+.question-name {
+  text-align: left;
+  margin-left: 10px;
+  font-size: 90%;
+
+  div p {
+    margin: 0 !important;
+  }
+}
+
+.text-left {
+  text-align: left;
+}
+
+.input-fields {
+  width: 120px;
+  border: 1px solid #cccccc;
+  padding-left: 5px;
+  font-size: 90%;
+  margin-bottom: 5px;
+}
+
+.input-fields:focus {
+  outline: none;
+}
+
+.default-value {
+  float: right;
+  font-size: 90%;
+  text-align: right;
+}
+
+.input-fields-with-icons {
+  width: 100px;
+  border: 1px solid #cccccc;
+  padding-left: 5px;
+  font-size: 90%;
+}
+
+.input-fields-with-icons:focus {
+  outline: none;
+}
+
+.signature-input-fields {
+  width: 160px;
+  border: 1px solid #cccccc;
+  padding-left: 5px;
+  font-size: 90%;
+}
+
+.signature-input-fields:focus {
+  outline: none;
+}
+
+.scan-icon {
+  width: 15px;
+  margin-left: 5px;
+}
+
+.vi-input {
+  height: 25px;
+  align-items: center;
+  width: 215px;
+}
+
+.vi-values {
+  width: inherit;
+  font-size: 80%;
+  background: white;
+  box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
+}
+
+.cb-input {
+  float: right;
+  margin-right: -40px;
+
+  .radio-checkbox {
+    display: none;
+  }
+  .radio-label {
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+    margin-right: 15px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .radio-label:before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    left: 16px;
+    top: -12px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #eee;
+    border-radius: 50%;
+    background-color: #fff;
+  }
+  .radio-checkbox:checked + .radio-label:before {
+    content: '\2022';
+    color: #3d5afe;
+    font-size: 36px;
+    text-align: center;
+    line-height: 12px;
+  }
+  .radio-label:hover:before {
+    border-color: #999;
+  }
+  .radio-label:active:before {
+    background-color: #eee;
+  }
+}
+
+.m-r-minus40 {
+  margin-right: -40px;
+}
+
+.signature-div {
+  margin: -10px 0 10px -10px;
+}
+
+.signature-icon {
+  width: 20px;
+}
+
+.location-icon {
+  width: 20px;
+  position: relative;
+  left: 55px;
+  top: 5px;
+}
+
+.location-column-text {
+  max-width: 60%;
+}
+
+.location-column-logo {
+  max-width: 40%;
+}
+
+.attachment-div {
+  margin: -5px 168px 10px -10px;
+}
+
+.attachment-btn {
+  position: relative;
+  left: 5px;
+}
+.attachment-btn :hover {
+  background-color: #d7dbf4;
+  cursor: pointer;
+}
+
+.attachment-btn-img {
+  width: 60px;
+}
+
+.image-field {
+  width: 240px;
+  height: 80px;
+  margin-left: 10px;
+}
+
+.range-field {
+  width: 230px;
+  margin-top: -15px;
+}
+
+.btns {
+  background-color: #008dc7;
+  border: #008dc7;
+  color: #ffffff;
+  padding: 5px;
+  height: 30px;
+  width: 80px;
+  margin-top: 6px;
+  float: right;
+  margin-right: 12px;
+}
+
+.dropdown {
+  width: 85%;
+  margin: 0 7px;
+  height: 25px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  text-align: left;
+  padding-left: 10px;
+
+  ::ng-deep .mat-select-value {
+    height: 24px;
+    padding-top: 8px;
+  }
+
+  ::ng-deep .mat-select-arrow {
+    position: relative;
+    top: -3px;
+  }
+}
+
+.dis-flex-center {
+  justify-content: space-between;
+  align-items: center;
+}
+
+::ng-deep .mat-accent .mat-slider-track-fill {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb {
+  background-color: blue !important;
+}
+
+::ng-deep .mat-slider-thumb-label {
+  background-color: blue !important;
+}
+
+.width-min {
+  width: min-content;
+}
+
+.font-90 {
+  font-size: 100%;
+}
