@@ -194,10 +194,6 @@ export class RdfService {
             isPublishedTillSave
           } = question;
 
-          if (isPublishedTillSave) {
-            return null;
-          }
-
           const {
             expression,
             validationMessage,
@@ -497,7 +493,15 @@ export class RdfService {
     let notificationGlobalIndex = 0;
     let askQuestions = [];
 
-    if (!question.logics || !question.logics.length) return expression;
+    if (!question.logics || !question.logics.length) {
+      return {
+        expression,
+        validationMessage,
+        askQuestions,
+        notificationExpression
+      };
+    }
+
     question.logics.forEach((logic) => {
       if (question.fieldType === 'CB') {
         logic.operand2 = logic.operand2 === 'true' ? 'X' : '';
@@ -529,14 +533,22 @@ export class RdfService {
       // Hide Questions;
       const hiddenQuestions = logic.hideQuestions;
       if (hiddenQuestions && hiddenQuestions.length) {
+        let operand2Val = '';
+        if (!logic.operand2.length) {
+          operand2Val = 'EMPTY';
+        } else {
+          operand2Val = `(V)${logic.operand2}`;
+        }
+        let hideExpression = '';
         hiddenQuestions.forEach((hq, index) => {
-          globalIndex = globalIndex + 1;
-          if (isEmpty) {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+          if (index === 0) {
+            hideExpression = `(HI) ${questionId} IF ${hq} ${logic.operator} ${operand2Val}`;
           } else {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            hideExpression = `${hideExpression} OR ${hq} ${logic.operator} ${operand2Val}`;
           }
         });
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:${hideExpression}`;
       }
 
       // Ask Evidence;
