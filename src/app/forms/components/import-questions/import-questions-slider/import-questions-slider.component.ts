@@ -23,6 +23,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() selectedFormName;
   @Input() selectedFormData;
   @Input() currentFormData;
+  @Input() isEmbeddedForm;
   @Input() isFooter;
   @Input() title;
 

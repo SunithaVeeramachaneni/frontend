@@ -445,9 +445,10 @@ export class ObservationsService {
           },
           condition: true
         },
-        dueDate: item?.DUEDATE
-          ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
-          : '',
+        dueDate:
+          item?.DUEDATE && this.isValidDate(new Date(item?.DUEDATE))
+            ? format(new Date(item?.DUEDATE), 'dd MMM yyyy hh:mm a')
+            : '',
         title: item.TITLE,
         description: item.DESCRIPTION,
         location,
@@ -478,5 +479,9 @@ export class ObservationsService {
       next: resp?.next,
       count: resp?.count
     };
+  }
+
+  private isValidDate(date): boolean {
+    return date instanceof Date && !isNaN(date as unknown as number);
   }
 }
