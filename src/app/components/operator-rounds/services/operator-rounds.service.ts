@@ -61,7 +61,7 @@ export class OperatorRoundsService {
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
 
   createAdditionalDetails$ = (
-    details: string,
+    details: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(
@@ -75,7 +75,7 @@ export class OperatorRoundsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
     this.appService._getResp(
-      environment.rdfApiUrl,
+      environment.operatorRoundsApiUrl,
       'round-plans/store-additional-details',
       info
     );
