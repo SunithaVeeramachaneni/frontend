@@ -69,15 +69,16 @@ export class ObservationsComponent implements OnInit {
     },
     legend: {
       orient: 'horizontal',
-      itemWidth: 15,
-      itemHeight: 15,
-      padding: [11, 5, 24, 5],
-      top: '86%'
+      bottom: 0
     },
     series: [
       {
         name: '',
         type: 'pie',
+        top: '-20%',
+        left: '-20%',
+        right: '-20%',
+        bottom: '-20%',
         radius: [25, 40],
         color: [],
         data: [],
