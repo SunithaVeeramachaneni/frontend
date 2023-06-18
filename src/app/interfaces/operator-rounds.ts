@@ -88,7 +88,7 @@ export interface RoundDetail extends RoundPlan {
   roundId: string;
   roundDetailId: string;
   scheduledType: string;
-  dueDate: string | Date;
+  dueDate: Date;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
@@ -119,6 +119,7 @@ export type RoundPlanList = {
   items: Array<RoundPlan | null>;
   next?: string | null;
   startedAt?: number | null;
+  count?: number;
 };
 
 export interface RoundPlanSubmission {

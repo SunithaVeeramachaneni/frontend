@@ -100,13 +100,16 @@ import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
 import { ObservationsComponent } from './components/observations/observations.component';
+import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import {
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
 import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
-
+import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { UserNameByEmailPipe } from './pipes';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -171,6 +174,9 @@ import { ShiftChartComponent } from './components/schedular/shift-chart/shift-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    RaiseNotificationDailogComponent,
+    DatePickerComponent,
+    UserNameByEmailPipe,
     ShiftChartComponent
   ],
   imports: [
@@ -205,6 +211,7 @@ import { ShiftChartComponent } from './components/schedular/shift-chart/shift-ch
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
@@ -247,6 +254,8 @@ import { ShiftChartComponent } from './components/schedular/shift-chart/shift-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    DatePickerComponent,
+    UserNameByEmailPipe,
     ShiftChartComponent
   ]
 })

@@ -36,7 +36,11 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
           map((response) =>
             FormConfigurationApiActions.createFormSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata },
+              formMetadata: {
+                id: response.id,
+                ...action.formMetadata,
+                embeddedFormId: response.embeddedFormId
+              },
               formSaveStatus: formConfigurationStatus.saved
             })
           ),

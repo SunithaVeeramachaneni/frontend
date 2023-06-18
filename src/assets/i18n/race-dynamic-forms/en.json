@@ -310,6 +310,8 @@
   "selectAll": "Select All",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
+  "link": "Link",
+  "raiseNotification": "Raise Notification",
   "advanceRoundsCountInfo": "How many rounds would you like to generate in advance?",
   "scheduling": "Scheduling",
   "planName": "Plan Name",

@@ -27,11 +27,12 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
     }
     return forkJoin({
       form: this.raceDynamicFormService.getFormById$(id),
+      embeddedFormDetail: this.raceDynamicFormService.getEmbeddedFormId$(id),
       authoredFormDetail:
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(id),
       formDetail: this.raceDynamicFormService.getFormDetailByFormId$(id)
     }).pipe(
-      map(({ form, authoredFormDetail, formDetail }) => {
+      map(({ form, embeddedFormDetail, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
           FormConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
@@ -55,6 +56,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
         let pdfTemplateConfiguration = JSON.parse(
           form?.pdfTemplateConfiguration
         );
+        const { embeddedFormId } = embeddedFormDetail;
         if (!pdfTemplateConfiguration) {
           pdfTemplateConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
         }
@@ -79,7 +81,8 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formType,
           tags,
           plantId,
-          plant: plant.name
+          plant: plant.name,
+          embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 
