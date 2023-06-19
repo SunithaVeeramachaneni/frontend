@@ -67,7 +67,6 @@ export class OperatorRoundsService {
     this.appService._postData(
       environment.operatorRoundsApiUrl,
       `round-plans/additional-details`,
-      `round-plans/additional-details`,
       details,
       info
     );
@@ -314,7 +313,7 @@ export class OperatorRoundsService {
         isArchived: false,
         isDeleted: false,
         pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
-        addditionalDetails: formListQuery.addditionalDetails
+        additionalDetails: formListQuery.additionalDetails
       }
     );
   }

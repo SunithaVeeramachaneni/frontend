@@ -27,8 +27,9 @@ export class RoundPlanConfigurationEffects {
   createRoundPlan$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RoundPlanConfigurationActions.createRoundPlan),
-      concatMap((action) =>
-        this.operatorRoundsService.createForm$(action.formMetadata).pipe(
+      concatMap((action) => {
+        console.log('action:', action.formMetadata);
+        return this.operatorRoundsService.createForm$(action.formMetadata).pipe(
           map((response) =>
             RoundPlanConfigurationApiActions.createRoundPlanSuccess({
               formMetadata: {
@@ -44,8 +45,8 @@ export class RoundPlanConfigurationEffects {
               RoundPlanConfigurationApiActions.createRoundPlanFailure({ error })
             );
           })
-        )
-      )
+        );
+      })
     )
   );
 

@@ -141,7 +141,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.getAllPlantsData();
     this.retrieveDetails();
     if (!this.changedValues) {
-      this.filteredLabels = of(this.labels);
     }
   }
 
@@ -428,7 +427,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       } else {
         this.toastService.show({
           type: 'warning',
-          text: 'Value is not Deleted'
+          text: 'Label is not Deleted'
         });
       }
     });
@@ -437,10 +436,16 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.operatorRoundsService
       .removeValue$({ value: value, label: this.labelSelected })
       .subscribe((response) => {
-        this.toastService.show({
-          type: 'success',
-          text: 'Value deleted Successfully'
-        });
+        if (response.acknowledge) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Value deleted Successfully'
+          });
+        }
       });
+  }
+
+  getAdditionalDetailList() {
+    return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 }
