@@ -10,7 +10,7 @@
   } as props"
 >
   <div>
-    <div (click)="!isAskQuestion && updateIsOpen(true)">
+    <div (click)="updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70"
@@ -105,7 +105,7 @@
           ></svg-icon>
         </div>
       </div>
-      <hr class="question-line" *ngIf="!isAskQuestion" />
+      <hr [ngClass]="!isAskQuestion ? 'question-line' : 'ask-question-line'" />
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
         <input
@@ -119,7 +119,11 @@
 
       <div
         class="dis-flex justify-content"
-        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+        *ngIf="
+          (isAskQuestion &&
+            questionForm.get('id').value === isAskQuestionFocusId) ||
+          (!isAskQuestion && questionForm.get('isOpen').value)
+        "
       >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
@@ -129,6 +133,7 @@
                 color="primary"
                 class="addLogicBtn"
                 *ngIf="
+                  !isAskQuestion &&
                   addLogicNotAppliedFields.indexOf(
                     questionForm.get('fieldType').value
                   ) < 0
@@ -141,7 +146,12 @@
                 <span translate="addLogicBtn"></span>
               </button>
 
-              <div *ngIf="questionForm.get('fieldType').value === 'INST'">
+              <div
+                *ngIf="
+                  questionForm.get('fieldType').value === 'INST' &&
+                  !isEmbeddedForm
+                "
+              >
                 <div class="dis-flex">
                   <span
                     *ngFor="
@@ -181,7 +191,9 @@
                 <button
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-inst-btn' : 'addLogicBtn'
+                  "
                   *ngIf="questionForm.get('fieldType').value === 'INST'"
                   (click)="instructionsFileUpload.click()"
                 >
@@ -212,7 +224,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <span translate="unitTxt"></span>
@@ -251,7 +266,10 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'NF' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <span translate="rangeTxt"></span>
@@ -259,15 +277,16 @@
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
-                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
+                  <span class="rangeValues">{{ rangeDisplayText }}</span>
                 </span>
               </span>
 
               <span
                 class="action"
                 *ngIf="
-                  questionForm.get('fieldType').value === 'NF' ||
-                  questionForm.get('fieldType').value === 'RT'
+                  (questionForm.get('fieldType').value === 'NF' ||
+                    questionForm.get('fieldType').value === 'RT') &&
+                  !isEmbeddedForm
                 "
               >
                 <mat-checkbox
@@ -279,11 +298,20 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'LF' ||
+                  (isEmbeddedForm &&
+                    questionForm.get('fieldType').value === 'HL')
+                "
                 class="action"
               >
                 <app-read-only
                   [question]="questionForm"
+                  [translateValue]="
+                    questionForm.get('fieldType').value === 'LF'
+                      ? 'defaultValue'
+                      : 'link'
+                  "
                   (defaultValue)="questionForm.get('value').setValue($event)"
                 ></app-read-only>
               </span>
@@ -311,13 +339,18 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'HL'"
+                *ngIf="
+                  questionForm.get('fieldType').value === 'HL' &&
+                  !isEmbeddedForm
+                "
                 class="action"
               >
                 <button
                   mat-button
                   color="primary"
-                  class="addLogicBtn"
+                  [ngClass]="
+                    isAskQuestion ? 'ask-question-hl-btn' : 'addLogicBtn'
+                  "
                   (click)="toggleHyperLink()"
                   [matTooltip]="
                     questionForm.get('value').value &&
@@ -402,6 +435,8 @@
                 [sectionId]="sectionId"
                 (logicEvent)="logicEventHandler($event)"
                 [selectedNodeId]="selectedNodeId"
+                [isEmbeddedForm]="isEmbeddedForm"
+                [questionName]="questionForm.get('name').value"
               ></app-add-logic>
             </div>
           </div>

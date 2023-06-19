@@ -315,5 +315,7 @@
   "planName": "Plan Name",
   "planDescription": "Plan Description",
   "scheduleBy": "Schedule By",
-  "timeZone": "Time Zone"
+  "timeZone": "Time Zone",
+  "link": "Link",
+  "raiseNotification": "Raise Notification"
 }

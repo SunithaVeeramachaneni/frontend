@@ -15,8 +15,8 @@
           {{ 'setFormDetailsHeading' | translate }}
         </h2>
 
-        <!-- <p class="sub-heading" translate="setFormTypeHeading"></p> -->
-        <!-- <input
+        <p class="sub-heading" translate="setFormTypeHeading"></p>
+        <input
           type="radio"
           name="formType"
           [value]="formConfigurationStatus.standalone"
@@ -24,9 +24,9 @@
           class="margin"
           formControlName="formType"
         />
-        <span class="radio-btn-text" translate="standalone"> </span><br /> -->
+        <span class="radio-btn-text" translate="standalone"> </span><br />
 
-        <!-- <input
+        <input
           id="2"
           type="radio"
           name="formType"
@@ -35,11 +35,11 @@
           class="margin"
           formControlName="formType"
         />
-        <span class="radio-btn-text" translate="embedded"> </span><br /> -->
+        <span class="radio-btn-text" translate="embedded"> </span><br />
 
-        <!-- <p class="radio-sub-text" translate="embeddedSubText"></p> -->
+        <p class="radio-sub-text" translate="embeddedSubText"></p>
 
-        <!-- <hr class="horizontal-line" /> -->
+        <hr class="horizontal-line" />
 
         <div class="form-name">
           <p class="form-name-description">
@@ -81,11 +81,13 @@
             <mat-select
               formControlName="plantId"
               [placeholder]="'plant' | translate"
+              (openedChange)="resetPlantSearchFilter()"
             >
               <input
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKeyPlant($event)"
+                [value]="plantFilterInput"
               />
               <div class="scrollable-area">
                 <mat-option
