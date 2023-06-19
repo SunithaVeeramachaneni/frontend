@@ -175,10 +175,11 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    ShiftChartComponent,
+
     RaiseNotificationDailogComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    UserNameByEmailPipe,
+    ShiftChartComponent
   ],
   imports: [
     SharedModule,
@@ -255,9 +256,9 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    ShiftChartComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    UserNameByEmailPipe,
+    ShiftChartComponent
   ]
 })
 export class FormModule {}
