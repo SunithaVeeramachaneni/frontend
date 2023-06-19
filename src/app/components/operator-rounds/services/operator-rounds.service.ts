@@ -66,7 +66,7 @@ export class OperatorRoundsService {
   ): Observable<any> =>
     this.appService._postData(
       environment.operatorRoundsApiUrl,
-      `round-plans/store-additional-details`,
+      `round-plans/additional-details`,
       details,
       info
     );
@@ -76,7 +76,7 @@ export class OperatorRoundsService {
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      'round-plans/store-additional-details',
+      'round-plans/additional-details',
       info
     );
 
@@ -292,7 +292,8 @@ export class OperatorRoundsService {
         plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
-        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        addditionalDetails: formListQuery.addditionalDetails
       }
     );
   }
