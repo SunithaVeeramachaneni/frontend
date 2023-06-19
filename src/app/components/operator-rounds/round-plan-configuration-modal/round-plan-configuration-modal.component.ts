@@ -347,6 +347,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.labels[this.changedValues.label]
           ? this.addNewShow.next(true)
           : this.addNewShow.next(false);
+
+        console.log('header:', this.headerDataForm.get('additionalDetails'));
       });
     }
   }
@@ -392,6 +394,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   valueOptionClick(index) {
+    this.labelSelected =
+      this.headerDataForm.get('additionalDetails').value[index].label;
     if (
       this.headerDataForm.get('additionalDetails').value[index].value &&
       this.headerDataForm.get('additionalDetails').value[index].label &&
@@ -414,5 +418,31 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.labels[this.changedValues.label]
       ? this.addNewShow.next(true)
       : this.addNewShow.next(false);
+  }
+
+  removeLabel(label) {
+    this.operatorRoundsService.removeLable$(label).subscribe((response) => {
+      if (response.acknowledge) {
+        this.toastService.show({
+          type: 'success',
+          text: 'Label deleted Successfully'
+        });
+      } else {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Value is not Deleted'
+        });
+      }
+    });
+  }
+  removeValue(value) {
+    this.operatorRoundsService
+      .removeValue$({ value: value, label: this.labelSelected })
+      .subscribe((response) => {
+        this.toastService.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+      });
   }
 }

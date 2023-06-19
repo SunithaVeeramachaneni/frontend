@@ -67,6 +67,7 @@ export class OperatorRoundsService {
     this.appService._postData(
       environment.operatorRoundsApiUrl,
       `round-plans/additional-details`,
+      `round-plans/additional-details`,
       details,
       info
     );
@@ -77,6 +78,26 @@ export class OperatorRoundsService {
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
       'round-plans/additional-details',
+      info
+    );
+
+  removeLable$ = (
+    label: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/delete-label/${label}`,
+      info
+    );
+  removeValue$ = (
+    detail: object,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/delete-value/`,
+      detail,
       info
     );
 

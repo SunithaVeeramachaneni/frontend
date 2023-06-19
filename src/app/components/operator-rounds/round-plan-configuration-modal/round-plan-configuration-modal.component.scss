@@ -199,10 +199,11 @@
   float: left;
 }
 
-.remove-txt {
+.remove-btn {
   color: $disabled-color;
   float: right;
   cursor: pointer;
+  margin-top: 5px;
 }
 
 ::ng-deep .mat-option-text {
