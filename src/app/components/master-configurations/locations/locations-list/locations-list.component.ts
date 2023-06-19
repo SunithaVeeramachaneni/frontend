@@ -56,7 +56,7 @@ import { PlantService } from '../../plants/services/plant.service';
 })
 export class LocationsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
-  allParentsLocations: any[] = [];
+  allParentsLocations: any = { data: [] };
   columns: Column[] = [
     {
       id: 'name',
@@ -361,7 +361,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { items: allPlants = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations = allLocations.filter(
+          this.allParentsLocations.data = allLocations.filter(
             (location) => !location._deleted
           );
           this.dataFetchingComplete = true;
@@ -383,20 +383,19 @@ export class LocationsListComponent implements OnInit, OnDestroy {
                 break;
               case 'add':
                 initial.data = [...newForm, ...initial.data];
-                this.allParentsLocations = [
-                  ...newForm,
-                  ...this.allParentsLocations
-                ];
+                this.allParentsLocations = {
+                  data: [...newForm, ...this.allParentsLocations.data]
+                };
                 break;
               case 'edit':
                 let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
                 initial.data[formIdx] = newForm[0];
-                formIdx = this.allParentsLocations.findIndex(
+                formIdx = this.allParentsLocations.data.findIndex(
                   (item) => item.id === form.id
                 );
-                this.allParentsLocations[formIdx] = newForm[0];
+                this.allParentsLocations.data[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -488,8 +487,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: locationData.data
         });
-        this.allParentsLocations = this.allParentsLocations.map((loc) =>
-          loc.id === locationData.data.id ? locationData.data : loc
+        this.allParentsLocations.data = this.allParentsLocations.data.map(
+          (loc) => (loc.id === locationData.data.id ? locationData.data : loc)
         );
         this.toast.show({
           text: 'Location updated successfully!',
@@ -613,9 +612,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.parentInformation = allLocations.items.filter(
           (location) => !location._deleted
         );
-        this.allParentsLocations = this.parentInformation;
+        this.allParentsLocations.data = this.parentInformation;
       } else {
-        this.allParentsLocations = [];
+        this.allParentsLocations.data = [];
       }
     });
   }
@@ -659,7 +658,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         });
       }
       if (data.parentId) {
-        const parent = this.allParentsLocations.find(
+        const parent = this.allParentsLocations.data.find(
           (d) => d.id === data.parentId
         );
 

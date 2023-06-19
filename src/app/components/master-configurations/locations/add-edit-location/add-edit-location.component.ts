@@ -28,7 +28,15 @@ export class AddEditLocationComponent implements OnInit {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdLocationData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
-  @Input() allLocations: any[];
+  @Input() set allLocations(locations) {
+    this._locations = locations.data;
+    this.parentInformation = this._locations;
+  }
+
+  get allLocations() {
+    return this._locations;
+  }
+
   @Input() set locationEditData(data) {
     this.locEditData = data;
     if (!this.locEditData) {
@@ -75,6 +83,7 @@ export class AddEditLocationComponent implements OnInit {
   allParentsData;
   allPlantsData;
   private locEditData;
+  private _locations;
 
   constructor(
     private fb: FormBuilder,
@@ -99,7 +108,6 @@ export class AddEditLocationComponent implements OnInit {
       parentId: '',
       plantsID: new FormControl('', [Validators.required])
     });
-
     this.parentInformation = this.allLocations;
     this.allParentsData = this.parentInformation;
     this.plantInformation = this.allPlants;
