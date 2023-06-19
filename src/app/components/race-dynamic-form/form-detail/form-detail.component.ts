@@ -204,6 +204,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.plantService.plantTimeZoneMapping$.unsubscribe();
     this.selectedForm = null;
     this.toggleLoader(false);
   }

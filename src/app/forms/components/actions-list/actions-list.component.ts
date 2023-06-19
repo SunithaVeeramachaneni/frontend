@@ -595,6 +595,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantService.plantTimeZoneMapping$.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

@@ -7,7 +7,8 @@ import {
   Output,
   ChangeDetectionStrategy,
   ElementRef,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -31,7 +32,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./add-edit-plant.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditPlantComponent implements OnInit {
+export class AddEditPlantComponent implements OnInit, OnDestroy {
   @ViewChild('countryInputSearch', { static: false })
   countryInputSearch: ElementRef;
   @ViewChild('stateInputSearch', { static: false })
@@ -402,4 +403,8 @@ export class AddEditPlantComponent implements OnInit {
     }
     return false;
   };
+
+  ngOnDestroy(): void {
+    this.plantService.plantMasterData$.unsubscribe();
+  }
 }

@@ -377,11 +377,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
               });
               break;
             case 'add':
-              // case 'copy':
-              // if (form.country && this.plantMasterData[form.country])
-              //   form.countryDisplay =
-              //     this.plantMasterData[form.country].countryName;
-              // if (form.timeZone) form.timeZoneDisplay = form.timeZone.utcOffset;
               form = this.formatTimeZoneMapping(form, this.plantMasterData);
               initial.data = [form, ...initial.data];
               break;
@@ -569,6 +564,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.plantService.plantMasterData$.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

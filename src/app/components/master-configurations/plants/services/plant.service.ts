@@ -37,22 +37,26 @@ export class PlantService {
   };
 
   getPlantTimeZoneMapping = () => {
-    this.fetchAllPlants$().subscribe((res) => {
-      const timeZoneMapping = {};
-      for (const plant of res.items) {
-        if (plant.id && plant.timeZone)
-          timeZoneMapping[plant.id] = plant.timeZone;
-      }
-      this.plantTimeZoneMapping$.next(timeZoneMapping);
-    });
+    if (!Object.keys(this.plantTimeZoneMapping$.value).length) {
+      this.fetchAllPlants$().subscribe((res) => {
+        const timeZoneMapping = {};
+        for (const plant of res.items) {
+          if (plant.id && plant.timeZone)
+            timeZoneMapping[plant.id] = plant.timeZone;
+        }
+        this.plantTimeZoneMapping$.next(timeZoneMapping);
+      });
+    }
   };
 
   getPlantMasterData = () => {
-    this._appService
-      ._getResp(environment.masterConfigApiUrl, 'plants/masterdata')
-      .subscribe((res) => {
-        this.plantMasterData$.next(res.plantMasterData);
-      });
+    if (!Object.keys(this.plantMasterData$.value).length) {
+      this._appService
+        ._getResp(environment.masterConfigApiUrl, 'plants/masterdata')
+        .subscribe((res) => {
+          this.plantMasterData$.next(res.plantMasterData);
+        });
+    }
   };
 
   getPlantsList$(queryParams: {

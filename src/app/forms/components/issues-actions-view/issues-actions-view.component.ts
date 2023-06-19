@@ -753,6 +753,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnDestroy(): void {
+    this.plantService.plantTimeZoneMapping$.unsubscribe();
     if (this.amplifySubscription$?.length > 0) {
       this.amplifySubscription$.forEach((subscription) => {
         if (subscription) {

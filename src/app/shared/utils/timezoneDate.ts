@@ -1,13 +1,21 @@
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
-const { isSameDay, isBefore, getDay, getWeekOfMonth } = require('date-fns');
+const {
+  isSameDay,
+  isBefore,
+  getDay,
+  getWeekOfMonth,
+  format
+} = require('date-fns');
 
-export const localToTimezoneDate = (date, timezone, format) => {
-  if (format === '') format = 'yyyy-MM-dd HH:mm:ss zzz';
-  return formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, format);
+export const localToTimezoneDate = (date, timezone, f) => {
+  if (f === '') f = 'yyyy-MM-dd HH:mm:ss zzz';
+  if (!timezone?.timeZoneIdentifier) return format(new Date(date), f);
+  return formatInTimeZone(new Date(date), timezone.timeZoneIdentifier, f);
 };
 
 export const getTimezoneUTC = (date, timezone) => {
   const d = new Date(date);
+  if (!timezone?.timeZoneIdentifier) return d.toISOString();
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
   const day = d.getDate();
@@ -31,6 +39,8 @@ export const getTimezoneUTC = (date, timezone) => {
 const getTimezoneDate = (date) => new Date(date).getTime();
 
 const getTimezoneDayStart = (date, timezone) => {
+  if (!timezone?.timeZoneIdentifier)
+    return getTimezoneDate(format(new Date(date), 'yyyy-MM-dd 00:00:00'));
   const d = formatInTimeZone(
     date,
     timezone.timeZoneIdentifier,
@@ -40,6 +50,8 @@ const getTimezoneDayStart = (date, timezone) => {
 };
 
 const getTimezoneDayEnd = (date, timezone) => {
+  if (!timezone?.timeZoneIdentifier)
+    return getTimezoneDate(format(new Date(date), 'yyyy-MM-dd 23:59:59'));
   const d = formatInTimeZone(
     date,
     timezone.timeZoneIdentifier,
@@ -49,7 +61,8 @@ const getTimezoneDayEnd = (date, timezone) => {
 };
 
 export const isSameDayTz = (d1, d2, timezone) => {
-  if (!timezone) return isSameDay(new Date(d1), new Date(d2));
+  if (!timezone?.timeZoneIdentifier)
+    return isSameDay(new Date(d1), new Date(d2));
   const startTime = getTimezoneDayStart(d1, timezone);
   const endTime = getTimezoneDayEnd(d1, timezone);
   const d2Time = getTimezoneDate(d2);
@@ -57,20 +70,21 @@ export const isSameDayTz = (d1, d2, timezone) => {
 };
 
 export const isBeforeTz = (d1, d2, timezone) => {
-  if (!timezone) return isBefore(new Date(d1), new Date(d2));
+  if (!timezone?.timeZoneIdentifier)
+    return isBefore(new Date(d1), new Date(d2));
   const startTime = getTimezoneDayStart(d2, timezone);
   const d1Time = getTimezoneDate(d1);
   return d1Time < startTime;
 };
 
 export const getDayTz = (date, timezone) => {
-  if (!timezone) return getDay(new Date(date));
+  if (!timezone?.timeZoneIdentifier) return getDay(new Date(date));
   const d = formatInTimeZone(date, timezone.timeZoneIdentifier, 'dd MMM yyyy');
   return getDay(new Date(d));
 };
 
 export const getWeekOfMonthTz = (date, timezone) => {
-  if (!timezone) return getWeekOfMonth(new Date(date));
+  if (!timezone?.timeZoneIdentifier) return getWeekOfMonth(new Date(date));
   const d = formatInTimeZone(date, timezone.timeZoneIdentifier, 'dd MMM yyyy');
   return getWeekOfMonth(new Date(d));
 };
