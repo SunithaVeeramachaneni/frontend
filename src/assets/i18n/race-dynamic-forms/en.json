@@ -123,7 +123,6 @@
   "dueDate": "Due Date",
   "dueDateAndTime": "Due Date and Time",
   "issueActionDueDateAndTime": "Due Date and Time: ",
-  "tasksCompleted": "Questions Completed",
   "preview": "Preview",
   "lastPublishedBy": "Last Published By",
   "lastModifiedBy": "Last Modified By",
@@ -317,5 +316,6 @@
   "scheduleBy": "Schedule By",
   "timeZone": "Time Zone",
   "link": "Link",
-  "raiseNotification": "Raise Notification"
+  "raiseNotification": "Raise Notification",
+  "shifts": "Shifts"
 }
