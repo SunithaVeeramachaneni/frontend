@@ -21,7 +21,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ShiftService } from '../../shifts/services/shift.service';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -88,6 +88,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   get plantEditData() {
     return this.plantsEditData;
   }
+  plantMapSubscription: Subscription;
   countrySearch: any;
   selectedCountry: any;
   countryAllStates: any = [];
@@ -120,11 +121,13 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.plantMasterData$.subscribe((res) => {
-      this.plantMasterData = res;
-      this.allCountries = Object.values(this.plantMasterData);
-      this.countryData = this.allCountries;
-    });
+    this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
+      (res) => {
+        this.plantMasterData = res;
+        this.allCountries = Object.values(this.plantMasterData);
+        this.countryData = this.allCountries;
+      }
+    );
     const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
@@ -403,8 +406,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
     }
     return false;
   };
-
-  ngOnDestroy(): void {
-    this.plantService.plantMasterData$.unsubscribe();
+  ngOnDestroy() {
+    this.plantMapSubscription.unsubscribe();
   }
 }

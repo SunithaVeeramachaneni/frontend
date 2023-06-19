@@ -40,7 +40,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { RoundPlanScheduleSuccessModalComponent } from '../round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { scheduleConfigs } from './round-plan-schedule-configuration.constants';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import {
   getDayTz,
@@ -70,7 +70,9 @@ export class RoundPlanScheduleConfigurationComponent
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   @Input() set roundPlanDetail(roundPlanDetail: any) {
     this._roundPlanDetail = roundPlanDetail;
-    this.setDefaultSchedulerConfigDates();
+    if (roundPlanDetail) {
+      this.setDefaultSchedulerConfigDates();
+    }
     if (roundPlanDetail) {
       this.getRoundPlanSchedulerConfigurationByRoundPlanId(roundPlanDetail.id);
     }
@@ -101,6 +103,7 @@ export class RoundPlanScheduleConfigurationComponent
     min: 0,
     max: 30
   };
+  plantMapSubscription: Subscription;
   dropdownPosition: any;
   plantTimezoneMap: any;
   placeHolder = '_ _';
@@ -117,9 +120,10 @@ export class RoundPlanScheduleConfigurationComponent
   ) {}
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.roundPlanSchedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: this.roundPlanDetail?.id,
@@ -958,7 +962,7 @@ export class RoundPlanScheduleConfigurationComponent
   }
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }

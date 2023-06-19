@@ -15,7 +15,14 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subject,
+  Subscription
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  newDateTimeFormat,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -348,6 +356,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     data: any[];
   }>;
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLDefaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
@@ -373,9 +382,10 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.observationsService.fetchIssues$.next({ data: 'load' });
     this.observationsService.fetchIssues$.next({} as TableEvent);
     this.searchIssue = new FormControl('');
@@ -489,10 +499,10 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[issue.plantId],
-        'dd MMM yyyy hh:mm a'
+        newDateTimeFormat
       );
     }
-    return format(new Date(date), 'dd MMM yyyy hh:mm a');
+    return format(new Date(date), newDateTimeFormat);
   }
 
   getIssuesList() {
@@ -617,7 +627,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

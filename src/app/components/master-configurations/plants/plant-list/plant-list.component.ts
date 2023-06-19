@@ -21,7 +21,8 @@ import {
   mergeMap,
   switchMap,
   takeUntil,
-  tap
+  tap,
+  skipWhile
 } from 'rxjs/operators';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
@@ -283,9 +284,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.plantService.fetchPlants$.next({ data: 'load' });
     this.plantService.getPlantMasterData();
-    this.plantService.plantMasterData$.subscribe(
-      (res) => (this.plantMasterData = res)
-    );
     this.plantService.fetchPlants$.next({} as TableEvent);
     this.searchPlant = new FormControl('');
 
@@ -355,16 +353,19 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.plants$ = combineLatest([
       plantsOnLoadSearch$,
       this.addEditCopyDeletePlants$,
-      onScrollPlants$
+      onScrollPlants$,
+      this.plantService.plantMasterData$.pipe(
+        skipWhile((val) => !Object.keys(val).length)
+      )
     ]).pipe(
-      map(([rows, { form, action }, scrollData]) => {
+      map(([rows, { form, action }, scrollData, plantMasterData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 140px)'
           };
           initial.data = rows.map((row) =>
-            this.formatTimeZoneMapping(row, this.plantMasterData)
+            this.formatTimeZoneMapping(row, plantMasterData)
           );
           initial.data = rows;
         } else if (this.addEditCopyDeletePlants) {
@@ -377,11 +378,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
               });
               break;
             case 'add':
-              form = this.formatTimeZoneMapping(form, this.plantMasterData);
+              form = this.formatTimeZoneMapping(form, plantMasterData);
               initial.data = [form, ...initial.data];
               break;
             case 'edit':
-              form = this.formatTimeZoneMapping(form, this.plantMasterData);
+              form = this.formatTimeZoneMapping(form, plantMasterData);
               initial.data = [
                 form,
                 ...initial.data.filter((item) => item.id !== form.id)
@@ -393,7 +394,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
           this.addEditCopyDeletePlants = false;
         } else {
           scrollData = scrollData.map((row) =>
-            this.formatTimeZoneMapping(row, this.plantMasterData)
+            this.formatTimeZoneMapping(row, plantMasterData)
           );
           initial.data = initial.data.concat(scrollData);
         }
@@ -564,7 +565,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.plantService.plantMasterData$.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

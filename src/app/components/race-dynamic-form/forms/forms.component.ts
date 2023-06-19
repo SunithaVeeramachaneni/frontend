@@ -14,6 +14,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -299,6 +300,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     unscheduled: 0
   };
   nextToken = '';
+  plantMapSubscription: Subscription;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -348,10 +350,10 @@ export class FormsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.getPlantTimeZoneMapping();
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -534,7 +536,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

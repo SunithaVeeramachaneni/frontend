@@ -1,4 +1,5 @@
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+import { newDateFormat } from 'src/app/app.constants';
 const {
   isSameDay,
   isBefore,
@@ -79,12 +80,12 @@ export const isBeforeTz = (d1, d2, timezone) => {
 
 export const getDayTz = (date, timezone) => {
   if (!timezone?.timeZoneIdentifier) return getDay(new Date(date));
-  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, 'dd MMM yyyy');
+  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, newDateFormat);
   return getDay(new Date(d));
 };
 
 export const getWeekOfMonthTz = (date, timezone) => {
   if (!timezone?.timeZoneIdentifier) return getWeekOfMonth(new Date(date));
-  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, 'dd MMM yyyy');
+  const d = formatInTimeZone(date, timezone.timeZoneIdentifier, newDateFormat);
   return getWeekOfMonth(new Date(d));
 };

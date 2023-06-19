@@ -42,6 +42,7 @@ import {
   getTimezoneUTC,
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
+import { newDateTimeFormat } from 'src/app/app.constants';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -103,6 +104,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   isCreateNotification = false;
   moduleName: string;
   plantTimezoneMap: any;
+  plantMapSubscription: Subscription;
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
@@ -130,9 +132,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     const { users$, totalCount$, allData, notificationInfo, moduleName } =
       this.data;
     this.allData = allData;
@@ -413,7 +416,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       });
     }
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, 'dd MMM yyyy hh:mm a')
+      [formControlDateField]: format(event.value, newDateTimeFormat)
     });
     this.issuesActionsDetailViewForm.markAsDirty();
   }
@@ -746,14 +749,14 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        'dd MMM yyyy hh:mm a'
+        newDateTimeFormat
       );
     }
-    return format(new Date(date), 'dd MMM yyyy hh:mm a');
+    return format(new Date(date), newDateTimeFormat);
   }
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     if (this.amplifySubscription$?.length > 0) {
       this.amplifySubscription$.forEach((subscription) => {
         if (subscription) {
@@ -867,7 +870,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), 'dd MMM yyyy hh:mm a'),
+        createdAt: format(new Date(data?.createdAt), newDateTimeFormat),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };

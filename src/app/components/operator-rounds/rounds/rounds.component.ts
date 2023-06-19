@@ -18,6 +18,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -56,6 +57,7 @@ import {
   formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
+  newDateFormat,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -364,6 +366,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
@@ -407,10 +410,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.getPlantTimeZoneMapping();
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -551,7 +554,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -563,10 +566,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        'dd MMM yyyy'
+        newDateFormat
       );
     }
-    return format(new Date(date), 'dd MMM yyyy');
+    return format(new Date(date), newDateFormat);
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -900,7 +903,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   dateChangeHandler(dueDate: Date) {
     const { roundId, assignedToEmail, plantId, ...rest } =
       this.selectedRoundInfo;
-    const dueDateDisplayFormat = format(dueDate, 'dd MMM yyyy');
+    const dueDateDisplayFormat = format(dueDate, newDateFormat);
     if (
       plantId &&
       this.plantTimezoneMap[plantId] &&

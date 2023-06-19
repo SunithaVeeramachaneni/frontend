@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { map } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -24,7 +24,11 @@ import {
   RoundPlanDetail,
   RoundDetail
 } from 'src/app/interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  newDateFormat,
+  newDateTimeFormat
+} from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
@@ -64,7 +68,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
-
+  plantMapSubscription: Subscription;
   currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
@@ -76,6 +80,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
   plantTimezoneMap: any;
+  dateFormat = newDateFormat;
+  dateTimeFormat = newDateTimeFormat;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -152,9 +158,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
   }
 
   cancelForm() {
@@ -177,7 +184,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  formatDate(date: string, plantId: string, dateFormat: string) {
+  formatDate(date, plantId, dateFormat) {
     if (!date) return '';
     if (
       this.plantTimezoneMap[plantId] &&
@@ -204,7 +211,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.selectedForm = null;
     this.toggleLoader(false);
   }

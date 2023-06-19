@@ -43,7 +43,7 @@ import {
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 import {
   getDayTz,
@@ -86,7 +86,9 @@ export class ScheduleConfigurationComponent
   }
   @Input() set formDetail(formDetail) {
     this._formDetail = formDetail;
-    this.setDefaultSchedulerConfigDates();
+    if (this.plantTimezoneMap) {
+      this.setDefaultSchedulerConfigDates();
+    }
     if (formDetail) {
       this.getFormsSchedulerConfigurationByFormId(formDetail?.id);
     }
@@ -101,6 +103,7 @@ export class ScheduleConfigurationComponent
   scheduleConfig: EventEmitter<ScheduleConfig> =
     new EventEmitter<ScheduleConfig>();
   @Output()
+  plantMapSubscription: Subscription;
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
   repeatTypes = scheduleConfigs.repeatTypes;
@@ -153,9 +156,10 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: this.roundPlanDetail?.id,
@@ -1061,7 +1065,7 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

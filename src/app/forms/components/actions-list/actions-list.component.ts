@@ -15,7 +15,14 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subject,
+  Subscription
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  newDateTimeFormat,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -352,6 +360,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   }>;
   skip = 0;
   limit = graphQLDefaultLimit;
+  plantMapSubscription: Subscription;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
   menuState = 'out';
@@ -375,9 +384,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.plantService.plantTimeZoneMapping$.subscribe(
-      (data) => (this.plantTimezoneMap = data)
-    );
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.observationsService.fetchActions$.next({ data: 'load' });
     this.observationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
@@ -477,10 +487,10 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[action.plantId],
-        'dd MMM yyyy hh:mm a'
+        newDateTimeFormat
       );
     }
-    return format(new Date(date), 'dd MMM yyyy hh:mm a');
+    return format(new Date(date), newDateTimeFormat);
   }
 
   getActionsList() {
@@ -595,7 +605,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

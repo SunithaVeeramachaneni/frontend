@@ -17,6 +17,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -52,6 +53,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLRoundsOrInspectionsLimit,
+  newDateFormat,
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
@@ -337,6 +339,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
@@ -384,9 +387,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.plantService.getPlantTimeZoneMapping();
-    this.plantService.plantTimeZoneMapping$.subscribe((data) => {
-      this.plantTimezoneMap = data;
-    });
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
 
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -588,7 +592,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
-    this.plantService.plantTimeZoneMapping$.unsubscribe();
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -851,7 +855,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   dateChangeHandler(dueDate: Date) {
     const { inspectionId, assignedToEmail, plantId, ...rest } =
       this.selectedFormInfo;
-    const dueDateDisplayFormat = format(dueDate, 'dd MMM yyyy');
+    const dueDateDisplayFormat = format(dueDate, newDateFormat);
     if (
       plantId &&
       this.plantTimezoneMap[plantId] &&
@@ -912,9 +916,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        'dd MMM yyyy'
+        newDateFormat
       );
     }
-    return format(new Date(date), 'dd MMM yyyy');
+    return format(new Date(date), newDateFormat);
   }
 }

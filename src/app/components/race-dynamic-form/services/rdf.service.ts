@@ -21,7 +21,11 @@ import {
   FormMetadata
 } from './../../../interfaces';
 
-import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  LIST_LENGTH,
+  newDateFormat
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
@@ -737,7 +741,7 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          ? format(new Date(p.dueDate), newDateFormat)
           : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
           p.totalTasks > 0

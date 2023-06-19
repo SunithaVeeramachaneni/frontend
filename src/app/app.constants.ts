@@ -327,6 +327,8 @@ export const defaultProfile = 'assets/user-management-icons/Vector.png';
 export const products = ['MWORKORDER', 'MINVENTORY'];
 export const LIST_LENGTH = 20000000;
 export const dateFormat = 'MMM dd, yy';
+export const newDateFormat = 'dd MMM yyyy';
+export const newDateTimeFormat = 'dd MMM yyyy hh:mm a';
 
 export const DEFAULT_PDF_BUILDER_CONFIG = {
   formId: true,

@@ -40,7 +40,7 @@
                   </ng-container>
                   <ng-template #byDate>
                     {{ selectedForm.schedule }},
-                    {{ frequencyDetail.info | date : 'dd MMM yyyy' }}
+                    {{ frequencyDetail.info | date : dateFormat }}
                     <a class="link" [matMenuTriggerFor]="menu">{{
                       frequencyDetail.more
                     }}</a>
@@ -63,7 +63,7 @@
                     class="custom-dates"
                   >
                     <p *ngFor="let data of frequencyDetail.data">
-                      {{ data.date | date : 'dd MMM yyyy' }}
+                      {{ data.date | date : dateFormat }}
                     </p>
                   </div>
                   <ng-template #byFrequency>
@@ -172,7 +172,7 @@
                   formatDate(
                     selectedForm?.publishedDate,
                     selectedForm?.plantId,
-                    'dd MMM yyyy hh:mm a'
+                    dateTimeFormat
                   )
                 }}
               </p>
@@ -192,7 +192,7 @@
                   formatDate(
                     selectedForm?.updatedAt,
                     selectedForm?.plantId,
-                    'dd MMM yyyy hh:mm a'
+                    dateTimeFormat
                   )
                 }}
               </p>
@@ -212,7 +212,7 @@
                   formatDate(
                     selectedForm?.createdAt,
                     selectedForm?.plantId,
-                    'dd MMM yyyy hh:mm a'
+                    dateTimeFormat
                   )
                 }}
               </p>
@@ -274,7 +274,7 @@
                   formatDate(
                     selectedForm?.dueDate,
                     selectedForm.plantId,
-                    'dd MMM yyyy'
+                    dateFormat
                   )
                 }}
               </h4>
