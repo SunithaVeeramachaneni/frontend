@@ -49,19 +49,23 @@
           <p class="field-info">
             {{ 'planName' | translate }}
           </p>
-          <div class="field-name">{{ selectedDetails?.plantName }}</div>
+          <div>
+            <p class="field-name">{{ selectedDetails?.plantName }}</p>
+          </div>
         </div>
         <div>
           <p class="field-info">
             {{ 'planDescription' | translate }}
           </p>
-          <div class="field-name">{{ selectedDetails?.plantDescription }}</div>
+          <div>
+            <p class="field-name">{{ selectedDetails?.plantDescription }}</p>
+          </div>
         </div>
         <!-- Plant and time zone -->
         <ng-container>
           <div>
             <br />
-            <mat-label translate>plant</mat-label>
+            <p translate class="field-info">plant</p>
             <mat-form-field appearance="outline" class="width-100 cursor">
               <input
                 disabled
@@ -75,7 +79,7 @@
           </div>
           <br />
           <div>
-            <mat-label translate>timeZone</mat-label>
+            <p translate class="field-info">timeZone</p>
             <mat-form-field appearance="outline" class="width-100 cursor">
               <input
                 disabled
@@ -106,7 +110,7 @@
           <div class="by-frequency">
             <div class="dis-flex">
               <p class="f-w-400">{{ 'repeatEvery' | translate }}</p>
-              <mat-form-field appearance="fill">
+              <mat-form-field appearance="fill" class="repeat-num">
                 <input
                   type="number"
                   matInput
@@ -114,7 +118,7 @@
                   formControlName="repeatDuration"
                 />
               </mat-form-field>
-              <mat-form-field appearance="fill">
+              <mat-form-field appearance="fill" class="repeat-day">
                 <mat-select formControlName="repeatEvery">
                   <mat-option
                     *ngFor="let repeatEvery of repeatTypes"
@@ -218,7 +222,7 @@
                   </mat-form-field>
                 </div>
                 <div class="after" *ngIf="scheduleEndType === 'after'">
-                  <mat-form-field appearance="fill">
+                  <mat-form-field appearance="fill" class="occurrences-num">
                     <input
                       matInput
                       type="number"

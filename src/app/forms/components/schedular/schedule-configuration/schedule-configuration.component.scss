@@ -33,13 +33,15 @@
     }
 
     .mat-card-content {
-      padding: 0 16px;
+      padding: 32px;
       height: calc(100vh - 138px);
       overflow-y: auto;
       overflow-x: hidden;
 
       .field-info {
-        color: $light-gray;
+        color: $black;
+        font-weight: 500;
+        font-size: 110%;
       }
 
       p {
@@ -49,15 +51,16 @@
 
       .field-name {
         font-weight: 500;
-        line-height: 20px;
-        border-bottom: 1px solid $gray9;
-        padding-bottom: 8px;
+        background: $gray;
+        padding: 12px;
+        border-radius: 4px;
+        height: 20px;
       }
 
       .schedule {
         margin: 20px 0 10px 0;
         font-size: 115%;
-        font-weight: 500;
+        font-weight: bold;
       }
 
       ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
@@ -77,6 +80,12 @@
         right: -10px;
       }
 
+      ::ng-deep
+        .mat-form-field-appearance-fill
+        .mat-form-field-underline::before {
+        background-color: transparent;
+      }
+
       .by-frequency {
         display: flex;
         flex-direction: column;
@@ -92,8 +101,17 @@
           margin-right: 36px;
         }
 
+        .repeat-num {
+          width: 8%;
+          font-weight: 500;
+        }
+
+        .repeat-day {
+          width: 11%;
+          font-weight: 500;
+        }
+
         mat-form-field {
-          width: 22%;
           margin-left: 20px;
         }
 
@@ -117,7 +135,7 @@
 
         .on {
           display: inline-block;
-          margin-left: 40px;
+          margin-left: 27px;
         }
 
         .on mat-form-field {
@@ -126,7 +144,11 @@
 
         .after {
           display: inline-block;
-          margin-left: 47px;
+          margin-left: 35px;
+
+          .occurrences-num {
+            width: 20%;
+          }
 
           ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
             border-radius: 4px 0 0 4px;
