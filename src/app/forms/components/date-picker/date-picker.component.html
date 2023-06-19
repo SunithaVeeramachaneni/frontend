@@ -1,0 +1,12 @@
+<input
+  matInput
+  [matDatepicker]="picker"
+  (dateChange)="onDateChange($event)"
+  [value]="selectedDate?.date"
+  hidden
+/>
+<mat-datepicker
+  touchUi="true"
+  (closed)="closedEvent()"
+  #picker
+></mat-datepicker>

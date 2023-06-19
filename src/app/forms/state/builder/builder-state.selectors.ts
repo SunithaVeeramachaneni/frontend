@@ -187,13 +187,32 @@ export const getTaskCountBySection = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    const allQuestions = state[key]?.find(
-      (page, index) => index === pageIndex
-    )?.questions;
-    const sectionQuestions = allQuestions
-      ? allQuestions.filter((q) => q.sectionId === sectionId)
-      : [];
-    return sectionQuestions.length;
+    const page = state[key]?.find((p, index) => index === pageIndex);
+
+    const questionsInSection = {};
+    const questionIdByLogic = {};
+    let count = 0;
+    if (page) {
+      for (const logic of page.logics)
+        questionIdByLogic[logic.id] = logic.questionId;
+      for (const question of page.questions) {
+        if (question.sectionId === sectionId) {
+          count++;
+          questionsInSection[question.id] = 1;
+        }
+      }
+      for (const question of page.questions) {
+        if (
+          question.sectionId !== sectionId &&
+          question.sectionId.startsWith('AQ_') &&
+          questionsInSection[
+            questionIdByLogic[question.sectionId.substr(3)]
+          ] === 1
+        )
+          count++;
+      }
+    }
+    return count;
   });
 
 export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
@@ -307,7 +326,7 @@ export const getQuestionLogics = (
     }
     return state[key]
       ?.find((page, index) => index === pageIndex)
-      .logics?.filter((logic) => logic.questionId === questionId);
+      ?.logics?.filter((logic) => logic.questionId === questionId);
   });
 
 export const getSectionQuestions = (
@@ -353,6 +372,25 @@ export const getPageWiseLogicSectionAskQuestions = (subFormId: string) =>
       acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
         logicAcc[logicCurr.id] = curr.questions.filter(
           (question) => question.sectionId === `AQ_${logicCurr.id}`
+        );
+        return logicAcc;
+      }, {});
+      return acc;
+    }, {});
+  });
+
+export const getPageWiseLogicSectionAskEvidenceQuestions = (
+  subFormId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) => {
+    let key = 'pages';
+    if (subFormId) {
+      key = `${key}_${subFormId}`;
+    }
+    return state[key]?.reduce((acc, curr, index) => {
+      acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
+        logicAcc[logicCurr.id] = curr.questions.filter(
+          (question) => question.sectionId === `EVIDENCE_${logicCurr.id}`
         );
         return logicAcc;
       }, {});

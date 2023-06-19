@@ -15,8 +15,7 @@ import { environment } from 'src/environments/environment';
 import {
   AssetsResponse,
   CreateAssets,
-  DeleteAssets,
-  GetAssets
+  DeleteAssets
 } from 'src/app/interfaces/master-data-management/assets';
 
 @Injectable({
@@ -52,28 +51,6 @@ export class AssetsService {
     );
   };
 
-  getAssetCount$(searchTerm: string): Observable<number> {
-    const filter = JSON.stringify(
-      Object.fromEntries(
-        Object.entries({
-          searchTerm: { contains: searchTerm }
-        }).filter(([_, v]) => Object.values(v).some((x) => x !== null))
-      )
-    );
-
-    return this._appService
-      ._getResp(
-        environment.masterConfigApiUrl,
-        'asset/count',
-        { displayToast: true, failureResponse: {} },
-        {
-          limit: this.MAX_FETCH_LIMIT,
-          filter
-        }
-      )
-      .pipe(map((res) => res.count || 0));
-  }
-
   getAssetsList$(
     queryParams: {
       next?: string;
@@ -88,28 +65,29 @@ export class AssetsService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.next !== null)
     ) {
-      const params: URLSearchParams = new URLSearchParams();
-
-      params.set('limit', `${queryParams.limit}`);
-      params.set('next', queryParams.next);
-
-      if (queryParams.searchKey) {
-        const filter: GetAssets = {
-          searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-        };
-        params.set('filter', JSON.stringify(filter));
-      }
-
-      if (filterData.plant) {
-        let filter = JSON.parse(params.get('filter'));
-        filter = { ...filter, plantsID: { eq: filterData.plant } };
-        params.set('filter', JSON.stringify(filter));
-      }
+      const assetsListFilter = JSON.stringify(
+        Object.fromEntries(
+          Object.entries({
+            searchTerm: {
+              contains: queryParams?.searchKey.toLocaleLowerCase()
+            },
+            plantsID: { eq: filterData?.plant }
+          }).filter(([_, v]) => Object.values(v).some((x) => x !== ''))
+        )
+      );
 
       return this._appService
         ._getResp(
           environment.masterConfigApiUrl,
-          'asset/list?' + params.toString()
+          'asset/list',
+          { displayToast: true, failureResponse: {} },
+          {
+            limit: `${queryParams.limit}`,
+            next: queryParams.next,
+            ...(Object.keys(assetsListFilter).length > 0 && {
+              filter: assetsListFilter
+            })
+          }
         )
         .pipe(map((res) => this.formatGraphQAssetsResponse(res)));
     } else {
@@ -222,13 +200,11 @@ export class AssetsService {
               })
             : ''
         })) || [];
-    const count = resp?.items.length || 0;
-    const next = resp?.next;
     rows = rows.filter((o: any) => !o._deleted);
     return {
-      count,
+      count: resp?.count,
       rows,
-      next
+      next: resp?.next
     };
   }
 

@@ -34,12 +34,13 @@
   }
   .footer {
     position: absolute;
-    bottom: 10px;
+    bottom: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: -webkit-fill-available;
+    width: 95%;
     margin: 10px 15px;
+    right: -6px;
     .viewPDFBtn {
       width: 50%;
       margin-right: 10px;

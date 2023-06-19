@@ -8,6 +8,7 @@ import { MasterConfigurationsContainerComponent } from './master-configurations-
 import { UnitMeasurementListComponent } from './unit-measurement/unit-measurement-list/unit-measurement-list.component';
 import { ResponsesListComponent } from './response-set/responses-list/responses-list.component';
 import { LocationsListComponent } from './locations/locations-list/locations-list.component';
+import { ShiftListComponent } from './shifts/shift-list/shift-list.component';
 const routes: Routes = [
   {
     path: '',
@@ -18,6 +19,15 @@ const routes: Routes = [
       permissions: [permissions.viewPlants]
     },
     children: [
+      {
+        path: 'shifts',
+        component: ShiftListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Shifts' },
+          permissions: [permissions.viewShifts]
+        }
+      },
       {
         path: 'locations',
         component: LocationsListComponent,

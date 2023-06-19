@@ -50,6 +50,8 @@ import { CreateFromTemplateModalComponent } from '../create-from-template-modal/
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
+import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-form-list',
@@ -159,11 +161,33 @@ export class FormListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'formType',
+      displayName: 'Form Type',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -185,7 +209,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       displayName: 'Last Published',
       type: 'timeAgo',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -209,7 +233,7 @@ export class FormListComponent implements OnInit, OnDestroy {
       type: 'number',
       controlType: 'string',
       isMultiValued: true,
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -259,22 +283,25 @@ export class FormListComponent implements OnInit, OnDestroy {
     modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
-    plant: ''
+    plant: '',
+    formType: ''
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
-  formsCount$: Observable<Count>;
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
       form: {} as GetFormList
     });
-  formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = graphQLDefaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
   formsListCount$: Observable<number>;
+  formsListCountRaw$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  formsListCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: GetFormList = null;
@@ -283,11 +310,13 @@ export class FormListComponent implements OnInit, OnDestroy {
   formsList$: Observable<any>;
   lastPublishedBy = [];
   lastPublishedOn = [];
+  lastModifiedBy = [];
   authoredBy = [];
   plantsIdNameMap = {};
   plants = [];
   createdBy = [];
   userInfo$: Observable<UserInfo>;
+  triggerCountUpdate = false;
   readonly perms = perms;
   private onDestroy$ = new Subject();
 
@@ -297,7 +326,9 @@ export class FormListComponent implements OnInit, OnDestroy {
     private router: Router,
     private readonly store: Store<State>,
     private dialog: MatDialog,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private usersService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
@@ -310,32 +341,31 @@ export class FormListComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => {
+        tap((value: string) => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getFilter();
-    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
 
-    this.getAllForms();
+    this.populateFilter();
     this.getDisplayedForms();
 
-    this.formsCount$ = combineLatest([
-      this.formsCount$,
-      this.formCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addCopyFormCount) {
-          count.count += update;
-          this.addCopyFormCount = false;
-        }
-        return count;
-      })
-    );
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
+    );
+    this.formsListCount$ = combineLatest([
+      this.formsListCountRaw$,
+      this.formsListCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.triggerCountUpdate) {
+          count += update;
+          this.triggerCountUpdate = false;
+        }
+        return count;
+      })
     );
   }
 
@@ -408,8 +438,6 @@ export class FormListComponent implements OnInit, OnDestroy {
                   oldId: form.id
                 } as any
               });
-              this.formsListCount$ =
-                this.raceDynamicFormService.getFormsListCount$();
             });
         }
       });
@@ -463,6 +491,8 @@ export class FormListComponent implements OnInit, OnDestroy {
             const newIdx = oldIdx !== -1 ? oldIdx : 0;
             initial.data.splice(newIdx, 0, obj);
             form.action = 'add';
+            this.triggerCountUpdate = true;
+            this.formsListCountUpdate$.next(1);
             this.toast.show({
               text: 'Form copied successfully!',
               type: 'success'
@@ -471,6 +501,8 @@ export class FormListComponent implements OnInit, OnDestroy {
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             form.action = 'add';
+            this.triggerCountUpdate = true;
+            this.formsListCountUpdate$.next(-1);
             this.toast.show({
               text: 'Form "' + form.form.name + '" archive successfully!',
               type: 'success'
@@ -501,13 +533,15 @@ export class FormListComponent implements OnInit, OnDestroy {
       )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          this.formsCount$ = of({ count });
+          if (count !== undefined) {
+            this.formsListCountRaw$.next(count);
+          }
           this.nextToken = next;
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.formsCount$ = of({ count: 0 });
+          this.formsListCount$ = of(0);
           this.isLoading$.next(false);
           return of([]);
         }),
@@ -540,12 +574,11 @@ export class FormListComponent implements OnInit, OnDestroy {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm) => {
+      .subscribe(() => {
         this.addEditCopyForm$.next({
           action: 'delete',
           form
         });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
       });
   }
 
@@ -609,51 +642,39 @@ export class FormListComponent implements OnInit, OnDestroy {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
-  getAllForms() {
-    this.formsList$ = this.raceDynamicFormService.fetchAllForms$();
-    this.formsList$
-      .pipe(
-        tap((formsList) => {
-          const objectKeys = Object.keys(formsList);
-          if (objectKeys.length > 0) {
-            const uniqueLastPublishedBy = formsList.rows
-              .map((item) => item.lastPublishedBy)
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.lastPublishedBy = [...uniqueLastPublishedBy];
+  populateFilter() {
+    combineLatest([
+      this.usersService.getUsersInfo$(),
+      this.plantService.fetchAllPlants$()
+    ]).subscribe(([usersList, { items: plantsList }]) => {
+      this.createdBy = usersList.map(
+        (user) => `${user.firstName} ${user.lastName}`
+      );
+      this.lastModifiedBy = usersList.map(
+        (user) => `${user.firstName} ${user.lastName}`
+      );
+      this.plants = plantsList.map((plant) => {
+        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
+        return `${plant.plantId} - ${plant.name}`;
+      });
 
-            const uniqueCreatedBy = formsList.rows
-              .map((item) => item.author)
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.createdBy = [...uniqueCreatedBy];
-
-            const uniquePlants = formsList.rows
-              .map((item) => {
-                if (item.plantId) {
-                  this.plantsIdNameMap[item.plant] = item.plantId;
-                  return item.plant;
-                }
-                return '';
-              })
-              .filter((value, index, self) => self.indexOf(value) === index);
-            this.plants = [...uniquePlants];
-
-            for (const item of this.filterJson) {
-              if (item.column === 'status') {
-                item.items = this.status;
-              } else if (item.column === 'modifiedBy') {
-                item.items = this.lastPublishedBy;
-              } else if (item.column === 'authoredBy') {
-                item.items = this.authoredBy;
-              } else if (item.column === 'plant') {
-                item.items = this.plants;
-              } else if (item.column === 'createdBy') {
-                item.items = this.createdBy;
-              }
-            }
-          }
-        })
-      )
-      .subscribe();
+      for (const item of this.filterJson) {
+        if (item.column === 'status') {
+          item.items = this.status;
+        } else if (item.column === 'modifiedBy') {
+          item.items = this.lastModifiedBy;
+        } else if (item.column === 'plant') {
+          item.items = this.plants;
+        } else if (item.column === 'createdBy') {
+          item.items = this.createdBy;
+        } else if (item.column === 'formType') {
+          item.items = [
+            formConfigurationStatus.embedded,
+            formConfigurationStatus.standalone
+          ];
+        }
+      }
+    });
   }
 
   getFilter() {

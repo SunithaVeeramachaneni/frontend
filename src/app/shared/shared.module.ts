@@ -56,6 +56,8 @@ import { MatCardModule } from '@angular/material/card';
 import { FilterSidePanelComponent } from './components/filter-side-panel/filter-side-panel.component';
 import { SlideshowComponent } from './components/slideshow/slideshow.component';
 import { ResponseCountPipe } from './pipes/response-count.pipe';
+import { LazyLoadContainerComponent } from './components/lazy-load-container/lazy-load-container.component';
+import { AmIvisibleDirective } from './directives/am-ivisible.directive';
 
 @NgModule({
   declarations: [
@@ -86,7 +88,9 @@ import { ResponseCountPipe } from './pipes/response-count.pipe';
     CustomRangePanelComponent,
     FilterSidePanelComponent,
     SlideshowComponent,
-    ResponseCountPipe
+    ResponseCountPipe,
+    LazyLoadContainerComponent,
+    AmIvisibleDirective
   ],
   imports: [
     FormsModule,
@@ -133,7 +137,9 @@ import { ResponseCountPipe } from './pipes/response-count.pipe';
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     BackgroundComponent,
-    SvgIconComponent
+    SvgIconComponent,
+    LazyLoadContainerComponent,
+    AmIvisibleDirective
   ],
   providers: [DatePipe]
 })

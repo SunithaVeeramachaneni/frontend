@@ -1,0 +1,86 @@
+<div id="add-edit-slider">
+  <mat-card>
+    <div class="top-bar">
+      <svg-icon icon="icon-close" class="cancel" (click)="cancel()"></svg-icon>
+      <h1 class="heading">{{ shiftTitle }}</h1>
+    </div>
+    <ng-container *ngIf="shiftMode !== 'VIEW'; else shiftDetails">
+      <div class="container-div" [formGroup]="shiftForm">
+        <p class="m-10-5">
+          <mat-form-field appearance="outline" class="width-100 m-b-10">
+            <mat-label translate="nameMandatory"></mat-label>
+            <input matInput [placeholder]="'nameMandatory' | translate" formControlName="name" />
+            <mat-hint align="start" translate="max25Chars" class="m-t-15">
+            </mat-hint>
+          </mat-form-field>
+        </p>
+
+        <span class="m-2">
+          <mat-form-field appearance="outline" class="width-100" class="m-5">
+            <mat-label translate="startTime"></mat-label>
+            <input type="time" matInput [placeholder]="'startTime' | translate" formControlName="startTime" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="width-100" class="m-5">
+            <mat-label translate="endTime"></mat-label>
+            <input type="time" matInput [placeholder]="'endTime' | translate" formControlName="endTime" />
+          </mat-form-field>
+        </span>
+        <p class="m-10-5 activeToggleBtn">
+          <mat-label translate="active"></mat-label>
+          <span class="slide-toggle">
+            <mat-slide-toggle [labelPosition]="'before'" formControlName="isActive">
+            </mat-slide-toggle>
+          </span>
+        </p>
+      </div>
+    </ng-container>
+    <ng-template #shiftDetails>
+      <div class="container-div" *ngIf="shiftMode === 'VIEW'">
+        <hr class="horizon-line" />
+        <span class="detailRow">
+          <span class="sub-headings" translate="shiftName"></span>
+          <span class="m-0 sub-headings-value">{{ shiftEditData.name }}</span>
+        </span>
+        <hr class="horizon-line" />
+        <span class="detailRow">
+          <span class="sub-headings" translate="startAndEndTime"></span>
+          <span class="m-0 sub-headings-value">
+            {{ shiftEditData.startAndEndTime }}
+          </span>
+        </span>
+        <hr class="horizon-line" />
+        <span class="detailRow">
+          <span class="sub-headings" translate="status"></span>
+          <span class="m-0 sub-headings-value">
+            {{ shiftEditData.status ? 'Active' : 'Inactive' }}
+          </span>
+        </span>
+        <hr class="horizon-line" />
+        <span class="detailRow">
+          <span class="sub-headings" translate="createdOn"></span>
+          <span class="m-0 sub-headings-value">
+            {{ shiftEditData.createdAt | date : 'dd MMM yyyy' }}
+          </span>
+        </span>
+        <hr class="horizon-line" />
+        <span class="detailRow">
+          <span class="sub-headings" translate="createdBy"></span>
+          <span class="m-0 sub-headings-value">
+            {{ shiftEditData.createdBy }}
+          </span>
+        </span>
+        <hr class="horizon-line" />
+      </div>
+    </ng-template>
+  </mat-card>
+  <div class="actions-footer">
+    <button mat-stroked-button class="cancel-btn" type="button" (click)="cancel()" translate="cancelBtn"></button>
+    <button mat-raised-button class="create-btn" type="submit"
+      [disabled]="shiftForm.invalid || isCreateUpdateInprogress" (click)="create()" *ngIf="shiftMode !== 'VIEW'">
+      {{ shiftButton }}
+
+    </button>
+    <button mat-raised-button class="create-btn" type="submit" (click)="goToEditMode()" translate="editShift"
+      *ngIf="shiftMode === 'VIEW'"></button>
+  </div>
+</div>

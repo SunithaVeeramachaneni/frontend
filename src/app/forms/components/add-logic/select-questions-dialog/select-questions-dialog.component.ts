@@ -57,11 +57,14 @@ export class SelectQuestionsDialogComponent implements OnInit {
             .map((logic) => logic.mandateQuestions)
             .flat();
           page.sections.map((section) => {
-            const sectionQuestions = page.questions.filter((q) =>
-              this.data.viewMode === 'HIDE'
-                ? q.sectionId === section.id && !mandateQuestion.includes(q.id)
-                : q.sectionId === section.id && !hideQuestion.includes(q.id)
-            );
+            const sectionQuestions = page.questions.filter((q) => {
+              if (q.required === false) {
+                return this.data.viewMode === 'HIDE'
+                  ? q.sectionId === section.id &&
+                      !mandateQuestion.includes(q.id)
+                  : q.sectionId === section.id && !hideQuestion.includes(q.id);
+              }
+            });
 
             this.sections.push({
               ...section,

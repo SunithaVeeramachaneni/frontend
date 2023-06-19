@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
+import { LoginService } from 'src/app/components/login/services/login.service';
 import {
   FormBuilder,
   FormControl,
@@ -24,39 +25,19 @@ import {
 } from 'rxjs/operators';
 
 import { isEqual } from 'lodash-es';
-import {
-  PageEvent,
-  QuestionEvent,
-  SectionEvent,
-  FormMetadata,
-  Page,
-  Question,
-  Section,
-  ValidationError
-} from 'src/app/interfaces';
+import { FormMetadata, Page, ValidationError } from 'src/app/interfaces';
 
 import {
-  getSectionQuestions,
   getFormMetadata,
-  getPageIndexes,
-  getQuestionIndexes,
-  getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
   getIsFormCreated,
-  getQuestionIds,
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,7 +45,6 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
-import { ResponseSetService } from '../../master-configurations/response-set/services/response-set.service';
 import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
 import {
   BuilderConfigurationActions,
@@ -73,6 +53,7 @@ import {
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -85,13 +66,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
-  pageIndexes$: Observable<number[]>;
   pages$: Observable<Page[]>;
   formDetails$: Observable<any>;
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
-  sectionIds$: Observable<any>;
-  questionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
@@ -99,7 +77,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formDetailPublishStatus$: Observable<string>;
   isFormCreated$: Observable<boolean>;
   questionCounter$: Observable<number>;
-  questionIndexes: any;
   formStatus: string;
   formDetailPublishStatus: string;
   isFormDetailPublished: string;
@@ -109,8 +86,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
+  isEmbeddedForm: boolean;
   errors: ValidationError = {};
   formDetails: any;
+  pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   private onDestroy$ = new Subject();
@@ -124,7 +103,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
-    private formConfigurationService: FormConfigurationService
+    private formConfigurationService: FormConfigurationService,
+    private loginService: LoginService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -190,8 +171,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
+        const { name, description, id, formLogo, formStatus, formType } =
+          formMetadata;
         this.formMetadata = formMetadata;
+        this.isEmbeddedForm = formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,
@@ -219,15 +202,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         );
       })
     );
-    this.pageIndexes$ = this.store.select(getPageIndexes);
     this.sectionIndexes$ = this.store
       .select(getSectionIndexes)
       .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
-    this.sectionIds$ = this.store.select(getSectionIds);
-    this.questionIds$ = this.store.select(getQuestionIds);
-    this.questionIndexes$ = this.store
-      .select(getQuestionIndexes)
-      .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
     this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
       tap((isFormCreated) => {
         if (isFormCreated) {
@@ -259,6 +236,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
+        this.pages = pages;
 
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
@@ -277,6 +255,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailId,
                   authoredFormDetailVersion,
                   authoredFormDetailDynamoDBVersion
+                })
+              );
+              this.store.dispatch(
+                BuilderConfigurationActions.updateFormMetadata({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  ...this.getFormConfigurationStatuses()
+                })
+              );
+
+              this.store.dispatch(
+                BuilderConfigurationActions.updateForm({
+                  formMetadata: {
+                    ...formMetadata,
+                    lastModifiedBy: this.loginService.getLoggedInUserName()
+                  },
+                  formListDynamoDBVersion: this.formListVersion
                 })
               );
             }
@@ -406,6 +403,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
+          this.store.select(getFormMetadata).subscribe((data) => {
+            this.isEmbeddedForm = data.formType === 'Embedded';
+          });
           const section = {
             id: 'S1',
             name: 'Section',
@@ -421,7 +421,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               return {
                 ...df,
                 name: 'Conducted On',
-                fieldType: 'DT',
+                fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
                 date: true,
                 time: true
               };
@@ -462,127 +462,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     return this.formConfiguration.controls;
   }
 
-  pageEventHandler(event: PageEvent) {
-    const { pageIndex, type, page } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addPage(
-            pageIndex,
-            1,
-            1,
-            this.sectionIndexes,
-            this.formConf.counter.value
-          );
-        }
-        break;
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updatePage({
-            page,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deletePage({
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
-  sectionEventHandler(event: SectionEvent) {
-    const { pageIndex, sectionIndex, section, type } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addSections(
-            pageIndex,
-            1,
-            1,
-            sectionIndex,
-            this.sectionIndexes,
-            this.formConf.counter.value
-          );
-        }
-        break;
-
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updateSection({
-            section,
-            sectionIndex,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deleteSection({
-            sectionIndex,
-            sectionId: section.id,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
-  questionEventHandler(event: QuestionEvent) {
-    const { pageIndex, questionIndex, sectionId, question, type } = event;
-    switch (type) {
-      case 'add':
-        {
-          this.formConfigurationService.addQuestions(
-            pageIndex,
-            sectionId,
-            1,
-            questionIndex,
-            this.formConf.counter.value
-          );
-        }
-        break;
-
-      case 'update':
-        this.store.dispatch(
-          BuilderConfigurationActions.updateQuestion({
-            question,
-            questionIndex,
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-
-      case 'delete':
-        this.store.dispatch(
-          BuilderConfigurationActions.deleteQuestion({
-            questionIndex,
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
-          })
-        );
-        break;
-    }
-  }
-
   uploadFormImageFile(e) {
     // uploaded image  file code
   }
@@ -598,69 +477,42 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
-  }
 
-  dropSection(event: CdkDragDrop<any>, pageIndex: number) {
-    const data = event.container.data.slice();
+    const form = { formMetadata: this.formMetadata, pages: this.pages };
 
-    if (event.previousContainer === event.container) {
-      moveItemInArray(data, event.previousIndex, event.currentIndex);
-      const sectionPositionMap = {};
-      data.forEach((section: Section, index) => {
-        sectionPositionMap[section.id] = index + 1;
-      });
-      this.store.dispatch(
-        BuilderConfigurationActions.updatePageSections({
-          pageIndex,
-          data: sectionPositionMap,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
-    }
-  }
+    if (this.isEmbeddedForm) {
+      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
+        form.pages[0].questions.forEach((question) => {
+          if (response.includes(question.id)) {
+            question.isPublished = true;
+            question.isPublishedTillSave = true;
+          }
+        });
 
-  drop(event: CdkDragDrop<any>, pageIndex, sectionId) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      event.container.data.forEach((question: Question, index) => {
+        const {
+          formMetadata,
+          formStatus,
+          counter,
+          authoredFormDetailId,
+          authoredFormDetailVersion,
+          formDetailPublishStatus,
+          authoredFormDetailDynamoDBVersion
+        } = this.formDetails;
         this.store.dispatch(
-          BuilderConfigurationActions.updateQuestionBySection({
-            question: Object.assign({}, question, {
-              position: index + 1,
-              sectionId
-            }),
-            sectionId,
-            pageIndex,
-            ...this.getFormConfigurationStatuses(),
-            subFormId: null
+          BuilderConfigurationActions.updateAuthoredFormDetail({
+            formStatus: formStatus,
+            formDetailPublishStatus,
+            formListId: formMetadata.id,
+            counter,
+            pages: form.pages,
+            authoredFormDetailId,
+            authoredFormDetailVersion,
+            authoredFormDetailDynamoDBVersion
           })
         );
+
+        this.router.navigate(['/forms']);
       });
-    } else {
-      const questionId = event.previousContainer.data[event.previousIndex].id;
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.transferQuestionFromSection({
-          questionId,
-          currentIndex: event.currentIndex,
-          previousIndex: event.previousIndex,
-          sourceSectionId: event.previousContainer.id,
-          destinationSectionId: event.container.id,
-          pageIndex,
-          ...this.getFormConfigurationStatuses(),
-          subFormId: null
-        })
-      );
     }
   }
 
@@ -704,7 +556,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       data: {
         selectedFormData: '',
         selectedFormName: '',
-        openImportQuestionsSlider: false
+        openImportQuestionsSlider: false,
+        isEmbeddedForm: this.isEmbeddedForm
       }
     });
 
@@ -725,14 +578,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.openAppSider$ = of(event);
   }
 
-  addQuestion(pageIndex, sectionIndex, questionIndex) {
-    this.formConfigurationService.addQuestions(
-      pageIndex,
-      sectionIndex,
-      1,
-      questionIndex,
-      this.formConf.counter.value
-    );
+  publishOrShowPdf() {
+    if (!this.isEmbeddedForm) {
+      this.goToPDFBuilderConfiguration();
+    } else {
+      // PUBLISH FORM TO SAP AND DYNAMODB
+      this.publishFormDetail();
+    }
   }
 
   goToPDFBuilderConfiguration = () => {

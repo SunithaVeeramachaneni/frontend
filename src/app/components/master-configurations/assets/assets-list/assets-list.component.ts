@@ -19,7 +19,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeMap,
   switchMap,
   takeUntil,
   tap
@@ -31,7 +30,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
@@ -304,13 +302,11 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
         tap((value: string) => {
-          this.reloadAssetCount(value.toLocaleLowerCase());
           this.assetService.fetchAssets$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
 
-    this.reloadAssetCount(null);
     this.getDisplayedAssets();
 
     this.configOptions.allColumns = this.columns;
@@ -431,10 +427,13 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.filter
       )
       .pipe(
-        mergeMap(({ count, rows, next }) => {
+        map(({ count, rows, next }) => {
           this.nextToken = next;
+          if (count !== undefined) {
+            this.reloadAssetCount(count);
+          }
           this.isLoading$.next(false);
-          return of(rows);
+          return rows;
         }),
         catchError(() => {
           this.isLoading$.next(false);
@@ -586,7 +585,6 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         this.getAllAssets();
         this.addEditCopyDeleteAssets = true;
         this.nextToken = '';
-        this.reloadAssetCount(this.searchAssets.value.toLocaleLowerCase());
         this.assetService.fetchAssets$.next({ data: 'load' });
         this.toast.show({
           text: 'Asset uploaded successfully!',
@@ -664,8 +662,8 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     return tableData;
   };
 
-  reloadAssetCount(searchTerm: string) {
-    this.assetsListCount$ = this.assetService.getAssetCount$(searchTerm);
+  reloadAssetCount(rawCount: number) {
+    this.assetsListCount$ = of(rawCount);
     this.assetsCount$ = combineLatest([
       this.assetsListCount$,
       this.assetsCountUpdate$

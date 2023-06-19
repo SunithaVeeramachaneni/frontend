@@ -7,7 +7,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -54,7 +55,7 @@ import {
 import {
   formConfigurationStatus,
   graphQLDefaultLimit,
-  graphQLDefaultMaxLimit,
+  graphQLRoundsOrInspectionsLimit,
   permissions as perms
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
@@ -69,6 +70,7 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-rounds',
@@ -78,7 +80,7 @@ import { UsersService } from '../../user-management/services/users.service';
   animations: [slideInOut]
 })
 export class RoundsComponent implements OnInit, OnDestroy {
-  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
@@ -91,7 +93,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   assigneeDetails: AssigneeDetails;
   filterJson = [];
   status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
@@ -204,10 +205,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'date-picker',
+      controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
         dependentFieldValues: ['to-do', 'open', 'in-progress'],
@@ -360,7 +361,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   roundsCount = 0;
@@ -371,6 +372,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedRound: RoundDetail;
+  selectedRoundInfo: RoundDetail;
+  selectedDate = null;
   zIndexDelay = 0;
   hideRoundDetail: boolean;
   roundPlanId: string;
@@ -378,8 +381,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   initial: any;
   plants = [];
   plantsIdNameMap = {};
-  userFullNameByEmail: {};
+  userFullNameByEmail = {};
   roundId = '';
+  sliceCount = 100;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -423,6 +427,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
+        this.dataSource = new MatTableDataSource([]);
         return this.getRoundsList();
       })
     );
@@ -457,7 +462,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
             dueDate: new Date(roundDetail.dueDate),
-            assignedTo: this.userService.getUserFullName(roundDetail.assignedTo)
+            assignedTo: this.userService.getUserFullName(
+              roundDetail.assignedTo
+            ),
+            assignedToEmail: roundDetail.assignedTo
           }));
         } else {
           this.initial.data = this.initial.data.concat(
@@ -466,12 +474,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
               dueDate: new Date(roundDetail.dueDate),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
-              )
+              ),
+              assignedToEmail: roundDetail.assignedTo
             }))
           );
         }
         this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
+        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
+        const dataSource = this.dataSource
+          ? this.dataSource.data.concat(
+              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
+            )
+          : this.initial.data.slice(sliceStart, this.sliceCount);
+        this.dataSource = new MatTableDataSource(dataSource);
         return this.initial;
       })
     );
@@ -501,7 +517,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       roundPlanId: this.roundPlanId,
       roundId: this.roundId
     };
-
+    this.isLoading$.next(true);
     return this.operatorRoundsService
       .getRoundsList$({ ...obj, ...this.filter })
       .pipe(
@@ -533,11 +549,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
-        this.selectedRound = row;
+        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        this.selectedRoundInfo = row;
         break;
-      case 'dueDate':
-        this.selectedRound = row;
+      case 'dueDateDisplay':
+        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedRoundInfo = row;
         break;
       default:
         this.openRoundHandler(row);
@@ -677,8 +695,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           }
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.assignedTo.push(item);
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
               }
             });
           }
@@ -722,7 +740,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data: any) {
-    let emailArray = [];
+    const emailArray = [];
     data?.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
@@ -739,9 +757,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
-      } else if (item.type !== 'date' && item.value) {
+      } else if (item.column === 'status' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'schedule' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
-      } else if (item.type === 'date' && item.value) {
+      } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value.toISOString();
       }
     }
@@ -778,30 +800,46 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler({ user }: SelectedAssignee) {
     const { email: assignedTo } = user;
-    const { roundId } = this.selectedRound;
-    let { status } = this.selectedRound;
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    let previouslyAssignedTo =
+      this.selectedRoundInfo.previouslyAssignedTo || '';
+    if (assignedTo !== assignedToEmail) {
+      previouslyAssignedTo += previouslyAssignedTo.length
+        ? `,${assignedToEmail}`
+        : assignedToEmail;
+    }
+
+    if (previouslyAssignedTo.includes(assignedTo)) {
+      previouslyAssignedTo = previouslyAssignedTo
+        .split(',')
+        .filter((email) => email !== assignedTo)
+        .join(',');
+    }
+
+    let { status } = this.selectedRoundInfo;
     status = status.toLowerCase() === 'open' ? 'to-do' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
-        { ...this.selectedRound, assignedTo, status },
+        { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
         'assigned-to'
       )
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
                   assignedTo: this.userService.getUserFullName(assignedTo),
                   status,
-                  roundDBVersion: resp.roundDBVersion + 1
+                  roundDBVersion: resp.roundDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -811,28 +849,30 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.trigger.closeMenu();
+    this.trigger.toArray()[0].closeMenu();
   }
 
-  onChangeDueDateHandler(dueDate: Date) {
-    const { roundId } = this.selectedRound;
+  dateChangeHandler(dueDate: Date) {
+    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
     this.operatorRoundsService
-      .updateRound$(roundId, { ...this.selectedRound, dueDate }, 'due-date')
+      .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
                   dueDate,
+                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
                   roundDBVersion: resp.roundDBVersion + 1,
-                  roundDetailDBVersion: resp.roundDetailDBVersion + 1
+                  roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                  assignedToEmail: resp.assignedTo
                 };
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -842,5 +882,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  dueDateClosedHandler() {
+    this.trigger.toArray()[1].closeMenu();
   }
 }

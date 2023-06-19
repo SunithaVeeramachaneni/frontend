@@ -19,6 +19,8 @@ export interface FormMetadata {
   plantId?: string;
   plant: string;
   pdfTemplateConfiguration: any;
+  lastModifiedBy: string;
+  embeddedFormId?: string;
 }
 
 export interface Page {
