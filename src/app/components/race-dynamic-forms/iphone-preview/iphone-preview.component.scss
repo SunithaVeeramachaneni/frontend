@@ -10,6 +10,13 @@
   margin: 0px auto 0;
 }
 
+.ard-style {
+  font-size: 160%;
+  float: right;
+  margin-right: -15px;
+  color: $blue-bg;
+}
+
 @media only screen and (max-width: 2049px) {
   .iphone-view {
     background-size: 295px 63vh;
