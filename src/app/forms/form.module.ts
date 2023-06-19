@@ -110,6 +110,7 @@ import { RaiseNotificationDailogComponent } from './components/add-logic/raise-n
 import { MatDialogModule } from '@angular/material/dialog';
 import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
 import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
+import { UserNameByEmailPipe } from './pipes';
 
 @NgModule({
   declarations: [
@@ -178,7 +179,8 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
     RaiseNotificationDailogComponent,
     DatePickerComponent,
     IphoneForEmbeddedFormsComponent,
-    PreviewForEmbeddedFormsComponent
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe
   ],
   imports: [
     SharedModule,
@@ -257,7 +259,8 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
     ObservationsComponent,
     DatePickerComponent,
     IphoneForEmbeddedFormsComponent,
-    PreviewForEmbeddedFormsComponent
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe
   ]
 })
 export class FormModule {}

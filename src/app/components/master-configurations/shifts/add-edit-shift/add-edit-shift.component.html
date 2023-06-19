@@ -75,9 +75,10 @@
   </mat-card>
   <div class="actions-footer">
     <button mat-stroked-button class="cancel-btn" type="button" (click)="cancel()" translate="cancelBtn"></button>
-    <button mat-raised-button class="create-btn" type="submit" [disabled]="shiftForm.invalid" (click)="create()"
-      *ngIf="shiftMode !== 'VIEW'">
+    <button mat-raised-button class="create-btn" type="submit"
+      [disabled]="shiftForm.invalid || isCreateUpdateInprogress" (click)="create()" *ngIf="shiftMode !== 'VIEW'">
       {{ shiftButton }}
+
     </button>
     <button mat-raised-button class="create-btn" type="submit" (click)="goToEditMode()" translate="editShift"
       *ngIf="shiftMode === 'VIEW'"></button>
