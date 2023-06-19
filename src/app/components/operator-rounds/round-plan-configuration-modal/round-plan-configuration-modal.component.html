@@ -204,7 +204,9 @@
                 [value]="label"
               >
                 {{ label }}
-                <span class="remove-txt">{{ 'removeBtn' | translate }}</span>
+                <button mat-button color="primary" class="p-0">
+                  <span class="remove-txt">{{ 'removeBtn' | translate }}</span>
+                </button>
               </mat-option>
               <mat-option
                 *ngIf="
@@ -212,22 +214,15 @@
                     .label
                 "
               >
-                <ng-container *ngIf="filteredLabels | async">
-                  <!-- <ng-container
-                    *ngIf="
-                      !O.keys(labels).includes(
-                        headerDataForm.get('additionalDetails')['controls'][i]
-                          .label
-                      )
-                    "
-                  > -->
+                <ng-container>
                   <button
                     mat-button
                     color="primary"
                     class="p-0"
-                    (click)="addNewOption()"
+                    (click)="storeDetails()"
                   >
                     <mat-icon class="m-r-5">add</mat-icon>
+
                     <span
                       >{{ 'addNew' | translate }} ({{
                         headerDataForm.get('additionalDetails')['controls'][i]
@@ -236,10 +231,14 @@
                     >
                   </button>
                 </ng-container>
-                <!-- <mat-error *ngIf="labelCtrl.value.length > 25">
-                    {{ 'errorExceedLabelMessage' | translate }}
-                  </mat-error> -->
-                <!-- </ng-container> -->
+                <mat-error
+                  *ngIf="
+                    headerDataForm.get('additionalDetails')['controls'][i].value
+                      .label.length > 25
+                  "
+                >
+                  {{ 'errorExceedLabelMessage' | translate }}
+                </mat-error>
               </mat-option>
             </mat-autocomplete>
           </div>
@@ -255,48 +254,60 @@
                 formControlName="value"
                 [matAutocomplete]="autoValue"
                 class="example-input"
+                (click)="valueOptionClick(i)"
               />
               <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
             </mat-form-field>
             <mat-autocomplete #autoValue="matAutocomplete">
-              <mat-option
-                *ngFor="let value of filteredValues | async"
-                [value]="value"
-              >
-                {{ value }}
-                <span class="remove-txt">{{ 'removeBtn' | translate }}</span>
-              </mat-option>
+              <ng-container *ngIf="addNewShow | async">
+                <mat-option
+                  *ngFor="let value of filteredValues | async"
+                  [value]="value"
+                >
+                  {{ value }}
+                  <button>
+                    <span class="remove-txt">{{
+                      'removeBtn' | translate
+                    }}</span>
+                  </button>
+                </mat-option>
 
-              <mat-option
-                *ngIf="
-                  headerDataForm.get('additionalDetails')['controls'][i][
-                    'value'
-                  ].value
-                "
-              >
-                <ng-container *ngIf="filteredValues | async as values">
-                  <!-- <ng-container *ngIf="!values.includes(labelCtrl.value)"> -->
-                  <button
-                    mat-button
-                    color="primary"
-                    class="p-0"
-                    (click)="addNewOption()"
-                  >
-                    <mat-icon class="m-r-5">add</mat-icon>
-                    <span
-                      >{{ 'addNew' | translate }} ({{
+                <mat-option
+                  *ngIf="
+                    headerDataForm.get('additionalDetails')['controls'][i][
+                      'value'
+                    ].value
+                  "
+                >
+                  <ng-container *ngIf="filteredValues | async">
+                    <button
+                      mat-button
+                      color="primary"
+                      class="p-0"
+                      (click)="storeDetails()"
+                    >
+                      <mat-icon class="m-r-5">add</mat-icon>
+
+                      <span
+                        >{{ 'addNew' | translate }} ({{
+                          headerDataForm.get('additionalDetails')['controls'][
+                            i
+                          ]['value'].value
+                        }})</span
+                      >
+                    </button>
+                    <mat-error
+                      *ngIf="
                         headerDataForm.get('additionalDetails')['controls'][i][
                           'value'
-                        ].value
-                      }})</span
+                        ].value.length > 40
+                      "
                     >
-                  </button>
-                  <!-- </ng-container> -->
-                  <!-- <mat-error *ngIf="valueCtrl.value.length > 40">
-                    {{ 'errorExceedValueMessage' | translate }}
-                  </mat-error> -->
-                </ng-container>
-              </mat-option>
+                      {{ 'errorExceedValueMessage' | translate }}
+                    </mat-error>
+                  </ng-container>
+                </mat-option>
+              </ng-container>
             </mat-autocomplete>
           </div>
           <div class="width-10 cancel-icon">

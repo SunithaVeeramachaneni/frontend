@@ -15,9 +15,10 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, of } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { Observable, merge, of, Subscription, BehaviorSubject } from 'rxjs';
+import { map, startWith, take, tap } from 'rxjs/operators';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -40,7 +41,7 @@ import {
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { Hash } from 'crypto';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -61,17 +62,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  // labels: string[] = ['abc', 'def', 'tataadx'];
-  labels = {
-    abc: 1,
-    def: 1,
-    tataadx: 1
-  };
-  // values: string[] = [''];
-  values = {
-    cde: 1,
-    efg: 1
-  };
+  labels: any = {};
   labelCtrl = new FormControl();
   valueCtrl = new FormControl();
   filteredLabels: Observable<string[]>;
@@ -82,14 +73,16 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
-  changedValues: string = '';
-  // showFields: boolean = true;
+  changedValues: any;
+  addNewShow = new BehaviorSubject<boolean>(false);
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+  convertedDetail = {};
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
-
+  additionalDetails: FormArray;
+  labelSelected: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -98,7 +91,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private toastService: ToastService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -114,11 +108,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         tag ? this.filter(tag) : this.allTags.slice()
       )
     );
-
-    // this.filteredLabels = this.labelCtrl.valueChanges.pipe(
-    //   startWith(''),
-    //   map((value) => this.filterLabel(value || ''))
-    // );
   }
 
   getAllPlantsData() {
@@ -150,35 +139,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
-    // this.retrieveDetails();
-
-    this.headerDataForm
-      .get('additionalDetails')
-      .valueChanges.subscribe((data) => {
-        data.map((detail) => {
-          if (detail.label && !this.labels[detail.label]) {
-            this.changedValues = detail.label;
-            this.filteredLabels = of(
-              Object.keys(this.labels).filter((lab) =>
-                lab.includes(this.changedValues)
-              )
-            );
-            return;
-          }
-          if (detail.value && !this.values[detail.value]) {
-            this.changedValues = detail.value;
-            this.filteredValues = of(
-              Object.keys(this.values).filter((lab) =>
-                lab.includes(this.changedValues)
-              )
-            );
-            return;
-          }
-        });
-      });
+    this.retrieveDetails();
     if (!this.changedValues) {
-      this.filteredLabels = of(Object.keys(this.labels));
-      this.filteredValues = of(Object.keys(this.values));
+      this.filteredLabels = of(this.labels);
     }
   }
 
@@ -343,13 +306,49 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   addAdditionalDetails() {
-    const add = this.headerDataForm.get('additionalDetails') as FormArray;
-    add.push(
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.additionalDetails.push(
       this.fb.group({
         label: ['', [Validators.maxLength(25)]],
         value: ['', [Validators.maxLength(40)]]
       })
     );
+    if (this.additionalDetails) {
+      merge(
+        ...this.additionalDetails.controls.map(
+          (control: AbstractControl, index: number) =>
+            control.valueChanges.pipe(
+              map((value) => ({ rowIndex: index, value }))
+            )
+        )
+      ).subscribe((changes) => {
+        this.changedValues = changes.value;
+        if (this.changedValues.label) {
+          this.filteredLabels = of(
+            Object.keys(this.labels).filter((label) => {
+              return label.includes(this.changedValues.label);
+            })
+          );
+        } else {
+          this.filteredLabels = of([]);
+        }
+        if (this.changedValues.value && this.labels[this.changedValues.label]) {
+          this.filteredValues = of(
+            this.labels[this.changedValues.label].filter((values) => {
+              return values.includes(this.changedValues.value);
+            })
+          );
+        } else {
+          this.filteredValues = of([]);
+        }
+
+        this.labels[this.changedValues.label]
+          ? this.addNewShow.next(true)
+          : this.addNewShow.next(false);
+      });
+    }
   }
 
   deleteAdditionalDetails(index: number) {
@@ -357,37 +356,63 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     add.removeAt(index);
   }
 
-  addNewOption() {
-    const newOption = this.labelCtrl.value;
-    this.labelCtrl.setValue(newOption);
-    this.storeDetails();
-  }
   storeDetails() {
-    const additionalDetails = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-
     this.operatorRoundsService
-      .createAdditionalDetails$(additionalDetails.value)
+      .createAdditionalDetails$(this.changedValues)
       .subscribe(
         (response) => {
-          console.log('Additional details stored successfully:', response);
+          this.toastService.show({
+            type: 'success',
+            text: 'Additional details stored successfully'
+          });
         },
         (error) => {
-          console.error('Error storing additional details:', error);
+          this.toastService.show({ type: 'warning', text: error });
         }
       );
+    this.retrieveDetails();
   }
 
   retrieveDetails() {
     this.operatorRoundsService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
-        // this.labels = [...details];
-        console.log('labels', this.labels);
+        this.labels = this.convertArrayToObject(details);
       },
       (error) => {
-        console.log('Error retrieving details:', error);
+        this.toastService.show({ type: 'warning', text: error });
       }
     );
+  }
+
+  convertArrayToObject(details) {
+    details.map((obj) => {
+      this.convertedDetail[obj.label] = obj.values;
+    });
+    return this.convertedDetail;
+  }
+
+  valueOptionClick(index) {
+    if (
+      this.headerDataForm.get('additionalDetails').value[index].value &&
+      this.headerDataForm.get('additionalDetails').value[index].label &&
+      this.labels[
+        this.headerDataForm.get('additionalDetails').value[index].label
+      ]
+    ) {
+      this.filteredValues = of(
+        this.labels[
+          this.headerDataForm.get('additionalDetails').value[index].label
+        ].filter((data) =>
+          data.includes(
+            this.headerDataForm.get('additionalDetails').value[index].value
+          )
+        )
+      );
+    } else {
+      this.filteredValues = of([]);
+    }
+    this.labels[this.changedValues.label]
+      ? this.addNewShow.next(true)
+      : this.addNewShow.next(false);
   }
 }
