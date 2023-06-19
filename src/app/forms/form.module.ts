@@ -106,7 +106,9 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
-
+import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { UserNameByEmailPipe } from './pipes';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -171,7 +173,9 @@ import {
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    RaiseNotificationDailogComponent,
+    DatePickerComponent,
+    UserNameByEmailPipe
   ],
   imports: [
     SharedModule,
@@ -205,6 +209,7 @@ import {
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
@@ -247,7 +252,8 @@ import {
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    UserNameByEmailPipe
   ]
 })
 export class FormModule {}

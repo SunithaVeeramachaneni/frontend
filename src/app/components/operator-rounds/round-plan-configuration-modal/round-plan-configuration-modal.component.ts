@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -44,7 +45,8 @@ import { Hash } from 'crypto';
 @Component({
   selector: 'app-round-plan-configuration-modal',
   templateUrl: './round-plan-configuration-modal.component.html',
-  styleUrls: ['./round-plan-configuration-modal.component.scss']
+  styleUrls: ['./round-plan-configuration-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoundPlanConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
@@ -84,6 +86,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   // showFields: boolean = true;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+
+  plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -304,23 +308,23 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  resetPlantSearchFilter = () => {
+    this.plantFilterInput = '';
+    this.plantInformation = this.allPlantsData;
+  };
+
   onKeyPlant(event) {
-    const value = event.target.value || '';
-    if (value) {
-      this.plantInformation = this.searchPlant(value);
+    this.plantFilterInput = event.target.value.trim() || '';
+
+    if (this.plantFilterInput) {
+      this.plantInformation = this.allPlantsData.filter(
+        (plant) =>
+          plant.name.toLowerCase().indexOf(this.plantFilterInput) !== -1 ||
+          plant.plantId.toLowerCase().indexOf(this.plantFilterInput) !== -1
+      );
     } else {
       this.plantInformation = this.allPlantsData;
     }
-  }
-
-  searchPlant(value: string) {
-    const searchValue = value.toLowerCase();
-    return this.plantInformation.filter(
-      (plant) =>
-        (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
-        (plant.plantId &&
-          plant.plantId.toLowerCase().indexOf(searchValue) !== -1)
-    );
   }
 
   processValidationErrors(controlName: string): boolean {

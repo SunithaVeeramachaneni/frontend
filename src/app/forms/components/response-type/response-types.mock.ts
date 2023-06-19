@@ -83,6 +83,13 @@ export const fieldTypesMock = {
     {
       type: 'USR',
       description: 'User'
+    },
+    { type: 'DF',
+      description: 'Date'
+    },
+    {
+      type: 'TIF',
+      description: 'Time Picker'
     }
   ]
 };

@@ -502,7 +502,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: this.formId
+      formId: this.formId,
+      formType: formConfigurationStatus.standalone
     };
 
     return this.raceDynamicFormService

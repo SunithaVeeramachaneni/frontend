@@ -48,7 +48,13 @@ export class ShiftService {
       params.set('limit', `${queryParams.limit}`);
       params.set('next', queryParams.next);
       params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase());
-      params.set('isActive', filter?.isActive ?? '');
+
+      const activeFilter = {
+        isActive: {
+          eq: filter?.isActive
+        }
+      };
+      params.set('filter', JSON.stringify(activeFilter));
 
       return this._appService
         ._getResp(environment.masterConfigApiUrl, 'shifts?' + params.toString())

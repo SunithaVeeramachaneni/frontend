@@ -309,5 +309,7 @@
   "typePlaceholder": "Type",
   "selectAll": "Select All",
   "actionPriority": "Priority: ",
-  "actionStatus": "Status: "
+  "actionStatus": "Status: ",
+  "link": "Link",
+  "raiseNotification": "Raise Notification"
 }
