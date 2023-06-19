@@ -347,8 +347,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.labels[this.changedValues.label]
           ? this.addNewShow.next(true)
           : this.addNewShow.next(false);
-
-        console.log('header:', this.headerDataForm.get('additionalDetails'));
       });
     }
   }

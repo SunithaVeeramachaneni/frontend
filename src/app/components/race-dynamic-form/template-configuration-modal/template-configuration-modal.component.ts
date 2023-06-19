@@ -14,15 +14,17 @@ import {
   MatAutocompleteSelectedEvent
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, merge } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
   Validators
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { ErrorInfo, ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
@@ -32,7 +34,9 @@ import {
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
-
+import { environment } from 'src/environments/environment';
+import { AppService } from 'src/app/shared/services/app.services';
+import { ToastService } from 'src/app/shared/toast';
 @Component({
   selector: 'app-template-configuration-modal',
   templateUrl: './template-configuration-modal.component.html',
@@ -50,14 +54,21 @@ export class TemplateConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-
+  labels: any = {};
+  labelCtrl = new FormControl();
+  valueCtrl = new FormControl();
+  filteredLabels: Observable<string[]>;
+  filteredValues: Observable<string[]>;
   allTags: string[] = [];
   originalTags: string[] = [];
-
+  changedValues: any;
+  addNewShow = new BehaviorSubject<boolean>(false);
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+  convertedDetail = {};
   readonly formConfigurationStatus = formConfigurationStatus;
-
+  additionalDetails: FormArray;
+  labelSelected: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -65,6 +76,8 @@ export class TemplateConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
+    private appService: AppService,
+    private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA)
     private data: any
   ) {
@@ -104,7 +117,8 @@ export class TemplateConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      additionalDetails: this.fb.array([])
     });
   }
 
@@ -150,6 +164,98 @@ export class TemplateConfigurationModalComponent implements OnInit {
       tag.toLowerCase().includes(filterValue)
     );
   }
+
+  addAdditionalDetails() {
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.additionalDetails.push(
+      this.fb.group({
+        label: ['', [Validators.maxLength(25)]],
+        value: ['', [Validators.maxLength(40)]]
+      })
+    );
+    if (this.additionalDetails) {
+      merge(
+        ...this.additionalDetails.controls.map(
+          (control: AbstractControl, index: number) =>
+            control.valueChanges.pipe(
+              map((value) => ({ rowIndex: index, value }))
+            )
+        )
+      ).subscribe((changes) => {
+        this.changedValues = changes.value;
+        if (this.changedValues.label) {
+          this.filteredLabels = of(
+            Object.keys(this.labels).filter((label) => {
+              return label.includes(this.changedValues.label);
+            })
+          );
+        } else {
+          this.filteredLabels = of([]);
+        }
+        if (this.changedValues.value && this.labels[this.changedValues.label]) {
+          this.filteredValues = of(
+            this.labels[this.changedValues.label].filter((values) => {
+              return values.includes(this.changedValues.value);
+            })
+          );
+        } else {
+          this.filteredValues = of([]);
+        }
+
+        this.labels[this.changedValues.label]
+          ? this.addNewShow.next(true)
+          : this.addNewShow.next(false);
+      });
+    }
+  }
+
+  deleteAdditionalDetails(index: number) {
+    const add = this.headerDataForm.get('additionalDetails') as FormArray;
+    add.removeAt(index);
+  }
+
+  createAdditionalDetails$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/additional-details`,
+      `round-plans/additional-details`,
+      details,
+      info
+    );
+
+  getAdditionalDetails$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      'round-plans/additional-details',
+      info
+    );
+
+  removeLable$ = (
+    label: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/delete-label/${label}`,
+      info
+    );
+  removeValue$ = (
+    detail: object,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      `round-plans/delete-value/`,
+      detail,
+      info
+    );
 
   next() {
     const newTags = [];
@@ -209,5 +315,91 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  storeDetails() {
+    this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
+      (response) => {
+        this.toastService.show({
+          type: 'success',
+          text: 'Additional details stored successfully'
+        });
+      },
+      (error) => {
+        this.toastService.show({ type: 'warning', text: error });
+      }
+    );
+    this.retrieveDetails();
+  }
+
+  retrieveDetails() {
+    this.rdfService.getAdditionalDetails$().subscribe(
+      (details: any[]) => {
+        this.labels = this.convertArrayToObject(details);
+      },
+      (error) => {
+        this.toastService.show({ type: 'warning', text: error });
+      }
+    );
+  }
+
+  convertArrayToObject(details) {
+    details.map((obj) => {
+      this.convertedDetail[obj.label] = obj.values;
+    });
+    return this.convertedDetail;
+  }
+
+  valueOptionClick(index) {
+    this.labelSelected =
+      this.headerDataForm.get('additionalDetails').value[index].label;
+    if (
+      this.headerDataForm.get('additionalDetails').value[index].value &&
+      this.headerDataForm.get('additionalDetails').value[index].label &&
+      this.labels[
+        this.headerDataForm.get('additionalDetails').value[index].label
+      ]
+    ) {
+      this.filteredValues = of(
+        this.labels[
+          this.headerDataForm.get('additionalDetails').value[index].label
+        ].filter((data) =>
+          data.includes(
+            this.headerDataForm.get('additionalDetails').value[index].value
+          )
+        )
+      );
+    } else {
+      this.filteredValues = of([]);
+    }
+    this.labels[this.changedValues.label]
+      ? this.addNewShow.next(true)
+      : this.addNewShow.next(false);
+  }
+
+  removeLabel(label) {
+    this.rdfService.removeLable$(label).subscribe((response) => {
+      if (response.acknowledge) {
+        this.toastService.show({
+          type: 'success',
+          text: 'Label deleted Successfully'
+        });
+      } else {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Value is not Deleted'
+        });
+      }
+    });
+  }
+  removeValue(value) {
+    this.rdfService
+      .removeValue$({ value: value, label: this.labelSelected })
+      .subscribe((response) => {
+        this.toastService.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+      });
   }
 }

@@ -83,6 +83,176 @@
           </mat-form-field>
         </div>
 
+        <div
+          class="additional-details"
+          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
+        >
+          <p translate="additionalDetails" class="additional-details-text"></p>
+          <button class="add-button" (click)="addAdditionalDetails()">
+            {{ 'add' | translate }}
+          </button>
+        </div>
+        <div
+          class="label-value-text"
+          *ngIf="
+            headerDataForm.get('additionalDetails')['controls']?.length > 0
+          "
+        >
+          <div class="width-45 label">{{ 'label' | translate }}</div>
+          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+        </div>
+        <div
+          class="dis-flex"
+          *ngFor="
+            let additionalDetails of headerDataForm.get('additionalDetails')[
+              'controls'
+            ];
+            let i = index
+          "
+          [formGroup]="additionalDetails"
+          formArrayName="additionalDetails"
+        >
+          <div class="width-45" formGroupName="{{ i }}">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-5 symbol m-b-10 width-100"
+            >
+              <input
+                matInput
+                type="text"
+                formControlName="label"
+                class="example-input"
+                [matAutocomplete]="autolabel"
+              />
+              <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <mat-autocomplete #autolabel="matAutocomplete">
+              <mat-option
+                *ngFor="let label of filteredLabels | async"
+                [value]="label"
+              >
+                {{ label }}
+                <button
+                  mat-button
+                  class="remove-btn"
+                  (click)="removeLabel(label)"
+                >
+                  <span>{{ 'removeBtn' | translate }}</span>
+                </button>
+              </mat-option>
+              <mat-option
+                *ngIf="
+                  headerDataForm.get('additionalDetails')['controls'][i].value
+                    .label
+                "
+              >
+                <ng-container>
+                  <button
+                    mat-button
+                    color="primary"
+                    class="p-0"
+                    (click)="storeDetails()"
+                  >
+                    <mat-icon class="m-r-5">add</mat-icon>
+
+                    <span
+                      >{{ 'addNew' | translate }} ({{
+                        headerDataForm.get('additionalDetails')['controls'][i]
+                          .value.label
+                      }})</span
+                    >
+                  </button>
+                </ng-container>
+                <mat-error
+                  *ngIf="
+                    headerDataForm.get('additionalDetails')['controls'][i].value
+                      .label.length > 25
+                  "
+                >
+                  {{ 'errorExceedLabelMessage' | translate }}
+                </mat-error>
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+
+          <div class="width-45" formGroupName="{{ i }}">
+            <mat-form-field
+              appearance="outline"
+              class="m-l-20 symbol m-b-10 width-100"
+            >
+              <input
+                matInput
+                type="text"
+                formControlName="value"
+                [matAutocomplete]="autoValue"
+                class="example-input"
+                (click)="valueOptionClick(i)"
+              />
+              <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+            </mat-form-field>
+            <mat-autocomplete #autoValue="matAutocomplete">
+              <ng-container *ngIf="addNewShow | async">
+                <mat-option
+                  *ngFor="let value of filteredValues | async"
+                  [value]="value"
+                >
+                  {{ value }}
+                  <button
+                    mat-button
+                    class="remove-btn"
+                    (click)="removeValue(value)"
+                  >
+                    <span>{{ 'removeBtn' | translate }}</span>
+                  </button>
+                </mat-option>
+
+                <mat-option
+                  *ngIf="
+                    headerDataForm.get('additionalDetails')['controls'][i][
+                      'value'
+                    ].value
+                  "
+                >
+                  <ng-container *ngIf="filteredValues | async">
+                    <button
+                      mat-button
+                      color="primary"
+                      class="p-0"
+                      (click)="storeDetails()"
+                    >
+                      <mat-icon class="m-r-5">add</mat-icon>
+
+                      <span
+                        >{{ 'addNew' | translate }} ({{
+                          headerDataForm.get('additionalDetails')['controls'][
+                            i
+                          ]['value'].value
+                        }})</span
+                      >
+                    </button>
+                    <mat-error
+                      *ngIf="
+                        headerDataForm.get('additionalDetails')['controls'][i][
+                          'value'
+                        ].value.length > 40
+                      "
+                    >
+                      {{ 'errorExceedValueMessage' | translate }}
+                    </mat-error>
+                  </ng-container>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </div>
+          <div class="width-10 cancel-icon">
+            <svg-icon
+              icon="icon-closeIcon"
+              class="close-icon"
+              (click)="deleteAdditionalDetails(i)"
+            ></svg-icon>
+          </div>
+        </div>
+
         <div mat-dialog-actions align="end" class="buttons">
           <button
             mat-stroked-button
