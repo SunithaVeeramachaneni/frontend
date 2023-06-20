@@ -422,14 +422,14 @@
               "
               [disabled]="data?.type === 'issue'"
             >
-              <ng-container *ngIf="data?.type === 'issue'; else elseActions">
+              <ng-container *ngIf="data?.type === 'issue'; else actions">
                 <mat-option
                   *ngFor="let priority of priorities"
                   [value]="priority"
                   >{{ priority }}</mat-option
                 >
               </ng-container>
-              <ng-template #elseActions>
+              <ng-template #actions>
                 <mat-option
                   [value]="priority"
                   *ngFor="let priority of priorities | slice : 1 : 4"
