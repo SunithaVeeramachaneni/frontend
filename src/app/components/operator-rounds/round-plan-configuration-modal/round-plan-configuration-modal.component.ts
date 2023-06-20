@@ -42,6 +42,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
+import { head } from 'lodash-es';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -208,11 +209,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       })
     );
 
-    this.headerDataForm.setControl(
-      'additionalDetails',
-      this.fb.array(updatedAdditionalDetails)
-    );
-
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -239,6 +235,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         BuilderConfigurationActions.addFormMetadata({
           formMetadata: {
             ...this.headerDataForm.value,
+            additionalDetails: updatedAdditionalDetails,
             plant: plant.name,
             moduleName: 'rdf'
           },
@@ -255,6 +252,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
+            additionalDetails: updatedAdditionalDetails,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
             formLogo: 'assets/img/svg/round-plans-icon.svg'
@@ -355,18 +353,37 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     add.removeAt(index);
   }
 
-  storeDetails() {
+  storeDetails(i) {
     this.operatorRoundsService
       .createAdditionalDetails$(this.changedValues)
       .subscribe(
         (response) => {
-          this.toastService.show({
-            type: 'success',
-            text: 'Additional details stored successfully'
-          });
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+
+          additionalinfoArray.at(i).get('label').setValue(response.label);
         },
         (error) => {
-          this.toastService.show({ type: 'warning', text: error });
+          throw error;
+        }
+      );
+    this.retrieveDetails();
+  }
+
+  storeValueDetails(i) {
+    this.operatorRoundsService
+      .createAdditionalDetails$(this.changedValues)
+      .subscribe(
+        (response) => {
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+
+          additionalinfoArray.at(i).get('value').setValue(response.value);
+        },
+        (error) => {
+          throw error;
         }
       );
     this.retrieveDetails();
@@ -434,7 +451,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
   removeValue(value) {
     this.operatorRoundsService
-      .removeValue$({ value: value, label: this.labelSelected })
+      .removeValue$({ value, label: this.labelSelected })
       .subscribe((response) => {
         if (response.acknowledge) {
           this.toastService.show({

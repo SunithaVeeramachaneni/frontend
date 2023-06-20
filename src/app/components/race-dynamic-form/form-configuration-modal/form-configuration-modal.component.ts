@@ -227,10 +227,6 @@ export class FormConfigurationModalComponent implements OnInit {
       })
     );
 
-    this.headerDataForm.setControl(
-      'additionalDetails',
-      this.fb.array(updatedAdditionalDetails)
-    );
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -255,7 +251,11 @@ export class FormConfigurationModalComponent implements OnInit {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         BuilderConfigurationActions.addFormMetadata({
-          formMetadata: { ...this.headerDataForm.value, plant: plant.name },
+          formMetadata: {
+            ...this.headerDataForm.value,
+            additionalDetails: updatedAdditionalDetails,
+            plant: plant.name
+          },
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
         })
@@ -269,6 +269,7 @@ export class FormConfigurationModalComponent implements OnInit {
         BuilderConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
+            additionalDetails: updatedAdditionalDetails,
             pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'

@@ -258,6 +258,17 @@ export class TemplateConfigurationModalComponent implements OnInit {
     );
 
   next() {
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    const updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => ({
+        FIELDLABEL: additionalinfo.label,
+        DEFAULTVALUE: additionalinfo.value,
+        UIFIELDTYPE: 'LF'
+      })
+    );
+
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -277,6 +288,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
       this.rdfService
         .createTemplate$({
           ...this.headerDataForm.value,
+          additionalDetails: updatedAdditionalDetails,
           author: userEmail,
           formLogo: 'assets/rdf-forms-icons/formlogo.svg'
         })
