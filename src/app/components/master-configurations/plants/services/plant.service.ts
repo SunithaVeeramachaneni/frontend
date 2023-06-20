@@ -43,7 +43,7 @@ export class PlantService {
         const timeZoneMapping = {};
         for (const plant of res.items) {
           if (plant.id && plant.timeZone) {
-            if (!!Object.keys(plant.timeZone).length) {
+            if (Object.keys(plant.timeZone).length !== 0) {
               timeZoneMapping[plant.id] = plant.timeZone;
             }
           }
