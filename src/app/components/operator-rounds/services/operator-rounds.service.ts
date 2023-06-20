@@ -586,7 +586,9 @@ export class OperatorRoundsService {
           },
           condition: true
         },
-        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
+        dueDateDisplay: p.dueDate
+          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks

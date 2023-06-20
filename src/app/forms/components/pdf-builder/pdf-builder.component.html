@@ -160,7 +160,8 @@
           </div>
           <button mat-raised-button class="publish-btn" (click)="publish()" [disabled]="
               formStatus === 'Published' ||
-              props.authoredFormDetail.isFormDetailPublished
+              props.authoredFormDetail.isFormDetailPublished ||
+              (getAssetsLocationsTasksAdded && data.moduleName !== 'RDF')
             ">
             <span>
               <svg-icon icon="icon-upload-white" class="publish-btn-icon"></svg-icon>
