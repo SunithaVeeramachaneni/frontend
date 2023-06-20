@@ -311,5 +311,6 @@
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
   "link": "Link",
-  "raiseNotification": "Raise Notification"
+  "raiseNotification": "Raise Notification",
+  "standaloneSubText": "On Publishing form will show in mInspections app"
 }
