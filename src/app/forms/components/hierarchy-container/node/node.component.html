@@ -7,9 +7,9 @@
 >
   <div
     class="parentNode node"
-    [ngClass]="{ active: selectedNode.id === node.id }"
-    [attr.data-id]="node.id"
-    [attr.id]="'node-' + node.id"
+    [ngClass]="{ active: selectedNode && node && selectedNode.id === node.id }"
+    [attr.data-id]="node ? node.id : null"
+    [attr.id]="node ? 'node-' + node.id : null"
   >
     <div class="left">
       <svg-icon
@@ -67,7 +67,9 @@
     <div class="right">
       <span
         class="nodeCount"
-        [ngClass]="{ nodeCountInvert: selectedNode.id === node.id }"
+        [ngClass]="{
+          nodeCountInvert: selectedNode && node && selectedNode.id === node.id
+        }"
       >
         {{ getTasksCountByNode(node) }}
       </span>
