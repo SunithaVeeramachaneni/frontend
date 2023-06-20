@@ -284,16 +284,6 @@
     width: 94%;
     justify-content: center;
 
-    .schedule-button {
-      width: 48%;
-      background-color: $blue-main;
-    }
-
-    .schedule-button:disabled {
-      background-color: $gray2-bg;
-      color: $gray7;
-    }
-
     .cancel-button {
       width: 48%;
       margin-right: 10px;
@@ -361,4 +351,19 @@
 ::ng-deep .mat-card > :last-child:not(.mat-card-footer),
 .mat-card-content > :last-child:not(.mat-card-footer) {
   margin-bottom: 70px;
+}
+
+.schedule-button {
+  width: 100%;
+  background-color: $blue-main;
+  color: $white;
+}
+
+.schedule-button:disabled {
+  background-color: $gray2-bg;
+  color: $gray7;
+}
+
+.date-flex {
+  display: flex;
 }
