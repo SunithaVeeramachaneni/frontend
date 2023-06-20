@@ -24,7 +24,7 @@ import {
 import {
   formConfigurationStatus,
   LIST_LENGTH,
-  newDateFormat
+  dateFormat2
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
@@ -741,7 +741,7 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), newDateFormat)
+          ? format(new Date(p.dueDate), dateFormat2)
           : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
           p.totalTasks > 0

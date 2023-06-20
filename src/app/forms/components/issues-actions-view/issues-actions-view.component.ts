@@ -42,7 +42,7 @@ import {
   getTimezoneUTC,
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
-import { newDateTimeFormat } from 'src/app/app.constants';
+import { dateTimeFormat2 } from 'src/app/app.constants';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -416,7 +416,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       });
     }
     this.issuesActionsDetailViewForm.patchValue({
-      [formControlDateField]: format(event.value, newDateTimeFormat)
+      [formControlDateField]: format(event.value, dateTimeFormat2)
     });
     this.issuesActionsDetailViewForm.markAsDirty();
   }
@@ -749,10 +749,10 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
         this.plantTimezoneMap[
           this.issuesActionsDetailViewForm.get('plantId').value
         ],
-        newDateTimeFormat
+        dateTimeFormat2
       );
     }
-    return format(new Date(date), newDateTimeFormat);
+    return format(new Date(date), dateTimeFormat2);
   }
 
   ngOnDestroy(): void {
@@ -870,7 +870,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (this.data?.id === currentChatSelectedId) {
       const newMessage = {
         ...data,
-        createdAt: format(new Date(data?.createdAt), newDateTimeFormat),
+        createdAt: format(new Date(data?.createdAt), dateTimeFormat2),
         message:
           data.type === 'Object' ? JSON.parse(data?.message) : data?.message
       };

@@ -53,8 +53,11 @@ import {
 import {
   formConfigurationStatus,
   graphQLRoundsOrInspectionsLimit,
-  newDateFormat,
-  permissions as perms
+  dateFormat2,
+  dateTimeFormat3,
+  permissions as perms,
+  dateFormat5,
+  hourFormat
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -622,7 +625,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              'yyyy-MM-dd 00:00:00'
+              dateTimeFormat3
             )
           );
           this.selectedDate = { ...this.selectedDate, date: dueDate };
@@ -855,7 +858,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   dateChangeHandler(dueDate: Date) {
     const { inspectionId, assignedToEmail, plantId, ...rest } =
       this.selectedFormInfo;
-    const dueDateDisplayFormat = format(dueDate, newDateFormat);
+    const dueDateDisplayFormat = format(dueDate, dateFormat2);
     if (
       plantId &&
       this.plantTimezoneMap[plantId] &&
@@ -864,10 +867,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
       const time = localToTimezoneDate(
         this.selectedFormInfo.dueDate,
         this.plantTimezoneMap[this.selectedFormInfo.plantId],
-        'HH:00:00'
+        hourFormat
       );
       dueDate = zonedTimeToUtc(
-        format(dueDate, 'yyyy-MM-dd') + ` ${time}`,
+        format(dueDate, dateFormat5) + ` ${time}`,
         this.plantTimezoneMap[this.selectedFormInfo.plantId].timeZoneIdentifier
       );
     }
@@ -916,9 +919,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        newDateFormat
+        dateFormat2
       );
     }
-    return format(new Date(date), newDateFormat);
+    return format(new Date(date), dateFormat2);
   }
 }

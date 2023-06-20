@@ -47,6 +47,13 @@ import {
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
 import { zonedTimeToUtc } from 'date-fns-tz';
+import {
+  dateFormat3,
+  dateFormat4,
+  dateFormat5,
+  dateTimeFormat3,
+  hourFormat
+} from 'src/app/app.constants';
 
 export interface ScheduleConfig {
   roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -150,7 +157,7 @@ export class RoundPlanScheduleConfigurationComponent
       scheduleEndType: 'on',
       scheduleEndOn: [
         {
-          value: format(addDays(new Date(), 29), 'MMM d, yyyy'),
+          value: format(addDays(new Date(), 29), dateFormat4),
           disabled: true
         }
       ],
@@ -160,11 +167,11 @@ export class RoundPlanScheduleConfigurationComponent
         [Validators.required, Validators.min(1)]
       ],
       scheduleEndOccurrencesText: [{ value: 'occurrences', disabled: true }],
-      startDate: format(new Date(), 'd MMMM yyyy'),
+      startDate: format(new Date(), dateFormat3),
       startDatePicker: new Date(),
       endDate: [
         {
-          value: format(addDays(new Date(), 30), 'd MMMM yyyy'),
+          value: format(addDays(new Date(), 30), dateFormat3),
           disabled: true
         }
       ],
@@ -240,7 +247,7 @@ export class RoundPlanScheduleConfigurationComponent
                     localToTimezoneDate(
                       new Date(),
                       this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                      'yyyy-MM-dd 00:00:00'
+                      dateTimeFormat3
                     )
                   ),
                   scheduled: false
@@ -267,7 +274,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 29),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'MMM d, yyyy'
+                  dateFormat4
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -277,7 +284,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 29),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'MMM d, yyyy'
+                    dateFormat4
                   )
                 )
               );
@@ -290,7 +297,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 29),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -300,7 +307,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 29),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'd MMMM yyyy'
+                    dateFormat3
                   )
                 )
               );
@@ -313,7 +320,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 90),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'MMM d, yyyy'
+                  dateFormat4
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -323,7 +330,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 90),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'MMM d, yyyy'
+                    dateFormat4
                   )
                 )
               );
@@ -344,7 +351,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 90),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -354,7 +361,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 90),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'd MMMM yyyy'
+                    dateFormat3
                   )
                 )
               );
@@ -367,7 +374,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 364),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'MMM d, yyyy'
+                  dateFormat4
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -377,7 +384,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 364),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'MMM d, yyyy'
+                    dateFormat4
                   )
                 )
               );
@@ -391,7 +398,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   addDays(new Date(), 364),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               );
             this.roundPlanSchedulerConfigForm
@@ -401,7 +408,7 @@ export class RoundPlanScheduleConfigurationComponent
                   localToTimezoneDate(
                     addDays(new Date(), 364),
                     this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                    'd MMMM yyyy'
+                    dateFormat3
                   )
                 )
               );
@@ -474,7 +481,7 @@ export class RoundPlanScheduleConfigurationComponent
                     1
                 ),
                 this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                'd MMMM yyyy'
+                dateFormat3
               )
             );
           this.roundPlanSchedulerConfigForm
@@ -490,7 +497,7 @@ export class RoundPlanScheduleConfigurationComponent
                       1
                   ),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               )
             );
@@ -560,7 +567,7 @@ export class RoundPlanScheduleConfigurationComponent
         this.roundPlanSchedulerConfigForm.getRawValue();
       const { id, startDate, endDate, scheduleEndOn } =
         roundPlanSchedulerConfig;
-      let time = format(new Date(), 'HH:00:00');
+      let time = format(new Date(), hourFormat);
       const {
         startDatePicker,
         scheduleEndOnPicker,
@@ -586,23 +593,23 @@ export class RoundPlanScheduleConfigurationComponent
         time = localToTimezoneDate(
           new Date(),
           this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-          'HH:00:00'
+          hourFormat
         );
 
         startDateByPlantTimezone = zonedTimeToUtc(
-          format(new Date(startDate), 'yyyy-MM-dd') + ` ${time}`,
+          format(new Date(startDate), dateFormat5) + ` ${time}`,
           this.plantTimezoneMap[this.roundPlanDetail?.plantId]
             ?.timeZoneIdentifier
         ).toISOString();
 
         endDateByPlantTimezone = zonedTimeToUtc(
-          format(new Date(endDate), 'yyyy-MM-dd') + ` ${time}`,
+          format(new Date(endDate), dateFormat5) + ` ${time}`,
           this.plantTimezoneMap[this.roundPlanDetail?.plantId]
             ?.timeZoneIdentifier
         ).toISOString();
 
         scheduleEndOnByPlantTimezone = zonedTimeToUtc(
-          format(new Date(scheduleEndOn), 'yyyy-MM-dd') + ` ${time}`,
+          format(new Date(scheduleEndOn), dateFormat5) + ` ${time}`,
           this.plantTimezoneMap[this.roundPlanDetail?.plantId]
             ?.timeZoneIdentifier
         ).toISOString();
@@ -672,8 +679,8 @@ export class RoundPlanScheduleConfigurationComponent
     this.roundPlanSchedulerConfigForm.patchValue({
       [formControlDateField]:
         formControlDateField !== 'scheduleEndOn'
-          ? format(event.value, 'd MMMM yyyy')
-          : format(event.value, 'MMM d, yyyy')
+          ? format(event.value, dateFormat3)
+          : format(event.value, dateFormat4)
     });
     this.roundPlanSchedulerConfigForm.markAsDirty();
   }
@@ -717,37 +724,37 @@ export class RoundPlanScheduleConfigurationComponent
               startDate: localToTimezoneDate(
                 new Date(startDate),
                 this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                'd MMMM yyyy'
+                dateFormat3
               ),
               endDate: localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                'd MMMM yyyy'
+                dateFormat3
               ),
               scheduleEndOn: localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                'MMM d, yyyy'
+                dateFormat4
               ),
               startDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(startDate),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               ),
               endDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(endDate),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'd MMMM yyyy'
+                  dateFormat3
                 )
               ),
               scheduleEndOnPicker: new Date(
                 localToTimezoneDate(
                   new Date(scheduleEndOn),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'MMM d, yyyy'
+                  dateFormat4
                 )
               )
             };
@@ -757,7 +764,7 @@ export class RoundPlanScheduleConfigurationComponent
                 localToTimezoneDate(
                   new Date(scheduleByDate.date),
                   this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-                  'yyyy-MM-dd 00:00:00'
+                  dateTimeFormat3
                 )
               )
             }));
@@ -786,17 +793,17 @@ export class RoundPlanScheduleConfigurationComponent
         startDate: localToTimezoneDate(
           new Date(),
           this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-          'd MMMM yyyy'
+          dateFormat3
         ),
         endDate: localToTimezoneDate(
           addDays(new Date(), 30),
           this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-          'd MMMM yyyy'
+          dateFormat3
         ),
         scheduleEndOn: localToTimezoneDate(
           addDays(new Date(), 29),
           this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-          'MMM d, yyyy'
+          dateFormat4
         ),
         daysOfWeek: [
           getDayTz(
@@ -808,29 +815,29 @@ export class RoundPlanScheduleConfigurationComponent
           localToTimezoneDate(
             new Date(),
             this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-            'd MMMM yyyy'
+            dateFormat3
           )
         ),
         endDatePicker: new Date(
           localToTimezoneDate(
             addDays(new Date(), 30),
             this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-            'd MMMM yyyy'
+            dateFormat3
           )
         ),
         scheduleEndOnPicker: new Date(
           localToTimezoneDate(
             addDays(new Date(), 29),
             this.plantTimezoneMap[this.roundPlanDetail?.plantId],
-            'MMM d, yyyy'
+            dateFormat4
           )
         )
       };
     } else {
       return {
-        startDate: format(new Date(), 'd MMMM yyyy'),
-        endDate: format(addDays(new Date(), 30), 'd MMMM yyyy'),
-        scheduleEndOn: format(addDays(new Date(), 29), 'MMM d, yyyy'),
+        startDate: format(new Date(), dateFormat3),
+        endDate: format(addDays(new Date(), 30), dateFormat3),
+        scheduleEndOn: format(addDays(new Date(), 29), dateFormat4),
         daysOfWeek: [getDay(new Date())],
         startDatePicker: new Date(),
         endDatePicker: addDays(new Date(), 30),
@@ -878,13 +885,13 @@ export class RoundPlanScheduleConfigurationComponent
   prepareScheduleByDates() {
     return this.scheduleByDates.map((scheduleByDate) => {
       let dateByPlantTimezone = new Date(
-        format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00')
+        format(scheduleByDate.date, dateTimeFormat3)
       );
       if (
         this.plantTimezoneMap[this.roundPlanDetail?.plantId]?.timeZoneIdentifier
       ) {
         dateByPlantTimezone = zonedTimeToUtc(
-          format(scheduleByDate.date, 'yyyy-MM-dd 00:00:00'),
+          format(scheduleByDate.date, dateTimeFormat3),
           this.plantTimezoneMap[this.roundPlanDetail?.plantId]
             ?.timeZoneIdentifier
         );

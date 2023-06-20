@@ -57,8 +57,11 @@ import {
   formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
-  newDateFormat,
-  permissions as perms
+  dateFormat2,
+  dateTimeFormat3,
+  permissions as perms,
+  dateFormat5,
+  hourFormat
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -566,10 +569,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        newDateFormat
+        dateFormat2
       );
     }
-    return format(new Date(date), newDateFormat);
+    return format(new Date(date), dateFormat2);
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -597,7 +600,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              'yyyy-MM-dd 00:00:00'
+              dateTimeFormat3
             )
           );
           this.selectedDate = { ...this.selectedDate, date: dueDate };
@@ -903,7 +906,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   dateChangeHandler(dueDate: Date) {
     const { roundId, assignedToEmail, plantId, ...rest } =
       this.selectedRoundInfo;
-    const dueDateDisplayFormat = format(dueDate, newDateFormat);
+    const dueDateDisplayFormat = format(dueDate, dateFormat2);
     if (
       plantId &&
       this.plantTimezoneMap[plantId] &&
@@ -912,10 +915,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       const time = localToTimezoneDate(
         this.selectedRoundInfo.dueDate,
         this.plantTimezoneMap[this.selectedRoundInfo.plantId],
-        'HH:00:00'
+        hourFormat
       );
       dueDate = zonedTimeToUtc(
-        format(dueDate, 'yyyy-MM-dd') + ` ${time}`,
+        format(dueDate, dateFormat5) + ` ${time}`,
         this.plantTimezoneMap[this.selectedRoundInfo.plantId].timeZoneIdentifier
       );
     }

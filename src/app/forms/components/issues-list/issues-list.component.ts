@@ -38,7 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
-  newDateTimeFormat,
+  dateTimeFormat2,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -499,10 +499,10 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[issue.plantId],
-        newDateTimeFormat
+        dateTimeFormat2
       );
     }
-    return format(new Date(date), newDateTimeFormat);
+    return format(new Date(date), dateTimeFormat2);
   }
 
   getIssuesList() {
