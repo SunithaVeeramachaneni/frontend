@@ -242,8 +242,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
   nextToken = '';
   userInfo$: Observable<UserInfo>;
   allPlants: any[];
-  allParentsAssets: any[] = [];
-  allParentsLocations: any[] = [];
+
+  allParentsAssets: any = { data: [] };
+  allParentsLocations: any = { data: [] };
 
   isPopoverOpen = false;
   filterJson = [];
@@ -360,10 +361,12 @@ export class AssetsListComponent implements OnInit, OnDestroy {
           { items: allAssets = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations = allLocations.filter(
+          this.allParentsLocations.data = allLocations.filter(
             (location) => !location._deleted
           );
-          this.allParentsAssets = allAssets.filter((asset) => !asset._deleted);
+          this.allParentsAssets.data = allAssets.filter(
+            (asset) => !asset._deleted
+          );
           this.dataLoadingComplete = true;
 
           if (this.skip === 0) {
@@ -383,13 +386,20 @@ export class AssetsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsAssets = {
+                  data: [...newForm, ...this.allParentsAssets.data]
+                };
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsAssets.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsAssets.data[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -438,6 +448,7 @@ export class AssetsListComponent implements OnInit, OnDestroy {
 
   addOrUpdateAssets(assetData) {
     if (assetData.status === 'add') {
+      this.addEditCopyDeleteAssets = true;
       if (this.searchAssets.value) {
         this.assetService.fetchAssets$.next({ data: 'search' });
       } else {
@@ -450,7 +461,6 @@ export class AssetsListComponent implements OnInit, OnDestroy {
         text: 'Asset created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteAssets = true;
       this.assetsCountUpdate$.next(1);
     } else if (assetData.status === 'edit') {
       this.addEditCopyDeleteAssets = true;
@@ -597,11 +607,11 @@ export class AssetsListComponent implements OnInit, OnDestroy {
     this.assetService.fetchAllAssets$().subscribe((allAssets) => {
       const objectKeys = Object.keys(allAssets);
       if (objectKeys.length > 0) {
-        this.allParentsAssets = allAssets.items.filter(
+        this.allParentsAssets.data = allAssets.items.filter(
           (asset) => !asset._deleted
         );
       } else {
-        this.allParentsAssets = [];
+        this.allParentsAssets.data = [];
       }
     });
   }
@@ -639,7 +649,9 @@ export class AssetsListComponent implements OnInit, OnDestroy {
       if (data.parentType) {
         const isParentLocation = data.parentType.toLowerCase() === 'location';
         const parent = (
-          isParentLocation ? this.allParentsLocations : this.allParentsAssets
+          isParentLocation
+            ? this.allParentsLocations.data
+            : this.allParentsAssets.data
         ).find((item) => item.id === data.parentId);
 
         if (parent) {

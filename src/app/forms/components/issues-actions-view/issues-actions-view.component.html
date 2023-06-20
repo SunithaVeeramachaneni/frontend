@@ -422,11 +422,20 @@
               "
               [disabled]="data?.type === 'issue'"
             >
-              <mat-option
-                *ngFor="let priority of priorities"
-                [value]="priority"
-                >{{ priority }}</mat-option
-              >
+              <ng-container *ngIf="data?.type === 'issue'; else actions">
+                <mat-option
+                  *ngFor="let priority of priorities"
+                  [value]="priority"
+                  >{{ priority }}</mat-option
+                >
+              </ng-container>
+              <ng-template #actions>
+                <mat-option
+                  [value]="priority"
+                  *ngFor="let priority of priorities | slice : 1 : 4"
+                  >{{ priority }}
+                </mat-option>
+              </ng-template>
             </mat-select>
           </mat-form-field>
         </div>
