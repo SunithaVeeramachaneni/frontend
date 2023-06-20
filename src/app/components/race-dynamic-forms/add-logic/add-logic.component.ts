@@ -218,6 +218,14 @@ export class AddLogicComponent implements OnInit, OnChanges {
             control.push(this.fb.control(q));
           }
         });
+        controlRaw
+          .slice()
+          .reverse()
+          .forEach((q, i) => {
+            if (!result.selectedQuestions.includes(q)) {
+              control.removeAt(controlRaw.length - 1 - i);
+            }
+          });
         logic.patchValue({
           action: result.type,
           mandateQuestions: result.selectedQuestions,
@@ -232,6 +240,14 @@ export class AddLogicComponent implements OnInit, OnChanges {
             control.push(this.fb.control(q));
           }
         });
+        controlRaw
+          .slice()
+          .reverse()
+          .forEach((q, i) => {
+            if (!result.selectedQuestions.includes(q)) {
+              control.removeAt(controlRaw.length - 1 - i);
+            }
+          });
         logic.patchValue({
           action: result.type,
           hideQuestions: result.selectedQuestions
