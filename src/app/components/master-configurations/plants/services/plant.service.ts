@@ -23,6 +23,7 @@ export class PlantService {
   plantTimeZoneMapping$ = new BehaviorSubject<any>({});
   plantMasterData$ = new BehaviorSubject<any>({});
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
@@ -41,8 +42,11 @@ export class PlantService {
       this.fetchAllPlants$().subscribe((res) => {
         const timeZoneMapping = {};
         for (const plant of res.items) {
-          if (plant.id && plant.timeZone)
-            timeZoneMapping[plant.id] = plant.timeZone;
+          if (plant.id && plant.timeZone) {
+            if (!!Object.keys(plant.timeZone).length) {
+              timeZoneMapping[plant.id] = plant.timeZone;
+            }
+          }
         }
         this.plantTimeZoneMapping$.next(timeZoneMapping);
       });

@@ -158,6 +158,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe((data) => {
         this.plantTimezoneMap = data;
