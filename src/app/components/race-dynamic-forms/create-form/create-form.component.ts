@@ -416,9 +416,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     hideQuestions: this.fb.array(hideQuestionsFormArray),
                     validationMessage: logic.validationMessage || '',
                     askEvidence: logic.askEvidence || '',
-                    raiseNotification:logic?.raiseNotification || false,
+                    raiseNotification: logic?.raiseNotification || false,
                     triggerInfo: logic?.triggerInfo || '',
-                    triggerWhen: logic?.triggerWhen || '',
+                    triggerWhen: logic?.triggerWhen || ''
                   });
                 });
               }
@@ -1168,7 +1168,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   if (response.includes(que.id)) {
                     publishedCount++;
                     que.isPublished = true;
-                    que.isPublishedTillSave = false; // It need to set to true for time being setting to false  to update the logic questions after post
+                    que.isPublishedTillSave = true;
                   }
                 });
               });
