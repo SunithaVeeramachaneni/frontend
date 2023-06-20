@@ -341,6 +341,15 @@
   .mt-12 {
     margin-top: 12px;
   }
+  .shift-dropdown {
+    color: $black;
+    font-weight: 500;
+    font-size: 110%;
+  }
+}
+
+::ng-deep .float-right {
+  float: right;
 }
 
 ::ng-deep .assign-menu + * .mat-menu-panel {

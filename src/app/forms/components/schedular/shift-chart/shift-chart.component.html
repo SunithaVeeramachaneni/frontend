@@ -1,16 +1,1 @@
-<div>
-  <div id="shift-container" translate="shifts"></div>
-  <div>
-    <mat-form-field class="width-100" appearance="outline">
-      <mat-label translate="shifts"></mat-label>
-      <mat-select [formControl]="shifts" multiple>
-        <mat-option
-          [value]="shifts.id"
-          *ngFor="let shifts of shiftsInformation"
-          [value]="shifts"
-          >{{ shifts.shiftsId }} - {{ shifts.name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-  </div>
-</div>
+<div id="shift-container">Shift chart here...</div>

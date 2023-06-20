@@ -313,6 +313,36 @@
           </div>
         </ng-container>
         <ng-container>
+          <div>
+            <div class="shift-dropdown" translate="shifts"></div>
+            <div>
+              <mat-form-field class="width-100" appearance="outline">
+                <mat-label translate="shifts"></mat-label>
+                <mat-select [formControl]="shiftsSelected" multiple>
+                  <mat-option
+                    [value]="shifts?.id"
+                    *ngFor="let shifts of shiftsInformation"
+                    >{{ shifts?.name }}
+                    <span class="float-right">
+                      {{ shifts?.startTime }} - {{ shifts?.endTime }}
+                    </span></mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <p translate="doNotSelectAnyShift"></p>
+            <div class="mt-12" *ngIf="!isShiftsSelected">
+              <h1>{{ 'whenToRunRounds' | translate }}</h1>
+              <p class="margin-3" translate="selectSlotsBelow"></p>
+            </div>
+            <div class="mt-12" *ngIf="isShiftsSelected">
+              <h1 translate="roundGenerationSlots"></h1>
+              <p
+                class="margin-3"
+                translate="defaultSlotInMultipleSlotsWithoutOverlapping"
+              ></p>
+            </div>
+          </div>
           <app-shift-chart></app-shift-chart>
         </ng-container>
         <ng-container>

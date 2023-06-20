@@ -12,7 +12,13 @@ import {
   SimpleChanges,
   OnDestroy
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import {
   MatCalendar,
   MatDatepickerInputEvent
@@ -44,6 +50,7 @@ import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedul
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
 import { scheduleConfigs } from './schedule-configuration.constants';
 import { Subject } from 'rxjs';
+import { ShiftService } from 'src/app/components/master-configurations/shifts/services/shift.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -114,6 +121,21 @@ export class ScheduleConfigurationComponent
   };
   dropdownPosition: any;
   selectedDetails: any = {};
+  shiftsSelected = new FormControl('');
+  shiftsInformation: {
+    id: string;
+    name: string;
+    isActive: boolean;
+    startTime: string;
+    endTime: string;
+    searchTerm: string;
+    createdAt: string;
+    createdBy: string;
+    updatedAt: string;
+    _deleted: null | boolean;
+    _lastChangedAt: number;
+    _version: number;
+  }[] = [];
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -123,7 +145,8 @@ export class ScheduleConfigurationComponent
     private rpscService: RoundPlanScheduleConfigurationService,
     private cdrf: ChangeDetectorRef,
     private dialog: MatDialog,
-    private readonly formScheduleConfigurationService: FormScheduleConfigurationService
+    private readonly formScheduleConfigurationService: FormScheduleConfigurationService,
+    private readonly shiftService: ShiftService
   ) {
     this.initDetails();
   }
@@ -136,6 +159,15 @@ export class ScheduleConfigurationComponent
       this.formName = this.roundPlanDetail?.name || '';
       this.selectedDetails = this.roundPlanDetail;
     }
+    if (this.selectedDetails) {
+      this.getAllShiftsData();
+    }
+  }
+
+  getAllShiftsData(): void {
+    this.shiftService.fetchAllShifts$().subscribe((shifts) => {
+      this.shiftsInformation = shifts?.items || [];
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -760,6 +792,10 @@ export class ScheduleConfigurationComponent
         Validators.max(this.roundsGeneration.max)
       ]);
     this.schedulerConfigForm.get(key).updateValueAndValidity();
+  }
+
+  get isShiftsSelected(): boolean {
+    return this.shiftsSelected?.value?.length > 0;
   }
 
   ngOnDestroy(): void {
