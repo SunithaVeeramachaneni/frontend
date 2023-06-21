@@ -194,6 +194,11 @@ export class RdfService {
             isPublishedTillSave
           } = question;
 
+          if (isPublishedTillSave) {
+            return null;
+          }
+
+
           const {
             expression,
             validationMessage,
@@ -533,23 +538,16 @@ export class RdfService {
       // Hide Questions;
       const hiddenQuestions = logic.hideQuestions;
       if (hiddenQuestions && hiddenQuestions.length) {
-        let operand2Val = '';
-        if (!logic.operand2.length) {
-          operand2Val = 'EMPTY';
-        } else {
-          operand2Val = `(V)${logic.operand2}`;
-        }
-        let hideExpression = '';
         hiddenQuestions.forEach((hq, index) => {
-          if (index === 0) {
-            hideExpression = `(HI) ${questionId} IF ${hq} ${logic.operator} ${operand2Val}`;
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            hideExpression = `${hideExpression} OR ${hq} ${logic.operator} ${operand2Val}`;
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
           }
         });
-        globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:${hideExpression}`;
       }
+
 
       // Ask Evidence;
       const evidenceQuestion = logic.askEvidence;
