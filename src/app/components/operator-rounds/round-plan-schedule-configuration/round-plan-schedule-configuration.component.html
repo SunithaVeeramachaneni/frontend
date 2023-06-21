@@ -206,7 +206,12 @@
           >
             <mat-label translate>endDate</mat-label>
             <input matInput formControlName="endDate" readonly />
-            <input matInput [matDatepicker]="endDate" hidden />
+            <input
+              matInput
+              [matDatepicker]="endDate"
+              formControlName="endDatePicker"
+              hidden
+            />
             <mat-datepicker-toggle
               matIconSuffix
               [for]="endDate"
@@ -231,6 +236,18 @@
             ></mat-calendar>
           </div>
         </ng-container>
+        <p translate class="field-info" translate>plantCreated</p>
+        <div class="field-name">{{ roundPlanDetail?.plant }}</div>
+        <p translate class="field-info" translate>timeZone</p>
+        <div class="field-name">
+          <span *ngIf="this.plantTimezoneMap[roundPlanDetail?.plantId]">
+            {{
+              this.plantTimezoneMap[roundPlanDetail.plantId].description
+            }}</span
+          ><span *ngIf="!this.plantTimezoneMap[roundPlanDetail?.plantId]">{{
+            placeHolder
+          }}</span>
+        </div>
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">
             <div class="dis-flex">

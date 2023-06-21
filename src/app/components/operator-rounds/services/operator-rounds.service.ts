@@ -22,7 +22,7 @@ import {
   UsersInfoByEmail,
   Count
 } from '../../../interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -569,7 +569,7 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          ? format(new Date(p.dueDate), dateFormat2)
           : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
