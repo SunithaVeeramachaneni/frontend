@@ -17,6 +17,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -52,7 +53,11 @@ import {
 import {
   formConfigurationStatus,
   graphQLRoundsOrInspectionsLimit,
-  permissions as perms
+  dateFormat2,
+  dateTimeFormat3,
+  permissions as perms,
+  dateFormat5,
+  hourFormat
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -67,6 +72,9 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
 import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '../../user-management/services/users.service';
 import { format } from 'date-fns';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-inspection',
@@ -334,6 +342,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
@@ -351,6 +360,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   hideInspectionDetail: boolean;
   formId: string;
   inspectionId = '';
+  plantTimezoneMap = {};
 
   plants = [];
   plantsIdNameMap = {};
@@ -374,10 +384,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
+
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -443,9 +460,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
-            dueDate: inspectionDetail.dueDate
-              ? new Date(inspectionDetail.dueDate)
-              : '',
+            dueDateDisplay: this.formatDate(
+              inspectionDetail.dueDate,
+              inspectionDetail.plantId
+            ),
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
@@ -455,9 +473,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((inspectionDetail) => ({
               ...inspectionDetail,
-              dueDate: inspectionDetail.dueDate
-                ? new Date(inspectionDetail.dueDate)
-                : '',
+              dueDateDisplay: this.formatDate(
+                inspectionDetail.dueDate,
+                inspectionDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
@@ -576,6 +595,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -596,6 +616,20 @@ export class InspectionComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (
+          row.plantId &&
+          this.plantTimezoneMap[row.plantId] &&
+          this.plantTimezoneMap[row.plantId].timeZoneIdentifier
+        ) {
+          const dueDate = new Date(
+            formatInTimeZone(
+              row.dueDate,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat3
+            )
+          );
+          this.selectedDate = { ...this.selectedDate, date: dueDate };
+        }
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedFormInfo = row;
         break;
@@ -822,7 +856,24 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
 
   dateChangeHandler(dueDate: Date) {
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+    const { inspectionId, assignedToEmail, plantId, ...rest } =
+      this.selectedFormInfo;
+    const dueDateDisplayFormat = format(dueDate, dateFormat2);
+    if (
+      plantId &&
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      const time = localToTimezoneDate(
+        this.selectedFormInfo.dueDate,
+        this.plantTimezoneMap[this.selectedFormInfo.plantId],
+        hourFormat
+      );
+      dueDate = zonedTimeToUtc(
+        format(dueDate, dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[this.selectedFormInfo.plantId].timeZoneIdentifier
+      );
+    }
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -830,14 +881,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'due-date'
       )
       .pipe(
-        tap((resp) => {
+        tap((resp: any) => {
           if (Object.keys(resp).length) {
             this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
                   dueDate,
-                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
+                  dueDateDisplay: dueDateDisplayFormat,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
@@ -859,5 +910,18 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   dueDateClosedHandler() {
     this.trigger.toArray()[1].closeMenu();
+  }
+  formatDate(date, plantId) {
+    if (
+      this.plantTimezoneMap[plantId] &&
+      this.plantTimezoneMap[plantId].timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateFormat2
+      );
+    }
+    return format(new Date(date), dateFormat2);
   }
 }

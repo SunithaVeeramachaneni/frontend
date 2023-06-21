@@ -81,11 +81,13 @@
             <mat-select
               formControlName="plantId"
               [placeholder]="'plant' | translate"
+              (openedChange)="resetPlantSearchFilter()"
             >
               <input
                 class="searchable-input"
                 [placeholder]="'search' | translate"
                 (keyup)="onKeyPlant($event)"
+                [value]="plantFilterInput"
               />
               <div class="scrollable-area">
                 <mat-option

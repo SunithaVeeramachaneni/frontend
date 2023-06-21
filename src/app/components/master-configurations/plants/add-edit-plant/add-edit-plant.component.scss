@@ -119,6 +119,10 @@
   border-radius: 4px;
   margin: 10px 10px 5px 12px;
 }
+.scrollable-area {
+  max-height: 200px;
+  overflow: auto;
+}
 .shiftOption {
   display: flex;
   align-items: center;

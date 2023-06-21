@@ -124,9 +124,7 @@
                         class="sub-headings"
                         translate="issueActionDueDateAndTime"
                       ></span>
-                      {{
-                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
-                      }}
+                      {{ formatDate(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
@@ -231,9 +229,7 @@
                         translate="dueDateAndTimeUpdated"
                       >
                       </span>
-                      {{
-                        history.message.DUEDATE | date : 'dd MMM yyyy hh:mm a'
-                      }}
+                      {{ formatDate(history.message.DUEDATE) }}
                     </span>
                     <br />
                   </ng-container>
@@ -276,7 +272,7 @@
               'text-align-right': history.username === userInfo.email
             }"
           >
-            {{ history.createdAt }}
+            {{ formatDate(history.createdAt) }}
           </div>
         </ng-container>
       </div>
@@ -391,6 +387,34 @@
       </div>
       <hr class="line" />
       <div class="right-div p-5-0">
+        <div class="titles" translate="timeZone"></div>
+        <div class="values">
+          <span
+            *ngIf="
+              this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ]
+            "
+          >
+            {{
+              this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ].description
+            }}
+          </span>
+          <span
+            *ngIf="
+              !this.plantTimezoneMap[
+                this.issuesActionsDetailViewForm.get('plantId').value
+              ]
+            "
+          >
+            {{ placeholder }}
+          </span>
+        </div>
+      </div>
+      <hr class="line" />
+      <div class="right-div p-5-0">
         <div class="titles" translate="location"></div>
         <div class="values">
           {{ this.issuesActionsDetailViewForm.get('location').value }}
@@ -422,11 +446,20 @@
               "
               [disabled]="data?.type === 'issue'"
             >
-              <mat-option
-                *ngFor="let priority of priorities"
-                [value]="priority"
-                >{{ priority }}</mat-option
-              >
+              <ng-container *ngIf="data?.type === 'issue'; else actions">
+                <mat-option
+                  *ngFor="let priority of priorities"
+                  [value]="priority"
+                  >{{ priority }}</mat-option
+                >
+              </ng-container>
+              <ng-template #actions>
+                <mat-option
+                  [value]="priority"
+                  *ngFor="let priority of priorities | slice : 1 : 4"
+                  >{{ priority }}
+                </mat-option>
+              </ng-template>
             </mat-select>
           </mat-form-field>
         </div>
