@@ -1170,29 +1170,50 @@ export class ScheduleConfigurationComponent
   }
 
   onShiftChange({ value }: { value: string[] }): void {
-    this.shiftSlots.clear();
     if (value?.length > 0) {
-      delete this._shiftDetails.null;
+      delete this._shiftDetails?.null;
+      const nullIdx = this.shiftSlots.controls.findIndex(
+        (c) => c?.value?.null !== undefined
+      );
+      if (nullIdx !== -1) {
+        this.shiftSlots.removeAt(nullIdx);
+      }
       value?.forEach((v) => {
-        const found = this.allShifts.find((shift) => shift?.id === v);
-        if (found) {
+        const foundShift = this.allShifts.find((shift) => shift?.id === v);
+        const shiftExistIdx = this.shiftSlots.controls.findIndex(
+          (ctrl) => ctrl?.value?.id === foundShift?.id
+        );
+        if (foundShift && shiftExistIdx === -1) {
           this.shiftSlots.push(
             this.addShiftDetails(false, {
-              id: found.id,
-              name: found.name,
-              startTime: found.startTime,
-              endTime: found.endTime
+              id: foundShift?.id,
+              name: foundShift?.name,
+              startTime: foundShift?.startTime,
+              endTime: foundShift?.endTime
             })
           );
         }
       });
+
+      // remove old shift which is not selected
+      this.shiftSlots?.value
+        ?.filter((shift) => !value?.some((v) => v === shift?.id))
+        ?.forEach((r) => {
+          const idx = this.shiftSlots.controls.findIndex(
+            (c) => c?.value?.id === r?.id
+          );
+          if (idx !== -1) this.shiftSlots.removeAt(idx);
+        });
     } else {
+      this.shiftSlots.clear();
       this._shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
   }
 
-  onUpdateShiftSlot(event): void {
+  onUpdateShiftSlot(event: {
+    [key: string]: { startTime: string; endTime: string }[];
+  }): void {
     this._shiftDetails = { ...this._shiftDetails, ...event };
   }
 
