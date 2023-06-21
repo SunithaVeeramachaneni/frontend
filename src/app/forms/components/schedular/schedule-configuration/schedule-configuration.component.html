@@ -31,6 +31,7 @@
                 scheduleByDates?.length === 0) ||
               disableSchedule
             "
+            (click)="scheduleConfiguration()"
             type="submit"
             translate="schedule"
           ></button>
@@ -41,7 +42,6 @@
       <form
         [formGroup]="schedulerConfigForm"
         class="form-padding p-2"
-        (ngSubmit)="scheduleConfiguration()"
         autocomplete="off"
       >
         <div>
@@ -318,7 +318,11 @@
             <div>
               <mat-form-field class="width-100" appearance="outline">
                 <mat-label translate="shifts"></mat-label>
-                <mat-select [formControl]="shiftsSelected" multiple>
+                <mat-select
+                  [formControl]="shiftsSelected"
+                  multiple
+                  (selectionChange)="onShiftChange($event)"
+                >
                   <mat-option
                     [value]="shifts?.id"
                     *ngFor="let shifts of shiftsInformation"
@@ -343,7 +347,20 @@
               ></p>
             </div>
           </div>
-          <app-shift-chart></app-shift-chart>
+          <ng-container formArrayName="shiftSlots">
+            <div
+              *ngFor="let shift of shiftSlots?.controls; let shiftIdx = index"
+            >
+              <div [formGroupName]="shiftIdx">
+                <app-shift-chart
+                  [shift]="shift"
+                  [shiftIdx]="shiftIdx"
+                  [slots]="timeSlots"
+                  (updateShiftSlot)="onUpdateShiftSlot($event)"
+                ></app-shift-chart>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">

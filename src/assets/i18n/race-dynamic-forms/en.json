@@ -322,5 +322,6 @@
   "whenToRunRounds": "When to Run Rounds",
   "selectSlotsBelow": "Select slots below",
   "roundGenerationSlots": "Round Generation Slots",
-  "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping."
+  "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
+  "slot": "Slot"
 }

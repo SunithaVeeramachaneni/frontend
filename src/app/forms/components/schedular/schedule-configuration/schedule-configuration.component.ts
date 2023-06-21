@@ -48,7 +48,11 @@ import {
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
 import { FormScheduleConfigurationService } from './../../../../components/race-dynamic-form/services/form-schedule-configuration.service';
-import { scheduleConfigs } from './schedule-configuration.constants';
+import {
+  TIME_SLOTS,
+  scheduleConfigs,
+  shiftDefaultPayload
+} from './schedule-configuration.constants';
 import { Subject } from 'rxjs';
 import { ShiftService } from 'src/app/components/master-configurations/shifts/services/shift.service';
 
@@ -62,6 +66,21 @@ export interface ScheduleConfig {
   roundPlanScheduleConfiguration?: RoundPlanScheduleConfiguration;
   formsScheduleConfiguration?: FormScheduleConfiguration;
   mode: 'create' | 'update';
+}
+
+export interface IShift {
+  id: string;
+  name: string;
+  isActive: boolean;
+  startTime: string;
+  endTime: string;
+  searchTerm: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  _deleted: null | boolean;
+  _lastChangedAt: number;
+  _version: number;
 }
 @Component({
   selector: 'app-schedule-configuration',
@@ -122,24 +141,16 @@ export class ScheduleConfigurationComponent
   dropdownPosition: any;
   selectedDetails: any = {};
   shiftsSelected = new FormControl('');
-  shiftsInformation: {
-    id: string;
-    name: string;
-    isActive: boolean;
-    startTime: string;
-    endTime: string;
-    searchTerm: string;
-    createdAt: string;
-    createdBy: string;
-    updatedAt: string;
-    _deleted: null | boolean;
-    _lastChangedAt: number;
-    _version: number;
-  }[] = [];
+  shiftsInformation: IShift[] = [];
+  allShifts: IShift[] = [];
+  timeSlots = TIME_SLOTS;
+  shiftSlotsFormArray = new FormArray([]);
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
-
+  private _shiftDetails: {
+    [key: string]: { startTime: string; endTime: string }[];
+  };
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -167,6 +178,7 @@ export class ScheduleConfigurationComponent
   getAllShiftsData(): void {
     this.shiftService.fetchAllShifts$().subscribe((shifts) => {
       this.shiftsInformation = shifts?.items || [];
+      this.allShifts = this.shiftsInformation;
     });
   }
 
@@ -242,7 +254,8 @@ export class ScheduleConfigurationComponent
           Validators.min(this.roundsGeneration.min),
           Validators.max(this.roundsGeneration.max)
         ]
-      ]
+      ],
+      shiftSlots: this.fb.array([this.addShiftDetails(true)])
     });
     this.schedulerConfigForm
       .get('scheduleEndType')
@@ -798,8 +811,47 @@ export class ScheduleConfigurationComponent
     return this.shiftsSelected?.value?.length > 0;
   }
 
+  get shiftSlots(): FormArray {
+    return this.schedulerConfigForm.get('shiftSlots') as FormArray;
+  }
+
+  addShiftDetails(isDefault: boolean = false, shiftDetails = {}): FormGroup {
+    const obj = {
+      ...(isDefault ? shiftDefaultPayload : { ...shiftDetails })
+    };
+    return this.fb.group(obj);
+  }
+
+  onShiftChange({ value }: { value: string[] }): void {
+    this.shiftSlots.clear();
+    if (value?.length > 0) {
+      delete this._shiftDetails.null;
+      value?.forEach((v) => {
+        const found = this.allShifts.find((shift) => shift?.id === v);
+        if (found) {
+          this.shiftSlots.push(
+            this.addShiftDetails(false, {
+              id: found.id,
+              name: found.name,
+              startTime: found.startTime,
+              endTime: found.endTime
+            })
+          );
+        }
+      });
+    } else {
+      this._shiftDetails = shiftDefaultPayload;
+      this.shiftSlots.push(this.addShiftDetails(true));
+    }
+  }
+
+  onUpdateShiftSlot(event): void {
+    this._shiftDetails = { ...this._shiftDetails, ...event };
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this._shiftDetails = {};
   }
 }

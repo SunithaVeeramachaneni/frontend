@@ -1,1 +1,89 @@
-<div id="shift-container">Shift chart here...</div>
+<div id="shift-container">
+  <ng-container>
+    <h1 class="mt-5" *ngIf="shift?.value?.name">
+      {{ shift.value.name }}
+    </h1>
+    <div id="assignDropdownPosition" class="table-wrapper">
+      <table cellspacing="0" class="center">
+        <tr>
+          <td *ngFor="let slot of slots" class="slot pr-20 pl-15">
+            <b>{{ slot }}</b>
+          </td>
+        </tr>
+        <tr *ngIf="col === 0">
+          <td [attr.colspan]="slots?.length" class="slot">
+            <div class="main-content slotBackground">
+              <div class="left left-margin">
+                <p>
+                  {{ 'slot' | translate }} {{ slots[0] }} -
+                  {{ subtractTime(slots[slots?.length - 1], 0, 1) }}
+                </p>
+              </div>
+              <div>
+                <ng-container>
+                  <button
+                    [matMenuTriggerFor]="menu"
+                    class="more-icon"
+                    aria-label="More Options"
+                  >
+                    <svg-icon
+                      icon="icon-more"
+                      class="more-icon-no-color"
+                    ></svg-icon>
+                  </button>
+                </ng-container>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button mat-menu-item translate>Remove</button>
+                </mat-menu>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="col > 0">
+          <td
+            *ngFor="let row of slotsControls; let index = index"
+            [attr.colspan]="dataArrays[index]?.index"
+            class="slot"
+          >
+            <div class="main-content">
+              <div class="left left-margin">
+                <p>
+                  {{ 'slot' | translate }} {{ dataArrays[index]?.startTime }} -
+                  {{ dataArrays[index]?.endTime }}
+                </p>
+              </div>
+              <div>
+                <ng-container>
+                  <button
+                    [matMenuTriggerFor]="menu"
+                    class="more-icon"
+                    aria-label="More Options"
+                  >
+                    <svg-icon
+                      icon="icon-more"
+                      class="more-icon-no-color"
+                    ></svg-icon>
+                  </button>
+                </ng-container>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button
+                    mat-menu-item
+                    translate
+                    (click)="onRemoveRow(index, dataArrays[index])"
+                  >
+                    Remove
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td *ngFor="let slot of slots; let index = index" class="slot">
+            <b (click)="toggleSlot(slot, index)">{{ 'slot' | translate }} +</b>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
+</div>
