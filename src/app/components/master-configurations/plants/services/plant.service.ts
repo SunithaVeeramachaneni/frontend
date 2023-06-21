@@ -20,6 +20,10 @@ export class PlantService {
   fetchPlants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
+  plantTimeZoneMapping$ = new BehaviorSubject<any>({});
+  plantMasterData$ = new BehaviorSubject<any>({});
+
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private MAX_FETCH_LIMIT = '1000000';
 
   constructor(private _appService: AppService) {}
@@ -31,6 +35,32 @@ export class PlantService {
       environment.masterConfigApiUrl,
       'plants/list?' + params.toString()
     );
+  };
+
+  getPlantTimeZoneMapping = () => {
+    if (!Object.keys(this.plantTimeZoneMapping$.value).length) {
+      this.fetchAllPlants$().subscribe((res) => {
+        const timeZoneMapping = {};
+        for (const plant of res.items) {
+          if (plant.id && plant.timeZone) {
+            if (Object.keys(plant.timeZone).length !== 0) {
+              timeZoneMapping[plant.id] = plant.timeZone;
+            }
+          }
+        }
+        this.plantTimeZoneMapping$.next(timeZoneMapping);
+      });
+    }
+  };
+
+  getPlantMasterData = () => {
+    if (!Object.keys(this.plantMasterData$.value).length) {
+      this._appService
+        ._getResp(environment.masterConfigApiUrl, 'plants/masterdata')
+        .subscribe((res) => {
+          this.plantMasterData$.next(res.plantMasterData);
+        });
+    }
   };
 
   getPlantsList$(queryParams: {
@@ -75,7 +105,13 @@ export class PlantService {
   createPlant$(
     formPlantQuery: Pick<
       CreatePlants,
-      'name' | 'image' | 'country' | 'zipCode' | 'plantId' | 'state'
+      | 'name'
+      | 'image'
+      | 'country'
+      | 'zipCode'
+      | 'timeZone'
+      | 'plantId'
+      | 'state'
     >
   ) {
     return this._appService._postData(

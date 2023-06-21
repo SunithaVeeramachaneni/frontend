@@ -5,6 +5,7 @@ import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { PlantService } from '../plants/services/plant.service';
 
 @Component({
   selector: 'app-master-configurations-container',
@@ -19,10 +20,12 @@ export class MasterConfigurationsContainerComponent implements OnInit {
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.masterConfiguration.url) {

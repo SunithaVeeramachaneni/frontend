@@ -317,5 +317,6 @@
   "typePlaceholder": "Type",
   "notificationCreation": "Notification Creation In-Progress",
   "actionPriority": "Priority: ",
-  "actionStatus": "Status: "
+  "actionStatus": "Status: ",
+  "timeZone": "Plant Timezone"
 }
