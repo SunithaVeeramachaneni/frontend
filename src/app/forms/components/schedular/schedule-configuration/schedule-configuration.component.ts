@@ -625,8 +625,6 @@ export class ScheduleConfigurationComponent
   }
 
   scheduleConfiguration() {
-    // eslint-disable-next-line no-debugger
-    debugger;
     if (this.schedulerConfigForm.valid && this.schedulerConfigForm.dirty) {
       this.disableSchedule = true;
       const schedularConfigFormValue = this.schedulerConfigForm.getRawValue();
