@@ -13,6 +13,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-form-container',
@@ -29,10 +30,12 @@ export class FormContainerComponent implements OnInit {
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
     private headerService: HeaderService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.raceDynamicForms.url) {
