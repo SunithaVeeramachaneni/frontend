@@ -33,6 +33,7 @@ export class AddEditPlantComponent implements OnInit {
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(data) {
     this.plantsEditData = data;
+    this.selectedShiftsDetails = [];
     if (this.plantsEditData === null) {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';

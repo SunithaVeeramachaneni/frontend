@@ -162,11 +162,10 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   shifts$: Observable<any>;
 
   addEditCopyDeleteShifts = false;
-  addEditCopyDeleteShifts$: BehaviorSubject<FormTableUpdate> =
-    new BehaviorSubject<FormTableUpdate>({
-      action: null,
-      form: {} as any
-    });
+  addEditCopyDeleteShifts$: BehaviorSubject<any> = new BehaviorSubject<any>({
+    action: null,
+    form: {} as any
+  });
   selectedShift;
 
   skip = 0;
@@ -411,21 +410,29 @@ export class ShiftListComponent implements OnInit, OnDestroy {
   }
 
   onToggleChangeHandler(event) {
-    this.shiftService
-      .updateShift$({
-        id: this.selectedShift.id,
-        name: this.selectedShift.name,
-        startTime: this.selectedShift.startTime,
-        endTime: this.selectedShift.endTime,
-        isActive: event,
-        _version: this.selectedShift._version
-      })
-      .subscribe((res) => {
-        this.toast.show({
-          text: 'Shift updated successfully!',
-          type: 'success'
-        });
+    const shiftData = {
+      id: this.selectedShift.id,
+      name: this.selectedShift.name,
+      startTime: this.selectedShift.startTime,
+      endTime: this.selectedShift.endTime,
+      isActive: event,
+      _version: this.selectedShift._version
+    };
+    this.shiftService.updateShift$(shiftData).subscribe((res) => {
+      this.addEditCopyDeleteShifts = true;
+      this.addEditCopyDeleteShifts$.next({
+        action: 'edit',
+        form: {
+          ...this.selectedShift,
+          isActive: event,
+          startAndEndTime: `${this.selectedShift.startTime} - ${this.selectedShift.endTime}`
+        }
       });
+      this.toast.show({
+        text: 'Shift updated successfully!',
+        type: 'success'
+      });
+    });
   }
 
   ngOnDestroy(): void {
