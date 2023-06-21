@@ -221,9 +221,9 @@ export class AddLogicComponent implements OnInit, OnChanges {
         controlRaw
           .slice()
           .reverse()
-          .forEach((q, i) => {
-            if (!result.selectedQuestions.includes(q)) {
-              control.removeAt(controlRaw.length - 1 - i);
+          .forEach((question, index) => {
+            if (!result.selectedQuestions.includes(question)) {
+              control.removeAt(controlRaw.length - 1 - index);
             }
           });
         logic.patchValue({
@@ -243,9 +243,9 @@ export class AddLogicComponent implements OnInit, OnChanges {
         controlRaw
           .slice()
           .reverse()
-          .forEach((q, i) => {
-            if (!result.selectedQuestions.includes(q)) {
-              control.removeAt(controlRaw.length - 1 - i);
+          .forEach((question, index) => {
+            if (!result.selectedQuestions.includes(question)) {
+              control.removeAt(controlRaw.length - 1 - index);
             }
           });
         logic.patchValue({
