@@ -138,12 +138,15 @@
               matStartDate
               [(ngModel)]="item.startDate"
               [placeholder]="'startDate' | translate"
+              #startDate
             />
             <input
               matEndDate
               [(ngModel)]="item.endDate"
               (dateInput)="dateRangeSelect(item)"
               [placeholder]="'endDate' | translate"
+              #endDate
+              (dateChange)="dateRangeChange(startDate, endDate)"
             />
           </mat-date-range-input>
           <mat-icon matDatepickerToggleIcon (click)="picker1.open()"
@@ -163,7 +166,7 @@
       mat-raised-button
       class="btn apply-filters-btn"
       type="button"
-      [disabled]="checkState()"
+      [disabled]="checkState() || isDisableDate"
       (click)="applyFilter()"
       (click)="closeFilter()"
       aria-label="Apply Filter"
@@ -173,7 +176,7 @@
     <button
       mat-button
       color="primary"
-      [disabled]="checkState()"
+      [disabled]="checkState() || isDisableDate"
       (click)="resetFilter()"
       class="btn reset-filters-btn"
       aria-label="Cancel Filter"

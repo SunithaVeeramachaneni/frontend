@@ -39,6 +39,10 @@ export class FilterComponent implements OnInit, OnChanges {
   @Output()
   reset: EventEmitter<any> = new EventEmitter();
 
+  isDisableDate;
+  startDate: HTMLInputElement;
+  endDate: HTMLInputElement;
+
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.json && changes.json.currentValue) {
@@ -79,6 +83,7 @@ export class FilterComponent implements OnInit, OnChanges {
         else if (typeof item.value === 'object' && item.value.length !== 0)
           status = false;
       }
+      if (item.endDate === null) status = true;
     }
     return status;
   }
@@ -91,6 +96,13 @@ export class FilterComponent implements OnInit, OnChanges {
     }
   }
 
+  dateRangeChange(startDate, endDate) {
+    if (startDate.value && endDate.value) {
+      this.isDisableDate = false;
+    } else if (endDate.value === '') {
+      this.isDisableDate = true;
+    }
+  }
   closeSelect(select: MatSelect): void {
     select.close();
   }
