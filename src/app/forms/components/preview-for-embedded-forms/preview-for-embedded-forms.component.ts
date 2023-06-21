@@ -47,8 +47,6 @@ export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
           return pageData;
         })
       );
-
-    this.previewFormData$.subscribe(console.log);
   }
 
   ngOnInit(): void {}
