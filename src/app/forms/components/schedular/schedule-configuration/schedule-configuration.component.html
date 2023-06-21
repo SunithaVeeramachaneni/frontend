@@ -38,6 +38,7 @@
         </div>
       </div>
     </mat-card-title>
+
     <mat-card-content class="content">
       <form
         [formGroup]="schedulerConfigForm"
@@ -49,7 +50,9 @@
             {{ 'planName' | translate }}
           </p>
           <div>
-            <p class="field-name">{{ selectedDetails?.plantName }}</p>
+            <p class="field-name">
+              {{ selectedDetails?.plantName || placeHolder }}
+            </p>
           </div>
         </div>
         <div>
@@ -57,7 +60,9 @@
             {{ 'planDescription' | translate }}
           </p>
           <div>
-            <p class="field-name">{{ selectedDetails?.plantDescription }}</p>
+            <p class="field-name">
+              {{ selectedDetails?.plantDescription || placeHolder }}
+            </p>
           </div>
         </div>
         <!-- Plant and time zone -->
@@ -85,7 +90,7 @@
                 type="text"
                 matInput
                 class="cursor"
-                [value]="currentDate"
+                [value]="plantTimeZone"
               />
               <mat-icon matSuffix class="cursor">arrow_drop_down</mat-icon>
             </mat-form-field>
@@ -241,62 +246,53 @@
               </mat-radio-button>
             </mat-radio-group>
           </div>
-          <div class="date-flex">
-            <div class="width-50">
-              <p translate="startDate" class="field-info"></p>
-              <mat-form-field appearance="outline" class="width-35 m-b-20">
-                <input matInput formControlName="startDate" readonly />
-                <input
-                  matInput
-                  [matDatepicker]="startDate"
-                  (dateChange)="updateDate($event, 'startDate')"
-                  [min]="currentDate"
-                  formControlName="startDatePicker"
-                  hidden
-                />
-                <mat-datepicker-toggle
-                  matIconSuffix
-                  [for]="startDate"
-                  (click)="startDate.open()"
-                  [disabled]="
-                    schedulerConfigForm.get('scheduledTill').value !== null
-                  "
-                ></mat-datepicker-toggle>
-                <mat-datepicker
-                  #startDate
-                  [disabled]="
-                    schedulerConfigForm.get('scheduledTill').value !== null
-                  "
-                ></mat-datepicker>
-              </mat-form-field>
-            </div>
-            <div class="width-50">
-              <p
-                translate="endDate"
-                class="field-info"
-                *ngIf="
-                  schedulerConfigForm.get('scheduleEndType').value === 'after'
-                "
-              ></p>
-              <mat-form-field
-                appearance="outline"
-                class="width-35 m-b-20"
-                *ngIf="
-                  schedulerConfigForm.get('scheduleEndType').value === 'after'
-                "
-              >
-                <input matInput formControlName="endDate" readonly />
-                <input matInput [matDatepicker]="endDate" hidden />
-                <mat-datepicker-toggle
-                  matIconSuffix
-                  [for]="endDate"
-                  (click)="endDate.open()"
-                  disabled
-                ></mat-datepicker-toggle>
-                <mat-datepicker #endDate disabled></mat-datepicker>
-              </mat-form-field>
-            </div>
-          </div>
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label translate>startDate</mat-label>
+            <input matInput formControlName="startDate" readonly />
+            <input
+              matInput
+              [matDatepicker]="startDate"
+              formControlName="startDatePicker"
+              (dateChange)="updateDate($event, 'startDate')"
+              [min]="currentDate"
+              hidden
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="startDate"
+              (click)="startDate.open()"
+              [disabled]="
+                schedulerConfigForm.get('scheduledTill').value !== null
+              "
+            ></mat-datepicker-toggle>
+            <mat-datepicker
+              #startDate
+              [disabled]="
+                schedulerConfigForm.get('scheduledTill').value !== null
+              "
+            ></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field
+            appearance="outline"
+            class="width-100"
+            *ngIf="schedulerConfigForm.get('scheduleEndType').value === 'after'"
+          >
+            <mat-label translate>endDate</mat-label>
+            <input matInput formControlName="endDate" readonly />
+            <input
+              matInput
+              [matDatepicker]="endDate"
+              formControlName="endDatePicker"
+              hidden
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="endDate"
+              (click)="endDate.open()"
+              disabled
+            ></mat-datepicker-toggle>
+            <mat-datepicker #endDate disabled></mat-datepicker>
+          </mat-form-field>
         </ng-container>
 
         <ng-container
@@ -312,6 +308,7 @@
             ></mat-calendar>
           </div>
         </ng-container>
+
         <ng-container>
           <div>
             <div class="shift-dropdown" translate="shifts"></div>
@@ -362,6 +359,7 @@
             </div>
           </ng-container>
         </ng-container>
+
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">
             <div class="dis-flex">
