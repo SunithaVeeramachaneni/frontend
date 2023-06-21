@@ -367,16 +367,36 @@ export class FormConfigurationModalComponent implements OnInit {
     add.removeAt(index);
   }
 
-  storeDetails() {
+  storeDetails(i) {
     this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
       (response) => {
-        this.toastService.show({
-          type: 'success',
-          text: 'Additional details stored successfully'
-        });
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+
+        additionalinfoArray.at(i).get('label').setValue(response.label);
       },
       (error) => {
-        this.toastService.show({ type: 'warning', text: error });
+        throw error;
+      }
+    );
+    this.retrieveDetails();
+  }
+
+  storeValueDetails(i) {
+    this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
+      (response) => {
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+
+        additionalinfoArray
+          .at(i)
+          .get('value')
+          .setValue(response.values.slice(-1));
+      },
+      (error) => {
+        throw error;
       }
     );
     this.retrieveDetails();

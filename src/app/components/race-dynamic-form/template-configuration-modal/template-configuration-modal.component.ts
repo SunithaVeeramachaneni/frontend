@@ -329,16 +329,36 @@ export class TemplateConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  storeDetails() {
+  storeDetails(i) {
     this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
       (response) => {
-        this.toastService.show({
-          type: 'success',
-          text: 'Additional details stored successfully'
-        });
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+
+        additionalinfoArray.at(i).get('label').setValue(response.label);
       },
       (error) => {
-        this.toastService.show({ type: 'warning', text: error });
+        throw error;
+      }
+    );
+    this.retrieveDetails();
+  }
+
+  storeValueDetails(i) {
+    this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
+      (response) => {
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+
+        additionalinfoArray
+          .at(i)
+          .get('value')
+          .setValue(response.values.slice(-1));
+      },
+      (error) => {
+        throw error;
       }
     );
     this.retrieveDetails();
@@ -399,19 +419,21 @@ export class TemplateConfigurationModalComponent implements OnInit {
       } else {
         this.toastService.show({
           type: 'warning',
-          text: 'Value is not Deleted'
+          text: 'Label is not Deleted'
         });
       }
     });
   }
   removeValue(value) {
     this.rdfService
-      .removeValue$({ value: value, label: this.labelSelected })
+      .removeValue$({ value, label: this.labelSelected })
       .subscribe((response) => {
-        this.toastService.show({
-          type: 'success',
-          text: 'Value deleted Successfully'
-        });
+        if (response.acknowledge) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Value deleted Successfully'
+          });
+        }
       });
   }
 }

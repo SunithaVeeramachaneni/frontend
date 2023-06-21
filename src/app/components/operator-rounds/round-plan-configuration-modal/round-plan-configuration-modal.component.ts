@@ -376,11 +376,15 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       .createAdditionalDetails$(this.changedValues)
       .subscribe(
         (response) => {
+          console.log('response', response);
           const additionalinfoArray = this.headerDataForm.get(
             'additionalDetails'
           ) as FormArray;
 
-          additionalinfoArray.at(i).get('value').setValue(response.value);
+          additionalinfoArray
+            .at(i)
+            .get('value')
+            .setValue(response.values.slice(-1));
         },
         (error) => {
           throw error;
