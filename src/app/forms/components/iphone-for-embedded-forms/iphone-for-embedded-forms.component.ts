@@ -20,16 +20,6 @@ export class IphoneForEmbeddedFormsComponent implements OnInit {
   @Input() subFormId: any;
   @Input() moduleType: string;
   currentPage = 1;
-  // private _formData;
-  // @Input() set formData(data) {
-  //   data.subscribe((val) => {
-  //     this._formData = val;
-  //     this.cdrf.markForCheck();
-  //   });
-  // }
-  // get formData() {
-  //   return this._formData;
-  // }
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
   constructor(private cdrf: ChangeDetectorRef, private store: Store<State>) {}
@@ -41,12 +31,4 @@ export class IphoneForEmbeddedFormsComponent implements OnInit {
       })
     );
   }
-
-  // changePageCount(event) {
-  //   console.log(event);
-  // }
-
-  // openBottomSheet(event) {
-  //   console.log(event);
-  // }
 }
