@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,8 +6,6 @@ import {
   State,
   getSubFormPages
 } from 'src/app/forms/state/builder/builder-state.selectors';
-import { fieldTypesMock } from '../response-type/response-types.mock';
-import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 @Component({
   selector: 'app-preview-for-embedded-forms',
@@ -28,9 +20,8 @@ export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
   previewFormData$: Observable<any>;
   previewFormData = [];
   isSectionOpenState = true;
-  //fieldTypes: any;
 
-  constructor(private imageUtils: ImageUtils, private store: Store<State>) {}
+  constructor(private store: Store<State>) {}
 
   ngOnChanges() {
     let pageData;
@@ -40,7 +31,6 @@ export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
         map((previewFormData) => {
           let sectionData;
           if (previewFormData) {
-            console.log(previewFormData);
             pageData = previewFormData.map((page) => {
               sectionData = page.sections.map((section) => {
                 const questionsArray = [];
@@ -61,22 +51,21 @@ export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
     this.previewFormData$.subscribe(console.log);
   }
 
-  ngOnInit(): void {
-    //this.fieldTypes = fieldTypesMock.fieldTypes;
-  }
+  ngOnInit(): void {}
 
   toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
   };
-
-  getImageSrc(base64) {
-    return this.imageUtils.getImageSrc(base64);
-  }
-
   formatLabel(value: number): string {
     if (value >= 1000) {
       return Math.round(value / 1000) + 'k';
     }
     return `${value}`;
   }
+
+  openURL = (question: any) => {
+    if (question.link.length) {
+      window.open(question.link);
+    }
+  };
 }

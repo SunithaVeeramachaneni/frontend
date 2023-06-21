@@ -107,16 +107,6 @@
       </div>
       <hr [ngClass]="!isAskQuestion ? 'question-line' : 'ask-question-line'" />
 
-      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-        <input
-          #insertImages
-          [hidden]="true"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png"
-          (change)="insertImageHandler($event)"
-        />
-      </div>
-
       <div
         class="dis-flex justify-content"
         *ngIf="
@@ -298,6 +288,34 @@
               </span>
 
               <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="date"
+                  class="required-input"
+                  name="date"
+                  formControlName="value"
+                />&nbsp;
+                <label for="date">Default to current date</label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="time"
+                  class="required-input"
+                  name="time"
+                  formControlName="value"
+                />&nbsp;
+                <label for="time">Default to current time</label>
+              </span>
+
+              <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'LF' ||
                   (isEmbeddedForm &&
@@ -440,16 +458,16 @@
               ></app-add-logic>
             </div>
           </div>
-          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+          <div [hidden]="questionForm.get('fieldType').value !== 'IMG'">
             <app-image [question]="questionForm"></app-image>
+            <input
+              #insertImage
+              [hidden]="true"
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              (change)="insertImageHandler($event)"
+            />
           </div>
-          <input
-            #insertImages
-            [hidden]="true"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            (change)="insertImageHandler($event)"
-          />
         </div>
       </div>
     </div>

@@ -1,3 +1,5 @@
+@import '../.././../../scss/colors.scss';
+
 .iphone-view {
   background: url('../../../../assets/Images/iphonep.png') top left no-repeat;
   background-size: 260px 550px;
@@ -88,7 +90,7 @@
 }
 
 .main-carosuel-iphone {
-  background-color: #ffffff;
+  background-color: $white;
   margin-top: -42px;
   margin-left: 15px;
   margin-right: 25px;
@@ -98,7 +100,7 @@
 
 @media only screen and (max-width: 2049px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -39px;
     margin-left: 17px;
     margin-right: 22px;
@@ -109,7 +111,7 @@
 
 @media only screen and (max-width: 1825px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -39px;
     margin-left: 17px;
     margin-right: 22px;
@@ -120,7 +122,7 @@
 
 @media only screen and (max-width: 1710px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -39px;
     margin-left: 17px;
     margin-right: 22px;
@@ -131,7 +133,7 @@
 
 @media only screen and (max-width: 1520px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -42px;
     margin-left: 15px;
     margin-right: 25px;
@@ -142,7 +144,7 @@
 
 @media only screen and (max-width: 1370px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -42px;
     margin-left: 15px;
     margin-right: 25px;
@@ -153,7 +155,7 @@
 
 @media only screen and (max-width: 1245px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -42px;
     margin-left: 15px;
     margin-right: 25px;
@@ -164,7 +166,7 @@
 
 @media only screen and (max-width: 1095px) {
   .main-carosuel-iphone {
-    background-color: #ffffff;
+    background-color: $white;
     margin-top: -42px;
     margin-left: 15px;
     margin-right: 25px;
@@ -177,18 +179,18 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 360px;
-  border-bottom: 1px solid #d3d3d3;
+  border-bottom: 1px solid $border-color;
 }
 
 @media only screen and (max-width: 5120px) {
   .iphone-body-content {
-    height: 19vh;
+    height: 20.2vh;
   }
 }
 
 @media only screen and (max-width: 3840px) {
   .iphone-body-content {
-    height: 29vh;
+    height: 30.4vh;
   }
 }
 
@@ -247,7 +249,7 @@
 }
 
 .iphone-header {
-  background: #3a6175;
+  background: $iphone-header;
   border-top-right-radius: 23px;
   border-top-left-radius: 23px;
   height: 100px;
@@ -263,7 +265,7 @@
   font-weight: 500;
   margin-left: 10px;
   margin-top: 2px;
-  color: #ffffff;
+  color: $white;
 }
 
 .status-bar-right {
@@ -280,7 +282,7 @@
   font-weight: 500;
   width: 12px;
   margin-right: 3px;
-  color: #ffffff;
+  color: $white;
 }
 
 .battery_full-icon {
@@ -309,12 +311,12 @@
 }
 
 .in-progress-text {
-  color: #ffffff;
+  color: $white;
   font-size: 90%;
 }
 
 .back-button {
-  color: #ffffff;
+  color: $white;
   float: left;
   margin-left: 5px;
   position: relative;
@@ -340,200 +342,15 @@
 
 .form-name {
   float: left;
-  color: #ffffff;
+  color: $white;
   font-size: 100%;
 }
 
 .form-description {
   float: left;
-  color: #ffffff;
+  color: $white;
   font-size: 80%;
   margin-top: 3px;
-}
-
-.section-name {
-  text-align: left;
-  color: #000000;
-  font-weight: 500;
-  padding-left: 10px;
-  padding-bottom: 7px;
-  border-bottom: 1px solid #d3d3d3;
-}
-
-.section-arrow {
-  float: right;
-  position: relative;
-  top: -2px;
-}
-
-.question-name {
-  text-align: left;
-  margin-left: 10px;
-  font-size: 90%;
-
-  div p {
-    margin: 0 !important;
-  }
-}
-
-.text-left {
-  text-align: left;
-}
-
-.input-fields {
-  width: 120px;
-  border: 1px solid #cccccc;
-  padding-left: 5px;
-  font-size: 90%;
-  margin-bottom: 5px;
-}
-
-.input-fields:focus {
-  outline: none;
-}
-
-.default-value {
-  float: right;
-  font-size: 90%;
-  text-align: right;
-}
-
-.input-fields-with-icons {
-  width: 100px;
-  border: 1px solid #cccccc;
-  padding-left: 5px;
-  font-size: 90%;
-}
-
-.input-fields-with-icons:focus {
-  outline: none;
-}
-
-.signature-input-fields {
-  width: 160px;
-  border: 1px solid #cccccc;
-  padding-left: 5px;
-  font-size: 90%;
-}
-
-.signature-input-fields:focus {
-  outline: none;
-}
-
-.scan-icon {
-  width: 15px;
-  margin-left: 5px;
-}
-
-.vi-input {
-  height: 25px;
-  align-items: center;
-  width: 215px;
-}
-
-.vi-values {
-  width: inherit;
-  font-size: 80%;
-  background: white;
-  box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
-}
-
-.cb-input {
-  float: right;
-  margin-right: -40px;
-
-  .radio-checkbox {
-    display: none;
-  }
-  .radio-label {
-    display: inline-block;
-    cursor: pointer;
-    position: relative;
-    padding-left: 25px;
-    margin-right: 15px;
-    font-size: 16px;
-    line-height: 20px;
-  }
-  .radio-label:before {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    left: 16px;
-    top: -12px;
-    width: 12px;
-    height: 12px;
-    border: 2px solid #eee;
-    border-radius: 50%;
-    background-color: #fff;
-  }
-  .radio-checkbox:checked + .radio-label:before {
-    content: '\2022';
-    color: #3d5afe;
-    font-size: 36px;
-    text-align: center;
-    line-height: 12px;
-  }
-  .radio-label:hover:before {
-    border-color: #999;
-  }
-  .radio-label:active:before {
-    background-color: #eee;
-  }
-}
-
-.m-r-minus40 {
-  margin-right: -40px;
-}
-
-.signature-div {
-  margin: -10px 0 10px -10px;
-}
-
-.signature-icon {
-  width: 20px;
-}
-
-.location-icon {
-  width: 20px;
-  position: relative;
-  left: 55px;
-  top: 5px;
-}
-
-.location-column-text {
-  max-width: 60%;
-}
-
-.location-column-logo {
-  max-width: 40%;
-}
-
-.attachment-div {
-  margin: -5px 168px 10px -10px;
-}
-
-.attachment-btn {
-  position: relative;
-  left: 5px;
-}
-.attachment-btn :hover {
-  background-color: #d7dbf4;
-  cursor: pointer;
-}
-
-.attachment-btn-img {
-  width: 60px;
-}
-
-.image-field {
-  width: 240px;
-  height: 80px;
-  margin-left: 10px;
-}
-
-.range-field {
-  width: 230px;
-  margin-top: -15px;
 }
 
 .btns {
@@ -546,49 +363,4 @@
   margin-top: 6px;
   float: right;
   margin-right: 12px;
-}
-
-.dropdown {
-  width: 85%;
-  margin: 0 7px;
-  height: 25px;
-  border: 1px solid #d3d3d3;
-  border-radius: 4px;
-  text-align: left;
-  padding-left: 10px;
-
-  ::ng-deep .mat-select-value {
-    height: 24px;
-    padding-top: 8px;
-  }
-
-  ::ng-deep .mat-select-arrow {
-    position: relative;
-    top: -3px;
-  }
-}
-
-.dis-flex-center {
-  justify-content: space-between;
-  align-items: center;
-}
-
-::ng-deep .mat-accent .mat-slider-track-fill {
-  background-color: blue !important;
-}
-
-::ng-deep .mat-slider-thumb {
-  background-color: blue !important;
-}
-
-::ng-deep .mat-slider-thumb-label {
-  background-color: blue !important;
-}
-
-.width-min {
-  width: min-content;
-}
-
-.font-90 {
-  font-size: 100%;
 }
