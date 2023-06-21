@@ -95,7 +95,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -211,7 +218,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 5,
@@ -298,7 +311,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 8,
@@ -347,8 +366,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': '#e0e0e0',
         color: '#000000'
       },
-      'to-do': {
-        'background-color': '#F56565',
+      assigned: {
+        'background-color': '#5AC8FA',
+        color: '#000000'
+      },
+      'partly-open': {
+        'background-color': '#FE9C30',
+        color: '#000000'
+      },
+      overdue: {
+        'background-color': '#F44336',
         color: '#ffffff'
       }
     }
@@ -817,7 +844,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    status = status.toLowerCase() === 'open' ? 'assigned' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,

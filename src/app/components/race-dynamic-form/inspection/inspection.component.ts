@@ -88,7 +88,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -185,7 +192,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 4,
@@ -271,7 +284,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 7,
@@ -320,8 +339,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'background-color': '#e0e0e0',
         color: '#000000'
       },
-      'to-do': {
-        'background-color': '#F56565',
+      assigned: {
+        'background-color': '#5AC8FA',
+        color: '#000000'
+      },
+      'partly-open': {
+        'background-color': '#FE9C30',
+        color: '#000000'
+      },
+      overdue: {
+        'background-color': '#F44336',
         color: '#ffffff'
       }
     }
@@ -786,7 +813,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedFormInfo;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    status = status.toLowerCase() === 'open' ? 'assigned' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
