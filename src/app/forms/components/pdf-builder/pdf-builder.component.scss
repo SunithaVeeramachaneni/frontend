@@ -305,7 +305,8 @@ ul {
   width: 175px !important;
 }
 .tablelogo {
-  width: 150px;
+  width: 160px;
+  height: 30px;
 }
 .tableHeading-text {
   display: flex;
@@ -338,15 +339,11 @@ ul {
 }
 .pageHeader {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 15px 0px;
 }
-.pageTitleRow {
-  display: flex;
-  align-items: center;
-  height: 50px;
-  padding: 10px 0px;
-}
+
 .subjectRow {
   display: flex;
   align-items: center;
@@ -357,13 +354,23 @@ ul {
   min-height: 800px;
 }
 .roundId {
-  color: $light-gray;
-  width: 45%;
+  color: $black;
+  width: 100%;
 }
+
 .formName {
-  color: $light-gray;
-  font-weight: 500;
-  font-size: 10pt;
+  color: $black;
+  font-weight: bolder;
+  font-size: 130%;
+  padding: 5px;
+}
+
+.formName-gray {
+  color: $dark-gray;
+}
+
+#submitted-color {
+  color: $green2;
 }
 .pageFooter {
   padding: 15px 0px;
@@ -421,6 +428,9 @@ ul {
 }
 .label {
   font-weight: 600;
+}
+.landingPageRow {
+  min-height: 800px;
 }
 
 .tasksHead {
@@ -618,4 +628,78 @@ ul {
 
 .tasks-completed {
   text-align: end;
+}
+
+.landing-page-table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+  th {
+    font-weight: 500;
+  }
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  .bg-gray {
+    background-color: $gray;
+  }
+}
+
+#issue-color {
+  color: $white;
+  background-color: $issue-raised;
+}
+
+.resolved-color {
+  color: $white;
+  background-color: $resolved;
+}
+
+.bg-yellow {
+  background-color: $yellow-bg;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+#action-color {
+  color: $white;
+  background-color: $action-raised;
+}
+
+.task-color {
+  color: $white;
+  background-color: $task-bg;
+}
+
+.issueColumns {
+  display: flex;
+}
+
+.actionColumns {
+  display: flex;
+}
+
+.notification-position {
+  position: relative;
+  left: 7px;
+}
+
+.waterMark:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url('../../../../assets/Images/watermark.svg');
+  background-size: 500px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
 }
