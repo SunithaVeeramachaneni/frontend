@@ -46,3 +46,8 @@ export const TIME_SLOTS: string[] = [
 export const shiftDefaultPayload = {
   null: [{ startTime: '12:00 AM', endTime: '11:59 PM' }]
 };
+
+export const enum TimeType {
+  am = 'AM',
+  pm = 'PM'
+}

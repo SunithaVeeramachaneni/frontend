@@ -1,10 +1,12 @@
 <div id="shift-container">
   <ng-container>
-    <h1 class="mt-5" *ngIf="shift?.value?.name">
-      {{ shift.value.name }}
+    <h1 class="mt-5" *ngIf="shift?.value?.id">
+      {{ shift?.value?.name }}: {{ shift?.value?.startTime }}-{{
+        shift?.value?.endTime
+      }}
     </h1>
-    <div id="assignDropdownPosition" class="table-wrapper">
-      <table cellspacing="0" class="center">
+    <div class="table-wrapper">
+      <table class="center">
         <tr>
           <td *ngFor="let slot of slots" class="slot pr-20 pl-15">
             <b>{{ slot }}</b>
@@ -71,7 +73,7 @@
                     translate
                     (click)="onRemoveRow(index, dataArrays[index])"
                   >
-                    Remove
+                    removeBtn
                   </button>
                 </mat-menu>
               </div>
@@ -79,8 +81,12 @@
           </td>
         </tr>
         <tr>
-          <td *ngFor="let slot of slots; let index = index" class="slot">
-            <b (click)="toggleSlot(slot, index)">{{ 'slot' | translate }} +</b>
+          <td
+            *ngFor="let slot of slots; let index = index"
+            class="slot"
+            (click)="onAddSlot(slot, index)"
+          >
+            <b>{{ 'slot' | translate }} +</b>
           </td>
         </tr>
       </table>

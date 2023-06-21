@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -6,19 +14,17 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { shiftDefaultPayload } from '../schedule-configuration/schedule-configuration.constants';
 
-const enum TimeType {
-  am = 'AM',
-  pm = 'PM'
-}
-
+import {
+  TimeType,
+  shiftDefaultPayload
+} from '../schedule-configuration/schedule-configuration.constants';
 @Component({
   selector: 'app-shift-chart',
   templateUrl: './shift-chart.component.html',
   styleUrls: ['./shift-chart.component.scss']
 })
-export class ShiftChartComponent implements OnInit {
+export class ShiftChartComponent implements OnInit, OnChanges {
   @Input() slots: string[] = [];
   @Input() col = 0;
   @Input() shift: AbstractControl;
@@ -29,10 +35,10 @@ export class ShiftChartComponent implements OnInit {
     startTime: string;
     endTime: string;
   }[] = [];
-  addForm: FormGroup;
-  itemForm: FormGroup;
-  tableColCount: number | undefined;
-  slotsArray: FormArray;
+  private addForm: FormGroup;
+  private itemForm: FormGroup;
+  private tableColCount: number | undefined;
+  private slotsArray: FormArray;
   constructor(private readonly fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -44,21 +50,36 @@ export class ShiftChartComponent implements OnInit {
     this.shift.valueChanges.subscribe((v) => console.log(v));
   }
 
-  toggleSlot(val: string, idx: number): void {
+  ngOnChanges(_changes: SimpleChanges) {
+    if (this.shift?.value?.null) {
+      this.slots = this.generateTimeSlots(
+        this.shift.value.null.startTime,
+        this.shift.value.null.endTime
+      );
+    } else if (this.shift?.value?.id) {
+      this.slots = this.generateTimeSlots(
+        this.shift.value.startTime,
+        this.shift.value.endTime
+      );
+    }
+  }
+
+  public onAddSlot(val: string, idx: number): void {
+    if (idx === this.slots?.length - 1) {
+      return;
+    }
     if (this.isTimeSlotPresent(val, this.dataArrays)) {
-      const indexOfMatchObject: number = this.dataArrays.findIndex(
+      const indexOfMatchObject = this.dataArrays.findIndex(
         (x) =>
           x?.startTime ===
-          this.getMatchingObject(val, this.dataArrays)?.startTime
+          this.getMatchingObject(val, this.dataArrays).startTime
       );
       const matchObject = this.getMatchingObject(val, this.dataArrays);
-
       let timeDiff = this.getTimeDifference(matchObject?.startTime, val);
       timeDiff = timeDiff === 0 ? 1 : timeDiff;
-      const oldIndex: number = this.dataArrays[indexOfMatchObject]?.index;
+      const oldIndex = this.dataArrays[indexOfMatchObject]?.index;
       this.dataArrays[indexOfMatchObject].index = Math.abs(timeDiff);
-
-      const lastTime: string = this.dataArrays[indexOfMatchObject]?.endTime;
+      const lastTIme = this.dataArrays[indexOfMatchObject]?.endTime;
       this.dataArrays[indexOfMatchObject].endTime = this.subtractTime(
         val,
         0,
@@ -67,7 +88,7 @@ export class ShiftChartComponent implements OnInit {
       const obj = {
         index: Math.abs(oldIndex - timeDiff),
         startTime: this.subtractTime(val, 0, 0),
-        endTime: lastTime
+        endTime: lastTIme
       };
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
@@ -81,25 +102,17 @@ export class ShiftChartComponent implements OnInit {
         index: idx,
         startTime: this.subtractTime(val, idx, 0),
         endTime: this.subtractTime(val, 0, 1)
-        // isBook: true
       };
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
     }
     this.dataArrays?.sort((a, b) =>
-      new Date(`2000-01-01 ${a.startTime}`).getTime() >
-      new Date(`2000-01-01 ${b.startTime}`).getTime()
-        ? 1
-        : -1
+      this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
     );
     this.setShiftDetails();
   }
 
-  onAddRow(): void {
-    this.slotsArray.push(this.createItemFormGroup());
-  }
-
-  onRemoveRow(rowIndex: number, objValue): void {
+  public onRemoveRow(rowIndex: number, objValue): void {
     this.slotsArray.removeAt(rowIndex);
     this.dataArrays = this.dataArrays?.filter(
       (obj) => objValue?.index !== obj?.index
@@ -110,16 +123,11 @@ export class ShiftChartComponent implements OnInit {
     }
   }
 
-  createItemFormGroup(): FormGroup {
-    return this.fb.group({
-      startTime: null,
-      endTime: null,
-      qty: null,
-      colspan: null
-    });
-  }
-
-  subtractTime(timeString, subtractHours, subtractMinutes) {
+  public subtractTime(
+    timeString: string,
+    subtractHours: number,
+    subtractMinutes: number
+  ): string {
     const [timePart, timeType] = (timeString?.split(' ') ?? []) as [
       string?,
       string?
@@ -130,7 +138,7 @@ export class ShiftChartComponent implements OnInit {
     ];
     let hours: number = parseInt(hoursStr, 10);
     let minutes: number = parseInt(minutesStr, 10);
-    if (timeType.toLowerCase() === TimeType.pm) {
+    if (timeType?.toLowerCase() === TimeType.pm) {
       hours += 12;
     }
 
@@ -164,83 +172,78 @@ export class ShiftChartComponent implements OnInit {
     return updatedTimeString;
   }
 
-  // Helper function to pad single-digit numbers with a leading zero
-  padZero(val: number): string {
-    return val?.toString().padStart(2, '0');
-  }
-
-  get slotsControls() {
+  get slotsControls(): AbstractControl[] {
     return (this.addForm.get('slotsArray') as FormArray)?.controls;
   }
 
-  isTimeSlotPresent(timeSlot: string, slots): boolean {
-    const time = new Date(`2000-01-01 ${timeSlot}`).getTime();
+  private padZero(val: number): string {
+    return val?.toString().padStart(2, '0');
+  }
+
+  private createItemFormGroup(): FormGroup {
+    return this.fb.group({
+      startTime: null,
+      endTime: null,
+      qty: null,
+      colspan: null
+    });
+  }
+
+  private isTimeSlotPresent(timeSlot: string, slots): boolean {
+    const time = this.getTime(timeSlot);
     return slots?.some((obj) => {
-      const startTime: number = new Date(
-        `2000-01-01 ${obj?.startTime}`
-      ).getTime();
-      const endTime: number = new Date(`2000-01-01 ${obj?.endTime}`).getTime();
+      const startTime: number = this.getTime(obj?.startTime);
+      const endTime: number = this.getTime(obj?.endTime);
       return time >= startTime && time <= endTime;
     });
   }
 
-  getMatchingObject(timeSlot, arrayOfObjects) {
-    const time = new Date(`2000-01-01 ${timeSlot}`).getTime();
+  private getMatchingObject(timeSlot, arrayOfObjects) {
+    const time = this.getTime(timeSlot);
     const matchingObject = arrayOfObjects?.find((obj) => {
-      const startTime = new Date(`2000-01-01 ${obj.startTime}`).getTime();
-      const endTime = new Date(`2000-01-01 ${obj.endTime}`).getTime();
+      const startTime: number = this.getTime(obj?.startTime);
+      const endTime: number = this.getTime(obj?.endTime);
       return time >= startTime && time <= endTime;
     });
     return matchingObject || null;
   }
 
-  subtractTimes(first: string, second: string): string {
-    const [hours1, minutes1, period1] =
-      first?.match(/(\d+):(\d+) ([APM]{2})/) ?? [];
-    const [hours2, minutes2, period2] =
-      second?.match(/(\d+):(\d+) ([APM]{2})/) ?? [];
-
-    const totalMinutes1: number = this.convertToMinutes(
-      hours1,
-      minutes1,
-      period1
-    );
-    const totalMinutes2: number = this.convertToMinutes(
-      hours2,
-      minutes2,
-      period2
-    );
-    const diffMinutes: number = (totalMinutes1 - totalMinutes2 + 720) % 720;
-    const resultHours: number = Math.floor(diffMinutes / 60);
-    const resultMinutes: number = diffMinutes % 60;
-    const resultTime: string = this.formatTime(resultHours, resultMinutes);
-
-    return resultTime;
+  private getTime(time: string): number {
+    return new Date(`2000-01-01 ${time}`).getTime();
   }
 
-  convertToMinutes(hours: string, minutes: string, period: string): number {
-    let totalMinutes: number = parseInt(hours, 10) * 60 + parseInt(minutes, 10);
-    if (period?.toUpperCase() === TimeType.pm) {
-      totalMinutes += 12 * 60;
-    }
-    return totalMinutes;
+  private getHours(time: string): number {
+    return new Date(`2000-01-01 ${time}`).getHours();
   }
 
-  formatTime(hours: number, minutes: number): string {
-    const period = hours >= 12 ? TimeType.pm : TimeType.am;
-    const formattedHours: string = (hours % 12 || 12).toString();
-    const formattedMinutes: string = minutes.toString().padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes} ${period}`;
-  }
-
-  getTimeDifference(firstTime: string, secondTime: string): number {
+  private getTimeDifference(firstTime: string, secondTime: string): number {
     const timeDifference: number =
-      new Date(`2000/01/01 ${secondTime}`).getHours() -
-      new Date(`2000/01/01 ${firstTime}`).getHours();
+      this.getHours(secondTime) - this.getHours(firstTime);
     return timeDifference;
   }
 
-  private setShiftDetails() {
+  private generateTimeSlots(startTime: string, endTime: string): string[] {
+    const timeSlots: string[] = [];
+    const start: Date = new Date('2000-01-01 ' + startTime);
+    const end: Date = new Date('2000-01-01 ' + endTime);
+
+    // Set the start time as the current time
+    const current: Date = new Date(start);
+
+    // Add one hour to the current time until it exceeds the end time
+    while (current <= end) {
+      const formattedTime = current.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      timeSlots.push(formattedTime.toLocaleUpperCase());
+      current.setHours(current.getHours() + 1);
+    }
+    return timeSlots;
+  }
+
+  private setShiftDetails(): void {
     if (this.shift?.value?.id) {
       this.updateShiftSlot.emit({
         [this.shift.value.id]: this.dataArrays.map((d) => ({
@@ -250,7 +253,7 @@ export class ShiftChartComponent implements OnInit {
       });
     }
     if (this.shift?.value?.null) {
-      let obj: any = shiftDefaultPayload;
+      let obj: { [x: string]: any } = shiftDefaultPayload;
       if (this.dataArrays.length > 0) {
         obj = this.dataArrays.map((d) => ({
           startTime: d.startTime,

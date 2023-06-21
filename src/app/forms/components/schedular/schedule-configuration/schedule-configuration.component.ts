@@ -1184,6 +1184,15 @@ export class ScheduleConfigurationComponent
           (ctrl) => ctrl?.value?.id === foundShift?.id
         );
         if (foundShift && shiftExistIdx === -1) {
+          this._shiftDetails = {
+            ...this._shiftDetails,
+            [foundShift?.id]: [
+              {
+                startTime: foundShift?.startTime,
+                endTime: foundShift?.endTime
+              }
+            ]
+          };
           this.shiftSlots.push(
             this.addShiftDetails(false, {
               id: foundShift?.id,
