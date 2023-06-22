@@ -39,10 +39,6 @@ export class FilterComponent implements OnInit, OnChanges {
   @Output()
   reset: EventEmitter<any> = new EventEmitter();
 
-  isValidDateRange;
-  startDate: HTMLInputElement;
-  endDate: HTMLInputElement;
-
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.json && changes.json.currentValue) {
@@ -83,7 +79,6 @@ export class FilterComponent implements OnInit, OnChanges {
         else if (typeof item.value === 'object' && item.value.length !== 0)
           status = false;
       }
-      if (item.endDate === null) status = true;
     }
     return status;
   }
@@ -93,16 +88,11 @@ export class FilterComponent implements OnInit, OnChanges {
       const startDate = new Date(item.startDate).toISOString();
       const endDate = new Date(item.endDate).toISOString();
       item.value = [startDate, endDate];
+    } else {
+      item.value = [];
     }
   }
 
-  dateRangeChange(startDate, endDate) {
-    if (startDate.value && endDate.value) {
-      this.isValidDateRange = false;
-    } else if (endDate.value === '') {
-      this.isValidDateRange = true;
-    }
-  }
   closeSelect(select: MatSelect): void {
     select.close();
   }
