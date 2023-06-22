@@ -83,10 +83,10 @@
           class="width-100 question-name"
           *ngIf="
             question.fieldType !== 'INST' &&
+            question.fieldType !== 'IMG' &&
             (question.fieldType === 'VI' ||
               question.fieldType === 'DD' ||
               question.fieldType === 'ATT' ||
-              question.fieldType === 'IMG' ||
               question.fieldType === 'RT' ||
               question.fieldType === 'ARD')
           "
