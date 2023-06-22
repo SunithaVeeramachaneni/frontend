@@ -562,10 +562,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
   formatDate(date, plantId) {
-    if (
-      this.plantTimezoneMap[plantId] &&
-      this.plantTimezoneMap[plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
@@ -591,11 +588,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
-        if (
-          row.plantId &&
-          this.plantTimezoneMap[row.plantId] &&
-          this.plantTimezoneMap[row.plantId].timeZoneIdentifier
-        ) {
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
           const dueDate = new Date(
             formatInTimeZone(
               row.dueDate,
@@ -907,19 +900,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     const { roundId, assignedToEmail, plantId, ...rest } =
       this.selectedRoundInfo;
     const dueDateDisplayFormat = format(dueDate, dateFormat2);
-    if (
-      plantId &&
-      this.plantTimezoneMap[plantId] &&
-      this.plantTimezoneMap[plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       const time = localToTimezoneDate(
         this.selectedRoundInfo.dueDate,
-        this.plantTimezoneMap[this.selectedRoundInfo.plantId],
+        this.plantTimezoneMap[plantId],
         hourFormat
       );
       dueDate = zonedTimeToUtc(
         format(dueDate, dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[this.selectedRoundInfo.plantId].timeZoneIdentifier
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
       );
     }
     this.operatorRoundsService

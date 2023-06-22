@@ -871,8 +871,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlanScheduleConfiguration;
     const formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.plantTimezoneMap[plantId] &&
-          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
           ? localToTimezoneDate(
               new Date(roundPlanScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
@@ -886,8 +885,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     const formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
@@ -895,8 +893,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               )
             : this.datePipe.transform(new Date(scheduleEndOn), 'MMM dd, yy')
           : scheduleEndType === 'after'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
