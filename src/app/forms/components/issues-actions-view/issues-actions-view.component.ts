@@ -395,10 +395,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
-      ] &&
-      this.plantTimezoneMap[
-        this.issuesActionsDetailViewForm.get('plantId').value
-      ].timeZoneIdentifier
+      ]?.timeZoneIdentifier
     ) {
       this.updateIssueOrAction({
         field: 'dueDate',
@@ -739,10 +736,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     if (
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
-      ] &&
-      this.plantTimezoneMap[
-        this.issuesActionsDetailViewForm.get('plantId').value
-      ].timeZoneIdentifier
+      ]?.timeZoneIdentifier
     ) {
       return localToTimezoneDate(
         date,
