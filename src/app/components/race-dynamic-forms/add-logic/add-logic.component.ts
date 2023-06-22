@@ -187,11 +187,11 @@ export class AddLogicComponent implements OnInit, OnChanges {
       this.cdrf.detectChanges();
       logic.patchValue({
         action: result.type,
-        raiseNotification: `true`,
+        raiseNotification: true,
         triggerInfo,
         triggerWhen
       });
-      logic.value.raiseNotification = `true`;
+      logic.value.raiseNotification = true;
       logic.value.triggerInfo = triggerInfo;
       logic.value.triggerWhen = triggerWhen;
     });
@@ -218,6 +218,14 @@ export class AddLogicComponent implements OnInit, OnChanges {
             control.push(this.fb.control(q));
           }
         });
+        controlRaw
+          .slice()
+          .reverse()
+          .forEach((question, index) => {
+            if (!result.selectedQuestions.includes(question)) {
+              control.removeAt(controlRaw.length - 1 - index);
+            }
+          });
         logic.patchValue({
           action: result.type,
           mandateQuestions: result.selectedQuestions,
@@ -232,6 +240,14 @@ export class AddLogicComponent implements OnInit, OnChanges {
             control.push(this.fb.control(q));
           }
         });
+        controlRaw
+          .slice()
+          .reverse()
+          .forEach((question, index) => {
+            if (!result.selectedQuestions.includes(question)) {
+              control.removeAt(controlRaw.length - 1 - index);
+            }
+          });
         logic.patchValue({
           action: result.type,
           hideQuestions: result.selectedQuestions
