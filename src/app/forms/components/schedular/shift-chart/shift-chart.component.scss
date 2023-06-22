@@ -14,8 +14,8 @@
     width: 100%;
   }
   .table-wrapper tr td {
-    border: 1px solid #e8e8e8;
-    color: white;
+    border: 1px solid $gray14;
+    color: $white;
     cursor: pointer;
   }
   .table-wrapper table {
@@ -25,23 +25,23 @@
   .main-content {
     display: flex;
     justify-content: space-between;
-    background-color: #e1f1ff;
-    border-left: 2px solid blue;
+    background-color: $gray15;
+    border-left: 2px solid $blue;
     height: 100%;
   }
 
   .table-wrapper tr:first-child td {
     border: 0;
-    color: black;
+    color: $black;
   }
 
   .table-wrapper tr td:hover {
     background-color: rgb(238 238 238);
-    color: black;
+    color: $black;
   }
 
   .main-content .left {
-    color: black;
+    color: $black;
   }
   .left-margin {
     margin: 0 12px;
@@ -52,7 +52,7 @@
     font-weight: normal;
     font-size: 100%;
     line-height: 19px;
-    color: #212121;
+    color: $gray-bg;
     margin-left: 10px;
   }
 
@@ -63,7 +63,7 @@
     border: none;
     z-index: 10;
     .more-icon-no-color {
-      color: #757575;
+      color: $light-gray;
     }
     ::ng-deep svg {
       width: 17px !important;
@@ -83,6 +83,6 @@
     padding-left: 15px;
   }
   ::ng-deep .slotBackground {
-    background-color: #e1f1ff !important;
+    background-color: $gray15 !important;
   }
 }

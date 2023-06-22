@@ -1,4 +1,4 @@
-<div id="shift-container">
+<div id="shift-container" *ngIf="slots?.length > 0">
   <ng-container>
     <h1 class="mt-5" *ngIf="shift?.value?.id">
       {{ shift?.value?.name }}: {{ shift?.value?.startTime }}-{{
@@ -16,10 +16,7 @@
           <td [attr.colspan]="slots?.length" class="slot">
             <div class="main-content slotBackground">
               <div class="left left-margin">
-                <p>
-                  {{ 'slot' | translate }} {{ slots[0] }} -
-                  {{ subtractTime(slots[slots?.length - 1], 0, 1) }}
-                </p>
+                <p>{{ 'slot' | translate }} {{ getInitialTime }}</p>
               </div>
               <div>
                 <ng-container>
@@ -35,7 +32,7 @@
                   </button>
                 </ng-container>
                 <mat-menu #menu="matMenu" xPosition="before">
-                  <button mat-menu-item translate>Remove</button>
+                  <button mat-menu-item translate>removeBtn</button>
                 </mat-menu>
               </div>
             </div>

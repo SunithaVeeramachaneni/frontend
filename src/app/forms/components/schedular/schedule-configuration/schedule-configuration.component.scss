@@ -21,7 +21,6 @@
 
     .cancel-side-drawer {
       position: absolute;
-      top: 15px;
       left: 15px;
       cursor: pointer;
       display: inline-flex;
@@ -34,7 +33,7 @@
 
     .mat-card-content {
       padding: 32px;
-      height: calc(100vh - 138px);
+      height: calc(100vh - 160px);
       overflow-y: auto;
       overflow-x: hidden;
 
@@ -324,8 +323,22 @@
   ::ng-deep .center {
     text-align: center;
   }
+  .dialog-close {
+    margin-top: 10px;
+    margin-right: 5px;
+    font-weight: lighter;
+    color: $gray1;
+  }
   .dialog-close h2 {
     margin-top: 5px;
+  }
+  .close-text {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .schedule-text {
+    padding-top: 10px;
+    font-size: 1rem;
   }
   .plus-icon {
     width: 40px;

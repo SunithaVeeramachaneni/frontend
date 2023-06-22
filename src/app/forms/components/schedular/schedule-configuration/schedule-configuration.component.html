@@ -1,11 +1,13 @@
 <div id="scheduler-customizer">
   <mat-card class="bg-white">
     <mat-card-title class="m-0 light-gray">
-      <span class="cancel-side-drawer" (click)="cancel()">
-        <mat-icon class="dialog-close">close</mat-icon>
-        <h2>{{ 'close' | translate }}</h2>
+      <span>
+        <span class="cancel-side-drawer" (click)="cancel()">
+          <mat-icon class="dialog-close">close</mat-icon>
+          <h2 class="close-text">{{ 'close' | translate }}</h2>
+        </span>
+        <h2 class="center schedule-text">{{ 'scheduling' | translate }}</h2>
       </span>
-      <h2 class="center">{{ 'scheduling' | translate }}</h2>
       <div class="heading-schedule" translate>
         <div class="left">
           <div>
@@ -334,7 +336,7 @@
             </div>
             <p translate="doNotSelectAnyShift"></p>
             <div class="mt-12" *ngIf="!isShiftsSelected">
-              <h1>{{ 'whenToRunRounds' | translate }}</h1>
+              <h1 translate="whenToRunRounds"></h1>
               <p class="margin-3" translate="selectSlotsBelow"></p>
             </div>
             <div class="mt-12" *ngIf="isShiftsSelected">

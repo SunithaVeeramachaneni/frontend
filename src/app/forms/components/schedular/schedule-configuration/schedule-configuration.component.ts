@@ -43,7 +43,6 @@ import {
   RoundPlanScheduleConfigurationObj,
   ScheduleByDate,
   SelectedAssignee,
-  UserDetails,
   ValidationError
 } from 'src/app/interfaces';
 import { ScheduleSuccessModalComponent } from '../schedule-success-modal/schedule-success-modal.component';
@@ -60,7 +59,7 @@ import {
   getDayTz,
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
-import { zonedTimeToUtc, formatInTimeZone } from 'date-fns-tz';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import {
   dateFormat3,
   dateFormat4,
@@ -68,6 +67,7 @@ import {
   dateTimeFormat3,
   hourFormat
 } from 'src/app/app.constants';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 
 export interface ScheduleConfigEvent {
   slideInOut: 'out' | 'in';
@@ -178,9 +178,9 @@ export class ScheduleConfigurationComponent
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
-  private _shiftDetails: {
+  private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  };
+  } = shiftDefaultPayload;
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -188,7 +188,8 @@ export class ScheduleConfigurationComponent
     private dialog: MatDialog,
     private readonly formScheduleConfigurationService: FormScheduleConfigurationService,
     private readonly shiftService: ShiftService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {
     this.initDetails();
   }
@@ -621,6 +622,9 @@ export class ScheduleConfigurationComponent
   }
 
   cancel() {
+    this.shiftSlots.clear();
+    this.shiftDetails = shiftDefaultPayload;
+    this.shiftSlots.push(this.addShiftDetails(true));
     this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
@@ -668,19 +672,19 @@ export class ScheduleConfigurationComponent
           this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
         ).toISOString();
       }
-
       if (id) {
         const payload = {
           ...rest,
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
-          scheduleByDates
+          scheduleByDates,
+          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
         };
+        delete payload.shiftSlots;
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
-          delete payload.shiftSlots;
           this.formScheduleConfigurationService
             .updateFormScheduleConfiguration$(id, payload)
             .pipe(
@@ -701,7 +705,6 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
-          delete payload.shiftSlots;
           this.rpscService
             .updateRoundPlanScheduleConfiguration$(id, payload)
             .pipe(
@@ -726,12 +729,13 @@ export class ScheduleConfigurationComponent
           startDate: startDateByPlantTimezone,
           endDate: endDateByPlantTimezone,
           scheduleEndOn: scheduleEndOnByPlantTimezone,
-          scheduleByDates
+          scheduleByDates,
+          shiftDetails: this.prepareShiftDetailsPayload(this.shiftDetails)
         };
+        delete payload.shiftSlots;
         if (this.isFormModule) {
           delete payload.roundPlanId;
           delete payload.advanceRoundsCount;
-          delete payload.shiftSlots;
           this.formScheduleConfigurationService
             .createFormScheduleConfiguration$(payload)
             .pipe(
@@ -755,7 +759,6 @@ export class ScheduleConfigurationComponent
         } else {
           delete payload.formId;
           delete payload.advanceFormsCount;
-          delete payload.shiftSlots;
           this.rpscService
             .createRoundPlanScheduleConfiguration$(payload)
             .pipe(
@@ -1170,22 +1173,26 @@ export class ScheduleConfigurationComponent
   }
 
   onShiftChange({ value }: { value: string[] }): void {
+    // eslint-disable-next-line no-debugger
+    debugger;
     if (value?.length > 0) {
-      delete this._shiftDetails?.null;
-      const nullIdx = this.shiftSlots.controls.findIndex(
+      delete this.shiftDetails?.null;
+      const nullIdx: number = this.shiftSlots.controls.findIndex(
         (c) => c?.value?.null !== undefined
       );
       if (nullIdx !== -1) {
         this.shiftSlots.removeAt(nullIdx);
       }
       value?.forEach((v) => {
-        const foundShift = this.allShifts.find((shift) => shift?.id === v);
-        const shiftExistIdx = this.shiftSlots.controls.findIndex(
+        const foundShift: IShift = this.allShifts.find(
+          (shift) => shift?.id === v
+        );
+        const shiftExistIdx: number = this.shiftSlots.controls.findIndex(
           (ctrl) => ctrl?.value?.id === foundShift?.id
         );
         if (foundShift && shiftExistIdx === -1) {
-          this._shiftDetails = {
-            ...this._shiftDetails,
+          this.shiftDetails = {
+            ...this.shiftDetails,
             [foundShift?.id]: [
               {
                 startTime: foundShift?.startTime,
@@ -1206,16 +1213,18 @@ export class ScheduleConfigurationComponent
 
       // remove old shift which is not selected
       this.shiftSlots?.value
-        ?.filter((shift) => !value?.some((v) => v === shift?.id))
-        ?.forEach((r) => {
-          const idx = this.shiftSlots.controls.findIndex(
-            (c) => c?.value?.id === r?.id
+        ?.filter(
+          (shift: IShift) => !value?.some((v: string) => v === shift?.id)
+        )
+        ?.forEach((_shift: IShift) => {
+          const idx: number = this.shiftSlots.controls.findIndex(
+            (c) => c?.value?.id === _shift?.id
           );
           if (idx !== -1) this.shiftSlots.removeAt(idx);
         });
     } else {
       this.shiftSlots.clear();
-      this._shiftDetails = shiftDefaultPayload;
+      this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
   }
@@ -1223,7 +1232,7 @@ export class ScheduleConfigurationComponent
   onUpdateShiftSlot(event: {
     [key: string]: { startTime: string; endTime: string }[];
   }): void {
-    this._shiftDetails = { ...this._shiftDetails, ...event };
+    this.shiftDetails = { ...this.shiftDetails, ...event };
   }
 
   get plantTimeZone(): string {
@@ -1237,6 +1246,22 @@ export class ScheduleConfigurationComponent
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
-    this._shiftDetails = {};
+    this.shiftDetails = {};
+  }
+
+  private prepareShiftDetailsPayload(shiftDetails) {
+    const payload = {};
+    Object.entries(shiftDetails)?.forEach(
+      ([key, value]: [string, { startTime: string; endTime: string }[]]) => {
+        if (value?.length > 0) {
+          payload[key] = value?.map(({ startTime, endTime }) => ({
+            startTime:
+              this.scheduleConfigurationService.convertTo24Hour(startTime),
+            endTime: this.scheduleConfigurationService.convertTo24Hour(endTime)
+          }));
+        }
+      }
+    );
+    return payload;
   }
 }
