@@ -138,11 +138,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       if (this.selectedForm?.status) {
         if (
           this.selectedForm?.status.toLowerCase() === 'open' ||
-          this.selectedForm?.status.toLowerCase() === 'assigned'
+          this.selectedForm?.status.toLowerCase() === 'assigned' ||
+          this.selectedForm?.status.toLowerCase() === 'overdue'
         ) {
           this.pdfButtonDisabled = true;
-        }
-        if (this.selectedForm?.viewPdf === true) {
+        } else if (this.selectedForm?.isViewPdf === true) {
           this.pdfButtonDisabled = false;
         }
       }
