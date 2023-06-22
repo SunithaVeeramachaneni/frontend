@@ -39,7 +39,7 @@ export class FilterComponent implements OnInit, OnChanges {
   @Output()
   reset: EventEmitter<any> = new EventEmitter();
 
-  isDisableDate;
+  isValidDateRange;
   startDate: HTMLInputElement;
   endDate: HTMLInputElement;
 
@@ -98,9 +98,9 @@ export class FilterComponent implements OnInit, OnChanges {
 
   dateRangeChange(startDate, endDate) {
     if (startDate.value && endDate.value) {
-      this.isDisableDate = false;
+      this.isValidDateRange = false;
     } else if (endDate.value === '') {
-      this.isDisableDate = true;
+      this.isValidDateRange = true;
     }
   }
   closeSelect(select: MatSelect): void {

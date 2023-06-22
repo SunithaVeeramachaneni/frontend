@@ -166,7 +166,7 @@
       mat-raised-button
       class="btn apply-filters-btn"
       type="button"
-      [disabled]="checkState() || isDisableDate"
+      [disabled]="checkState() || isValidDateRange"
       (click)="applyFilter()"
       (click)="closeFilter()"
       aria-label="Apply Filter"
@@ -176,7 +176,7 @@
     <button
       mat-button
       color="primary"
-      [disabled]="checkState() || isDisableDate"
+      [disabled]="checkState() || isValidDateRange"
       (click)="resetFilter()"
       class="btn reset-filters-btn"
       aria-label="Cancel Filter"
