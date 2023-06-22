@@ -479,11 +479,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
 
   formatDate(date, action) {
     if (date === '') return '';
-    if (
-      action.plantId &&
-      this.plantTimezoneMap[action.plantId] &&
-      this.plantTimezoneMap[action.plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[action?.plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[action.plantId],
