@@ -66,7 +66,7 @@ export class OperatorRoundsService {
   ): Observable<any> =>
     this.appService._postData(
       environment.operatorRoundsApiUrl,
-      `round-plans/additional-details`,
+      `additional-details`,
       details,
       info
     );
@@ -76,17 +76,17 @@ export class OperatorRoundsService {
   ): Observable<any[]> =>
     this.appService._getResp(
       environment.operatorRoundsApiUrl,
-      'round-plans/additional-details',
+      `additional-details`,
       info
     );
 
   removeLable$ = (
-    label: string,
+    labelId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._removeData(
       environment.operatorRoundsApiUrl,
-      `round-plans/delete-label/${label}`,
+      `delete-additional-details/${labelId}`,
       info
     );
   removeValue$ = (
@@ -95,7 +95,7 @@ export class OperatorRoundsService {
   ): Observable<any> =>
     this.appService.patchData(
       environment.operatorRoundsApiUrl,
-      `round-plans/delete-value/`,
+      `additional-details/${detail}`,
       detail,
       info
     );

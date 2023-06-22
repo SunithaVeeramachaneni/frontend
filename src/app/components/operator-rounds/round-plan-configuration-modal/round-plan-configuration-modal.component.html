@@ -115,7 +115,7 @@
             {{ 'tags' | translate }}
           </p>
           <mat-form-field
-            class="chips-list width-100 fo rm-field"
+            class="chips-list width-100 form-field"
             appearance="outline"
           >
             <mat-chip-list #chipList>
@@ -300,15 +300,39 @@
                             }})</span
                           >
                         </button>
-                        <mat-error
+                        <!-- <mat-error
                           *ngIf="
                             headerDataForm.get('additionalDetails')['controls'][
                               i
-                            ]['value'].value.length > 40
+                            ]['value'].value.length>40
                           "
                         >
                           {{ 'errorExceedValueMessage' | translate }}
-                        </mat-error>
+                        </mat-error> -->
+                        <!-- <mat-error
+                          *ngIf="
+                            processValidationErrors(
+                              headerDataForm.get('additionalDetails')[
+                                'controls'
+                              ][i]['value'].value
+                            )
+                          "
+                          class="m-5 error-fields"
+                        >
+                          {{
+                            errors.headerDataForm.get('additionalDetails')[
+                              'controls'
+                            ][i]['value'].value.length
+                              | translate
+                                : {
+                                    name: 'errorExceedValueMessage' | translate,
+                                    length:
+                                      errors.headerDataForm.get(
+                                        'additionalDetails'
+                                      )['controls'][i]['value'].value.length
+                                  }
+                          }}
+                        </mat-error> -->
                       </ng-container>
                     </mat-option>
                   </ng-container>

@@ -28,7 +28,6 @@ export class RoundPlanConfigurationEffects {
     this.actions$.pipe(
       ofType(RoundPlanConfigurationActions.createRoundPlan),
       concatMap((action) => {
-        console.log('action:', action.formMetadata);
         return this.operatorRoundsService.createForm$(action.formMetadata).pipe(
           map((response) =>
             RoundPlanConfigurationApiActions.createRoundPlanSuccess({

@@ -43,6 +43,7 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
 import { head } from 'lodash-es';
+import { id } from 'date-fns/locale';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -66,11 +67,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   labels: any = {};
   labelCtrl = new FormControl();
   valueCtrl = new FormControl();
-  filteredLabels: Observable<string[]>;
-  filteredValues: Observable<string[]>;
+  filteredLabels: Observable<any>;
+  filteredValues: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
-  options: string[] = ['Option 1', 'Option 2', 'Option 3'];
   selectedOption: string;
   allPlantsData = [];
   plantInformation = [];
@@ -309,9 +309,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.additionalDetails.push(
       this.fb.group({
         label: ['', [Validators.maxLength(25)]],
-        value: ['', [Validators.maxLength(40)]]
+        value: ['', [Validators.maxLength(40)]],
+        id: ''
       })
     );
+
     if (this.additionalDetails) {
       merge(
         ...this.additionalDetails.controls.map(
@@ -322,20 +324,23 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         )
       ).subscribe((changes) => {
         this.changedValues = changes.value;
+        console.log('Changed value:', this.changedValues);
         if (this.changedValues.label) {
           this.filteredLabels = of(
-            Object.keys(this.labels).filter((label) => {
-              return label.includes(this.changedValues.label);
-            })
+            Object.keys(this.labels).filter((label) =>
+              label.includes(this.changedValues.label)
+            )
           );
         } else {
-          this.filteredLabels = of([]);
+          this.filteredLabels = of([{}]);
         }
+        console.log('labels :', this.labels);
+
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
           this.filteredValues = of(
-            this.labels[this.changedValues.label].filter((values) => {
-              return values.includes(this.changedValues.value);
-            })
+            this.labels[this.changedValues.label].filter((values) =>
+              values.includes(this.changedValues.value)
+            )
           );
         } else {
           this.filteredValues = of([]);
@@ -345,6 +350,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           ? this.addNewShow.next(true)
           : this.addNewShow.next(false);
       });
+      console.log('filtered value', this.filteredValues);
     }
   }
 
@@ -358,11 +364,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       .createAdditionalDetails$(this.changedValues)
       .subscribe(
         (response) => {
+          console.log('response :', response);
           const additionalinfoArray = this.headerDataForm.get(
             'additionalDetails'
           ) as FormArray;
 
-          additionalinfoArray.at(i).get('label').setValue(response.label);
+          additionalinfoArray.at(i).get('label').setValue(response.label.label);
         },
         (error) => {
           throw error;
@@ -385,28 +392,32 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
             .at(i)
             .get('value')
             .setValue(response.values.slice(-1));
+          additionalinfoArray.at(i).get('id').setValue(response.id);
         },
         (error) => {
           throw error;
         }
       );
+    console.log('Additiona', this.additionalDetails);
     this.retrieveDetails();
   }
 
   retrieveDetails() {
     this.operatorRoundsService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
+        console.log('Details :', details);
         this.labels = this.convertArrayToObject(details);
       },
       (error) => {
         this.toastService.show({ type: 'warning', text: error });
       }
     );
+    console.log('labels', this.labels);
   }
 
   convertArrayToObject(details) {
     details.map((obj) => {
-      this.convertedDetail[obj.label] = obj.values;
+      this.convertedDetail[obj.label.label] = obj.values;
     });
     return this.convertedDetail;
   }
@@ -440,7 +451,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   removeLabel(label) {
     this.operatorRoundsService.removeLable$(label).subscribe((response) => {
-      if (response.acknowledge) {
+      console.log('response1', response);
+      if (response.acknowledged) {
         this.toastService.show({
           type: 'success',
           text: 'Label deleted Successfully'
@@ -453,14 +465,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       }
     });
   }
-  removeValue(value) {
+  removeValue(id) {
+    console.log('id', id);
     this.operatorRoundsService
-      .removeValue$({ value, label: this.labelSelected })
+      .removeValue$({ id, label: this.labelSelected })
       .subscribe((response) => {
         if (response.acknowledge) {
           this.toastService.show({
             type: 'success',
             text: 'Value deleted Successfully'
+          });
+        } else {
+          this.toastService.show({
+            type: 'warning',
+            text: 'Label is not Deleted'
           });
         }
       });
