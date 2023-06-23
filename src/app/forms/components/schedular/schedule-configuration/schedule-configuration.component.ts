@@ -1173,8 +1173,6 @@ export class ScheduleConfigurationComponent
   }
 
   onShiftChange({ value }: { value: string[] }): void {
-    // eslint-disable-next-line no-debugger
-    debugger;
     if (value?.length > 0) {
       delete this.shiftDetails?.null;
       const nullIdx: number = this.shiftSlots.controls.findIndex(
