@@ -323,6 +323,7 @@
   "roundGenerationSlots": "Round Generation Slots",
   "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
   "slot": "Slot",
+  "standaloneSubText": "On Publishing form will show in mInspections app",
   "timeZone": "Plant Timezone",
   "removeBtn": "Remove",
   "user": "User",
