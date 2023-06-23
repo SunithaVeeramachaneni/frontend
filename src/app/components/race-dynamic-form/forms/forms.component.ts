@@ -795,7 +795,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       formScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
         ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
           ? localToTimezoneDate(
@@ -808,7 +808,7 @@ export class FormsComponent implements OnInit, OnDestroy {
               dateFormat
             )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
           ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
@@ -828,6 +828,29 @@ export class FormsComponent implements OnInit, OnDestroy {
             : this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
+    if (scheduleType === 'byDate') {
+      const scheduleDates = formScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
