@@ -195,6 +195,20 @@
                   />
                   <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
                 </mat-form-field>
+                <mat-error
+                  *ngIf="additionalDetails.get('label').errors?.maxlength"
+                >
+                  {{
+                    'errorExceedLabelMessage'
+                      | translate
+                        : {
+                            name: 'errorExceedLabelMessage' | translate,
+                            length:
+                              additionalDetails.get('label').errors.maxlength
+                                .requiredLength
+                          }
+                  }}
+                </mat-error>
                 <mat-autocomplete #autolabel="matAutocomplete">
                   <mat-option
                     *ngFor="let label of filteredLabels$ | async"
@@ -233,14 +247,6 @@
                         >
                       </button>
                     </ng-container>
-                    <mat-error
-                      *ngIf="
-                        headerDataForm.get('additionalDetails')['controls'][i]
-                          .value.label.length > 25
-                      "
-                    >
-                      {{ 'errorExceedLabelMessage' | translate }}
-                    </mat-error>
                   </mat-option>
                 </mat-autocomplete>
               </div>
@@ -260,6 +266,20 @@
                   />
                   <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
                 </mat-form-field>
+                <mat-error
+                  *ngIf="additionalDetails.get('value').errors?.maxlength"
+                >
+                  {{
+                    'errorExceedValueMessage'
+                      | translate
+                        : {
+                            name: 'errorExceedValueMessage' | translate,
+                            length:
+                              additionalDetails.get('value').errors.maxlength
+                                .requiredLength
+                          }
+                  }}
+                </mat-error>
                 <mat-autocomplete #autoValue="matAutocomplete">
                   <ng-container *ngIf="addNewShow | async">
                     <mat-option
@@ -300,40 +320,6 @@
                             }})</span
                           >
                         </button>
-                        <!-- <mat-error
-                          *ngIf="
-                            headerDataForm.get('additionalDetails')['controls'][
-                              i
-                            ]['value'].value.length>40
-                          "
-                        >
-                          {{ 'errorExceedValueMessage' | translate }}
-                        </mat-error> -->
-
-                        <mat-error
-                          *ngIf="
-                            processValidationErrors(
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i]['value'].value
-                            )
-                          "
-                          class="m-5 error-fields"
-                        >
-                          {{
-                            errors.headerDataForm.get('additionalDetails')[
-                              'controls'
-                            ][i]['value'].value
-                              | translate
-                                : {
-                                    name: 'errorExceedValueMessage' | translate,
-                                    length:
-                                      errors.headerDataForm.get(
-                                        'additionalDetails'
-                                      )['controls'][i]['value'].value
-                                  }
-                          }}
-                        </mat-error>
                       </ng-container>
                     </mat-option>
                   </ng-container>
