@@ -448,7 +448,7 @@ export const DEFAULT_TEMPLATE_PAGES = [
   }
 ];
 
-export const colors = {
+export const statusColors = {
   white: '#ffffff',
   black: '#000000',
   overdue: '#F44336',

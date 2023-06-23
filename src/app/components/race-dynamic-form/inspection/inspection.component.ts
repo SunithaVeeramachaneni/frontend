@@ -58,7 +58,7 @@ import {
   permissions as perms,
   dateFormat5,
   hourFormat,
-  colors
+  statusColors
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -337,28 +337,28 @@ export class InspectionComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': colors.submitted,
-        color: colors.white
+        'background-color': statusColors.submitted,
+        color: statusColors.white
       },
       'in-progress': {
-        'background-color': colors.inProgress,
-        color: colors.black
+        'background-color': statusColors.inProgress,
+        color: statusColors.black
       },
       open: {
-        'background-color': colors.open,
-        color: colors.black
+        'background-color': statusColors.open,
+        color: statusColors.black
       },
       assigned: {
-        'background-color': colors.assigned,
-        color: colors.black
+        'background-color': statusColors.assigned,
+        color: statusColors.black
       },
       'partly-open': {
-        'background-color': colors.partlyOpen,
-        color: colors.black
+        'background-color': statusColors.partlyOpen,
+        color: statusColors.black
       },
       overdue: {
-        'background-color': colors.overdue,
-        color: colors.white
+        'background-color': statusColors.overdue,
+        color: statusColors.white
       }
     }
   };
