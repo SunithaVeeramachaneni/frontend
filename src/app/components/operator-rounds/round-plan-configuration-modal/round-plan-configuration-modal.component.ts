@@ -54,6 +54,8 @@ import { id } from 'date-fns/locale';
 export class RoundPlanConfigurationModalComponent implements OnInit {
   @ViewChild('tagsInput', { static: false })
   tagsInput: ElementRef<HTMLInputElement>;
+  @ViewChild('valueInput', { static: false }) valueInput: ElementRef;
+  @ViewChild('labelInput', { static: false }) labelInput: ElementRef;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   visible = true;
@@ -73,7 +75,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allPlantsData = [];
   plantInformation = [];
   changedValues: any;
-  addNewShow = new BehaviorSubject<boolean>(false);
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
@@ -342,10 +344,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         } else {
           this.filteredValues$ = of([]);
         }
-
-        this.labels[this.changedValues.label]
-          ? this.addNewShow.next(true)
-          : this.addNewShow.next(false);
       });
     }
   }
@@ -358,38 +356,73 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   storeDetails(i) {
     this.operatorRoundsService
       .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
-      .subscribe((response) => {
-        console.log('Responsee :', response);
-        const additionalinfoArray = this.headerDataForm.get(
-          'additionalDetails'
-        ) as FormArray;
-        this.labels[response.label] = response.value;
-        this.filteredLabels$ = of(Object.keys(this.labels));
-        additionalinfoArray.at(i).get('label').setValue(response.label);
-      });
-    this.retrieveDetails();
+      .subscribe(
+        (response) => {
+          if (response?.label) {
+            this.toastService.show({
+              type: 'success',
+              text: 'Label added successfully'
+            });
+          }
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+          this.labels[response?.label] = response?.values;
+          this.filteredLabels$ = of(Object.keys(this.labels));
+          this.additionalDetailsIdMap[response?.label] = response?.id;
+          additionalinfoArray.at(i).get('label').setValue(response.label);
+        },
+        (error) => {
+          throw error;
+        }
+      );
   }
 
   storeValueDetails(i) {
-    this.operatorRoundsService
-      .createAdditionalDetails$(this.changedValues)
-      .subscribe((response) => {
-        const additionalinfoArray = this.headerDataForm.get(
-          'additionalDetails'
-        ) as FormArray;
+    if (Object.keys(this.labels).includes(this.changedValues.label)) {
+      this.operatorRoundsService
+        .updateValues$({
+          label: this.changedValues.label,
+          value: this.changedValues.value,
+          updateType: 'add',
+          labelId: this.additionalDetailsIdMap[this.changedValues.label]
+        })
+        .subscribe(
+          (response) => {
+            if (response?.label) {
+              this.toastService.show({
+                type: 'success',
+                text: 'Value added successfully'
+              });
+            }
+            this.labels[response.label] = response.values;
+            this.filteredLabels$ = of(Object.keys(this.labels));
 
-        additionalinfoArray
-          .at(i)
-          .get('value')
-          .setValue(response.values.slice(-1));
-        additionalinfoArray.at(i).get('id').setValue(response.id);
+            const additionalinfoArray = this.headerDataForm.get(
+              'additionalDetails'
+            ) as FormArray;
+
+            additionalinfoArray
+              .at(i)
+              .get('value')
+              .setValue(response.values.slice(-1));
+            additionalinfoArray.at(i).get('id').setValue(response.id);
+          },
+          (error) => {
+            throw error;
+          }
+        );
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'The selected label does not exist'
       });
+    }
   }
 
   retrieveDetails() {
     this.operatorRoundsService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
-        console.log('resposne :', details);
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
           this.additionalDetailsIdMap[data.label] = data.id;
@@ -428,9 +461,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     } else {
       this.filteredValues$ = of([]);
     }
-    this.labels[this.changedValues.label]
-      ? this.addNewShow.next(true)
-      : this.addNewShow.next(false);
   }
 
   removeLabel(label) {
@@ -438,6 +468,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.operatorRoundsService
       .removeLabel$(documentId)
       .subscribe((response) => {
+        delete this.labels[label];
+        delete this.additionalDetailsIdMap[label];
         if (response.acknowledged) {
           this.toastService.show({
             type: 'success',
@@ -455,13 +487,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   removeValue(deleteValue) {
     this.operatorRoundsService
       .deleteAdditionalDetailsValue$({
-        label: this.labelSelected,
+        label: this.changedValues.label,
         value: deleteValue,
-        labelId: this.additionalDetailsIdMap[this.labelSelected],
+        labelId: this.additionalDetailsIdMap[this.changedValues.label],
         updateType: 'delete'
       })
       .subscribe((response) => {
-        if (response.acknowledge) {
+        this.labels[response.label] = response.values;
+        if (!response.values.includes(deleteValue)) {
           this.toastService.show({
             type: 'success',
             text: 'Value deleted Successfully'
@@ -469,7 +502,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         } else {
           this.toastService.show({
             type: 'warning',
-            text: 'Label is not Deleted'
+            text: 'Value is not deleted'
           });
         }
       });

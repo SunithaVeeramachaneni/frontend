@@ -70,12 +70,22 @@ export class OperatorRoundsService {
       details,
       info
     );
+  updateValues$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.operatorRoundsApiUrl,
+      'additional-details',
+      details,
+      info
+    );
 
   deleteAdditionalDetailsValue$ = (
     details: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._postData(
+    this.appService.patchData(
       environment.operatorRoundsApiUrl,
       `additional-details`,
       details,
