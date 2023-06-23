@@ -209,4 +209,10 @@ export class ScheduleConfigurationService {
     )} ${type}`;
     return updatedTimeString;
   }
+
+  sortArray(rows = []) {
+    return rows?.sort((a, b) =>
+      this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
+    );
+  }
 }

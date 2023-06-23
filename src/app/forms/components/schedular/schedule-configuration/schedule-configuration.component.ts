@@ -622,10 +622,14 @@ export class ScheduleConfigurationComponent
   }
 
   cancel() {
+    this.initShiftStat();
+    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
+  }
+
+  initShiftStat() {
     this.shiftSlots.clear();
     this.shiftDetails = shiftDefaultPayload;
     this.shiftSlots.push(this.addShiftDetails(true));
-    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
   }
 
   scheduleConfiguration() {
@@ -698,6 +702,7 @@ export class ScheduleConfigurationComponent
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
                 }
+                this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
@@ -718,6 +723,7 @@ export class ScheduleConfigurationComponent
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
                 }
+                this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
@@ -752,6 +758,7 @@ export class ScheduleConfigurationComponent
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
                 }
+                this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
@@ -775,6 +782,7 @@ export class ScheduleConfigurationComponent
                     .patchValue(scheduleConfig.id);
                   this.schedulerConfigForm.markAsPristine();
                 }
+                this.initShiftStat();
                 this.cdrf.detectChanges();
               })
             )
@@ -986,7 +994,6 @@ export class ScheduleConfigurationComponent
               scheduledTill,
               scheduleByDates
             } = config;
-
             config = {
               ...config,
               startDate: localToTimezoneDate(
@@ -1036,6 +1043,9 @@ export class ScheduleConfigurationComponent
                 )
               )
             }));
+            if (config?.shiftDetails) {
+              delete config?.shiftDetails;
+            }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
               this.schedulerConfigForm.get('startDate').disable();
@@ -1247,15 +1257,24 @@ export class ScheduleConfigurationComponent
     this.shiftDetails = {};
   }
 
-  private prepareShiftDetailsPayload(shiftDetails) {
+  private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
     const payload = {};
     Object.entries(shiftDetails)?.forEach(
       ([key, value]: [string, { startTime: string; endTime: string }[]]) => {
         if (value?.length > 0) {
           payload[key] = value?.map(({ startTime, endTime }) => ({
             startTime:
-              this.scheduleConfigurationService.convertTo24Hour(startTime),
-            endTime: this.scheduleConfigurationService.convertTo24Hour(endTime)
+              type === '24'
+                ? this.scheduleConfigurationService.convertTo24Hour(startTime)
+                : this.scheduleConfigurationService.convertTo12HourFormat(
+                    startTime
+                  ),
+            endTime:
+              type === '24'
+                ? this.scheduleConfigurationService.convertTo24Hour(endTime)
+                : this.scheduleConfigurationService.convertTo12HourFormat(
+                    endTime
+                  )
           }));
         }
       }
