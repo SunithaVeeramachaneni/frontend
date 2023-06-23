@@ -311,6 +311,7 @@
   "actionStatus": "Status: ",
   "link": "Link",
   "raiseNotification": "Raise Notification",
+  "standaloneSubText": "On Publishing form will show in mInspections app",
   "timeZone": "Plant Timezone",
   "user": "User",
   "defaultCurrentDate": "Default to current date",
