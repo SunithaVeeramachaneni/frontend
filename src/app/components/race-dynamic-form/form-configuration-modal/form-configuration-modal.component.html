@@ -196,7 +196,7 @@
             </mat-form-field>
             <mat-autocomplete #autolabel="matAutocomplete">
               <mat-option
-                *ngFor="let label of filteredLabels | async"
+                *ngFor="let label of filteredLabels$ | async"
                 [value]="label"
               >
                 {{ label }}
@@ -261,7 +261,7 @@
             <mat-autocomplete #autoValue="matAutocomplete">
               <ng-container *ngIf="addNewShow | async">
                 <mat-option
-                  *ngFor="let value of filteredValues | async"
+                  *ngFor="let value of filteredValues$ | async"
                   [value]="value"
                 >
                   {{ value }}
@@ -281,7 +281,7 @@
                     ].value
                   "
                 >
-                  <ng-container *ngIf="filteredValues | async">
+                  <ng-container *ngIf="filteredValues$ | async">
                     <button
                       mat-button
                       color="primary"

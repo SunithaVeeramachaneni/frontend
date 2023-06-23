@@ -65,10 +65,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   labels: any = {};
-  labelCtrl = new FormControl();
-  valueCtrl = new FormControl();
-  filteredLabels: Observable<any>;
-  filteredValues: Observable<any>;
+  filteredLabels$: Observable<any>;
+  filteredValues$: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
   selectedOption: string;
@@ -143,8 +141,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
     this.getAllPlantsData();
     this.retrieveDetails();
-    if (!this.changedValues) {
-    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -311,8 +307,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     this.additionalDetails.push(
       this.fb.group({
         label: ['', [Validators.maxLength(25)]],
-        value: ['', [Validators.maxLength(40)]],
-        id: ''
+        value: ['', [Validators.maxLength(40)]]
       })
     );
 
@@ -327,7 +322,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       ).subscribe((changes) => {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
-          this.filteredLabels = of(
+          this.filteredLabels$ = of(
             Object.keys(this.labels).filter((label) => {
               if (this.deletedLabel !== label) {
                 return label.includes(this.changedValues.label);
@@ -335,24 +330,23 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
             })
           );
         } else {
-          this.filteredLabels = of([]);
+          this.filteredLabels$ = of([]);
         }
 
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues = of(
+          this.filteredValues$ = of(
             this.labels[this.changedValues.label].filter((values) =>
               values.includes(this.changedValues.value)
             )
           );
         } else {
-          this.filteredValues = of([]);
+          this.filteredValues$ = of([]);
         }
 
         this.labels[this.changedValues.label]
           ? this.addNewShow.next(true)
           : this.addNewShow.next(false);
       });
-      console.log('filtered value', this.filteredValues);
     }
   }
 
@@ -364,44 +358,32 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   storeDetails(i) {
     this.operatorRoundsService
       .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
-      .subscribe(
-        (response) => {
-          console.log('Responsee :', response);
-          const additionalinfoArray = this.headerDataForm.get(
-            'additionalDetails'
-          ) as FormArray;
-          this.labels[response.label] = response.value;
-          this.filteredLabels = of(Object.keys(this.labels));
-          additionalinfoArray.at(i).get('label').setValue(response.label);
-        },
-        (error) => {
-          throw error;
-        }
-      );
+      .subscribe((response) => {
+        console.log('Responsee :', response);
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        this.labels[response.label] = response.value;
+        this.filteredLabels$ = of(Object.keys(this.labels));
+        additionalinfoArray.at(i).get('label').setValue(response.label);
+      });
     this.retrieveDetails();
   }
 
   storeValueDetails(i) {
     this.operatorRoundsService
       .createAdditionalDetails$(this.changedValues)
-      .subscribe(
-        (response) => {
-          const additionalinfoArray = this.headerDataForm.get(
-            'additionalDetails'
-          ) as FormArray;
+      .subscribe((response) => {
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
 
-          additionalinfoArray
-            .at(i)
-            .get('value')
-            .setValue(response.values.slice(-1));
-          additionalinfoArray.at(i).get('id').setValue(response.id);
-        },
-        (error) => {
-          throw error;
-        }
-      );
-    console.log('Additiona', this.additionalDetails);
-    this.retrieveDetails();
+        additionalinfoArray
+          .at(i)
+          .get('value')
+          .setValue(response.values.slice(-1));
+        additionalinfoArray.at(i).get('id').setValue(response.id);
+      });
   }
 
   retrieveDetails() {
@@ -417,7 +399,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.toastService.show({ type: 'warning', text: error });
       }
     );
-    console.log('labels', this.labels);
   }
 
   convertArrayToObject(details) {
@@ -432,12 +413,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       this.headerDataForm.get('additionalDetails').value[index].label;
     if (
       this.headerDataForm.get('additionalDetails').value[index].value &&
-      this.headerDataForm.get('additionalDetails').value[index].label &&
-      this.labels[
-        this.headerDataForm.get('additionalDetails').value[index].label
-      ]
+      this.labelSelected &&
+      this.labels[this.labelSelected]
     ) {
-      this.filteredValues = of(
+      this.filteredValues$ = of(
         this.labels[
           this.headerDataForm.get('additionalDetails').value[index].label
         ].filter((data) =>
@@ -447,7 +426,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         )
       );
     } else {
-      this.filteredValues = of([]);
+      this.filteredValues$ = of([]);
     }
     this.labels[this.changedValues.label]
       ? this.addNewShow.next(true)
@@ -455,23 +434,15 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   removeLabel(label) {
-    console.log(label);
     const documentId = this.additionalDetailsIdMap[label];
-    console.log('Document ID :', documentId);
     this.operatorRoundsService
-      .removeLable$(documentId)
+      .removeLabel$(documentId)
       .subscribe((response) => {
         if (response.acknowledged) {
           this.toastService.show({
             type: 'success',
             text: 'Label deleted Successfully'
           });
-          console.log('labels :', this.labels);
-          // this.filteredLabels = of(
-          //   Object.keys(this.labels).filter(
-          //     (notDeletedlabel) => notDeletedlabel !== label
-          //   )
-          // );
           this.deletedLabel = label;
         } else {
           this.toastService.show({

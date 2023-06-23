@@ -60,10 +60,8 @@ export class FormConfigurationModalComponent implements OnInit {
   filteredTags: Observable<string[]>;
   tags: string[] = [];
   labels: any = {};
-  labelCtrl = new FormControl();
-  valueCtrl = new FormControl();
-  filteredLabels: Observable<string[]>;
-  filteredValues: Observable<string[]>;
+  filteredLabels$: Observable<any>;
+  filteredValues$: Observable<any>;
   allTags: string[] = [];
   originalTags: string[] = [];
   allPlantsData = [];
@@ -73,6 +71,8 @@ export class FormConfigurationModalComponent implements OnInit {
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
+  additionalDetailsIdMap = {};
+  deletedLabel = '';
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -128,6 +128,7 @@ export class FormConfigurationModalComponent implements OnInit {
       additionalDetails: this.fb.array([])
     });
     this.getAllPlantsData();
+    this.retrieveDetails();
   }
 
   getAllPlantsData() {
@@ -326,6 +327,7 @@ export class FormConfigurationModalComponent implements OnInit {
         value: ['', [Validators.maxLength(40)]]
       })
     );
+
     if (this.additionalDetails) {
       merge(
         ...this.additionalDetails.controls.map(
@@ -337,22 +339,25 @@ export class FormConfigurationModalComponent implements OnInit {
       ).subscribe((changes) => {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
-          this.filteredLabels = of(
+          this.filteredLabels$ = of(
             Object.keys(this.labels).filter((label) => {
-              return label.includes(this.changedValues.label);
+              if (this.deletedLabel !== label) {
+                return label.includes(this.changedValues.label);
+              }
             })
           );
         } else {
-          this.filteredLabels = of([]);
+          this.filteredLabels$ = of([]);
         }
+
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
-          this.filteredValues = of(
-            this.labels[this.changedValues.label].filter((values) => {
-              return values.includes(this.changedValues.value);
-            })
+          this.filteredValues$ = of(
+            this.labels[this.changedValues.label].filter((values) =>
+              values.includes(this.changedValues.value)
+            )
           );
         } else {
-          this.filteredValues = of([]);
+          this.filteredValues$ = of([]);
         }
 
         this.labels[this.changedValues.label]
@@ -368,24 +373,23 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   storeDetails(i) {
-    this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
-      (response) => {
+    this.rdfService
+      .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
+      .subscribe((response) => {
         const additionalinfoArray = this.headerDataForm.get(
           'additionalDetails'
         ) as FormArray;
-
+        this.labels[response.label] = response.value;
+        this.filteredLabels$ = of(Object.keys(this.labels));
         additionalinfoArray.at(i).get('label').setValue(response.label);
-      },
-      (error) => {
-        throw error;
-      }
-    );
+      });
     this.retrieveDetails();
   }
 
   storeValueDetails(i) {
-    this.rdfService.createAdditionalDetails$(this.changedValues).subscribe(
-      (response) => {
+    this.rdfService
+      .createAdditionalDetails$(this.changedValues)
+      .subscribe((response) => {
         const additionalinfoArray = this.headerDataForm.get(
           'additionalDetails'
         ) as FormArray;
@@ -394,18 +398,18 @@ export class FormConfigurationModalComponent implements OnInit {
           .at(i)
           .get('value')
           .setValue(response.values.slice(-1));
-      },
-      (error) => {
-        throw error;
-      }
-    );
-    this.retrieveDetails();
+        additionalinfoArray.at(i).get('id').setValue(response.id);
+      });
   }
 
   retrieveDetails() {
     this.rdfService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
+        console.log('resposne :', details);
         this.labels = this.convertArrayToObject(details);
+        details.forEach((data) => {
+          this.additionalDetailsIdMap[data.label] = data.id;
+        });
       },
       (error) => {
         this.toastService.show({ type: 'warning', text: error });
@@ -425,12 +429,10 @@ export class FormConfigurationModalComponent implements OnInit {
       this.headerDataForm.get('additionalDetails').value[index].label;
     if (
       this.headerDataForm.get('additionalDetails').value[index].value &&
-      this.headerDataForm.get('additionalDetails').value[index].label &&
-      this.labels[
-        this.headerDataForm.get('additionalDetails').value[index].label
-      ]
+      this.labelSelected &&
+      this.labels[this.labelSelected]
     ) {
-      this.filteredValues = of(
+      this.filteredValues$ = of(
         this.labels[
           this.headerDataForm.get('additionalDetails').value[index].label
         ].filter((data) =>
@@ -440,7 +442,7 @@ export class FormConfigurationModalComponent implements OnInit {
         )
       );
     } else {
-      this.filteredValues = of([]);
+      this.filteredValues$ = of([]);
     }
     this.labels[this.changedValues.label]
       ? this.addNewShow.next(true)
@@ -448,28 +450,45 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   removeLabel(label) {
-    this.rdfService.removeLable$(label).subscribe((response) => {
-      if (response.acknowledge) {
+    const documentId = this.additionalDetailsIdMap[label];
+    this.rdfService.removeLabel$(documentId).subscribe((response) => {
+      if (response.acknowledged) {
         this.toastService.show({
           type: 'success',
           text: 'Label deleted Successfully'
         });
+        this.deletedLabel = label;
       } else {
         this.toastService.show({
           type: 'warning',
-          text: 'Value is not Deleted'
+          text: 'Label is not Deleted'
         });
       }
     });
   }
-  removeValue(value) {
+  removeValue(deleteValue) {
     this.rdfService
-      .removeValue$({ value: value, label: this.labelSelected })
+      .deleteAdditionalDetailsValue$({
+        label: this.labelSelected,
+        value: deleteValue,
+        labelId: this.additionalDetailsIdMap[this.labelSelected],
+        updateType: 'delete'
+      })
       .subscribe((response) => {
-        this.toastService.show({
-          type: 'success',
-          text: 'Value deleted Successfully'
-        });
+        if (response.acknowledge) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Value deleted Successfully'
+          });
+        } else {
+          this.toastService.show({
+            type: 'warning',
+            text: 'Label is not Deleted'
+          });
+        }
       });
+  }
+  getAdditionalDetailList() {
+    return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 }

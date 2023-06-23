@@ -197,7 +197,7 @@
                 </mat-form-field>
                 <mat-autocomplete #autolabel="matAutocomplete">
                   <mat-option
-                    *ngFor="let label of filteredLabels | async"
+                    *ngFor="let label of filteredLabels$ | async"
                     [value]="label"
                   >
                     {{ label }}
@@ -263,7 +263,7 @@
                 <mat-autocomplete #autoValue="matAutocomplete">
                   <ng-container *ngIf="addNewShow | async">
                     <mat-option
-                      *ngFor="let value of filteredValues | async"
+                      *ngFor="let value of filteredValues$ | async"
                       [value]="value"
                     >
                       {{ value }}
@@ -283,7 +283,7 @@
                         ].value
                       "
                     >
-                      <ng-container *ngIf="filteredValues | async">
+                      <ng-container *ngIf="filteredValues$ | async">
                         <button
                           mat-button
                           color="primary"
@@ -309,7 +309,8 @@
                         >
                           {{ 'errorExceedValueMessage' | translate }}
                         </mat-error> -->
-                        <!-- <mat-error
+
+                        <mat-error
                           *ngIf="
                             processValidationErrors(
                               headerDataForm.get('additionalDetails')[
@@ -322,17 +323,17 @@
                           {{
                             errors.headerDataForm.get('additionalDetails')[
                               'controls'
-                            ][i]['value'].value.length
+                            ][i]['value'].value
                               | translate
                                 : {
                                     name: 'errorExceedValueMessage' | translate,
                                     length:
                                       errors.headerDataForm.get(
                                         'additionalDetails'
-                                      )['controls'][i]['value'].value.length
+                                      )['controls'][i]['value'].value
                                   }
                           }}
-                        </mat-error> -->
+                        </mat-error>
                       </ng-container>
                     </mat-option>
                   </ng-container>

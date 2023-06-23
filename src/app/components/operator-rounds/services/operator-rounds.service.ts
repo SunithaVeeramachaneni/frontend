@@ -91,23 +91,13 @@ export class OperatorRoundsService {
       info
     );
 
-  removeLable$ = (
+  removeLabel$ = (
     labelId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._removeData(
       environment.operatorRoundsApiUrl,
       `delete-additional-details/${labelId}`,
-      info
-    );
-  removeValue$ = (
-    detail: object,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService.patchData(
-      environment.operatorRoundsApiUrl,
-      `additional-details/${detail}`,
-      detail,
       info
     );
 
