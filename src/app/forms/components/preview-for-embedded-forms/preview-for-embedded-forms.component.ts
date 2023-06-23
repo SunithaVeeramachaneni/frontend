@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,7 +16,8 @@ import {
 @Component({
   selector: 'app-preview-for-embedded-forms',
   templateUrl: './preview-for-embedded-forms.component.html',
-  styleUrls: ['./preview-for-embedded-forms.component.scss']
+  styleUrls: ['./preview-for-embedded-forms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreviewForEmbeddedFormsComponent implements OnInit, OnChanges {
   @Input() subFormId: any;

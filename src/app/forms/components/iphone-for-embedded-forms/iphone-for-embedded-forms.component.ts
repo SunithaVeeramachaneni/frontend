@@ -1,5 +1,11 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FormMetadata } from 'src/app/interfaces';
@@ -14,7 +20,8 @@ import { Store } from '@ngrx/store';
 @Component({
   selector: 'app-iphone-for-embedded-forms',
   templateUrl: './iphone-for-embedded-forms.component.html',
-  styleUrls: ['./iphone-for-embedded-forms.component.scss']
+  styleUrls: ['./iphone-for-embedded-forms.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IphoneForEmbeddedFormsComponent implements OnInit {
   @Input() subFormId: any;
