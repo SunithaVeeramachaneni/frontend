@@ -78,6 +78,12 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
+    const checkSlot = this.dataArrays.filter((item) => item.startTime === val);
+    if (checkSlot.length) {
+      if (checkSlot[0].index === 1 || checkSlot[0].index === 0) {
+        return;
+      }
+    }
     if (this.service.isTimeSlotPresent(val, this.dataArrays)) {
       const indexOfMatchObject = this.dataArrays.findIndex(
         (x) =>
@@ -102,27 +108,46 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       if (matchObject.isBook === false) {
         if (matchObject?.endTime === this.service.addTime(val, 0, 59)) {
           this.dataArrays[indexOfMatchObject].isBook = true;
+          const endTime = this.dataArrays[indexOfMatchObject].endTime;
+          this.dataArrays[indexOfMatchObject].endTime =
+            this.service.subtractTime(endTime, 0, 0);
+          this.setShiftDetails();
+          return;
+        }
+        if (matchObject?.endTime === this.service.addTime(val, 0, 1)) {
+          this.dataArrays[indexOfMatchObject].isBook = true;
+          const endTime = this.dataArrays[indexOfMatchObject].endTime;
+          this.dataArrays[indexOfMatchObject].endTime =
+            this.service.subtractTime(endTime, 0, 1);
           this.setShiftDetails();
           return;
         }
         const oldIndex = this.dataArrays[indexOfMatchObject].index;
         if (matchObject?.startTime === val && matchObject?.index === 1) {
           this.dataArrays[indexOfMatchObject].isBook = true;
+          this.dataArrays[indexOfMatchObject].endTime = this.service.addTime(
+            val,
+            0,
+            59
+          );
           this.setShiftDetails();
           return;
         }
         if (matchObject?.startTime === val) {
-          alert(matchObject?.startTime === val);
           if (matchObject?.startTime === val && matchObject?.index === 1) {
             this.dataArrays[indexOfMatchObject].isBook = true;
+            const endTime = this.dataArrays[indexOfMatchObject].endTime;
+            this.dataArrays[indexOfMatchObject].endTime =
+              this.service.subtractTime(endTime, 0, 1);
+
             this.setShiftDetails();
             return;
           }
           this.dataArrays[indexOfMatchObject].isBook = true;
           this.dataArrays[indexOfMatchObject].endTime = this.service.addTime(
             val,
-            1,
-            0
+            0,
+            59
           );
           this.dataArrays[indexOfMatchObject].index = timeDiff;
           const diTime = Math.abs(oldIndex - timeDiff);
@@ -153,7 +178,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.slotsArray.push(this.createItemFormGroup());
       } else {
         if (this.dataArrays.filter((e) => e.startTime === val).length) {
-          alert(this.dataArrays.filter((e) => e.startTime === val).length);
           const findIndx = this.dataArrays.findIndex(
             (e) => e.startTime === val
           );
@@ -163,8 +187,8 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           return;
         }
         const lastTIme = this.dataArrays[indexOfMatchObject].endTime;
-        this.dataArrays[indexOfMatchObject].index = Math.abs(timeDiff);
         const oldIndex = this.dataArrays[indexOfMatchObject].index;
+        this.dataArrays[indexOfMatchObject].index = Math.abs(timeDiff);
         this.dataArrays[indexOfMatchObject].endTime = this.service.subtractTime(
           val,
           0,
@@ -193,6 +217,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       };
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
+      this.dataArrays = this.service.sortArray(this.dataArrays);
     }
     this.dataArrays = this.service.sortArray(this.dataArrays);
     this.setShiftDetails();
@@ -207,6 +232,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
     } else {
       this.dataArrays[rowIndex].isBook = false;
     }
+    this.dataArrays = this.service.sortArray(this.dataArrays);
     if (this.dataArrays.length === 0) {
       this.col = 0;
     }

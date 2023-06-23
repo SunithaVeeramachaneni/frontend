@@ -203,6 +203,10 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
+    const startTime = '12:00 PM';
+    if (timeString?.toLowerCase() === startTime?.toLowerCase()) {
+      type = TimeType.am;
+    }
 
     const updatedTimeString = `${this.padZero(hours)}:${this.padZero(
       minutes
