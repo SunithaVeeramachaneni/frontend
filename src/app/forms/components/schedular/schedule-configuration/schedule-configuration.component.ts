@@ -1293,10 +1293,6 @@ export class ScheduleConfigurationComponent
     [key: string]: { startTime: string; endTime: string }[];
   }): void {
     this.shiftDetails = { ...this.shiftDetails, ...event };
-    console.log(
-      '🚀 ~ file: schedule-configuration.component.ts:1296 ~ this.shiftDetails:',
-      this.shiftDetails
-    );
   }
 
   get plantTimeZone(): string {
