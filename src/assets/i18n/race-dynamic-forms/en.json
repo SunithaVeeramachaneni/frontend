@@ -312,5 +312,6 @@
   "actionStatus": "Status: ",
   "link": "Link",
   "raiseNotification": "Raise Notification",
-  "timeZone": "Plant Timezone"
+  "timeZone": "Plant Timezone",
+  "user": "User"
 }
