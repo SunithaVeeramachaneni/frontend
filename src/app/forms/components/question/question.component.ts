@@ -55,6 +55,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -225,7 +226,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private base64Service: Base64HelperService
   ) {}
 
   ngOnInit(): void {
@@ -561,10 +563,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
-      .subscribe((data) => {
+      .subscribe(async (data) => {
+        const { base64Response: base64 } =
+          await this.base64Service.getBase64ImageFromSourceUrl(
+            data.message.objectURL
+          );
         const value = {
           name: file.name,
           size: file.size,
+          base64: base64.split(',')[1],
           objectKey: data.message.objectKey,
           objectURL: data.message.objectURL
         };

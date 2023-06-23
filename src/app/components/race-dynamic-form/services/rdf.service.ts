@@ -1109,62 +1109,22 @@ export class RaceDynamicFormService {
       case 'VI':
       case 'DD': {
         const {
-          value: {
-            values,
-            responseType,
-            dependsOn,
-            location,
-            latitudeColumn: lat,
-            longitudeColumn: lan,
-            radius,
-            pins: pinsCount,
-            autoSelectColumn: autoFill,
-            fileName,
-            globalDataset,
-            children
-          },
+          value: { value },
           multi
         } = question;
-        if (!globalDataset) {
-          const viVALUE = values.map((item, idx) => ({
-            [`label${idx + 1}`]: item.title,
-            key: item.title,
-            color: item.color,
-            description: item.title
-          }));
-          properties = {
-            ...properties,
-            DDVALUE: JSON.stringify(viVALUE),
-            UIFIELDTYPE: multi ? 'DDM' : fieldType
-          };
-        } else {
-          if (location) {
-            properties = {
-              ...properties,
-              MAPDATA: JSON.stringify({
-                lat,
-                lan,
-                radius,
-                pinsCount: pinsCount.toString(),
-                autoFill: autoFill.toString(),
-                parent: responseType
-              })
-            };
-          }
-          if (readOnly) {
-            properties = {
-              ...properties,
-              UIFIELDTYPE: 'LF'
-            };
-          }
-          properties = {
-            ...properties,
-            FILENAME: fileName,
-            DDDEPENDECYFIELD: dependsOn,
-            CHILDREN: JSON.stringify(children),
-            COLUMNNAME: responseType
-          };
-        }
+        console.log(question);
+        const viVALUE = value.map((item, idx) => ({
+          [`label${idx + 1}`]: item.title,
+          key: item.title,
+          color: item.color,
+          description: item.title
+        }));
+        properties = {
+          ...properties,
+          DDVALUE: JSON.stringify(viVALUE),
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
+        };
+
         break;
       }
       case 'ARD': {
