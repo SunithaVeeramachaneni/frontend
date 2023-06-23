@@ -180,7 +180,8 @@ export class ScheduleConfigurationComponent
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  } = shiftDefaultPayload;
+  } = {};
+  private shiftApiResponse: any;
   constructor(
     private fb: FormBuilder,
     private rpscService: RoundPlanScheduleConfigurationService,
@@ -211,7 +212,43 @@ export class ScheduleConfigurationComponent
     this.shiftService.fetchAllShifts$().subscribe((shifts) => {
       this.shiftsInformation = shifts?.items || [];
       this.allShifts = this.shiftsInformation;
+      this.initCreatedSlots();
     });
+  }
+
+  initCreatedSlots(): void {
+    if (this.shiftApiResponse) {
+      this.shiftSlots.clear();
+      const shiftsSelected = [];
+      Object.entries(this.shiftApiResponse).forEach(([key, value]: any) => {
+        if (key === 'null') {
+          this.shiftSlots.push(
+            this.addShiftDetails(false, {
+              null: {
+                startTime: shiftDefaultPayload.null[0].startTime,
+                endTime: shiftDefaultPayload.null[0].endTime,
+                payload: value
+              }
+            })
+          );
+        } else {
+          shiftsSelected.push(key);
+          const foundShift = this.allShifts.find((s) => s.id === key);
+          if (foundShift) {
+            this.shiftSlots.push(
+              this.addShiftDetails(false, {
+                id: foundShift?.id,
+                name: foundShift?.name,
+                startTime: foundShift?.startTime,
+                endTime: foundShift?.endTime,
+                payload: value
+              })
+            );
+          }
+        }
+      });
+      this.shiftsSelected.patchValue(shiftsSelected);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -291,7 +328,8 @@ export class ScheduleConfigurationComponent
           Validators.max(this.roundsGeneration.max)
         ]
       ],
-      shiftSlots: this.fb.array([this.addShiftDetails(true)])
+      shiftSlots: this.fb.array([this.addShiftDetails(true)]),
+      shiftsSelected: []
     });
     this.schedulerConfigForm
       .get('scheduleEndType')
@@ -881,6 +919,13 @@ export class ScheduleConfigurationComponent
                 )
               )
             }));
+            if (config?.shiftDetails) {
+              this.shiftApiResponse = this.prepareShiftDetailsPayload(
+                config?.shiftDetails,
+                '12'
+              );
+              delete config?.shiftDetails;
+            }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
               this.schedulerConfigForm.get('startDate').disable();
@@ -975,6 +1020,8 @@ export class ScheduleConfigurationComponent
       },
       advanceFormsCount: 0,
       advanceRoundsCount: 0,
+      shiftsSelected: [],
+      shiftSlots: [],
       ...this.getDefaultSchedulerConfigDates()
     });
 
@@ -1044,6 +1091,10 @@ export class ScheduleConfigurationComponent
               )
             }));
             if (config?.shiftDetails) {
+              this.shiftApiResponse = this.prepareShiftDetailsPayload(
+                config?.shiftDetails,
+                '12'
+              );
               delete config?.shiftDetails;
             }
             this.schedulerConfigForm.patchValue(config);
@@ -1235,12 +1286,17 @@ export class ScheduleConfigurationComponent
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
+    console.log(this.schedulerConfigForm.value);
   }
 
   onUpdateShiftSlot(event: {
     [key: string]: { startTime: string; endTime: string }[];
   }): void {
     this.shiftDetails = { ...this.shiftDetails, ...event };
+    console.log(
+      '🚀 ~ file: schedule-configuration.component.ts:1296 ~ this.shiftDetails:',
+      this.shiftDetails
+    );
   }
 
   get plantTimeZone(): string {
@@ -1259,6 +1315,9 @@ export class ScheduleConfigurationComponent
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {
     const payload = {};
+    if (!shiftDetails) {
+      return payload;
+    }
     Object.entries(shiftDetails)?.forEach(
       ([key, value]: [string, { startTime: string; endTime: string }[]]) => {
         if (value?.length > 0) {

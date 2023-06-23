@@ -41,9 +41,15 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   constructor(
     private readonly fb: FormBuilder,
     private readonly service: ScheduleConfigurationService
-  ) {}
+  ) {
+    this.initForm();
+  }
 
   ngOnInit(): void {
+    /* TODO document why this method 'ngOnInit' is empty */
+  }
+
+  initForm() {
     this.addForm = this.fb.group({
       items: [null, Validators.required]
     });
@@ -57,11 +63,17 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.shift.value.null.startTime,
         this.shift.value.null.endTime
       );
+      if (this.shift?.value?.null?.payload) {
+        this.initEditPayloadForSlots(this.shift.value.null.payload);
+      }
     } else if (this.shift?.value?.id) {
       this.slots = this.service.generateTimeSlots(
         this.shift.value.startTime,
         this.shift.value.endTime
       );
+      if (this.shift?.value?.payload) {
+        this.initEditPayloadForSlots(this.shift.value.payload);
+      }
     }
   }
 
@@ -213,7 +225,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         59
       )}`;
     }
-    return;
+    return '';
   }
 
   private createItemFormGroup(): FormGroup {
@@ -249,5 +261,32 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       }
       this.updateShiftSlot.emit(obj);
     }
+  }
+
+  private initEditPayloadForSlots(payload) {
+    if (Array.isArray(payload)) {
+      this.col = payload?.length;
+      payload?.forEach((p) => this.prepareSelectedTime(p));
+    } else {
+      this.col = 1;
+      this.prepareSelectedTime(payload);
+    }
+  }
+
+  private prepareSelectedTime(payload) {
+    let timeDiff = this.service.getTimeDifference(
+      payload?.startTime,
+      payload?.endTime
+    );
+    timeDiff = timeDiff === 0 ? 1 : timeDiff;
+    const obj = {
+      index: timeDiff,
+      startTime: payload.startTime,
+      endTime: payload.endTime,
+      isBook: true
+    };
+    this.dataArrays.push(obj);
+    this.slotsArray.push(this.createItemFormGroup());
+    this.setShiftDetails();
   }
 }
