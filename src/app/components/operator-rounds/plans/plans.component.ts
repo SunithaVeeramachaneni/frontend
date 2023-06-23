@@ -888,7 +888,7 @@ export class PlansComponent implements OnInit, OnDestroy {
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
-                'MMM dd, yy'
+                dateFormat
               )
             : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
           : scheduleEndType === 'after'
@@ -896,7 +896,7 @@ export class PlansComponent implements OnInit, OnDestroy {
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
-                'MMM dd, yy'
+                dateFormat
               )
             : this.datePipe.transform(new Date(endDate), dateFormat)
           : 'Never'
