@@ -146,10 +146,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
       this.setFrequencyInfo();
       this.pdfButtonDisabled = true;
-      if (this.selectedForm?.status) {
-        if (this.selectedForm?.isViewPdf === true) {
-          this.pdfButtonDisabled = false;
-        }
+      if (this.selectedForm?.isViewPdf === true) {
+        this.pdfButtonDisabled = false;
       }
     }
   }
