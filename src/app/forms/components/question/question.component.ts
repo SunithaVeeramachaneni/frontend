@@ -56,6 +56,7 @@ import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -207,6 +208,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
+  embeddedFormId: string = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -227,7 +229,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private responseSetService: ResponseSetService,
     private toast: ToastService,
     private translate: TranslateService,
-    private base64Service: Base64HelperService
+    private base64Service: Base64HelperService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -235,6 +238,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       tap((event) => {
         this.formId = event.id;
         this.formMetadata = event;
+        this.embeddedFormId = event?.embeddedFormId;
       })
     );
     this.moduleName$ = this.store
@@ -456,6 +460,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       type: 'delete',
       questionId: this.questionId
     });
+
+    if (this.embeddedFormId) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.embeddedFormId,
+          UNIQUEKEY: this.questionId
+        })
+        .subscribe();
+    }
   }
 
   selectFieldTypeEventHandler(fieldType) {

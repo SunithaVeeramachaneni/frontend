@@ -1197,6 +1197,24 @@ export class RaceDynamicFormService {
       info
     );
 
+  deleteAbapFormField$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('FORMNAME', queryParams.FORMNAME);
+    params.set('UNIQUEKEY', queryParams.UNIQUEKEY);
+    params.set('APPNAME', APPNAME);
+    params.set('VERSION', VERSION);
+    params.set('VALIDFROM', VALIDFROM);
+    params.set('VALIDTO', VALIDTO);
+    return this.appService._removeData(
+      environment.rdfApiUrl,
+      `abap/forms/fields?` + params.toString(),
+      info
+    );
+  };
+
   getEmbeddedFormId$ = (
     formId: string,
     info: ErrorInfo = {} as ErrorInfo
