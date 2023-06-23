@@ -71,6 +71,17 @@ export class OperatorRoundsService {
       info
     );
 
+  deleteAdditionalDetailsValue$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+
   getAdditionalDetails$ = (
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
