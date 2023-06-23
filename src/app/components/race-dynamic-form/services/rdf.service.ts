@@ -1112,7 +1112,6 @@ export class RaceDynamicFormService {
           value: { value },
           multi
         } = question;
-        console.log(question);
         const viVALUE = value.map((item, idx) => ({
           [`label${idx + 1}`]: item.title,
           key: item.title,
