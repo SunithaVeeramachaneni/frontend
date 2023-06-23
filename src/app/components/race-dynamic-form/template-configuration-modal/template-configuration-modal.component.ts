@@ -280,10 +280,6 @@ export class TemplateConfigurationModalComponent implements OnInit {
         } else {
           this.filteredValues$ = of([]);
         }
-
-        this.labels[this.changedValues.label]
-          ? this.addNewShow.next(true)
-          : this.addNewShow.next(false);
       });
     }
   }
@@ -297,36 +293,62 @@ export class TemplateConfigurationModalComponent implements OnInit {
     this.rdfService
       .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
       .subscribe((response) => {
+        if (response?.label) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Label added successfully'
+          });
+        }
         const additionalinfoArray = this.headerDataForm.get(
           'additionalDetails'
         ) as FormArray;
-        this.labels[response.label] = response.value;
+        this.labels[response?.label] = response?.values;
         this.filteredLabels$ = of(Object.keys(this.labels));
+        this.additionalDetailsIdMap[response?.label] = response?.id;
         additionalinfoArray.at(i).get('label').setValue(response.label);
       });
-    this.retrieveDetails();
   }
 
   storeValueDetails(i) {
-    this.rdfService
-      .createAdditionalDetails$(this.changedValues)
-      .subscribe((response) => {
-        const additionalinfoArray = this.headerDataForm.get(
-          'additionalDetails'
-        ) as FormArray;
+    if (Object.keys(this.labels).includes(this.changedValues.label)) {
+      this.rdfService
+        .updateValues$({
+          label: this.changedValues.label,
+          value: this.changedValues.value,
+          updateType: 'add',
+          labelId: this.additionalDetailsIdMap[this.changedValues.label]
+        })
+        .subscribe((response) => {
+          if (response?.label) {
+            this.toastService.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
+          }
+          this.labels[response.label] = response.values;
+          this.filteredLabels$ = of(Object.keys(this.labels));
 
-        additionalinfoArray
-          .at(i)
-          .get('value')
-          .setValue(response.values.slice(-1));
-        additionalinfoArray.at(i).get('id').setValue(response.id);
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+
+          additionalinfoArray
+            .at(i)
+            .get('value')
+            .setValue(response.values.slice(-1));
+          // additionalinfoArray.at(i).get('id').setValue(response.id);
+        });
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'The selected label does not exist'
       });
+    }
   }
 
   retrieveDetails() {
     this.rdfService.getAdditionalDetails$().subscribe(
       (details: any[]) => {
-        console.log('resposne :', details);
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
           this.additionalDetailsIdMap[data.label] = data.id;
@@ -365,13 +387,12 @@ export class TemplateConfigurationModalComponent implements OnInit {
     } else {
       this.filteredValues$ = of([]);
     }
-    this.labels[this.changedValues.label]
-      ? this.addNewShow.next(true)
-      : this.addNewShow.next(false);
   }
   removeLabel(label) {
     const documentId = this.additionalDetailsIdMap[label];
     this.rdfService.removeLabel$(documentId).subscribe((response) => {
+      delete this.labels[label];
+      delete this.additionalDetailsIdMap[label];
       if (response.acknowledged) {
         this.toastService.show({
           type: 'success',
@@ -389,13 +410,14 @@ export class TemplateConfigurationModalComponent implements OnInit {
   removeValue(deleteValue) {
     this.rdfService
       .deleteAdditionalDetailsValue$({
-        label: this.labelSelected,
+        label: this.changedValues.label,
         value: deleteValue,
-        labelId: this.additionalDetailsIdMap[this.labelSelected],
+        labelId: this.additionalDetailsIdMap[this.changedValues.label],
         updateType: 'delete'
       })
       .subscribe((response) => {
-        if (response.acknowledge) {
+        this.labels[response.label] = response.values;
+        if (!response.values.includes(deleteValue)) {
           this.toastService.show({
             type: 'success',
             text: 'Value deleted Successfully'
@@ -403,7 +425,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
         } else {
           this.toastService.show({
             type: 'warning',
-            text: 'Label is not Deleted'
+            text: 'Value is not deleted'
           });
         }
       });

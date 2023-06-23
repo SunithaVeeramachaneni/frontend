@@ -356,26 +356,21 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   storeDetails(i) {
     this.operatorRoundsService
       .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
-      .subscribe(
-        (response) => {
-          if (response?.label) {
-            this.toastService.show({
-              type: 'success',
-              text: 'Label added successfully'
-            });
-          }
-          const additionalinfoArray = this.headerDataForm.get(
-            'additionalDetails'
-          ) as FormArray;
-          this.labels[response?.label] = response?.values;
-          this.filteredLabels$ = of(Object.keys(this.labels));
-          this.additionalDetailsIdMap[response?.label] = response?.id;
-          additionalinfoArray.at(i).get('label').setValue(response.label);
-        },
-        (error) => {
-          throw error;
+      .subscribe((response) => {
+        if (response?.label) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Label added successfully'
+          });
         }
-      );
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        this.labels[response?.label] = response?.values;
+        this.filteredLabels$ = of(Object.keys(this.labels));
+        this.additionalDetailsIdMap[response?.label] = response?.id;
+        additionalinfoArray.at(i).get('label').setValue(response.label);
+      });
   }
 
   storeValueDetails(i) {
@@ -387,31 +382,25 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           updateType: 'add',
           labelId: this.additionalDetailsIdMap[this.changedValues.label]
         })
-        .subscribe(
-          (response) => {
-            if (response?.label) {
-              this.toastService.show({
-                type: 'success',
-                text: 'Value added successfully'
-              });
-            }
-            this.labels[response.label] = response.values;
-            this.filteredLabels$ = of(Object.keys(this.labels));
-
-            const additionalinfoArray = this.headerDataForm.get(
-              'additionalDetails'
-            ) as FormArray;
-
-            additionalinfoArray
-              .at(i)
-              .get('value')
-              .setValue(response.values.slice(-1));
-            additionalinfoArray.at(i).get('id').setValue(response.id);
-          },
-          (error) => {
-            throw error;
+        .subscribe((response) => {
+          if (response?.label) {
+            this.toastService.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
           }
-        );
+          this.labels[response.label] = response.values;
+          this.filteredLabels$ = of(Object.keys(this.labels));
+
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+
+          additionalinfoArray
+            .at(i)
+            .get('value')
+            .setValue(response.values.slice(-1));
+        });
     } else {
       this.toastService.show({
         type: 'warning',
