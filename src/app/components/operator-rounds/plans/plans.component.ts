@@ -15,6 +15,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -51,6 +52,7 @@ import {
   AssigneeDetails
 } from 'src/app/interfaces';
 import {
+  dateFormat,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -69,6 +71,8 @@ import {
 } from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-plans',
@@ -358,6 +362,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   roundPlanDetail: RoundPlanDetail;
+  plantMapSubscription: Subscription;
   scheduleRoundPlanDetail: RoundPlanDetail;
   zIndexDelay = 0;
   zIndexScheduleDelay = 0;
@@ -373,6 +378,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   userFullNameByEmail = {};
+  plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -387,10 +393,15 @@ export class PlansComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
+    private plantService: PlantService,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -602,6 +613,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -775,7 +787,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             ...data,
             schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
             scheduleDates: this.getFormatedScheduleDates(
-              roundPlanScheduleConfiguration
+              roundPlanScheduleConfiguration,
+              data.plantId
             ),
             assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
             assigneeToEmail: this.getAssignedToEmail(
@@ -828,7 +841,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlanScheduleConfigurations[roundPlan.id]
           ),
           scheduleDates: this.getFormatedScheduleDates(
-            roundPlanScheduleConfigurations[roundPlan.id]
+            roundPlanScheduleConfigurations[roundPlan.id],
+            roundPlan.plantId
           ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
@@ -849,25 +863,68 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFormatedScheduleDates(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration,
+    plantId
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       roundPlanScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.datePipe.transform(
-            roundPlanScheduleConfiguration.startDate,
-            'MMM dd, yy'
-          )
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+          ? localToTimezoneDate(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              this.plantTimezoneMap[plantId],
+              dateFormat
+            )
+          : this.datePipe.transform(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              dateFormat
+            )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, 'MMM dd, yy')
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(scheduleEndOn),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, 'MMM dd, yy')
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(endDate),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(new Date(endDate), dateFormat)
           : 'Never'
         : '';
+
+    if (scheduleType === 'byDate') {
+      const scheduleDates = roundPlanScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
@@ -917,7 +974,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data?: any) {
-    let emailArray = [];
+    const emailArray = [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     data.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(

@@ -5,7 +5,11 @@
     </div>
     <div *ngIf="selectedPlant">
       <p>
-        <img [src]="selectedPlantImageurl(selectedPlant)" alt="Image" class="image" />
+        <img
+          [src]="selectedPlantImageurl(selectedPlant)"
+          alt="Image"
+          class="image"
+        />
       </p>
       <h1 class="heading">{{ selectedPlant.name }}</h1>
       <hr class="horizon-line" />
@@ -14,32 +18,51 @@
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="country"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.country ? selectedPlant.country : '--' }}
+        {{ selectedPlant.country ? selectedPlant.countryDisplay : placeHolder }}
       </p>
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="zipCode"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.zipCode ? selectedPlant.zipCode : '--' }}
+        {{ selectedPlant.zipCode ? selectedPlant.zipCode : placeHolder }}
       </p>
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="state"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.state ? selectedPlant.state : '--' }}
+        {{ selectedPlant.state ? selectedPlant.state : placeHolder }}
       </p>
+      <hr class="horizon-line" />
+      <p class="m-0 sub-headings" translate="timeZone"></p>
+      <p class="m-0 sub-headings-value">
+        {{
+          selectedPlant.timeZone
+            ? selectedPlant.timeZone.description
+            : placeHolder
+        }}
+      </p>
+
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="shifts"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.shiftNames ? selectedPlant.shiftNames?.join(', ') : '--' }}
+        {{
+          selectedPlant.shiftNames
+            ? selectedPlant.shiftNames?.join(', ')
+            : placeHolder
+        }}
       </p>
       <hr class="horizon-line" />
       <p class="m-0 sub-headings" translate="additionalDetails"></p>
       <p class="m-0 sub-headings-value">
-        {{ selectedPlant.label ? selectedPlant.label : '--' }}
+        {{ selectedPlant.label ? selectedPlant.label : placeHolder }}
         :
-        {{ selectedPlant.field ? selectedPlant.field : '--' }}
+        {{ selectedPlant.field ? selectedPlant.field : placeHolder }}
       </p>
       <hr class="horizon-line" />
-      <button mat-raised-button class="edit-btn" (click)="edit()" translate="editBtn"></button>
+      <button
+        mat-raised-button
+        class="edit-btn"
+        (click)="edit()"
+        translate="editBtn"
+      ></button>
     </div>
   </mat-card>
 </div>

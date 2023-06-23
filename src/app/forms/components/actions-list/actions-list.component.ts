@@ -15,7 +15,14 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subject,
+  Subscription
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  dateTimeFormat2,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -47,6 +55,8 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
 
 @Component({
   selector: 'app-actions-list',
@@ -66,6 +76,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     return this._users$;
   }
   assigneeDetails: AssigneeDetails;
+  plantTimezoneMap = {};
   columns: Column[] = [
     {
       id: 'title',
@@ -222,7 +233,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
@@ -349,6 +360,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   }>;
   skip = 0;
   limit = graphQLDefaultLimit;
+  plantMapSubscription: Subscription;
   searchAction: FormControl;
   actionsCount$: Observable<number>;
   menuState = 'out';
@@ -366,11 +378,16 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
     private readonly userService: UsersService,
+    private plantService: PlantService,
     private dialog: MatDialog,
     private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.observationsService.fetchActions$.next({ data: 'load' });
     this.observationsService.fetchActions$.next({} as TableEvent);
     this.searchAction = new FormControl('');
@@ -450,6 +467,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       const { assignedTo, createdBy } = action;
       return {
         ...action,
+        dueDateDisplay: this.formatDate(action.dueDate, action),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
@@ -457,6 +475,18 @@ export class ActionsListComponent implements OnInit, OnDestroy {
         createdBy: this.userService.getUserFullName(createdBy)
       };
     });
+  }
+
+  formatDate(date, action) {
+    if (date === '') return '';
+    if (this.plantTimezoneMap[action?.plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[action.plantId],
+        dateTimeFormat2
+      );
+    }
+    return format(new Date(date), dateTimeFormat2);
   }
 
   getActionsList() {
@@ -571,6 +601,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
