@@ -105,7 +105,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   filterJson = [];
   status = [
     'Open',
-    'In-progress',
+    'In-Progress',
     'Submitted',
     'Assigned',
     'Partly-Open',

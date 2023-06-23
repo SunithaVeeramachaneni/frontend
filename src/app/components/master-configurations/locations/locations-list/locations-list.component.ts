@@ -252,9 +252,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   filterJson = [];
   status = [
     'Open',
-    'In-progress',
+    'In-Progress',
     'Submitted',
-    'Partly-Opened',
+    'Partly-Open',
     'Overdue',
     'Assigned'
   ];

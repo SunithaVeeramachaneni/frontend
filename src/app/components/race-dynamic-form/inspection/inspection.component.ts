@@ -98,7 +98,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   filterJson = [];
   status = [
     'Open',
-    'In-progress',
+    'In-Progress',
     'Submitted',
     'Assigned',
     'Partly-Open',
