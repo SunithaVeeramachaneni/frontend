@@ -185,7 +185,6 @@
   "capturedTasks": "Captured Questions",
   "photos": "Photos(Issues, Actions, Questions)",
   "skippedTasks": "Skipped Questions",
-  "tasksCompleted": "Questions Completed",
   "pdfPreviewTxt": "PDF setup and preview",
   "questionsCompleted": "Questions Completed",
   "issues": "Issues",
@@ -325,5 +324,8 @@
   "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
   "slot": "Slot",
   "timeZone": "Plant Timezone",
-  "removeBtn": "Remove"
+  "removeBtn": "Remove",
+  "user": "User",
+  "defaultCurrentDate": "Default to current date",
+  "defaultCurrentTime": "Default to current time"
 }
