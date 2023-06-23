@@ -264,7 +264,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
         (this.isEmbeddedForm
-          ? fieldType.type !== 'DT' && fieldType.type !== 'HL'
+          ? fieldType.type !== 'DT'
           : fieldType.type !== 'DF' &&
             fieldType.type !== 'TIF' &&
             fieldType.type !== 'IMG')
