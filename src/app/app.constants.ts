@@ -448,4 +448,15 @@ export const DEFAULT_TEMPLATE_PAGES = [
   }
 ];
 
+export const colors = {
+  white: '#ffffff',
+  black: '#000000',
+  overdue: '#F44336',
+  inProgress: '#FFCC00',
+  open: '#e0e0e0',
+  assigned: '#5AC8FA',
+  partlyOpen: '#FE9C30',
+  submitted: '#2C9E53'
+};
+
 export const responseCount = 1000;

@@ -61,7 +61,8 @@ import {
   dateTimeFormat3,
   permissions as perms,
   dateFormat5,
-  hourFormat
+  hourFormat,
+  colors
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -363,28 +364,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': ' #2C9E53',
-        color: '#ffffff'
+        'background-color': colors.submitted,
+        color: colors.white
       },
       'in-progress': {
-        'background-color': '#FFCC00',
-        color: '#000000'
+        'background-color': colors.inProgress,
+        color: colors.black
       },
       open: {
-        'background-color': '#e0e0e0',
-        color: '#000000'
+        'background-color': colors.open,
+        color: colors.black
       },
       assigned: {
-        'background-color': '#5AC8FA',
-        color: '#000000'
+        'background-color': colors.assigned,
+        color: colors.black
       },
       'partly-open': {
-        'background-color': '#FE9C30',
-        color: '#000000'
+        'background-color': colors.partlyOpen,
+        color: colors.black
       },
       overdue: {
-        'background-color': '#F44336',
-        color: '#ffffff'
+        'background-color': colors.overdue,
+        color: colors.white
       }
     }
   };
@@ -889,6 +890,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
     let { status } = this.selectedRoundInfo;
     status = status.toLowerCase() === 'open' ? 'assigned' : status;
+    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
