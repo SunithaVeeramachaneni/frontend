@@ -67,7 +67,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
-  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+  @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
 
@@ -258,13 +258,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
-        fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
         (this.isEmbeddedForm
-          ? fieldType.type !== 'DT'
-          : fieldType.type !== 'DF' && fieldType.type !== 'TIF')
+          ? fieldType.type !== 'DT' && fieldType.type !== 'HL'
+          : fieldType.type !== 'DF' &&
+            fieldType.type !== 'TIF' &&
+            fieldType.type !== 'IMG')
     );
 
     // isAskQuestion true set question id and section id
@@ -497,7 +498,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.questionForm.get('value').setValue(sliderValue);
         break;
       case 'IMG':
-        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
+        this.insertImage.nativeElement.click();
         break;
       case 'INST':
         const instructionsValue = {
@@ -551,20 +552,24 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   insertImageHandler(event) {
-    let base64: string;
     const { files } = event.target as HTMLInputElement;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      const image = base64.split(',')[1];
-      const value = {
-        name: files[0].name,
-        size: (files[0].size / 1024).toFixed(2),
-        base64: image
-      };
-      this.questionForm.get('value').setValue(value);
+    const file = {
+      name: files[0].name,
+      size: (files[0].size / 1024).toFixed(2),
+      type: files[0].type
     };
+
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
+      .subscribe((data) => {
+        const value = {
+          name: file.name,
+          size: file.size,
+          objectKey: data.message.objectKey,
+          objectURL: data.message.objectURL
+        };
+        this.questionForm.get('value').setValue(value);
+      });
   }
 
   getImageSrc(base64) {

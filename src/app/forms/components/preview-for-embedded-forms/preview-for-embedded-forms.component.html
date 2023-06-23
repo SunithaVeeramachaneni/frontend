@@ -1,0 +1,236 @@
+<div
+  *ngIf="previewFormData$ | async as pageData"
+  class="preview-embedded-forms"
+>
+  <div *ngFor="let section of pageData[0].sections; let i = index">
+    <p class="section-name">
+      {{ section.name ? section.name : 'Section Name' }}
+      <mat-icon class="section-arrow"> keyboard_arrow_down </mat-icon>
+    </p>
+    <div *ngFor="let question of section.questions">
+      <div class="dis-flex m-b-10 m-r-15">
+        <div
+          class="width-100 question-name dis-flex dis-flex-center"
+          *ngIf="question.fieldType === 'USR'"
+        >
+          <span class="font-90">{{ question.name }}</span>
+          <span class="font-90" translate="user"></span>
+        </div>
+        <div
+          class="width-100 question-name dis-flex dis-flex-center"
+          *ngIf="question.fieldType === 'SGF'"
+        >
+          <span class="font-90">
+            {{ question.name ? question.name : 'Type Question' }}
+            {{ question.required ? '*' : '' }}
+          </span>
+          <span>
+            <svg-icon icon="icon-signature" class="signature-icon"></svg-icon>
+          </span>
+        </div>
+
+        <div
+          class="width-100 dis-flex dis-flex-center question-name"
+          *ngIf="question.fieldType === 'DFR'"
+        >
+          <span class="font-90">
+            {{ question.name ? question.name : 'Type Question' }}
+            {{ question.required ? '*' : '' }}
+          </span>
+          <span class="width-min">
+            <input type="date" class="input-fields" />
+            <input type="date" class="input-fields" />
+          </span>
+        </div>
+
+        <div
+          class="width-100 question-name"
+          *ngIf="question.fieldType === 'GAL'"
+        >
+          <span class="font-90">
+            {{ question.name ? question.name : 'Type Question' }}
+            {{ question.required ? '*' : '' }}
+          </span>
+          <span class="">
+            <svg-icon
+              icon="icon-location-view"
+              class="location-icon"
+            ></svg-icon>
+          </span>
+        </div>
+
+        <div
+          class="width-40 question-name"
+          *ngIf="
+            question.fieldType !== 'USR' &&
+            question.fieldType !== 'INST' &&
+            question.fieldType !== 'VI' &&
+            question.fieldType !== 'DD' &&
+            question.fieldType !== 'SGF' &&
+            question.fieldType !== 'GAL' &&
+            question.fieldType !== 'ATT' &&
+            question.fieldType !== 'IMG' &&
+            question.fieldType !== 'RT' &&
+            question.fieldType !== 'ARD' &&
+            question.fieldType !== 'DFR'
+          "
+        >
+          {{ question.name ? question.name : 'Type Question' }}
+          {{ question.required ? '*' : '' }}
+        </div>
+
+        <div
+          class="width-100 question-name"
+          *ngIf="
+            question.fieldType !== 'INST' &&
+            question.fieldType !== 'IMG' &&
+            (question.fieldType === 'VI' ||
+              question.fieldType === 'DD' ||
+              question.fieldType === 'ATT' ||
+              question.fieldType === 'RT' ||
+              question.fieldType === 'ARD')
+          "
+        >
+          {{ question.name ? question.name : 'Type Question' }}
+          {{ question.required ? '*' : '' }}
+        </div>
+        <div
+          class="width-100 question-name"
+          *ngIf="question.fieldType === 'INST'"
+        >
+          <div [innerHTML]="question.name" class="instruction"></div>
+        </div>
+        <div
+          class="width-40 text-left"
+          *ngIf="
+            question.fieldType !== 'INST' &&
+            question.fieldType !== 'VI' &&
+            question.fieldType !== 'DD' &&
+            question.fieldType !== 'SGF' &&
+            question.fieldType !== 'ATT' &&
+            question.fieldType !== 'IMG' &&
+            question.fieldType !== 'RT' &&
+            question.fieldType !== 'ARD' &&
+            question.fieldType !== 'DFR' &&
+            question.fieldType !== 'GAL' &&
+            question.fieldType !== 'USR'
+          "
+        >
+          <p
+            class="m-0"
+            *ngIf="question.fieldType === 'TF' && question.value !== 'LTV'"
+          >
+            <input type="text" class="input-fields" />
+          </p>
+
+          <p class="m-0" *ngIf="question.fieldType === 'DF'">
+            <input type="date" class="input-fields" />
+          </p>
+
+          <p *ngIf="question.fieldType === 'CB'" class="m-0 cb-input">
+            <input type="checkbox" id="option1" class="radio-checkbox" />
+            <label for="option1" class="radio-label"></label>
+          </p>
+
+          <p *ngIf="question.fieldType === 'TIF'" class="m-0">
+            <input type="time" class="input-fields" />
+          </p>
+
+          <textarea
+            rows="3"
+            cols="10"
+            *ngIf="question.value === 'LTV' && question.fieldType === 'TF'"
+            class="input-fields"
+          ></textarea>
+
+          <p *ngIf="question.fieldType === 'NF'" class="m-0">
+            <input type="number" class="input-fields" />
+          </p>
+
+          <p
+            *ngIf="question.fieldType === 'LF'"
+            class="default-value m-0 m-r-minus40"
+          >
+            {{ question.value }}
+          </p>
+
+          <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
+            <input type="text" class="input-fields-with-icons" />
+            <svg-icon icon="icon-scan" class="scan-icon"></svg-icon>
+          </p>
+        </div>
+      </div>
+      <div class="width-100">
+        <div *ngIf="question.fieldType === 'ATT'" class="attachment-div">
+          <a class="attachment-btn">
+            <mat-icon class="attachment-btn-img">add</mat-icon>
+          </a>
+        </div>
+
+        <div *ngIf="question.fieldType === 'IMG'">
+          <img
+            [src]="question.value.objectURL"
+            *ngIf="question.value.objectURL"
+            alt="image"
+            class="image-field"
+          />
+        </div>
+
+        <div *ngIf="question.fieldType === 'RT'">
+          <mat-slider
+            class="range-field"
+            min="{{ question.value.min }}"
+            max="{{ question.value.max }}"
+            step="{{ question.value.increment }}"
+            thumbLabel
+            [displayWith]="formatLabel"
+          >
+          </mat-slider>
+          <span class="slider-min-value">
+            {{ question.value.min }}
+          </span>
+          <span class="slider-max-value">
+            {{ question.value.max }}
+          </span>
+        </div>
+
+        <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
+          <div *ngIf="question.value?.value?.length > 0">
+            <div *ngIf="4 >= question.value.value.length">
+              <mat-button-toggle-group class="vi-input">
+                <mat-button-toggle
+                  class="vi-values"
+                  [value]="ques.title"
+                  [ngStyle]="{
+                    color: ques.color
+                  }"
+                  *ngFor="let ques of question.value.value"
+                >
+                  {{ ques.title }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="question.fieldType === 'DD'" class="m-b-10">
+          <div *ngIf="question.value?.value?.length > 0">
+            <div *ngIf="question.value.value.length > 4">
+              <mat-select class="dropdown" [multiple]="question.multi">
+                <mat-option
+                  *ngFor="let ques of question.value.value"
+                  [value]="ques.title"
+                  [ngStyle]="{
+                    color: ques.color
+                  }"
+                >
+                  {{ ques.title }}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
