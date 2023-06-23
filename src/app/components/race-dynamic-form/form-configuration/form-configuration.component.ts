@@ -480,11 +480,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     const form = { formMetadata: this.formMetadata, pages: this.pages };
 
-    console.log(form, this.isEmbeddedForm);
-
     if (this.isEmbeddedForm) {
       this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
-        console.log(form.pages[0].questions);
         form.pages[0].questions.forEach((question) => {
           if (response.includes(question.id)) {
             question.isPublished = true;
