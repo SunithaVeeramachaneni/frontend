@@ -30,45 +30,20 @@
           </mat-checkbox>
         </span>
         <div class="group">
-          <span class="groupHead" translate="header"></span>
-          <span class="option">
-            <mat-checkbox formControlName="formId" class="checkbox">
-              <span translate="roundId"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option">
-            <mat-checkbox formControlName="formTitle" class="checkbox">
-              <span translate="roundTitle"></span>
-            </mat-checkbox>
-          </span>
-        </div>
-        <div class="group">
-          <span class="groupHead" translate="subject"></span>
+          <span class="groupHead" translate="summaryPage"></span>
           <span class="option">
             <mat-checkbox formControlName="logo" class="checkbox">
               <span translate="logo"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option">
-            <mat-checkbox formControlName="questionCompleted" class="checkbox">
-              <span translate="taskCompleted"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option">
-            <mat-checkbox formControlName="submittedOn" class="checkbox">
-              <span translate="submittedOn"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option">
-            <mat-checkbox formControlName="submittedBy" class="checkbox">
-              <span translate="submittedBy"></span>
             </mat-checkbox>
           </span>
         </div>
         <div class="group">
           <span class="groupHead" translate="footer"></span>
           <span class="option">
-            <mat-checkbox formControlName="pdfGeneratedDate" class="checkbox">
+            <mat-checkbox
+              formControlName="pdfGeneratedDate"
+              class="checkbox bottomBorder"
+            >
               <span translate="pdfGeneratedDate"></span>
             </mat-checkbox>
           </span>
@@ -77,7 +52,10 @@
               <span translate="customText"></span>
             </mat-checkbox>
             <div class="customText">
-              <div [formGroup]="pdfBuilderConfigurationsFormCustomText">
+              <div
+                [formGroup]="pdfBuilderConfigurationsFormCustomText"
+                class="customField"
+              >
                 <mat-form-field class="field" appearance="outline">
                   <mat-label translate="label"></mat-label>
                   <input
@@ -101,69 +79,69 @@
         <div class="group">
           <span class="groupHead" translate="bodyContent"></span>
           <span class="option">
-            <mat-checkbox formControlName="actions" class="checkbox">
+            <mat-checkbox
+              formControlName="actions"
+              class="checkbox bottomBorder"
+            >
               <span translate="actions"></span>
             </mat-checkbox>
           </span>
           <span class="option">
-            <mat-checkbox formControlName="issues" class="checkbox">
+            <mat-checkbox
+              formControlName="issues"
+              class="checkbox bottomBorder"
+            >
               <span translate="issues"></span>
             </mat-checkbox>
           </span>
           <span class="option">
             <mat-checkbox
               formControlName="photos"
-              class="checkbox"
+              class="checkbox bottomBorder"
               (change)="toggleQuestionPhotos($event)"
             >
               <span translate="photos"></span>
             </mat-checkbox>
           </span>
-          <span class="option">
-            <mat-checkbox
-              formControlName="questions"
-              class="checkbox"
-              [indeterminate]="areQuestionsIndeterminate()"
-              (change)="toggleAllQuestions($event)"
-            >
-              <span translate="tasks"></span>
-            </mat-checkbox>
+
+          <span
+            class="option"
+            formControlName="questions"
+            class="checkbox bottomBorder questions"
+            [ngClass]="{ indeterminate: areQuestionsIndeterminate() }"
+            (click)="toggleAllQuestions($event)"
+          >
+            <span translate="tasks"></span>
           </span>
-          <span class="option m-l-40">
+
+          <span class="option m-l-50">
             <mat-checkbox
               formControlName="incompleteQuestions"
-              class="checkbox"
+              class="checkbox bottomBorder"
               (change)="toggleIncompleteQuestions($event)"
             >
               <span translate="incompleteTasks"></span>
             </mat-checkbox>
           </span>
-          <span class="option m-l-40">
+
+          <span class="option m-l-50">
+            <mat-checkbox
+              formControlName="skippedQuestions"
+              class="checkbox bottomBorder"
+              (change)="toggleSkippedQuestions($event)"
+            >
+              <span translate="skippedTasks"></span>
+            </mat-checkbox>
+          </span>
+
+          <span class="option m-l-50">
             <mat-checkbox
               formControlName="completedQuestions"
-              class="checkbox"
+              class="checkbox bottomBorder"
               [indeterminate]="areCompletedQuestionsIndeterminate()"
               (change)="toggleCompletedQuestions($event)"
             >
               <span translate="completedTasks"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option m-l-80">
-            <mat-checkbox
-              formControlName="capturedQuestions"
-              class="checkbox"
-              (change)="togglecapturedQuestions($event)"
-            >
-              <span translate="capturedTasks"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option m-l-80">
-            <mat-checkbox
-              formControlName="skippedQuestions"
-              class="checkbox"
-              (change)="toggleSkippedQuestions($event)"
-            >
-              <span translate="skippedTasks"></span>
             </mat-checkbox>
           </span>
         </div>
