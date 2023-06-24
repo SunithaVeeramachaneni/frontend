@@ -317,6 +317,7 @@
   "errorExceedLabelMessage": "Label exceeded 25 characters limit",
   "errorExceedValueMessage": "Value exceeded 40 characters limit",
   "removeBtn": "Remove",
+  "standaloneSubText": "On Publishing form will show in mInspections app",
   "timeZone": "Plant Timezone",
   "user": "User",
   "defaultCurrentDate": "Default to current date",

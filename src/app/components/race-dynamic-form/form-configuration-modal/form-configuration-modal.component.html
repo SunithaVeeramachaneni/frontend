@@ -16,29 +16,32 @@
         </h2>
 
         <p class="sub-heading" translate="setFormTypeHeading"></p>
-        <input
-          type="radio"
-          name="formType"
-          [value]="formConfigurationStatus.standalone"
-          id="1"
-          class="margin"
-          formControlName="formType"
-        />
-        <span class="radio-btn-text" translate="standalone"> </span><br />
+        <div class="formtype-flex">
+          <div class="formtype-style">
+            <input
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.standalone"
+              id="1"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="standalone"> </span>
+            <p class="radio-sub-text" translate="standaloneSubText"></p>
+          </div>
+          <div class="formtype-style">
+            <input
+              id="2"
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.embedded"
+              [disabled]="true"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="embedded"> </span><br />
 
-        <input
-          id="2"
-          type="radio"
-          name="formType"
-          [value]="formConfigurationStatus.embedded"
-          [disabled]="true"
-          class="margin"
-          formControlName="formType"
-        />
-        <span class="radio-btn-text" translate="embedded"> </span><br />
-
-        <p class="radio-sub-text" translate="embeddedSubText"></p>
-
+            <p class="radio-sub-text" translate="embeddedSubText"></p>
+          </div>
+        </div>
         <hr class="horizontal-line" />
 
         <div class="form-name">

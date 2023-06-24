@@ -58,16 +58,12 @@
         margin: 10px 5px;
       }
 
-      .margin {
-        margin: 10px 5px;
-      }
-
       .radio-btn-text {
-        font-weight: 400;
+        font-weight: 500;
         font-size: 110%;
-        color: $light-gray;
+        color: $black;
         position: relative;
-        top: -2px;
+        left: 10px;
       }
 
       .radio-sub-text {
@@ -75,7 +71,7 @@
         font-size: 90%;
         color: $text-color;
         opacity: 0.8;
-        margin: 0px 28px;
+        margin: 3px 0px 5px 35px;
       }
 
       .horizontal-line {
@@ -229,4 +225,21 @@
 .mat-error {
   margin-top: 1px;
   margin-left: 20px;
+}
+.formtype-flex {
+  display: flex;
+
+  input[type='radio'] {
+    width: 6%;
+    height: 17px;
+    position: relative;
+    top: 18px;
+  }
+
+  .formtype-style {
+    border: 2px solid $gray;
+    border-radius: 12px;
+    padding: 5px;
+    margin: 5px;
+  }
 }
