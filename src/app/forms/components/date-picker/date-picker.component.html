@@ -1,4 +1,4 @@
-<input
+<!-- <input
   matInput
   [matDatepicker]="picker"
   (dateChange)="onDateChange($event)"
@@ -9,4 +9,18 @@
   touchUi="true"
   (closed)="closedEvent()"
   #picker
-></mat-datepicker>
+></mat-datepicker> -->
+
+<input
+  matInput
+  [ngxMatDatetimePicker]="picker"
+  [min]="minDate"
+  (dateChange)="onDateChange($event)"
+  [hidden]="true"
+/>
+
+<ngx-mat-datetime-picker
+  #picker
+  [enableMeridian]="true"
+  class="date-picker-position"
+></ngx-mat-datetime-picker>

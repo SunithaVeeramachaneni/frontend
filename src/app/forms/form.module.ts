@@ -111,7 +111,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
 import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 import { UserNameByEmailPipe } from './pipes';
-
+import { ShiftComponent } from './components/shift/shift.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -180,7 +180,8 @@ import { UserNameByEmailPipe } from './pipes';
     DatePickerComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
-    UserNameByEmailPipe
+    UserNameByEmailPipe,
+    ShiftComponent
   ],
   imports: [
     SharedModule,
@@ -260,7 +261,8 @@ import { UserNameByEmailPipe } from './pipes';
     DatePickerComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
-    UserNameByEmailPipe
+    UserNameByEmailPipe,
+    ShiftComponent
   ]
 })
 export class FormModule {}

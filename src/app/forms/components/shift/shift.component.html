@@ -1,0 +1,68 @@
+<!-- <mat-form-field>
+  <mat-select>
+    <mat-option
+      *ngFor="
+        let option of _plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']
+      "
+      [value]="option.name"
+    >
+      {{ option.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field> -->
+<!-- <ng-container *ngFor="let option of _plantShiftObj[_plantSelected]">
+  <div mat-menu-item>{{ option.name }}</div>
+</ng-container> -->
+<!-- <div *ngIf="plantShiftObj">
+  <ng-container
+    *ngFor="
+      let option of _plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']
+    "
+  >
+    <button mat-menu-item>{{ option.name }}</button>
+  </ng-container>
+</div> -->
+<!-- <div *ngIf="plantShiftObj">
+  <mat-form-field>
+    <mat-select>
+      <mat-option
+        *ngFor="
+          let option of _plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']
+        "
+        [value]="option.name"
+      >
+        {{ option.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div> -->
+<!-- <mat-form-field>
+  <mat-select #shiftOpen>
+    <mat-option>one</mat-option>
+  </mat-select>
+</mat-form-field> -->
+<div *ngIf="_plantShiftObj">
+  <button
+    [matMenuTriggerFor]="menu"
+    #menuTrigger="matMenuTrigger"
+    [hidden]="true"
+  ></button>
+
+  <mat-menu #menu="matMenu">
+    <div
+      class="custom-menu mat-menu-panel"
+      [ngStyle]="{ top: _dropdownPosition.top, left: _dropdownPosition.left }"
+      *ngIf="_plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']"
+    >
+      <button
+        mat-menu-item
+        (click)="optionClick(item)"
+        *ngFor="
+          let item of _plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']
+        "
+      >
+        {{ item.name }}
+      </button>
+    </div>
+  </mat-menu>
+</div>

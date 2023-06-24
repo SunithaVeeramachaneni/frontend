@@ -8,6 +8,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 
 interface SelectedDate {
   date: Date;
@@ -31,6 +32,7 @@ export class DatePickerComponent implements OnInit {
   get selectedDate() {
     return this._selectedDate;
   }
+  @Input() minDate: Date;
   @Output() dateChange: EventEmitter<Date> = new EventEmitter<Date>();
   @Output() closed: EventEmitter<boolean> = new EventEmitter<boolean>();
   currentDate = new Date();
@@ -40,8 +42,9 @@ export class DatePickerComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onDateChange(event: any) {
-    this.dateChange.emit(event.target.value);
+  onDateChange(event: MatDatetimePickerInputEvent<Date>) {
+    console.log('date:', event.value);
+    this.dateChange.emit(event.value);
   }
 
   closedEvent() {

@@ -88,7 +88,9 @@ export interface RoundDetail extends RoundPlan {
   roundId: string;
   roundDetailId: string;
   scheduledType: string;
+  scheduledAt: Date;
   dueDate: Date;
+  shiftId: string;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
