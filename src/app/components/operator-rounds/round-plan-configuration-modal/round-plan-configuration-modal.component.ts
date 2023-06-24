@@ -404,17 +404,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   retrieveDetails() {
-    this.operatorRoundsService.getAdditionalDetails$().subscribe(
-      (details: any[]) => {
+    this.operatorRoundsService
+      .getAdditionalDetails$()
+      .subscribe((details: any[]) => {
         this.labels = this.convertArrayToObject(details);
         details.forEach((data) => {
           this.additionalDetailsIdMap[data.label] = data.id;
         });
-      },
-      (error) => {
-        this.toastService.show({ type: 'warning', text: error });
-      }
-    );
+      });
   }
 
   convertArrayToObject(details) {

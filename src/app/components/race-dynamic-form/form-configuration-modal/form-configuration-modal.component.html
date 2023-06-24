@@ -199,10 +199,10 @@
                   *ngIf="additionalDetails.get('label').errors?.maxlength"
                 >
                   {{
-                    'errorExceedLabelMessage'
+                    'maxlength'
                       | translate
                         : {
-                            name: 'errorExceedLabelMessage' | translate,
+                            name: 'label' | translate,
                             length:
                               additionalDetails.get('label').errors.maxlength
                                 .requiredLength
@@ -272,10 +272,10 @@
                   *ngIf="additionalDetails.get('value').errors?.maxlength"
                 >
                   {{
-                    'errorExceedValueMessage'
+                    'maxlength'
                       | translate
                         : {
-                            name: 'errorExceedValueMessage' | translate,
+                            name: 'value' | translate,
                             length:
                               additionalDetails.get('value').errors.maxlength
                                 .requiredLength
@@ -308,7 +308,7 @@
                       mat-button
                       color="primary"
                       class="p-0"
-                      (click)="storeValueDetails(i)"
+                      (click)="storeValueDetails()"
                     >
                       <mat-icon class="m-r-5">add</mat-icon>
 

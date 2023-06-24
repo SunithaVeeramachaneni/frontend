@@ -309,55 +309,43 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
   }
 
-  storeValueDetails(i) {
+  storeValueDetails() {
     if (Object.keys(this.labels).includes(this.changedValues.label)) {
+      const newValues = [
+        ...this.labels[this.changedValues.label],
+        this.changedValues.value
+      ];
       this.rdfService
         .updateValues$({
-          label: this.changedValues.label,
-          value: this.changedValues.value,
-          updateType: 'add',
+          value: newValues,
           labelId: this.additionalDetailsIdMap[this.changedValues.label]
         })
-        .subscribe((response) => {
-          if (response?.label) {
+        .subscribe(
+          () => {
             this.toastService.show({
               type: 'success',
               text: 'Value added successfully'
             });
+            this.labels[this.changedValues.label] = newValues;
+            this.filteredLabels$ = of(Object.keys(this.labels));
+          },
+          (error) => {
+            this.toastService.show({
+              type: 'warning',
+              text: 'The selected label does not exist'
+            });
           }
-          this.labels[response.label] = response.values;
-          this.filteredLabels$ = of(Object.keys(this.labels));
-
-          const additionalinfoArray = this.headerDataForm.get(
-            'additionalDetails'
-          ) as FormArray;
-
-          additionalinfoArray
-            .at(i)
-            .get('value')
-            .setValue(response.values.slice(-1));
-          // additionalinfoArray.at(i).get('id').setValue(response.id);
-        });
-    } else {
-      this.toastService.show({
-        type: 'warning',
-        text: 'The selected label does not exist'
-      });
+        );
     }
   }
 
   retrieveDetails() {
-    this.rdfService.getAdditionalDetails$().subscribe(
-      (details: any[]) => {
-        this.labels = this.convertArrayToObject(details);
-        details.forEach((data) => {
-          this.additionalDetailsIdMap[data.label] = data.id;
-        });
-      },
-      (error) => {
-        this.toastService.show({ type: 'warning', text: error });
-      }
-    );
+    this.rdfService.getAdditionalDetails$().subscribe((details: any[]) => {
+      this.labels = this.convertArrayToObject(details);
+      details.forEach((data) => {
+        this.additionalDetailsIdMap[data.label] = data.id;
+      });
+    });
   }
 
   convertArrayToObject(details) {
@@ -409,27 +397,29 @@ export class TemplateConfigurationModalComponent implements OnInit {
     );
   }
   removeValue(deleteValue) {
+    const newValue = this.labels[this.changedValues.label].filter(
+      (value) => value !== deleteValue
+    );
     this.rdfService
       .deleteAdditionalDetailsValue$({
-        label: this.changedValues.label,
-        value: deleteValue,
-        labelId: this.additionalDetailsIdMap[this.changedValues.label],
-        updateType: 'delete'
+        value: newValue,
+        labelId: this.additionalDetailsIdMap[this.changedValues.label]
       })
-      .subscribe((response) => {
-        this.labels[response.label] = response.values;
-        if (!response.values.includes(deleteValue)) {
+      .subscribe(
+        () => {
+          this.labels[this.changedValues.label] = newValue;
           this.toastService.show({
             type: 'success',
             text: 'Value deleted Successfully'
           });
-        } else {
+        },
+        (error) => {
           this.toastService.show({
             type: 'warning',
             text: 'Value is not deleted'
           });
         }
-      });
+      );
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
