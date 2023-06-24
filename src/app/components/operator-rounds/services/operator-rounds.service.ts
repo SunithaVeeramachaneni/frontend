@@ -74,7 +74,7 @@ export class OperatorRoundsService {
     details: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService.patchData(
+    this.appService._updateData(
       environment.operatorRoundsApiUrl,
       'additional-details',
       details,
@@ -85,7 +85,7 @@ export class OperatorRoundsService {
     details: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService.patchData(
+    this.appService._updateData(
       environment.operatorRoundsApiUrl,
       `additional-details`,
       details,

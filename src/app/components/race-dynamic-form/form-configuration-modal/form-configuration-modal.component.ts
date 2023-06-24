@@ -469,22 +469,25 @@ export class FormConfigurationModalComponent implements OnInit {
 
   removeLabel(label) {
     const documentId = this.additionalDetailsIdMap[label];
-    this.rdfService.removeLabel$(documentId).subscribe((response) => {
-      delete this.labels[label];
-      delete this.additionalDetailsIdMap[label];
-      if (response.acknowledged) {
-        this.toastService.show({
-          type: 'success',
-          text: 'Label deleted Successfully'
-        });
-        this.deletedLabel = label;
-      } else {
+    this.rdfService.removeLabel$(documentId).subscribe(
+      () => {
+        {
+          delete this.labels[label];
+          delete this.additionalDetailsIdMap[label];
+          this.toastService.show({
+            type: 'success',
+            text: 'Label deleted Successfully'
+          });
+          this.deletedLabel = label;
+        }
+      },
+      (error) => {
         this.toastService.show({
           type: 'warning',
           text: 'Label is not Deleted'
         });
       }
-    });
+    );
   }
   removeValue(deleteValue) {
     this.rdfService
