@@ -325,11 +325,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter((label) => {
-              if (this.deletedLabel !== label) {
-                return label.includes(this.changedValues.label);
-              }
-            })
+            Object.keys(this.labels).filter((label) =>
+              label.includes(this.changedValues.label)
+            )
           );
         } else {
           this.filteredLabels$ = of([]);
@@ -384,22 +382,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           value: newValues,
           labelId: this.additionalDetailsIdMap[this.changedValues.label]
         })
-        .subscribe(
-          () => {
-            this.toastService.show({
-              type: 'success',
-              text: 'Value added successfully'
-            });
-            this.labels[this.changedValues.label] = newValues;
-            this.filteredLabels$ = of(Object.keys(this.labels));
-          },
-          (error) => {
-            this.toastService.show({
-              type: 'warning',
-              text: 'The selected label does not exist'
-            });
-          }
-        );
+        .subscribe(() => {
+          this.toastService.show({
+            type: 'success',
+            text: 'Value added successfully'
+          });
+          this.labels[this.changedValues.label] = newValues;
+          this.filteredLabels$ = of(Object.keys(this.labels));
+        });
     }
   }
 
@@ -445,23 +435,15 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   removeLabel(label) {
     const documentId = this.additionalDetailsIdMap[label];
-    this.operatorRoundsService.removeLabel$(documentId).subscribe(
-      () => {
-        delete this.labels[label];
-        delete this.additionalDetailsIdMap[label];
-        this.toastService.show({
-          type: 'success',
-          text: 'Label deleted Successfully'
-        });
-        this.deletedLabel = label;
-      },
-      (error) => {
-        this.toastService.show({
-          type: 'warning',
-          text: 'Label is not Deleted'
-        });
-      }
-    );
+    this.operatorRoundsService.removeLabel$(documentId).subscribe(() => {
+      delete this.labels[label];
+      delete this.additionalDetailsIdMap[label];
+      this.toastService.show({
+        type: 'success',
+        text: 'Label deleted Successfully'
+      });
+      this.deletedLabel = label;
+    });
   }
   removeValue(deleteValue) {
     const newValue = this.labels[this.changedValues.label].filter(
@@ -472,21 +454,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         value: newValue,
         labelId: this.additionalDetailsIdMap[this.changedValues.label]
       })
-      .subscribe(
-        () => {
-          this.labels[this.changedValues.label] = newValue;
-          this.toastService.show({
-            type: 'success',
-            text: 'Value deleted Successfully'
-          });
-        },
-        (error) => {
-          this.toastService.show({
-            type: 'warning',
-            text: 'Value is not deleted'
-          });
-        }
-      );
+      .subscribe(() => {
+        this.labels[this.changedValues.label] = newValue;
+        this.toastService.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+      });
   }
 
   getAdditionalDetailList() {

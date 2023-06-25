@@ -40,6 +40,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
@@ -88,6 +89,7 @@ export class FormConfigurationModalComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private plantService: PlantService,
     private toastService: ToastService,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA) public data
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -340,11 +342,9 @@ export class FormConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter((label) => {
-              if (this.deletedLabel !== label) {
-                return label.includes(this.changedValues.label);
-              }
-            })
+            Object.keys(this.labels).filter((label) =>
+              label.includes(this.changedValues.label)
+            )
           );
         } else {
           this.filteredLabels$ = of([]);
@@ -369,7 +369,7 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   storeDetails(i) {
-    this.rdfService
+    this.operatorRoundService
       .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
       .subscribe((response) => {
         if (response?.label) {
@@ -394,37 +394,31 @@ export class FormConfigurationModalComponent implements OnInit {
         ...this.labels[this.changedValues.label],
         this.changedValues.value
       ];
-      this.rdfService
+      this.operatorRoundService
         .updateValues$({
           value: newValues,
           labelId: this.additionalDetailsIdMap[this.changedValues.label]
         })
-        .subscribe(
-          () => {
-            this.toastService.show({
-              type: 'success',
-              text: 'Value added successfully'
-            });
-            this.labels[this.changedValues.label] = newValues;
-            this.filteredLabels$ = of(Object.keys(this.labels));
-          },
-          (error) => {
-            this.toastService.show({
-              type: 'warning',
-              text: 'The selected label does not exist'
-            });
-          }
-        );
+        .subscribe(() => {
+          this.toastService.show({
+            type: 'success',
+            text: 'Value added successfully'
+          });
+          this.labels[this.changedValues.label] = newValues;
+          this.filteredLabels$ = of(Object.keys(this.labels));
+        });
     }
   }
 
   retrieveDetails() {
-    this.rdfService.getAdditionalDetails$().subscribe((details: any[]) => {
-      this.labels = this.convertArrayToObject(details);
-      details.forEach((data) => {
-        this.additionalDetailsIdMap[data.label] = data.id;
+    this.operatorRoundService
+      .getAdditionalDetails$()
+      .subscribe((details: any[]) => {
+        this.labels = this.convertArrayToObject(details);
+        details.forEach((data) => {
+          this.additionalDetailsIdMap[data.label] = data.id;
+        });
       });
-    });
   }
 
   convertArrayToObject(details) {
@@ -458,48 +452,32 @@ export class FormConfigurationModalComponent implements OnInit {
 
   removeLabel(label) {
     const documentId = this.additionalDetailsIdMap[label];
-    this.rdfService.removeLabel$(documentId).subscribe(
-      () => {
-        delete this.labels[label];
-        delete this.additionalDetailsIdMap[label];
-        this.toastService.show({
-          type: 'success',
-          text: 'Label deleted Successfully'
-        });
-        this.deletedLabel = label;
-      },
-      (error) => {
-        this.toastService.show({
-          type: 'warning',
-          text: 'Label is not Deleted'
-        });
-      }
-    );
+    this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
+      delete this.labels[label];
+      delete this.additionalDetailsIdMap[label];
+      this.toastService.show({
+        type: 'success',
+        text: 'Label deleted Successfully'
+      });
+      this.deletedLabel = label;
+    });
   }
   removeValue(deleteValue) {
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
-    this.rdfService
+    this.operatorRoundService
       .deleteAdditionalDetailsValue$({
         value: newValue,
         labelId: this.additionalDetailsIdMap[this.changedValues.label]
       })
-      .subscribe(
-        () => {
-          this.labels[this.changedValues.label] = newValue;
-          this.toastService.show({
-            type: 'success',
-            text: 'Value deleted Successfully'
-          });
-        },
-        (error) => {
-          this.toastService.show({
-            type: 'warning',
-            text: 'Value is not deleted'
-          });
-        }
-      );
+      .subscribe(() => {
+        this.labels[this.changedValues.label] = newValue;
+        this.toastService.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+      });
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
