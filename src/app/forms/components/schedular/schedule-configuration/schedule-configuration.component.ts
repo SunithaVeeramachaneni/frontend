@@ -10,7 +10,8 @@ import {
   ViewChild,
   OnChanges,
   SimpleChanges,
-  OnDestroy
+  OnDestroy,
+  Inject
 } from '@angular/core';
 import {
   FormArray,
@@ -23,7 +24,11 @@ import {
   MatCalendar,
   MatDatepickerInputEvent
 } from '@angular/material/datepicker';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef
+} from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import {
   addDays,
@@ -105,48 +110,15 @@ export class ScheduleConfigurationComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
-  @Input() assigneeDetails: AssigneeDetails;
-  @Input() moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  @Input() set roundPlanDetail(roundPlanDetail: any) {
-    this._roundPlanDetail = roundPlanDetail;
-    if (roundPlanDetail) {
-      this.getRoundPlanSchedulerConfigurationByRoundPlanId(roundPlanDetail.id);
-    }
-  }
+  assigneeDetails: AssigneeDetails;
+  moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   get roundPlanDetail(): any {
     return this._roundPlanDetail;
-  }
-  @Input() set formDetail(formDetail) {
-    this._formDetail = formDetail;
-    if (this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier) {
-      this.currentDate = new Date(
-        localToTimezoneDate(
-          new Date(),
-          this.plantTimezoneMap[this.formDetail?.plantId],
-          'yyyy-MM-dd HH:mm:ss'
-        )
-      );
-      if (this.schedulerConfigForm?.value) {
-        this.schedulerConfigForm.patchValue({
-          ...this.getDefaultSchedulerConfigDates()
-        });
-      }
-    }
-    if (formDetail) {
-      this.getFormsSchedulerConfigurationByFormId(formDetail?.id);
-    }
   }
   get formDetail(): any {
     return this._formDetail;
   }
-  @Output()
-  scheduleConfigEvent: EventEmitter<ScheduleConfigEvent> =
-    new EventEmitter<ScheduleConfigEvent>();
-  @Output()
-  scheduleConfig: EventEmitter<ScheduleConfig> =
-    new EventEmitter<ScheduleConfig>();
-  @Output()
   plantMapSubscription: Subscription;
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
@@ -190,22 +162,26 @@ export class ScheduleConfigurationComponent
     private readonly formScheduleConfigurationService: FormScheduleConfigurationService,
     private readonly shiftService: ShiftService,
     private plantService: PlantService,
-    private readonly scheduleConfigurationService: ScheduleConfigurationService
-  ) {
-    this.initDetails();
-  }
+    private readonly scheduleConfigurationService: ScheduleConfigurationService,
+    private dialogRef: MatDialogRef<ScheduleConfigurationComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: any
+  ) {}
 
   initDetails(): void {
+    if (this.data?.moduleName === 'RDF') {
+      this.isFormModule = true;
+    } else {
+      this.isFormModule = false;
+    }
     if (this.isFormModule) {
       this.formName = this.formDetail?.name || '';
       this.selectedDetails = this.formDetail;
-    } else {
+    } else if (this.roundPlanDetail) {
       this.formName = this.roundPlanDetail?.name || '';
       this.selectedDetails = this.roundPlanDetail;
     }
-    if (this.selectedDetails) {
-      this.getAllShiftsData();
-    }
+    this.getAllShiftsData();
   }
 
   getAllShiftsData(): void {
@@ -269,6 +245,47 @@ export class ScheduleConfigurationComponent
   }
 
   ngOnInit(): void {
+    if (this.data) {
+      const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
+        this.data;
+      this.initDetails();
+      this.assigneeDetails = assigneeDetails;
+      this.moduleName = moduleName;
+
+      // If the module name is RDF
+      if (formDetail && moduleName === 'RDF') {
+        this.isFormModule = true;
+        this._formDetail = formDetail;
+        this.selectedDetails = formDetail;
+        if (
+          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+        ) {
+          this.currentDate = new Date(
+            localToTimezoneDate(
+              new Date(),
+              this.plantTimezoneMap[this.formDetail?.plantId],
+              'yyyy-MM-dd HH:mm:ss'
+            )
+          );
+          if (this.schedulerConfigForm?.value) {
+            this.schedulerConfigForm.patchValue({
+              ...this.getDefaultSchedulerConfigDates()
+            });
+          }
+        }
+        this.getFormsSchedulerConfigurationByFormId(formDetail?.id);
+      }
+
+      // If moduleName is round-plan
+      if (roundPlanDetail && moduleName === 'OPERATOR_ROUNDS') {
+        this._roundPlanDetail = roundPlanDetail;
+        this.selectedDetails = roundPlanDetail;
+        this.getRoundPlanSchedulerConfigurationByRoundPlanId(
+          roundPlanDetail?.id
+        );
+      }
+    }
+
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -661,7 +678,10 @@ export class ScheduleConfigurationComponent
 
   cancel() {
     this.initShiftStat();
-    this.scheduleConfigEvent.emit({ slideInOut: 'out' });
+    this.dialogRef.close({
+      slideInOut: 'out',
+      actionType: 'scheduleConfigEvent'
+    });
   }
 
   initShiftStat() {
@@ -733,11 +753,13 @@ export class ScheduleConfigurationComponent
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
-                  this.scheduleConfig.emit({
-                    formsScheduleConfiguration: scheduleConfig,
-                    mode: 'update'
-                  });
+                  // Close popup and pass data through it
                   this.openScheduleSuccessModal('update');
+                  this.dialogRef.close({
+                    formsScheduleConfiguration: scheduleConfig,
+                    mode: 'update',
+                    actionType: 'scheduleConfig'
+                  });
                   this.schedulerConfigForm.markAsPristine();
                 }
                 this.initShiftStat();
@@ -754,9 +776,11 @@ export class ScheduleConfigurationComponent
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig).length) {
-                  this.scheduleConfig.emit({
+                  // Close popup and pass data through it
+                  this.dialogRef.close({
                     roundPlanScheduleConfiguration: scheduleConfig,
-                    mode: 'update'
+                    mode: 'update',
+                    actionType: 'scheduleConfig'
                   });
                   this.openScheduleSuccessModal('update');
                   this.schedulerConfigForm.markAsPristine();
@@ -786,9 +810,11 @@ export class ScheduleConfigurationComponent
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
-                  this.scheduleConfig.emit({
+                  // Close popup and pass data through it
+                  this.dialogRef.close({
                     formsScheduleConfiguration: scheduleConfig,
-                    mode: 'create'
+                    mode: 'create',
+                    actionType: 'scheduleConfig'
                   });
                   this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
@@ -810,9 +836,11 @@ export class ScheduleConfigurationComponent
               tap((scheduleConfig) => {
                 this.disableSchedule = false;
                 if (scheduleConfig && Object.keys(scheduleConfig)?.length) {
-                  this.scheduleConfig.emit({
+                  // Close popup and pass data through it
+                  this.dialogRef.close({
                     roundPlanScheduleConfiguration: scheduleConfig,
-                    mode: 'create'
+                    mode: 'create',
+                    actionType: 'scheduleConfig'
                   });
                   this.openScheduleSuccessModal('create');
                   this.schedulerConfigForm
@@ -1149,32 +1177,32 @@ export class ScheduleConfigurationComponent
       height: '275px',
       backdropClass: 'schedule-success-modal',
       data: {
-        name: this.isFormModule
-          ? this.formDetail?.name
-          : this.roundPlanDetail.name,
+        name: this.selectedDetails?.name ?? '',
         mode: dialogMode,
         isFormModule: this.isFormModule
       }
     });
-
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
         if (data?.redirect) {
           if (this.isFormModule) {
-            this.scheduleConfigEvent.emit({
+            this.scheduleConfigurationService.scheduleConfigEvent.next({
               slideInOut: 'out',
-              viewForms: true
+              viewForms: true,
+              actionType: 'scheduleConfigEvent'
             });
           } else {
-            this.scheduleConfigEvent.emit({
+            this.scheduleConfigurationService.scheduleConfigEvent.next({
               slideInOut: 'out',
-              viewRounds: true
+              viewRounds: true,
+              actionType: 'scheduleConfigEvent'
             });
           }
         } else {
-          this.scheduleConfigEvent.emit({
+          this.scheduleConfigurationService.scheduleConfigEvent.next({
             slideInOut: 'out',
-            mode: data.mode
+            mode: data?.mode,
+            actionType: 'scheduleConfigEvent'
           });
         }
       }
@@ -1283,10 +1311,10 @@ export class ScheduleConfigurationComponent
         });
     } else {
       this.shiftSlots.clear();
+      this.shiftApiResponse = null;
       this.shiftDetails = shiftDefaultPayload;
       this.shiftSlots.push(this.addShiftDetails(true));
     }
-    console.log(this.schedulerConfigForm.value);
   }
 
   onUpdateShiftSlot(event: {
@@ -1307,6 +1335,7 @@ export class ScheduleConfigurationComponent
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.shiftDetails = {};
+    this.shiftApiResponse = null;
   }
 
   private prepareShiftDetailsPayload(shiftDetails, type: '24' | '12' = '24') {

@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 
 import { TimeType } from '../components/schedular/schedule-configuration/schedule-configuration.constants';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleConfigurationService {
+  scheduleConfigEvent = new BehaviorSubject<{
+    slideInOut: 'out' | 'in';
+    viewForms?: boolean;
+    viewRounds?: boolean;
+    actionType: 'scheduleConfigEvent';
+    mode?: 'create' | 'update';
+  }>(null);
   constructor() {}
 
   // The convertTo24Hour function takes a time string in the 12-hour format with AM/PM indicator and converts it to the 24-hour format.

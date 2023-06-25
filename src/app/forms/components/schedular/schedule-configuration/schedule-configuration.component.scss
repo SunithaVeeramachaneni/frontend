@@ -4,10 +4,8 @@
   position: fixed;
   bottom: 0;
   top: 0;
-  right: 0;
   width: 96%;
   height: 100%;
-  z-index: 9999;
   background-color: $white;
   border-left: 1px solid $border-color;
 }
@@ -368,7 +366,6 @@
 ::ng-deep .assign-menu + * .mat-menu-panel {
   position: relative;
   top: 60px;
-  right: 370px;
 }
 ::ng-deep .mat-card > :last-child:not(.mat-card-footer),
 .mat-card-content > :last-child:not(.mat-card-footer) {
