@@ -256,6 +256,7 @@ export class RaceDynamicFormService {
       | 'isPublic'
       | 'plantId'
       | 'pdfTemplateConfiguration'
+      | 'additionalDetails'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -269,6 +270,7 @@ export class RaceDynamicFormService {
       tags: formListQuery.tags,
       isPublic: formListQuery.isPublic,
       plantId: formListQuery.plantId,
+      additionalDetails: formListQuery.additionalDetails,
       isArchived: false,
       isDeleted: false
     });
