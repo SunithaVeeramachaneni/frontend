@@ -458,11 +458,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: plantData.data
         });
-        this.toast.show({
-          text: 'Plant updated successfully!',
-          type: 'success'
-        });
       }
+      this.toast.show({
+        text: 'Plant updated successfully!',
+        type: 'success'
+      });
     }
     this.plantService.fetchPlants$.next({ data: 'load' });
   }
