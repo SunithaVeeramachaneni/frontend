@@ -37,8 +37,10 @@ export class DatePickerComponent implements OnInit {
   @Output() closed: EventEmitter<boolean> = new EventEmitter<boolean>();
   currentDate = new Date();
   _selectedDate: SelectedDate;
-
-  constructor() {}
+  mindate: any;
+  constructor() {
+    this.minDate = new Date();
+  }
 
   ngOnInit(): void {}
 

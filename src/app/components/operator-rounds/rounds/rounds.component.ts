@@ -1141,10 +1141,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDateTime >= shiftStartDateAndTime &&
       dueDateTime <= shiftEndDateAndTime
     ) {
-      const data = { type: 'warning' };
       const openDialogModalRef = this.dialog.open(
         ShiftChangeWarningModalComponent,
-        { data }
+        { data: { type: 'warning' } }
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
@@ -1170,7 +1169,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
-
+          console.log('scheduledAt:', new Date(changedScheduleAt));
           this.operatorRoundsService
             .updateRound$(
               roundId,
@@ -1190,13 +1189,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
             .pipe(
               tap((resp: any) => {
                 if (Object.keys(resp).length) {
+                  console.log('scheuleAtDisplay', scheduleAtDisplayFormat);
                   this.dataSource.data = this.dataSource.data.map((data) => {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
                         dueDate: changedDueDate,
                         dueDateDisplay: dueDateDisplayFormat,
-                        scheduleAtDisplay: scheduleAtDisplayFormat,
+                        scheduledAtDisplay: scheduleAtDisplayFormat,
                         status: changedStatus,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
@@ -1221,7 +1221,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       });
     } else {
       const data = { type: 'date' };
-      this.dialog.open(ShiftChangeWarningModalComponent, { data });
+      this.dialog.open(ShiftChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
     }
   }
 
