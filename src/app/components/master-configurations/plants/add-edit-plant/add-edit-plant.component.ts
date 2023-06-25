@@ -41,6 +41,7 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(data) {
     this.plantsEditData = data;
+    this.selectedShiftsDetails = [];
     if (this.plantsEditData === null) {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';
@@ -397,9 +398,26 @@ export class AddEditPlantComponent implements OnInit, OnDestroy {
   };
 
   isOverlapping = (arr) => {
-    for (let i = 0; i < arr.length - 1; i++) {
-      for (let j = i + 1; j < arr.length; j++) {
-        if (this.overlapping(arr[i], arr[j])) {
+    const filteredShifts = [];
+    arr.forEach((e) => {
+      if (e.start > e.end) {
+        const TS1 = {
+          start: e.start,
+          end: '24:00'
+        };
+        const TS2 = {
+          start: '01:00',
+          end: e.end
+        };
+        filteredShifts.push(TS1);
+        filteredShifts.push(TS2);
+      } else {
+        filteredShifts.push(e);
+      }
+    });
+    for (let i = 0; i < filteredShifts.length - 1; i++) {
+      for (let j = i + 1; j < filteredShifts.length; j++) {
+        if (this.overlapping(filteredShifts[i], filteredShifts[j])) {
           return true;
         }
       }
