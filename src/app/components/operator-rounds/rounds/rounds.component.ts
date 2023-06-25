@@ -397,8 +397,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open',
-          'overdue'
+          'partly-open'
         ],
         displayType: 'text'
       },
@@ -741,7 +740,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           );
           this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
         }
-        if (row.status !== 'submitted') this.trigger.toArray()[2].openMenu();
+        if (row.status !== 'submitted') {
+          this.trigger.toArray()[2].openMenu();
+        } else {
+          this.openRoundHandler(row);
+        }
         this.selectedRoundInfo = row;
         break;
       case 'shift':
@@ -1167,16 +1170,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
-          if (
-            plantId &&
-            this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
-          ) {
-            changedDueDate = zonedTimeToUtc(
-              format(changedDueDate, dateTimeFormat4),
-              this.plantTimezoneMap[plantId].timeZoneIdentifier
-            );
-          }
+          // if (
+          //   plantId &&
+          //   this.plantTimezoneMap[plantId] &&
+          //   this.plantTimezoneMap[plantId].timeZoneIdentifier
+          // ) {
+          //   changedDueDate = zonedTimeToUtc(
+          //     format(changedDueDate, dateTimeFormat4),
+          //     this.plantTimezoneMap[plantId].timeZoneIdentifier
+          //   );
+          // }
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
@@ -1189,7 +1192,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
-          console.log('scheduledAt:', new Date(changedScheduleAt));
           this.operatorRoundsService
             .updateRound$(
               roundId,
@@ -1209,7 +1211,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
             .pipe(
               tap((resp: any) => {
                 if (Object.keys(resp).length) {
-                  console.log('scheuleAtDisplay', scheduleAtDisplayFormat);
                   this.dataSource.data = this.dataSource.data.map((data) => {
                     if (data.roundId === roundId) {
                       return {
@@ -1240,7 +1241,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      const data = { type: 'date' };
       this.dialog.open(ShiftChangeWarningModalComponent, {
         data: { type: 'date' }
       });
@@ -1260,7 +1260,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       assignedTo,
       ...rest
     } = this.selectedRoundInfo;
-    console.log(this.selectedRoundInfo);
     const ndueDate = new Date(dueDate);
     const nscheduledAt = new Date(scheduledAt);
     let changedDueDate = ndueDate.setDate(
@@ -1322,21 +1321,21 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
-          if (
-            plantId &&
-            this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
-          ) {
-            const time = localToTimezoneDate(
-              this.selectedRoundInfo.scheduledAt,
-              this.plantTimezoneMap[plantId],
-              hourFormat
-            );
-            changedScheduledAt = zonedTimeToUtc(
-              format(changedScheduledAt, dateTimeFormat4) + ` ${time}`,
-              this.plantTimezoneMap[plantId].timeZoneIdentifier
-            );
-          }
+          // if (
+          //   plantId &&
+          //   this.plantTimezoneMap[plantId] &&
+          //   this.plantTimezoneMap[plantId].timeZoneIdentifier
+          // ) {
+          //   const time = localToTimezoneDate(
+          //     this.selectedRoundInfo.scheduledAt,
+          //     this.plantTimezoneMap[plantId],
+          //     hourFormat
+          //   );
+          //   changedScheduledAt = zonedTimeToUtc(
+          //     format(changedScheduledAt, dateTimeFormat4) + ` ${time}`,
+          //     this.plantTimezoneMap[plantId].timeZoneIdentifier
+          //   );
+          // }
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
@@ -1397,13 +1396,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      const data = { type: 'date' };
-      this.dialog.open(ShiftChangeWarningModalComponent, { data });
+      this.dialog.open(ShiftChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
     }
   }
 
   shiftChangeHandler(shift) {
-    console.log('shift:', shift);
     const {
       roundId,
       assignedToEmail,
@@ -1417,44 +1416,59 @@ export class RoundsComponent implements OnInit, OnDestroy {
     } = this.selectedRoundInfo;
     const shiftId = shift.id;
 
+    ///startDate
+    const [endNewHours, endNewMinutes] = shift.endTime.split(':').map(Number);
+    const [startNewHours, startNewMinutes] = shift.startTime
+      .split(':')
+      .map(Number);
+    let shiftStartDateAndTime: Date;
+    let shiftEndDateAndTime: Date;
+    if (status !== 'overdue') {
+      const shiftStart = this.selectedRoundInfo.scheduledAt;
+      const shiftEnd = this.selectedRoundInfo.dueDate;
+      shiftStartDateAndTime = new Date(
+        new Date(shiftStart).getFullYear(),
+        new Date(shiftStart).getMonth(),
+        new Date(shiftStart).getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+      //end
+      ///EndDate
+
+      shiftEndDateAndTime = new Date(
+        new Date(shiftEnd).getFullYear(),
+        new Date(shiftEnd).getMonth(),
+        new Date(shiftEnd).getDate(),
+        endNewHours,
+        endNewMinutes
+      );
+    } else {
+      shiftStartDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+      shiftEndDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        endNewHours,
+        endNewMinutes
+      );
+    }
+    //end
+
+    if (shiftEndDateAndTime.getTime() < shiftStartDateAndTime.getTime()) {
+      shiftEndDateAndTime.setDate(shiftEndDateAndTime.getDate() + 1);
+    }
+
     const openDialogModalRef = this.dialog.open(
       ShiftChangeWarningModalComponent,
       { data: { type: 'warning' } }
     );
-    const shiftStart = this.selectedRoundInfo.scheduledAt;
-    const shiftEnd = this.selectedRoundInfo.dueDate;
-
-    ///startDate
-    const startYear: number = new Date(shiftStart).getFullYear();
-    const startMonth: number = new Date(shiftStart).getMonth();
-    const startDay: number = new Date(shiftStart).getDate();
-
-    const [startNewHours, startNewMinutes] = shift.startTime
-      .split(':')
-      .map(Number);
-    const shiftStartDateAndTime = new Date(
-      startYear,
-      startMonth,
-      startDay,
-      startNewHours,
-      startNewMinutes
-    );
-    //end
-
-    ///EndDate
-    const endYear: number = new Date(shiftEnd).getFullYear();
-    const endMonth: number = new Date(shiftEnd).getMonth();
-    const endDay: number = new Date(shiftEnd).getDate();
-    const [endNewHours, endNewMinutes] = shift.endTime.split(':').map(Number);
-    const shiftEndDateAndTime = new Date(
-      endYear,
-      endMonth,
-      endDay,
-      endNewHours,
-      endNewMinutes
-    );
-    //end
-
     openDialogModalRef.afterClosed().subscribe((resp) => {
       if (resp) {
         let changedStatus = status;
@@ -1469,8 +1483,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
               : (changedStatus = this.statusMap.open);
           }
         }
-        console.log(shiftStartDateAndTime, shiftEndDateAndTime);
-        console.log('scheduleAt:', scheduledAt);
         this.operatorRoundsService
           .updateRound$(
             roundId,
