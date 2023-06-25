@@ -93,6 +93,7 @@ export interface RoundDetail extends RoundPlan {
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
+  isViewPdf?: boolean;
   createdBy: string;
   status: string;
   locationAndAssetTasksCompleted: number;
