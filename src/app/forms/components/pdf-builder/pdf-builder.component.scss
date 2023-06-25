@@ -35,16 +35,20 @@
             font-size: 130%;
             font-weight: 500;
             border-top: 1px solid $drag-preview-shadow2;
-            padding-top: 13px;
+            padding-top: 10px;
+            border-bottom: 1px solid $drag-preview-shadow2;
+            padding-bottom: 10px;
           }
           .option {
             display: flex;
-            margin: 10px;
+            margin: 6px;
             flex-direction: column;
             .customText {
               display: flex;
               justify-content: flex-start;
               width: 100%;
+              position: relative;
+              left: 10px;
               .field {
                 margin: 10px;
                 width: 45%;
@@ -54,8 +58,8 @@
           .m-l-40 {
             margin-left: 40px;
           }
-          .m-l-80 {
-            margin-left: 80px;
+          .m-l-50 {
+            margin-left: 50px;
           }
         }
       }
@@ -69,6 +73,16 @@
   }
 }
 
+.bottomBorder {
+  border-bottom: 1px solid $drag-preview-shadow2;
+  padding-bottom: 5px;
+}
+.questions {
+  position: relative;
+  margin-left: 30px;
+  padding-top: 5px;
+  padding-bottom: 8px;
+}
 .back-btn {
   border: none;
   background-color: transparent;
@@ -291,7 +305,9 @@ ul {
   margin-left: 10px;
   height: 80%;
 }
-
+.customField {
+  display: contents;
+}
 .details {
   margin-left: 8px;
 }
