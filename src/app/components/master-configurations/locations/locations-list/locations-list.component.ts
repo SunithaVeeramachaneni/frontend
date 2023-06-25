@@ -250,7 +250,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 
   isPopoverOpen = false;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     plant: ''
   };

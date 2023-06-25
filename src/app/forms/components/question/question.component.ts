@@ -55,6 +55,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -206,6 +208,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
+  embeddedFormId: string = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -225,7 +228,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private base64Service: Base64HelperService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -233,6 +238,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       tap((event) => {
         this.formId = event.id;
         this.formMetadata = event;
+        this.embeddedFormId = event?.embeddedFormId;
       })
     );
     this.moduleName$ = this.store
@@ -262,7 +268,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
         (this.isEmbeddedForm
-          ? fieldType.type !== 'DT' && fieldType.type !== 'HL'
+          ? fieldType.type !== 'DT'
           : fieldType.type !== 'DF' &&
             fieldType.type !== 'TIF' &&
             fieldType.type !== 'IMG')
@@ -454,6 +460,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       type: 'delete',
       questionId: this.questionId
     });
+
+    if (this.embeddedFormId) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.embeddedFormId,
+          UNIQUEKEY: this.questionId
+        })
+        .subscribe();
+    }
   }
 
   selectFieldTypeEventHandler(fieldType) {
@@ -561,10 +576,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
 
     this.formService
       .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
-      .subscribe((data) => {
+      .subscribe(async (data) => {
+        const { base64Response: base64 } =
+          await this.base64Service.getBase64ImageFromSourceUrl(
+            data.message.objectURL
+          );
         const value = {
           name: file.name,
           size: file.size,
+          base64: base64.split(',')[1],
           objectKey: data.message.objectKey,
           objectURL: data.message.objectURL
         };
