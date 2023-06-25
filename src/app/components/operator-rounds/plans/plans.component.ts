@@ -23,6 +23,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  catchError,
   startWith,
   switchMap,
   takeUntil,
@@ -73,6 +74,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 
 @Component({
   selector: 'app-plans',
@@ -99,7 +101,9 @@ export class PlansComponent implements OnInit, OnDestroy {
     plant: '',
     schedule: '',
     assignedTo: '',
-    scheduledAt: ''
+    scheduledAt: '',
+    shifts: '',
+    roundPlanId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -361,6 +365,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  activeShifts$: Observable<any>;
   roundPlanDetail: RoundPlanDetail;
   plantMapSubscription: Subscription;
   scheduleRoundPlanDetail: RoundPlanDetail;
@@ -376,9 +381,11 @@ export class PlansComponent implements OnInit, OnDestroy {
   planCategory: FormControl;
   roundPlanId: string;
   plants = [];
+  allShiftsMaster = [];
   plantsIdNameMap = {};
   userFullNameByEmail = {};
   plantTimezoneMap = {};
+  activeShiftIdMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -394,7 +401,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private shiftService: ShiftService
   ) {}
 
   ngOnInit(): void {
@@ -402,6 +410,17 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    this.activeShifts$ = this.shiftService
+      .getShiftsList$(
+        {
+          next: '',
+          limit: 100000,
+          searchKey: '',
+          fetchType: 'load'
+        },
+        { isActive: 'true' }
+      )
+      .pipe(catchError(() => of([])));
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -456,26 +475,37 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
+      this.activeShifts$,
       this.users$
     ]).pipe(
-      map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
-        this.isLoading$.next(false);
-        if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
-            roundPlans.rows,
-            roundPlanScheduleConfigurations
+      map(
+        ([
+          roundPlans,
+          scrollData,
+          roundPlanScheduleConfigurations,
+          shiftData
+        ]) => {
+          shiftData.rows.forEach(
+            (value) => (this.activeShiftIdMap[value.id] = value.name)
           );
-        } else {
-          this.initial.data = this.initial.data.concat(
-            this.formatRoundPlans(
-              scrollData.rows,
+          this.isLoading$.next(false);
+          if (this.skip === 0) {
+            this.initial.data = this.formatRoundPlans(
+              roundPlans.rows,
               roundPlanScheduleConfigurations
-            )
-          );
+            );
+          } else {
+            this.initial.data = this.initial.data.concat(
+              this.formatRoundPlans(
+                scrollData.rows,
+                roundPlanScheduleConfigurations
+              )
+            );
+          }
+          this.skip = this.initial.data.length;
+          return this.initial;
         }
-        this.skip = this.initial.data.length;
-        return this.initial;
-      })
+      )
     );
 
     this.filteredRoundPlans$ = combineLatest([
@@ -536,6 +566,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           }
           if (item.column === 'schedule') {
             item.items = this.schedules;
+          }
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.activeShiftIdMap);
           }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
@@ -989,15 +1022,19 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
+      console.log('filter item :', item);
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (
-        item.type !== 'daterange' &&
-        item.value &&
-        item.column !== 'schedule'
-      ) {
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.activeShiftIdMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
+      } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.type === 'daterange' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'roundPlanId' && item.value) {
         this.filter[item.column] = item.value;
       } else {
         this.filter[item.column] = item.value ?? '';
@@ -1013,7 +1050,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       plant: '',
       schedule: '',
       assignedTo: '',
-      scheduledAt: ''
+      scheduledAt: '',
+      shifts: '',
+      roundPlanId: ''
     };
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });

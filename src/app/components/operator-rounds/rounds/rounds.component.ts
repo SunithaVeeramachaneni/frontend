@@ -129,11 +129,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     schedule: '',
     assignedTo: '',
     dueDate: '',
-    plant: ''
+    plant: '',
+    scheduledAt: '',
+    shift: '',
+    roundPlanId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
   shiftObj: any = {};
+  shiftNameMap = {};
   columns: Column[] = [
     {
       id: 'name',
@@ -576,6 +580,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         tap((shifts) => {
           shifts.items.map((shift) => {
             this.shiftObj[shift.id] = shift;
+            this.shiftNameMap[shift.id] = shift.name;
           });
         })
       ),
@@ -942,6 +947,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
             if (item.column === 'schedule') {
               item.items = this.schedules;
             }
+            if (item['column'] === 'shift') {
+              item.items = Object.values(this.shiftNameMap);
+            }
           }
         }
       },
@@ -978,6 +986,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
+      } else if (item.column === 'shift' && item.value) {
+        const foundEntry = Object.entries(this.shiftNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.column === 'status' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.column === 'schedule' && item.value) {
@@ -986,6 +999,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'scheduledAt' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else if (item.column === 'roundPlanId' && item.value) {
+        this.filter[item.column] = item.value;
       }
     }
     this.nextToken = '';
@@ -999,7 +1016,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedTo: '',
       dueDate: '',
-      plant: ''
+      plant: '',
+      scheduledAt: '',
+      shift: '',
+      roundPlanId: ''
     };
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
