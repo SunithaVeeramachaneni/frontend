@@ -318,6 +318,9 @@
   "notificationCreation": "Notification Creation In-Progress",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
+  "additionalDetails": "Additional Details",
+  "value": "Value",
+  "add": "Add",
   "timeZone": "Plant Timezone",
   "taskSkipped": "Tasks Skipped",
   "locationAssetsCompleted": "Location or Assets Completed"

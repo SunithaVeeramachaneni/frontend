@@ -145,14 +145,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
-      this.pdfButtonDisabled = false;
-      if (this.selectedForm?.status) {
-        if (
-          this.selectedForm?.status.toLowerCase() === 'open' ||
-          this.selectedForm?.status.toLowerCase() === 'to-do'
-        ) {
-          this.pdfButtonDisabled = true;
-        }
+      this.pdfButtonDisabled = true;
+      if (this.selectedForm?.isViewPdf === true) {
+        this.pdfButtonDisabled = false;
       }
     }
   }
@@ -187,10 +182,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   formatDate(date, plantId, dateFormat) {
     if (!date) return '';
-    if (
-      this.plantTimezoneMap[plantId] &&
-      this.plantTimezoneMap[plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],

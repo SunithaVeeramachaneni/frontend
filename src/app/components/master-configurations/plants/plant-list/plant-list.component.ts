@@ -515,7 +515,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'name':
       case 'plantId':
-      case 'country':
+      case 'countryDisplay':
+      case 'timeZoneDisplay':
+      case 'shiftNames':
       case 'zipCode':
       case 'state':
         this.showPlantDetail(row);

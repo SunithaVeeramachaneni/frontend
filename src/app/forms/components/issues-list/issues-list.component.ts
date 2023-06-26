@@ -491,11 +491,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
 
   formatDate(date, issue) {
     if (date === '') return '';
-    if (
-      issue.plantId &&
-      this.plantTimezoneMap[issue.plantId] &&
-      this.plantTimezoneMap[issue.plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[issue?.plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[issue.plantId],

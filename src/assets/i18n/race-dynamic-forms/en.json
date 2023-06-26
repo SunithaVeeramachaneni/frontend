@@ -186,7 +186,6 @@
   "capturedTasks": "Captured Questions",
   "photos": "Photos(Issues, Actions, Questions)",
   "skippedTasks": "Skipped Questions",
-  "tasksCompleted": "Questions Completed",
   "pdfPreviewTxt": "PDF setup and preview",
   "questionsCompleted": "Questions Completed",
   "issues": "Issues",
@@ -312,5 +311,13 @@
   "actionStatus": "Status: ",
   "link": "Link",
   "raiseNotification": "Raise Notification",
-  "timeZone": "Plant Timezone"
+  "additionalDetails": "Additional Details",
+  "value": "Value",
+  "add": "Add",
+  "removeBtn": "Remove",
+  "standaloneSubText": "On Publishing form will show in mInspections app",
+  "timeZone": "Plant Timezone",
+  "user": "User",
+  "defaultCurrentDate": "Default to current date",
+  "defaultCurrentTime": "Default to current time"
 }
