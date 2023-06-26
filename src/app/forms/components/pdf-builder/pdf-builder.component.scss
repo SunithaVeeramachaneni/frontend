@@ -473,8 +473,9 @@ ul {
   border: 1px solid $issue-border;
 }
 .actionHead {
-  background: $white1;
+  background: $actions-color;
   padding: 10px;
+  margin: 10px 10px 0px 10px;
 }
 .actionBody {
   padding: 10px;

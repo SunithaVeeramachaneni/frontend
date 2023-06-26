@@ -256,12 +256,7 @@
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
               <span
-                class="roundId"
-                *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
-                >{{ formMetadata.id }}</span
-              >
-              <span
-                class="formName"
+                class="formName-gray"
                 *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
                 >{{ formMetadata.name }}</span
               >
@@ -669,7 +664,7 @@
                 <div class="bg-yellow">
                   <div class="p-5">
                     <span class="label"> Priority: </span>
-                    <span class="description"> High </span>
+                    <span class="description priority-color"> High </span>
                   </div>
                   <div class="p-5">
                     <span class="label"> Category: </span>
@@ -737,7 +732,7 @@
                 <div class="bg-yellow">
                   <div class="p-5">
                     <span class="label"> Priority: </span>
-                    <span class="description"> High </span>
+                    <span class="description priority-color"> High </span>
                   </div>
                   <div class="p-5">
                     <span class="label"> Category: </span>
@@ -947,7 +942,7 @@
               <div class="bg-yellow width-100">
                 <div class="p-5">
                   <span class="label"> Priority: </span>
-                  <span class="description"> High </span>
+                  <span class="description priority-color"> High </span>
                 </div>
                 <div class="p-5">
                   <span class="label"> Category: </span>
