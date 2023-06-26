@@ -61,7 +61,8 @@ import {
   dateTimeFormat3,
   permissions as perms,
   dateFormat5,
-  hourFormat
+  hourFormat,
+  statusColors
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -103,7 +104,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-Progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -219,7 +227,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 5,
@@ -306,7 +320,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 8,
@@ -344,20 +364,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': ' #2C9E53',
-        color: '#ffffff'
+        'background-color': statusColors.submitted,
+        color: statusColors.white
       },
       'in-progress': {
-        'background-color': '#FFCC00',
-        color: '#000000'
+        'background-color': statusColors.inProgress,
+        color: statusColors.black
       },
       open: {
-        'background-color': '#e0e0e0',
-        color: '#000000'
+        'background-color': statusColors.open,
+        color: statusColors.black
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#ffffff'
+      assigned: {
+        'background-color': statusColors.assigned,
+        color: statusColors.black
+      },
+      'partly-open': {
+        'background-color': statusColors.partlyOpen,
+        color: statusColors.black
+      },
+      overdue: {
+        'background-color': statusColors.overdue,
+        color: statusColors.white
       }
     }
   };
@@ -861,7 +889,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    status = status.toLowerCase() === 'open' ? 'assigned' : status;
+    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
