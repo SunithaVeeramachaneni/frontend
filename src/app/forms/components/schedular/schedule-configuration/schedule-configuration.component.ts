@@ -258,12 +258,13 @@ export class ScheduleConfigurationComponent
         this._formDetail = formDetail;
         this.selectedDetails = formDetail;
         if (
-          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+            ?.timeZoneIdentifier
         ) {
           this.currentDate = new Date(
             localToTimezoneDate(
               new Date(),
-              this.plantTimezoneMap[this.formDetail?.plantId],
+              this.plantTimezoneMap[this.selectedDetails?.plantId],
               'yyyy-MM-dd HH:mm:ss'
             )
           );
@@ -391,7 +392,7 @@ export class ScheduleConfigurationComponent
                   date: new Date(
                     localToTimezoneDate(
                       new Date(),
-                      this.plantTimezoneMap[this.formDetail?.plantId],
+                      this.plantTimezoneMap[this.selectedDetails?.plantId],
                       dateTimeFormat3
                     )
                   ),
@@ -416,7 +417,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 29),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
               );
@@ -426,7 +427,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 29),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
                 )
@@ -439,7 +440,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 29),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               );
@@ -449,7 +450,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 29),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
                 )
@@ -462,7 +463,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 90),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
               );
@@ -472,7 +473,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 90),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
                 )
@@ -485,7 +486,7 @@ export class ScheduleConfigurationComponent
               .patchValue([
                 getDayTz(
                   new Date(),
-                  this.plantTimezoneMap[this.formDetail?.plantId]
+                  this.plantTimezoneMap[this.selectedDetails?.plantId]
                 )
               ]);
             this.schedulerConfigForm
@@ -493,7 +494,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 90),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               );
@@ -503,7 +504,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 90),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
                 )
@@ -516,7 +517,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 364),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
               );
@@ -526,7 +527,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 364),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat4
                   )
                 )
@@ -540,7 +541,7 @@ export class ScheduleConfigurationComponent
               .patchValue(
                 localToTimezoneDate(
                   addDays(new Date(), 364),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               );
@@ -550,7 +551,7 @@ export class ScheduleConfigurationComponent
                 new Date(
                   localToTimezoneDate(
                     addDays(new Date(), 364),
-                    this.plantTimezoneMap[this.formDetail?.plantId],
+                    this.plantTimezoneMap[this.selectedDetails?.plantId],
                     dateFormat3
                   )
                 )
@@ -570,7 +571,7 @@ export class ScheduleConfigurationComponent
             .patchValue([
               getDayTz(
                 new Date(),
-                this.plantTimezoneMap[this.formDetail?.plantId]
+                this.plantTimezoneMap[this.selectedDetails?.plantId]
               )
             ]);
         }
@@ -621,7 +622,7 @@ export class ScheduleConfigurationComponent
                   days * this.schedulerConfigForm.get('repeatDuration').value -
                     1
                 ),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat3
               )
             );
@@ -636,7 +637,7 @@ export class ScheduleConfigurationComponent
                       this.schedulerConfigForm.get('repeatDuration').value -
                       1
                   ),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               )
@@ -663,7 +664,10 @@ export class ScheduleConfigurationComponent
   setMonthlyDaysOfWeek() {
     for (const weekRepeatDays of this.monthlyDaysOfWeek.controls) {
       weekRepeatDays.patchValue([
-        getDayTz(new Date(), this.plantTimezoneMap[this.formDetail?.plantId])
+        getDayTz(
+          new Date(),
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+        )
       ]);
     }
   }
@@ -712,26 +716,31 @@ export class ScheduleConfigurationComponent
         `${scheduleEndOn} ${time}`
       ).toISOString();
 
-      if (this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier) {
+      if (
+        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+      ) {
         time = localToTimezoneDate(
           new Date(),
-          this.plantTimezoneMap[this.formDetail?.plantId],
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
           hourFormat
         );
 
         startDateByPlantTimezone = zonedTimeToUtc(
           format(new Date(startDate), dateFormat5) + ` ${time}`,
-          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+            ?.timeZoneIdentifier
         ).toISOString();
 
         endDateByPlantTimezone = zonedTimeToUtc(
           format(new Date(endDate), dateFormat5) + ` ${time}`,
-          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+            ?.timeZoneIdentifier
         ).toISOString();
 
         scheduleEndOnByPlantTimezone = zonedTimeToUtc(
           format(new Date(scheduleEndOn), dateFormat5) + ` ${time}`,
-          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+            ?.timeZoneIdentifier
         ).toISOString();
       }
       if (id) {
@@ -902,37 +911,37 @@ export class ScheduleConfigurationComponent
               ...config,
               startDate: localToTimezoneDate(
                 new Date(startDate),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat3
               ),
               endDate: localToTimezoneDate(
                 new Date(endDate),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat3
               ),
               scheduleEndOn: localToTimezoneDate(
                 new Date(scheduleEndOn),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat4
               ),
               startDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(startDate),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               ),
               endDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(endDate),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               ),
               scheduleEndOnPicker: new Date(
                 localToTimezoneDate(
                   new Date(scheduleEndOn),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
               )
@@ -942,7 +951,7 @@ export class ScheduleConfigurationComponent
               date: new Date(
                 localToTimezoneDate(
                   new Date(scheduleByDate.date),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   ''
                 )
               )
@@ -969,44 +978,49 @@ export class ScheduleConfigurationComponent
   }
 
   getDefaultSchedulerConfigDates() {
-    if (this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier) {
+    if (
+      this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+    ) {
       return {
         startDate: localToTimezoneDate(
           new Date(),
-          this.plantTimezoneMap[this.formDetail?.plantId],
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
         endDate: localToTimezoneDate(
           addDays(new Date(), 30),
-          this.plantTimezoneMap[this.formDetail?.plantId],
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat3
         ),
         scheduleEndOn: localToTimezoneDate(
           addDays(new Date(), 29),
-          this.plantTimezoneMap[this.formDetail?.plantId],
+          this.plantTimezoneMap[this.selectedDetails?.plantId],
           dateFormat4
         ),
         daysOfWeek: [
-          getDayTz(new Date(), this.plantTimezoneMap[this.formDetail?.plantId])
+          getDayTz(
+            new Date(),
+            this.plantTimezoneMap[this.selectedDetails?.plantId]
+          )
         ],
         startDatePicker: new Date(
           localToTimezoneDate(
             new Date(),
-            this.plantTimezoneMap[this.formDetail?.plantId],
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           )
         ),
         endDatePicker: new Date(
           localToTimezoneDate(
             addDays(new Date(), 30),
-            this.plantTimezoneMap[this.formDetail?.plantId],
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat3
           )
         ),
         scheduleEndOnPicker: new Date(
           localToTimezoneDate(
             addDays(new Date(), 29),
-            this.plantTimezoneMap[this.formDetail?.plantId],
+            this.plantTimezoneMap[this.selectedDetails?.plantId],
             dateFormat4
           )
         )
@@ -1073,37 +1087,37 @@ export class ScheduleConfigurationComponent
               ...config,
               startDate: localToTimezoneDate(
                 new Date(startDate),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat3
               ),
               endDate: localToTimezoneDate(
                 new Date(endDate),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat3
               ),
               scheduleEndOn: localToTimezoneDate(
                 new Date(scheduleEndOn),
-                this.plantTimezoneMap[this.formDetail?.plantId],
+                this.plantTimezoneMap[this.selectedDetails?.plantId],
                 dateFormat4
               ),
               startDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(startDate),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               ),
               endDatePicker: new Date(
                 localToTimezoneDate(
                   new Date(endDate),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat3
                 )
               ),
               scheduleEndOnPicker: new Date(
                 localToTimezoneDate(
                   new Date(scheduleEndOn),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateFormat4
                 )
               )
@@ -1113,7 +1127,7 @@ export class ScheduleConfigurationComponent
               date: new Date(
                 localToTimezoneDate(
                   new Date(scheduleByDate.date),
-                  this.plantTimezoneMap[this.formDetail?.plantId],
+                  this.plantTimezoneMap[this.selectedDetails?.plantId],
                   dateTimeFormat3
                 )
               )
@@ -1157,10 +1171,13 @@ export class ScheduleConfigurationComponent
       let dateByPlantTimezone = new Date(
         format(scheduleByDate.date, dateTimeFormat3)
       );
-      if (this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier) {
+      if (
+        this.plantTimezoneMap[this.selectedDetails?.plantId]?.timeZoneIdentifier
+      ) {
         dateByPlantTimezone = zonedTimeToUtc(
           format(scheduleByDate.date, dateTimeFormat3),
-          this.plantTimezoneMap[this.formDetail?.plantId]?.timeZoneIdentifier
+          this.plantTimezoneMap[this.selectedDetails?.plantId]
+            ?.timeZoneIdentifier
         );
       }
       return {
