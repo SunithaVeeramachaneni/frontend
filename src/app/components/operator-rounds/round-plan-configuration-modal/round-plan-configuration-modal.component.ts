@@ -16,7 +16,14 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, merge, of, Subscription, BehaviorSubject } from 'rxjs';
-import { map, startWith, take, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  take,
+  tap
+} from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -318,6 +325,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         ...this.additionalDetails.controls.map(
           (control: AbstractControl, index: number) =>
             control.valueChanges.pipe(
+              distinctUntilChanged(),
+              debounceTime(500),
               map((value) => ({ rowIndex: index, value }))
             )
         )
@@ -325,8 +334,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter((label) =>
-              label.includes(this.changedValues.label)
+            Object.keys(this.labels).filter(
+              (label) =>
+                label
+                  .toLowerCase()
+                  .indexOf(this.changedValues.label.toLowerCase()) === 0
             )
           );
         } else {
@@ -335,8 +347,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
           this.filteredValues$ = of(
-            this.labels[this.changedValues.label].filter((values) =>
-              values.includes(this.changedValues.value)
+            this.labels[this.changedValues.label].filter((value) =>
+              value
+                .toLowerCase()
+                .includes(this.changedValues.value.toLowerCase())
             )
           );
         } else {
@@ -371,7 +385,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
   }
 
-  storeValueDetails() {
+  storeValueDetails(i) {
     if (Object.keys(this.labels).includes(this.changedValues.label)) {
       const newValues = [
         ...this.labels[this.changedValues.label],
@@ -389,6 +403,13 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           });
           this.labels[this.changedValues.label] = newValues;
           this.filteredLabels$ = of(Object.keys(this.labels));
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+          additionalinfoArray
+            .at(i)
+            .get('value')
+            .setValue(newValues.slice(-1)[0]);
         });
     }
   }
@@ -433,7 +454,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
   }
 
-  removeLabel(label) {
+  removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
     this.operatorRoundsService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
@@ -444,8 +465,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
       this.deletedLabel = label;
     });
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    additionalinfoArray.at(i).get('label').setValue('');
   }
-  removeValue(deleteValue) {
+  removeValue(deleteValue, i) {
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
@@ -461,6 +486,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           text: 'Value deleted Successfully'
         });
       });
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    additionalinfoArray.at(i).get('value').setValue('');
   }
 
   getAdditionalDetailList() {

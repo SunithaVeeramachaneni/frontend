@@ -264,7 +264,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
             Object.keys(this.labels).filter((label) =>
-              label.includes(this.changedValues.label)
+              label
+                .toLowerCase()
+                .includes(this.changedValues.label.toLowerCase())
             )
           );
         } else {
@@ -309,7 +311,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
   }
 
-  storeValueDetails() {
+  storeValueDetails(i) {
     if (Object.keys(this.labels).includes(this.changedValues.label)) {
       const newValues = [
         ...this.labels[this.changedValues.label],
@@ -327,6 +329,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
           });
           this.labels[this.changedValues.label] = newValues;
           this.filteredLabels$ = of(Object.keys(this.labels));
+          const additionalinfoArray = this.headerDataForm.get(
+            'additionalDetails'
+          ) as FormArray;
+          additionalinfoArray.at(i).get('value').setValue(newValues.slice(-1));
         });
     }
   }
@@ -370,7 +376,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
       this.filteredValues$ = of([]);
     }
   }
-  removeLabel(label) {
+  removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
     this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
@@ -381,8 +387,12 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
       this.deletedLabel = label;
     });
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    additionalinfoArray.at(i).get('label').setValue('');
   }
-  removeValue(deleteValue) {
+  removeValue(deleteValue, i) {
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
@@ -398,6 +408,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
           text: 'Value deleted Successfully'
         });
       });
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    additionalinfoArray.at(i).get('value').setValue('');
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;

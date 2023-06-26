@@ -219,7 +219,7 @@
                     <button
                       mat-button
                       class="remove-btn"
-                      (click)="removeLabel(label)"
+                      (click)="removeLabel(label, i)"
                     >
                       <span>{{ 'removeBtn' | translate }}</span>
                     </button>
@@ -291,7 +291,7 @@
                     <button
                       mat-button
                       class="remove-btn"
-                      (click)="removeValue(value)"
+                      (click)="removeValue(value, i)"
                     >
                       <span>{{ 'removeBtn' | translate }}</span>
                     </button>
@@ -308,7 +308,7 @@
                       mat-button
                       color="primary"
                       class="p-0"
-                      (click)="storeValueDetails()"
+                      (click)="storeValueDetails(i)"
                     >
                       <mat-icon class="m-r-5">add</mat-icon>
 
