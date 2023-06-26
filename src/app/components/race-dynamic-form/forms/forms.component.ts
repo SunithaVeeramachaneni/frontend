@@ -341,7 +341,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
-  private scheduleConfigEvent$: Subscription;
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -357,7 +357,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.scheduleConfigEvent$ =
+    this.scheduleConfigEvent =
       this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
         (value) => {
           if (value) {

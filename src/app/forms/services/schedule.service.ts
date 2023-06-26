@@ -57,12 +57,12 @@ export class ScheduleConfigurationService {
 
   // The getTime function takes a time string in the format HH:MM and returns the corresponding timestamp in milliseconds.
   getTime(time: string): number {
-    return new Date(`2000-01-01 ${time}`).getTime();
+    return new Date(`${this.getDateString()} ${time}`).getTime();
   }
 
   // The getHours function takes a time string in the format HH:MM and returns the corresponding timestamp in hours.
   getHours(time: string): number {
-    return new Date(`2000-01-01 ${time}`).getHours();
+    return new Date(`${this.getDateString()} ${time}`).getHours();
   }
 
   // The getTimeDifference function takes two time strings (firstTime and secondTime) in the format HH:MM and returns the time difference in hours between the two.
@@ -75,8 +75,8 @@ export class ScheduleConfigurationService {
   // The function generateTimeSlots(startTime: string, endTime: string): string[] generates an array of time slots between a given start time and end time.
   generateTimeSlots(startTime: string, endTime: string): string[] {
     const timeSlots: string[] = [];
-    const start: Date = new Date('2000-01-01 ' + startTime);
-    const end: Date = new Date('2000-01-01 ' + endTime);
+    const start: Date = new Date(`${this.getDateString()} ${startTime}`);
+    const end: Date = new Date(`${this.getDateString()} ${endTime}`);
 
     // Set the start time as the current time
     const current: Date = new Date(start);
@@ -226,5 +226,13 @@ export class ScheduleConfigurationService {
     return rows?.sort((a, b) =>
       this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
     );
+  }
+
+  private getDateString(data?: Date): string {
+    const currentDate = data ? new Date(data) : new Date();
+    const date = currentDate.getDate();
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    return `${year}-${month}-${date}`;
   }
 }

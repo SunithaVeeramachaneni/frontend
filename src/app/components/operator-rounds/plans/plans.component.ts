@@ -386,7 +386,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
   private destroy$ = new Subject();
-  private scheduleConfigEvent$: Subscription;
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
@@ -403,7 +403,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.scheduleConfigEvent$ =
+    this.scheduleConfigEvent =
       this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
         (value) => {
           if (value) {

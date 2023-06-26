@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -20,7 +21,8 @@ import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.se
 @Component({
   selector: 'app-shift-chart',
   templateUrl: './shift-chart.component.html',
-  styleUrls: ['./shift-chart.component.scss']
+  styleUrls: ['./shift-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShiftChartComponent implements OnInit, OnChanges {
   @Input() slots: string[] = [];
