@@ -1271,10 +1271,24 @@ export class ScheduleConfigurationComponent
     return this.schedulerConfigForm.get('shiftSlots') as FormArray;
   }
 
-  addShiftDetails(isDefault: boolean = false, shiftDetails = {}): FormGroup {
+  addShiftDetails(
+    isDefault: boolean = false,
+    shiftDetails: any = {}
+  ): FormGroup {
     const obj = {
-      ...(isDefault ? shiftDefaultPayload : { ...shiftDetails })
+      ...(isDefault ? shiftDefaultPayload : { ...shiftDetails }),
+      payload: this.fb.array([])
     };
+    if (
+      !isDefault &&
+      shiftDetails?.payload &&
+      Array.isArray(shiftDetails?.payload)
+    ) {
+      const payloadArray = shiftDetails?.payload?.map((payloadItem: any) =>
+        this.fb.group(payloadItem)
+      );
+      obj.payload = this.fb.array(payloadArray);
+    }
     return this.fb.group(obj);
   }
 

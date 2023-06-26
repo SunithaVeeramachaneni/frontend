@@ -345,7 +345,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   private prepareSelectedTime(payload) {
     let timeDiff = this.service.getTimeDifference(
       payload?.startTime,
-      payload?.endTime
+      this.service.addTime(payload?.endTime, 0, 1)
     );
     timeDiff = timeDiff === 0 ? 1 : timeDiff;
     const obj = {
