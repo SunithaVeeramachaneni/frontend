@@ -364,13 +364,16 @@ export class ObservationsService {
       const formattedDisplayNames: string[] = [];
       assignee.forEach((a) => {
         const foundAssignee = this.userService.getUserFullName(a);
-        if (foundAssignee) {
+        const isUserActive = this.userService.getUserIsActive(a);
+        if (foundAssignee && isUserActive) {
           formattedDisplayNames.push(foundAssignee);
         }
       });
       if (formattedDisplayNames?.length > 0) {
         if (formattedDisplayNames?.length > 1) {
-          return `${formattedDisplayNames[0]} + ${assignee?.length - 1} more`;
+          return `${formattedDisplayNames[0]} + ${
+            formattedDisplayNames?.length - 1
+          } more`;
         }
         return formattedDisplayNames[0];
       }
