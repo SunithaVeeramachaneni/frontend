@@ -1077,7 +1077,7 @@ export class RaceDynamicFormService {
         const { name } = question;
         properties = {
           ...properties,
-          FIELDLABEL: `<html>${name}</html>`,
+          FIELDLABEL: `<html>${name}</html>`.replace(/"/g, "'"),
           DEFAULTVALUE: ''
           //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
