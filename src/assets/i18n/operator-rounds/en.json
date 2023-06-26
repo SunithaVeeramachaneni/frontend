@@ -321,5 +321,6 @@
   "additionalDetails": "Additional Details",
   "value": "Value",
   "add": "Add",
-  "timeZone": "Plant Timezone"
+  "timeZone": "Plant Timezone",
+  "summaryPage": "Summary Page"
 }
