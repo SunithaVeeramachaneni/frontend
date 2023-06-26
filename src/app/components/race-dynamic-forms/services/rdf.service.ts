@@ -198,7 +198,6 @@ export class RdfService {
             return null;
           }
 
-
           const {
             expression,
             validationMessage,
@@ -360,7 +359,7 @@ export class RdfService {
         const { name } = question;
         properties = {
           ...properties,
-          FIELDLABEL: `<html>${name}</html>`,
+          FIELDLABEL: `<html>${name}</html>`.replace(/"/g, "'"),
           DEFAULTVALUE: ''
           //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
@@ -547,7 +546,6 @@ export class RdfService {
           }
         });
       }
-
 
       // Ask Evidence;
       const evidenceQuestion = logic.askEvidence;
