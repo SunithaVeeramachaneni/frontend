@@ -41,6 +41,8 @@
       margin: 15px auto;
       padding: 49px;
       box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      max-height: calc(100vh - 220px);
 
       .heading {
         font-size: 130%;
@@ -135,9 +137,82 @@
       }
     }
   }
+  .close-icon {
+    width: 20px;
+    height: 30px;
+  }
 }
 
 .next-btn {
   background-color: $radio-button-checked;
   border-color: $radio-button-checked;
+}
+
+.add-button {
+  color: $blue-main;
+  border: none;
+  background: none;
+  float: right;
+  position: relative;
+  bottom: 14px;
+  right: 5px;
+}
+.additional-details {
+  background-color: $blue7;
+  border-radius: 8px;
+  margin-top: 33px;
+  height: 40px;
+}
+
+.additional-details-text {
+  font-weight: bold;
+  font-size: 120%;
+  position: relative;
+  top: 13px;
+  left: 10px;
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
+.label-value-text {
+  display: flex;
+  margin: 15px 0 5px 10px;
+}
+
+.label,
+.value {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.cancel-icon {
+  position: relative;
+  top: 15px;
+  left: 35px;
+}
+
+.arrow {
+  font-size: 260%;
+  position: relative;
+  top: 5px;
+}
+
+.mat-dialog-container {
+  height: 10px;
+  width: 10px;
+  float: left;
+}
+
+.remove-btn {
+  color: $disabled-color;
+  float: right;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+::ng-deep .mat-option-text {
+  font-size: 100%;
+}
+.mat-error {
+  margin-top: -29px;
 }
