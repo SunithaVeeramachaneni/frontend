@@ -453,7 +453,7 @@ export class ResponsesListComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'name':
       case 'responseCount':
-      case 'createdBy':
+      case 'creator':
       case 'updatedAt':
         this.showRepsonseSetDetail(row);
         break;

@@ -18,6 +18,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -56,7 +57,12 @@ import {
   formConfigurationStatus,
   graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
-  permissions as perms
+  dateFormat2,
+  dateTimeFormat3,
+  permissions as perms,
+  dateFormat5,
+  hourFormat,
+  statusColors
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -70,7 +76,10 @@ import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-pr
 import { MatMenuTrigger } from '@angular/material/menu';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { format } from 'date-fns';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-rounds',
@@ -95,7 +104,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-Progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -211,7 +227,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 5,
@@ -298,7 +320,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 8,
@@ -336,20 +364,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': ' #2C9E53',
-        color: '#ffffff'
+        'background-color': statusColors.submitted,
+        color: statusColors.white
       },
       'in-progress': {
-        'background-color': '#FFCC00',
-        color: '#000000'
+        'background-color': statusColors.inProgress,
+        color: statusColors.black
       },
       open: {
-        'background-color': '#e0e0e0',
-        color: '#000000'
+        'background-color': statusColors.open,
+        color: statusColors.black
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#ffffff'
+      assigned: {
+        'background-color': statusColors.assigned,
+        color: statusColors.black
+      },
+      'partly-open': {
+        'background-color': statusColors.partlyOpen,
+        color: statusColors.black
+      },
+      overdue: {
+        'background-color': statusColors.overdue,
+        color: statusColors.white
       }
     }
   };
@@ -361,6 +397,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   fetchRounds$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
@@ -384,6 +421,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
   userFullNameByEmail = {};
   roundId = '';
   sliceCount = 100;
+  plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -398,10 +436,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toastService: ToastService,
     private userService: UsersService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.fetchRounds$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -461,7 +504,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           };
           this.initial.data = rounds.rows.map((roundDetail) => ({
             ...roundDetail,
-            dueDate: new Date(roundDetail.dueDate),
+
+            dueDateDisplay: this.formatDate(
+              roundDetail.dueDate,
+              roundDetail.plantId
+            ),
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
@@ -471,7 +518,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((roundDetail) => ({
               ...roundDetail,
-              dueDate: new Date(roundDetail.dueDate),
+
+              dueDateDisplay: this.formatDate(
+                roundDetail.dueDate,
+                roundDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
@@ -534,8 +585,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+  formatDate(date, plantId) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateFormat2
+      );
+    }
+    return format(new Date(date), dateFormat2);
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -554,6 +616,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
+          const dueDate = new Date(
+            formatInTimeZone(
+              row.dueDate,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat3
+            )
+          );
+          this.selectedDate = { ...this.selectedDate, date: dueDate };
+        }
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedRoundInfo = row;
         break;
@@ -741,10 +813,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   getFullNameToEmailArray(data: any) {
     const emailArray = [];
-    data?.forEach((data: any) => {
+    data?.forEach((name: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
-          (email) => this.userFullNameByEmail[email].fullName === data
+          (email) => this.userFullNameByEmail[email].fullName === name
         )
       );
     });
@@ -817,7 +889,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    status = status.toLowerCase() === 'open' ? 'assigned' : status;
+    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,
@@ -853,18 +926,31 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   dateChangeHandler(dueDate: Date) {
-    const { roundId, assignedToEmail, ...rest } = this.selectedRoundInfo;
+    const { roundId, assignedToEmail, plantId, ...rest } =
+      this.selectedRoundInfo;
+    const dueDateDisplayFormat = format(dueDate, dateFormat2);
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      const time = localToTimezoneDate(
+        this.selectedRoundInfo.dueDate,
+        this.plantTimezoneMap[plantId],
+        hourFormat
+      );
+      dueDate = zonedTimeToUtc(
+        format(dueDate, dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      );
+    }
     this.operatorRoundsService
       .updateRound$(roundId, { ...rest, roundId, dueDate }, 'due-date')
       .pipe(
-        tap((resp) => {
+        tap((resp: any) => {
           if (Object.keys(resp).length) {
             this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.roundId === roundId) {
                 return {
                   ...data,
                   dueDate,
-                  dueDateDisplay: format(new Date(dueDate), 'dd MMM yyyy'),
+                  dueDateDisplay: dueDateDisplayFormat,
                   roundDBVersion: resp.roundDBVersion + 1,
                   roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo

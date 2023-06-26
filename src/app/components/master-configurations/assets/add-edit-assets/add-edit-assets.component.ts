@@ -31,8 +31,20 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdAssetsData: EventEmitter<any> = new EventEmitter();
   @Input() allPlants: any[];
-  @Input() allLocations: any[];
-  @Input() allAssets: any[];
+  @Input() set allLocations(locations) {
+    this._allLocations = locations.data;
+  }
+
+  get allLocations() {
+    return this._allLocations;
+  }
+  @Input() set allAssets(assets) {
+    this._allAssets = assets.data;
+  }
+
+  get allAssets() {
+    return this._allAssets;
+  }
   allLocations$: Observable<any>;
   private assetEditData = null;
   parentType: any = 'location';
@@ -94,6 +106,8 @@ export class AddEditAssetsComponent implements OnInit, OnDestroy {
   allParentsData;
   allParentsData$: BehaviorSubject<any> = new BehaviorSubject<any>([]);
   allPlantsData;
+  private _allAssets;
+  private _allLocations;
   private onDestroy$ = new Subject();
 
   constructor(private fb: FormBuilder, private assetService: AssetsService) {}

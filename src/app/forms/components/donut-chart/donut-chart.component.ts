@@ -54,13 +54,15 @@ export class DonutChartComponent implements OnInit, OnChanges {
     },
     legend: {
       orient: 'horizontal',
-      itemWidth: 20,
-      itemHeight: 20,
-      top: '90%'
+      bottom: 0
     },
     series: {
       name: '',
       type: 'pie',
+      top: '-20%',
+      left: '-20%',
+      right: '-20%',
+      bottom: '-20%',
       radius: [10, 40],
       color: [],
       data: [],

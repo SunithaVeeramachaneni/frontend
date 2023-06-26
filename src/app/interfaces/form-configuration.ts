@@ -21,6 +21,7 @@ export interface FormMetadata {
   pdfTemplateConfiguration: any;
   lastModifiedBy: string;
   embeddedFormId?: string;
+  additionalDetails: string;
 }
 
 export interface Page {
