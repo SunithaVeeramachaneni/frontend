@@ -225,7 +225,7 @@
   "assignToInfo": "The assignee will be auto assigned to all the forms generated, However you can still change from the forms",
   "advanceInspectionsCountInfo": "How many Inspections would you like to generate in advance?",
   "inspectionsCount": "Inspections Count",
-  "InspectionsGeneration": "Inspections Generation",
+  "inspectionsGeneration": "Inspections Generation",
   "advanceRoundsCount": "Forms Count",
   "min": "{name} must be at least {count}",
   "max": "{name} must be at the max of {count}",
