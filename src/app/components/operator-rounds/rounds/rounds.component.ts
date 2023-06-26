@@ -198,7 +198,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'isLocationOrAssetSkipped',
+      id: 'locationOrAssetSkipped',
       displayName: 'Locations/Assets Skipped',
       type: 'string',
       controlType: 'string',
