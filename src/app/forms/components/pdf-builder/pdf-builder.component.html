@@ -256,12 +256,7 @@
           <div id="content" #content class="pdfPage">
             <div class="pageHeader">
               <span
-                class="roundId"
-                *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
-                >{{ formMetadata.id }}</span
-              >
-              <span
-                class="formName"
+                class="formName-gray"
                 *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
                 >{{ formMetadata.name }}</span
               >
@@ -437,14 +432,14 @@
     </div>
 
     <div class="landingPageRow">
-      <div class="tableHeading-text">
+      <div class="tableHeading-text waterMark">
         <table class="landing-page-table">
           <tr class="bg-gray">
             <th>Description</th>
           </tr>
           <tr>
             <td>
-              {{ formMetadata.description ? formMetadata.description : '' }}
+              {{ formMetadata.description ? formMetadata.description : '--' }}
             </td>
           </tr>
         </table>
@@ -651,15 +646,15 @@
             </div>
             <div class="issueColumns">
               <div class="width-100">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Raised By: </span>
                   <span class="description"> Aron </span>
                 </div>
-                <div class="p-2">
-                  <span class="label"> Category: </span>
-                  <span class="description"> Safety </span>
+                <div class="p-5">
+                  <span class="label"> Status: </span>
+                  <span class="description status-color"> Open </span>
                 </div>
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Due Date : </span>
                   <span class="description"> 3/25/23 </span>
                 </div>
@@ -667,13 +662,13 @@
 
               <div class="width-95">
                 <div class="bg-yellow">
-                  <div class="p-2">
+                  <div class="p-5">
                     <span class="label"> Priority: </span>
-                    <span class="description"> High </span>
+                    <span class="description priority-color"> High </span>
                   </div>
-                  <div class="p-2">
-                    <span class="label"> Status: </span>
-                    <span class="description"> Open </span>
+                  <div class="p-5">
+                    <span class="label"> Category: </span>
+                    <span class="description"> Safety </span>
                   </div>
                 </div>
                 <div class="notification-position">
@@ -719,15 +714,15 @@
             </div>
             <div class="issueColumns">
               <div class="width-100">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Raised By: </span>
                   <span class="description"> Aron </span>
                 </div>
-                <div class="p-2">
-                  <span class="label"> Category: </span>
-                  <span class="description"> Safety </span>
+                <div class="p-5">
+                  <span class="label"> Status: </span>
+                  <span class="description status-color"> Open </span>
                 </div>
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Due Date : </span>
                   <span class="description"> 3/25/23 </span>
                 </div>
@@ -735,16 +730,16 @@
 
               <div class="width-95">
                 <div class="bg-yellow">
-                  <div class="p-2">
+                  <div class="p-5">
                     <span class="label"> Priority: </span>
-                    <span class="description"> High </span>
+                    <span class="description priority-color"> High </span>
                   </div>
-                  <div class="p-2">
-                    <span class="label"> Status: </span>
-                    <span class="description"> Open </span>
+                  <div class="p-5">
+                    <span class="label"> Category: </span>
+                    <span class="description"> Safety </span>
                   </div>
                 </div>
-                <div class="notification-position p-2">
+                <div class="notification-position p-5">
                   <span class="label"> Notification No: </span>
                   <span class="description"> 123456 </span>
                 </div>
@@ -868,24 +863,28 @@
 
             <div class="actionColumns">
               <div class="width-50">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Raised By: </span>
                   <span class="description"> Aron </span>
                 </div>
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Due Date : </span>
                   <span class="description"> 3/25/23 </span>
+                </div>
+                <div class="p-5">
+                  <span class="label"> Status: </span>
+                  <span class="description status-color"> Open </span>
                 </div>
               </div>
 
               <div class="bg-yellow width-100">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Priority: </span>
-                  <span class="description"> High </span>
+                  <span class="description priority-color"> High </span>
                 </div>
-                <div class="p-2">
-                  <span class="label"> Status: </span>
-                  <span class="description"> Open </span>
+                <div class="p-5">
+                  <span class="label"> Category: </span>
+                  <span class="description"> Safety </span>
                 </div>
               </div>
             </div>
@@ -926,24 +925,28 @@
             </div>
             <div class="actionColumns">
               <div class="width-50">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Raised By: </span>
                   <span class="description"> Aron </span>
                 </div>
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Due Date : </span>
                   <span class="description"> 3/25/23 </span>
+                </div>
+                <div class="p-5">
+                  <span class="label"> Status: </span>
+                  <span class="description status-color"> Open </span>
                 </div>
               </div>
 
               <div class="bg-yellow width-100">
-                <div class="p-2">
+                <div class="p-5">
                   <span class="label"> Priority: </span>
-                  <span class="description"> High </span>
+                  <span class="description priority-color"> High </span>
                 </div>
-                <div class="p-2">
-                  <span class="label"> Status: </span>
-                  <span class="description"> Open </span>
+                <div class="p-5">
+                  <span class="label"> Category: </span>
+                  <span class="description"> Safety </span>
                 </div>
               </div>
             </div>
