@@ -78,11 +78,27 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
-    const checkSlot = this.dataArrays.filter((item) => item.startTime === val);
-    if (checkSlot.length) {
-      if (checkSlot[0].index === 1 || checkSlot[0].index === 0) {
+    const checkSlot = this.dataArrays.filter(
+      (item) =>
+        item.startTime === val ||
+        item.endTime === this.service.subtractTime(val, 0, 1)
+    );
+    if (checkSlot.length || checkSlot.length > 0) {
+      const checkIsBook = checkSlot.filter((e) => e.isBook === false);
+      if (checkIsBook.length) {
+        const isBookIndex = this.dataArrays.findIndex(
+          (e) => e.isBook === false
+        );
+        this.dataArrays[isBookIndex].isBook = true;
+        this.setShiftDetails();
         return;
       }
+      if (checkSlot[0].index === 1 || checkSlot[0].index === 0) {
+        this.setShiftDetails();
+        return;
+      }
+      this.setShiftDetails();
+      return;
     }
     if (this.service.isTimeSlotPresent(val, this.dataArrays)) {
       const indexOfMatchObject = this.dataArrays.findIndex(
@@ -223,7 +239,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
     this.setShiftDetails();
   }
 
-  public onRemoveRow(rowIndex: number, _): void {
+  public onRemoveRow(rowIndex: number, objVal): void {
     const lastElement = this.dataArrays[this.dataArrays.length - 1];
     const ds = this.dataArrays.lastIndexOf(lastElement);
     if (ds === rowIndex) {
@@ -231,6 +247,33 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       this.dataArrays.splice(rowIndex, 1);
     } else {
       this.dataArrays[rowIndex].isBook = false;
+      const myData = this.dataArrays.filter(
+        (e) =>
+          (e.startTime === this.service.addTime(objVal.endTime, 0, 1) ||
+            this.service.addTime(e.endTime, 0, 1) === objVal.startTime) &&
+          e.isBook === false
+      );
+      const newObject: any = {};
+      if (myData.length) {
+        newObject.index = objVal.index + myData[0]?.index;
+        newObject.startTime =
+          this.service.addTime(myData[0].endTime, 0, 1) === objVal.startTime
+            ? myData[0]?.startTime
+            : objVal?.startTime;
+        newObject.endTime =
+          this.service.addTime(myData[0].endTime, 0, 1) === objVal.startTime
+            ? objVal?.endTime
+            : myData[0].endTime;
+        newObject.isBook = false;
+        this.dataArrays.splice(rowIndex, 1);
+        const idx = this.dataArrays.findIndex((e) => e === myData[0]);
+        this.dataArrays.splice(idx, 1);
+        this.slotsArray.removeAt(idx);
+        this.dataArrays.push(newObject);
+        this.service.sortArray(this.dataArrays);
+      } else {
+        this.dataArrays[rowIndex].isBook = false;
+      }
     }
     this.dataArrays = this.service.sortArray(this.dataArrays);
     if (this.dataArrays.length === 0) {
