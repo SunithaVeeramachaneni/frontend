@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import {
   Component,
@@ -32,7 +32,7 @@ import {
 } from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
-
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 interface FrequencyDetail {
@@ -58,6 +58,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
+  @Input() shiftObj: any;
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
@@ -91,7 +92,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private readonly store: Store<State>,
-    private readonly plantService: PlantService
+    private readonly plantService: PlantService,
+    private readonly shiftService: ShiftService
   ) {}
 
   ngOnChanges(_: SimpleChanges) {

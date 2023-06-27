@@ -318,5 +318,6 @@
   "defaultCurrentTime": "Default to current time",
   "alert": "Alert",
   "warning": "Changes in Shift will update the round schedule Start Date/Time,Due Date/Time and Status. Do you want to proceed?",
-  "invalidSlotTime": "Slot we selected is out of Shift C hours"
+  "invalidSlotTime": "Slot we selected is out of Shift C hours",
+  "shift": "Shift"
 }

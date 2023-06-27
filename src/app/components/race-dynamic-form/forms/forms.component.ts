@@ -70,6 +70,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-forms',
@@ -86,8 +87,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     schedule: '',
     assignedTo: '',
     scheduledAt: '',
-    shiftId: '',
-    formIdFilter: ''
+    shiftId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -143,6 +143,28 @@ export class FormsComponent implements OnInit, OnDestroy {
       titleStyle: {
         'overflow-wrap': 'anywhere'
       },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'shift',
+      displayName: 'Shift',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -329,6 +351,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plantTimezoneMap = {};
   shiftIdNameMap = {};
+  plantShiftObj = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -351,7 +374,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
     private plantService: PlantService,
-    private shiftService: ShiftService
+    private shiftService: ShiftService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -414,7 +438,23 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
-      this.users$
+      this.users$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap((plants) => {
+          plants.items.map((plant) => {
+            if (
+              this.commonService.isJson(plant.shifts) &&
+              JSON.parse(plant.shifts)
+            ) {
+              let shifts = '';
+              JSON.parse(plant.shifts).map((shift) => {
+                shifts += shift.name + ',';
+              });
+              this.plantShiftObj[plant.id] = shifts;
+            }
+          });
+        })
+      )
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, shifts]) => {
         shifts.items.forEach((shift) => {
@@ -435,6 +475,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        this.initial.data = this.addShift(this.initial.data);
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -517,6 +558,13 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.populatePlantsforFilter();
     this.getFilter();
+  }
+
+  addShift(rounds) {
+    return rounds.map((round) => {
+      round.shift = this.plantShiftObj[round.shiftId];
+      return round;
+    });
   }
 
   getFormsList() {
@@ -939,8 +987,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedTo: '',
       scheduledAt: '',
-      shiftId: '',
-      formIdFilter: ''
+      shiftId: ''
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

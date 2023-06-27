@@ -635,7 +635,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   addShift(rounds) {
     return rounds.map((round) => {
-      round.shift = this.plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f'];
+      round.shift = this.plantShiftObj[round.shiftId];
       return round;
     });
   }
