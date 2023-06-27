@@ -290,11 +290,20 @@ export class ShiftChartComponent implements OnInit, OnChanges {
 
   public get getInitialTime(): string {
     if (this.slots?.length > 0) {
-      return `${this.slots[0]} - ${this.service.addTime(
-        this.slots[this.slots?.length - 1],
-        0,
-        59
-      )}`;
+      const startTime = this.slots[0];
+      if (this.shift?.value?.id) {
+        return `${startTime} - ${this.service.subtractTime(
+          this.slots[this.slots?.length - 1],
+          0,
+          1
+        )}`;
+      } else {
+        return `${startTime} - ${this.service.addTime(
+          this.slots[this.slots?.length - 1],
+          0,
+          59
+        )}`;
+      }
     }
     return '';
   }
@@ -308,14 +317,31 @@ export class ShiftChartComponent implements OnInit, OnChanges {
 
   private setShiftDetails(): void {
     if (this.shift?.value?.id) {
-      this.updateShiftSlot.emit({
-        [this.shift.value.id]: this.dataArrays
-          .filter((d) => d?.isBook)
-          .map((d) => ({
-            startTime: d?.startTime,
-            endTime: d?.endTime
-          }))
-      });
+      if (this.dataArrays?.length === 0) {
+        this.updateShiftSlot.emit({
+          [this.shift.value.id]: [
+            {
+              startTime: this.service.convertTo12HourFormat(
+                this.shift?.value?.startTime
+              ),
+              endTime: this.service.subtractTime(
+                this.service.convertTo12HourFormat(this.shift?.value?.endTime),
+                0,
+                1
+              )
+            }
+          ]
+        });
+      } else {
+        this.updateShiftSlot.emit({
+          [this.shift.value.id]: this.dataArrays
+            .filter((d) => d?.isBook)
+            .map((d) => ({
+              startTime: d?.startTime,
+              endTime: d?.endTime
+            }))
+        });
+      }
     }
     if (this.shift?.value?.null) {
       let obj: { [x: string]: { startTime: string; endTime: string }[] } =
@@ -345,6 +371,10 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   private prepareSelectedTime(payload) {
+    console.log(
+      '🚀 ~ file: shift-chart.component.ts:374 ~ ShiftChartComponent ~ prepareSelectedTime ~ payload:',
+      payload
+    );
     let timeDiff = this.service.getTimeDifference(
       payload?.startTime,
       this.service.addTime(payload?.endTime, 0, 1)
