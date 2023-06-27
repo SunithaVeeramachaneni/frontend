@@ -1,6 +1,7 @@
 import { UserDetails } from './user';
 
 export interface RoundPlanScheduleConfiguration {
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
   id?: string;
   roundPlanId: string;
   scheduleType: string;

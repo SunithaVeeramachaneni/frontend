@@ -56,7 +56,10 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
         let pdfTemplateConfiguration = JSON.parse(
           form?.pdfTemplateConfiguration
         );
-        const { embeddedFormId } = embeddedFormDetail;
+        let embeddedFormId;
+        if (embeddedFormDetail) {
+          embeddedFormId = embeddedFormDetail.embeddedFormId;
+        }
         if (!pdfTemplateConfiguration) {
           pdfTemplateConfiguration = DEFAULT_PDF_BUILDER_CONFIG;
         }

@@ -106,6 +106,8 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
+
 import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
@@ -176,8 +178,10 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+
     RaiseNotificationDailogComponent,
     DatePickerComponent,
+    ShiftChartComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe
@@ -258,6 +262,7 @@ import { UserNameByEmailPipe } from './pipes';
     AssignedToComponent,
     ObservationsComponent,
     DatePickerComponent,
+    ShiftChartComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe

@@ -8,12 +8,19 @@
     padding-left: 10px;
     padding-bottom: 7px;
     border-bottom: 1px solid $border-color;
+    display: flex;
+    margin-bottom: 10px;
+
+    .name {
+      margin: 10px 0 0 0;
+      overflow-wrap: anywhere;
+    }
   }
 
   .section-arrow {
     float: right;
     position: relative;
-    top: -2px;
+    top: 5px;
   }
 
   .question-name {
@@ -46,6 +53,11 @@
     float: right;
     font-size: 90%;
     text-align: right;
+  }
+
+  .hyderlink-value {
+    text-decoration: underline;
+    overflow-wrap: anywhere;
   }
 
   .input-fields-with-icons {
