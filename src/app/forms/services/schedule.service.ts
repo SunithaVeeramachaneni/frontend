@@ -67,8 +67,14 @@ export class ScheduleConfigurationService {
 
   // The getTimeDifference function takes two time strings (firstTime and secondTime) in the format HH:MM and returns the time difference in hours between the two.
   getTimeDifference(firstTime: string, secondTime: string): number {
-    const timeDifference: number =
-      this.getHours(secondTime) - this.getHours(firstTime);
+    let timeDifference;
+    const startTime = '12:00 AM';
+    const twenty24Hours = 24;
+    if (firstTime === startTime && secondTime === startTime) {
+      timeDifference = twenty24Hours;
+    } else {
+      timeDifference = this.getHours(secondTime) - this.getHours(firstTime);
+    }
     return timeDifference;
   }
 

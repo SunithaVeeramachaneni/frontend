@@ -152,7 +152,7 @@ export class ScheduleConfigurationComponent
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
-  } = {};
+  } = shiftDefaultPayload;
   private shiftApiResponse: any;
   constructor(
     private fb: FormBuilder,
@@ -961,6 +961,7 @@ export class ScheduleConfigurationComponent
                 config?.shiftDetails,
                 '12'
               );
+              this.shiftDetails = {};
               delete config?.shiftDetails;
             }
             this.schedulerConfigForm.patchValue(config);
@@ -1137,6 +1138,7 @@ export class ScheduleConfigurationComponent
                 config?.shiftDetails,
                 '12'
               );
+              this.shiftDetails = {};
               delete config?.shiftDetails;
             }
             this.schedulerConfigForm.patchValue(config);
