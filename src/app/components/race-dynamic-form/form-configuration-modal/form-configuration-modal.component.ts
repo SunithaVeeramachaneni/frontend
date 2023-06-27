@@ -342,10 +342,11 @@ export class FormConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter((label) =>
-              label
-                .toLowerCase()
-                .includes(this.changedValues.label.toLowerCase())
+            Object.keys(this.labels).filter(
+              (label) =>
+                label
+                  .toLowerCase()
+                  .indexOf(this.changedValues.label.toLowerCase()) === 0
             )
           );
         } else {
@@ -354,8 +355,11 @@ export class FormConfigurationModalComponent implements OnInit {
 
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
           this.filteredValues$ = of(
-            this.labels[this.changedValues.label].filter((values) =>
-              values.includes(this.changedValues.value)
+            this.labels[this.changedValues.label]?.filter(
+              (value) =>
+                value
+                  .toLowerCase()
+                  .indexOf(this.changedValues.value.toLowerCase()) === 0
             )
           );
         } else {
@@ -372,7 +376,7 @@ export class FormConfigurationModalComponent implements OnInit {
 
   storeDetails(i) {
     this.operatorRoundService
-      .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
+      .createAdditionalDetails$({ ...this.changedValues })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -391,28 +395,43 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   storeValueDetails(i) {
-    if (Object.keys(this.labels).includes(this.changedValues.label)) {
-      const newValues = [
-        ...this.labels[this.changedValues.label],
-        this.changedValues.value
-      ];
-      this.operatorRoundService
-        .updateValues$({
-          value: newValues,
-          labelId: this.additionalDetailsIdMap[this.changedValues.label]
-        })
-        .subscribe(() => {
-          this.toastService.show({
-            type: 'success',
-            text: 'Value added successfully'
+    const currentLabel = this.changedValues.label;
+    const currentValue = this.changedValues.value;
+    if (Object.keys(this.labels).includes(currentLabel)) {
+      if (
+        this.labels[currentLabel].every(
+          (value) => value.toLowerCase() !== currentValue.toLowerCase()
+        )
+      ) {
+        const newValues = [...this.labels[currentLabel], currentValue];
+        this.operatorRoundService
+          .updateValues$({
+            value: newValues,
+            labelId: this.additionalDetailsIdMap[currentLabel]
+          })
+          .subscribe(() => {
+            this.toastService.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
+            this.labels[currentLabel] = newValues;
+            this.filteredValues$ = of(this.labels[currentLabel]);
+            const additionalinfoArray = this.headerDataForm.get(
+              'additionalDetails'
+            ) as FormArray;
+            additionalinfoArray.at(i).get('value').setValue(currentValue);
           });
-          this.labels[this.changedValues.label] = newValues;
-          this.filteredLabels$ = of(Object.keys(this.labels));
-          const additionalinfoArray = this.headerDataForm.get(
-            'additionalDetails'
-          ) as FormArray;
-          additionalinfoArray.at(i).get('value').setValue(newValues.slice(-1));
+      } else {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Value already exists'
         });
+      }
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Label does not exist'
+      });
     }
   }
 
@@ -466,11 +485,17 @@ export class FormConfigurationModalComponent implements OnInit {
         text: 'Label deleted Successfully'
       });
       this.deletedLabel = label;
+      const additionalinfoArray = this.headerDataForm.get(
+        'additionalDetails'
+      ) as FormArray;
+      additionalinfoArray.at(i).get('label').setValue('');
+      additionalinfoArray.controls.forEach((control, index) => {
+        if (control.value.label === label) {
+          control.get('label').setValue('');
+          control.get('value').setValue('');
+        }
+      });
     });
-    const additionalinfoArray = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    additionalinfoArray.at(i).get('label').setValue('');
   }
   removeValue(deleteValue, i) {
     const newValue = this.labels[this.changedValues.label].filter(
@@ -487,11 +512,16 @@ export class FormConfigurationModalComponent implements OnInit {
           type: 'success',
           text: 'Value deleted Successfully'
         });
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        additionalinfoArray.at(i).get('value').setValue('');
+        additionalinfoArray.controls.forEach((control, index) => {
+          if (control.value.value === deleteValue) {
+            control.get('value').setValue('');
+          }
+        });
       });
-    const additionalinfoArray = this.headerDataForm.get(
-      'additionalDetails'
-    ) as FormArray;
-    additionalinfoArray.at(i).get('value').setValue('');
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
