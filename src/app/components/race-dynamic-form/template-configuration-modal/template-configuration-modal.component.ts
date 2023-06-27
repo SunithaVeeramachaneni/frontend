@@ -394,6 +394,19 @@ export class TemplateConfigurationModalComponent implements OnInit {
       this.filteredValues$ = of([]);
     }
   }
+  labelOptionClick(index) {
+    const labelSelectedData =
+      this.headerDataForm.get('additionalDetails').value[index].label;
+    if (labelSelectedData) {
+      this.filteredLabels$ = of(
+        Object.keys(this.labels).filter((data) =>
+          data.includes(labelSelectedData)
+        )
+      );
+    } else {
+      this.filteredLabels$ = of([]);
+    }
+  }
   removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
     this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
@@ -417,6 +430,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
     });
   }
   removeValue(deleteValue, i) {
+    const currentLabel = this.changedValues.label;
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
@@ -436,7 +450,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
         ) as FormArray;
         additionalinfoArray.at(i).get('value').setValue('');
         additionalinfoArray.controls.forEach((control, index) => {
-          if (control.value.value === deleteValue) {
+          if (
+            control.value.value === deleteValue &&
+            control.value.label === currentLabel
+          ) {
             control.get('value').setValue('');
           }
         });
