@@ -186,7 +186,7 @@ export class ScheduleConfigurationComponent
 
   getAllShiftsData(): void {
     this.shiftService.fetchAllShifts$().subscribe((shifts) => {
-      this.shiftsInformation = shifts?.items || [];
+      this.shiftsInformation = shifts?.items?.filter((s) => s?.isActive) || [];
       this.allShifts = this.shiftsInformation;
       this.initCreatedSlots();
     });
