@@ -1228,7 +1228,14 @@ export class RaceDynamicFormService {
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const payload = this.deactivateFormPayload(form);
+    const { name, embeddedFormId } = form;
+    const payload = {
+      VERSION,
+      APPNAME,
+      FORMNAME: embeddedFormId,
+      FORMTITLE: name,
+      DEACTIVATE: 'X'
+    };
     return this.appService._updateData(
       environment.rdfApiUrl,
       `abap/forms`,
@@ -1236,15 +1243,4 @@ export class RaceDynamicFormService {
       info
     );
   };
-
-  deactivateFormPayload(form) {
-    const { name, embeddedFormId } = form;
-    return {
-      VERSION,
-      APPNAME,
-      FORMNAME: embeddedFormId,
-      FORMTITLE: name,
-      DEACTIVATE: 'X'
-    };
-  }
 }
