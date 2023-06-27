@@ -305,7 +305,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         const newQuestion = {
-          id: `AQ_${uuidv4()}`,
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${logic.id}`,
           name: '',
           fieldType: 'TF',

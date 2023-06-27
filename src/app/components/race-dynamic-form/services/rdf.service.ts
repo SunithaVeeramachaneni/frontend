@@ -456,7 +456,6 @@ export class RaceDynamicFormService {
       // Ask Questions;
       askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
       askQuestions.forEach((q) => {
-        q.id = q.isPublished ? q.id : `AQ_${Date.now() + globalIndex}`;
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
