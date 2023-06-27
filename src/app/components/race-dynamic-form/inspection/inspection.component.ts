@@ -122,7 +122,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     dueDate: '',
     plant: '',
     shiftId: '',
-    formId: '',
     scheduledAt: ''
   };
   assignedTo: string[] = [];
@@ -956,10 +955,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
           ([key, val]) => val === item.value
         );
         this.filter[item.column] = foundEntry[0];
+      } else if (item.column === 'scheduledAt' && item.value) {
+        this.filter[item.column] = item.value;
+      } else if (item.column === 'dueDate' && item.value) {
+        this.filter[item.column] = item.value;
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
-      } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
       }
     }
     this.nextToken = '';
@@ -975,7 +976,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: '',
       shiftId: '',
-      formId: '',
       scheduledAt: ''
     };
     this.nextToken = '';

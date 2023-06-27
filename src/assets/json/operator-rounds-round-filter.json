@@ -24,7 +24,9 @@
     "label": "Start Date",
     "items": [],
     "column": "scheduledAt",
-    "type": "date",
+    "type": "daterange",
+    "startDate": "Start Date",
+    "endDate": "End Date",
     "value": ""
   },
   {
@@ -48,13 +50,6 @@
     "items": [],
     "column": "shiftId",
     "type": "select",
-    "value": ""
-  },
-  {
-    "label": "Round Plan Id",
-    "items": [],
-    "column": "roundPlanId",
-    "type": "input",
     "value": ""
   }
 ]

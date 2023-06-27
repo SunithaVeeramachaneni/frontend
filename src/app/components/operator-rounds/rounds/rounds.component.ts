@@ -128,8 +128,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     dueDate: '',
     plant: '',
     scheduledAt: '',
-    shiftId: '',
-    roundPlanId: ''
+    shiftId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -1009,10 +1008,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        this.filter[item.column] = item.value;
       } else if (item.column === 'scheduledAt' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
-      } else if (item.column === 'roundPlanId' && item.value) {
+        console.log('item.value:', item.value);
         this.filter[item.column] = item.value;
       }
     }
@@ -1029,8 +1027,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: '',
       scheduledAt: '',
-      shiftId: '',
-      roundPlanId: ''
+      shiftId: ''
     };
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
