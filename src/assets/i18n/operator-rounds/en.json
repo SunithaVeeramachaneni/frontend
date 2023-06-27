@@ -322,5 +322,7 @@
   "value": "Value",
   "add": "Add",
   "timeZone": "Plant Timezone",
-  "summaryPage": "Summary Page"
+  "summaryPage": "Summary Page",
+  "taskSkipped": "Tasks Skipped",
+  "locationAssetsCompleted": "Location or Assets Completed"
 }
