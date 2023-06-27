@@ -69,6 +69,7 @@ import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 
 @Component({
   selector: 'app-forms',
@@ -84,7 +85,9 @@ export class FormsComponent implements OnInit, OnDestroy {
     plant: '',
     schedule: '',
     assignedTo: '',
-    scheduledAt: ''
+    scheduledAt: '',
+    shiftId: '',
+    formIdFilter: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -325,6 +328,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   assigneeDetails: AssigneeDetails;
   plantsIdNameMap = {};
   plantTimezoneMap = {};
+  shiftIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -346,7 +350,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private shiftService: ShiftService
   ) {}
 
   ngOnInit(): void {
@@ -408,9 +413,18 @@ export class FormsComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       onScrollForms$,
       formScheduleConfigurations$,
+      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations]) => {
+      map(([forms, scrollData, formScheduleConfigurations, shifts]) => {
+        shifts.items.forEach((shift) => {
+          this.shiftIdNameMap[shift.id] = shift.name;
+        });
+        for (const item of this.filterJson) {
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.shiftIdNameMap);
+          }
+        }
         if (this.skip === 0) {
           this.initial.data = this.formatForms(
             forms.rows,
@@ -902,6 +916,11 @@ export class FormsComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.shiftIdNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value ?? '';
       } else if (item.type === 'date' && item.value) {
@@ -919,7 +938,9 @@ export class FormsComponent implements OnInit, OnDestroy {
       plant: '',
       schedule: '',
       assignedTo: '',
-      scheduledAt: ''
+      scheduledAt: '',
+      shiftId: '',
+      formIdFilter: ''
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
