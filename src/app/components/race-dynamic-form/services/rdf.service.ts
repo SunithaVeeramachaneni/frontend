@@ -926,7 +926,8 @@ export class RaceDynamicFormService {
               SECTIONNAME: sectionName,
               FIELDLABEL: questionName,
               UIPOSITION: index.toString(),
-              UIFIELDTYPE: question.fieldType,
+              UIFIELDTYPE:
+                question.fieldType === 'INST' ? 'LLF' : question.fieldType,
               ACTIVE: 'X',
               INSTRUCTION: '',
               TEXTSTYLE: '',
@@ -1072,7 +1073,7 @@ export class RaceDynamicFormService {
         };
         break;
       }
-      case 'LLF': {
+      case 'INST': {
         const { name } = question;
         properties = {
           ...properties,
@@ -1146,6 +1147,13 @@ export class RaceDynamicFormService {
         properties = {
           ...properties,
           SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      case 'HL': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: question.value
         };
         break;
       }
