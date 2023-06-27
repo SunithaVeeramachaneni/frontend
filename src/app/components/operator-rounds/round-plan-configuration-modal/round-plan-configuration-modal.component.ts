@@ -15,15 +15,8 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, merge, of, Subscription, BehaviorSubject } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  startWith,
-  take,
-  tap
-} from 'rxjs/operators';
+import { Observable, merge, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -49,9 +42,6 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
-import { head } from 'lodash-es';
-import { id } from 'date-fns/locale';
-import { AbsoluteSourceSpan } from '@angular/compiler';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',

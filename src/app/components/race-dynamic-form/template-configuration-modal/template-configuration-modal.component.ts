@@ -24,7 +24,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { ErrorInfo, ValidationError } from 'src/app/interfaces';
+import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
@@ -34,7 +34,6 @@ import {
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
-import { environment } from 'src/environments/environment';
 import { AppService } from 'src/app/shared/services/app.services';
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
