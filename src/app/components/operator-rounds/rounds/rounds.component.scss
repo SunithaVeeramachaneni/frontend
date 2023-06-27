@@ -51,6 +51,14 @@
     min-width: 80px;
   }
 
+  ::ng-deep .mat-column-locationAndAssetsSkipped {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-tasksSkipped {
+    min-width: 60px;
+  }
+
   ::ng-deep .mat-column-tasksCompleted {
     min-width: 90px;
   }
