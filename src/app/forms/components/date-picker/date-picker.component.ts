@@ -8,6 +8,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 
 interface SelectedDate {
@@ -26,6 +27,9 @@ export class DatePickerComponent implements OnInit {
   set selectedDate(selectedDate: SelectedDate) {
     if (selectedDate) {
       this._selectedDate = selectedDate;
+      console.log('date', selectedDate);
+      console.log(this.dateGroup.controls);
+      this.dateGroup.get('date').setValue(this.selectedDate.date);
       this.picker.open();
     }
   }
@@ -38,14 +42,17 @@ export class DatePickerComponent implements OnInit {
   currentDate = new Date();
   _selectedDate: SelectedDate;
   mindate: any;
-  constructor() {
+
+  constructor(private fb: FormBuilder) {
     this.minDate = new Date();
   }
 
   ngOnInit(): void {}
+  dateGroup: FormGroup = this.fb.group({
+    date: ''
+  });
 
   onDateChange(event: MatDatetimePickerInputEvent<Date>) {
-    console.log('date:', event.value);
     this.dateChange.emit(event.value);
   }
 

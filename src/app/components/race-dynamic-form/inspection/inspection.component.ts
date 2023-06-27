@@ -53,12 +53,10 @@ import {
 import {
   formConfigurationStatus,
   graphQLRoundsOrInspectionsLimit,
-  dateFormat2,
-  dateTimeFormat3,
   permissions as perms,
-  dateFormat5,
-  hourFormat,
-  statusColors
+  statusColors,
+  dateTimeFormat4,
+  dateTimeFormat5
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -76,6 +74,10 @@ import { format } from 'date-fns';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { ShiftChangeWarningModalComponent } from '../../operator-rounds/shift-change-warning-modal/shift-change-warning-modal.component';
+import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 
 @Component({
   selector: 'app-inspection',
@@ -105,6 +107,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
     'Partly-Open',
     'Overdue'
   ];
+  statusMap = {
+    open: 'Open',
+    submitted: 'Submitted',
+    assigned: 'Assigned',
+    partlyOpen: 'Partly-Open',
+    inProgress: 'In-Progress',
+    overdue: 'Overdue'
+  };
   filter = {
     status: '',
     schedule: '',
@@ -171,32 +181,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'tasksCompleted',
-      displayName: 'Responses Completed',
-      type: 'string',
-      controlType: 'space-between',
-      controlValue: ',',
-      order: 3,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { width: '125px' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-
-    {
-      id: 'dueDateDisplay',
-      displayName: 'Due Date',
+      id: 'shift',
+      displayName: 'Shift',
       type: 'string',
       controlType: 'dropdown',
       controlValue: {
@@ -228,11 +214,101 @@ export class InspectionComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'scheduledAtDisplay',
+      displayName: 'Start',
+      type: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
+        displayType: 'text'
+      },
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+
+    {
+      id: 'dueDateDisplay',
+      displayName: 'Due',
+      type: 'string',
+      controlType: 'dropdown',
+      controlValue: {
+        dependentFieldId: 'status',
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
+        displayType: 'text'
+      },
+      order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'tasksCompleted',
+      displayName: 'Responses Completed',
+      type: 'string',
+      controlType: 'space-between',
+      controlValue: ',',
+      order: 7,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { width: '125px' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'schedule',
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -254,7 +330,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -302,7 +378,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 7,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -389,7 +465,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   formId: string;
   inspectionId = '';
   plantTimezoneMap = {};
-
+  selectedStartDate;
   plants = [];
   plantsIdNameMap = {};
 
@@ -398,6 +474,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
     data: []
   };
   sliceCount = 100;
+  shiftObj = {};
+  plantShiftObj = {};
+  shiftNameMap = {};
+  plantSelected: any;
+  plantToShift: any;
+  shiftPosition: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -413,7 +495,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private cdrf: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private shiftService: ShiftService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -478,7 +562,24 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.inspections$ = combineLatest([
       inspectionsOnLoadSearch$,
       onScrollInspections$,
-      this.users$
+      this.users$,
+      this.shiftService.fetchAllShifts$().pipe(
+        tap((shifts) => {
+          shifts.items.map((shift) => {
+            this.shiftObj[shift.id] = shift;
+            this.shiftNameMap[shift.id] = shift.name;
+          });
+        })
+      ),
+      this.plantService.fetchAllPlants$().pipe(
+        tap((plants) => {
+          plants.items.map((plant) => {
+            if (this.commonService.isJson(plant.shifts) && plant.shifts) {
+              this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
+            }
+          });
+        })
+      )
     ]).pipe(
       map(([inspections, scrollData]) => {
         if (this.skip === 0) {
@@ -490,6 +591,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
             ...inspectionDetail,
             dueDateDisplay: this.formatDate(
               inspectionDetail.dueDate,
+              inspectionDetail.plantId
+            ),
+            scheduledAtDisplay: this.formatDate(
+              inspectionDetail.scheduledAt,
               inspectionDetail.plantId
             ),
             assignedTo: inspectionDetail?.assignedTo
@@ -505,6 +610,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 inspectionDetail.dueDate,
                 inspectionDetail.plantId
               ),
+              scheduledAtDisplay: this.formatDate(
+                inspectionDetail.schedueledAt,
+                inspectionDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
@@ -513,6 +622,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
           );
         }
         this.skip = this.initial.data.length;
+        this.initial.data = this.addShift(this.initial.data);
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
         const dataSource = this.dataSource
@@ -539,6 +649,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
     );
 
     this.configOptions.allColumns = this.columns;
+  }
+
+  addShift(rounds) {
+    return rounds.map((round) => {
+      if (this.shiftObj[round.shiftId]) {
+        round.shift = this.shiftObj[round.shiftId].name;
+      }
+      return round;
+    });
   }
 
   getInspectionsList() {
@@ -630,11 +749,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    const pos = document.getElementById(`${row.id}`).getBoundingClientRect();
     switch (columnId) {
       case 'assignedTo':
-        const pos = document
-          .getElementById(`${row.id}`)
-          .getBoundingClientRect();
         this.assigneePosition = {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
@@ -649,12 +766,45 @@ export class InspectionComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat3
+              dateTimeFormat4
             )
           );
           this.selectedDate = { ...this.selectedDate, date: dueDate };
         }
         if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedFormInfo = row;
+        break;
+
+      case 'shift':
+        this.shiftPosition = {
+          top: `${pos?.top + 7}px`,
+          left: `${pos?.left - 15}px`
+        };
+        this.plantToShift = this.plantShiftObj;
+        this.plantSelected = row.plantId;
+        if (row.status !== 'submitted') this.trigger.toArray()[3].openMenu();
+        this.selectedFormInfo = row;
+        break;
+      case 'scheduledAtDisplay':
+        this.selectedStartDate = {
+          ...this.selectedStartDate,
+          date: row.scheduledAt
+        };
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
+          const scheduledAt = new Date(
+            formatInTimeZone(
+              row.scheduledAt,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat4
+            )
+          );
+          this.selectedStartDate = {
+            ...this.selectedStartDate,
+            date: scheduledAt
+          };
+        }
+
+        if (row.status !== 'submitted') this.trigger.toArray()[2].openMenu();
         this.selectedFormInfo = row;
         break;
       default:
@@ -879,66 +1029,458 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.trigger.toArray()[0].closeMenu();
   }
 
-  dateChangeHandler(dueDate: Date) {
-    const { inspectionId, assignedToEmail, plantId, ...rest } =
-      this.selectedFormInfo;
-    const dueDateDisplayFormat = format(dueDate, dateFormat2);
-    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
-      const time = localToTimezoneDate(
-        this.selectedFormInfo.dueDate,
-        this.plantTimezoneMap[plantId],
-        hourFormat
-      );
-      dueDate = zonedTimeToUtc(
-        format(dueDate, dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[plantId].timeZoneIdentifier
-      );
+  dateChangeHandler(changedDueDate: Date) {
+    const {
+      inspectionId,
+      assignedToEmail,
+      plantId,
+      dueDate,
+      scheduledAt,
+      status,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      ...rest
+    } = this.selectedFormInfo;
+    console.log('scheduledAt:', scheduledAt);
+    if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'DueDate Cannot be less than Start Date'
+      });
+      return;
     }
-    this.raceDynamicFormService
-      .updateInspection$(
-        inspectionId,
-        { ...rest, inspectionId, dueDate },
-        'due-date'
-      )
-      .pipe(
-        tap((resp: any) => {
-          if (Object.keys(resp).length) {
-            this.dataSource.data = this.dataSource.data.map((data) => {
-              if (data.inspectionId === inspectionId) {
-                return {
-                  ...data,
-                  dueDate,
-                  dueDateDisplay: dueDateDisplayFormat,
-                  inspectionDBVersion: resp.inspectionDBVersion + 1,
-                  inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
-                  assignedToEmail: resp.assignedTo
-                };
-              }
-              return data;
-            });
-            this.dataSource = new MatTableDataSource(this.dataSource.data);
-            this.cdrf.detectChanges();
-            this.toastService.show({
-              type: 'success',
-              text: 'Due date updated successfully'
-            });
+    const dueDateDisplayFormat = format(changedDueDate, dateTimeFormat4);
+
+    const dueDateTime = changedDueDate.getTime(); ///curent Date
+    let shiftStartDateAndTime: any;
+    let shiftEndDateAndTime: any;
+    let shiftValidation = true;
+    if (this.selectedFormInfo.shiftId) {
+      const shiftStartTime =
+        this.shiftObj[this.selectedFormInfo.shiftId].startTime;
+
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shiftStartDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
+
+      const shiftEndTime = this.shiftObj[this.selectedFormInfo.shiftId].endTime;
+
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+
+      shiftEndDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
+
+      dueDateTime >= shiftStartDateAndTime && dueDateTime <= shiftEndDateAndTime
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
+      const openDialogModalRef = this.dialog.open(
+        ShiftDateChangeWarningModalComponent,
+        { data: { type: 'warning' } }
+      );
+      openDialogModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedDueDate = zonedTimeToUtc(
+              format(changedDueDate, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
           }
-        })
-      )
-      .subscribe();
+          let changedStatus = status;
+          if (status === 'overdue') {
+            if (assignedTo) {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.inProgress)
+                : (changedStatus = this.statusMap.assigned);
+            } else {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.partlyOpen)
+                : (changedStatus = this.statusMap.open);
+            }
+          }
+          // console.log('schedueledat:', changedScheduleAt);
+          this.raceDynamicFormService
+            .updateInspection$(
+              inspectionId,
+              {
+                ...rest,
+                assignedToEmail,
+                plantId,
+                status: changedStatus,
+                inspectionId,
+                dueDate: changedDueDate,
+                scheduledAt,
+                locationAndAssetTasksCompleted,
+                assignedTo
+              },
+              'due-date'
+            )
+            .pipe(
+              tap((resp: any) => {
+                if (Object.keys(resp).length) {
+                  this.dataSource.data = this.dataSource.data.map((data) => {
+                    if (data.inspectionId === inspectionId) {
+                      return {
+                        ...data,
+                        scheduledAt,
+                        dueDate: changedDueDate,
+                        dueDateDisplay: dueDateDisplayFormat,
+                        status: changedStatus,
+                        roundDBVersion: resp.roundDBVersion + 1,
+                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        assignedToEmail: resp.assignedTo
+                      };
+                    }
+                    return data;
+                  });
+                  this.dataSource = new MatTableDataSource(
+                    this.dataSource.data
+                  );
+                  this.cdrf.detectChanges();
+                  this.toastService.show({
+                    type: 'success',
+                    text: 'Due date updated successfully'
+                  });
+                }
+              })
+            )
+            .subscribe();
+        }
+      });
+    } else {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
+    }
   }
 
+  startDateChangeHandler(changedScheduledAt: Date) {
+    const {
+      inspectionId,
+      assignedToEmail,
+      plantId,
+      dueDate,
+      scheduledAt,
+      status,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      ...rest
+    } = this.selectedFormInfo;
+    if (new Date(dueDate).getTime() < changedScheduledAt.getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Start Date Cannot be More Than Due Date'
+      });
+      return;
+    }
+    let shiftValidation: Boolean = true;
+
+    const startDateDisplayFormat = format(changedScheduledAt, dateTimeFormat4);
+
+    const scheduleTime = changedScheduledAt.getTime(); ///curent Date
+
+    if (this.selectedFormInfo.shiftId) {
+      let shfitStartDateAndTime: any;
+      let shfitEndDateAndTime: any;
+      const shiftStartTime =
+        this.shiftObj[this.selectedFormInfo.shiftId].startTime;
+
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shfitStartDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
+
+      const shiftEndTime = this.shiftObj[this.selectedFormInfo.shiftId].endTime;
+
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+
+      shfitEndDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
+
+      scheduleTime >= shfitStartDateAndTime &&
+      scheduleTime <= shfitEndDateAndTime
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
+      const data = { type: 'warning' };
+      const openDialogModalRef = this.dialog.open(
+        ShiftDateChangeWarningModalComponent,
+        { data }
+      );
+      openDialogModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedScheduledAt = zonedTimeToUtc(
+              format(changedScheduledAt, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
+          }
+          let changedStatus = status;
+          if (status === 'overdue') {
+            if (assignedTo) {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.inProgress)
+                : (changedStatus = this.statusMap.assigned);
+            } else {
+              locationAndAssetTasksCompleted > 0
+                ? (changedStatus = this.statusMap.partlyOpen)
+                : (changedStatus = this.statusMap.open);
+            }
+          }
+          console.log('schedueledat:', changedScheduledAt);
+          this.raceDynamicFormService
+            .updateInspection$(
+              inspectionId,
+              {
+                ...rest,
+                status: changedStatus,
+                locationAndAssetTasksCompleted,
+                inspectionId,
+                assignedTo,
+                scheduledAt: changedScheduledAt,
+                dueDate
+              },
+              'start-date'
+            )
+            .pipe(
+              tap((resp: any) => {
+                if (Object.keys(resp).length) {
+                  this.dataSource.data = this.dataSource.data.map((data) => {
+                    if (data.inspectionId === inspectionId) {
+                      return {
+                        ...data,
+                        scheduledAt: changedScheduledAt,
+                        status: changedStatus,
+                        scheduledAtDisplay: startDateDisplayFormat,
+                        roundDBVersion: resp.roundDBVersion + 1,
+                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        assignedToEmail: resp.assignedTo
+                      };
+                    }
+                    return data;
+                  });
+                  this.dataSource = new MatTableDataSource(
+                    this.dataSource.data
+                  );
+                  this.cdrf.detectChanges();
+                  this.toastService.show({
+                    type: 'success',
+                    text: 'Start Date Updated Successfully'
+                  });
+                }
+              })
+            )
+            .subscribe();
+        }
+      });
+    } else {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
+        data: { type: 'date' }
+      });
+    }
+  }
+
+  shiftChangeHandler(shift) {
+    const {
+      inspectionId,
+      assignedToEmail,
+      plantId,
+      locationAndAssetTasksCompleted,
+      assignedTo,
+      scheduledAt,
+      dueDate,
+      status,
+      ...rest
+    } = this.selectedFormInfo;
+    const shiftId = shift.id;
+
+    const [endNewHours, endNewMinutes] = shift.endTime.split(':').map(Number);
+    const [startNewHours, startNewMinutes] = shift.startTime
+      .split(':')
+      .map(Number);
+    let shiftStartDateAndTime: Date;
+    let shiftEndDateAndTime: Date;
+    if (status !== 'overdue') {
+      const shiftStart = this.selectedFormInfo.scheduledAt;
+      const shiftEnd = this.selectedFormInfo.dueDate;
+      shiftStartDateAndTime = new Date(
+        new Date(shiftStart).getFullYear(),
+        new Date(shiftStart).getMonth(),
+        new Date(shiftStart).getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+
+      shiftEndDateAndTime = new Date(
+        new Date(shiftEnd).getFullYear(),
+        new Date(shiftEnd).getMonth(),
+        new Date(shiftEnd).getDate(),
+        endNewHours,
+        endNewMinutes
+      );
+    } else {
+      shiftStartDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        startNewHours,
+        startNewMinutes
+      );
+      shiftEndDateAndTime = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        endNewHours,
+        endNewMinutes
+      );
+    }
+
+    if (shiftEndDateAndTime.getTime() < shiftStartDateAndTime.getTime()) {
+      shiftEndDateAndTime.setDate(shiftEndDateAndTime.getDate() + 1);
+    }
+
+    const openDialogModalRef = this.dialog.open(
+      ShiftDateChangeWarningModalComponent,
+      { data: { type: 'warning' } }
+    );
+    openDialogModalRef.afterClosed().subscribe((resp) => {
+      if (resp) {
+        if (
+          plantId &&
+          this.plantTimezoneMap[plantId] &&
+          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ) {
+          shiftStartDateAndTime = zonedTimeToUtc(
+            format(shiftStartDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
+          shiftEndDateAndTime = zonedTimeToUtc(
+            format(shiftEndDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
+        }
+
+        let changedStatus = status;
+        if (status === 'overdue') {
+          if (assignedTo) {
+            locationAndAssetTasksCompleted > 0
+              ? (changedStatus = this.statusMap.inProgress)
+              : (changedStatus = this.statusMap.assigned);
+          } else {
+            locationAndAssetTasksCompleted > 0
+              ? (changedStatus = this.statusMap.partlyOpen)
+              : (changedStatus = this.statusMap.open);
+          }
+        }
+        this.raceDynamicFormService
+          .updateInspection$(
+            inspectionId,
+            {
+              ...rest,
+              inspectionId,
+              shiftId,
+              scheduledAt: shiftStartDateAndTime,
+              dueDate: shiftEndDateAndTime,
+              locationAndAssetTasksCompleted,
+              assignedTo,
+              status: changedStatus
+            },
+            'shift'
+          )
+          .pipe(
+            tap((resp: any) => {
+              if (Object.keys(resp).length) {
+                this.dataSource.data = this.dataSource.data.map((data) => {
+                  const shift = this.shiftObj[resp.shiftId].name;
+                  if (data.inspectionId === inspectionId) {
+                    return {
+                      ...data,
+                      shift,
+                      scheduledAt: shiftStartDateAndTime,
+                      scheduledAtDisplay: this.formatDate(
+                        shiftStartDateAndTime,
+                        dateTimeFormat4
+                      ),
+                      dueDateDisplay: this.formatDate(
+                        shiftEndDateAndTime,
+                        dateTimeFormat4
+                      ),
+                      status: changedStatus,
+                      dueDate: shiftEndDateAndTime,
+                      roundDBVersion: resp.roundDBVersion + 1,
+                      roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                      assignedToEmail: resp.assignedTo
+                    };
+                  }
+                  return data;
+                });
+                this.dataSource = new MatTableDataSource(this.dataSource.data);
+                this.cdrf.detectChanges();
+                this.toastService.show({
+                  type: 'success',
+                  text: 'Shift Updated Successfully'
+                });
+              }
+            })
+          )
+          .subscribe();
+      }
+    });
+  }
   dueDateClosedHandler() {
     this.trigger.toArray()[1].closeMenu();
+  }
+
+  startDateClosedHandler() {
+    this.trigger.toArray()[2].closeMenu();
   }
   formatDate(date, plantId) {
     if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        dateFormat2
+        dateTimeFormat4
       );
     }
-    return format(new Date(date), dateFormat2);
+    return format(new Date(date), dateTimeFormat4);
   }
 }

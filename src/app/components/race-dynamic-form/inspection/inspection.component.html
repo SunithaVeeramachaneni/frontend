@@ -112,6 +112,21 @@
       ></app-assign-inspection>
     </mat-menu>
   </ng-container>
+
+  <button
+    class="hide-mat-menu"
+    mat-button
+    [matMenuTriggerFor]="startDateMenu"
+    #startDateMenuTrigger="matMenuTrigger"
+  ></button>
+  <mat-menu #startDateMenu="matMenu">
+    <app-date-picker
+      [selectedDate]="selectedStartDate"
+      (dateChange)="startDateChangeHandler($event)"
+      (closed)="startDateClosedHandler()"
+    ></app-date-picker>
+  </mat-menu>
+
   <button
     class="hide-mat-menu"
     mat-button
@@ -125,4 +140,21 @@
       (closed)="dueDateClosedHandler()"
     ></app-date-picker>
   </mat-menu>
+
+  <ng-container>
+    <button
+      mat-button
+      [matMenuTriggerFor]="shiftMenu"
+      #shiftMenuTrigger="matMenuTrigger"
+    ></button>
+    <mat-menu #shiftMenu="matMenu">
+      <app-shift
+        [plantShiftObj]="plantToShift"
+        [plantSelected]="plantSelected"
+        [dropdownPosition]="shiftPosition"
+        (shiftChange)="shiftChangeHandler($event)"
+      >
+      </app-shift>
+    </mat-menu>
+  </ng-container>
 </ng-container>

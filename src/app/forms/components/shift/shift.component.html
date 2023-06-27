@@ -9,17 +9,17 @@
     <div
       class="custom-menu mat-menu-panel"
       [ngStyle]="{ top: _dropdownPosition.top, left: _dropdownPosition.left }"
-      *ngIf="_plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']"
+      *ngIf="_plantShiftObj[_plantSelected]"
     >
       <button
         mat-menu-item
         (click)="optionClick(item)"
-        *ngFor="
-          let item of _plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']
-        "
+        *ngFor="let item of _plantShiftObj[_plantSelected]"
       >
         {{ item.name }}
       </button>
     </div>
   </mat-menu>
 </div>
+
+<!-- *ngIf="_plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']" -->
