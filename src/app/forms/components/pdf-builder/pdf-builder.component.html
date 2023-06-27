@@ -40,14 +40,6 @@
         <div class="group">
           <span class="groupHead" translate="footer"></span>
           <span class="option">
-            <mat-checkbox
-              formControlName="pdfGeneratedDate"
-              class="checkbox bottomBorder"
-            >
-              <span translate="pdfGeneratedDate"></span>
-            </mat-checkbox>
-          </span>
-          <span class="option">
             <mat-checkbox formControlName="customText" class="checkbox">
               <span translate="customText"></span>
             </mat-checkbox>
@@ -962,13 +954,6 @@
   </div>
 </ng-template>
 <ng-template #footerTemplate let-footerData="footerData">
-  <div class="w-33">
-    <span
-      class="generatedDate"
-      *ngIf="pdfBuilderConfigurationsForm.get('pdfGeneratedDate').value"
-      >{{ getCurrentDate() }}</span
-    >
-  </div>
   <div class="w-33 poweredBy">
     <span class="poweredByText">Powered By</span>
     <svg-icon icon="icon-innova-big" class="footerLogo"></svg-icon>
