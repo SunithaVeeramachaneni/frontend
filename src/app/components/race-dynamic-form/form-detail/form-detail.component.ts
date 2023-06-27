@@ -27,6 +27,7 @@ import {
 import {
   formConfigurationStatus,
   dateFormat2,
+  dateTimeFormat2,
   dateTimeFormat4
 } from 'src/app/app.constants';
 import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
@@ -80,7 +81,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
   plantTimezoneMap: any;
-  readonly dateTimeFormat = dateTimeFormat4;
+  readonly dateTimeFormat = dateTimeFormat2;
   readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
@@ -193,16 +194,16 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     return format(new Date(date), dateFormat);
   }
 
-  formatDateTime(date, plantId, dateTimeFormat) {
+  formatDateTime(date, plantId) {
     if (!date) return '';
     if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],
-        dateTimeFormat
+        dateTimeFormat4
       );
     }
-    return format(new Date(date), dateTimeFormat);
+    return format(new Date(date), dateTimeFormat4);
   }
 
   onNavigateToDetailPage() {

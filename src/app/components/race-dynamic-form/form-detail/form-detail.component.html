@@ -299,8 +299,7 @@
                 {{
                   formatDateTime(
                     selectedForm?.scheduledAt,
-                    selectedForm?.plantId,
-                    dateTimeFormat
+                    selectedForm?.plantId
                   )
                 }}
               </h4>
@@ -315,11 +314,7 @@
             <div class="flex-custom">
               <h4 class="create-name">
                 {{
-                  formatDateTime(
-                    selectedForm?.dueDate,
-                    selectedForm.plantId,
-                    dateTimeFormat
-                  )
+                  formatDateTime(selectedForm?.dueDate, selectedForm.plantId)
                 }}
               </h4>
             </div>
