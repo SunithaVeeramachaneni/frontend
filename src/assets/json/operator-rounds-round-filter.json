@@ -46,7 +46,7 @@
   {
     "label": "Shift",
     "items": [],
-    "column": "shift",
+    "column": "shiftId",
     "type": "select",
     "value": ""
   },

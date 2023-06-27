@@ -56,14 +56,11 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultLimit,
   graphQLRoundsOrInspectionsLimit,
-  dateFormat2,
   dateTimeFormat4,
   permissions as perms,
-  dateFormat5,
-  hourFormat,
-  statusColors
+  statusColors,
+  dateTimeFormat5
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
@@ -131,7 +128,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     dueDate: '',
     plant: '',
     scheduledAt: '',
-    shift: '',
+    shiftId: '',
     roundPlanId: ''
   };
   assignedTo: string[] = [];
@@ -199,7 +196,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 3,
@@ -226,7 +229,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 4,
@@ -670,7 +679,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   addShift(rounds) {
     return rounds.map((round) => {
-      round.shift = this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].name;
+      if (this.shiftObj[round.shiftId]) {
+        round.shift = this.shiftObj[round.shiftId].name;
+      }
       return round;
     });
   }
@@ -725,7 +736,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        if (row.status !== 'submitted' && row.status !== 'overdue')
+          this.trigger.toArray()[0].openMenu();
         this.selectedRoundInfo = row;
         break;
       case 'dueDateDisplay':
@@ -741,7 +753,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
         }
         if (row.status !== 'submitted') {
-          this.trigger.toArray()[2].openMenu();
+          // this.trigger.toArray()[2].openMenu();
         } else {
           this.openRoundHandler(row);
         }
@@ -762,23 +774,19 @@ export class RoundsComponent implements OnInit, OnDestroy {
           ...this.selectedStartDate,
           date: row.scheduledAt
         };
-        // if (
-        //   row.plantId &&
-        //   this.plantTimezoneMap[row.plantId] &&
-        //   this.plantTimezoneMap[row.plantId].timeZoneIdentifier
-        // ) {
-        //   const scheduledAt = new Date(
-        //     formatInTimeZone(
-        //       row.scheduledAt,
-        //       this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-        //       dateTimeFormat4
-        //     )
-        //   );
-        //   this.selectedStartDate = {
-        //     ...this.selectedStartDate,
-        //     date: scheduledAt
-        //   };
-        // }
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
+          const scheduledAt = new Date(
+            formatInTimeZone(
+              row.scheduledAt,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat4
+            )
+          );
+          this.selectedStartDate = {
+            ...this.selectedStartDate,
+            date: scheduledAt
+          };
+        }
 
         if (row.status !== 'submitted') this.trigger.toArray()[2].openMenu();
         this.selectedRoundInfo = row;
@@ -950,7 +958,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             if (item.column === 'schedule') {
               item.items = this.schedules;
             }
-            if (item['column'] === 'shift') {
+            if (item['column'] === 'shiftId') {
               item.items = Object.values(this.shiftNameMap);
             }
           }
@@ -989,7 +997,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
-      } else if (item.column === 'shift' && item.value) {
+      } else if (item.column === 'shiftId' && item.value) {
         const foundEntry = Object.entries(this.shiftNameMap).find(
           ([key, val]) => val === item.value
         );
@@ -1021,7 +1029,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       dueDate: '',
       plant: '',
       scheduledAt: '',
-      shift: '',
+      shiftId: '',
       roundPlanId: ''
     };
     this.nextToken = '';
@@ -1098,8 +1106,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   dateChangeHandler(changedDueDate: Date) {
-    this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].endTime = '20:00';
-
     const {
       roundId,
       assignedToEmail,
@@ -1111,75 +1117,71 @@ export class RoundsComponent implements OnInit, OnDestroy {
       assignedTo,
       ...rest
     } = this.selectedRoundInfo;
-
-    const nscheduledAt = new Date(scheduledAt);
-    const ndueDate = new Date(dueDate);
-    let changedScheduleAt = nscheduledAt.setDate(
-      nscheduledAt.getDate() +
-        Math.abs(
-          (changedDueDate.getTime() - ndueDate.getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-    );
-    const scheduleAtDisplayFormat = format(changedScheduleAt, dateTimeFormat4);
-    const dueDateDisplayFormat = format(changedDueDate, dateTimeFormat4);
+    if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'DueDate Cannot be less than Start Date'
+      });
+      return;
+    }
+    const dueDateDisplayFormat = this.formatDate(changedDueDate, plantId);
 
     const dueDateTime = changedDueDate.getTime(); ///curent Date
-    const Year: number = changedDueDate.getFullYear();
-    const Month: number = changedDueDate.getMonth();
-    const Day: number = changedDueDate.getDate();
+    let shiftStartDateAndTime: any;
+    let shiftEndDateAndTime: any;
+    let shiftValidation = true;
+    if (this.selectedRoundInfo.shiftId) {
+      const shiftStartTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].startTime;
 
-    //shiftStartDate
-    const shiftStartTime =
-      this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].startTime;
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shiftStartDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
 
-    const [startNewHours, startNewMinutes] = shiftStartTime
-      .split(':')
-      .map(Number);
-    const shiftStartDateAndTime = new Date(
-      Year,
-      Month,
-      Day,
-      startNewHours,
-      startNewMinutes
-    ).getTime();
-    //end
-    const selectedRoundShiftId = this.selectedRoundInfo.shiftId;
-    //shfitEndDate
-    const shiftEndTime =
-      this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].endTime;
+      const shiftEndTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].endTime;
 
-    const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
 
-    const shiftEndDateAndTime = new Date(
-      Year,
-      Month,
-      Day,
-      endNewHours,
-      endNewMinutes
-    ).getTime();
-    //end
+      shiftEndDateAndTime = new Date(
+        changedDueDate.getFullYear(),
+        changedDueDate.getMonth(),
+        changedDueDate.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
 
-    if (
-      dueDateTime >= shiftStartDateAndTime &&
-      dueDateTime <= shiftEndDateAndTime
-    ) {
+      dueDateTime >= shiftStartDateAndTime && dueDateTime <= shiftEndDateAndTime
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
       const openDialogModalRef = this.dialog.open(
         ShiftChangeWarningModalComponent,
         { data: { type: 'warning' } }
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
-          // if (
-          //   plantId &&
-          //   this.plantTimezoneMap[plantId] &&
-          //   this.plantTimezoneMap[plantId].timeZoneIdentifier
-          // ) {
-          //   changedDueDate = zonedTimeToUtc(
-          //     format(changedDueDate, dateTimeFormat4),
-          //     this.plantTimezoneMap[plantId].timeZoneIdentifier
-          //   );
-          // }
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedDueDate = zonedTimeToUtc(
+              format(changedDueDate, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
+          }
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
@@ -1202,7 +1204,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 status: changedStatus,
                 roundId,
                 dueDate: changedDueDate,
-                scheduledAt: new Date(changedScheduleAt),
+                scheduledAt,
                 locationAndAssetTasksCompleted,
                 assignedTo
               },
@@ -1215,9 +1217,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
+                        scheduledAt,
                         dueDate: changedDueDate,
                         dueDateDisplay: dueDateDisplayFormat,
-                        scheduledAtDisplay: scheduleAtDisplayFormat,
                         status: changedStatus,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
@@ -1248,7 +1250,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   startDateChangeHandler(changedScheduledAt: Date) {
-    this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].endTime = '20:00';
     const {
       roundId,
       assignedToEmail,
@@ -1260,60 +1261,58 @@ export class RoundsComponent implements OnInit, OnDestroy {
       assignedTo,
       ...rest
     } = this.selectedRoundInfo;
-    const ndueDate = new Date(dueDate);
-    const nscheduledAt = new Date(scheduledAt);
-    let changedDueDate = ndueDate.setDate(
-      ndueDate.getDate() +
-        Math.abs(
-          (changedScheduledAt.getTime() - nscheduledAt.getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-    );
-    const dueDateDisplayFormat = format(changedDueDate, dateTimeFormat4);
-    const startDateDisplayFormat = format(changedScheduledAt, dateTimeFormat4);
+    if (new Date(dueDate).getTime() < changedScheduledAt.getTime()) {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Start Date Cannot be More Than Due Date'
+      });
+      return;
+    }
+    let shiftValidation: Boolean = true;
 
-    const selectedRoundShiftId = this.selectedRoundInfo.shiftId;
+    const startDateDisplayFormat = this.formatDate(changedScheduledAt, plantId);
+
     const scheduleTime = changedScheduledAt.getTime(); ///curent Date
 
-    const Year: number = changedScheduledAt.getFullYear();
-    const Month: number = changedScheduledAt.getMonth();
-    const Day: number = changedScheduledAt.getDate();
+    if (this.selectedRoundInfo.shiftId) {
+      let shfitStartDateAndTime: any;
+      let shfitEndDateAndTime: any;
+      const shiftStartTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].startTime;
 
-    //shiftStartDate
-    const shiftStartTime =
-      this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].startTime;
+      const [startNewHours, startNewMinutes] = shiftStartTime
+        .split(':')
+        .map(Number);
+      shfitStartDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        startNewHours,
+        startNewMinutes
+      ).getTime();
 
-    const [startNewHours, startNewMinutes] = shiftStartTime
-      .split(':')
-      .map(Number);
-    const shfitStartDateAndTime = new Date(
-      Year,
-      Month,
-      Day,
-      startNewHours,
-      startNewMinutes
-    ).getTime();
-    //end
+      const shiftEndTime =
+        this.shiftObj[this.selectedRoundInfo.shiftId].endTime;
 
-    //shfitEndDate
-    const shiftEndTime =
-      this.shiftObj['c4be1177-9098-4a2b-8f47-7d950a31b010'].endTime;
+      const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
 
-    const [endNewHours, endNewMinutes] = shiftEndTime.split(':').map(Number);
+      shfitEndDateAndTime = new Date(
+        changedScheduledAt.getFullYear(),
+        changedScheduledAt.getMonth(),
+        changedScheduledAt.getDate(),
+        endNewHours,
+        endNewMinutes
+      ).getTime();
 
-    const shfitEndDateAndTime = new Date(
-      Year,
-      Month,
-      Day,
-      endNewHours,
-      endNewMinutes
-    ).getTime();
-    //end
-
-    if (
       scheduleTime >= shfitStartDateAndTime &&
       scheduleTime <= shfitEndDateAndTime
-    ) {
+        ? (shiftValidation = true)
+        : (shiftValidation = false);
+    } else {
+      shiftValidation = true;
+    }
+
+    if (shiftValidation) {
       const data = { type: 'warning' };
       const openDialogModalRef = this.dialog.open(
         ShiftChangeWarningModalComponent,
@@ -1321,21 +1320,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
         if (resp) {
-          // if (
-          //   plantId &&
-          //   this.plantTimezoneMap[plantId] &&
-          //   this.plantTimezoneMap[plantId].timeZoneIdentifier
-          // ) {
-          //   const time = localToTimezoneDate(
-          //     this.selectedRoundInfo.scheduledAt,
-          //     this.plantTimezoneMap[plantId],
-          //     hourFormat
-          //   );
-          //   changedScheduledAt = zonedTimeToUtc(
-          //     format(changedScheduledAt, dateTimeFormat4) + ` ${time}`,
-          //     this.plantTimezoneMap[plantId].timeZoneIdentifier
-          //   );
-          // }
+          if (
+            plantId &&
+            this.plantTimezoneMap[plantId] &&
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ) {
+            changedScheduledAt = zonedTimeToUtc(
+              format(changedScheduledAt, dateTimeFormat5),
+              this.plantTimezoneMap[plantId].timeZoneIdentifier
+            );
+          }
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
@@ -1358,7 +1352,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundId,
                 assignedTo,
                 scheduledAt: changedScheduledAt,
-                dueDate: new Date(changedDueDate)
+                dueDate
               },
               'start-date'
             )
@@ -1369,10 +1363,8 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     if (data.roundId === roundId) {
                       return {
                         ...data,
-                        scheduledAt,
+                        scheduledAt: changedScheduledAt,
                         status: changedStatus,
-                        dueDate: changedDueDate,
-                        dueDateDisplay: dueDateDisplayFormat,
                         scheduledAtDisplay: startDateDisplayFormat,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
@@ -1433,8 +1425,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         startNewHours,
         startNewMinutes
       );
-      //end
-      ///EndDate
 
       shiftEndDateAndTime = new Date(
         new Date(shiftEnd).getFullYear(),
@@ -1459,7 +1449,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         endNewMinutes
       );
     }
-    //end
 
     if (shiftEndDateAndTime.getTime() < shiftStartDateAndTime.getTime()) {
       shiftEndDateAndTime.setDate(shiftEndDateAndTime.getDate() + 1);
@@ -1482,6 +1471,20 @@ export class RoundsComponent implements OnInit, OnDestroy {
               ? (changedStatus = this.statusMap.partlyOpen)
               : (changedStatus = this.statusMap.open);
           }
+        }
+        if (
+          plantId &&
+          this.plantTimezoneMap[plantId] &&
+          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ) {
+          shiftStartDateAndTime = zonedTimeToUtc(
+            format(shiftStartDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
+          shiftEndDateAndTime = zonedTimeToUtc(
+            format(shiftEndDateAndTime, dateTimeFormat5),
+            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          );
         }
         this.operatorRoundsService
           .updateRound$(
@@ -1508,13 +1511,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
                       ...data,
                       shift,
                       scheduledAt: shiftStartDateAndTime,
-                      dueDateDisplay: format(
+                      dueDateDisplay: this.formatDate(
                         shiftEndDateAndTime,
-                        dateTimeFormat4
+                        plantId
                       ),
-                      scheduledAtDisplay: format(
+                      scheduledAtDisplay: this.formatDate(
                         shiftStartDateAndTime,
-                        dateTimeFormat4
+                        plantId
                       ),
                       status: changedStatus,
                       dueDate: shiftEndDateAndTime,

@@ -112,6 +112,7 @@ import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedde
 import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftComponent } from './components/shift/shift.component';
+import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -181,7 +182,8 @@ import { ShiftComponent } from './components/shift/shift.component';
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
-    ShiftComponent
+    ShiftComponent,
+    ShiftDateChangeWarningModalComponent
   ],
   imports: [
     SharedModule,

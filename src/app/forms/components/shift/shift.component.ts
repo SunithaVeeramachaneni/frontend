@@ -18,7 +18,8 @@ import { MatMenuTrigger } from '@angular/material/menu';
 export class ShiftComponent implements OnInit, OnChanges {
   @ViewChild('shiftOpen') shiftOpen;
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
-  @Input() set plantSelected(plantSelected) {
+  @Input()
+  set plantSelected(plantSelected) {
     this._plantSelected = plantSelected;
   }
   @Input() set plantShiftObj(plantShiftObj) {

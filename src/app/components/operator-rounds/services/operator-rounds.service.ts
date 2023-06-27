@@ -153,6 +153,7 @@ export class OperatorRoundsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundDetailResponse> {
     const { fetchType, ...rest } = queryParams;
+    console.log('quearyParams', queryParams);
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&

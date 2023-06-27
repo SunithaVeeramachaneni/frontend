@@ -75,7 +75,7 @@ import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-
+import { CommonService } from 'src/app/shared/services/common.service';
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.component.html',
@@ -143,6 +143,28 @@ export class PlansComponent implements OnInit, OnDestroy {
     {
       id: 'plant',
       displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'shift',
+      displayName: 'Shift',
       type: 'string',
       controlType: 'string',
       order: 2,
@@ -386,6 +408,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   userFullNameByEmail = {};
   plantTimezoneMap = {};
   activeShiftIdMap = {};
+  plantShiftObj = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -402,7 +425,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
-    private shiftService: ShiftService
+    private shiftService: ShiftService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -476,7 +500,23 @@ export class PlansComponent implements OnInit, OnDestroy {
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
       this.activeShifts$,
-      this.users$
+      this.users$,
+      this.plantService.fetchAllPlants$().pipe(
+        tap((plants) => {
+          plants.items.map((plant) => {
+            if (
+              this.commonService.isJson(plant.shifts) &&
+              JSON.parse(plant.shifts)
+            ) {
+              let shifts = '';
+              JSON.parse(plant.shifts).map((shift) => {
+                shifts += shift.name + ',';
+              });
+              this.plantShiftObj[plant.id] = shifts;
+            }
+          });
+        })
+      )
     ]).pipe(
       map(
         ([
@@ -502,6 +542,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               )
             );
           }
+          this.initial.data = this.addShift(this.initial.data);
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -590,6 +631,13 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
 
     this.getAllRoundPlans();
+  }
+
+  addShift(rounds) {
+    return rounds.map((round) => {
+      round.shift = this.plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f'];
+      return round;
+    });
   }
 
   getRoundPlanList() {
@@ -866,6 +914,8 @@ export class PlansComponent implements OnInit, OnDestroy {
     roundPlans: RoundPlanDetail[],
     roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj
   ) {
+    console.log('plantshiftObj:', this.plantShiftObj);
+    console.log(roundPlans);
     return roundPlans.map((roundPlan) => {
       if (roundPlanScheduleConfigurations[roundPlan.id]) {
         return {
