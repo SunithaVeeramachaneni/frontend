@@ -120,7 +120,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
     schedule: '',
     assignedTo: '',
     dueDate: '',
-    plant: ''
+    plant: '',
+    shiftId: '',
+    formId: '',
+    scheduledAt: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -447,6 +450,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
   plantMapSubscription: Subscription;
+  allActiveShifts$: Observable<any>;
   limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
@@ -506,7 +510,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe((data) => {
         this.plantTimezoneMap = data;
       });
-
+    this.allActiveShifts$ = this.shiftService.fetchAllShifts$();
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -581,7 +585,12 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
     ]).pipe(
-      map(([inspections, scrollData]) => {
+      map(([inspections, scrollData, shifts]) => {
+        for (const item of this.filterJson) {
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.shiftNameMap);
+          }
+        }
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -729,6 +738,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
               item.items = this.plants;
             } else if (item.column === 'schedule') {
               item.items = this.schedules;
+            } else if (item.column === 'shiftId') {
+              item.items = Object.values(this.shiftNameMap);
             }
           }
         }
@@ -935,10 +946,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
+    console.log(data);
     for (const item of data) {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
         this.filter[item.column] = plantId ?? '';
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.shiftNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
@@ -956,7 +973,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedTo: '',
       dueDate: '',
-      plant: ''
+      plant: '',
+      shiftId: '',
+      formId: '',
+      scheduledAt: ''
     };
     this.nextToken = '';
     this.fetchInspection$.next({ data: 'load' });
