@@ -319,14 +319,54 @@ export class FormConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
+  processValidationErrorsAdditionalDetails(
+    index: number,
+    controlName: string
+  ): boolean {
+    const touched: boolean = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.touched;
+    const errors: ValidationError = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors)?.forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
   addAdditionalDetails() {
     this.additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
     this.additionalDetails.push(
       this.fb.group({
-        label: ['', [Validators.maxLength(25)]],
-        value: ['', [Validators.maxLength(40)]]
+        label: [
+          '',
+          [
+            Validators.maxLength(25),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
+        value: [
+          '',
+          [
+            Validators.maxLength(40),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ]
       })
     );
 
@@ -475,6 +515,20 @@ export class FormConfigurationModalComponent implements OnInit {
     }
   }
 
+  labelOptionClick(index) {
+    const labelSelectedData =
+      this.headerDataForm.get('additionalDetails').value[index].label;
+    if (labelSelectedData) {
+      this.filteredLabels$ = of(
+        Object.keys(this.labels).filter((data) =>
+          data.includes(labelSelectedData)
+        )
+      );
+    } else {
+      this.filteredLabels$ = of([]);
+    }
+  }
+
   removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
     this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
@@ -498,6 +552,7 @@ export class FormConfigurationModalComponent implements OnInit {
     });
   }
   removeValue(deleteValue, i) {
+    const currentLabel = this.changedValues.label;
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
@@ -517,7 +572,10 @@ export class FormConfigurationModalComponent implements OnInit {
         ) as FormArray;
         additionalinfoArray.at(i).get('value').setValue('');
         additionalinfoArray.controls.forEach((control, index) => {
-          if (control.value.value === deleteValue) {
+          if (
+            control.value.value === deleteValue &&
+            control.value.label === currentLabel
+          ) {
             control.get('value').setValue('');
           }
         });
