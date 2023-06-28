@@ -300,14 +300,54 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
+  processValidationErrorsAdditionalDetails(
+    index: number,
+    controlName: string
+  ): boolean {
+    const touched: boolean = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.touched;
+    const errors: ValidationError = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors)?.forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
   addAdditionalDetails() {
     this.additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
     this.additionalDetails.push(
       this.fb.group({
-        label: ['', [Validators.maxLength(25)]],
-        value: ['', [Validators.maxLength(40)]]
+        label: [
+          '',
+          [
+            Validators.maxLength(25),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
+        value: [
+          '',
+          [
+            Validators.maxLength(40),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ]
       })
     );
 
