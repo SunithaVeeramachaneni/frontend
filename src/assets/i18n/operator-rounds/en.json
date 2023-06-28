@@ -255,7 +255,7 @@
   "plant": "Plant",
   "plantMandatory": "Plant *",
   "assignToInfo": "The assignee will be auto assigned to all the rounds generated, However you can still change from the rounds",
-  "advanceRoundsCountInfo": "How many rounds would you like to generate in advance?",
+  "advanceRoundsCountInfo": "For how many days would you like to generate rounds at a time in advance?",
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
   "advanceRoundsCount": "Rounds Count",
@@ -334,5 +334,6 @@
   "add": "Add",
   "timeZone": "Plant Timezone",
   "taskSkipped": "Tasks Skipped",
-  "locationAssetsCompleted": "Location or Assets Completed"
+  "locationAssetsCompleted": "Location or Assets Completed",
+  "daysCount": "Days Count"
 }

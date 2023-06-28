@@ -223,7 +223,7 @@
   "assignedToHeader": "Assigned To",
   "noSearchResultsFound": "No Search Results Found.",
   "assignToInfo": "The assignee will be auto assigned to all the forms generated, However you can still change from the forms",
-  "advanceInspectionsCountInfo": "How many Inspections would you like to generate in advance?",
+  "advanceInspectionsCountInfo": "For how many days would you like to generate inspections at a time in advance?",
   "inspectionsCount": "Inspections Count",
   "inspectionsGeneration": "Inspections Generation",
   "advanceRoundsCount": "Forms Count",
@@ -331,5 +331,6 @@
   "removeBtn": "Remove",
   "user": "User",
   "defaultCurrentDate": "Default to current date",
-  "defaultCurrentTime": "Default to current time"
+  "defaultCurrentTime": "Default to current time",
+  "daysCount": "Days Count"
 }
