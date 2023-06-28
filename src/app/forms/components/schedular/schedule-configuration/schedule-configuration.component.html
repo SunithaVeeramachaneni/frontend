@@ -39,6 +39,7 @@
           ></button>
         </div>
       </div>
+      <hr id="horizontal-row" />
     </mat-card-title>
 
     <mat-card-content class="content">
@@ -366,7 +367,7 @@
         <ng-container>
           <div formGroupName="assignmentDetails" class="assign-to">
             <div class="dis-flex">
-              <div class="title" translate>assignedTo</div>
+              <div class="title" translate>assignTo</div>
               <mat-radio-group class="radio-group" formControlName="type">
                 <mat-radio-button
                   color="primary"
@@ -412,10 +413,7 @@
             </div>
             <mat-form-field appearance="outline" class="width-100">
               <mat-label>
-                {{
-                  (isFormModule ? 'inspectionsCount' : 'advanceRoundsCount')
-                    | translate
-                }}
+                {{ 'daysCount' | translate }}
               </mat-label>
               <input
                 type="number"
