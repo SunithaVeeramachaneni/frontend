@@ -427,7 +427,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        this.dataSource = new MatTableDataSource([]);
         return this.getRoundsList();
       })
     );
