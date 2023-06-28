@@ -880,9 +880,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        if (Array.isArray(item.value)) {
+          this.filter[item.column] = item.value.map((time) =>
+            new Date(time).toISOString()
+          );
+        }
       }
     }
+
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -933,8 +938,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'assigned' : status;
-    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
+    status =
+      status.toLowerCase() === 'open'
+        ? 'assigned'
+        : status.toLowerCase() === 'partly-open'
+        ? 'in-progress'
+        : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,

@@ -15,8 +15,8 @@ import {
   MatAutocompleteTrigger
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, merge, of, Subscription, BehaviorSubject } from 'rxjs';
-import { map, startWith, take, tap } from 'rxjs/operators';
+import { Observable, merge, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -42,8 +42,6 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
-import { head } from 'lodash-es';
-import { id } from 'date-fns/locale';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -302,14 +300,54 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
+  processValidationErrorsAdditionalDetails(
+    index: number,
+    controlName: string
+  ): boolean {
+    const touched: boolean = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.touched;
+    const errors: ValidationError = (
+      this.headerDataForm?.get('additionalDetails') as FormArray
+    )
+      .at(index)
+      .get(controlName)?.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors)?.forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
+
   addAdditionalDetails() {
     this.additionalDetails = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
     this.additionalDetails.push(
       this.fb.group({
-        label: ['', [Validators.maxLength(25)]],
-        value: ['', [Validators.maxLength(40)]]
+        label: [
+          '',
+          [
+            Validators.maxLength(25),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
+        value: [
+          '',
+          [
+            Validators.maxLength(40),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ]
       })
     );
 
@@ -325,8 +363,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.changedValues = changes.value;
         if (this.changedValues.label) {
           this.filteredLabels$ = of(
-            Object.keys(this.labels).filter((label) =>
-              label.includes(this.changedValues.label)
+            Object.keys(this.labels)?.filter(
+              (label) =>
+                label
+                  .toLowerCase()
+                  .indexOf(this.changedValues.label.toLowerCase()) === 0
             )
           );
         } else {
@@ -335,8 +376,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
         if (this.changedValues.value && this.labels[this.changedValues.label]) {
           this.filteredValues$ = of(
-            this.labels[this.changedValues.label].filter((values) =>
-              values.includes(this.changedValues.value)
+            this.labels[this.changedValues.label]?.filter(
+              (value) =>
+                value
+                  .toLowerCase()
+                  .indexOf(this.changedValues.value.toLowerCase()) === 0
             )
           );
         } else {
@@ -353,7 +397,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   storeDetails(i) {
     this.operatorRoundsService
-      .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
+      .createAdditionalDetails$({ ...this.changedValues })
       .subscribe((response) => {
         if (response?.label) {
           this.toastService.show({
@@ -371,25 +415,44 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
   }
 
-  storeValueDetails() {
-    if (Object.keys(this.labels).includes(this.changedValues.label)) {
-      const newValues = [
-        ...this.labels[this.changedValues.label],
-        this.changedValues.value
-      ];
-      this.operatorRoundsService
-        .updateValues$({
-          value: newValues,
-          labelId: this.additionalDetailsIdMap[this.changedValues.label]
-        })
-        .subscribe(() => {
-          this.toastService.show({
-            type: 'success',
-            text: 'Value added successfully'
+  storeValueDetails(i) {
+    const currentLabel = this.changedValues.label;
+    const currentValue = this.changedValues.value;
+    if (Object.keys(this.labels).includes(currentLabel)) {
+      if (
+        this.labels[currentLabel].every(
+          (value) => value.toLowerCase() !== currentValue.toLowerCase()
+        )
+      ) {
+        const newValues = [...this.labels[currentLabel], currentValue];
+        this.operatorRoundsService
+          .updateValues$({
+            value: newValues,
+            labelId: this.additionalDetailsIdMap[currentLabel]
+          })
+          .subscribe(() => {
+            this.toastService.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
+            this.labels[currentLabel] = newValues;
+            this.filteredValues$ = of(this.labels[currentLabel]);
+            const additionalinfoArray = this.headerDataForm.get(
+              'additionalDetails'
+            ) as FormArray;
+            additionalinfoArray.at(i).get('value').setValue(currentValue);
           });
-          this.labels[this.changedValues.label] = newValues;
-          this.filteredLabels$ = of(Object.keys(this.labels));
+      } else {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Value already exists'
         });
+      }
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Label does not exist'
+      });
     }
   }
 
@@ -433,7 +496,21 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
   }
 
-  removeLabel(label) {
+  labelOptionClick(index) {
+    const labelSelectedData =
+      this.headerDataForm.get('additionalDetails').value[index].label;
+    if (labelSelectedData) {
+      this.filteredLabels$ = of(
+        Object.keys(this.labels).filter((data) =>
+          data.includes(labelSelectedData)
+        )
+      );
+    } else {
+      this.filteredLabels$ = of([]);
+    }
+  }
+
+  removeLabel(label, i) {
     const documentId = this.additionalDetailsIdMap[label];
     this.operatorRoundsService.removeLabel$(documentId).subscribe(() => {
       delete this.labels[label];
@@ -443,9 +520,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         text: 'Label deleted Successfully'
       });
       this.deletedLabel = label;
+      const additionalinfoArray = this.headerDataForm.get(
+        'additionalDetails'
+      ) as FormArray;
+      additionalinfoArray.at(i).get('label').setValue('');
+      additionalinfoArray.controls.forEach((control, index) => {
+        if (control.value.label === label) {
+          control.get('label').setValue('');
+          control.get('value').setValue('');
+        }
+      });
     });
   }
-  removeValue(deleteValue) {
+  removeValue(deleteValue, i) {
+    const currentLabel = this.changedValues.label;
     const newValue = this.labels[this.changedValues.label].filter(
       (value) => value !== deleteValue
     );
@@ -459,6 +547,18 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         this.toastService.show({
           type: 'success',
           text: 'Value deleted Successfully'
+        });
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        additionalinfoArray.at(i).get('value').setValue('');
+        additionalinfoArray.controls.forEach((control, index) => {
+          if (
+            control.value.value === deleteValue &&
+            control.value.label === currentLabel
+          ) {
+            control.get('value').setValue('');
+          }
         });
       });
   }
