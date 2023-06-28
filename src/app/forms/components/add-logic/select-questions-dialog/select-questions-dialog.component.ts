@@ -81,7 +81,6 @@ export class SelectQuestionsDialogComponent implements OnInit {
       const hideQuestions = this.data.logic.hideQuestions || [];
       this.selectedQuestions = this.selectedQuestions.concat(hideQuestions);
     }
-    console.log(this.data);
   }
 
   selectQuestion(checked: boolean, questionId: string) {

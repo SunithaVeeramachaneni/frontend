@@ -6,7 +6,8 @@ import {
   Input,
   OnDestroy,
   Output,
-  ViewChild
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -16,6 +17,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -50,8 +52,13 @@ import {
 } from 'src/app/interfaces';
 import {
   formConfigurationStatus,
-  graphQLDefaultMaxLimit,
-  permissions as perms
+  graphQLRoundsOrInspectionsLimit,
+  dateFormat2,
+  dateTimeFormat3,
+  permissions as perms,
+  dateFormat5,
+  hourFormat,
+  statusColors
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -65,6 +72,10 @@ import { ToastService } from 'src/app/shared/toast';
 import { PDFPreviewComponent } from 'src/app/forms/components/pdf-preview/pdf-preview.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '../../user-management/services/users.service';
+import { format } from 'date-fns';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 
 @Component({
   selector: 'app-inspection',
@@ -74,8 +85,8 @@ import { UsersService } from '../../user-management/services/users.service';
   animations: [slideInOut]
 })
 export class InspectionComponent implements OnInit, OnDestroy {
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
-  @ViewChild('assigneeMenuTrigger') assigneeMenuTrigger: MatMenuTrigger;
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => (this.assigneeDetails = { users }))
@@ -86,7 +97,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-Progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -177,13 +195,19 @@ export class InspectionComponent implements OnInit, OnDestroy {
     },
 
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
-      controlType: 'date-picker',
+      controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 4,
@@ -269,7 +293,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 7,
@@ -307,20 +337,28 @@ export class InspectionComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': ' #2C9E53',
-        color: '#ffffff'
+        'background-color': statusColors.submitted,
+        color: statusColors.white
       },
-      'in-progress': {
-        'background-color': '#FFCC00',
-        color: '#000000'
+      'in progress': {
+        'background-color': statusColors.inProgress,
+        color: statusColors.black
       },
       open: {
-        'background-color': '#e0e0e0',
-        color: '#000000'
+        'background-color': statusColors.open,
+        color: statusColors.black
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#ffffff'
+      assigned: {
+        'background-color': statusColors.assigned,
+        color: statusColors.black
+      },
+      'partly open': {
+        'background-color': statusColors.partlyOpen,
+        color: statusColors.black
+      },
+      overdue: {
+        'background-color': statusColors.overdue,
+        color: statusColors.white
       }
     }
   };
@@ -332,7 +370,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
   fetchInspection$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   skip = 0;
-  limit = graphQLDefaultMaxLimit;
+  plantMapSubscription: Subscription;
+  limit = graphQLRoundsOrInspectionsLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
   inspectionsCount = 0;
@@ -343,9 +382,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   selectedForm: InspectionDetail;
+  selectedFormInfo: InspectionDetail;
+  selectedDate = null;
   zIndexDelay = 0;
   hideInspectionDetail: boolean;
   formId: string;
+  inspectionId = '';
+  plantTimezoneMap = {};
 
   plants = [];
   plantsIdNameMap = {};
@@ -354,6 +397,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     columns: this.columns,
     data: []
   };
+  sliceCount = 100;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -368,10 +412,17 @@ export class InspectionComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private cdrf: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService
   ) {}
 
   ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
+
     this.fetchInspection$.next({} as TableEvent);
     this.searchForm = new FormControl('');
     this.getFilter();
@@ -397,6 +448,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
+        this.dataSource = new MatTableDataSource([]);
         return this.getInspectionsList();
       })
     );
@@ -436,30 +488,41 @@ export class InspectionComponent implements OnInit, OnDestroy {
           };
           this.initial.data = inspections?.rows?.map((inspectionDetail) => ({
             ...inspectionDetail,
-            dueDate: inspectionDetail.dueDate
-              ? new Date(inspectionDetail.dueDate)
-              : '',
+            dueDateDisplay: this.formatDate(
+              inspectionDetail.dueDate,
+              inspectionDetail.plantId
+            ),
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
+            status: inspectionDetail.status.replace('-', ' '),
             assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
           this.initial.data = this.initial.data.concat(
             scrollData.rows?.map((inspectionDetail) => ({
               ...inspectionDetail,
-              dueDate: inspectionDetail.dueDate
-                ? new Date(inspectionDetail.dueDate)
-                : '',
+              dueDateDisplay: this.formatDate(
+                inspectionDetail.dueDate,
+                inspectionDetail.plantId
+              ),
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
+              status: inspectionDetail.status.replace('-', ' '),
               assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
         }
         this.skip = this.initial.data.length;
-        this.dataSource = new MatTableDataSource(this.initial.data);
+        // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
+        const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
+        const dataSource = this.dataSource
+          ? this.dataSource.data.concat(
+              this.initial.data.slice(sliceStart, sliceStart + this.sliceCount)
+            )
+          : this.initial.data.slice(sliceStart, this.sliceCount);
+        this.dataSource = new MatTableDataSource(dataSource);
         return this.initial;
       })
     );
@@ -468,11 +531,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.hideInspectionDetail = true;
     });
 
-    this.activatedRoute.queryParams.subscribe(({ formId = '' }) => {
-      this.formId = formId;
-      this.fetchInspection$.next({ data: 'load' });
-      this.isLoading$.next(true);
-    });
+    this.activatedRoute.queryParams.subscribe(
+      ({ formId = '', inspectionId = '' }) => {
+        this.formId = formId;
+        this.inspectionId = inspectionId;
+        this.fetchInspection$.next({ data: 'load' });
+        this.isLoading$.next(true);
+      }
+    );
 
     this.configOptions.allColumns = this.columns;
   }
@@ -483,8 +549,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: this.formId
+      formId: this.formId,
+      inspectionId: this.inspectionId
     };
+    this.isLoading$.next(true);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
@@ -498,7 +566,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   getAllInspections() {
     this.isLoading$.next(true);
-    this.raceDynamicFormService.fetchAllRounds$().subscribe(
+    this.raceDynamicFormService.fetchAllInspections$().subscribe(
       (formsList) => {
         this.isLoading$.next(false);
         const objectKeys = Object.keys(formsList);
@@ -557,6 +625,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -572,11 +641,23 @@ export class InspectionComponent implements OnInit, OnDestroy {
           top: `${pos?.top + 7}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.assigneeMenuTrigger.openMenu();
-        this.selectedForm = row;
+        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        this.selectedFormInfo = row;
         break;
-      case 'dueDate':
-        this.selectedForm = row;
+      case 'dueDateDisplay':
+        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
+          const dueDate = new Date(
+            formatInTimeZone(
+              row.dueDate,
+              this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
+              dateTimeFormat3
+            )
+          );
+          this.selectedDate = { ...this.selectedDate, date: dueDate };
+        }
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        this.selectedFormInfo = row;
         break;
       default:
         this.openInspectionHandler(row);
@@ -749,8 +830,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   selectedAssigneeHandler(userDetails: UserDetails) {
     const { email: assignedTo } = userDetails;
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
-    let previouslyAssignedTo = this.selectedForm.previouslyAssignedTo || '';
+    const { inspectionId, assignedToEmail, ...rest } = this.selectedFormInfo;
+    let previouslyAssignedTo = this.selectedFormInfo.previouslyAssignedTo || '';
     if (assignedTo !== assignedToEmail) {
       previouslyAssignedTo += previouslyAssignedTo.length
         ? `,${assignedToEmail}`
@@ -764,8 +845,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
         .join(',');
     }
 
-    let { status } = this.selectedForm;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    let { status } = this.selectedFormInfo;
+
+    status =
+      status.toLowerCase() === 'open'
+        ? 'assigned'
+        : status.toLowerCase() === 'partly-open'
+        ? 'in-progress'
+        : status;
+
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -775,7 +863,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
@@ -787,7 +875,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -797,11 +885,24 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    this.assigneeMenuTrigger.closeMenu();
+    this.trigger.toArray()[0].closeMenu();
   }
 
-  onChangeDueDateHandler(dueDate: Date) {
-    const { inspectionId, assignedToEmail, ...rest } = this.selectedForm;
+  dateChangeHandler(dueDate: Date) {
+    const { inspectionId, assignedToEmail, plantId, ...rest } =
+      this.selectedFormInfo;
+    const dueDateDisplayFormat = format(dueDate, dateFormat2);
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      const time = localToTimezoneDate(
+        this.selectedFormInfo.dueDate,
+        this.plantTimezoneMap[plantId],
+        hourFormat
+      );
+      dueDate = zonedTimeToUtc(
+        format(dueDate, dateFormat5) + ` ${time}`,
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
+      );
+    }
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -809,13 +910,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'due-date'
       )
       .pipe(
-        tap((resp) => {
+        tap((resp: any) => {
           if (Object.keys(resp).length) {
-            this.initial.data = this.dataSource.data.map((data) => {
+            this.dataSource.data = this.dataSource.data.map((data) => {
               if (data.inspectionId === inspectionId) {
                 return {
                   ...data,
                   dueDate,
+                  dueDateDisplay: dueDateDisplayFormat,
                   inspectionDBVersion: resp.inspectionDBVersion + 1,
                   inspectionDetailDBVersion: resp.inspectionDetailDBVersion + 1,
                   assignedToEmail: resp.assignedTo
@@ -823,7 +925,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               }
               return data;
             });
-            this.dataSource = new MatTableDataSource(this.initial.data);
+            this.dataSource = new MatTableDataSource(this.dataSource.data);
             this.cdrf.detectChanges();
             this.toastService.show({
               type: 'success',
@@ -833,5 +935,19 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  dueDateClosedHandler() {
+    this.trigger.toArray()[1].closeMenu();
+  }
+  formatDate(date, plantId) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateFormat2
+      );
+    }
+    return format(new Date(date), dateFormat2);
   }
 }

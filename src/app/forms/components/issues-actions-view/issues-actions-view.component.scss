@@ -293,3 +293,11 @@
   border-radius: 4px;
   margin: 10px 10px 5px 12px;
 }
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding-bottom: 20px;
+}
+
+::ng-deep .ngx-mat-timepicker-spacer {
+  padding-bottom: 8px;
+}

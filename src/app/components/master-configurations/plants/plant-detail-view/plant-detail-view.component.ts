@@ -16,6 +16,7 @@ import {
 export class PlantDetailViewComponent implements OnInit {
   @Input() selectedPlant;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
+  placeHolder = '--';
   constructor() {}
 
   ngOnInit(): void {}

@@ -19,23 +19,38 @@ export class ImportService {
    */
   constructor(private zone: NgZone, private sseService: SseService) {}
 
-
   /**
    * Import file
    * @param url to make call
    * @param file to import
    * @return obervable that has the progress
    */
-  public importFile(url: string, formData: FormData): Observable<ImportFileEventData> {
-    return this.getServerSentEvent(url, formData);
+  public importFile(
+    apiUrl: string,
+    urlString: string,
+    formData: FormData
+  ): Observable<ImportFileEventData> {
+    return this.getServerSentEvent(apiUrl, urlString, formData);
+  }
+
+  closeConnection(): void {
+    this.sseService.closeEventSource();
   }
 
   /**
    * Get event source (SSE)
    */
-  private getServerSentEvent(url: string, data: FormData): Observable<ImportFileEventData> {
+  private getServerSentEvent(
+    apiUrl: string,
+    urlString: string,
+    data: FormData
+  ): Observable<ImportFileEventData> {
     return new Observable((observer) => {
-      const eventSource = this.sseService.getEventSourceWithPost(url, data);
+      const eventSource = this.sseService.getEventSourceWithPost(
+        apiUrl,
+        urlString,
+        data
+      );
       // Launch query
       eventSource.stream();
       // on answer from message listener
@@ -53,10 +68,4 @@ export class ImportService {
       };
     });
   }
-
-
-  public closeConnection(): void {
-    this.sseService.closeEventSource();
-  }
 }
-

@@ -37,6 +37,20 @@
   .actions {
     float: right;
     margin-right: 15px;
+
+    .close-btn {
+      color: $blue-main;
+    }
+
+    .select-btn {
+      color: $white;
+      background-color: $blue-main;
+    }
+
+    .select-btn:disabled {
+      color: $gray7;
+      background-color: $gray2-bg;
+    }
   }
 
   .list-container {

@@ -40,7 +40,7 @@
                   </ng-container>
                   <ng-template #byDate>
                     {{ selectedForm.schedule }},
-                    {{ frequencyDetail.info | date : 'dd MMM yyyy' }}
+                    {{ frequencyDetail.info | date : dateFormat }}
                     <a class="link" [matMenuTriggerFor]="menu">{{
                       frequencyDetail.more
                     }}</a>
@@ -63,7 +63,7 @@
                     class="custom-dates"
                   >
                     <p *ngFor="let data of frequencyDetail.data">
-                      {{ data.date | date : 'dd MMM yyyy' }}
+                      {{ data.date | date : dateFormat }}
                     </p>
                   </div>
                   <ng-template #byFrequency>
@@ -168,7 +168,13 @@
               <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.publishedDate) }}
+                {{
+                  formatDate(
+                    selectedForm?.publishedDate,
+                    selectedForm?.plantId,
+                    dateTimeFormat
+                  )
+                }}
               </p>
             </div>
           </div>
@@ -182,7 +188,13 @@
               <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.updatedAt) }}
+                {{
+                  formatDate(
+                    selectedForm?.updatedAt,
+                    selectedForm?.plantId,
+                    dateTimeFormat
+                  )
+                }}
               </p>
             </div>
           </div>
@@ -196,8 +208,32 @@
               <h4 class="create-name">{{ selectedForm?.author }}</h4>
               <span class="dots"></span>
               <p class="date-name color-gray">
-                {{ formateDate(selectedForm?.createdAt) }}
+                {{
+                  formatDate(
+                    selectedForm?.createdAt,
+                    selectedForm?.plantId,
+                    dateTimeFormat
+                  )
+                }}
               </p>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'timeZone' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]">
+                  {{
+                    this.plantTimezoneMap[selectedForm?.plantId].description
+                  }}</span
+                ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
+                  this.placeHolder
+                }}</span>
+              </h4>
             </div>
           </div>
         </ng-container>
@@ -214,6 +250,20 @@
               </h4>
             </div>
           </div>
+
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'locationAssetsCompleted' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{ selectedForm?.locationAssetsCompleted.split(',')[0] }}
+              </h4>
+            </div>
+          </div>
+
           <div class="name-heading">
             <div>
               <p class="color-gray">
@@ -226,6 +276,20 @@
               </h4>
             </div>
           </div>
+
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'taskSkipped' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{ selectedForm?.taskSkipped }}
+              </h4>
+            </div>
+          </div>
+
           <div class="name-heading">
             <div>
               <p class="color-gray">
@@ -234,7 +298,13 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
-                {{ selectedForm?.dueDate | date : 'dd MMM yyyy' }}
+                {{
+                  formatDate(
+                    selectedForm?.dueDate,
+                    selectedForm.plantId,
+                    dateFormat
+                  )
+                }}
               </h4>
             </div>
           </div>
@@ -246,6 +316,24 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">{{ selectedForm?.assignedTo }}</h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'timeZone' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <span *ngIf="this.plantTimezoneMap[selectedForm?.plantId]">
+                  {{
+                    this.plantTimezoneMap[selectedForm?.plantId].description
+                  }}</span
+                ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
+                  this.placeHolder
+                }}</span>
+              </h4>
             </div>
           </div>
         </ng-template>

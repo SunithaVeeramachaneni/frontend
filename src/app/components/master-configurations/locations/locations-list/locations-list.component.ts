@@ -19,7 +19,6 @@ import {
   distinctUntilChanged,
   filter,
   map,
-  mergeMap,
   switchMap,
   takeUntil,
   tap
@@ -31,7 +30,6 @@ import {
 } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
-  Count,
   FormTableUpdate,
   Permission,
   TableEvent,
@@ -58,7 +56,7 @@ import { PlantService } from '../../plants/services/plant.service';
 })
 export class LocationsListComponent implements OnInit, OnDestroy {
   readonly perms = perms;
-  allParentsLocations: any[] = [];
+  allParentsLocations: any = { data: [] };
   columns: Column[] = [
     {
       id: 'name',
@@ -252,7 +250,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 
   isPopoverOpen = false;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted'];
   filter = {
     plant: ''
   };
@@ -310,12 +307,10 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.locationService.fetchLocations$.next({ data: 'search' });
-          this.reloadLocationCount(value.toLocaleLowerCase());
         })
       )
       .subscribe(() => this.isLoading$.next(true));
     this.getDisplayedLocations();
-    this.reloadLocationCount(null);
     this.configOptions.allColumns = this.columns;
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -365,7 +360,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           { items: allPlants = [] }
         ]) => {
           this.allPlants = allPlants.filter((plant) => !plant._deleted);
-          this.allParentsLocations = allLocations.filter(
+          this.allParentsLocations.data = allLocations.filter(
             (location) => !location._deleted
           );
           this.dataFetchingComplete = true;
@@ -386,13 +381,20 @@ export class LocationsListComponent implements OnInit, OnDestroy {
                 });
                 break;
               case 'add':
-                initial.data = [newForm, ...initial.data];
+                initial.data = [...newForm, ...initial.data];
+                this.allParentsLocations = {
+                  data: [...newForm, ...this.allParentsLocations.data]
+                };
                 break;
               case 'edit':
-                const formIdx = initial.data.findIndex(
+                let formIdx = initial.data.findIndex(
                   (item) => item.id === form.id
                 );
-                initial.data[formIdx] = newForm;
+                initial.data[formIdx] = newForm[0];
+                formIdx = this.allParentsLocations.data.findIndex(
+                  (item) => item.id === form.id
+                );
+                this.allParentsLocations.data[formIdx] = newForm[0];
                 break;
               default:
               //Do nothing
@@ -433,8 +435,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
   }
 
   getLocations() {
-    return this.locationService
-      .getLocationsList$(
+    return (
+      this.locationService.getLocationsList$(
         {
           next: this.nextToken,
           limit: this.limit,
@@ -442,22 +444,26 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           fetchType: this.fetchType
         },
         this.filter
-      )
-      .pipe(
-        mergeMap(({ count, rows, next }) => {
-          this.nextToken = next;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+      ) as Observable<any>
+    ).pipe(
+      map(({ count, rows, next }) => {
+        this.nextToken = next;
+        if (count !== undefined) {
+          this.reloadLocationCount(count);
+        }
+        this.isLoading$.next(false);
+        return rows;
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
+      })
+    );
   }
 
   addOrUpdateLocation(locationData) {
     if (locationData?.status === 'add') {
+      this.addEditCopyDeleteLocations = true;
       if (this.searchLocation.value) {
         this.locationService.fetchLocations$.next({ data: 'search' });
       } else {
@@ -470,7 +476,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         text: 'Location created successfully!',
         type: 'success'
       });
-      this.addEditCopyDeleteLocations = true;
       this.locationsCountUpdate$.next(1);
     } else if (locationData?.status === 'edit') {
       this.addEditCopyDeleteLocations = true;
@@ -481,6 +486,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
           action: 'edit',
           form: locationData.data
         });
+        this.allParentsLocations.data = this.allParentsLocations.data.map(
+          (loc) => (loc.id === locationData.data.id ? locationData.data : loc)
+        );
         this.toast.show({
           text: 'Location updated successfully!',
           type: 'success'
@@ -603,9 +611,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.parentInformation = allLocations.items.filter(
           (location) => !location._deleted
         );
-        this.allParentsLocations = this.parentInformation;
+        this.allParentsLocations.data = this.parentInformation;
       } else {
-        this.allParentsLocations = [];
+        this.allParentsLocations.data = [];
       }
     });
   }
@@ -626,7 +634,6 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         this.addEditCopyDeleteLocations = true;
         this.nextToken = '';
         this.locationService.fetchLocations$.next({ data: 'load' });
-        this.reloadLocationCount(this.searchLocation.value.toLocaleLowerCase());
         this.toast.show({
           text: 'Locations uploaded successfully!',
           type: 'success'
@@ -650,7 +657,7 @@ export class LocationsListComponent implements OnInit, OnDestroy {
         });
       }
       if (data.parentId) {
-        const parent = this.allParentsLocations.find(
+        const parent = this.allParentsLocations.data.find(
           (d) => d.id === data.parentId
         );
 
@@ -668,9 +675,8 @@ export class LocationsListComponent implements OnInit, OnDestroy {
     return tableData;
   };
 
-  reloadLocationCount(searchTerm: string) {
-    this.locationsListCount$ =
-      this.locationService.getLocationCount$(searchTerm);
+  reloadLocationCount(rawCount: number) {
+    this.locationsListCount$ = of(rawCount);
     this.locationsCount$ = combineLatest([
       this.locationsListCount$,
       this.locationsCountUpdate$

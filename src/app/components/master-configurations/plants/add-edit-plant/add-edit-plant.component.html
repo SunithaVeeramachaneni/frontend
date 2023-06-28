@@ -64,11 +64,28 @@
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
           <mat-label translate="countryMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'countryMandatory' | translate"
+          <mat-select
             formControlName="country"
-          />
+            [placeholder]="'countryMandatory' | translate"
+            (closed)="onCountryClosed()"
+          >
+            <input
+              #countryInputSearch
+              [(ngModel)]="this.countrySearch"
+              [ngModelOptions]="{ standalone: true }"
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyCountry($event)"
+              (keydown)="$event.stopPropagation()"
+            />
+            <div class="scrollable-area">
+              <mat-option
+                *ngFor="let country of this.countryData"
+                [value]="country.countryCode"
+                >{{ country.countryName }}
+              </mat-option>
+            </div>
+          </mat-select>
           <mat-error
             *ngIf="processValidationErrors('country')"
             class="m-t-5 error-fields"
@@ -108,12 +125,29 @@
       </p>
       <p class="m-0">
         <mat-form-field appearance="outline" class="width-100 m-b-10">
-          <mat-label translate="stateMandatory"></mat-label>
-          <input
-            matInput
-            [placeholder]="'stateMandatory' | translate"
+          <mat-label>{{
+            noState
+              ? ('stateNotMandatory' | translate)
+              : ('stateMandatory' | translate)
+          }}</mat-label>
+          <mat-select
             formControlName="state"
-          />
+            [placeholder]="'stateMandatory' | translate"
+            (closed)="onStateClosed()"
+          >
+            <input
+              #stateInputSearch
+              class="searchable-input"
+              [placeholder]="'search' | translate"
+              (keyup)="onKeyState($event)"
+              (keydown)="$event.stopPropagation()"
+            />
+            <div class="scrollable-area">
+              <mat-option *ngFor="let state of states" [value]="state">{{
+                state
+              }}</mat-option>
+            </div>
+          </mat-select>
           <mat-error
             *ngIf="processValidationErrors('state')"
             class="m-t-5 error-fields"
@@ -126,6 +160,69 @@
                     }
             }}
           </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="timeZoneMandatory"></mat-label>
+          <mat-select
+            formControlName="timeZone"
+            [placeholder]="'timeZoneMandatory' | translate"
+            [compareWith]="compareTimeZones"
+          >
+            <div class="scrollable-area">
+              <mat-option *ngFor="let timeZone of timeZones" [value]="timeZone"
+                ><span> {{ timeZone.description }}</span></mat-option
+              >
+            </div>
+          </mat-select>
+          <mat-error
+            *ngIf="processValidationErrors('timeZone')"
+            class="m-t-5 error-fields"
+          >
+            {{
+              errors.timeZone.name
+                | translate
+                  : {
+                      name: 'timeZone' | translate
+                    }
+            }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p class="m-0" *ngIf="activeShifts$ | async as activeShifts">
+        <mat-form-field appearance="outline" class="width-100 m-b-10">
+          <mat-label translate="shifts"></mat-label>
+          <mat-select
+            placeholder="Shifts"
+            formControlName="shifts"
+            multiple
+            [(ngModel)]="selectedShiftIDs"
+            (selectionChange)="shiftSelectionChanged($event)"
+          >
+            <mat-select-trigger>
+              {{
+                selectedShiftsDetails.length
+                  ? selectedShiftsDetails[0]?.name
+                  : ''
+              }}
+              <span *ngIf="selectedShiftsDetails.length > 1">
+                (+{{ selectedShiftsDetails.length - 1 }}
+                {{ selectedShiftsDetails.length === 2 ? 'other' : 'others' }})
+              </span>
+            </mat-select-trigger>
+            <mat-option
+              *ngFor="let shift of activeShifts; let i = index"
+              [value]="shift.id"
+            >
+              <span class="shiftOption">
+                <span> {{ shift.name }}</span>
+                <span class="shiftTimeLabel"
+                  >{{ shift.startTime }} - {{ shift.endTime }}</span
+                >
+              </span>
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </p>
       <p class="additional-details">

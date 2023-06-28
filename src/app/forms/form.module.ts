@@ -103,6 +103,19 @@ import { DynamictableModule } from '@innovapptive.com/dynamictable';
 
 import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { DatePickerComponent } from './components/date-picker/date-picker.component';
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
+import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
+
+import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
+import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
+import { UserNameByEmailPipe } from './pipes';
 
 @NgModule({
   declarations: [
@@ -169,7 +182,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AssignedToComponent,
     ObservationsComponent,
     UploadImagePreviewComponent,
-    UploadPdfPreviewComponent
+    UploadPdfPreviewComponent,
+
+    RaiseNotificationDailogComponent,
+    DatePickerComponent,
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe
   ],
   imports: [
     SharedModule,
@@ -186,6 +206,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatInputModule,
     MatButtonModule,
     MatBottomSheetModule,
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule,
     MatListModule,
     MatIconModule,
     MatCardModule,
@@ -200,6 +223,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({}),
     MatDatepickerModule,
@@ -243,7 +267,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AssignedToComponent,
     ObservationsComponent,
     UploadImagePreviewComponent,
-    UploadPdfPreviewComponent
+    UploadPdfPreviewComponent,
+    DatePickerComponent,
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe
   ]
 })
 export class FormModule {}

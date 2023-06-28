@@ -10,6 +10,7 @@ import {
 import { FilterSidePanelComponent } from '../filter-side-panel/filter-side-panel.component';
 import { DatePipeDateAdapter } from '../../utils/DatePipeDateAdapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'app-filter',
@@ -87,6 +88,12 @@ export class FilterComponent implements OnInit, OnChanges {
       const startDate = new Date(item.startDate).toISOString();
       const endDate = new Date(item.endDate).toISOString();
       item.value = [startDate, endDate];
+    } else {
+      item.value = [];
     }
+  }
+
+  closeSelect(select: MatSelect): void {
+    select.close();
   }
 }

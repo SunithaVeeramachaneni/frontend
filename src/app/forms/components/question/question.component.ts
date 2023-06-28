@@ -55,6 +55,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -67,7 +69,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
-  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+  @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
 
@@ -120,7 +122,16 @@ export class QuestionComponent implements OnInit, OnDestroy {
     return this._subFormId;
   }
 
+  @Input() set isQuestionPublished(value: boolean) {
+    this._isQuestionPublished = value;
+  }
+
+  get isQuestionPublished() {
+    return this._isQuestionPublished;
+  }
+
   @Input() isPreviewActive;
+  @Input() isEmbeddedForm;
 
   @Input() isAskQuestionFocusId: any;
   @Output() isAskedQuestionFocusId = new EventEmitter<any>();
@@ -129,6 +140,19 @@ export class QuestionComponent implements OnInit, OnDestroy {
   fieldTypes: any = [this.fieldType];
   formMetadata: FormMetadata;
   moduleName: string;
+
+  get rangeDisplayText() {
+    return this._rangeDisplayText;
+  }
+
+  set rangeDisplayText(d) {
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      this._rangeDisplayText = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+  }
+
+  private _rangeDisplayText = 'None';
 
   addLogicNotAppliedFields = [
     'LTV',
@@ -145,7 +169,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     'ARD',
     'DT',
     'HL',
-    'INST'
+    'INST',
+    'DF',
+    'TIF'
   ];
 
   unitOfMeasurementsAvailable: any[] = [];
@@ -182,6 +208,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
+  embeddedFormId: string = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -191,6 +218,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   private _questionName: string;
   private _subFormId: string;
   private onDestroy$ = new Subject();
+  private _isQuestionPublished: boolean;
 
   constructor(
     private dialog: MatDialog,
@@ -200,7 +228,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private base64Service: Base64HelperService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -208,6 +238,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       tap((event) => {
         this.formId = event.id;
         this.formMetadata = event;
+        this.embeddedFormId = event?.embeddedFormId;
       })
     );
     this.moduleName$ = this.store
@@ -233,10 +264,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
-        fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF'
+        fieldType.type !== 'TAF' &&
+        (this.isEmbeddedForm
+          ? fieldType.type !== 'DT'
+          : fieldType.type !== 'DF' &&
+            fieldType.type !== 'TIF' &&
+            fieldType.type !== 'IMG')
     );
 
     // isAskQuestion true set question id and section id
@@ -244,6 +279,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       this.questionForm.get('id').setValue(this.questionId);
       this.questionForm.get('sectionId').setValue(this.sectionId);
       this.questionForm.get('name').setValue(this.questionName);
+      this.questionForm.get('isPublished').setValue(this.isQuestionPublished);
       this.selectedNodeId = this.subFormId;
     }
 
@@ -276,6 +312,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
                 prevValue?.type === 'globalResponse'
               )
                 this.handleGlobalResponseRefCount(prevValue, currValue);
+
+              if (!isEqual(prev.rangeMetadata, curr.rangeMetadata))
+                this.rangeDisplayText = '';
 
               this.questionEvent.emit({
                 pageIndex: this.pageIndex,
@@ -336,6 +375,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             this.questionForm.patchValue(question, {
               emitEvent: false
             });
+            this.rangeDisplayText = '';
           }
         })
       );
@@ -420,6 +460,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       type: 'delete',
       questionId: this.questionId
     });
+
+    if (this.embeddedFormId) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.embeddedFormId,
+          UNIQUEKEY: this.questionId
+        })
+        .subscribe();
+    }
   }
 
   selectFieldTypeEventHandler(fieldType) {
@@ -464,7 +513,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.questionForm.get('value').setValue(sliderValue);
         break;
       case 'IMG':
-        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
+        this.insertImage.nativeElement.click();
         break;
       case 'INST':
         const instructionsValue = {
@@ -498,39 +547,49 @@ export class QuestionComponent implements OnInit, OnDestroy {
   };
 
   sliderOpen() {
-    this.formService.setsliderOpenState(true);
+    this.formService.setsliderOpenState({
+      isOpen: true,
+      questionId: this.questionForm.get('id').value,
+      value: {
+        value: 0,
+        min: 0,
+        max: 100,
+        increment: 1
+      }
+    });
   }
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
+      questionId: question.id,
       rangeMetadata: question.rangeMetadata
     });
   }
 
-  getRangeDisplayText() {
-    let resp = 'None';
-    const rangeMeta = this.questionForm.get('rangeMetadata').value;
-    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
-      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
-    }
-    return resp;
-  }
-
   insertImageHandler(event) {
-    let base64: string;
     const { files } = event.target as HTMLInputElement;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      const image = base64.split(',')[1];
-      const value = {
-        name: files[0].name,
-        size: (files[0].size / 1024).toFixed(2),
-        base64: image
-      };
-      this.questionForm.get('value').setValue(value);
+    const file = {
+      name: files[0].name,
+      size: (files[0].size / 1024).toFixed(2),
+      type: files[0].type
     };
+
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
+      .subscribe(async (data) => {
+        const { base64Response: base64 } =
+          await this.base64Service.getBase64ImageFromSourceUrl(
+            data.message.objectURL
+          );
+        const value = {
+          name: file.name,
+          size: file.size,
+          base64: base64.split(',')[1],
+          objectKey: data.message.objectKey,
+          objectURL: data.message.objectURL
+        };
+        this.questionForm.get('value').setValue(value);
+      });
   }
 
   getImageSrc(base64) {
@@ -550,10 +609,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     });
 
   updateIsOpen(isOpen: boolean) {
-    const isAskQuestion =
-      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-
-    if (isAskQuestion) {
+    if (this.isAskQuestion) {
       return;
     }
     if (this.questionForm.get('isOpen').value !== isOpen) {
@@ -625,10 +681,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       operand2: '',
       action: '',
       mandateAttachment: false,
+      askEvidence: '',
       raiseIssue: false,
       logicTitle: '',
       expression: '',
+      raiseNotification: false,
+      triggerInfo: '',
+      triggerWhen: '',
       questions: [],
+      evidenceQuestions: [],
       mandateQuestions: [],
       hideQuestions: []
     };
@@ -668,8 +729,8 @@ export class QuestionComponent implements OnInit, OnDestroy {
         );
         break;
       case 'ask_question_create':
-        const newQuestion = {
-          id: `AQ_${uuidv4()}`,
+        let newQuestion = {
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',
@@ -678,6 +739,33 @@ export class QuestionComponent implements OnInit, OnDestroy {
           enableHistory: false,
           multi: false,
           value: 'TF',
+          isPublished: false,
+          isPublishedTillSave: false,
+          isOpen: false,
+          isResponseTypeModalOpen: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion,
+            subFormId: this.selectedNodeId
+          })
+        );
+        break;
+      case 'ask_evidence_create':
+        newQuestion = {
+          id: event.askEvidence,
+          sectionId: `EVIDENCE_${event.logic.id}`,
+          name: `Attach Evidence for ${event.questionName}`,
+          fieldType: 'ATT',
+          position: 0,
+          required: true,
+          enableHistory: false,
+          multi: false,
+          value: 'ATT',
           isPublished: false,
           isPublishedTillSave: false,
           isOpen: false,
