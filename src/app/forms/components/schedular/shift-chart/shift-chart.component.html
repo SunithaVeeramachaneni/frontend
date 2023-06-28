@@ -13,7 +13,7 @@
           </td>
         </tr>
         <tr *ngIf="col === 0">
-          <td [attr.colspan]="slots?.length" class="slot">
+          <td [attr.colspan]="slots?.length - 1" class="slot">
             <div class="main-content slotBackground">
               <div class="left left-margin">
                 <p>{{ 'slot' | translate }} {{ getInitialTime }}</p>
@@ -40,7 +40,10 @@
         </tr>
         <tr *ngIf="col > 0">
           <td
-            *ngFor="let row of slotsControls; let index = index"
+            *ngFor="
+              let row of slotsControls | slice : 0 : slots.length - 1;
+              let index = index
+            "
             [attr.colspan]="dataArrays[index]?.index"
             class="slot"
           >
@@ -88,7 +91,10 @@
         </tr>
         <tr>
           <td
-            *ngFor="let slot of slots; let index = index"
+            *ngFor="
+              let slot of slots | slice : 0 : slots.length - 1;
+              let index = index
+            "
             class="slot"
             (click)="onAddSlot(slot, index)"
           >
