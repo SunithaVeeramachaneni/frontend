@@ -411,7 +411,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.submitted,
         color: statusColors.white
       },
-      'in-progress': {
+      'in progress': {
         'background-color': statusColors.inProgress,
         color: statusColors.black
       },
@@ -423,7 +423,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.assigned,
         color: statusColors.black
       },
-      'partly-open': {
+      'partly open': {
         'background-color': statusColors.partlyOpen,
         color: statusColors.black
       },
@@ -556,6 +556,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
+            status: roundDetail.status.replace('-', ' '),
             assignedToEmail: roundDetail.assignedTo
           }));
         } else {
@@ -570,6 +571,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
+              status: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
