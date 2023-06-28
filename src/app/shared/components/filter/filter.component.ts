@@ -88,6 +88,8 @@ export class FilterComponent implements OnInit, OnChanges {
       const startDate = new Date(item.startDate).toISOString();
       const endDate = new Date(item.endDate).toISOString();
       item.value = [startDate, endDate];
+    } else {
+      item.value = [];
     }
   }
 
