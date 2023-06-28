@@ -411,7 +411,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.submitted,
         color: statusColors.white
       },
-      'in-progress': {
+      'in progress': {
         'background-color': statusColors.inProgress,
         color: statusColors.black
       },
@@ -423,7 +423,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.assigned,
         color: statusColors.black
       },
-      'partly-open': {
+      'partly open': {
         'background-color': statusColors.partlyOpen,
         color: statusColors.black
       },
@@ -556,6 +556,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
+            status: roundDetail.status.replace('-', ' '),
             assignedToEmail: roundDetail.assignedTo
           }));
         } else {
@@ -570,6 +571,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
+              status: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
@@ -880,9 +882,14 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        if (Array.isArray(item.value)) {
+          this.filter[item.column] = item.value.map((time) =>
+            new Date(time).toISOString()
+          );
+        }
       }
     }
+
     this.nextToken = '';
     this.fetchRounds$.next({ data: 'load' });
   }
@@ -933,8 +940,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'assigned' : status;
-    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
+    status =
+      status.toLowerCase() === 'open'
+        ? 'assigned'
+        : status.toLowerCase() === 'partly-open'
+        ? 'in-progress'
+        : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,

@@ -340,7 +340,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'background-color': statusColors.submitted,
         color: statusColors.white
       },
-      'in-progress': {
+      'in progress': {
         'background-color': statusColors.inProgress,
         color: statusColors.black
       },
@@ -352,7 +352,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         'background-color': statusColors.assigned,
         color: statusColors.black
       },
-      'partly-open': {
+      'partly open': {
         'background-color': statusColors.partlyOpen,
         color: statusColors.black
       },
@@ -495,6 +495,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
             assignedTo: inspectionDetail?.assignedTo
               ? this.userService.getUserFullName(inspectionDetail.assignedTo)
               : '',
+            status: inspectionDetail.status.replace('-', ' '),
             assignedToEmail: inspectionDetail.assignedTo || ''
           }));
         } else {
@@ -508,6 +509,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 inspectionDetail.assignedTo
               ),
+              status: inspectionDetail.status.replace('-', ' '),
               assignedToEmail: inspectionDetail.assignedTo || ''
             }))
           );
@@ -844,7 +846,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedFormInfo;
-    status = status.toLowerCase() === 'open' ? 'assigned' : status;
+
+    status =
+      status.toLowerCase() === 'open'
+        ? 'assigned'
+        : status.toLowerCase() === 'partly-open'
+        ? 'in-progress'
+        : status;
+
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
