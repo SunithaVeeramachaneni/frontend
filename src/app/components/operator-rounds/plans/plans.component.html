@@ -14,16 +14,6 @@
       "
     ></app-form-detail>
   </div>
-  <ng-container *ngIf="users$ | async">
-    <app-round-plan-schedule-configuration
-      [@slideInOut]="scheduleConfigState"
-      [roundPlanDetail]="scheduleRoundPlanDetail"
-      [hidden]="hideScheduleConfig"
-      [assigneeDetails]="assigneeDetails"
-      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
-      (scheduleConfig)="scheduleConfigHandler($event)"
-    ></app-round-plan-schedule-configuration>
-  </ng-container>
   <span class="custom-form-field-gray-color plan-categories">
     <mat-button-toggle-group
       name="plans"

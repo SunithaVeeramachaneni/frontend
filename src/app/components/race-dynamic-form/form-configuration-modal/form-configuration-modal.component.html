@@ -16,29 +16,32 @@
         </h2>
 
         <p class="sub-heading" translate="setFormTypeHeading"></p>
-        <input
-          type="radio"
-          name="formType"
-          [value]="formConfigurationStatus.standalone"
-          id="1"
-          class="margin"
-          formControlName="formType"
-        />
-        <span class="radio-btn-text" translate="standalone"> </span><br />
+        <div class="formtype-flex">
+          <div class="formtype-style">
+            <input
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.standalone"
+              id="1"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="standalone"> </span>
+            <p class="radio-sub-text" translate="standaloneSubText"></p>
+          </div>
+          <div class="formtype-style">
+            <input
+              id="2"
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.embedded"
+              [disabled]="true"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="embedded"> </span><br />
 
-        <input
-          id="2"
-          type="radio"
-          name="formType"
-          [value]="formConfigurationStatus.embedded"
-          [disabled]="true"
-          class="margin"
-          formControlName="formType"
-        />
-        <span class="radio-btn-text" translate="embedded"> </span><br />
-
-        <p class="radio-sub-text" translate="embeddedSubText"></p>
-
+            <p class="radio-sub-text" translate="embeddedSubText"></p>
+          </div>
+        </div>
         <hr class="horizontal-line" />
 
         <div class="form-name">
@@ -149,6 +152,186 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
+        </div>
+
+        <div
+          class="additional-details"
+          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
+        >
+          <p translate="additionalDetails" class="additional-details-text"></p>
+          <button class="add-button" (click)="addAdditionalDetails()">
+            {{ 'add' | translate }}
+          </button>
+        </div>
+        <div
+          class="label-value-text"
+          *ngIf="
+            headerDataForm.get('additionalDetails')['controls']?.length > 0
+          "
+        >
+          <div class="width-45 label">{{ 'label' | translate }}</div>
+          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+        </div>
+        <div formArrayName="additionalDetails">
+          <div
+            *ngFor="
+              let additionalDetails of getAdditionalDetailList();
+              let i = index
+            "
+          >
+            <div [formGroupName]="i" class="dis-flex">
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-5 symbol m-b-10 width-100"
+                >
+                  <input
+                    #labelInput
+                    matInput
+                    type="text"
+                    formControlName="label"
+                    class="example-input"
+                    [matAutocomplete]="autolabel"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+                </mat-form-field>
+                <mat-error
+                  *ngIf="additionalDetails.get('label').errors?.maxlength"
+                >
+                  {{
+                    'maxlength'
+                      | translate
+                        : {
+                            name: 'label' | translate,
+                            length:
+                              additionalDetails.get('label').errors.maxlength
+                                .requiredLength
+                          }
+                  }}
+                </mat-error>
+
+                <mat-autocomplete #autolabel="matAutocomplete">
+                  <mat-option
+                    *ngFor="let label of filteredLabels$ | async"
+                    [value]="label"
+                  >
+                    {{ label }}
+                    <button
+                      mat-button
+                      class="remove-btn"
+                      (click)="removeLabel(label, i)"
+                    >
+                      <span>{{ 'removeBtn' | translate }}</span>
+                    </button>
+                  </mat-option>
+                  <mat-option
+                    *ngIf="
+                      headerDataForm.get('additionalDetails')['controls'][i]
+                        .value.label
+                    "
+                  >
+                    <ng-container>
+                      <button
+                        mat-button
+                        color="primary"
+                        class="p-0"
+                        (click)="storeDetails(i)"
+                      >
+                        <mat-icon class="m-r-5">add</mat-icon>
+
+                        <span
+                          >{{ 'addNew' | translate }} ({{
+                            headerDataForm.get('additionalDetails')['controls'][
+                              i
+                            ].value.label
+                          }})</span
+                        >
+                      </button>
+                    </ng-container>
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-20 symbol m-b-10 width-100"
+                >
+                  <input
+                    #valueInput
+                    matInput
+                    type="text"
+                    formControlName="value"
+                    [matAutocomplete]="autoValue"
+                    class="example-input"
+                    (click)="valueOptionClick(i)"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+                </mat-form-field>
+                <mat-error
+                  *ngIf="additionalDetails.get('value').errors?.maxlength"
+                >
+                  {{
+                    'maxlength'
+                      | translate
+                        : {
+                            name: 'value' | translate,
+                            length:
+                              additionalDetails.get('value').errors.maxlength
+                                .requiredLength
+                          }
+                  }}
+                </mat-error>
+                <mat-autocomplete #autoValue="matAutocomplete">
+                  <mat-option
+                    *ngFor="let value of filteredValues$ | async"
+                    [value]="value"
+                  >
+                    {{ value }}
+                    <button
+                      mat-button
+                      class="remove-btn"
+                      (click)="removeValue(value, i)"
+                    >
+                      <span>{{ 'removeBtn' | translate }}</span>
+                    </button>
+                  </mat-option>
+
+                  <mat-option
+                    *ngIf="
+                      headerDataForm.get('additionalDetails')['controls'][i][
+                        'value'
+                      ].value
+                    "
+                  >
+                    <button
+                      mat-button
+                      color="primary"
+                      class="p-0"
+                      (click)="storeValueDetails(i)"
+                    >
+                      <mat-icon class="m-r-5">add</mat-icon>
+
+                      <span
+                        >{{ 'addNew' | translate }} ({{
+                          headerDataForm.get('additionalDetails')['controls'][
+                            i
+                          ]['value'].value
+                        }})</span
+                      >
+                    </button>
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+              <div class="width-10 cancel-icon">
+                <svg-icon
+                  icon="icon-closeIcon"
+                  class="close-icon"
+                  (click)="deleteAdditionalDetails(i)"
+                ></svg-icon>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div mat-dialog-actions align="end" class="buttons">

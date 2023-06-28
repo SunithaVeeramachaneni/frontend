@@ -318,5 +318,21 @@
   "notificationCreation": "Notification Creation In-Progress",
   "actionPriority": "Priority: ",
   "actionStatus": "Status: ",
-  "timeZone": "Plant Timezone"
+  "scheduling": "Scheduling",
+  "planName": "Plan Name",
+  "planDescription": "Plan Description",
+  "scheduleBy": "Schedule By",
+  "shifts": "Shifts",
+  "doNotSelectAnyShift": "Do not select any Shift if you wish to run for whole day.",
+  "whenToRunRounds": "When to Run Rounds",
+  "selectSlotsBelow": "Select slots below",
+  "roundGenerationSlots": "Round Generation Slots",
+  "defaultSlotInMultipleSlotsWithoutOverlapping": "You can split default slot into multiple slots without overlapping.",
+  "slot": "Slot",
+  "additionalDetails": "Additional Details",
+  "value": "Value",
+  "add": "Add",
+  "timeZone": "Plant Timezone",
+  "taskSkipped": "Tasks Skipped",
+  "locationAssetsCompleted": "Location or Assets Completed"
 }
