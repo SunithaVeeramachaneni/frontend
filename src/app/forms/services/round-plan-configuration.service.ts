@@ -24,6 +24,7 @@ export class RoundPlanConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     subFormId: string,
+    isEmbeddedForm: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
     const page = this.getPageObject(
@@ -32,7 +33,8 @@ export class RoundPlanConfigurationService {
       addQuestions,
       pageWiseSectionIndexes,
       questionCounter,
-      sectionQuestionsList
+      sectionQuestionsList,
+      isEmbeddedForm
     );
     this.store.dispatch(
       BuilderConfigurationActions.addPage({
@@ -61,6 +63,7 @@ export class RoundPlanConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     subFormId: string,
+    isEmbeddedForm: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
     const { sections, questions } = this.getSectionsObject(
@@ -69,7 +72,8 @@ export class RoundPlanConfigurationService {
       addQuestions,
       pageWiseSectionIndexes,
       questionCounter,
-      sectionQuestionsList
+      sectionQuestionsList,
+      isEmbeddedForm
     );
     this.store.dispatch(
       BuilderConfigurationActions.addSections({
@@ -151,7 +155,8 @@ export class RoundPlanConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[]
+    sectionQuestionsList: SectionQuestions[],
+    isEmbeddedForm: boolean
   ) {
     const { sections, questions } = this.getSectionsObject(
       pageIndex,
@@ -159,7 +164,8 @@ export class RoundPlanConfigurationService {
       addQuestions,
       pageWiseSectionIndexes,
       questionCounter,
-      sectionQuestionsList
+      sectionQuestionsList,
+      isEmbeddedForm
     );
 
     return {
@@ -178,7 +184,8 @@ export class RoundPlanConfigurationService {
     addQuestions: number,
     pageWiseSectionIndexes: any,
     questionCounter: number,
-    sectionQuestionsList: SectionQuestions[]
+    sectionQuestionsList: SectionQuestions[],
+    isEmbeddedForm: boolean
   ) {
     let sectionCount =
       pageWiseSectionIndexes && pageWiseSectionIndexes[pageIndex]
@@ -191,7 +198,8 @@ export class RoundPlanConfigurationService {
       sectionCount = ++sectionCount;
       const section = this.getSection(
         sectionCount,
-        sectionQuestionsList[sectionIndex]?.section
+        sectionQuestionsList[sectionIndex]?.section,
+        isEmbeddedForm
       );
 
       const sectionQuestions = new Array(addQuestions)
@@ -224,10 +232,18 @@ export class RoundPlanConfigurationService {
     };
   }
 
-  private getSection(sectionIndex: number, section: Section) {
+  private getSection(
+    sectionIndex: number,
+    section: Section,
+    isEmbeddedForm: boolean
+  ) {
     return {
       id: `S${uuidv4()}`,
-      name: section ? section.name : 'Section',
+      name: section
+        ? section.name
+        : isEmbeddedForm
+        ? `Section ${sectionIndex}`
+        : `Section`,
       position: sectionIndex,
       isOpen: true
     };

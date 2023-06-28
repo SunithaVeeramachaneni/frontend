@@ -62,7 +62,7 @@
 }
 
 .m-r-5 {
-  margin-right: 5px;
+  margin-right: 5px !important;
 }
 
 .m-r-10 {
@@ -390,6 +390,7 @@ li {
 .instruction ol,
 ul {
   padding: 0 20px;
+  margin: 0;
 }
 
 a {

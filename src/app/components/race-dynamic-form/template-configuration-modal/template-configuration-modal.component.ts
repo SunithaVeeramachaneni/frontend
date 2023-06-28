@@ -14,9 +14,11 @@ import {
   MatAutocompleteSelectedEvent
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, merge } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -32,7 +34,9 @@ import {
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name-validator';
-
+import { AppService } from 'src/app/shared/services/app.services';
+import { ToastService } from 'src/app/shared/toast';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 @Component({
   selector: 'app-template-configuration-modal',
   templateUrl: './template-configuration-modal.component.html',
@@ -50,14 +54,21 @@ export class TemplateConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-
+  labels: any = {};
+  filteredLabels$: Observable<string[]>;
+  filteredValues$: Observable<string[]>;
   allTags: string[] = [];
   originalTags: string[] = [];
-
+  changedValues: any;
+  addNewShow = new BehaviorSubject<boolean>(false);
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+  convertedDetail = {};
   readonly formConfigurationStatus = formConfigurationStatus;
-
+  additionalDetails: FormArray;
+  labelSelected: any;
+  additionalDetailsIdMap = {};
+  deletedLabel = '';
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -65,6 +76,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
+    private appService: AppService,
+    private toastService: ToastService,
+    private operatorRoundService: OperatorRoundsService,
     @Inject(MAT_DIALOG_DATA)
     private data: any
   ) {
@@ -104,8 +118,10 @@ export class TemplateConfigurationModalComponent implements OnInit {
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
       formType: [formConfigurationStatus.standalone],
-      tags: [this.tags]
+      tags: [this.tags],
+      additionalDetails: this.fb.array([])
     });
+    this.retrieveDetails();
   }
 
   add(event: MatChipInputEvent): void {
@@ -152,6 +168,17 @@ export class TemplateConfigurationModalComponent implements OnInit {
   }
 
   next() {
+    const additionalinfoArray = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    const updatedAdditionalDetails = additionalinfoArray.value.map(
+      (additionalinfo) => ({
+        FIELDLABEL: additionalinfo.label,
+        DEFAULTVALUE: additionalinfo.value,
+        UIFIELDTYPE: 'LF'
+      })
+    );
+
     const newTags = [];
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -171,6 +198,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
       this.rdfService
         .createTemplate$({
           ...this.headerDataForm.value,
+          additionalDetails: updatedAdditionalDetails,
           author: userEmail,
           formLogo: 'assets/rdf-forms-icons/formlogo.svg'
         })
@@ -209,5 +237,212 @@ export class TemplateConfigurationModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  addAdditionalDetails() {
+    this.additionalDetails = this.headerDataForm.get(
+      'additionalDetails'
+    ) as FormArray;
+    this.additionalDetails.push(
+      this.fb.group({
+        label: ['', [Validators.maxLength(25)]],
+        value: ['', [Validators.maxLength(40)]]
+      })
+    );
+
+    if (this.additionalDetails) {
+      merge(
+        ...this.additionalDetails.controls.map(
+          (control: AbstractControl, index: number) =>
+            control.valueChanges.pipe(
+              map((value) => ({ rowIndex: index, value }))
+            )
+        )
+      ).subscribe((changes) => {
+        this.changedValues = changes.value;
+        if (this.changedValues.label) {
+          this.filteredLabels$ = of(
+            Object.keys(this.labels).filter(
+              (label) =>
+                label
+                  .toLowerCase()
+                  .indexOf(this.changedValues.label.toLowerCase()) === 0
+            )
+          );
+        } else {
+          this.filteredLabels$ = of([]);
+        }
+
+        if (this.changedValues.value && this.labels[this.changedValues.label]) {
+          this.filteredValues$ = of(
+            this.labels[this.changedValues.label].filter(
+              (value) =>
+                value
+                  .toLowerCase()
+                  .indexOf(this.changedValues.value.toLowerCase()) === 0
+            )
+          );
+        } else {
+          this.filteredValues$ = of([]);
+        }
+      });
+    }
+  }
+
+  deleteAdditionalDetails(index: number) {
+    const add = this.headerDataForm.get('additionalDetails') as FormArray;
+    add.removeAt(index);
+  }
+
+  storeDetails(i) {
+    this.operatorRoundService
+      .createAdditionalDetails$({ ...this.changedValues, updateType: 'add' })
+      .subscribe((response) => {
+        if (response?.label) {
+          this.toastService.show({
+            type: 'success',
+            text: 'Label added successfully'
+          });
+        }
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        this.labels[response?.label] = response?.values;
+        this.filteredLabels$ = of(Object.keys(this.labels));
+        this.additionalDetailsIdMap[response?.label] = response?.id;
+        additionalinfoArray.at(i).get('label').setValue(response.label);
+      });
+  }
+
+  storeValueDetails(i) {
+    const currentLabel = this.changedValues.label;
+    const currentValue = this.changedValues.value;
+    if (Object.keys(this.labels).includes(currentLabel)) {
+      if (
+        this.labels[currentLabel].every(
+          (value) => value.toLowerCase() !== currentValue.toLowerCase()
+        )
+      ) {
+        const newValues = [...this.labels[currentLabel], currentValue];
+        this.operatorRoundService
+          .updateValues$({
+            value: newValues,
+            labelId: this.additionalDetailsIdMap[currentLabel]
+          })
+          .subscribe(() => {
+            this.toastService.show({
+              type: 'success',
+              text: 'Value added successfully'
+            });
+            this.labels[currentLabel] = newValues;
+            this.filteredValues$ = of(this.labels[currentLabel]);
+            const additionalinfoArray = this.headerDataForm.get(
+              'additionalDetails'
+            ) as FormArray;
+            additionalinfoArray.at(i).get('value').setValue(currentValue);
+          });
+      } else {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Value already exists'
+        });
+      }
+    } else {
+      this.toastService.show({
+        type: 'warning',
+        text: 'Label does not exist'
+      });
+    }
+  }
+
+  retrieveDetails() {
+    this.operatorRoundService
+      .getAdditionalDetails$()
+      .subscribe((details: any[]) => {
+        this.labels = this.convertArrayToObject(details);
+        details.forEach((data) => {
+          this.additionalDetailsIdMap[data.label] = data.id;
+        });
+      });
+  }
+
+  convertArrayToObject(details) {
+    details.map((obj) => {
+      this.convertedDetail[obj.label] = obj.values;
+    });
+    return this.convertedDetail;
+  }
+
+  valueOptionClick(index) {
+    this.labelSelected =
+      this.headerDataForm.get('additionalDetails').value[index].label;
+    if (
+      this.headerDataForm.get('additionalDetails').value[index].value &&
+      this.labelSelected &&
+      this.labels[this.labelSelected]
+    ) {
+      this.filteredValues$ = of(
+        this.labels[
+          this.headerDataForm.get('additionalDetails').value[index].label
+        ].filter((data) =>
+          data.includes(
+            this.headerDataForm.get('additionalDetails').value[index].value
+          )
+        )
+      );
+    } else {
+      this.filteredValues$ = of([]);
+    }
+  }
+  removeLabel(label, i) {
+    const documentId = this.additionalDetailsIdMap[label];
+    this.operatorRoundService.removeLabel$(documentId).subscribe(() => {
+      delete this.labels[label];
+      delete this.additionalDetailsIdMap[label];
+      this.toastService.show({
+        type: 'success',
+        text: 'Label deleted Successfully'
+      });
+      this.deletedLabel = label;
+      const additionalinfoArray = this.headerDataForm.get(
+        'additionalDetails'
+      ) as FormArray;
+      additionalinfoArray.at(i).get('label').setValue('');
+      additionalinfoArray.controls.forEach((control, index) => {
+        if (control.value.label === label) {
+          control.get('label').setValue('');
+          control.get('value').setValue('');
+        }
+      });
+    });
+  }
+  removeValue(deleteValue, i) {
+    const newValue = this.labels[this.changedValues.label].filter(
+      (value) => value !== deleteValue
+    );
+    this.operatorRoundService
+      .deleteAdditionalDetailsValue$({
+        value: newValue,
+        labelId: this.additionalDetailsIdMap[this.changedValues.label]
+      })
+      .subscribe(() => {
+        this.labels[this.changedValues.label] = newValue;
+        this.toastService.show({
+          type: 'success',
+          text: 'Value deleted Successfully'
+        });
+        const additionalinfoArray = this.headerDataForm.get(
+          'additionalDetails'
+        ) as FormArray;
+        additionalinfoArray.at(i).get('value').setValue('');
+        additionalinfoArray.controls.forEach((control, index) => {
+          if (control.value.value === deleteValue) {
+            control.get('value').setValue('');
+          }
+        });
+      });
+  }
+  getAdditionalDetailList() {
+    return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
   }
 }

@@ -57,7 +57,8 @@ import {
   dateTimeFormat3,
   permissions as perms,
   dateFormat5,
-  hourFormat
+  hourFormat,
+  statusColors
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -96,7 +97,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
   }
   assigneeDetails: AssigneeDetails;
   filterJson = [];
-  status = ['Open', 'In-progress', 'Submitted', 'To-Do'];
+  status = [
+    'Open',
+    'In-Progress',
+    'Submitted',
+    'Assigned',
+    'Partly-Open',
+    'Overdue'
+  ];
   filter = {
     status: '',
     schedule: '',
@@ -193,7 +201,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 4,
@@ -279,7 +293,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
       controlType: 'dropdown',
       controlValue: {
         dependentFieldId: 'status',
-        dependentFieldValues: ['to-do', 'open', 'in-progress'],
+        dependentFieldValues: [
+          'assigned',
+          'open',
+          'in-progress',
+          'partly-open',
+          'overdue'
+        ],
         displayType: 'text'
       },
       order: 7,
@@ -317,20 +337,28 @@ export class InspectionComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       submitted: {
-        'background-color': ' #2C9E53',
-        color: '#ffffff'
+        'background-color': statusColors.submitted,
+        color: statusColors.white
       },
       'in-progress': {
-        'background-color': '#FFCC00',
-        color: '#000000'
+        'background-color': statusColors.inProgress,
+        color: statusColors.black
       },
       open: {
-        'background-color': '#e0e0e0',
-        color: '#000000'
+        'background-color': statusColors.open,
+        color: statusColors.black
       },
-      'to-do': {
-        'background-color': '#F56565',
-        color: '#ffffff'
+      assigned: {
+        'background-color': statusColors.assigned,
+        color: statusColors.black
+      },
+      'partly-open': {
+        'background-color': statusColors.partlyOpen,
+        color: statusColors.black
+      },
+      overdue: {
+        'background-color': statusColors.overdue,
+        color: statusColors.white
       }
     }
   };
@@ -616,11 +644,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         break;
       case 'dueDateDisplay':
         this.selectedDate = { ...this.selectedDate, date: row.dueDate };
-        if (
-          row.plantId &&
-          this.plantTimezoneMap[row.plantId] &&
-          this.plantTimezoneMap[row.plantId].timeZoneIdentifier
-        ) {
+        if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
           const dueDate = new Date(
             formatInTimeZone(
               row.dueDate,
@@ -820,7 +844,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedFormInfo;
-    status = status.toLowerCase() === 'open' ? 'to-do' : status;
+    status = status.toLowerCase() === 'open' ? 'assigned' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
@@ -859,19 +883,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
     const { inspectionId, assignedToEmail, plantId, ...rest } =
       this.selectedFormInfo;
     const dueDateDisplayFormat = format(dueDate, dateFormat2);
-    if (
-      plantId &&
-      this.plantTimezoneMap[plantId] &&
-      this.plantTimezoneMap[plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       const time = localToTimezoneDate(
         this.selectedFormInfo.dueDate,
-        this.plantTimezoneMap[this.selectedFormInfo.plantId],
+        this.plantTimezoneMap[plantId],
         hourFormat
       );
       dueDate = zonedTimeToUtc(
         format(dueDate, dateFormat5) + ` ${time}`,
-        this.plantTimezoneMap[this.selectedFormInfo.plantId].timeZoneIdentifier
+        this.plantTimezoneMap[plantId].timeZoneIdentifier
       );
     }
     this.raceDynamicFormService
@@ -912,10 +932,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.trigger.toArray()[1].closeMenu();
   }
   formatDate(date, plantId) {
-    if (
-      this.plantTimezoneMap[plantId] &&
-      this.plantTimezoneMap[plantId].timeZoneIdentifier
-    ) {
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
       return localToTimezoneDate(
         date,
         this.plantTimezoneMap[plantId],

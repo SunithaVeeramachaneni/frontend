@@ -65,10 +65,15 @@ import { DatePipe } from '@angular/common';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
-import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import {
+  ScheduleConfigEvent,
+  ScheduleConfigurationComponent
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { MatDialog } from '@angular/material/dialog';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 
 @Component({
   selector: 'app-forms',
@@ -336,7 +341,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
-
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -346,10 +351,21 @@ export class FormsComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
   ngOnInit(): void {
+    this.scheduleConfigEvent =
+      this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
+        (value) => {
+          if (value) {
+            this.scheduleConfigEventHandler(value);
+          }
+        }
+      );
+
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -644,11 +660,36 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   openScheduleConfigHandler(row: any) {
+    this.scheduleFormDetail = { ...row };
+    const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        formDetail: this.scheduleFormDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'RDF',
+        assigneeDetails: this.assigneeDetails
+      }
+    });
     this.hideScheduleConfig = false;
     this.closeFormHandler();
-    this.scheduleFormDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -738,10 +779,6 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   }
 
-  viewFormsHandler(id: any) {
-    this.selectTab.emit({ index: 1, queryParams: { id } });
-  }
-
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
     switch (action) {
@@ -795,10 +832,9 @@ export class FormsComponent implements OnInit, OnDestroy {
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       formScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.plantTimezoneMap[plantId] &&
-          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
           ? localToTimezoneDate(
               new Date(formScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
@@ -809,11 +845,10 @@ export class FormsComponent implements OnInit, OnDestroy {
               dateFormat
             )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
@@ -821,8 +856,7 @@ export class FormsComponent implements OnInit, OnDestroy {
               )
             : this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
@@ -831,6 +865,29 @@ export class FormsComponent implements OnInit, OnDestroy {
             : this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
+    if (scheduleType === 'byDate') {
+      const scheduleDates = formScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`

@@ -65,14 +65,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { DatePipe } from '@angular/common';
-import {
-  ScheduleConfig,
-  ScheduleConfigEvent
-} from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { UsersService } from '../../user-management/services/users.service';
+import {
+  ScheduleConfig,
+  ScheduleConfigEvent,
+  ScheduleConfigurationComponent
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-plans',
@@ -383,7 +386,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
   private destroy$ = new Subject();
-
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
@@ -394,10 +397,21 @@ export class PlansComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
     private plantService: PlantService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
   ngOnInit(): void {
+    this.scheduleConfigEvent =
+      this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
+        (value) => {
+          if (value) {
+            this.scheduleConfigEventHandler(value);
+          }
+        }
+      );
+
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
@@ -721,11 +735,37 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   openScheduleConfigHandler(row: RoundPlanDetail) {
+    this.scheduleRoundPlanDetail = { ...row };
+    const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        roundPlanDetail: this.scheduleRoundPlanDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'OPERATOR_ROUNDS',
+        assigneeDetails: this.assigneeDetails
+      }
+    });
     this.hideScheduleConfig = false;
     this.closeRoundPlanHandler();
-    this.scheduleRoundPlanDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -771,8 +811,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  scheduleConfigHandler(scheduleConfig: ScheduleConfig) {
-    const { roundPlanScheduleConfiguration, mode } = scheduleConfig;
+  scheduleConfigHandler(scheduleConfig) {
+    const { roundPlanScheduleConfiguration, mode } =
+      scheduleConfig as ScheduleConfig;
     this.roundPlanScheduleConfigurations[
       roundPlanScheduleConfiguration.roundPlanId
     ] = roundPlanScheduleConfiguration;
@@ -868,10 +909,9 @@ export class PlansComponent implements OnInit, OnDestroy {
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       roundPlanScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.plantTimezoneMap[plantId] &&
-          this.plantTimezoneMap[plantId].timeZoneIdentifier
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
           ? localToTimezoneDate(
               new Date(roundPlanScheduleConfiguration.startDate),
               this.plantTimezoneMap[plantId],
@@ -882,28 +922,50 @@ export class PlansComponent implements OnInit, OnDestroy {
               dateFormat
             )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(scheduleEndOn),
                 this.plantTimezoneMap[plantId],
-                'MMM dd, yy'
+                dateFormat
               )
-            : this.datePipe.transform(new Date(scheduleEndOn), 'MMM dd, yy')
+            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
           : scheduleEndType === 'after'
-          ? this.plantTimezoneMap[plantId] &&
-            this.plantTimezoneMap[plantId].timeZoneIdentifier
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
             ? localToTimezoneDate(
                 new Date(endDate),
                 this.plantTimezoneMap[plantId],
-                'MMM dd, yy'
+                dateFormat
               )
-            : this.datePipe.transform(new Date(endDate), 'MMM dd, yy')
+            : this.datePipe.transform(new Date(endDate), dateFormat)
           : 'Never'
         : '';
+
+    if (scheduleType === 'byDate') {
+      const scheduleDates = roundPlanScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
