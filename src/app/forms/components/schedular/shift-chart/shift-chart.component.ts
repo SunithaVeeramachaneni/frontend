@@ -80,11 +80,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
-    const checkSlot = this.dataArrays.filter(
-      (item) =>
-        item.startTime === val ||
-        item.endTime === this.service.subtractTime(val, 0, 1)
-    );
+    const checkSlot = this.dataArrays.filter((item) => item.startTime === val);
     if (checkSlot.length || checkSlot.length > 0) {
       const checkIsBook = checkSlot.filter((e) => e.isBook === false);
       if (checkIsBook.length) {
@@ -233,6 +229,20 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         endTime: this.service.subtractTime(val, 0, 1),
         isBook: true
       };
+      if (val === this.slots[this.slots.length - 2]) {
+        obj.endTime = this.service.addTime(val, 0, 59);
+      }
+      if (
+        this.shift?.value?.null &&
+        val === this.slots[this.slots.length - 2]
+      ) {
+        obj.index = idx + 1;
+        obj.endTime = this.service.addTime(val, 0, 59);
+      }
+      if (val === this.slots[0]) {
+        obj.index = idx + 1;
+        obj.endTime = this.service.addTime(val, 0, 59);
+      }
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
       this.dataArrays = this.service.sortArray(this.dataArrays);
@@ -298,10 +308,10 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           1
         )}`;
       } else {
-        return `${startTime} - ${this.service.addTime(
+        return `${startTime} - ${this.service.subtractTime(
           this.slots[this.slots?.length - 1],
           0,
-          59
+          1
         )}`;
       }
     }
@@ -371,10 +381,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   private prepareSelectedTime(payload) {
-    console.log(
-      '🚀 ~ file: shift-chart.component.ts:374 ~ ShiftChartComponent ~ prepareSelectedTime ~ payload:',
-      payload
-    );
     let timeDiff = this.service.getTimeDifference(
       payload?.startTime,
       this.service.addTime(payload?.endTime, 0, 1)

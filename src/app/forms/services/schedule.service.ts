@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { TimeType } from '../components/schedular/schedule-configuration/schedule-configuration.constants';
+import {
+  TimeType,
+  TIME_SLOTS
+} from '../components/schedular/schedule-configuration/schedule-configuration.constants';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -67,13 +70,21 @@ export class ScheduleConfigurationService {
 
   // The getTimeDifference function takes two time strings (firstTime and secondTime) in the format HH:MM and returns the time difference in hours between the two.
   getTimeDifference(firstTime: string, secondTime: string): number {
-    let timeDifference;
+    let timeDifference: number;
     const startTime = '12:00 AM';
-    const twenty24Hours = 24;
+    const twentyFourHours = 24;
+
     if (firstTime === startTime && secondTime === startTime) {
-      timeDifference = twenty24Hours;
+      timeDifference = twentyFourHours;
     } else {
-      timeDifference = this.getHours(secondTime) - this.getHours(firstTime);
+      const firstHour = this.getHours(firstTime);
+      const secondHour = this.getHours(secondTime);
+
+      if (firstHour > secondHour) {
+        timeDifference = twentyFourHours - (firstHour - secondHour);
+      } else {
+        timeDifference = secondHour - firstHour;
+      }
     }
     return timeDifference;
   }
@@ -96,6 +107,12 @@ export class ScheduleConfigurationService {
       });
       timeSlots.push(formattedTime.toLocaleUpperCase());
       current.setHours(current.getHours() + 1);
+      if (current > end) {
+        break;
+      }
+    }
+    if (startTime === this.addTime(endTime, 0, 1)) {
+      return TIME_SLOTS;
     }
     return timeSlots;
   }
@@ -217,8 +234,12 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
-    const startTime = '12:00 PM';
-    if (timeString?.toLowerCase() === startTime?.toLowerCase()) {
+    const startTimePM = '12:00 PM';
+    if (timeString?.toLowerCase() === startTimePM?.toLowerCase()) {
+      type = TimeType.am;
+    }
+    const startTimeAM = '12:00 am';
+    if (timeString?.toLowerCase() === startTimeAM) {
       type = TimeType.am;
     }
 
