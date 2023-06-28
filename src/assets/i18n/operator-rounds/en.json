@@ -254,7 +254,7 @@
   "userGroup": "User Group",
   "plant": "Plant",
   "plantMandatory": "Plant *",
-  "assignToInfo": "The assignee will be auto assigned to all the rounds generated, However you can still change from the rounds",
+  "assignToInfo": "All the tasks will be assigned to the selected user",
   "advanceRoundsCountInfo": "For how many days would you like to generate rounds at a time in advance?",
   "select": "Select",
   "roundsGeneration": "Rounds Generation",
@@ -335,5 +335,6 @@
   "timeZone": "Plant Timezone",
   "taskSkipped": "Tasks Skipped",
   "locationAssetsCompleted": "Location or Assets Completed",
-  "daysCount": "Days Count"
+  "daysCount": "Days Count",
+  "assignTo": "Assign To"
 }
