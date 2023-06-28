@@ -332,5 +332,6 @@
   "user": "User",
   "defaultCurrentDate": "Default to current date",
   "defaultCurrentTime": "Default to current time",
-  "daysCount": "Days Count"
+  "daysCount": "Days Count",
+  "assignTo": "Assign To"
 }
