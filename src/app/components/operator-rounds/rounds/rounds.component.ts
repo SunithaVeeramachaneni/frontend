@@ -884,8 +884,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
           this.filter[item.column] = item.value.map((time) =>
             new Date(time).toISOString()
           );
-        } else {
-          this.filter[item.column] = new Date(item.value).toISOString();
         }
       }
     }
