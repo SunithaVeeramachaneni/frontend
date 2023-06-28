@@ -845,6 +845,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
     let { status } = this.selectedFormInfo;
     status = status.toLowerCase() === 'open' ? 'assigned' : status;
+    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
     this.raceDynamicFormService
       .updateInspection$(
         inspectionId,
