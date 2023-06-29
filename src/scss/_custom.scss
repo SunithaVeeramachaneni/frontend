@@ -4,8 +4,16 @@
   padding: 0;
 }
 
+.p-5 {
+  padding: 5px;
+}
+
 .p-10 {
   padding: 10px;
+}
+
+.p-15 {
+  padding: 15px;
 }
 
 .m-0 {
@@ -62,7 +70,7 @@
 }
 
 .m-r-5 {
-  margin-right: 5px;
+  margin-right: 5px !important;
 }
 
 .m-r-10 {

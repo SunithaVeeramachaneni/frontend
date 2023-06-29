@@ -12,19 +12,6 @@
       [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"
     ></app-form-detail>
   </div>
-  <ng-container *ngIf="users$ | async">
-    <app-schedule-configuration
-      [@slideInOut]="scheduleConfigState"
-      [formDetail]="scheduleFormDetail"
-      [hidden]="hideScheduleConfig"
-      [moduleName]="'RDF'"
-      [assigneeDetails]="assigneeDetails"
-      (scheduleConfigEvent)="scheduleConfigEventHandler($event)"
-      (scheduleConfig)="scheduleConfigHandler($event)"
-      (viewForms)="viewFormsHandler($event)"
-    ></app-schedule-configuration>
-  </ng-container>
-
   <span class="custom-form-field-gray-color form-categories">
     <mat-button-toggle-group
       name="forms"
@@ -96,7 +83,10 @@
   </ng-template>
 </div>
 <ng-container *ngIf="userInfo$ | async">
-  <div *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false" class="forms-list">
+  <div
+    *ngIf="(filteredForms$ | async) && (isLoading$ | async) === false"
+    class="forms-list"
+  >
     <cwp-dynamictable
       [ngClass]="{
         'remove-zindex': zIndexDelay === 400 || zIndexScheduleDelay === 400

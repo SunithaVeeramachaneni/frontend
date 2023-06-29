@@ -139,7 +139,8 @@ export class BuilderComponent implements OnInit {
       1,
       this.sectionIndexes,
       this.counter,
-      this.selectedNode.id
+      this.selectedNode.id,
+      this.isEmbeddedForm
     );
   }
 
@@ -154,7 +155,8 @@ export class BuilderComponent implements OnInit {
             1,
             this.sectionIndexes,
             this.counter,
-            this.selectedNode.id
+            this.selectedNode.id,
+            this.isEmbeddedForm
           );
         }
         break;
@@ -193,7 +195,8 @@ export class BuilderComponent implements OnInit {
             sectionIndex,
             this.sectionIndexes,
             this.counter,
-            this.selectedNode.id
+            this.selectedNode.id,
+            this.isEmbeddedForm
           );
         }
         break;

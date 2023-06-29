@@ -3,10 +3,12 @@
   class="preview-embedded-forms"
 >
   <div *ngFor="let section of pageData[0].sections; let i = index">
-    <p class="section-name">
-      {{ section.name ? section.name : 'Section Name' }}
+    <div class="section-name">
+      <p class="width-90 name">
+        {{ section.name ? section.name : 'Section Name' }}
+      </p>
       <mat-icon class="section-arrow"> keyboard_arrow_down </mat-icon>
-    </p>
+    </div>
     <div *ngFor="let question of section.questions">
       <div class="dis-flex m-b-10 m-r-15">
         <div
@@ -152,6 +154,15 @@
             class="default-value m-0 m-r-minus40"
           >
             {{ question.value }}
+          </p>
+
+          <p
+            *ngIf="question.fieldType === 'HL'"
+            class="default-value m-0 m-r-minus40"
+          >
+            <a href=" question.value" target="_blank" class="hyderlink-value">{{
+              question.value
+            }}</a>
           </p>
 
           <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">

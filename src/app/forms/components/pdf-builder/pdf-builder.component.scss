@@ -35,16 +35,20 @@
             font-size: 130%;
             font-weight: 500;
             border-top: 1px solid $drag-preview-shadow2;
-            padding-top: 13px;
+            padding-top: 10px;
+            border-bottom: 1px solid $drag-preview-shadow2;
+            padding-bottom: 10px;
           }
           .option {
             display: flex;
-            margin: 10px;
+            margin: 6px;
             flex-direction: column;
             .customText {
               display: flex;
               justify-content: flex-start;
               width: 100%;
+              position: relative;
+              left: 10px;
               .field {
                 margin: 10px;
                 width: 45%;
@@ -54,8 +58,8 @@
           .m-l-40 {
             margin-left: 40px;
           }
-          .m-l-80 {
-            margin-left: 80px;
+          .m-l-50 {
+            margin-left: 50px;
           }
         }
       }
@@ -69,6 +73,16 @@
   }
 }
 
+.bottomBorder {
+  border-bottom: 1px solid $drag-preview-shadow2;
+  padding-bottom: 5px;
+}
+.questions {
+  position: relative;
+  margin-left: 30px;
+  padding-top: 5px;
+  padding-bottom: 8px;
+}
 .back-btn {
   border: none;
   background-color: transparent;
@@ -291,7 +305,9 @@ ul {
   margin-left: 10px;
   height: 80%;
 }
-
+.customField {
+  display: contents;
+}
 .details {
   margin-left: 8px;
 }
@@ -305,7 +321,8 @@ ul {
   width: 175px !important;
 }
 .tablelogo {
-  width: 150px;
+  width: 160px;
+  height: 30px;
 }
 .tableHeading-text {
   display: flex;
@@ -338,15 +355,11 @@ ul {
 }
 .pageHeader {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 15px 0px;
 }
-.pageTitleRow {
-  display: flex;
-  align-items: center;
-  height: 50px;
-  padding: 10px 0px;
-}
+
 .subjectRow {
   display: flex;
   align-items: center;
@@ -357,13 +370,23 @@ ul {
   min-height: 800px;
 }
 .roundId {
-  color: $light-gray;
-  width: 45%;
+  color: $black;
+  width: 100%;
 }
+
 .formName {
-  color: $light-gray;
-  font-weight: 500;
-  font-size: 10pt;
+  color: $black;
+  font-weight: bolder;
+  font-size: 130%;
+  padding: 5px 5px 5px 0px;
+}
+
+.formName-gray {
+  color: $dark-gray;
+}
+
+#submitted-color {
+  color: $green2;
 }
 .pageFooter {
   padding: 15px 0px;
@@ -380,6 +403,8 @@ ul {
   font-weight: 500;
   width: 100%;
   height: 10px;
+  position: relative;
+  right: 110px;
   .poweredByText {
     width: 175px;
     position: relative;
@@ -422,9 +447,13 @@ ul {
 .label {
   font-weight: 600;
 }
+.landingPageRow {
+  position: relative;
+  min-height: 800px;
+}
 
 .tasksHead {
-  background: $black;
+  background: $task-bg;
   padding: 10px;
   color: $white;
   display: flex;
@@ -446,8 +475,9 @@ ul {
   border: 1px solid $issue-border;
 }
 .actionHead {
-  background: $white1;
+  background: $actions-color;
   padding: 10px;
+  margin: 10px 10px 0px 10px;
 }
 .actionBody {
   padding: 10px;
@@ -618,4 +648,89 @@ ul {
 
 .tasks-completed {
   text-align: end;
+}
+
+.landing-page-table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+  th {
+    font-weight: 500;
+  }
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  .bg-gray {
+    background-color: $gray;
+  }
+}
+
+#issue-color {
+  color: $white;
+  background-color: $issue-raised;
+}
+
+.resolved-color {
+  color: $white;
+  background-color: $resolved;
+}
+
+.bg-yellow {
+  background-color: $yellow-bg;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+#action-color {
+  color: $white;
+  background-color: $action-raised;
+}
+
+.task-color {
+  color: $white;
+  background-color: $task-bg;
+}
+
+.issueColumns {
+  display: flex;
+}
+
+.actionColumns {
+  display: flex;
+}
+
+.notification-position {
+  position: relative;
+  left: 7px;
+}
+
+.waterMark:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url('../../../../assets/Images/watermark.svg');
+  background-size: 250px;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.status-color {
+  color: $black;
+  background-color: $border-color;
+  padding: 4px 11px 4px 11px;
+  border-radius: 20px;
+}
+
+.priority-color {
+  color: $issue-bg;
 }
