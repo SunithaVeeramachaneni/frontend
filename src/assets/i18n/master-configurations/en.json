@@ -20,7 +20,7 @@
   "assetsId": "Asset Id",
   "assetsIdMandatory": "Asset Id *",
   "model": "Model",
-  "description": "Description",
+  "description": "UOM",
   "parentType": "Parent Type",
   "location": "Location",
   "asset": "Asset",
