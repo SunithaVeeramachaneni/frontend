@@ -76,7 +76,6 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { ShiftChangeWarningModalComponent } from '../../operator-rounds/shift-change-warning-modal/shift-change-warning-modal.component';
 import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 
 @Component({

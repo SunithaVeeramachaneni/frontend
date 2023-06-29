@@ -79,7 +79,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { ShiftChangeWarningModalComponent } from '../shift-change-warning-modal/shift-change-warning-modal.component';
+import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 @Component({
   selector: 'app-rounds',
   templateUrl: './rounds.component.html',
@@ -1219,7 +1219,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
     if (shiftValidation) {
       const openDialogModalRef = this.dialog.open(
-        ShiftChangeWarningModalComponent,
+        ShiftDateChangeWarningModalComponent,
         { data: { type: 'warning' } }
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
@@ -1295,7 +1295,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.dialog.open(ShiftChangeWarningModalComponent, {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
         data: { type: 'date' }
       });
     }
@@ -1367,7 +1367,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     if (shiftValidation) {
       const data = { type: 'warning' };
       const openDialogModalRef = this.dialog.open(
-        ShiftChangeWarningModalComponent,
+        ShiftDateChangeWarningModalComponent,
         { data }
       );
       openDialogModalRef.afterClosed().subscribe((resp) => {
@@ -1440,7 +1440,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.dialog.open(ShiftChangeWarningModalComponent, {
+      this.dialog.open(ShiftDateChangeWarningModalComponent, {
         data: { type: 'date' }
       });
     }
@@ -1508,7 +1508,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     const openDialogModalRef = this.dialog.open(
-      ShiftChangeWarningModalComponent,
+      ShiftDateChangeWarningModalComponent,
       { data: { type: 'warning' } }
     );
     openDialogModalRef.afterClosed().subscribe((resp) => {

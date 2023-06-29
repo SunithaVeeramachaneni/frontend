@@ -70,7 +70,6 @@ import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effect
 import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
-import { ShiftChangeWarningModalComponent } from './shift-change-warning-modal/shift-change-warning-modal.component';
 import {
   NgxMatDatetimePickerModule,
   NgxMatTimepickerModule
@@ -96,8 +95,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedDeleteModalComponent,
     AssetsModalComponent,
     AssetsModalComponent,
-    RoundObservationsComponent,
-    ShiftChangeWarningModalComponent
+    RoundObservationsComponent
   ],
   imports: [
     FormsModule,
