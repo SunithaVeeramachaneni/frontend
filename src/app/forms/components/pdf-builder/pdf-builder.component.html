@@ -191,8 +191,6 @@
             <div class="pageHeader">
               <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id
                 }}</span>
-              <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name
-                }}</span>
             </div>
             <div *ngIf="
                 !(
@@ -205,7 +203,7 @@
                   <img [src]="innovapptiveLogo" class="tablelogo" />
                 </div>
                 <div class="tableHeading-text">
-                  <span class="name">{{ formMetadata.name }}</span>
+                  <span class="name" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
                   <span class="discribe">{{
                     formMetadata.description ? formMetadata.description : ''
                     }}</span>
@@ -317,14 +315,13 @@
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
       <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id }}</span>
-      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
     </div>
     <div class="pageTitleRow">
       <div class="tableHead-logo" *ngIf="pdfBuilderConfigurationsForm.get('logo').value">
         <img [src]="innovapptiveLogo" class="tablelogo" />
       </div>
       <div class="tableHeading-text">
-        <span class="name">{{ formMetadata.name }}</span>
+        <span class="name" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
         <span class="discribe">{{
           formMetadata.description ? formMetadata.description : ''
           }}</span>
@@ -504,7 +501,6 @@
   <div id="content" #content class="pdfPage">
     <div class="pageHeader">
       <span class="roundId" *ngIf="pdfBuilderConfigurationsForm.get('formId').value">{{ formMetadata.id }}</span>
-      <span class="formName" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
     </div>
     <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
       <div class="pageTitleRow">
@@ -512,7 +508,7 @@
           <img [src]="innovapptiveLogo" class="tablelogo" />
         </div>
         <div class="tableHeading-text">
-          <span class="name">{{ formMetadata.name }}</span>
+          <span class="name" *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value">{{ formMetadata.name }}</span>
           <span class="discribe">{{
             formMetadata.description ? formMetadata.description : ''
             }}</span>
