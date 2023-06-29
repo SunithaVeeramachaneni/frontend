@@ -256,6 +256,7 @@ export class RaceDynamicFormService {
       | 'isPublic'
       | 'plantId'
       | 'pdfTemplateConfiguration'
+      | 'additionalDetails'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -269,6 +270,7 @@ export class RaceDynamicFormService {
       tags: formListQuery.tags,
       isPublic: formListQuery.isPublic,
       plantId: formListQuery.plantId,
+      additionalDetails: formListQuery.additionalDetails,
       isArchived: false,
       isDeleted: false
     });
@@ -456,7 +458,6 @@ export class RaceDynamicFormService {
       // Ask Questions;
       askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
       askQuestions.forEach((q) => {
-        q.id = q.isPublished ? q.id : `AQ_${Date.now() + globalIndex}`;
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
@@ -927,7 +928,8 @@ export class RaceDynamicFormService {
               SECTIONNAME: sectionName,
               FIELDLABEL: questionName,
               UIPOSITION: index.toString(),
-              UIFIELDTYPE: question.fieldType,
+              UIFIELDTYPE:
+                question.fieldType === 'INST' ? 'LLF' : question.fieldType,
               ACTIVE: 'X',
               INSTRUCTION: '',
               TEXTSTYLE: '',
@@ -1073,11 +1075,11 @@ export class RaceDynamicFormService {
         };
         break;
       }
-      case 'LLF': {
+      case 'INST': {
         const { name } = question;
         properties = {
           ...properties,
-          FIELDLABEL: `<html>${name}</html>`,
+          FIELDLABEL: `<html>${name}</html>`.replace(/"/g, "'"),
           DEFAULTVALUE: ''
           //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
@@ -1147,6 +1149,13 @@ export class RaceDynamicFormService {
         properties = {
           ...properties,
           SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      case 'HL': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: question.value
         };
         break;
       }
@@ -1224,4 +1233,24 @@ export class RaceDynamicFormService {
       `forms/embedded/${formId}`,
       info
     );
+
+  deactivateAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const { name, embeddedFormId } = form;
+    const payload = {
+      VERSION,
+      APPNAME,
+      FORMNAME: embeddedFormId,
+      FORMTITLE: name,
+      DEACTIVATE: 'X'
+    };
+    return this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms`,
+      payload,
+      info
+    );
+  };
 }

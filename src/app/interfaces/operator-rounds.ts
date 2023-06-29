@@ -1,6 +1,7 @@
 import { UserDetails } from './user';
 
 export interface RoundPlanScheduleConfiguration {
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
   id?: string;
   roundPlanId: string;
   scheduleType: string;
@@ -93,6 +94,8 @@ export interface RoundDetail extends RoundPlan {
   shiftId: string;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
+  taskSkipped: number;
+  locationOrAssetSkipped: number;
   locationAndAssetTasks: number;
   isViewPdf?: boolean;
   createdBy: string;

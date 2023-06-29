@@ -24,13 +24,13 @@ import {
   RoundPlanDetail,
   RoundDetail
 } from 'src/app/interfaces';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
 import {
   formConfigurationStatus,
   dateFormat2,
   dateTimeFormat2,
   dateTimeFormat4
 } from 'src/app/app.constants';
-import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';

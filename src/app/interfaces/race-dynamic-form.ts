@@ -102,6 +102,7 @@ export type FormList = {
 };
 
 export interface FormScheduleConfiguration {
+  shiftSlots: any;
   id?: string;
   formId: string;
   scheduleType: string;
@@ -120,6 +121,7 @@ export interface FormScheduleConfiguration {
   endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
   assignmentDetails: AssignmentDetail;
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
 }
 export interface FormScheduleConfigurationObj {
   [key: string]: FormScheduleConfiguration;

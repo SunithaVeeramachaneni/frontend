@@ -730,7 +730,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         break;
       case 'ask_question_create':
         let newQuestion = {
-          id: `AQ_${uuidv4()}`,
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',

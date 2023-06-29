@@ -8,8 +8,7 @@ import {
   OnDestroy,
   Output,
   QueryList,
-  ViewChildren,
-  ViewChild
+  ViewChildren
 } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -222,6 +221,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'locationOrAssetSkipped',
+      displayName: 'Locations/Assets Skipped',
+      type: 'string',
+      controlType: 'string',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'scheduledAtDisplay',
       displayName: 'Start',
       type: 'string',
@@ -237,7 +258,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -270,7 +291,29 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 7,
+      order: 6,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'taskSkipped',
+      displayName: 'Tasks Skipped',
+      type: 'string',
+      controlType: 'string',
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -293,7 +336,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -316,7 +359,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 6,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -339,7 +382,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 11,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -361,7 +404,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 12,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -409,7 +452,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 10,
+      order: 13,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -447,7 +490,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.submitted,
         color: statusColors.white
       },
-      'in-progress': {
+      'in progress': {
         'background-color': statusColors.inProgress,
         color: statusColors.black
       },
@@ -459,7 +502,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         'background-color': statusColors.assigned,
         color: statusColors.black
       },
-      'partly-open': {
+      'partly open': {
         'background-color': statusColors.partlyOpen,
         color: statusColors.black
       },
@@ -622,6 +665,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             assignedTo: this.userService.getUserFullName(
               roundDetail.assignedTo
             ),
+            status: roundDetail.status.replace('-', ' '),
             assignedToEmail: roundDetail.assignedTo
           }));
         } else {
@@ -640,6 +684,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               assignedTo: this.userService.getUserFullName(
                 roundDetail.assignedTo
               ),
+              status: roundDetail.status.replace('-', ' '),
               assignedToEmail: roundDetail.assignedTo
             }))
           );
@@ -1066,8 +1111,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
     }
 
     let { status } = this.selectedRoundInfo;
-    status = status.toLowerCase() === 'open' ? 'assigned' : status;
-    status = status.toLowerCase() === 'partly-open' ? 'in-progress' : status;
+    status =
+      status.toLowerCase() === 'open'
+        ? 'assigned'
+        : status.toLowerCase() === 'partly-open'
+        ? 'in-progress'
+        : status;
     this.operatorRoundsService
       .updateRound$(
         roundId,

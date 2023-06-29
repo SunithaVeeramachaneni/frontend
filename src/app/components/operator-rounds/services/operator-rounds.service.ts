@@ -54,12 +54,62 @@ export class OperatorRoundsService {
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
   }
-
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  createAdditionalDetails$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+  updateValues$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      'additional-details',
+      details,
+      info
+    );
+
+  deleteAdditionalDetailsValue$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+
+  getAdditionalDetails$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      info
+    );
+
+  removeLabel$ = (
+    labelId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `delete-additional-details/${labelId}`,
+      info
+    );
 
   createDataSet$ = (
     dataset: any,
@@ -274,7 +324,8 @@ export class OperatorRoundsService {
         plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
-        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        additionalDetails: formListQuery.additionalDetails
       }
     );
   }

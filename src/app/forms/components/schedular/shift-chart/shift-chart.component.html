@@ -1,0 +1,107 @@
+<div id="shift-container" *ngIf="slots?.length > 0">
+  <ng-container>
+    <h1 class="mt-5" *ngIf="shift?.value?.id">
+      {{ shift?.value?.name }}: {{ shift?.value?.startTime }}-{{
+        shift?.value?.endTime
+      }}
+    </h1>
+    <div class="table-wrapper">
+      <table class="center">
+        <tr>
+          <td *ngFor="let slot of slots" class="slot pr-20 pl-15">
+            <b>{{ slot }}</b>
+          </td>
+        </tr>
+        <tr *ngIf="col === 0">
+          <td [attr.colspan]="slots?.length - 1" class="slot">
+            <div class="main-content slotBackground">
+              <div class="left left-margin">
+                <p>{{ 'slot' | translate }} {{ getInitialTime }}</p>
+              </div>
+              <div>
+                <ng-container>
+                  <button
+                    [matMenuTriggerFor]="menu"
+                    class="more-icon"
+                    aria-label="More Options"
+                  >
+                    <svg-icon
+                      icon="icon-more"
+                      class="more-icon-no-color"
+                    ></svg-icon>
+                  </button>
+                </ng-container>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button mat-menu-item translate>removeBtn</button>
+                </mat-menu>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="col > 0">
+          <td
+            *ngFor="
+              let row of slotsControls | slice : 0 : slots.length - 1;
+              let index = index
+            "
+            [attr.colspan]="dataArrays[index]?.index"
+            class="slot"
+          >
+            <div
+              class="main-content"
+              [ngStyle]="{
+                'background-color':
+                  dataArrays[index]?.isBook === true ? ' #E1F1FF' : 'white',
+                'border-left':
+                  dataArrays[index]?.isBook === true ? '2px solid blue' : ''
+              }"
+              *ngIf="dataArrays[index]?.isBook === true"
+            >
+              <div class="left left-margin">
+                <p>
+                  {{ 'slot' | translate }} {{ dataArrays[index]?.startTime }} -
+                  {{ dataArrays[index]?.endTime }}
+                </p>
+              </div>
+              <div>
+                <ng-container>
+                  <button
+                    [matMenuTriggerFor]="menu"
+                    class="more-icon"
+                    aria-label="More Options"
+                  >
+                    <svg-icon
+                      icon="icon-more"
+                      class="more-icon-no-color"
+                    ></svg-icon>
+                  </button>
+                </ng-container>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button
+                    mat-menu-item
+                    translate
+                    (click)="onRemoveRow(index, dataArrays[index])"
+                  >
+                    removeBtn
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td
+            *ngFor="
+              let slot of slots | slice : 0 : slots.length - 1;
+              let index = index
+            "
+            class="slot"
+            (click)="onAddSlot(slot, index)"
+          >
+            <b>{{ 'slot' | translate }} +</b>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
+</div>
