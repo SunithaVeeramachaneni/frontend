@@ -348,5 +348,6 @@
   "skipped": "Skipped",
   "total": "Total",
   "totalPages": "Total Pages",
-  "reportGeneratedOn": "Report Generated On"
+  "reportGeneratedOn": "Report Generated On",
+  "tasksCompleted": "Responses Completed"
 }
