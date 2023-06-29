@@ -114,9 +114,11 @@ export class ScheduleConfigurationComponent
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
   get roundPlanDetail(): any {
+    this._roundPlanDetail = this.data.roundPlanDetail;
     return this._roundPlanDetail;
   }
   get formDetail(): any {
+    this._formDetail = this.data.formDetail;
     return this._formDetail;
   }
   plantMapSubscription: Subscription;
@@ -147,6 +149,7 @@ export class ScheduleConfigurationComponent
   shiftSlotsFormArray = new FormArray([]);
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
+  selectedShifts = [];
   private _roundPlanDetail: any;
   private _formDetail: any;
   private onDestroy$ = new Subject();
@@ -187,6 +190,11 @@ export class ScheduleConfigurationComponent
   getAllShiftsData(): void {
     this.shiftService.fetchAllShifts$().subscribe((shifts) => {
       this.shiftsInformation = shifts?.items?.filter((s) => s?.isActive) || [];
+      this.shiftsInformation = this.shiftsInformation.filter((shift) =>
+        JSON.parse(this.selectedDetails?.shifts).some(
+          (data) => data.id === shift.id
+        )
+      );
       this.allShifts = this.shiftsInformation;
       this.initCreatedSlots();
     });
