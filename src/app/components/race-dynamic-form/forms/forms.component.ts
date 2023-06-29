@@ -578,7 +578,15 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   addShift(rounds) {
     return rounds.map((round) => {
-      round.shift = this.plantShiftObj[round.shiftId];
+      let shift = '';
+      if (this.formScheduleConfigurations[round.id]?.shiftDetails) {
+        Object.keys(
+          this.formScheduleConfigurations[round.id]?.shiftDetails
+        ).map((shiftId) => {
+          shift += this.shiftIdNameMap[shiftId] + ',';
+        });
+        round.shift = shift;
+      }
       return round;
     });
   }

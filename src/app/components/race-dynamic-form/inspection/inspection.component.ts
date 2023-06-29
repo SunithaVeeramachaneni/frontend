@@ -375,8 +375,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
           'assigned',
           'open',
           'in-progress',
-          'partly-open',
-          'overdue'
+          'partly-open'
         ],
         displayType: 'text'
       },
@@ -469,8 +468,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
   inspectionId = '';
   plantTimezoneMap = {};
   selectedStartDate;
+  selectedDueDate;
   plants = [];
   plantsIdNameMap = {};
+  openMenuStateDueDate = false;
+  openMenuStateStartDate = false;
 
   initial = {
     columns: this.columns,
@@ -765,14 +767,15 @@ export class InspectionComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'assignedTo':
         this.assigneePosition = {
-          top: `${pos?.top + 7}px`,
+          top: `${pos?.top + 17}px`,
           left: `${pos?.left - 15}px`
         };
-        if (row.status !== 'submitted') this.trigger.toArray()[0].openMenu();
+        if (row.status !== 'submitted' && row.status !== 'overdue')
+          this.trigger.toArray()[0].openMenu();
         this.selectedFormInfo = row;
         break;
       case 'dueDateDisplay':
-        this.selectedDate = { ...this.selectedDate, date: row.dueDate };
+        this.selectedDueDate = { ...this.selectedDueDate, date: row.dueDate };
         if (this.plantTimezoneMap[row?.plantId]?.timeZoneIdentifier) {
           const dueDate = new Date(
             formatInTimeZone(
@@ -781,20 +784,23 @@ export class InspectionComponent implements OnInit, OnDestroy {
               dateTimeFormat4
             )
           );
-          this.selectedDate = { ...this.selectedDate, date: dueDate };
+          this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
         }
-        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
+        if (row.status !== 'submitted') {
+          this.openMenuStateDueDate = true;
+        } else {
+          this.openInspectionHandler(row);
+        }
         this.selectedFormInfo = row;
         break;
-
       case 'shift':
         this.shiftPosition = {
-          top: `${pos?.top + 7}px`,
+          top: `${pos?.top + 20}px`,
           left: `${pos?.left - 15}px`
         };
         this.plantToShift = this.plantShiftObj;
         this.plantSelected = row.plantId;
-        if (row.status !== 'submitted') this.trigger.toArray()[3].openMenu();
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedFormInfo = row;
         break;
       case 'scheduledAtDisplay':
@@ -816,7 +822,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
           };
         }
 
-        if (row.status !== 'submitted') this.trigger.toArray()[2].openMenu();
+        if (row.status !== 'submitted') {
+          this.openMenuStateStartDate = true;
+        } else {
+          this.openInspectionHandler(row);
+        }
         this.selectedFormInfo = row;
         break;
       default:
@@ -947,7 +957,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
-    console.log(data);
     for (const item of data) {
       if (item.column === 'plant') {
         const plantId = this.plantsIdNameMap[item.value];
@@ -1070,7 +1079,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       assignedTo,
       ...rest
     } = this.selectedFormInfo;
-    console.log('scheduledAt:', scheduledAt);
     if (changedDueDate.getTime() < new Date(scheduledAt).getTime()) {
       this.toastService.show({
         type: 'warning',
@@ -1147,7 +1155,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
-          // console.log('schedueledat:', changedScheduleAt);
           this.raceDynamicFormService
             .updateInspection$(
               inspectionId,
@@ -1295,7 +1302,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
-          console.log('schedueledat:', changedScheduledAt);
+          let slot;
+
+          slot = JSON.stringify(slot);
           this.raceDynamicFormService
             .updateInspection$(
               inspectionId,
@@ -1357,6 +1366,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       assignedTo,
       scheduledAt,
       dueDate,
+      slotDetails,
       status,
       ...rest
     } = this.selectedFormInfo;
@@ -1440,6 +1450,13 @@ export class InspectionComponent implements OnInit, OnDestroy {
               : (changedStatus = this.statusMap.open);
           }
         }
+        let slot;
+        if (JSON.parse(this.selectedFormInfo.slotDetails)) {
+          slot = JSON.parse(this.selectedFormInfo.slotDetails);
+          slot.startTime = shift.startTime;
+          slot.endTime = shift.endTime;
+        }
+        slot = JSON.stringify(slot);
         this.raceDynamicFormService
           .updateInspection$(
             inspectionId,
@@ -1451,6 +1468,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               dueDate: shiftEndDateAndTime,
               locationAndAssetTasksCompleted,
               assignedTo,
+              slotDetails: slot,
               status: changedStatus
             },
             'shift'
@@ -1474,6 +1492,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         dateTimeFormat4
                       ),
                       status: changedStatus,
+                      slotDetails: slot,
                       dueDate: shiftEndDateAndTime,
                       roundDBVersion: resp.roundDBVersion + 1,
                       roundDetailDBVersion: resp.roundDetailDBVersion + 1,
@@ -1496,11 +1515,11 @@ export class InspectionComponent implements OnInit, OnDestroy {
     });
   }
   dueDateClosedHandler() {
-    this.trigger.toArray()[1].closeMenu();
+    this.openMenuStateDueDate = false;
   }
 
   startDateClosedHandler() {
-    this.trigger.toArray()[2].closeMenu();
+    this.openMenuStateStartDate = false;
   }
   formatDate(date, plantId) {
     if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {

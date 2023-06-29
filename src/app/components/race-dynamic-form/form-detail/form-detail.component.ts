@@ -32,7 +32,6 @@ import {
   dateTimeFormat4
 } from 'src/app/app.constants';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
-import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 interface FrequencyDetail {
@@ -82,21 +81,24 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
   plantTimezoneMap: any;
+  slotArr = [];
   readonly dateTimeFormat = dateTimeFormat2;
   readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
-  private _scheduleConfiguration: RoundPlanScheduleConfiguration;
+  public _scheduleConfiguration: RoundPlanScheduleConfiguration;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private readonly store: Store<State>,
-    private readonly plantService: PlantService,
-    private readonly shiftService: ShiftService
+    private readonly plantService: PlantService
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
+    if (this._scheduleConfiguration?.shiftDetails) {
+      this.slotArr = Object.entries(this._scheduleConfiguration.shiftDetails);
+    }
     if (this.selectedForm) {
       this.toggleLoader(true);
 
@@ -161,6 +163,22 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe((data) => {
         this.plantTimezoneMap = data;
       });
+  }
+
+  convertTo12HourFormat(time24: string): string {
+    const [hours, minutes] = time24.split(':');
+
+    let hours12 = parseInt(hours, 10);
+    const suffix = hours12 >= 12 ? 'PM' : 'AM';
+
+    if (hours12 === 0) {
+      hours12 = 12;
+    } else if (hours12 > 12) {
+      hours12 -= 12;
+    }
+
+    const time12 = `${hours12}:${minutes} ${suffix}`;
+    return time12;
   }
 
   cancelForm() {
@@ -239,7 +257,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       } = this.scheduleConfiguration;
       if (scheduleType === 'byFrequency') {
       }
-
       this.frequencyDetail =
         scheduleType === 'byFrequency'
           ? repeatEvery === 'week'

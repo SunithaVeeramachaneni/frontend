@@ -144,6 +144,7 @@ export interface InspectionDetail extends Form {
   locationAndAssetTasks: number;
   createdBy: string;
   shiftId: string;
+  slotDetails: string;
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;

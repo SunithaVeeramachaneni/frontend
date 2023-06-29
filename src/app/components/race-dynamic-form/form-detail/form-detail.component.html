@@ -137,7 +137,7 @@
               </div>
               <div class="flex-custom">
                 <h4 class="create-name">
-                  <!-- {{ selectedForm?.scheduledAt }} -->
+                  {{ selectedForm?.scheduleDates }}
                 </h4>
               </div>
             </div>
@@ -154,7 +154,7 @@
                 <h4 class="create-name">
                   {{
                     formatDate(
-                      selectedForm?.scheduleEndOn,
+                      selectedForm?.dueDate,
                       selectedForm?.plantId,
                       dateFormat
                     )
@@ -256,6 +256,28 @@
                 ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
                   this.placeHolder
                 }}</span>
+              </h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'slot' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <div *ngFor="let shiftDetail of slotArr; let i = index">
+                  <span class="make-bold"
+                    >{{ shiftObj[shiftDetail[i]].name }} :</span
+                  >
+                  <ng-container *ngFor="let shift of shiftDetail[i + 1]">
+                    <span>
+                      {{ convertTo12HourFormat(shift.startTime) }} -
+                      {{ convertTo12HourFormat(shift.endTime) }}
+                    </span>
+                  </ng-container>
+                </div>
               </h4>
             </div>
           </div>
@@ -383,7 +405,7 @@
             </div>
             <div class="flex-custom">
               <h4 class="create-name">
-                {{ shiftObj[selectedForm?.shiftId].name }}
+                {{ shiftObj[selectedForm?.shiftId]?.name }}
               </h4>
             </div>
           </div>

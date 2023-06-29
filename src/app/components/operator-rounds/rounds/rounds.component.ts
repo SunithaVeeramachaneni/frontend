@@ -550,6 +550,9 @@ export class RoundsComponent implements OnInit, OnDestroy {
   plantShiftObj: any = {};
   plantSelected: any;
   plantToShift: any;
+  selectedRoundConfig: any;
+  openMenuStateDueDate = false;
+  openMenuStateStartDate = false;
 
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -777,7 +780,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'assignedTo':
         this.assigneePosition = {
-          top: `${pos?.top + 7}px`,
+          top: `${pos?.top + 20}px`,
           left: `${pos?.left - 15}px`
         };
         if (row.status !== 'submitted' && row.status !== 'overdue')
@@ -791,13 +794,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.dueDate,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat4
+              dateTimeFormat5
             )
           );
           this.selectedDueDate = { ...this.selectedDueDate, date: dueDate };
         }
         if (row.status !== 'submitted') {
-          // this.trigger.toArray()[2].openMenu();
+          this.openMenuStateDueDate = true;
         } else {
           this.openRoundHandler(row);
         }
@@ -805,12 +808,12 @@ export class RoundsComponent implements OnInit, OnDestroy {
         break;
       case 'shift':
         this.shiftPosition = {
-          top: `${pos?.top + 7}px`,
+          top: `${pos?.top - 17}px`,
           left: `${pos?.left - 15}px`
         };
         this.plantToShift = this.plantShiftObj;
         this.plantSelected = row.plantId;
-        if (row.status !== 'submitted') this.trigger.toArray()[3].openMenu();
+        if (row.status !== 'submitted') this.trigger.toArray()[1].openMenu();
         this.selectedRoundInfo = row;
         break;
       case 'scheduledAtDisplay':
@@ -823,7 +826,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             formatInTimeZone(
               row.scheduledAt,
               this.plantTimezoneMap[row.plantId].timeZoneIdentifier,
-              dateTimeFormat4
+              dateTimeFormat5
             )
           );
           this.selectedStartDate = {
@@ -832,7 +835,11 @@ export class RoundsComponent implements OnInit, OnDestroy {
           };
         }
 
-        if (row.status !== 'submitted') this.trigger.toArray()[2].openMenu();
+        if (row.status !== 'submitted') {
+          this.openMenuStateStartDate = true;
+        } else {
+          this.openRoundHandler(row);
+        }
         this.selectedRoundInfo = row;
         break;
 
@@ -1055,7 +1062,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'dueDate' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.column === 'scheduledAt' && item.value) {
-        console.log('item.value:', item.value);
         this.filter[item.column] = item.value;
       }
     }
@@ -1450,6 +1456,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       scheduledAt,
       dueDate,
       status,
+      slotDetails,
       ...rest
     } = this.selectedRoundInfo;
     const shiftId = shift.id;
@@ -1532,6 +1539,13 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
         }
+        let slot;
+        if (JSON.parse(this.selectedRoundInfo.slotDetails)) {
+          slot = JSON.parse(this.selectedRoundInfo.slotDetails);
+          slot.startTime = shift.startTime;
+          slot.endTime = shift.endTime;
+        }
+        slot = JSON.stringify(slot);
         this.operatorRoundsService
           .updateRound$(
             roundId,
@@ -1543,6 +1557,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
               dueDate: shiftEndDateAndTime,
               locationAndAssetTasksCompleted,
               assignedTo,
+              slotDetails: slot,
               status: changedStatus
             },
             'shift'
@@ -1565,6 +1580,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         shiftStartDateAndTime,
                         plantId
                       ),
+                      slotDetails: slot,
                       status: changedStatus,
                       dueDate: shiftEndDateAndTime,
                       roundDBVersion: resp.roundDBVersion + 1,
@@ -1589,9 +1605,10 @@ export class RoundsComponent implements OnInit, OnDestroy {
   }
 
   dueDateClosedHandler() {
-    this.trigger.toArray()[1].closeMenu();
+    this.openMenuStateDueDate = false;
   }
+
   startDateClosedHandler() {
-    this.trigger.toArray()[2].closeMenu();
+    this.openMenuStateStartDate = false;
   }
 }

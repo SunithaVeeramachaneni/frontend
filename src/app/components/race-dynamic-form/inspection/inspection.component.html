@@ -9,6 +9,7 @@
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
+      [shiftObj]="shiftObj"
       (formDetailAction)="formsDetailActionHandler($event)"
     ></app-form-detail>
   </div>
@@ -113,33 +114,23 @@
     </mat-menu>
   </ng-container>
 
-  <button
-    class="hide-mat-menu"
-    mat-button
-    [matMenuTriggerFor]="startDateMenu"
-    #startDateMenuTrigger="matMenuTrigger"
-  ></button>
-  <mat-menu #startDateMenu="matMenu">
+  <div *ngIf="openMenuStateStartDate">
     <app-date-picker
       [selectedDate]="selectedStartDate"
       (dateChange)="startDateChangeHandler($event)"
       (closed)="startDateClosedHandler()"
+      *ngIf="openMenuStateStartDate"
     ></app-date-picker>
-  </mat-menu>
+  </div>
 
-  <button
-    class="hide-mat-menu"
-    mat-button
-    [matMenuTriggerFor]="dueDateMenu"
-    #dueDateMenuTrigger="matMenuTrigger"
-  ></button>
-  <mat-menu #dueDateMenu="matMenu">
+  <div *ngIf="openMenuStateDueDate">
     <app-date-picker
-      [selectedDate]="selectedDate"
+      [selectedDate]="selectedDueDate"
       (dateChange)="dateChangeHandler($event)"
       (closed)="dueDateClosedHandler()"
+      *ngIf="openMenuStateDueDate"
     ></app-date-picker>
-  </mat-menu>
+  </div>
 
   <ng-container>
     <button
@@ -147,14 +138,18 @@
       [matMenuTriggerFor]="shiftMenu"
       #shiftMenuTrigger="matMenuTrigger"
     ></button>
-    <mat-menu #shiftMenu="matMenu">
-      <app-shift
-        [plantShiftObj]="plantToShift"
-        [plantSelected]="plantSelected"
-        [dropdownPosition]="shiftPosition"
-        (shiftChange)="shiftChangeHandler($event)"
-      >
-      </app-shift>
-    </mat-menu>
+    <div>
+      <mat-menu #shiftMenu="matMenu">
+        <div *ngIf="plantSelected">
+          <app-shift
+            [plantShiftObj]="plantToShift"
+            [plantSelected]="plantSelected"
+            [dropdownPosition]="shiftPosition"
+            (shiftChange)="shiftChangeHandler($event)"
+          >
+          </app-shift>
+        </div>
+      </mat-menu>
+    </div>
   </ng-container>
 </ng-container>

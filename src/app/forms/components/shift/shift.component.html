@@ -1,25 +1,12 @@
-<div *ngIf="_plantShiftObj">
+<div
+  class="custom-menu mat-menu-panel"
+  [ngStyle]="{ top: _dropdownPosition.top, left: _dropdownPosition.left }"
+>
   <button
-    [matMenuTriggerFor]="menu"
-    #menuTrigger="matMenuTrigger"
-    [hidden]="true"
-  ></button>
-
-  <mat-menu #menu="matMenu">
-    <div
-      class="custom-menu mat-menu-panel"
-      [ngStyle]="{ top: _dropdownPosition.top, left: _dropdownPosition.left }"
-      *ngIf="_plantShiftObj[_plantSelected]"
-    >
-      <button
-        mat-menu-item
-        (click)="optionClick(item)"
-        *ngFor="let item of _plantShiftObj[_plantSelected]"
-      >
-        {{ item.name }}
-      </button>
-    </div>
-  </mat-menu>
+    mat-menu-item
+    (click)="optionClick(item)"
+    *ngFor="let item of _plantShiftObj[_plantSelected]"
+  >
+    {{ item.name }}
+  </button>
 </div>
-
-<!-- *ngIf="_plantShiftObj['8542c76a-07f2-46bf-bf0b-edadfb48da2f']" -->

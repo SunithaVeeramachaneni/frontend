@@ -76,7 +76,6 @@ import {
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -412,7 +411,10 @@ export class PlansComponent implements OnInit, OnDestroy {
   userFullNameByEmail = {};
   plantTimezoneMap = {};
   activeShiftIdMap = {};
-  plantShiftObj = {};
+  shiftIdMaptoShift = {};
+  selectedRoundConfig: any;
+  shiftObj: any = {};
+
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -430,7 +432,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
     private shiftService: ShiftService,
-    private commonService: CommonService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
@@ -482,7 +483,11 @@ export class PlansComponent implements OnInit, OnDestroy {
 
     const roundPlanScheduleConfigurations$ = this.rpscService
       .fetchRoundPlanScheduleConfigurations$()
-      .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
+      .pipe(
+        tap((configs) => {
+          this.roundPlanScheduleConfigurations = configs;
+        })
+      );
 
     const roundPlansOnLoadSearch$ = this.fetchPlans$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -515,23 +520,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
       this.activeShifts$,
-      this.users$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap((plants) => {
-          plants.items.map((plant) => {
-            if (
-              this.commonService.isJson(plant.shifts) &&
-              JSON.parse(plant.shifts)
-            ) {
-              let shifts = '';
-              JSON.parse(plant.shifts).map((shift) => {
-                shifts += shift.name + ',';
-              });
-              this.plantShiftObj[plant.id] = shifts;
-            }
-          });
-        })
-      )
+      this.users$
     ]).pipe(
       map(
         ([
@@ -540,9 +529,10 @@ export class PlansComponent implements OnInit, OnDestroy {
           roundPlanScheduleConfigurations,
           shiftData
         ]) => {
-          shiftData.rows.forEach(
-            (value) => (this.activeShiftIdMap[value.id] = value.name)
-          );
+          shiftData.rows.forEach((value) => {
+            this.activeShiftIdMap[value.id] = value.name;
+            this.shiftIdMaptoShift[value.id] = value;
+          });
           this.isLoading$.next(false);
           if (this.skip === 0) {
             this.initial.data = this.formatRoundPlans(
@@ -650,7 +640,15 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   addShift(rounds) {
     return rounds.map((round) => {
-      round.shift = this.plantShiftObj[round.shiftId];
+      let shift = '';
+      if (this.roundPlanScheduleConfigurations[round.id]?.shiftDetails) {
+        Object.keys(
+          this.roundPlanScheduleConfigurations[round.id]?.shiftDetails
+        ).map((shiftId) => {
+          shift += this.activeShiftIdMap[shiftId] + ',';
+        });
+        round.shift = shift;
+      }
       return round;
     });
   }
@@ -809,6 +807,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.roundPlanDetail = { ...row };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
+    this.selectedRoundConfig = this.roundPlanScheduleConfigurations;
   }
 
   roundPlanDetailActionHandler() {
@@ -956,8 +955,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     roundPlans: RoundPlanDetail[],
     roundPlanScheduleConfigurations: RoundPlanScheduleConfigurationObj
   ) {
-    console.log('plantshiftObj:', this.plantShiftObj);
-    console.log(roundPlans);
     return roundPlans.map((roundPlan) => {
       if (roundPlanScheduleConfigurations[roundPlan.id]) {
         return {
@@ -1114,7 +1111,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      console.log('filter item :', item);
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
       } else if (item.column === 'shiftId' && item.value) {

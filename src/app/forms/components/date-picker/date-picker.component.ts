@@ -6,7 +6,8 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
@@ -22,15 +23,13 @@ interface SelectedDate {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatePickerComponent implements OnInit {
-  @ViewChild('picker') picker;
+  @ViewChild('picker', { static: false }) picker: any;
   @Input()
   set selectedDate(selectedDate: SelectedDate) {
     if (selectedDate) {
       this._selectedDate = selectedDate;
-      console.log('date', selectedDate);
-      console.log(this.dateGroup.controls);
       this.dateGroup.get('date').setValue(this.selectedDate.date);
-      this.picker.open();
+      this.picker?.open();
     }
   }
   get selectedDate() {

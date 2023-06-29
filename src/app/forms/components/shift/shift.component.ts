@@ -1,12 +1,10 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnInit,
   Output,
-  ViewChild,
-  OnChanges
+  ViewChild
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 
@@ -15,7 +13,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
   templateUrl: './shift.component.html',
   styleUrls: ['./shift.component.scss']
 })
-export class ShiftComponent implements OnInit, OnChanges {
+export class ShiftComponent implements OnInit {
   @ViewChild('shiftOpen') shiftOpen;
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
   @Input()
@@ -42,13 +40,7 @@ export class ShiftComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit(): void {}
-  ngOnChanges() {
-    if (this._plantSelected) {
-      this.menuTrigger.openMenu();
-    }
-  }
   optionClick(data) {
-    console.log('data:', data);
     this.shiftChange.emit(data);
   }
 }
