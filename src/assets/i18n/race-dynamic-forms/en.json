@@ -167,6 +167,7 @@
   "configuration": "Configuration",
   "header": "Header",
   "summaryPage": "Summary Page",
+  "summary": "Summary",
   "roundId": "Inspection Id",
   "roundTitle": "Inspections Title",
   "subject": "Subject",
@@ -334,5 +335,18 @@
   "defaultCurrentDate": "Default to current date",
   "defaultCurrentTime": "Default to current time",
   "daysCount": "Days Count",
-  "assignTo": "Assign To"
+  "assignTo": "Assign To",
+  "shift": "Shift",
+  "due": "Due",
+  "issuesSummary": "Issues Summary",
+  "actionsSummary": "Actions Summary",
+  "issuesRaised": "Issues Raised",
+  "issuesResolved": "Issues Resolved",
+  "actionsRaised": "Actions Raised",
+  "actionsResolved": "Actions Resolved",
+  "open": "Open",
+  "skipped": "Skipped",
+  "total": "Total",
+  "totalPages": "Total Pages",
+  "reportGeneratedOn": "Report Generated On"
 }

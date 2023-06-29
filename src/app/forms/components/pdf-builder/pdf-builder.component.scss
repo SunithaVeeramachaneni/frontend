@@ -223,7 +223,7 @@ ul {
 .pdfPage {
   padding: 16px 40px;
 }
-.pdfPage-container {
+.pdfPageContainer {
   margin: 10px 0px;
   box-shadow: 0px 0px 16.253px $box-shadow;
 }
@@ -661,7 +661,7 @@ ul {
 
   td,
   th {
-    border: 1px solid #dddddd;
+    border: 1px solid $table-bg;
     text-align: left;
     padding: 8px;
   }

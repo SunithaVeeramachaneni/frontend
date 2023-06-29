@@ -337,5 +337,19 @@
   "taskSkipped": "Tasks Skipped",
   "locationAssetsCompleted": "Location or Assets Completed",
   "daysCount": "Days Count",
-  "assignTo": "Assign To"
+  "assignTo": "Assign To",
+  "summary": "Summary",
+  "shift": "Shift",
+  "due": "Due",
+  "issuesSummary": "Issues Summary",
+  "actionsSummary": "Actions Summary",
+  "issuesRaised": "Issues Raised",
+  "issuesResolved": "Issues Resolved",
+  "actionsRaised": "Actions Raised",
+  "actionsResolved": "Actions Resolved",
+  "open": "Open",
+  "skipped": "Skipped",
+  "total": "Total",
+  "totalPages": "Total Pages",
+  "reportGeneratedOn": "Report Generated On"
 }

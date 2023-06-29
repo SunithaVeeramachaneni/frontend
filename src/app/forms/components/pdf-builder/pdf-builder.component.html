@@ -202,7 +202,7 @@
       </div>
       <div *ngIf="formMetadata$ | async as formMetadata" class="pdf-container">
         <!-- LANDING PAGE -->
-        <div id="myPDF" class="pdfPage-container" #myPDF>
+        <div id="myPDF" class="pdfPageContainer" #myPDF>
           <ng-container
             *ngTemplateOutlet="
               landingPageTemplate;
@@ -213,7 +213,7 @@
         <!-- ISSUES -->
         <div
           id="myPDF"
-          class="pdfPage-container"
+          class="pdfPageContainer"
           #myPDF
           *ngIf="pdfBuilderConfigurationsForm.get('issues').value"
         >
@@ -227,7 +227,7 @@
         <!-- ACTIONS -->
         <div
           id="myPDF"
-          class="pdfPage-container"
+          class="pdfPageContainer"
           #myPDF
           *ngIf="pdfBuilderConfigurationsForm.get('actions').value"
         >
@@ -241,7 +241,7 @@
         <!-- TASKS -->
         <div
           id="myPDF"
-          class="pdfPage-container"
+          class="pdfPageContainer"
           #myPDF
           *ngIf="pdfBuilderConfigurationsForm.get('questions').value"
         >
@@ -418,7 +418,7 @@
       </div>
 
       <div>
-        <b>Status:</b> &nbsp;
+        <b translate="actionStatus"></b> &nbsp;
         <span id="submitted-color">Submitted</span>
       </div>
     </div>
@@ -427,7 +427,7 @@
       <div class="tableHeading-text waterMark">
         <table class="landing-page-table">
           <tr class="bg-gray">
-            <th>Description</th>
+            <th translate="des"></th>
           </tr>
           <tr>
             <td>
@@ -436,12 +436,12 @@
           </tr>
         </table>
 
-        <h5>Summary</h5>
+        <h5 translate="summary"></h5>
         <table class="landing-page-table">
           <tr class="bg-gray">
             <th>{{ 'plant' | translate }}</th>
-            <th>Schedule</th>
-            <th>Shift</th>
+            <th translate="schedule"></th>
+            <th translate="shift"></th>
           </tr>
           <tr>
             <td>
@@ -462,13 +462,15 @@
           "
         >
           <tr class="bg-gray">
-            <th>Due</th>
-            <th *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value">
-              Submitted On
-            </th>
-            <th *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value">
-              Submitted By
-            </th>
+            <th translate="due"></th>
+            <th
+              *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
+              translate="submittedOn"
+            ></th>
+            <th
+              *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
+              translate="submittedBy"
+            ></th>
           </tr>
           <tr>
             <td>Feb 02, 2023 - 8:11 AM</td>
@@ -479,11 +481,11 @@
       </div>
 
       <div *ngIf="pdfBuilderConfigurationsForm.get('issues').value">
-        <h5>Issues Summary</h5>
+        <h5 translate="issuesSummary"></h5>
         <table class="landing-page-table">
           <tr>
-            <th id="issue-color">Issues Raised</th>
-            <th class="resolved-color">Issues Resolved</th>
+            <th id="issue-color" translate="issuesRaised"></th>
+            <th class="resolved-color" translate="issuesResolved"></th>
           </tr>
           <tr>
             <td>3</td>
@@ -492,11 +494,11 @@
         </table>
       </div>
       <div *ngIf="pdfBuilderConfigurationsForm.get('actions').value">
-        <h5>Actions Summary</h5>
+        <h5 translate="actionsSummary"></h5>
         <table class="landing-page-table">
           <tr>
-            <th id="action-color">Actions Raised</th>
-            <th class="resolved-color">Actions Resolved</th>
+            <th id="action-color" translate="actionsRaised"></th>
+            <th class="resolved-color" translate="actionsResolved"></th>
           </tr>
           <tr>
             <td>3</td>
@@ -509,10 +511,10 @@
         <h5>{{ 'tasks' | translate }} Summary</h5>
         <table class="landing-page-table">
           <tr class="task-color">
-            <th>Open</th>
-            <th>Skipped</th>
-            <th>Completed</th>
-            <th>Total</th>
+            <th translate="open"></th>
+            <th translate="skipped"></th>
+            <th translate="completed"></th>
+            <th translate="total"></th>
           </tr>
           <tr>
             <td>50</td>
@@ -528,8 +530,8 @@
           <table class="landing-page-table">
             <tr class="bg-gray">
               <th>{{ 'taskCompleted' | translate }} By</th>
-              <th>Report Generated On</th>
-              <th>Total Pages</th>
+              <th translate="reportGeneratedOn"></th>
+              <th translate="totalPages"></th>
             </tr>
             <tr>
               <td>
