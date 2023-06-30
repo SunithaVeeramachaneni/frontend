@@ -74,6 +74,7 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 
 @Component({
   selector: 'app-forms',
@@ -324,6 +325,8 @@ export class FormsComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   formCategory: FormControl;
   formId: string;
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
@@ -352,6 +355,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
     private plantService: PlantService,
+    private shiftService: ShiftService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
@@ -424,9 +428,13 @@ export class FormsComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       onScrollForms$,
       formScheduleConfigurations$,
+      this.plantService.fetchAllPlants$(),
+      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations]) => {
+      map(([forms, scrollData, formScheduleConfigurations, plants, shifts]) => {
+        this.allPlants = plants;
+        this.allShifts = shifts.items.filter((s) => s.isActive);
         if (this.skip === 0) {
           this.initial.data = this.formatForms(
             forms.rows,
@@ -559,23 +567,31 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    const selectedPlant = this.allPlants?.items.find(
+      (data) => data.id === row.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts.some((shift) => shift.id === data.id)
+    );
+
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'forms':
         if (row.forms !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openFormHandler(row);
+        this.openFormHandler({ ...row, shifts: activeShifts });
     }
   };
 
@@ -781,12 +797,19 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const selectedPlant = this.allPlants?.items.find(
+      (plant) => plant.id === data.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((s) =>
+      selectedShifts.some((shift) => shift.id === s.id)
+    );
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openFormHandler(data);
+        this.openFormHandler({ ...data, shifts: activeShifts });
         break;
       case 'showInspections':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });

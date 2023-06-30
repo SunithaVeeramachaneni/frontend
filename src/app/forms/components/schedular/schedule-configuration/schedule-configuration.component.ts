@@ -179,25 +179,18 @@ export class ScheduleConfigurationComponent
     }
     if (this.isFormModule) {
       this.formName = this.formDetail?.name || '';
-      this.selectedDetails = this.formDetail;
+      this.selectedDetails = this.data.formDetail;
     } else if (this.roundPlanDetail) {
       this.formName = this.roundPlanDetail?.name || '';
-      this.selectedDetails = this.roundPlanDetail;
+      this.selectedDetails = this.data.roundPlanDetail;
     }
     this.getAllShiftsData();
   }
 
   getAllShiftsData(): void {
-    this.shiftService.fetchAllShifts$().subscribe((shifts) => {
-      this.shiftsInformation = shifts?.items?.filter((s) => s?.isActive) || [];
-      this.shiftsInformation = this.shiftsInformation.filter((shift) =>
-        JSON.parse(this.selectedDetails?.shifts).some(
-          (data) => data.id === shift.id
-        )
-      );
-      this.allShifts = this.shiftsInformation;
-      this.initCreatedSlots();
-    });
+    this.shiftsInformation = this.selectedDetails?.shifts;
+    this.allShifts = this.shiftsInformation;
+    this.initCreatedSlots();
   }
 
   initCreatedSlots(): void {
