@@ -14,6 +14,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -64,8 +65,16 @@ import { DatePipe } from '@angular/common';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
-import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import {
+  ScheduleConfigEvent,
+  ScheduleConfigurationComponent
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { MatDialog } from '@angular/material/dialog';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -296,6 +305,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     unscheduled: 0
   };
   nextToken = '';
+  plantMapSubscription: Subscription;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -318,8 +328,8 @@ export class FormsComponent implements OnInit, OnDestroy {
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
-  plants = [];
   plantsIdNameMap = {};
+  plantTimezoneMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -331,7 +341,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
-
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -340,10 +350,26 @@ export class FormsComponent implements OnInit, OnDestroy {
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
-    private userService: UsersService
+    private userService: UsersService,
+    private plantService: PlantService,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
   ngOnInit(): void {
+    this.scheduleConfigEvent =
+      this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
+        (value) => {
+          if (value) {
+            this.scheduleConfigEventHandler(value);
+          }
+        }
+      );
+
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -353,7 +379,7 @@ export class FormsComponent implements OnInit, OnDestroy {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap(() => {
+        tap((value: string) => {
           this.fetchForms$.next({ data: 'search' });
           this.isLoading$.next(true);
         })
@@ -491,7 +517,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
 
     this.configOptions.allColumns = this.columns;
-    this.getAllForms();
+    this.populatePlantsforFilter();
     this.getFilter();
   }
 
@@ -501,22 +527,21 @@ export class FormsComponent implements OnInit, OnDestroy {
       limit: this.limit,
       searchTerm: this.searchForm.value,
       fetchType: this.fetchType,
-      formId: this.formId
+      formId: this.formId,
+      formType: formConfigurationStatus.standalone
     };
 
     return this.raceDynamicFormService
-      .getFormQuestionsFormsList$(obj, this.filter)
+      .getFormsForScheduler$(obj, this.filter)
       .pipe(
-        tap(({ scheduledCount, unscheduledCount, next }) => {
+        tap(({ next, scheduledCount, unscheduledCount }) => {
           this.nextToken = next !== undefined ? next : null;
-          const { scheduled, unscheduled } = this.formsCount;
-          this.formsCount = {
-            ...this.formsCount,
-            scheduled:
-              scheduledCount !== undefined ? scheduledCount : scheduled,
-            unscheduled:
-              unscheduledCount !== undefined ? unscheduledCount : unscheduled
-          };
+          if (scheduledCount !== undefined) {
+            this.formsCount = {
+              scheduled: scheduledCount,
+              unscheduled: unscheduledCount
+            };
+          }
           this.isLoading$.next(false);
         })
       );
@@ -527,6 +552,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -634,11 +660,36 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   openScheduleConfigHandler(row: any) {
+    this.scheduleFormDetail = { ...row };
+    const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        formDetail: this.scheduleFormDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'RDF',
+        assigneeDetails: this.assigneeDetails
+      }
+    });
     this.hideScheduleConfig = false;
     this.closeFormHandler();
-    this.scheduleFormDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -707,7 +758,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             ...data,
             schedule: this.getFormattedSchedule(formsScheduleConfiguration),
             scheduleDates: this.getFormattedScheduleDates(
-              formsScheduleConfiguration
+              formsScheduleConfiguration,
+              data.plantId
             ),
             assignedTo: this.getAssignedTo(formsScheduleConfiguration),
             assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
@@ -718,7 +770,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.dataSource = new MatTableDataSource(this.initial?.data);
       if (mode === 'create') {
         this.formsCount = {
-          ...this.formsCount,
           scheduled: this.formsCount.scheduled + 1,
           unscheduled: this.formsCount.unscheduled - 1
         };
@@ -726,10 +777,6 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.nextToken = '';
       this.fetchForms$.next({ data: 'load' });
     }
-  }
-
-  viewFormsHandler(id: any) {
-    this.selectTab.emit({ index: 1, queryParams: { id } });
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
@@ -760,7 +807,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             formScheduleConfigurations[form?.id]
           ),
           scheduleDates: this.getFormattedScheduleDates(
-            formScheduleConfigurations[form?.id]
+            formScheduleConfigurations[form?.id],
+            form.plantId
           ),
           forms: form.forms || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
@@ -779,25 +827,67 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   getFormattedScheduleDates(
-    formScheduleConfiguration: FormScheduleConfiguration
+    formScheduleConfiguration: FormScheduleConfiguration,
+    plantId
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       formScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.datePipe.transform(
-            formScheduleConfiguration.startDate,
-            dateFormat
-          )
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+          ? localToTimezoneDate(
+              new Date(formScheduleConfiguration.startDate),
+              this.plantTimezoneMap[plantId],
+              dateFormat
+            )
+          : this.datePipe.transform(
+              formScheduleConfiguration.startDate,
+              dateFormat
+            )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, dateFormat)
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(scheduleEndOn),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, dateFormat)
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(endDate),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
+    if (scheduleType === 'byDate') {
+      const scheduleDates = formScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
@@ -828,30 +918,20 @@ export class FormsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllForms() {
-    this.raceDynamicFormService
-      .fetchAllSchedulerForms$()
-      .subscribe((formsList) => {
-        const objectKeys = Object.keys(formsList);
-        if (objectKeys.length > 0) {
-          const uniquePlants = formsList.items
-            .map((item) => {
-              if (item.plant) {
-                this.plantsIdNameMap[item.plant] = item.plantId;
-                return item.plant;
-              }
-              return '';
-            })
-            .filter((value, index, self) => self.indexOf(value) === index);
-          this.plants = [...uniquePlants];
-
-          for (const item of this.filterJson) {
-            if (item.column === 'plant') {
-              item.items = this.plants;
-            }
-          }
-        }
+  populatePlantsforFilter() {
+    this.plantService.fetchAllPlants$().subscribe((plants) => {
+      plants.items.forEach((plant) => {
+        this.plantsIdNameMap[`${plant.plantId} - ${plant.name}`] = plant.id;
       });
+
+      for (const item of this.filterJson) {
+        if (item.column === 'plant') {
+          item.items = plants.items.map(
+            (plant) => `${plant.plantId} - ${plant.name}`
+          );
+        }
+      }
+    });
   }
 
   applyFilters(data: any): void {

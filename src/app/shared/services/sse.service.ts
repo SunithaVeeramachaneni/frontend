@@ -4,6 +4,7 @@ import { CommonService } from './common.service';
 import * as hash from 'object-hash';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 import { AuthConfigService } from 'src/app/auth-config.service';
+import { AppService } from './app.services';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class SseService {
   constructor(
     private commonService: CommonService,
     private tenantService: TenantService,
-    private authConfigService: AuthConfigService
+    private authConfigService: AuthConfigService,
+    private appService: AppService
   ) {}
 
   /**
@@ -27,8 +29,16 @@ export class SseService {
    * @param API url
    * @formData data (file, ...etc.)
    */
-  public getEventSourceWithPost(url: string, formData: FormData): SSE {
-    return this.buildEventSource(url, 'POST', formData);
+  public getEventSourceWithPost(
+    apiUrl: string,
+    urlString: string,
+    formData: FormData
+  ): SSE {
+    return this.buildEventSource(
+      this.appService.prepareUrl(apiUrl, urlString),
+      'POST',
+      formData
+    );
   }
 
   /**
@@ -37,8 +47,16 @@ export class SseService {
    * @param API url
    * @formData data (file, ...etc.)
    */
-  public getEventSourceWithGet(url: string, formData: FormData): SSE {
-    return this.buildEventSource(url, 'GET', formData);
+  public getEventSourceWithGet(
+    apiUrl: string,
+    urlString: string,
+    formData: FormData
+  ): SSE {
+    return this.buildEventSource(
+      this.appService.prepareUrl(apiUrl, urlString),
+      'GET',
+      formData
+    );
   }
 
   /**

@@ -69,6 +69,8 @@ export interface ScheduleFormDetail extends Form {
   rounds: number;
   forms: number;
   operator: string;
+  plantId: string;
+  plant: string;
 }
 
 export interface FormDetail extends Form {
@@ -100,6 +102,7 @@ export type FormList = {
 };
 
 export interface FormScheduleConfiguration {
+  shiftSlots: any;
   id?: string;
   formId: string;
   scheduleType: string;
@@ -118,6 +121,7 @@ export interface FormScheduleConfiguration {
   endDatePicker?: Date;
   scheduleEndOnPicker?: Date;
   assignmentDetails: AssignmentDetail;
+  shiftDetails: { [x: string]: { startTime: string; endTime: string }[] };
 }
 export interface FormScheduleConfigurationObj {
   [key: string]: FormScheduleConfiguration;
@@ -129,6 +133,7 @@ export interface FormSuccessModalData {
 }
 
 export interface InspectionDetail extends Form {
+  plantId?: string;
   inspectionId: string;
   inspectionDetailId: string;
   scheduledType: string;

@@ -4,11 +4,8 @@
   position: fixed;
   bottom: 0;
   top: 0;
-  right: 0;
-  width: 457px;
-  min-width: 457px;
+  width: 100%;
   height: 100%;
-  z-index: 9999;
   background-color: $white;
   border-left: 1px solid $border-color;
 }
@@ -22,9 +19,10 @@
 
     .cancel-side-drawer {
       position: absolute;
-      top: 15px;
       left: 15px;
+      top: -5px;
       cursor: pointer;
+      display: inline-flex;
     }
 
     .heading {
@@ -33,13 +31,15 @@
     }
 
     .mat-card-content {
-      padding: 0 16px;
-      height: calc(100vh - 138px);
+      padding: 32px;
+      height: calc(100vh - 160px);
       overflow-y: auto;
       overflow-x: hidden;
 
       .field-info {
-        color: $light-gray;
+        color: $black;
+        font-weight: 500;
+        font-size: 110%;
       }
 
       p {
@@ -49,15 +49,16 @@
 
       .field-name {
         font-weight: 500;
-        line-height: 20px;
-        border-bottom: 1px solid $gray9;
-        padding-bottom: 8px;
+        background: $gray;
+        padding: 12px;
+        border-radius: 4px;
+        height: 20px;
       }
 
       .schedule {
         margin: 20px 0 10px 0;
         font-size: 115%;
-        font-weight: 500;
+        font-weight: bold;
       }
 
       ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
@@ -77,6 +78,12 @@
         right: -10px;
       }
 
+      ::ng-deep
+        .mat-form-field-appearance-fill
+        .mat-form-field-underline::before {
+        background-color: transparent;
+      }
+
       .by-frequency {
         display: flex;
         flex-direction: column;
@@ -92,8 +99,17 @@
           margin-right: 36px;
         }
 
+        .repeat-num {
+          width: 8%;
+          font-weight: 500;
+        }
+
+        .repeat-day {
+          width: 11%;
+          font-weight: 500;
+        }
+
         mat-form-field {
-          width: 22%;
           margin-left: 20px;
         }
 
@@ -117,7 +133,7 @@
 
         .on {
           display: inline-block;
-          margin-left: 40px;
+          margin-left: 27px;
         }
 
         .on mat-form-field {
@@ -126,7 +142,11 @@
 
         .after {
           display: inline-block;
-          margin-left: 47px;
+          margin-left: 35px;
+
+          .occurrences-num {
+            width: 20%;
+          }
 
           ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
             border-radius: 4px 0 0 4px;
@@ -262,25 +282,125 @@
     width: 94%;
     justify-content: center;
 
-    .schedule-button {
-      width: 48%;
-      background-color: $blue-main;
-    }
-
-    .schedule-button:disabled {
-      background-color: $gray2-bg;
-      color: $gray7;
-    }
-
     .cancel-button {
       width: 48%;
       margin-right: 10px;
     }
   }
+  schedule-btn {
+    float: right;
+    margin-right: 40px;
+    margin-top: 15px;
+  }
+  .left {
+    display: flex;
+    align-items: center;
+  }
+  ::ng-deep .heading-schedule {
+    margin: 10px 16px 10px 16px;
+    font-size: 80%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .content {
+    margin-top: 30px;
+    margin-left: 320px;
+    margin-right: 320px;
+    border-radius: 10px;
+    background-color: $white !important;
+  }
+  .bg-white {
+    background-color: $light-blue-bg !important;
+  }
+  .schedule-btn {
+    float: right;
+    margin-right: 40px;
+    margin-top: 15px;
+  }
+  ::ng-deep .center {
+    text-align: center;
+  }
+  .dialog-close {
+    margin-top: 10px;
+    margin-right: 5px;
+    font-weight: lighter;
+    color: $gray1;
+  }
+  .dialog-close h2 {
+    margin-top: 5px;
+  }
+  .close-text {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .schedule-text {
+    padding: 10px 0 10px;
+    font-size: 1rem;
+    background-color: $white;
+    margin-bottom: 0;
+    border-bottom: 1px solid $gray14;
+  }
+  .plus-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  .form-title {
+    font-weight: 500;
+  }
+  .form-description {
+    color: $light-gray;
+    margin: 2px 0;
+  }
+  .mt-12 {
+    margin-top: 12px;
+  }
+  .shift-dropdown {
+    color: $black;
+    font-weight: 500;
+    font-size: 110%;
+  }
+
+  .sub-text {
+    color: $light-gray;
+  }
+}
+
+#horizontal-row {
+  border: 0.3px solid $gray14;
+}
+
+::ng-deep .float-right {
+  float: right;
 }
 
 ::ng-deep .assign-menu + * .mat-menu-panel {
   position: relative;
   top: 60px;
-  right: 370px;
+}
+::ng-deep .mat-card > :last-child:not(.mat-card-footer),
+.mat-card-content > :last-child:not(.mat-card-footer) {
+  margin-bottom: 70px;
+}
+
+.schedule-button {
+  width: 100%;
+  background-color: $blue-main;
+  color: $white;
+  padding: 0 25px 0 25px;
+}
+
+.schedule-button:disabled {
+  background-color: $gray2-bg;
+  color: $gray7;
+}
+
+.date-flex {
+  display: flex;
+}
+
+.form-name {
+  font-weight: bold;
+  font-size: 130%;
+  margin: 0;
 }

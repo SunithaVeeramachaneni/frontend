@@ -199,7 +199,7 @@ export class UnitMeasurementService {
       value: string;
     }[]
   > {
-    return this._appService._getLocal('', 'assets/json/uom-filter.json', info);
+    return this._appService._getLocal('', '/assets/json/uom-filter.json', info);
   }
 
   handleError(error: any) {

@@ -4,7 +4,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HierarchyEntity } from 'src/app/interfaces';
 import {
   RangeSelectorState,
-  ResponseTypeOpenState
+  ResponseTypeOpenState,
+  SliderSelectorState
 } from 'src/app/interfaces/response-type';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -13,7 +14,11 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class FormService {
-  private sliderOpenStateSubject = new BehaviorSubject<boolean>(false);
+  private sliderOpenStateSubject = new BehaviorSubject<SliderSelectorState>({
+    isOpen: false,
+    questionId: '',
+    value: 'TF'
+  });
   private multiChoiceOpenStateSubject =
     new BehaviorSubject<ResponseTypeOpenState>({
       isOpen: false,
@@ -34,8 +39,8 @@ export class FormService {
 
   constructor(private _appService: AppService) {}
 
-  setsliderOpenState(open: boolean) {
-    this.sliderOpenStateSubject.next(open);
+  setsliderOpenState(sliderResponse: SliderSelectorState) {
+    this.sliderOpenStateSubject.next(sliderResponse);
   }
 
   setMultiChoiceOpenState(responseType: ResponseTypeOpenState) {

@@ -34,6 +34,10 @@
   }
 }
 
+.hide-mat-menu {
+  display: none;
+}
+
 .rounds-list {
   ::ng-deep .table-column {
     width: 15%;
@@ -45,6 +49,14 @@
 
   ::ng-deep .mat-column-locationAssetsCompleted {
     min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-locationAndAssetsSkipped {
+    min-width: 80px;
+  }
+
+  ::ng-deep .mat-column-tasksSkipped {
+    min-width: 60px;
   }
 
   ::ng-deep .mat-column-tasksCompleted {

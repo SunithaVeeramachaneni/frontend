@@ -54,11 +54,9 @@ import { PlansComponent } from './plans/plans.component';
 import { RoundsComponent } from './rounds/rounds.component';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
-import { RoundPlanScheduleConfigurationComponent } from './round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { MatRadioModule } from '@angular/material/radio';
 
 import { AssetsModalComponent } from './assets-modal/assets-modal.component';
-import { RoundPlanScheduleSuccessModalComponent } from './round-plan-schedule-success-modal/round-plan-schedule-success-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HierarchyDeleteConfirmationDialogComponent } from 'src/app/forms/components/hierarchy-container/hierarchy-delete-dialog/hierarchy-delete-dialog.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -93,8 +91,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     ArchivedListComponent,
     ArchivedDeleteModalComponent,
     AssetsModalComponent,
-    RoundPlanScheduleSuccessModalComponent,
-    RoundPlanScheduleConfigurationComponent,
     AssetsModalComponent,
     RoundObservationsComponent
   ],

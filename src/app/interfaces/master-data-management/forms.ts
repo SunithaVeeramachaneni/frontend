@@ -20,11 +20,13 @@ export type GetFormList = {
   formListFormDetail?: {} | null;
   isDeleted?: boolean | null;
   createdBy?: string | null;
+  embeddedFormId?: string | null;
   plantId?: string;
   createdAt: string;
   updatedAt: string;
   _version: number;
   pdfTemplateConfiguration?: any;
+  additionalDetails?: string | null;
 };
 
 export type UpdateAuthoredFormDetail = {

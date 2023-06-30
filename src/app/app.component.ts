@@ -4,7 +4,8 @@ import {
   Component,
   HostListener,
   OnDestroy,
-  OnInit
+  OnInit,
+  Inject
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
@@ -17,7 +18,6 @@ import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
 import { environment } from 'src/environments/environment';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { AuthHeaderService } from './shared/services/authHeader.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { ImageUtils } from './shared/utils/imageUtils';
 import { Buffer } from 'buffer';
@@ -28,6 +28,7 @@ import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
+import { DOCUMENT } from '@angular/common';
 
 const {
   dashboard,
@@ -62,6 +63,7 @@ const {
   assets,
   unitOfMeasurement,
   plants,
+  shifts,
   globalResponse,
   roundPlanArchivedForms,
   roundPlanObservations,
@@ -271,6 +273,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: plants.permission
         },
         {
+          title: shifts.title,
+          url: shifts.url,
+          permission: plants.permission
+        },
+        {
           title: locations.title,
           url: locations.url,
           permission: locations.permission
@@ -322,14 +329,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private translateService: TranslateService,
     private usersService: UsersService,
     private loginService: LoginService,
-    private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
     private tenantService: TenantService,
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
     private userIdle: UserIdleService,
-    private sseService: SseService
+    private sseService: SseService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
@@ -496,9 +503,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     // COLLABORATION CHAT SSE
     const stopCollabSSE = true;
     if (!stopCollabSSE && userID) {
-      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${collaborationType}/sse/${userID}`;
       this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
-        collaborationSSEUrl,
+        environment.userRoleManagementApiUrl,
+        `${collaborationType}/sse/${userID}`,
         null
       );
       this.eventSourceCollaboration.stream();
@@ -538,9 +545,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     // JITSI AV CALLING SSE
     const stopJitsiSSE = true;
     if (!stopJitsiSSE) {
-      const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
       this.eventSourceJitsi = this.sseService.getEventSourceWithGet(
-        jitsiSseUrl,
+        environment.userRoleManagementApiUrl,
+        `jitsi/sse/${userInfo.email}`,
         null
       );
       this.eventSourceJitsi.stream();
@@ -576,9 +583,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     // USER PRESENCE SSE
-    const updateUserPresenceSSEURL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
     this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
-      updateUserPresenceSSEURL,
+      environment.userRoleManagementApiUrl,
+      'users/sse/users_presence',
       null
     );
     this.eventSourceUpdateUserPresence.stream();

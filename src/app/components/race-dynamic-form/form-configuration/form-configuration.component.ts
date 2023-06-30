@@ -53,6 +53,7 @@ import {
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -85,8 +86,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedFormName: string;
   selectedFormData: any;
   currentFormData: any;
+  isEmbeddedForm: boolean;
   errors: ValidationError = {};
   formDetails: any;
+  pages: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   authoredFormDetailSubscription: Subscription;
   private onDestroy$ = new Subject();
@@ -101,7 +104,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
     private formConfigurationService: FormConfigurationService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -167,8 +171,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
+        const { name, description, id, formLogo, formStatus, formType } =
+          formMetadata;
         this.formMetadata = formMetadata;
+        this.isEmbeddedForm = formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,
@@ -230,6 +236,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formDetailPublishStatus = formDetailPublishStatus;
         const { id: formListId } = formMetadata;
         this.isFormDetailPublished = isFormDetailPublished;
+        this.pages = pages;
 
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
@@ -396,6 +403,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             })
           );
         } else {
+          this.store.select(getFormMetadata).subscribe((data) => {
+            this.isEmbeddedForm = data.formType === 'Embedded';
+          });
           const section = {
             id: 'S1',
             name: 'Section',
@@ -411,7 +421,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               return {
                 ...df,
                 name: 'Conducted On',
-                fieldType: 'DT',
+                fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
                 date: true,
                 time: true
               };
@@ -467,6 +477,43 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
+
+    const form = { formMetadata: this.formMetadata, pages: this.pages };
+
+    if (this.isEmbeddedForm) {
+      this.rdfService.publishEmbeddedForms$(form).subscribe((response) => {
+        form.pages[0].questions.forEach((question) => {
+          if (response.includes(question.id)) {
+            question.isPublished = true;
+            question.isPublishedTillSave = true;
+          }
+        });
+
+        const {
+          formMetadata,
+          formStatus,
+          counter,
+          authoredFormDetailId,
+          authoredFormDetailVersion,
+          formDetailPublishStatus,
+          authoredFormDetailDynamoDBVersion
+        } = this.formDetails;
+        this.store.dispatch(
+          BuilderConfigurationActions.updateAuthoredFormDetail({
+            formStatus: formStatus,
+            formDetailPublishStatus,
+            formListId: formMetadata.id,
+            counter,
+            pages: form.pages,
+            authoredFormDetailId,
+            authoredFormDetailVersion,
+            authoredFormDetailDynamoDBVersion
+          })
+        );
+
+        this.router.navigate(['/forms']);
+      });
+    }
   }
 
   getFormConfigurationStatuses() {
@@ -509,7 +556,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       data: {
         selectedFormData: '',
         selectedFormName: '',
-        openImportQuestionsSlider: false
+        openImportQuestionsSlider: false,
+        isEmbeddedForm: this.isEmbeddedForm
       }
     });
 
@@ -528,6 +576,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
+  }
+
+  publishOrShowPdf() {
+    if (!this.isEmbeddedForm) {
+      this.goToPDFBuilderConfiguration();
+    } else {
+      // PUBLISH FORM TO SAP AND DYNAMODB
+      this.publishFormDetail();
+    }
   }
 
   goToPDFBuilderConfiguration = () => {
