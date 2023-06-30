@@ -97,7 +97,7 @@ export class ScheduleConfigurationService {
 
     // Set the start time as the current time
     const current: Date = new Date(start);
-
+    if (current > end) end.setHours(end.getHours() + 24);
     // Add one hour to the current time until it exceeds the end time
     while (current <= end) {
       const formattedTime: string = current.toLocaleTimeString('en-US', {
