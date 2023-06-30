@@ -439,9 +439,9 @@
         <h5 translate="summary"></h5>
         <table class="landing-page-table">
           <tr class="bg-gray">
-            <th>{{ 'plant' | translate }}</th>
-            <th translate="schedule"></th>
-            <th translate="shift"></th>
+            <th class="width-35">{{ 'plant' | translate }}</th>
+            <th class="width-35" translate="schedule"></th>
+            <th class="width-35" translate="shift"></th>
           </tr>
           <tr>
             <td>
@@ -462,12 +462,14 @@
           "
         >
           <tr class="bg-gray">
-            <th translate="due"></th>
+            <th class="width-35" translate="due"></th>
             <th
+              class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
               translate="submittedOn"
             ></th>
             <th
+              class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
               translate="submittedBy"
             ></th>
