@@ -283,7 +283,7 @@ export class ScheduleConfigurationComponent
     this.schedulerConfigForm = this.fb.group({
       id: '',
       roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
-      formId: !this.isFormModule ? this.selectedDetails?.id : '',
+      formId: this.isFormModule ? this.selectedDetails?.id : '',
       scheduleType: 'byFrequency',
       repeatDuration: [1, [Validators.required, Validators.min(1)]],
       repeatEvery: 'day',
