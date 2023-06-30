@@ -567,14 +567,8 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
-    const selectedPlant = this.allPlants?.items.find(
-      (data) => data.id === row.plantId
-    );
-    const selectedShifts = JSON.parse(selectedPlant?.shifts);
-    const activeShifts = this.allShifts.filter((data) =>
-      selectedShifts.some((shift) => shift.id === data.id)
-    );
 
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
@@ -594,6 +588,17 @@ export class FormsComponent implements OnInit, OnDestroy {
         this.openFormHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(row: any) {
+    const selectedPlant = this.allPlants?.items.find(
+      (data) => data.id === row.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -797,13 +802,7 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
-    const selectedPlant = this.allPlants?.items.find(
-      (plant) => plant.id === data.plantId
-    );
-    const selectedShifts = JSON.parse(selectedPlant?.shifts);
-    const activeShifts = this.allShifts.filter((s) =>
-      selectedShifts.some((shift) => shift.id === s.id)
-    );
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
         this.openScheduleConfigHandler({ ...data, shifts: activeShifts });

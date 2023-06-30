@@ -113,14 +113,6 @@ export class ScheduleConfigurationComponent
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   assigneeDetails: AssigneeDetails;
   moduleName: 'OPERATOR_ROUNDS' | 'RDF';
-  get roundPlanDetail(): any {
-    this._roundPlanDetail = this.data.roundPlanDetail;
-    return this._roundPlanDetail;
-  }
-  get formDetail(): any {
-    this._formDetail = this.data.formDetail;
-    return this._formDetail;
-  }
   plantMapSubscription: Subscription;
   scheduleTypes = scheduleConfigs.scheduleTypes;
   scheduleEndTypes = scheduleConfigs.scheduleEndTypes;
@@ -150,8 +142,6 @@ export class ScheduleConfigurationComponent
   plantTimezoneMap: any = {};
   placeHolder = '_ _';
   selectedShifts = [];
-  private _roundPlanDetail: any;
-  private _formDetail: any;
   private onDestroy$ = new Subject();
   private shiftDetails: {
     [key: string]: { startTime: string; endTime: string }[];
@@ -178,10 +168,10 @@ export class ScheduleConfigurationComponent
       this.isFormModule = false;
     }
     if (this.isFormModule) {
-      this.formName = this.formDetail?.name || '';
+      this.formName = this.data?.fromDetail?.name || '';
       this.selectedDetails = this.data.formDetail;
-    } else if (this.roundPlanDetail) {
-      this.formName = this.roundPlanDetail?.name || '';
+    } else {
+      this.formName = this.data?.roundPlanDetail?.name || '';
       this.selectedDetails = this.data.roundPlanDetail;
     }
     this.getAllShiftsData();
@@ -249,14 +239,12 @@ export class ScheduleConfigurationComponent
     if (this.data) {
       const { formDetail, roundPlanDetail, moduleName, assigneeDetails } =
         this.data;
-      this.initDetails();
       this.assigneeDetails = assigneeDetails;
       this.moduleName = moduleName;
 
       // If the module name is RDF
       if (formDetail && moduleName === 'RDF') {
         this.isFormModule = true;
-        this._formDetail = formDetail;
         this.selectedDetails = formDetail;
         if (
           this.plantTimezoneMap[this.selectedDetails?.plantId]
@@ -280,13 +268,13 @@ export class ScheduleConfigurationComponent
 
       // If moduleName is round-plan
       if (roundPlanDetail && moduleName === 'OPERATOR_ROUNDS') {
-        this._roundPlanDetail = roundPlanDetail;
         this.selectedDetails = roundPlanDetail;
         this.getRoundPlanSchedulerConfigurationByRoundPlanId(
           roundPlanDetail?.id
         );
       }
     }
+    this.initDetails();
 
     this.plantMapSubscription =
       this.plantService.plantTimeZoneMapping$.subscribe(
@@ -294,8 +282,8 @@ export class ScheduleConfigurationComponent
       );
     this.schedulerConfigForm = this.fb.group({
       id: '',
-      roundPlanId: this.roundPlanDetail?.id,
-      formId: this.formDetail?.id,
+      roundPlanId: !this.isFormModule ? this.selectedDetails?.id : '',
+      formId: !this.isFormModule ? this.selectedDetails?.id : '',
       scheduleType: 'byFrequency',
       repeatDuration: [1, [Validators.required, Validators.min(1)]],
       repeatEvery: 'day',
