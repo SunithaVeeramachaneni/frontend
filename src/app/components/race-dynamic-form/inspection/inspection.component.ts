@@ -89,7 +89,10 @@ export class InspectionComponent implements OnInit, OnDestroy {
   @Output() selectTab: EventEmitter<SelectTab> = new EventEmitter<SelectTab>();
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -392,6 +395,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
   plants = [];
   plantsIdNameMap = {};
+  openMenuStateDueDate = false;
+  openMenuStateStartDate = false;
+  userFullNameByEmail = {};
 
   initial = {
     columns: this.columns,
@@ -577,8 +583,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
 
           if (uniqueAssignTo?.length > 0) {
             uniqueAssignTo?.filter(Boolean).forEach((item) => {
-              if (item) {
-                this.assignedTo.push(item);
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
               }
             });
           }
@@ -949,5 +955,16 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
     }
     return format(new Date(date), dateFormat2);
+  }
+  getFullNameToEmailArray(data: any) {
+    const emailArray = [];
+    data?.forEach((name: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === name
+        )
+      );
+    });
+    return emailArray;
   }
 }

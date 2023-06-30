@@ -330,10 +330,14 @@ export class FormsComponent implements OnInit, OnDestroy {
   assigneeDetails: AssigneeDetails;
   plantsIdNameMap = {};
   plantTimezoneMap = {};
+  userFullNameByEmail = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -488,9 +492,15 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         for (const item of uniqueAssignTo) {
-          if (item && !this.assignedTo.includes(item)) {
-            this.assignedTo.push(item);
+          if (item && this.userFullNameByEmail[item] !== undefined) {
+            this.assignedTo.push(this.userFullNameByEmail[item].fullName);
           }
+          console.log(
+            'forms: ',
+            this.userFullNameByEmail[item].fullName,
+            'item: ',
+            item
+          );
         }
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
@@ -960,5 +970,17 @@ export class FormsComponent implements OnInit, OnDestroy {
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
+  }
+  getFullNameToEmailArray(data?: any) {
+    const emailArray = [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    data.forEach((data: any) => {
+      emailArray.push(
+        Object.keys(this.userFullNameByEmail).find(
+          (email) => this.userFullNameByEmail[email].fullName === data
+        )
+      );
+    });
+    return emailArray;
   }
 }
