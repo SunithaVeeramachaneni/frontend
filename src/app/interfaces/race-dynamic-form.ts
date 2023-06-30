@@ -71,6 +71,7 @@ export interface ScheduleFormDetail extends Form {
   operator: string;
   plantId: string;
   plant: string;
+  shifts: [];
 }
 
 export interface FormDetail extends Form {

@@ -54,7 +54,7 @@
           </p>
           <div>
             <p class="field-name">
-              {{ selectedDetails?.plantName || placeHolder }}
+              {{ selectedDetails?.name || placeHolder }}
             </p>
           </div>
         </div>
@@ -64,7 +64,7 @@
           </p>
           <div>
             <p class="field-name">
-              {{ selectedDetails?.plantDescription || placeHolder }}
+              {{ selectedDetails?.description || placeHolder }}
             </p>
           </div>
         </div>
@@ -324,6 +324,18 @@
                   multiple
                   (selectionChange)="onShiftChange($event)"
                 >
+                  <mat-select-trigger>
+                    {{ shiftSlots?.value[0]?.name }},
+                    {{ shiftSlots?.value[1]?.name }},
+                    {{ shiftSlots?.value[2]?.name }}
+                    <span
+                      *ngIf="shiftSlots?.value?.length > 3"
+                      class="example-additional-selection"
+                    >
+                      (+{{ shiftSlots?.value?.length - 3 }}
+                      {{ shiftSlots?.value?.length === 4 ? 'more' : 'more' }})
+                    </span>
+                  </mat-select-trigger>
                   <mat-option
                     [value]="shifts?.id"
                     *ngFor="let shifts of shiftsInformation"
@@ -338,12 +350,12 @@
             <p translate="doNotSelectAnyShift"></p>
             <div class="mt-12" *ngIf="!isShiftsSelected">
               <h1 translate="whenToRunRounds"></h1>
-              <p class="margin-3" translate="selectSlotsBelow"></p>
+              <p class="margin-3 sub-text" translate="selectSlotsBelow"></p>
             </div>
             <div class="mt-12" *ngIf="isShiftsSelected">
               <h1 translate="roundGenerationSlots"></h1>
               <p
-                class="margin-3"
+                class="margin-3 sub-text"
                 translate="defaultSlotInMultipleSlotsWithoutOverlapping"
               ></p>
             </div>
