@@ -113,7 +113,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
 import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 import { UserNameByEmailPipe } from './pipes';
-import { ShiftComponent } from './components/shift/shift.component';
+import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 @NgModule({
   declarations: [
@@ -186,7 +186,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
-    ShiftComponent,
+    ShiftMenuItemComponent,
     ShiftDateChangeWarningModalComponent
   ],
   imports: [
@@ -269,7 +269,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
-    ShiftComponent
+    ShiftMenuItemComponent
   ]
 })
 export class FormModule {}

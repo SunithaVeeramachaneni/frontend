@@ -351,5 +351,6 @@
   "total": "Total",
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
-  "tasksCompleted": "Responses Completed"
+  "tasksCompleted": "Responses Completed",
+  "yes": "yes"
 }

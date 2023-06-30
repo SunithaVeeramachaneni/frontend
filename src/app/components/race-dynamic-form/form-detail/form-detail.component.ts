@@ -86,7 +86,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
-  public _scheduleConfiguration: RoundPlanScheduleConfiguration;
+  private _scheduleConfiguration: RoundPlanScheduleConfiguration;
 
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,

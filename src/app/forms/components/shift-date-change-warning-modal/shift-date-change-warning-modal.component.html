@@ -15,7 +15,7 @@
     (click)="onClick(true)"
     *ngIf="data.type === 'warning'"
   >
-    Yes
+    {{ 'yes' | translate }}
   </button>
   <button
     mat-button
@@ -27,6 +27,7 @@
     *ngIf="data.type === 'warning'"
   >
     Cancel
+    {{ 'cancel' | translate }}
   </button>
 
   <button
@@ -38,6 +39,6 @@
     (click)="onSubmit()"
     *ngIf="data.type === 'date'"
   >
-    Okay
+    {{ 'okay' | translate }}
   </button>
 </div>

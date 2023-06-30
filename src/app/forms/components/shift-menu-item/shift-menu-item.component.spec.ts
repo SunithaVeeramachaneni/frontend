@@ -1,20 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShiftComponent } from './shift.component';
+import { ShiftMenuItemComponent } from './shift-menu-item.component';
 
 describe('ShiftComponent', () => {
-  let component: ShiftComponent;
-  let fixture: ComponentFixture<ShiftComponent>;
+  let component: ShiftMenuItemComponent;
+  let fixture: ComponentFixture<ShiftMenuItemComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ShiftComponent ]
-    })
-    .compileComponents();
+      declarations: [ShiftMenuItemComponent]
+    }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShiftComponent);
+    fixture = TestBed.createComponent(ShiftMenuItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

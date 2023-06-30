@@ -1,24 +1,26 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnInit,
-  Output,
-  ViewChild
+  Output
 } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-shift',
-  templateUrl: './shift.component.html',
-  styleUrls: ['./shift.component.scss']
+  templateUrl: './shift-menu-item.component.html',
+  styleUrls: ['./shift-menu-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ShiftComponent implements OnInit {
-  @ViewChild('shiftOpen') shiftOpen;
-  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
+export class ShiftMenuItemComponent implements OnInit {
   @Input()
-  set plantSelected(plantSelected) {
-    this._plantSelected = plantSelected;
+  set plantId(plantId) {
+    this._plantId = plantId;
+  }
+  get plantSelected(): any {
+    return this._plantId;
   }
   @Input() set plantShiftObj(plantShiftObj) {
     this._plantShiftObj = plantShiftObj;
@@ -30,12 +32,15 @@ export class ShiftComponent implements OnInit {
   @Input() set dropdownPosition(dropdownPosition) {
     this._dropdownPosition = dropdownPosition;
   }
+  get dropdownPosition(): any {
+    return this._dropdownPosition;
+  }
 
   @Output() shiftChange: EventEmitter<any> = new EventEmitter<any>();
 
-  public _dropdownPosition: any;
-  public _plantShiftObj: any;
-  public _plantSelected: any;
+  private _dropdownPosition: any;
+  private _plantShiftObj: any;
+  private _plantId: any;
 
   constructor() {}
 

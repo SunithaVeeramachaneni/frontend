@@ -859,17 +859,22 @@ export class RoundsComponent implements OnInit, OnDestroy {
         action: 'showPlans'
       }
     ];
-
     if (
       !this.loginService.checkUserHasPermission(
         permissions,
         'SCHEDULE_ROUND_PLAN'
       )
     ) {
-      this.columns[3].controlType = 'string';
-      this.columns[4].controlType = 'string';
-      this.columns[7].controlType = 'string';
+      this.columns[12].controlType = 'string';
       this.columns[10].controlType = 'string';
+    }
+
+    if (
+      !this.loginService.checkUserHasPermission(permissions, 'UPDATE_SHIFT')
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[5].controlType = 'string';
+      this.columns[6].controlType = 'string';
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;

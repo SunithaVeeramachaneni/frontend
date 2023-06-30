@@ -28,7 +28,7 @@ export class DatePickerComponent implements OnInit {
   set selectedDate(selectedDate: SelectedDate) {
     if (selectedDate) {
       this._selectedDate = selectedDate;
-      this.dateGroup.get('date').setValue(this.selectedDate.date);
+      this.dateGroup.get('date').patchValue(this.selectedDate.date);
       this.picker?.open();
     }
   }

@@ -78,6 +78,7 @@ import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
+import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-plans',
@@ -406,12 +407,10 @@ export class PlansComponent implements OnInit, OnDestroy {
   planCategory: FormControl;
   roundPlanId: string;
   plants = [];
-  allShiftsMaster = [];
   plantsIdNameMap = {};
   userFullNameByEmail = {};
   plantTimezoneMap = {};
   activeShiftIdMap = {};
-  shiftIdMaptoShift = {};
   selectedRoundConfig: any;
   shiftObj: any = {};
 
@@ -454,7 +453,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       .getShiftsList$(
         {
           next: '',
-          limit: 100000,
+          limit: graphQLDefaultMaxLimit,
           searchKey: '',
           fetchType: 'load'
         },
@@ -531,7 +530,6 @@ export class PlansComponent implements OnInit, OnDestroy {
         ]) => {
           shiftData.rows.forEach((value) => {
             this.activeShiftIdMap[value.id] = value.name;
-            this.shiftIdMaptoShift[value.id] = value;
           });
           this.isLoading$.next(false);
           if (this.skip === 0) {

@@ -5,7 +5,7 @@
   <button
     mat-menu-item
     (click)="optionClick(item)"
-    *ngFor="let item of _plantShiftObj[_plantSelected]"
+    *ngFor="let item of _plantShiftObj[_plantId]"
   >
     {{ item.name }}
   </button>

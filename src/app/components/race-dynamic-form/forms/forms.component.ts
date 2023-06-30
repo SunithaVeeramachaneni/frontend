@@ -356,7 +356,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   plantTimezoneMap = {};
   shiftIdNameMap = {};
-  plantShiftObj = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
@@ -454,23 +453,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
-      this.users$,
-      this.plantService.fetchAllPlants$().pipe(
-        tap((plants) => {
-          plants.items.map((plant) => {
-            if (
-              this.commonService.isJson(plant.shifts) &&
-              JSON.parse(plant.shifts)
-            ) {
-              let shifts = '';
-              JSON.parse(plant.shifts).map((shift) => {
-                shifts += shift.name + ',';
-              });
-              this.plantShiftObj[plant.id] = shifts;
-            }
-          });
-        })
-      )
+      this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, shifts]) => {
         shifts.items.forEach((shift) => {

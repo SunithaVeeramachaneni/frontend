@@ -846,14 +846,21 @@ export class InspectionComponent implements OnInit, OnDestroy {
     ];
 
     if (
-      !this.loginService.checkUserHasPermission(permissions, 'SCHEDULE_FORM')
+      !this.loginService.checkUserHasPermission(
+        permissions,
+        'SCHEDULE_ROUND_PLAN'
+      )
     ) {
-      if (this.columns[3]?.controlType) {
-        this.columns[3].controlType = 'string';
-      }
-      if (this.columns[6]?.controlType) {
-        this.columns[6].controlType = 'string';
-      }
+      this.columns[12].controlType = 'string';
+      this.columns[10].controlType = 'string';
+    }
+
+    if (
+      !this.loginService.checkUserHasPermission(permissions, 'UPDATE_SHIFT')
+    ) {
+      this.columns[3].controlType = 'string';
+      this.columns[5].controlType = 'string';
+      this.columns[6].controlType = 'string';
     }
 
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -1181,8 +1188,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         dueDate: changedDueDate,
                         dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
-                        roundDBVersion: resp.roundDBVersion + 1,
-                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        inspectionDBVersion: resp.inspectionDBVersion + 1,
+                        inspectionDetailDBVersion:
+                          resp.inspectionDetailDBVersion + 1,
                         assignedToEmail: resp.assignedTo
                       };
                     }
@@ -1328,8 +1336,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         scheduledAt: changedScheduledAt,
                         status: changedStatus,
                         scheduledAtDisplay: startDateDisplayFormat,
-                        roundDBVersion: resp.roundDBVersion + 1,
-                        roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                        inspectionDBVersion: resp.inspectionDBVersion + 1,
+                        inspectionDetailDBVersion:
+                          resp.inspectionDetailDBVersion + 1,
                         assignedToEmail: resp.assignedTo
                       };
                     }
@@ -1493,8 +1502,9 @@ export class InspectionComponent implements OnInit, OnDestroy {
                       status: changedStatus,
                       slotDetails: slot,
                       dueDate: shiftEndDateAndTime,
-                      roundDBVersion: resp.roundDBVersion + 1,
-                      roundDetailDBVersion: resp.roundDetailDBVersion + 1,
+                      inspectionDBVersion: resp.inspectionDBVersion + 1,
+                      inspectionDetailDBVersion:
+                        resp.inspectionDetailDBVersion + 1,
                       assignedToEmail: resp.assignedTo
                     };
                   }

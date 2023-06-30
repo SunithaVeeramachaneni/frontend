@@ -1,10 +1,16 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-shift-date-change-warning-modal',
   templateUrl: './shift-date-change-warning-modal.component.html',
-  styleUrls: ['./shift-date-change-warning-modal.component.scss']
+  styleUrls: ['./shift-date-change-warning-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ShiftDateChangeWarningModalComponent implements OnInit {
   constructor(

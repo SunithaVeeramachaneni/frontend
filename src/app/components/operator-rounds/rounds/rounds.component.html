@@ -140,7 +140,7 @@
       <div *ngIf="plantSelected">
         <app-shift
           [plantShiftObj]="plantToShift"
-          [plantSelected]="plantSelected"
+          [plantId]="plantSelected"
           [dropdownPosition]="shiftPosition"
           (shiftChange)="shiftChangeHandler($event)"
         >
