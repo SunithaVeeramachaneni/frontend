@@ -170,7 +170,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -192,7 +192,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Location',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -214,7 +214,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assets',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -236,7 +236,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Tasks',
       type: 'number',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -259,7 +259,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -281,7 +281,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Rounds Generated',
       type: 'number',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -303,7 +303,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -325,7 +325,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -450,17 +450,15 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
-    this.activeShifts$ = this.shiftService
-      .getShiftsList$(
-        {
-          next: '',
-          limit: 100000,
-          searchKey: '',
-          fetchType: 'load'
-        },
-        { isActive: 'true' }
-      )
-      .pipe(catchError(() => of([])));
+    this.activeShifts$ = this.shiftService.getShiftsList$(
+      {
+        next: '',
+        limit: 100000,
+        searchKey: '',
+        fetchType: 'load'
+      },
+      { isActive: 'true' }
+    );
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -1111,21 +1109,22 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (item.column === 'shiftId' && item.value) {
-        const foundEntry = Object.entries(this.activeShiftIdMap).find(
-          ([key, val]) => val === item.value
-        );
-        this.filter[item.column] = foundEntry[0];
-      } else if (item.column === 'assignedTo' && item.value) {
-        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
-      } else if (item.type === 'daterange' && item.value) {
-        this.filter[item.column] = item.value;
-      } else if (item.column === 'roundPlanId' && item.value) {
-        this.filter[item.column] = item.value;
-      } else {
-        this.filter[item.column] = item.value ?? '';
+      switch (item.column) {
+        case 'plant':
+          this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+          break;
+        case 'shiftId':
+          const foundEntry = Object.entries(this.activeShiftIdMap).find(
+            ([key, val]) => val === item.value
+          );
+          this.filter[item.column] = foundEntry[0];
+          break;
+        case 'assignedTo':
+          this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+          break;
+        default:
+          this.filter[item.column] = item.value;
+          break;
       }
     }
     this.nextToken = '';
