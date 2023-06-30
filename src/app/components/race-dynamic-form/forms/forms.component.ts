@@ -589,9 +589,9 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   };
 
-  prepareActiveShifts(row: any) {
+  prepareActiveShifts(form: any) {
     const selectedPlant = this.allPlants?.items.find(
-      (data) => data.id === row.plantId
+      (plant) => plant.id === form.plantId
     );
     const selectedShifts = JSON.parse(selectedPlant?.shifts);
     const activeShifts = this.allShifts.filter((data) =>
