@@ -22,7 +22,7 @@ import {
   UsersInfoByEmail,
   Count
 } from '../../../interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import { formConfigurationStatus, dateFormat2 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
@@ -54,12 +54,62 @@ export class OperatorRoundsService {
   setHierarchyMode(mode: string) {
     this.hierarchyModeSubject.next(mode);
   }
-
   createTags$ = (
     tags: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  createAdditionalDetails$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+  updateValues$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      'additional-details',
+      details,
+      info
+    );
+
+  deleteAdditionalDetailsValue$ = (
+    details: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      details,
+      info
+    );
+
+  getAdditionalDetails$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.operatorRoundsApiUrl,
+      `additional-details`,
+      info
+    );
+
+  removeLabel$ = (
+    labelId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.operatorRoundsApiUrl,
+      `delete-additional-details/${labelId}`,
+      info
+    );
 
   createDataSet$ = (
     dataset: any,
@@ -273,7 +323,8 @@ export class OperatorRoundsService {
         plantId: formListQuery.plantId,
         isArchived: false,
         isDeleted: false,
-        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration
+        pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        additionalDetails: formListQuery.additionalDetails
       }
     );
   }
@@ -569,7 +620,7 @@ export class OperatorRoundsService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          ? format(new Date(p.dueDate), dateFormat2)
           : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
@@ -585,7 +636,8 @@ export class OperatorRoundsService {
               )
             : 0
         }%`,
-        roundId: p.roundId
+        roundId: p.roundId,
+        isViewPdf: p.isViewPdf
       }));
     return rows;
   }
@@ -713,7 +765,7 @@ export class OperatorRoundsService {
   ): Observable<Blob> =>
     this.appService.downloadFile(
       environment.operatorRoundsApiUrl,
-      `rounds/${roundPlanId}/${roundId}`,
+      `rounds/download-pdf/${roundPlanId}/${roundId}`,
       info,
       true,
       {},

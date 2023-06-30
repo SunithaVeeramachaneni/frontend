@@ -55,6 +55,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { getUnitOfMeasurementList } from '../../state';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Base64HelperService } from 'src/app/components/work-instructions/services/base64-helper.service';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -67,7 +69,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
-  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+  @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
 
@@ -206,6 +208,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   moduleName$: Observable<string>;
   uom$: Observable<UnitOfMeasurement[]>;
+  embeddedFormId: string = '';
 
   private _pageIndex: number;
   private _id: string;
@@ -225,7 +228,9 @@ export class QuestionComponent implements OnInit, OnDestroy {
     private formService: FormService,
     private responseSetService: ResponseSetService,
     private toast: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private base64Service: Base64HelperService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -233,6 +238,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
       tap((event) => {
         this.formId = event.id;
         this.formMetadata = event;
+        this.embeddedFormId = event?.embeddedFormId;
       })
     );
     this.moduleName$ = this.store
@@ -258,13 +264,14 @@ export class QuestionComponent implements OnInit, OnDestroy {
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
-        fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
         fieldType.type !== 'TAF' &&
         (this.isEmbeddedForm
           ? fieldType.type !== 'DT'
-          : fieldType.type !== 'DF' && fieldType.type !== 'TIF')
+          : fieldType.type !== 'DF' &&
+            fieldType.type !== 'TIF' &&
+            fieldType.type !== 'IMG')
     );
 
     // isAskQuestion true set question id and section id
@@ -453,6 +460,15 @@ export class QuestionComponent implements OnInit, OnDestroy {
       type: 'delete',
       questionId: this.questionId
     });
+
+    if (this.embeddedFormId) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.embeddedFormId,
+          UNIQUEKEY: this.questionId
+        })
+        .subscribe();
+    }
   }
 
   selectFieldTypeEventHandler(fieldType) {
@@ -497,7 +513,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         this.questionForm.get('value').setValue(sliderValue);
         break;
       case 'IMG':
-        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
+        this.insertImage.nativeElement.click();
         break;
       case 'INST':
         const instructionsValue = {
@@ -551,20 +567,29 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
 
   insertImageHandler(event) {
-    let base64: string;
     const { files } = event.target as HTMLInputElement;
-    const reader = new FileReader();
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      const image = base64.split(',')[1];
-      const value = {
-        name: files[0].name,
-        size: (files[0].size / 1024).toFixed(2),
-        base64: image
-      };
-      this.questionForm.get('value').setValue(value);
+    const file = {
+      name: files[0].name,
+      size: (files[0].size / 1024).toFixed(2),
+      type: files[0].type
     };
+
+    this.formService
+      .uploadToS3$(`${this.moduleName}/${this.formMetadata?.id}`, files[0])
+      .subscribe(async (data) => {
+        const { base64Response: base64 } =
+          await this.base64Service.getBase64ImageFromSourceUrl(
+            data.message.objectURL
+          );
+        const value = {
+          name: file.name,
+          size: file.size,
+          base64: base64.split(',')[1],
+          objectKey: data.message.objectKey,
+          objectURL: data.message.objectURL
+        };
+        this.questionForm.get('value').setValue(value);
+      });
   }
 
   getImageSrc(base64) {
@@ -705,7 +730,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
         break;
       case 'ask_question_create':
         let newQuestion = {
-          id: `AQ_${uuidv4()}`,
+          id: this.isEmbeddedForm ? `AQ_${Date.now()}` : `AQ_${uuidv4()}`,
           sectionId: `AQ_${event.logic.id}`,
           name: '',
           fieldType: 'TF',

@@ -347,7 +347,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
         questions: true,
         incompleteQuestions: true,
         completedQuestions: true,
-        capturedQuestions: true,
         skippedQuestions: true
       });
     } else {
@@ -432,8 +431,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     return (
       config.incompleteQuestions ||
       config.completedQuestions ||
-      config.capturedQuestions ||
-      config.photos ||
       config.skippedQuestions
     );
   }
@@ -500,6 +497,13 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  get getAssetsLocationsTasksAdded(): boolean {
+    return (
+      (this.totalLocationsCount === 0 || this.totalAssetsCount === 0) &&
+      this.totalQuestionsCount === 0
+    );
   }
 
   ngOnDestroy(): void {

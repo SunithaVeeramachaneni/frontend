@@ -15,6 +15,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -51,6 +52,7 @@ import {
   AssigneeDetails
 } from 'src/app/interfaces';
 import {
+  dateFormat,
   graphQLDefaultLimit,
   permissions as perms
 } from 'src/app/app.constants';
@@ -63,12 +65,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
 import { DatePipe } from '@angular/common';
-import {
-  ScheduleConfig,
-  ScheduleConfigEvent
-} from '../round-plan-schedule-configuration/round-plan-schedule-configuration.component';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { UsersService } from '../../user-management/services/users.service';
+import {
+  ScheduleConfig,
+  ScheduleConfigEvent,
+  ScheduleConfigurationComponent
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-plans',
@@ -358,6 +365,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
   roundPlanDetail: RoundPlanDetail;
+  plantMapSubscription: Subscription;
   scheduleRoundPlanDetail: RoundPlanDetail;
   zIndexDelay = 0;
   zIndexScheduleDelay = 0;
@@ -373,11 +381,12 @@ export class PlansComponent implements OnInit, OnDestroy {
   plants = [];
   plantsIdNameMap = {};
   userFullNameByEmail = {};
+  plantTimezoneMap = {};
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
   private destroy$ = new Subject();
-
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
@@ -387,10 +396,26 @@ export class PlansComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
-    private cdrf: ChangeDetectorRef
+    private plantService: PlantService,
+    private cdrf: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
   ngOnInit(): void {
+    this.scheduleConfigEvent =
+      this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
+        (value) => {
+          if (value) {
+            this.scheduleConfigEventHandler(value);
+          }
+        }
+      );
+
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -602,6 +627,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -709,11 +735,37 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   openScheduleConfigHandler(row: RoundPlanDetail) {
+    this.scheduleRoundPlanDetail = { ...row };
+    const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        roundPlanDetail: this.scheduleRoundPlanDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'OPERATOR_ROUNDS',
+        assigneeDetails: this.assigneeDetails
+      }
+    });
     this.hideScheduleConfig = false;
     this.closeRoundPlanHandler();
-    this.scheduleRoundPlanDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
+
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -759,8 +811,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  scheduleConfigHandler(scheduleConfig: ScheduleConfig) {
-    const { roundPlanScheduleConfiguration, mode } = scheduleConfig;
+  scheduleConfigHandler(scheduleConfig) {
+    const { roundPlanScheduleConfiguration, mode } =
+      scheduleConfig as ScheduleConfig;
     this.roundPlanScheduleConfigurations[
       roundPlanScheduleConfiguration.roundPlanId
     ] = roundPlanScheduleConfiguration;
@@ -775,7 +828,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             ...data,
             schedule: this.getFormatedSchedule(roundPlanScheduleConfiguration),
             scheduleDates: this.getFormatedScheduleDates(
-              roundPlanScheduleConfiguration
+              roundPlanScheduleConfiguration,
+              data.plantId
             ),
             assignedTo: this.getAssignedTo(roundPlanScheduleConfiguration),
             assigneeToEmail: this.getAssignedToEmail(
@@ -828,7 +882,8 @@ export class PlansComponent implements OnInit, OnDestroy {
             roundPlanScheduleConfigurations[roundPlan.id]
           ),
           scheduleDates: this.getFormatedScheduleDates(
-            roundPlanScheduleConfigurations[roundPlan.id]
+            roundPlanScheduleConfigurations[roundPlan.id],
+            roundPlan.plantId
           ),
           rounds: roundPlan.rounds || this.placeHolder,
           assignedTo: this.getAssignedTo(
@@ -849,25 +904,68 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFormatedScheduleDates(
-    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration
+    roundPlanScheduleConfiguration: RoundPlanScheduleConfiguration,
+    plantId
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       roundPlanScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.datePipe.transform(
-            roundPlanScheduleConfiguration.startDate,
-            'MMM dd, yy'
-          )
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+          ? localToTimezoneDate(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              this.plantTimezoneMap[plantId],
+              dateFormat
+            )
+          : this.datePipe.transform(
+              new Date(roundPlanScheduleConfiguration.startDate),
+              dateFormat
+            )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, 'MMM dd, yy')
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(scheduleEndOn),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(new Date(scheduleEndOn), dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, 'MMM dd, yy')
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(endDate),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(new Date(endDate), dateFormat)
           : 'Never'
         : '';
+
+    if (scheduleType === 'byDate') {
+      const scheduleDates = roundPlanScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
@@ -917,7 +1015,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   getFullNameToEmailArray(data?: any) {
-    let emailArray = [];
+    const emailArray = [];
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     data.forEach((data: any) => {
       emailArray.push(
         Object.keys(this.userFullNameByEmail).find(
