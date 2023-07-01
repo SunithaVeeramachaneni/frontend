@@ -1485,6 +1485,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                     return {
                       ...data,
                       shift,
+                      shiftId: shiftId,
                       scheduledAt: shiftStartDateAndTime,
                       scheduledAtDisplay: this.formatDate(
                         shiftStartDateAndTime,

@@ -1571,6 +1571,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                     return {
                       ...data,
                       shift,
+                      shiftId: shiftId,
                       scheduledAt: shiftStartDateAndTime,
                       dueDateDisplay: this.formatDate(
                         shiftEndDateAndTime,
