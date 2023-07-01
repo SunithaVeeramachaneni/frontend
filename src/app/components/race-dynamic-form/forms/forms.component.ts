@@ -349,6 +349,8 @@ export class FormsComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   formCategory: FormControl;
   formId: string;
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
@@ -379,7 +381,6 @@ export class FormsComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private plantService: PlantService,
     private shiftService: ShiftService,
-    private commonService: CommonService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
@@ -453,12 +454,16 @@ export class FormsComponent implements OnInit, OnDestroy {
       onScrollForms$,
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
+      this.plantService.fetchAllPlants$(),
+      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations, shifts]) => {
+      map(([forms, scrollData, formScheduleConfigurations, plants, shifts]) => {
         shifts.items.forEach((shift) => {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
+        this.allPlants = plants;
+        this.allShifts = shifts.items.filter((s) => s.isActive);
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
             item.items = Object.values(this.shiftIdNameMap);
@@ -612,25 +617,38 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'forms':
         if (row.forms !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openFormHandler(row);
+        this.openFormHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(form: any) {
+    const selectedPlant = this.allPlants?.items.find(
+      (plant) => plant.id === form.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -834,12 +852,13 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openFormHandler(data);
+        this.openFormHandler({ ...data, shifts: activeShifts });
         break;
       case 'showInspections':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });

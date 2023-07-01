@@ -414,6 +414,8 @@ export class PlansComponent implements OnInit, OnDestroy {
   selectedRoundConfig: any;
   shiftObj: any = {};
 
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -517,6 +519,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
       this.activeShifts$,
+      this.plantService.fetchAllPlants$(),
+      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
       map(
@@ -524,11 +528,14 @@ export class PlansComponent implements OnInit, OnDestroy {
           roundPlans,
           scrollData,
           roundPlanScheduleConfigurations,
-          shiftData
+          plants,
+          shifts
         ]) => {
-          shiftData.rows.forEach((value) => {
+          shifts.rows.forEach((value) => {
             this.activeShiftIdMap[value.id] = value.name;
           });
+          this.allPlants = plants;
+          this.allShifts = shifts.items.filter((s) => s.isActive);
           this.isLoading$.next(false);
           if (this.skip === 0) {
             this.initial.data = this.formatRoundPlans(
@@ -710,25 +717,37 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row.id } });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openRoundPlanHandler(row);
+        this.openRoundPlanHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(plan: any) {
+    const selectedPlant = this.allPlants?.items.find(
+      (plant) => plant.id === plan.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts?.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -932,12 +951,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openRoundPlanHandler(data);
+        this.openRoundPlanHandler({ ...data, shifts: activeShifts });
         break;
       case 'showRounds':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
