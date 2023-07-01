@@ -9,7 +9,7 @@ import {
 import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
-  selector: 'app-shift',
+  selector: 'app-shift-menu-item',
   templateUrl: './shift-menu-item.component.html',
   styleUrls: ['./shift-menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
