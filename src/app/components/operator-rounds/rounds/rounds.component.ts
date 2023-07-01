@@ -693,7 +693,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           );
         }
 
-        this.initial.data = this.formattinRound(this.initial.data);
+        this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
 
@@ -724,7 +724,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
-  formattinRound(rounds) {
+  formattingRound(rounds) {
     return rounds.map((round) => {
       if (this.shiftObj[round.shiftId]) {
         round.shift = this.shiftObj[round.shiftId].name;
