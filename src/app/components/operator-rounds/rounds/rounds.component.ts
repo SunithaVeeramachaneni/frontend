@@ -221,28 +221,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'locationOrAssetSkipped',
-      displayName: 'Locations/Assets Skipped',
-      type: 'string',
-      controlType: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
       id: 'scheduledAtDisplay',
       displayName: 'Start',
       type: 'string',
@@ -258,7 +236,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -291,6 +269,28 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'locationOrAssetSkipped',
+      displayName: 'Locations/Assets Skipped',
+      type: 'string',
+      controlType: 'string',
       order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -313,7 +313,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Tasks Skipped',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -336,7 +336,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Locations/Assets Completed',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -359,7 +359,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 10,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -382,7 +382,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 11,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -404,7 +404,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 12,
+      order: 11,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -452,7 +452,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 13,
+      order: 12,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -631,7 +631,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       this.users$,
       this.shiftSevice.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts.items.map((shift) => {
+          shifts?.items?.map((shift) => {
             this.shiftObj[shift.id] = shift;
             this.shiftNameMap[shift.id] = shift.name;
           });
@@ -639,7 +639,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       ),
       this.plantService.fetchAllPlants$().pipe(
         tap((plants) => {
-          plants.items.map((plant) => {
+          plants?.items?.map((plant) => {
             if (this.commonService.isJson(plant.shifts) && plant.shifts) {
               this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
             }
@@ -693,7 +693,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
           );
         }
 
-        this.initial.data = this.addShift(this.initial.data);
+        this.initial.data = this.formattinRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
 
@@ -724,7 +724,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
-  addShift(rounds) {
+  formattinRound(rounds) {
     return rounds.map((round) => {
       if (this.shiftObj[round.shiftId]) {
         round.shift = this.shiftObj[round.shiftId].name;
@@ -867,11 +867,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
     ) {
       this.columns[12].controlType = 'string';
       this.columns[10].controlType = 'string';
-    }
-
-    if (
-      !this.loginService.checkUserHasPermission(permissions, 'UPDATE_SHIFT')
-    ) {
       this.columns[3].controlType = 'string';
       this.columns[5].controlType = 'string';
       this.columns[6].controlType = 'string';

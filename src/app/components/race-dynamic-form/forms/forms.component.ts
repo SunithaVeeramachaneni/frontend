@@ -157,7 +157,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Shift',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -179,7 +179,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -202,7 +202,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -226,7 +226,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -248,7 +248,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -270,7 +270,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -455,11 +455,10 @@ export class FormsComponent implements OnInit, OnDestroy {
       formScheduleConfigurations$,
       this.shiftService.fetchAllShifts$(),
       this.plantService.fetchAllPlants$(),
-      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
       map(([forms, scrollData, formScheduleConfigurations, plants, shifts]) => {
-        shifts.items.forEach((shift) => {
+        shifts?.items?.forEach((shift) => {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
         this.allPlants = plants;
@@ -479,7 +478,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
-        this.initial.data = this.addShift(this.initial.data);
+        this.initial.data = this.formattingForms(this.initial.data);
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -564,7 +563,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.getFilter();
   }
 
-  addShift(rounds) {
+  formattingForms(rounds) {
     return rounds.map((round) => {
       let shift = '';
       if (this.formScheduleConfigurations[round.id]?.shiftDetails) {

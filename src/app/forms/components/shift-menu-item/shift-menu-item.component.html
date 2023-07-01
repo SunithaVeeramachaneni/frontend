@@ -1,11 +1,11 @@
 <div
   class="custom-menu mat-menu-panel"
-  [ngStyle]="{ top: _dropdownPosition.top, left: _dropdownPosition.left }"
+  [ngStyle]="{ top: dropdownPosition.top, left: dropdownPosition.left }"
 >
   <button
     mat-menu-item
     (click)="optionClick(item)"
-    *ngFor="let item of _plantShiftObj[_plantId]"
+    *ngFor="let item of plantShiftObj[plantId]"
   >
     {{ item.name }}
   </button>

@@ -164,7 +164,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'string',
       controlValue: ',',
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -197,7 +197,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 4,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -230,7 +230,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -264,7 +264,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 6,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -287,7 +287,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'space-between',
       controlValue: ',',
-      order: 7,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -309,7 +309,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       displayName: 'Schedule',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -331,7 +331,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -378,7 +378,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         ],
         displayType: 'text'
       },
-      order: 10,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -569,7 +569,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.users$,
       this.shiftService.fetchAllShifts$().pipe(
         tap((shifts) => {
-          shifts.items.map((shift) => {
+          shifts?.items?.map((shift) => {
             this.shiftObj[shift.id] = shift;
             this.shiftNameMap[shift.id] = shift.name;
           });
@@ -577,7 +577,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       ),
       this.plantService.fetchAllPlants$().pipe(
         tap((plants) => {
-          plants.items.map((plant) => {
+          plants?.items?.map((plant) => {
             if (this.commonService.isJson(plant.shifts) && plant.shifts) {
               this.plantShiftObj[plant.id] = JSON.parse(plant.shifts);
             }
@@ -585,7 +585,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         })
       )
     ]).pipe(
-      map(([inspections, scrollData, shifts]) => {
+      map(([inspections, scrollData]) => {
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
             item.items = Object.values(this.shiftNameMap);
@@ -633,7 +633,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
           );
         }
         this.skip = this.initial.data.length;
-        this.initial.data = this.addShift(this.initial.data);
+        this.initial.data = this.formattingInspection(this.initial.data);
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
         const dataSource = this.dataSource
@@ -662,7 +662,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
   }
 
-  addShift(rounds) {
+  formattingInspection(rounds) {
     return rounds.map((round) => {
       if (this.shiftObj[round.shiftId]) {
         round.shift = this.shiftObj[round.shiftId].name;
@@ -853,11 +853,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
     ) {
       this.columns[12].controlType = 'string';
       this.columns[10].controlType = 'string';
-    }
-
-    if (
-      !this.loginService.checkUserHasPermission(permissions, 'UPDATE_SHIFT')
-    ) {
       this.columns[3].controlType = 'string';
       this.columns[5].controlType = 'string';
       this.columns[6].controlType = 'string';

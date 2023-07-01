@@ -19,7 +19,7 @@ export class ShiftMenuItemComponent implements OnInit {
   set plantId(plantId) {
     this._plantId = plantId;
   }
-  get plantSelected(): any {
+  get plantId(): any {
     return this._plantId;
   }
   @Input() set plantShiftObj(plantShiftObj) {

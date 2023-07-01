@@ -451,15 +451,12 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
-    this.activeShifts$ = this.shiftService.getShiftsList$(
-      {
-        next: '',
-        limit: graphQLDefaultLimit,
-        searchKey: '',
-        fetchType: 'load'
-      },
-      { isActive: 'true' }
-    );
+    this.activeShifts$ = this.shiftService.getShiftsList$({
+      next: '',
+      limit: graphQLDefaultLimit,
+      searchKey: '',
+      fetchType: 'load'
+    });
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -531,7 +528,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           plants,
           shifts
         ]) => {
-          shifts.rows.forEach((value) => {
+          shifts?.items?.forEach((value) => {
             this.activeShiftIdMap[value.id] = value.name;
           });
           this.allPlants = plants;
@@ -550,7 +547,7 @@ export class PlansComponent implements OnInit, OnDestroy {
               )
             );
           }
-          this.initial.data = this.addShift(this.initial.data);
+          this.initial.data = this.formattingPlans(this.initial.data);
           this.skip = this.initial.data.length;
           return this.initial;
         }
@@ -641,7 +638,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.getAllRoundPlans();
   }
 
-  addShift(rounds) {
+  formattingPlans(rounds) {
     return rounds.map((round) => {
       let shift = '';
       if (this.roundPlanScheduleConfigurations[round.id]?.shiftDetails) {
