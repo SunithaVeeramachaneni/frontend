@@ -9,6 +9,7 @@
       [hidden]="hideInspectionDetail"
       [formStatus]="formConfigurationStatus.published"
       formDetailType="submitted"
+      [shiftObj]="shiftObj"
       (formDetailAction)="formsDetailActionHandler($event)"
     ></app-form-detail>
   </div>
@@ -112,17 +113,43 @@
       ></app-assign-inspection>
     </mat-menu>
   </ng-container>
-  <button
-    class="hide-mat-menu"
-    mat-button
-    [matMenuTriggerFor]="dueDateMenu"
-    #dueDateMenuTrigger="matMenuTrigger"
-  ></button>
-  <mat-menu #dueDateMenu="matMenu">
+
+  <div *ngIf="openMenuStateStartDate">
     <app-date-picker
-      [selectedDate]="selectedDate"
+      [selectedDate]="selectedStartDate"
+      (dateChange)="startDateChangeHandler($event)"
+      (closed)="startDateClosedHandler()"
+      *ngIf="openMenuStateStartDate"
+    ></app-date-picker>
+  </div>
+
+  <div *ngIf="openMenuStateDueDate">
+    <app-date-picker
+      [selectedDate]="selectedDueDate"
       (dateChange)="dateChangeHandler($event)"
       (closed)="dueDateClosedHandler()"
+      *ngIf="openMenuStateDueDate"
     ></app-date-picker>
-  </mat-menu>
+  </div>
+
+  <ng-container>
+    <button
+      mat-button
+      [matMenuTriggerFor]="shiftMenu"
+      #shiftMenuTrigger="matMenuTrigger"
+    ></button>
+    <div>
+      <mat-menu #shiftMenu="matMenu">
+        <div *ngIf="plantSelected">
+          <app-shift
+            [plantShiftObj]="plantToShift"
+            [plantId]="plantSelected"
+            [dropdownPosition]="shiftPosition"
+            (shiftChange)="shiftChangeHandler($event)"
+          >
+          </app-shift>
+        </div>
+      </mat-menu>
+    </div>
+  </ng-container>
 </ng-container>
