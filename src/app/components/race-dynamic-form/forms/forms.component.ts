@@ -421,7 +421,11 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
       .fetchFormScheduleConfigurations$()
-      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
+      .pipe(
+        tap((configs) => {
+          this.formScheduleConfigurations = configs;
+        })
+      );
 
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -457,7 +461,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       this.plantService.fetchAllPlants$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations, plants, shifts]) => {
+      map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
         shifts?.items?.forEach((shift) => {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
@@ -563,18 +567,18 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.getFilter();
   }
 
-  formattingForms(rounds) {
-    return rounds.map((round) => {
+  formattingForms(forms) {
+    return forms.map((form) => {
       let shift = '';
-      if (this.formScheduleConfigurations[round.id]?.shiftDetails) {
-        Object.keys(
-          this.formScheduleConfigurations[round.id]?.shiftDetails
-        ).map((shiftId) => {
-          shift += this.shiftIdNameMap[shiftId] + ',';
-        });
-        round.shift = shift;
+      if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
+        Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
+          (shiftId) => {
+            shift += this.shiftIdNameMap[shiftId] + ',';
+          }
+        );
+        form.shift = shift;
       }
-      return round;
+      return form;
     });
   }
 

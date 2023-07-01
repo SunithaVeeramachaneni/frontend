@@ -134,6 +134,7 @@
 
   <ng-container>
     <button
+      class="hide-mat-menu"
       mat-button
       [matMenuTriggerFor]="shiftMenu"
       #shiftMenuTrigger="matMenuTrigger"
@@ -141,13 +142,13 @@
     <div>
       <mat-menu #shiftMenu="matMenu">
         <div *ngIf="plantSelected">
-          <app-shift
+          <app-shift-menu-item
             [plantShiftObj]="plantToShift"
             [plantId]="plantSelected"
             [dropdownPosition]="shiftPosition"
             (shiftChange)="shiftChangeHandler($event)"
           >
-          </app-shift>
+          </app-shift-menu-item>
         </div>
       </mat-menu>
     </div>

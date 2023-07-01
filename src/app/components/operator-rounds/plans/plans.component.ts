@@ -638,18 +638,18 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.getAllRoundPlans();
   }
 
-  formattingPlans(rounds) {
-    return rounds.map((round) => {
+  formattingPlans(plans) {
+    return plans.map((plan) => {
       let shift = '';
-      if (this.roundPlanScheduleConfigurations[round.id]?.shiftDetails) {
+      if (this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails) {
         Object.keys(
-          this.roundPlanScheduleConfigurations[round.id]?.shiftDetails
+          this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails
         ).map((shiftId) => {
           shift += this.activeShiftIdMap[shiftId] + ',';
         });
-        round.shift = shift;
+        plan.shift = shift;
       }
-      return round;
+      return plan;
     });
   }
 
