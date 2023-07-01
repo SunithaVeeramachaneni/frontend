@@ -71,6 +71,7 @@ export interface ScheduleFormDetail extends Form {
   operator: string;
   plantId: string;
   plant: string;
+  shifts: [];
 }
 
 export interface FormDetail extends Form {
@@ -137,11 +138,14 @@ export interface InspectionDetail extends Form {
   inspectionId: string;
   inspectionDetailId: string;
   scheduledType: string;
+  scheduledAt: string | Date;
   dueDate: string | Date;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   locationAndAssetTasks: number;
   createdBy: string;
+  shiftId: string;
+  slotDetails: string;
   status: string;
   locationAndAssetTasksCompleted: number;
   assignedTo: string;

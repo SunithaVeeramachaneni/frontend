@@ -28,5 +28,19 @@
     "column": "plant",
     "type": "select",
     "value": ""
+  },
+  {
+    "label": "Shift",
+    "items": [],
+    "column": "shiftId",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Form ID",
+    "items": [],
+    "column": "formIdFilter",
+    "type": "input",
+    "value": ""
   }
 ]
