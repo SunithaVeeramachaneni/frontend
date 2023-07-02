@@ -104,7 +104,7 @@
           class="dis-flex m-t-10 describe"
           *ngIf="unitMeasurementForm?.get('units').value.length"
         >
-          <p class="description-heading" translate="description"></p>
+          <p class="description-heading" translate="uomDescription"></p>
           <p class="symbol-heading" translate="symbol"></p>
         </div>
         <div
@@ -120,7 +120,7 @@
               <input
                 matInput
                 formControlName="description"
-                [placeholder]="'description' | translate"
+                [placeholder]="'uomDescription' | translate"
               />
               <mat-error
                 *ngIf="processValidationErrors(i, 'description')"
@@ -130,7 +130,7 @@
                   errors?.description?.name
                     | translate
                       : {
-                          name: 'description' | translate,
+                          name: 'uomDescription' | translate,
                           length: errors?.description?.length
                         }
                 }}
