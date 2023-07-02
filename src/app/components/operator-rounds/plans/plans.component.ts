@@ -515,7 +515,6 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
-      this.activeShifts$,
       this.plantService.fetchAllPlants$(),
       this.shiftService.fetchAllShifts$(),
       this.users$
@@ -736,7 +735,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(plan: any) {
-    const selectedPlant = this.allPlants?.items.find(
+    const selectedPlant = this.allPlants?.items?.find(
       (plant) => plant.id === plan.plantId
     );
     const selectedShifts = JSON.parse(selectedPlant?.shifts);
