@@ -454,7 +454,9 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
+      askQuestions = askQuestions.concat(
+        ...questions.filter((q) => q.sectionId === `AQ_${logic.id}`)
+      );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
