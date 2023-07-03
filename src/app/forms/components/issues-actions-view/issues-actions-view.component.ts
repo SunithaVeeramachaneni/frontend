@@ -84,7 +84,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     attachments: this.fb.array([]),
     message: ''
   });
-  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown'];
+  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown', 'Turnaround'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
