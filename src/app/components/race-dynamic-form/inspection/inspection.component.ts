@@ -476,8 +476,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
   openMenuStateDueDate = false;
   openMenuStateStartDate = false;
   userFullNameByEmail = {};
-  openMenuStateDueDate = false;
-  openMenuStateStartDate = false;
 
   initial = {
     columns: this.columns,
@@ -1541,16 +1539,5 @@ export class InspectionComponent implements OnInit, OnDestroy {
       );
     }
     return format(new Date(date), dateTimeFormat4);
-  }
-  getFullNameToEmailArray(data: any) {
-    const emailArray = [];
-    data?.forEach((name: any) => {
-      emailArray.push(
-        Object.keys(this.userFullNameByEmail).find(
-          (email) => this.userFullNameByEmail[email].fullName === name
-        )
-      );
-    });
-    return emailArray;
   }
 }

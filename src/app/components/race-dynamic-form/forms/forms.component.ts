@@ -1050,16 +1050,4 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });
   }
-  getFullNameToEmailArray(data?: any) {
-    const emailArray = [];
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    data.forEach((data: any) => {
-      emailArray.push(
-        Object.keys(this.userFullNameByEmail).find(
-          (email) => this.userFullNameByEmail[email].fullName === data
-        )
-      );
-    });
-    return emailArray;
-  }
 }
