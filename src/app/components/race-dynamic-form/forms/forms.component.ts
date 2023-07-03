@@ -492,15 +492,13 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         for (const item of uniqueAssignTo) {
-          if (item && this.userFullNameByEmail[item] !== undefined) {
-            this.assignedTo.push(this.userFullNameByEmail[item].fullName);
+          if (uniqueAssignTo?.length > 0) {
+            uniqueAssignTo?.filter(Boolean).forEach((item) => {
+              if (item && this.userFullNameByEmail[item] !== undefined) {
+                this.assignedTo.push(this.userFullNameByEmail[item].fullName);
+              }
+            });
           }
-          console.log(
-            'forms: ',
-            this.userFullNameByEmail[item].fullName,
-            'item: ',
-            item
-          );
         }
         for (const item of this.filterJson) {
           if (item.column === 'assignedTo') {
