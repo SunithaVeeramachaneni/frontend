@@ -23,6 +23,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  catchError,
   startWith,
   switchMap,
   takeUntil,
@@ -74,8 +75,10 @@ import {
 } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 import { MatDialog } from '@angular/material/dialog';
+import { graphQLDefaultMaxLimit } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-plans',
@@ -102,7 +105,9 @@ export class PlansComponent implements OnInit, OnDestroy {
     plant: '',
     schedule: '',
     assignedTo: '',
-    scheduledAt: ''
+    scheduledAt: '',
+    shifts: '',
+    roundPlanId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -162,11 +167,33 @@ export class PlansComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'shift',
+      displayName: 'Shift',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'locations',
       displayName: 'Location',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -188,7 +215,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assets',
       type: 'number',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -210,7 +237,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Tasks',
       type: 'number',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -233,7 +260,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -255,7 +282,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Rounds Generated',
       type: 'number',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -277,7 +304,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 8,
+      order: 9,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -299,7 +326,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 9,
+      order: 10,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -364,6 +391,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   userInfo$: Observable<UserInfo>;
+  activeShifts$: Observable<any>;
   roundPlanDetail: RoundPlanDetail;
   plantMapSubscription: Subscription;
   scheduleRoundPlanDetail: RoundPlanDetail;
@@ -382,6 +410,12 @@ export class PlansComponent implements OnInit, OnDestroy {
   plantsIdNameMap = {};
   userFullNameByEmail = {};
   plantTimezoneMap = {};
+  activeShiftIdMap = {};
+  selectedRoundConfig: any;
+  shiftObj: any = {};
+
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   private _users$: Observable<UserDetails[]>;
@@ -398,6 +432,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
+    private shiftService: ShiftService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
@@ -416,6 +451,12 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.plantService.plantTimeZoneMapping$.subscribe(
         (data) => (this.plantTimezoneMap = data)
       );
+    this.activeShifts$ = this.shiftService.getShiftsList$({
+      next: '',
+      limit: graphQLDefaultLimit,
+      searchKey: '',
+      fetchType: 'load'
+    });
     this.planCategory = new FormControl('all');
     this.fetchPlans$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -438,7 +479,11 @@ export class PlansComponent implements OnInit, OnDestroy {
 
     const roundPlanScheduleConfigurations$ = this.rpscService
       .fetchRoundPlanScheduleConfigurations$()
-      .pipe(tap((configs) => (this.roundPlanScheduleConfigurations = configs)));
+      .pipe(
+        tap((configs) => {
+          this.roundPlanScheduleConfigurations = configs;
+        })
+      );
 
     const roundPlansOnLoadSearch$ = this.fetchPlans$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -470,26 +515,42 @@ export class PlansComponent implements OnInit, OnDestroy {
       roundPlansOnLoadSearch$,
       onScrollRoundPlans$,
       roundPlanScheduleConfigurations$,
+      this.plantService.fetchAllPlants$(),
+      this.shiftService.fetchAllShifts$(),
       this.users$
     ]).pipe(
-      map(([roundPlans, scrollData, roundPlanScheduleConfigurations]) => {
-        this.isLoading$.next(false);
-        if (this.skip === 0) {
-          this.initial.data = this.formatRoundPlans(
-            roundPlans.rows,
-            roundPlanScheduleConfigurations
-          );
-        } else {
-          this.initial.data = this.initial.data.concat(
-            this.formatRoundPlans(
-              scrollData.rows,
+      map(
+        ([
+          roundPlans,
+          scrollData,
+          roundPlanScheduleConfigurations,
+          plants,
+          shifts
+        ]) => {
+          shifts?.items?.forEach((value) => {
+            this.activeShiftIdMap[value.id] = value.name;
+          });
+          this.allPlants = plants;
+          this.allShifts = shifts.items.filter((s) => s.isActive);
+          this.isLoading$.next(false);
+          if (this.skip === 0) {
+            this.initial.data = this.formatRoundPlans(
+              roundPlans.rows,
               roundPlanScheduleConfigurations
-            )
-          );
+            );
+          } else {
+            this.initial.data = this.initial.data.concat(
+              this.formatRoundPlans(
+                scrollData.rows,
+                roundPlanScheduleConfigurations
+              )
+            );
+          }
+          this.initial.data = this.formattingPlans(this.initial.data);
+          this.skip = this.initial.data.length;
+          return this.initial;
         }
-        this.skip = this.initial.data.length;
-        return this.initial;
-      })
+      )
     );
 
     this.filteredRoundPlans$ = combineLatest([
@@ -551,6 +612,9 @@ export class PlansComponent implements OnInit, OnDestroy {
           if (item.column === 'schedule') {
             item.items = this.schedules;
           }
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.activeShiftIdMap);
+          }
         }
         this.dataSource = new MatTableDataSource(filteredRoundPlans);
         return { ...roundPlans, data: filteredRoundPlans };
@@ -571,6 +635,21 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
 
     this.getAllRoundPlans();
+  }
+
+  formattingPlans(plans) {
+    return plans.map((plan) => {
+      let shift = '';
+      if (this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails) {
+        Object.keys(
+          this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails
+        ).map((shiftId) => {
+          shift += this.activeShiftIdMap[shiftId] + ',';
+        });
+        plan.shift = shift;
+      }
+      return plan;
+    });
   }
 
   getRoundPlanList() {
@@ -634,25 +713,37 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'rounds':
         if (row.rounds !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row.id } });
         } else {
-          this.openRoundPlanHandler(row);
+          this.openRoundPlanHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openRoundPlanHandler(row);
+        this.openRoundPlanHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(plan: any) {
+    const selectedPlant = this.allPlants?.items?.find(
+      (plant) => plant.id === plan.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts?.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -727,6 +818,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.roundPlanDetail = { ...row };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
+    this.selectedRoundConfig = this.roundPlanScheduleConfigurations;
   }
 
   roundPlanDetailActionHandler() {
@@ -855,12 +947,13 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openRoundPlanHandler(data);
+        this.openRoundPlanHandler({ ...data, shifts: activeShifts });
         break;
       case 'showRounds':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
@@ -1030,18 +1123,22 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      if (item.column === 'plant') {
-        this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-      } else if (
-        item.type !== 'daterange' &&
-        item.value &&
-        item.column !== 'schedule'
-      ) {
-        this.filter[item.column] = this.getFullNameToEmailArray(item.value);
-      } else if (item.type === 'daterange' && item.value) {
-        this.filter[item.column] = item.value;
-      } else {
-        this.filter[item.column] = item.value ?? '';
+      switch (item.column) {
+        case 'plant':
+          this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+          break;
+        case 'shiftId':
+          const foundEntry = Object.entries(this.activeShiftIdMap).find(
+            ([key, val]) => val === item.value
+          );
+          this.filter[item.column] = foundEntry[0];
+          break;
+        case 'assignedTo':
+          this.filter[item.column] = this.getFullNameToEmailArray(item.value);
+          break;
+        default:
+          this.filter[item.column] = item.value;
+          break;
       }
     }
     this.nextToken = '';
@@ -1054,7 +1151,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       plant: '',
       schedule: '',
       assignedTo: '',
-      scheduledAt: ''
+      scheduledAt: '',
+      shifts: '',
+      roundPlanId: ''
     };
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });

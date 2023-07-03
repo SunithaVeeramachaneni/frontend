@@ -439,9 +439,9 @@
         <h5 translate="summary"></h5>
         <table class="landing-page-table">
           <tr class="bg-gray">
-            <th>{{ 'plant' | translate }}</th>
-            <th translate="schedule"></th>
-            <th translate="shift"></th>
+            <th class="width-35">{{ 'plant' | translate }}</th>
+            <th class="width-35" translate="schedule"></th>
+            <th class="width-35" translate="shift"></th>
           </tr>
           <tr>
             <td>
@@ -462,19 +462,21 @@
           "
         >
           <tr class="bg-gray">
-            <th translate="due"></th>
+            <th class="width-35" translate="due"></th>
             <th
+              class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedOn').value"
               translate="submittedOn"
             ></th>
             <th
+              class="width-35"
               *ngIf="pdfBuilderConfigurationsForm.get('submittedBy').value"
               translate="submittedBy"
             ></th>
           </tr>
           <tr>
             <td>Feb 02, 2023 - 8:11 AM</td>
-            <td>Weekly</td>
+            <td>Feb 02, 2023 - 8:11 AM</td>
             <td>{{ currentUserName }}</td>
           </tr>
         </table>
@@ -531,19 +533,17 @@
             <tr class="bg-gray">
               <th>{{ 'taskCompleted' | translate }} By</th>
               <th translate="reportGeneratedOn"></th>
-              <th translate="totalPages"></th>
             </tr>
             <tr>
               <td>
-                <ol>
-                  <li>Kate Alexander</li>
-                  <li>David April</li>
-                  <li>Henry David</li>
-                  <li>Mike Wills</li>
+                <ol class="p-0 m-0">
+                  <li>1. Kate Alexander</li>
+                  <li>2. David April</li>
+                  <li>3. Henry David</li>
+                  <li>4. Mike Wills</li>
                 </ol>
               </td>
-              <td>Feb 02, 2023 - 8:11 AM</td>
-              <td>6</td>
+              <td class="report-alignment">Feb 02, 2023 - 8:11 AM</td>
             </tr>
           </table>
         </div>

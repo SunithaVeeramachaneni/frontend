@@ -82,6 +82,7 @@ export interface RoundPlanDetail extends RoundPlan {
   rounds: number;
   plantId?: string;
   plant?: string;
+  shifts: [];
 }
 
 export interface RoundDetail extends RoundPlan {
@@ -89,7 +90,10 @@ export interface RoundDetail extends RoundPlan {
   roundId: string;
   roundDetailId: string;
   scheduledType: string;
+  slotDetails: string;
+  scheduledAt: Date;
   dueDate: Date;
+  shiftId: string;
   locationAndAssets: number;
   locationAndAssetsCompleted: number;
   taskSkipped: number;
