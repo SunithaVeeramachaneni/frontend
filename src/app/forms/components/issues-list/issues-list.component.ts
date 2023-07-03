@@ -311,7 +311,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 390px)',
+    tableHeight: 'calc(100vh - 435px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
@@ -445,7 +445,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 390px)'
+            tableHeight: 'calc(100vh - 435px)'
           };
           this.initial.data = this.formatIssues(rows);
         } else {
@@ -513,7 +513,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       mergeMap(({ rows, next, count }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
-        this.issuesCount$ = of(count);
+        if (count) {
+          this.issuesCount$ = of(count);
+        }
         this.observationsService.issues$.next({ rows, next, count });
         return of(rows as any[]);
       }),
