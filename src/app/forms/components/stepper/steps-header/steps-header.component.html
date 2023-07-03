@@ -1,1 +1,44 @@
-<p>steps-header works!</p>
+<mat-toolbar class="form-toolbar">
+  <button (click)="onCancel()" class="back-btn">
+    <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+    <span class="back-btn-text">
+      {{ 'backBtn' | translate }}
+    </span>
+  </button>
+
+  <mat-stepper #stepper class="stepper-container">
+    <div *ngFor="let step of steps">
+      <mat-step>
+        <ng-template matStepLabel>
+          {{ step.title }}
+        </ng-template>
+      </mat-step>
+    </div>
+  </mat-stepper>
+  <!-- <div
+        class="steps-breadcrumb"
+        *ngFor="
+          let step of steps;
+          let i = index;
+          let last = last;
+          let first = first
+        "
+        (click)="onGotoStep(i)"
+        [ngClass]="{
+          current: currentStep === i,
+          completed: currentStep > i,
+          last: last,
+          first: first
+        }"
+      >
+        <div class="index">
+          <span>{{ i + 1 }}</span>
+        </div>
+        <div class="title pr-8">{{ step.title }}</div>
+        <mat-icon class="pr-8" *ngIf="!last">chevron_right</mat-icon>
+      </div> -->
+
+  <!-- DYNAMIC CONTENT -->
+  <ng-content></ng-content>
+  <!-- / DYNAMIC CONTENT -->
+</mat-toolbar>

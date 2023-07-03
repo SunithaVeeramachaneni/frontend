@@ -1,10 +1,22 @@
-<!-- <div>
-  <mat-toolbar class="form-toolbar">
-    <button (click)="onCancel()" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-      <span class="back-btn-text">
-        {{ 'backBtn' | translate }}
-      </span>
-    </button>
-  </mat-toolbar>
-</div> -->
+<app-dynamic-stepper
+  [steps]="steps"
+  [currentStep]="currentStep"
+  [showGoBack]="true"
+  (goBack)="goBack()"
+  (gotoStep)="onGotoStep($event)"
+  (gotoNextStep)="gotoNextStep()"
+  (gotoPreviousStep)="gotoPreviousStep()"
+>
+  <div stepsContent>
+    <!-- STEP 1 -->
+    <div *ngIf="currentStep === 0">
+      <app-form-configuration-modal></app-form-configuration-modal>
+    </div>
+
+    <!-- STEP 2 -->
+    <div *ngIf="currentStep === 1">
+      <app-form-configuration></app-form-configuration>
+    </div>
+    <!-- / STEP 2 -->
+  </div>
+</app-dynamic-stepper>

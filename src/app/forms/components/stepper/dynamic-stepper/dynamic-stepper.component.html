@@ -1,1 +1,38 @@
-<p>dynamic-stepper works!</p>
+<div id="create-stepper">
+  <!-- CENTER -->
+  <div class="center">
+    <!-- STEPS HEADER -->
+    <app-steps-header
+      [steps]="steps"
+      [currentStep]="currentStep"
+      [showGoBack]="showGoBack"
+      (gotoStep)="onGotoStep($event)"
+      (goBack)="goBack.emit()"
+    >
+      <ng-container *ngTemplateOutlet="stepsHeader"></ng-container>
+    </app-steps-header>
+    <!-- / STEPS HEADER -->
+
+    <!-- STEPS CONTENT -->
+    <div class="content">
+      <div fxFlex fxLayout="row" fxLayoutAlign="center center" class="step">
+        <div class="step-content">
+          <ng-container *ngTemplateOutlet="stepsContent"></ng-container>
+        </div>
+      </div>
+    </div>
+    <!-- / STEPS CONTENT -->
+
+    <!-- NEXT & PREVIOUS BUTTONS -->
+    <!-- / NEXT & PREVIOUS BUTTONS -->
+  </div>
+  <!-- / CENTER -->
+</div>
+
+<ng-template #stepsHeader>
+  <ng-content select="[stepsHeader]"></ng-content>
+</ng-template>
+
+<ng-template #stepsContent>
+  <ng-content select="[stepsContent]"></ng-content>
+</ng-template>

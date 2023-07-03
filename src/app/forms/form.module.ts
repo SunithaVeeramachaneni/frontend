@@ -117,6 +117,7 @@ import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
 import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
+import { MatStepperModule } from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -236,7 +237,8 @@ import { StepsHeaderComponent } from './components/stepper/steps-header/steps-he
     NgxEchartsModule.forRoot({
       echarts
     }),
-    MatToolbarModule
+    MatToolbarModule,
+    MatStepperModule
   ],
   exports: [
     FormWidgetComponent,
@@ -274,7 +276,9 @@ import { StepsHeaderComponent } from './components/stepper/steps-header/steps-he
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
-    ShiftMenuItemComponent
+    ShiftMenuItemComponent,
+    DynamicStepperComponent,
+    StepsHeaderComponent
   ]
 })
 export class FormModule {}

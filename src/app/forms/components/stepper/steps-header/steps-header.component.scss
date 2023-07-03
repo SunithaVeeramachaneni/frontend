@@ -1,0 +1,46 @@
+@import '../../../../../scss/colors.scss';
+
+.form-toolbar {
+  height: 65px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+
+  .back-btn {
+    border: none;
+    background-color: transparent;
+
+    .back-btn-text {
+      font-weight: 700;
+      font-size: 120%;
+      letter-spacing: 0.15px;
+      color: $text-color;
+      margin-left: 10px;
+      position: relative;
+      top: -2px;
+    }
+
+    .back-arrow {
+      height: 15px;
+      width: 15px;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.stepper-container {
+  height: 63px;
+  position: relative;
+  left: 27%;
+  width: 40%;
+
+  ::ng-deep .mat-step-header {
+    height: 55px;
+  }
+
+  ::ng-deep
+    .mat-step-header:hover:not([aria-disabled])
+    .mat-step-header:hover[aria-disabled='false'] {
+    background-color: transparent;
+  }
+}

@@ -1,15 +1,67 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ContentChild,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { Step } from 'src/app/interfaces/stepper';
 
 @Component({
   selector: 'app-dynamic-stepper',
   templateUrl: './dynamic-stepper.component.html',
-  styleUrls: ['./dynamic-stepper.component.scss']
+  styleUrls: ['./dynamic-stepper.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
-export class DynamicStepperComponent implements OnInit {
+export class DynamicStepperComponent implements OnInit, OnChanges {
+  @Input() steps: Step[];
+  @Input() currentStep = 0;
+  @Input() showGoBack?: boolean;
+  @Output() goBack = new EventEmitter<void>();
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Output() gotoPreviousStep = new EventEmitter<void>();
+  @Output() gotoStep = new EventEmitter<number>();
+  @Output() confirmLastStep = new EventEmitter<void>();
 
-  constructor() { }
+  @ContentChild('stepsHeader', { read: TemplateRef })
+  stepsHeader: TemplateRef<any>;
+  @ContentChild('stepsContent', { read: TemplateRef })
+  stepsContent: TemplateRef<any>;
+  totalSteps: number;
 
-  ngOnInit(): void {
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
+
+  onGotoStep(step): void {
+    console.log('Go to step: ' + Number(step + 1));
+    this.gotoStep.emit(step);
   }
 
+  onGotoNextStep(): void {
+    this.gotoNextStep.emit();
+  }
+
+  onGotoPreviousStep(): void {
+    if (this.currentStep === 0) {
+      return;
+    }
+    this.gotoPreviousStep.emit();
+  }
+
+  ngOnInit(): void {
+    this.totalSteps = this.steps ? this.steps.length : 0;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.currentStep && changes.currentStep.currentValue) {
+      this.changeDetectorRef.detectChanges(); // Run change detection so the change in the animation direction registered
+    }
+  }
 }
