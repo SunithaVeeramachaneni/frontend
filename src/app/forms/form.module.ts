@@ -115,9 +115,9 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
-import { StepperContainerComponent } from './components/stepper/stepper-container/stepper-container.component';
-import { StepperHeaderContainerComponent } from './components/stepper/stepper-header-container/stepper-header-container.component';
-import { StepperContentRendererComponent } from './components/stepper/stepper-content-renderer/stepper-content-renderer.component';
+import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
+import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
+
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -191,9 +191,8 @@ import { StepperContentRendererComponent } from './components/stepper/stepper-co
     UserNameByEmailPipe,
     ShiftMenuItemComponent,
     ShiftDateChangeWarningModalComponent,
-    StepperContainerComponent,
-    StepperHeaderContainerComponent,
-    StepperContentRendererComponent
+    DynamicStepperComponent,
+    StepsHeaderComponent
   ],
   imports: [
     SharedModule,

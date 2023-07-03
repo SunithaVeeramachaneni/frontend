@@ -300,10 +300,6 @@ export class FormConfigurationModalComponent implements OnInit {
     }
   }
 
-  onCancel(): void {
-    this.dialogRef.close();
-  }
-
   processValidationErrors(controlName: string): boolean {
     const touched = this.headerDataForm.get(controlName).touched;
     const errors = this.headerDataForm.get(controlName).errors;

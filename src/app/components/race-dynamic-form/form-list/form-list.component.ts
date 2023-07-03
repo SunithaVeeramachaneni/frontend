@@ -52,6 +52,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoginService } from '../../login/services/login.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UsersService } from '../../user-management/services/users.service';
+import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 
 @Component({
   selector: 'app-form-list',
@@ -705,7 +706,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   openFormCreationModal(data: any) {
-    this.dialog.open(FormConfigurationModalComponent, {
+    this.dialog.open(FullScreenFormCreationComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
