@@ -85,8 +85,16 @@ export class FilterComponent implements OnInit, OnChanges {
 
   dateRangeSelect(item: any) {
     if (item.startDate && item.endDate) {
-      const startDate = new Date(item.startDate).toISOString();
-      const endDate = new Date(item.endDate).toISOString();
+      let sOffset = new Date(item.startDate).getTimezoneOffset() * 60 * 1000;
+      let eOffset = new Date(item.endDate).getTimezoneOffset() * 60 * 1000;
+      sOffset > 0 ? (sOffset = -sOffset) : (sOffset = Math.abs(sOffset));
+      eOffset > 0 ? (eOffset = -eOffset) : (eOffset = Math.abs(eOffset));
+      const startDate = new Date(
+        new Date(item.startDate).getTime() + sOffset
+      ).toISOString();
+      const endDate = new Date(
+        new Date(item.endDate).getTime() + eOffset
+      ).toISOString();
       item.value = [startDate, endDate];
     } else {
       item.value = [];

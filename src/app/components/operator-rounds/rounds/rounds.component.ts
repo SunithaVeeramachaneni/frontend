@@ -780,7 +780,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
     switch (columnId) {
       case 'assignedTo':
         this.assigneePosition = {
-          top: `${pos?.top + 20}px`,
+          top: `${pos?.top + 40}px`,
           left: `${pos?.left - 15}px`
         };
         if (row.status !== 'submitted' && row.status !== 'overdue')
@@ -1127,7 +1127,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       .updateRound$(
         roundId,
         { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
-        'assigned-to'
+        'assignedTo'
       )
       .pipe(
         tap((resp) => {
@@ -1539,7 +1539,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
             this.plantTimezoneMap[plantId].timeZoneIdentifier
           );
         }
-        let slot;
+        let slot = null;
         if (JSON.parse(this.selectedRoundInfo.slotDetails)) {
           slot = JSON.parse(this.selectedRoundInfo.slotDetails);
           slot.startTime = shift.startTime;

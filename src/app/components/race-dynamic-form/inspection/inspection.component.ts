@@ -1038,7 +1038,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       .updateInspection$(
         inspectionId,
         { ...rest, inspectionId, assignedTo, previouslyAssignedTo, status },
-        'assigned-to'
+        'assignedTo'
       )
       .pipe(
         tap((resp) => {

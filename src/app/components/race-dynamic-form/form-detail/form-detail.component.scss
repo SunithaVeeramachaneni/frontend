@@ -273,3 +273,12 @@
 .m-t-20 {
   margin-top: 20px;
 }
+.in-row {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 5px 5px 5px;
+}
+.in-column {
+  display: flex;
+  padding: 0px 5px 5px 5px;
+}

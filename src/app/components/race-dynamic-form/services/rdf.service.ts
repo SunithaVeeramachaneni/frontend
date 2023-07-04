@@ -786,7 +786,7 @@ export class RaceDynamicFormService {
   updateInspection$ = (
     inspectionId: string,
     inspectionDetail: InspectionDetail,
-    type: 'due-date' | 'assigned-to' | 'start-date' | 'shift',
+    type: 'due-date' | 'assignedTo' | 'start-date' | 'shift',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> =>
     this.appService
