@@ -1,0 +1,83 @@
+@import '../../../../scss/colors.scss';
+
+.filter-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.search {
+  margin-top: 5px;
+}
+
+.search {
+  margin: 0 15px;
+
+  .icon {
+    position: relative;
+    top: 3px;
+  }
+}
+
+.list-container {
+  height: 340px;
+  overflow-y: auto;
+
+  .list-item-conatiner {
+    border-bottom: 1px solid $gray8;
+    margin: 0 15px;
+
+    .selected-list-element {
+      list-style-type: none;
+      display: flex;
+      width: 100%;
+      cursor: pointer;
+
+      .form-name {
+        padding: 0 15px;
+        color: black;
+        font-size: 110%;
+        margin: 7px 0 0 0;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .form-des {
+        padding: 0 15px;
+        color: $gray4;
+        font-size: 100%;
+        margin: 5px 0;
+      }
+
+      .no-of-ques {
+        float: right;
+        padding-right: 15px;
+        color: $gray4;
+        font-size: 100%;
+      }
+    }
+
+    .selected-list-element:hover {
+      background: $blue4-hover;
+      box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .active {
+      background: $blue4-hover;
+      box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+      border-radius: 5px;
+    }
+  }
+
+  .no-records {
+    background: $white;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+}
+
+.ghost-loading {
+  padding: 0 15px;
+}

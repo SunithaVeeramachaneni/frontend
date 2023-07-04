@@ -1,12 +1,9 @@
-<div
-  class="import-questions-modal"
-  *ngIf="{ formMetadata: formMetadata$ | async }"
->
+<div class="import-questions-modal">
   <div class="dis-flex heading-conatiner">
     <h2 class="heading" translate>Import From</h2>
     <mat-icon class="clear-icon" mat-dialog-close="true">clear</mat-icon>
   </div>
-  <mat-tab-group class="body-container" animationDuration="0ms">
+  <mat-tab-group animationDuration="0ms">
     <mat-tab>
       <ng-template mat-tab-label>{{ 'templates' | translate }}</ng-template>
       <app-import-template-list></app-import-template-list>
