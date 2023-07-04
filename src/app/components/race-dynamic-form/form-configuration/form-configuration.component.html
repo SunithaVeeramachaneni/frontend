@@ -132,13 +132,13 @@
         (click)="importQuestions()"
       ></button>
 
-      <button
+      <!-- <button
         mat-stroked-button
         class="import-btn"
         [disabled]="isEmbeddedForm"
         translate="saveAsTemplate"
         (click)="openSaveTemplateDialog()"
-      ></button>
+      ></button> -->
 
       <button mat-stroked-button class="next-btn" (click)="publishOrShowPdf()">
         {{ isEmbeddedForm ? ('publishBtn' | translate) : ('next' | translate) }}
