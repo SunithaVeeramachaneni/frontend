@@ -61,6 +61,7 @@ export class BuilderComponent implements OnInit {
   @Input() isPreviewActive;
   @Input() moduleName;
   @Input() isEmbeddedForm;
+  @Input() isTemplate;
 
   subFormPages$: Observable<any>;
   pageIndexes$: Observable<number[]>;
