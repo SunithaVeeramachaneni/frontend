@@ -301,3 +301,20 @@
 ::ng-deep .ngx-mat-timepicker-spacer {
   padding-bottom: 8px;
 }
+
+.date-card {
+  background-color: rgba(171, 165, 165, 0.473);
+  width: 100px;
+  height: 18px;
+  padding: 4px 0px 0px 0;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.date-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
