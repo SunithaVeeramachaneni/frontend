@@ -13,7 +13,7 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="forms$ | async as forms; else loadingForms">
+  <div *ngIf="(forms$ | async) && (isLoading$ | async) === false">
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
@@ -22,47 +22,13 @@
       class="width-100"
     ></cwp-dynamictable>
   </div>
-
-  <div
-    *ngIf="forms$ | async as forms; else loadingForms"
-    class="list-container"
-  >
-    <div
-      *ngFor="let form of forms.data; let i = index"
-      class="dis-flex list-item-conatiner"
-    >
-      <li
-        class="selected-list-element"
-        (click)="selectListItem(form, i)"
-        [ngClass]="{ active: selectedItem === i }"
-      >
-        <div class="width-100">
-          <p class="form-name">{{ form.name }}</p>
-          <p class="form-des">
-            {{
-              (form.description ? form.description : 'formDescription')
-                | translate
-            }}
-          </p>
-        </div>
-        <!-- <div class="width-30">
-      <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
-    </div> -->
-      </li>
-    </div>
-    <div
-      class="dis-flex no-records"
-      *ngIf="forms.data.length === 0"
-      translate="noSearchResultsFound"
-    ></div>
-  </div>
 </div>
 
-<ng-template #loadingForms>
-  <div class="ghost-loading">
+<div *ngIf="isLoading$ | async">
+  <div>
     <div *ngFor="let number of ghostLoading">
       <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
       </ngx-shimmer-loading>
     </div>
   </div>
-</ng-template>
+</div>

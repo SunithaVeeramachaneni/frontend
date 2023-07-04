@@ -1,6 +1,6 @@
 .import-questions-modal {
-  height: 500px;
-  width: 500px;
+  height: 540px;
+  width: 540px;
   overflow: hidden;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
@@ -21,5 +21,9 @@
       margin-top: 10px;
       cursor: pointer;
     }
+  }
+
+  .body-container {
+    padding: 0 15px 10px 15px;
   }
 }

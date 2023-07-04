@@ -2,8 +2,9 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -39,8 +40,6 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   skip = 0;
   limit = graphQLDefaultMaxLimit;
   selectedForm;
-  selectedItem;
-  disableSelectBtn = true;
   forms$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   authoredFormDetail;
@@ -49,7 +48,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
-  private onDestroy$ = new Subject();
+  isLoading$ = new BehaviorSubject(true);
 
   status: any[] = ['Draft', 'Published'];
   columns: Column[] = [
@@ -92,7 +91,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -114,7 +113,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       displayName: 'Status',
       type: 'string',
       controlType: 'string',
-      order: 2,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -161,7 +160,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: '392px',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
@@ -175,6 +174,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     }
   };
   dataSource: MatTableDataSource<any>;
+  private onDestroy$ = new Subject();
 
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
@@ -184,7 +184,6 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Inside import-form-list: ', this.data);
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -197,11 +196,10 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
 
     this.getDisplayedForms();
-
-    this.forms$.subscribe((res) => console.log('Forms: ', res));
+    this.configOptions.allColumns = this.columns;
 
     this.formMetadata$ = this.store
       .select(getFormMetadata)
@@ -232,18 +230,23 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     );
 
     const initial = {
-      columns: [],
+      columns: this.columns,
       data: []
     };
     this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
-          initial.data = rows.filter((row) => row.id !== this.formMetadata.id);
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: '392px'
+          };
+          initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data.length;
+        this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
@@ -267,15 +270,30 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
       .pipe(
         mergeMap(({ count, rows, next }) => {
           this.nextToken = next;
+          this.isLoading$.next(false);
           return of(rows);
-        })
+        }),
+        catchError(() => {
+          this.isLoading$.next(false);
+          return of([]);
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: item.plant
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
 
   selectListItem(form) {
-    // this.selectedItem = index;
-    this.disableSelectBtn = false;
-
     this.raceDynamicFormService
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
