@@ -73,7 +73,11 @@
     <ng-content></ng-content>
   </div>
 
-  <button class="add-page-btn" (click)="addPage()" *ngIf="!isEmbeddedForm">
+  <button
+    class="add-page-btn"
+    (click)="addPage()"
+    *ngIf="!isEmbeddedForm && !isTemplate"
+  >
     <svg-icon icon="icon-add-page" class="add-page-btn-icon"></svg-icon>
     {{ 'addPage' | translate }}
   </button>

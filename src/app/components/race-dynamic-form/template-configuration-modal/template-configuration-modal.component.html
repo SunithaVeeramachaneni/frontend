@@ -9,6 +9,33 @@
     <div class="width-95">
       <div class="form-details">
         <h2 class="heading" translate="templateDetailsHeading"></h2>
+        <p class="sub-heading" translate="setTemplateTypeHeading"></p>
+        <div class="formtype-flex">
+          <div class="formtype-style">
+            <input
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.standalone"
+              id="1"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="standalone"> </span>
+            <p class="radio-sub-text" translate="standaloneTemplateSubText"></p>
+          </div>
+          <div class="formtype-style">
+            <input
+              id="2"
+              type="radio"
+              name="formType"
+              [value]="formConfigurationStatus.embedded"
+              [disabled]="true"
+              formControlName="formType"
+            />
+            <span class="radio-btn-text" translate="embedded"> </span><br />
+
+            <p class="radio-sub-text" translate="embeddedTemplateSubText"></p>
+          </div>
+        </div>
         <div class="form-name">
           <p class="form-name-description" translate="templateName"></p>
           <mat-form-field appearance="outline" class="width-100">
