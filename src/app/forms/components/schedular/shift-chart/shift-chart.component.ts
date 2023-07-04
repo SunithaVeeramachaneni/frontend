@@ -80,7 +80,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   }
 
   public onAddSlot(val: string, idx: number): void {
-    const checkSlot = this.dataArrays.filter((item) => item.startTime === val);
+    const checkSlot = this.dataArrays.filter(
+      (item) => item.startTime === this.service.addLeadingZero(val)
+    );
+
+    // 1. Check if slot is already added
     if (checkSlot.length || checkSlot.length > 0) {
       const checkIsBook = checkSlot.filter((e) => e.isBook === false);
       if (checkIsBook.length) {
@@ -98,6 +102,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       this.setShiftDetails();
       return;
     }
+    // 2. If we create slot in already created slot
     if (this.service.isTimeSlotPresent(val, this.dataArrays)) {
       const indexOfMatchObject = this.dataArrays.findIndex(
         (x) =>
@@ -119,6 +124,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         endTime: string;
         isBook: boolean;
       };
+      // 2.1 It will run when the slot is removed from the data
       if (matchObject.isBook === false) {
         if (matchObject?.endTime === this.service.addTime(val, 0, 59)) {
           this.dataArrays[indexOfMatchObject].isBook = true;
@@ -153,7 +159,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
             const endTime = this.dataArrays[indexOfMatchObject].endTime;
             this.dataArrays[indexOfMatchObject].endTime =
               this.service.subtractTime(endTime, 0, 1);
-
             this.setShiftDetails();
             return;
           }
@@ -172,7 +177,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
             isBook: false
           };
           this.dataArrays.push(obj);
-          this.dataArrays = this.service.sortArray(this.dataArrays);
+          this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
           this.slotsArray.push(this.createItemFormGroup());
           this.setShiftDetails();
           return;
@@ -191,12 +196,13 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.dataArrays.push(obj);
         this.slotsArray.push(this.createItemFormGroup());
       } else {
+        // 2.2 If slot is deleted and we are adding a new which is not existing.
         if (this.dataArrays.filter((e) => e.startTime === val).length) {
           const findIndx = this.dataArrays.findIndex(
             (e) => e.startTime === val
           );
           this.dataArrays[findIndx].isBook = true;
-          this.dataArrays[findIndx].endTime = this.service.addTime(val, 1, 0);
+          this.dataArrays[findIndx].endTime = this.service.addTime(val, 0, 59);
           this.setShiftDetails();
           return;
         }
@@ -211,27 +217,48 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj = {
           index: Math.abs(oldIndex - timeDiff),
           startTime: this.service.subtractTime(val, 0, 0),
-          endTime: lastTIme,
+          endTime: timeDiff === 1 ? this.service.addTime(val, 0, 59) : lastTIme,
           isBook: true
         };
         this.dataArrays.push(obj);
         this.slotsArray.push(this.createItemFormGroup());
       }
     } else {
+      // 3. If we a add new slot
       for (const data of this.dataArrays) {
         idx = Math.abs(data.index - idx);
       }
       this.tableColCount = this.slots.indexOf(val);
       this.col = this.slots.length - this.tableColCount;
+
       const obj = {
         index: idx,
-        startTime: this.service.subtractTime(val, idx, 0),
-        endTime: this.service.subtractTime(val, 0, 1),
+        startTime: idx === 1 ? val : this.service.subtractTime(val, idx, 0),
+        endTime:
+          idx === 1 || idx === 0
+            ? this.service.addTime(val, 0, 59)
+            : this.service.subtractTime(val, 0, 1),
         isBook: true
       };
+      if (this.dataArrays?.length === 0) {
+        obj.startTime = this.slots[0];
+
+        const timeDiff1: any = this.service.getTimeDifference(
+          obj.startTime,
+          this.service.addTime(obj.endTime, 0, 1)
+        );
+        obj.index = timeDiff1;
+      }
+      if (
+        this.dataArrays.filter((item) => item.endTime === obj.endTime).length
+      ) {
+        this.setShiftDetails();
+        return;
+      }
       if (val === this.slots[this.slots.length - 2]) {
         obj.endTime = this.service.addTime(val, 0, 59);
       }
+      // If we select last slot then it will work
       if (
         this.shift?.value?.null &&
         val === this.slots[this.slots.length - 2]
@@ -243,11 +270,35 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj.index = idx + 1;
         obj.endTime = this.service.addTime(val, 0, 59);
       }
+      if (val === this.slots[this.slots.length - 2]) {
+        obj.index = idx + 1;
+      }
+
+      if (
+        this.dataArrays.filter(
+          (item) =>
+            this.service.addLeadingZero(item.startTime) === obj.startTime &&
+            obj.index > 1
+        ).length
+      ) {
+        obj.startTime = this.service.addTime(obj.startTime, 1, 0);
+        obj.index = obj.index - 1;
+      }
+
+      // If we add slot from left to right and endTime and startTime are equal
+      if (
+        this.dataArrays.filter(
+          (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
+        ).length
+      ) {
+        obj.startTime = this.service.addTime(obj.startTime, 1, 0);
+        obj.index = obj.index - 1;
+      }
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
-      this.dataArrays = this.service.sortArray(this.dataArrays);
+      this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
     }
-    this.dataArrays = this.service.sortArray(this.dataArrays);
+    this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
     this.setShiftDetails();
   }
 
@@ -282,15 +333,25 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         this.dataArrays.splice(idx, 1);
         this.slotsArray.removeAt(idx);
         this.dataArrays.push(newObject);
-        this.service.sortArray(this.dataArrays);
+        this.service.sortArray(this.dataArrays, this.slots);
       } else {
         this.dataArrays[rowIndex].isBook = false;
       }
     }
-    this.dataArrays = this.service.sortArray(this.dataArrays);
+    this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
     if (this.dataArrays.length === 0) {
       this.col = 0;
     }
+    if (
+      this.dataArrays.filter((item) => item.isBook === false).length ===
+      this.dataArrays.length
+    ) {
+      this.col = 0;
+      this.dataArrays = [];
+      const frmArray = this.addForm.get('slotsArray') as FormArray;
+      frmArray.clear();
+    }
+
     this.setShiftDetails();
   }
 
@@ -301,6 +362,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
   public get getInitialTime(): string {
     if (this.slots?.length > 0) {
       const startTime = this.slots[0];
+      const endTime = this.slots[this.slots?.length - 2];
       if (this.shift?.value?.id) {
         return `${startTime} - ${this.service.subtractTime(
           this.slots[this.slots?.length - 1],
@@ -308,11 +370,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           1
         )}`;
       } else {
-        return `${startTime} - ${this.service.subtractTime(
-          this.slots[this.slots?.length - 1],
-          0,
-          1
-        )}`;
+        return `${startTime} - ${this.service.addTime(endTime, 0, 59)}`;
       }
     }
     return '';

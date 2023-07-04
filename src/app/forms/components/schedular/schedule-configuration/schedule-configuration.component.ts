@@ -953,6 +953,9 @@ export class ScheduleConfigurationComponent
               this.shiftDetails = {};
               delete config?.shiftDetails;
             }
+            if (this.selectedDetails?.shifts?.length > 0) {
+              this.initCreatedSlots();
+            }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
               this.schedulerConfigForm.get('startDate').disable();
@@ -1129,6 +1132,9 @@ export class ScheduleConfigurationComponent
               );
               this.shiftDetails = {};
               delete config?.shiftDetails;
+            }
+            if (this.selectedDetails?.shifts?.length > 0) {
+              this.initCreatedSlots();
             }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {

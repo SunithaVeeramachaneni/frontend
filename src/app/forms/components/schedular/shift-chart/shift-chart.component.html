@@ -9,7 +9,7 @@
       <table class="center">
         <tr>
           <ng-container *ngFor="let slot of slots; let last = last">
-            <td *ngIf="!last" class="slot pr-20 pl-15">
+            <td class="slot pr-20 pl-15">
               <b>{{ slot }}</b>
             </td>
           </ng-container>
@@ -48,6 +48,12 @@
             "
             [attr.colspan]="dataArrays[index]?.index"
             class="slot"
+            [ngStyle]="{
+              border:
+                dataArrays[index]?.isBook === false
+                  ? 'none'
+                  : '1px solid #e8e8e8'
+            }"
           >
             <div
               class="main-content"
@@ -100,7 +106,7 @@
             class="slot"
             (click)="onAddSlot(slot, index)"
           >
-            <b>{{ 'slot' | translate }} +</b>
+            <b class="cursor">{{ 'slot' | translate }} +</b>
           </td>
         </tr>
       </table>

@@ -183,6 +183,11 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
+
+    const startTimeAM = '12:00 am';
+    if (originalTime?.toLowerCase() === startTimeAM.toLowerCase()) {
+      ampm = TimeType.am;
+    }
     // Format the resulting time as a string
     const updatedTime = `${this.padZero(hours)}:${this.padZero(
       minutes
@@ -249,10 +254,28 @@ export class ScheduleConfigurationService {
     return updatedTimeString;
   }
 
-  sortArray(rows = []) {
-    return rows?.sort((a, b) =>
-      this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
-    );
+  sortArray(rows = [], timeSlots = []) {
+    if (timeSlots.length > 0) {
+      if (timeSlots[0] === timeSlots[timeSlots.length - 1]) {
+        return rows?.sort((a, b) =>
+          this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
+        );
+      }
+    }
+
+    return rows?.sort((a, b) => {
+      const aIndex = timeSlots.indexOf(a?.startTime);
+      const bIndex = timeSlots.indexOf(b?.startTime);
+      return aIndex - bIndex;
+    });
+  }
+
+  addLeadingZero(val: string): string {
+    const parsedNumber = parseInt(val, 10);
+    if (!isNaN(parsedNumber) && parsedNumber >= 1 && parsedNumber <= 9) {
+      return '0' + val;
+    }
+    return val;
   }
 
   private getDateString(data?: Date): string {
