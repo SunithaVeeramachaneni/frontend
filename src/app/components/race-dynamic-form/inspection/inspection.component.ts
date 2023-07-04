@@ -1144,6 +1144,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
               this.plantTimezoneMap[plantId].timeZoneIdentifier
             );
           }
+          let slot = null;
+          if (JSON.parse(this.selectedFormInfo.slotDetails)) {
+            slot = JSON.parse(this.selectedFormInfo.slotDetails);
+            slot.endTime =
+              changedDueDate.getHours().toString() +
+              ':' +
+              changedDueDate.getMinutes().toString();
+          }
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
@@ -1168,7 +1176,8 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 dueDate: changedDueDate,
                 scheduledAt,
                 locationAndAssetTasksCompleted,
-                assignedTo
+                assignedTo,
+                slotDetails: slot
               },
               'due-date'
             )
@@ -1183,6 +1192,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         dueDate: changedDueDate,
                         dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
+                        slotDetails: slot,
                         inspectionDBVersion: resp.inspectionDBVersion + 1,
                         inspectionDetailDBVersion:
                           resp.inspectionDetailDBVersion + 1,
@@ -1304,8 +1314,14 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
-          let slot;
-
+          let slot = null;
+          if (JSON.parse(this.selectedFormInfo.slotDetails)) {
+            slot = JSON.parse(this.selectedFormInfo.slotDetails);
+            slot.startTime =
+              changedScheduledAt.getHours().toString() +
+              ':' +
+              changedScheduledAt.getMinutes().toString();
+          }
           slot = JSON.stringify(slot);
           this.raceDynamicFormService
             .updateInspection$(
@@ -1317,6 +1333,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                 inspectionId,
                 assignedTo,
                 scheduledAt: changedScheduledAt,
+                slotDetails: slot,
                 dueDate
               },
               'start-date'
@@ -1331,6 +1348,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
                         scheduledAt: changedScheduledAt,
                         status: changedStatus,
                         scheduledAtDisplay: startDateDisplayFormat,
+                        slotDetails: slot,
                         inspectionDBVersion: resp.inspectionDBVersion + 1,
                         inspectionDetailDBVersion:
                           resp.inspectionDetailDBVersion + 1,
