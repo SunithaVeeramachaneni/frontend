@@ -610,6 +610,7 @@ export class OperatorRoundsService {
       )
       .map((p) => ({
         ...p,
+        id: p.roundId,
         preTextImage: {
           image: 'assets/img/svg/rounds-icon.svg',
           style: {
