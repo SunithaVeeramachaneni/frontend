@@ -2,10 +2,11 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy,
   ChangeDetectorRef,
   ViewChild,
-  ElementRef
+  ElementRef,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
@@ -45,13 +46,7 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
-import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
-import {
-  BuilderConfigurationActions,
-  GlobalResponseActions,
-  QuickResponseActions,
-  UnitOfMeasurementActions
-} from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { SaveTemplateContainerComponent } from '../save-template-container/save-template-container.component';
 import { RaceDynamicFormService } from '../services/rdf.service';
 
@@ -61,8 +56,9 @@ import { RaceDynamicFormService } from '../services/rdf.service';
   styleUrls: ['./form-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FormConfigurationComponent implements OnInit, OnDestroy {
+export class FormConfigurationComponent implements OnInit {
   @ViewChild('name') formName: ElementRef;
+  @Output() gotoNextStep = new EventEmitter<void>();
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -500,7 +496,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         } = this.formDetails;
         this.store.dispatch(
           BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus: formStatus,
+            formStatus,
             formDetailPublishStatus,
             formListId: formMetadata.id,
             counter,
@@ -537,18 +533,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
-  }
-
-  ngOnDestroy(): void {
-    if (this.authoredFormDetailSubscription) {
-      this.authoredFormDetailSubscription.unsubscribe();
-    }
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
-    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
-    this.store.dispatch(QuickResponseActions.resetQuickResponses());
-    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 
   importQuestions(): void {
@@ -588,16 +572,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PDFBuilderComponent, {
-      data: {
-        moduleName: 'RDF'
-      },
-      hasBackdrop: false,
-      disableClose: true,
-      width: '100vw',
-      minWidth: '100vw',
-      height: '100vh'
-    });
+    this.gotoNextStep.emit();
   };
 
   openSaveTemplateDialog() {

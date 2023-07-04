@@ -19,6 +19,7 @@ export class FullScreenFormCreationComponent implements OnInit {
   currentStep = 0;
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
+    @Inject(MAT_DIALOG_DATA) public data,
     private router: Router
   ) {}
 
@@ -27,7 +28,6 @@ export class FullScreenFormCreationComponent implements OnInit {
   }
 
   goBack(): void {
-    // Change the location with new one
     this.router.navigate(['/forms']);
   }
 
@@ -36,10 +36,10 @@ export class FullScreenFormCreationComponent implements OnInit {
   }
 
   gotoNextStep(): void {
-    this.currentStep++; // Increase the current step
+    this.currentStep++;
   }
 
   gotoPreviousStep(): void {
-    this.currentStep--; // Decrease the current step
+    this.currentStep--;
   }
 }

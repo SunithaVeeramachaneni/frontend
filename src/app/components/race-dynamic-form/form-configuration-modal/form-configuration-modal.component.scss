@@ -3,34 +3,6 @@
 .form-header-modal {
   background: $white2;
 
-  .form-toolbar {
-    height: 65px;
-    background-color: $white;
-    border-bottom: 1px solid $border-color;
-
-    .back-btn {
-      border: none;
-      background-color: transparent;
-
-      .back-btn-text {
-        font-weight: 700;
-        font-size: 120%;
-        letter-spacing: 0.15px;
-        color: $text-color;
-        margin-left: 10px;
-        position: relative;
-        top: -2px;
-      }
-
-      .back-arrow {
-        height: 15px;
-        width: 15px;
-        position: relative;
-        top: 1px;
-      }
-    }
-  }
-
   .form-content {
     height: calc(100vh - 75px);
 

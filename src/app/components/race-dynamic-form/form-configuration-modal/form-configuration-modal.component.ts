@@ -6,10 +6,11 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  Inject
+  EventEmitter,
+  Output,
+  Input
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
@@ -52,6 +53,8 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
+  @Output() gotoNextStep = new EventEmitter<void>();
+  @Input() data;
   visible = true;
   selectable = true;
   removable = true;
@@ -82,15 +85,13 @@ export class FormConfigurationModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,
     private cdrf: ChangeDetectorRef,
     private plantService: PlantService,
     private toastService: ToastService,
-    private operatorRoundService: OperatorRoundsService,
-    @Inject(MAT_DIALOG_DATA) public data
+    private operatorRoundService: OperatorRoundsService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -286,16 +287,14 @@ export class FormConfigurationModalComponent implements OnInit {
             formsUsageCount: this.data.formsUsageCount + 1
           })
           .subscribe(() => {
-            this.router
-              .navigate(['/forms/create'], {
-                state: { selectedTemplate: this.data }
-              })
-              .then(() => this.dialogRef.close());
+            this.gotoNextStep.emit();
+            //this.router.navigate(['/forms/create'], {
+            //state: { selectedTemplate: this.data }
+            //});
+            // .then(() => this.dialogRef.close());
           });
       } else {
-        this.router
-          .navigate(['/forms/create'])
-          .then(() => this.dialogRef.close());
+        this.gotoNextStep.emit();
       }
     }
   }
@@ -579,5 +578,9 @@ export class FormConfigurationModalComponent implements OnInit {
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+
+  onCancel() {
+    this.router.navigate(['/forms']);
   }
 }

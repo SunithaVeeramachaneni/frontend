@@ -3,16 +3,15 @@
 import {
   Component,
   OnInit,
-  Inject,
   ChangeDetectionStrategy,
   ViewChild,
   ElementRef,
-  OnDestroy
+  OnDestroy,
+  Input
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ToastService } from 'src/app/shared/toast';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -20,7 +19,10 @@ import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
 import {
   BuilderConfigurationActions,
-  RoundPlanConfigurationActions
+  GlobalResponseActions,
+  QuickResponseActions,
+  RoundPlanConfigurationActions,
+  UnitOfMeasurementActions
 } from '../../state/actions';
 import {
   getFormMetadata,
@@ -51,7 +53,8 @@ import { format } from 'date-fns';
 export class PDFBuilderComponent implements OnInit, OnDestroy {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
-
+  @Input() moduleName;
+  authoredFormDetailSubscription: Subscription;
   loadPDFBuilderConfig$: Observable<any>;
 
   authoredFormDetail$: Observable<any>;
@@ -110,10 +113,8 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private router: Router,
     public assetHierarchyUtil: AssetHierarchyUtil,
-    public dialogRef: MatDialogRef<PDFBuilderComponent>,
     private loginService: LoginService,
-    private toast: ToastService,
-    @Inject(MAT_DIALOG_DATA) public data
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -140,20 +141,18 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           this.formDetailPublishStatus = formDetailPublishStatus;
           if (formDetailPublishStatus === 'Published' && this.inDraftState) {
-            if (this.data.moduleName === 'OPERATOR_ROUNDS') {
+            if (this.moduleName === 'OPERATOR_ROUNDS') {
               this.toast.show({
                 text: 'Round published successfully',
                 type: 'success'
               });
               this.router.navigate(['/operator-rounds']);
-              this.dialogRef.close();
-            } else if (this.data.moduleName === 'RDF') {
+            } else if (this.moduleName === 'RDF') {
               this.toast.show({
                 text: 'Form published successfully',
                 type: 'success'
               });
               this.router.navigate(['/forms']);
-              this.dialogRef.close();
             }
           }
           if (
@@ -164,7 +163,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
         })
       );
 
-    if (this.data.moduleName && this.data.moduleName === 'OPERATOR_ROUNDS') {
+    if (this.moduleName && this.moduleName === 'OPERATOR_ROUNDS') {
       this.store.select(getSelectedHierarchyList).subscribe((data) => {
         this.selectedFlatHierarchy =
           this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
@@ -203,7 +202,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.data.moduleName && this.data.moduleName === 'RDF') {
+        if (this.moduleName && this.moduleName === 'RDF') {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,
@@ -240,7 +239,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.data.moduleName && this.data.moduleName === 'RDF') {
+        if (this.moduleName && this.moduleName === 'RDF') {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,
@@ -495,10 +494,6 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     return format(new Date(), 'M/d/yy');
   }
 
-  onCancel(): void {
-    this.dialogRef.close();
-  }
-
   get getAssetsLocationsTasksAdded(): boolean {
     return (
       (this.totalLocationsCount === 0 || this.totalAssetsCount === 0) &&
@@ -507,7 +502,14 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.authoredFormDetailSubscription) {
+      this.authoredFormDetailSubscription.unsubscribe();
+    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
+    this.store.dispatch(QuickResponseActions.resetQuickResponses());
+    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 }

@@ -10,13 +10,22 @@
   <div stepsContent>
     <!-- STEP 1 -->
     <div *ngIf="currentStep === 0">
-      <app-form-configuration-modal></app-form-configuration-modal>
+      <app-form-configuration-modal
+        [data]="data"
+        (gotoNextStep)="gotoNextStep()"
+      ></app-form-configuration-modal>
     </div>
 
     <!-- STEP 2 -->
     <div *ngIf="currentStep === 1">
-      <app-form-configuration></app-form-configuration>
+      <app-form-configuration
+        (gotoNextStep)="gotoNextStep()"
+      ></app-form-configuration>
     </div>
-    <!-- / STEP 2 -->
+
+    <!-- STEP 3 -->
+    <div *ngIf="currentStep === 2">
+      <app-pdf-builder [moduleName]="'RDF'"></app-pdf-builder>
+    </div>
   </div>
 </app-dynamic-stepper>
