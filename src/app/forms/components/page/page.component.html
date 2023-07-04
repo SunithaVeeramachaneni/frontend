@@ -7,7 +7,7 @@
     pageTasksCount: pageTasksCount$ | async
   } as props"
 >
-  <div class="page-header" *ngIf="!isEmbeddedForm">
+  <div class="page-header" *ngIf="!isEmbeddedForm && !isTemplate">
     <mat-icon
       (click)="toggleIsOpenState()"
       *ngIf="pageForm.get('isOpen').value === true"
@@ -68,7 +68,7 @@
   <div
     *ngIf="pageForm.get('isOpen').value === true"
     class="section-content"
-    [ngClass]="{ 'page-header-embedded': isEmbeddedForm }"
+    [ngClass]="{ 'page-header-embedded': isEmbeddedForm && !isTemplate }"
   >
     <ng-content></ng-content>
   </div>
