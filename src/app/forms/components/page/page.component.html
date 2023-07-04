@@ -68,7 +68,7 @@
   <div
     *ngIf="pageForm.get('isOpen').value === true"
     class="section-content"
-    [ngClass]="{ 'page-header-embedded': isEmbeddedForm && !isTemplate }"
+    [ngClass]="{ 'page-header-embedded': isEmbeddedForm }"
   >
     <ng-content></ng-content>
   </div>
