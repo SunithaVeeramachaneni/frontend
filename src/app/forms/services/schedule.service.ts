@@ -72,14 +72,26 @@ export class ScheduleConfigurationService {
   getTimeDifference(firstTime: string, secondTime: string): number {
     let timeDifference: number;
     const startTime = '12:00 AM';
+    const nextDayStartTime = '01:00 AM';
     const twentyFourHours = 24;
-
+    const twelveHours = 12;
+    const firstHour = this.getHours(firstTime);
+    const secondHour = this.getHours(secondTime);
+    if (
+      firstTime.toLowerCase() === startTime.toLowerCase() &&
+      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
+    ) {
+      return (timeDifference = twelveHours + (firstHour === 0 ? 1 : firstHour));
+    }
+    if (
+      firstTime.toLowerCase() !== startTime.toLowerCase() &&
+      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
+    ) {
+      return (timeDifference = (firstHour === 0 ? 1 : firstHour) - secondHour);
+    }
     if (firstTime === startTime && secondTime === startTime) {
       timeDifference = twentyFourHours;
     } else {
-      const firstHour = this.getHours(firstTime);
-      const secondHour = this.getHours(secondTime);
-
       if (firstHour > secondHour) {
         timeDifference = twentyFourHours - (firstHour - secondHour);
       } else {

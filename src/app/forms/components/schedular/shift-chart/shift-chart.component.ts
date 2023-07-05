@@ -242,8 +242,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       };
       if (this.dataArrays?.length === 0) {
         obj.startTime = this.slots[0];
-
-        const timeDiff1: any = this.service.getTimeDifference(
+        const timeDiff1 = this.service.getTimeDifference(
           obj.startTime,
           this.service.addTime(obj.endTime, 0, 1)
         );
