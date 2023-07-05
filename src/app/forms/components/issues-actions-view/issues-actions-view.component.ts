@@ -109,11 +109,11 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   plantTimezoneMap: any;
   plantMapSubscription: Subscription;
-
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
