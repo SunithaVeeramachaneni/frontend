@@ -72,6 +72,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  isEmbeddedTemplate: boolean;
+  isTemplate: boolean = true;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
   private onDestroy$ = new Subject();
@@ -105,7 +107,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       ),
       description: [''],
       counter: [0],
-      formStatus: [formConfigurationStatus.draft]
+      formStatus: [formConfigurationStatus.draft],
+      formType: formConfigurationStatus.standalone
     });
 
     // if accessed from list screen, allTemplates will be in router state
@@ -209,15 +212,19 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
+        const { name, description, id, formLogo, formStatus, formType } =
+          formMetadata;
         this.formMetadata = formMetadata;
+        this.isEmbeddedTemplate =
+          formMetadata.formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,
             description,
             id,
             formLogo,
-            formStatus
+            formStatus,
+            formType
           },
           { emitEvent: false }
         );
