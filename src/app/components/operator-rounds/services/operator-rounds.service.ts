@@ -132,6 +132,7 @@ export class OperatorRoundsService {
       params.set('plantId', filterData.plant ?? '');
       params.set('createdBy', filterData.createdBy ?? '');
       params.set('lastModifiedOn', filterData.lastModifiedOn ?? '');
+      params.set('publishedBy', filterData.publishedBy ?? '');
       params.set(
         'scheduleStartDate',
         filterData.scheduleStartDate ? filterData.scheduleStartDate : ''
