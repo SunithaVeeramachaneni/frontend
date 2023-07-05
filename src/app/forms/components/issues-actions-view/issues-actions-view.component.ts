@@ -34,7 +34,7 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { format, isToday, isYesterday, parse, parseISO } from 'date-fns';
+import { format, isToday, isYesterday, parse } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
