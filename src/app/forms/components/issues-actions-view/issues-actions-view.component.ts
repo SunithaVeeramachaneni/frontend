@@ -42,7 +42,11 @@ import {
   getTimezoneUTC,
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
-import { dateTimeFormat2, dateFormat2 } from 'src/app/app.constants';
+import {
+  dateTimeFormat2,
+  dateFormat2,
+  timeFormat
+} from 'src/app/app.constants';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -105,11 +109,12 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   plantTimezoneMap: any;
   plantMapSubscription: Subscription;
+  previousDate = '';
+
   private totalCount = 0;
   private allData = [];
   private amplifySubscription$: Subscription[] = [];
   private attachmentsSubscriptionData = [];
-
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<IssuesActionsViewComponent>,
@@ -747,6 +752,23 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       );
     }
     return format(new Date(date), dateTimeFormat2);
+  }
+
+  formatTime(date) {
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ]?.timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[
+          this.issuesActionsDetailViewForm.get('plantId').value
+        ],
+        timeFormat
+      );
+    }
+    return format(new Date(date), timeFormat);
   }
 
   formatDate(date: string) {
