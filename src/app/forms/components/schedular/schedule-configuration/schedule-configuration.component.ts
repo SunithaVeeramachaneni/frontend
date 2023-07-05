@@ -1358,6 +1358,16 @@ export class ScheduleConfigurationComponent
       : this.placeHolder;
   }
 
+  get initialShiftSelected(): string {
+    if (this.shiftSlots?.value?.length > 0) {
+      return this.shiftSlots?.value
+        ?.slice(0, 3)
+        .map((s) => s?.name)
+        .join(', ');
+    }
+    return '';
+  }
+
   ngOnDestroy(): void {
     this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
