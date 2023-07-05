@@ -109,7 +109,6 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   moduleName: string;
   plantTimezoneMap: any;
   plantMapSubscription: Subscription;
-  previousDate = '';
 
   private totalCount = 0;
   private allData = [];
