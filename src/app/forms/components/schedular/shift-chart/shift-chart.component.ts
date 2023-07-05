@@ -242,11 +242,11 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       };
       if (this.dataArrays?.length === 0) {
         obj.startTime = this.slots[0];
-        const timeDiff1 = this.service.getTimeDifference(
-          obj.startTime,
-          this.service.addTime(obj.endTime, 0, 1)
-        );
-        obj.index = timeDiff1;
+        const index = obj.index - 1;
+        obj.endTime =
+          obj.index === 1 || obj.index === 0
+            ? this.service.addTime(obj.startTime, 0, 59)
+            : this.service.addTime(obj.startTime, index, 59);
       }
       if (
         this.dataArrays.filter((item) => item.endTime === obj.endTime).length
