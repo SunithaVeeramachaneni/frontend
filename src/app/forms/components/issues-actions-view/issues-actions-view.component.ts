@@ -771,7 +771,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   formatDate(date: string) {
-    const parsedDate = parseISO(date);
+    const parsedDate = new Date();
     if (
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
