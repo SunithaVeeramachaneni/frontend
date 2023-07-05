@@ -5,6 +5,8 @@ import { Plant } from 'src/app/interfaces/plant';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { UserGroupService } from '../services/user-group.service';
 import { Observable } from 'rxjs';
+import { defaultLimit } from 'src/app/app.constants';
+import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-user-group-list',
   templateUrl: './user-group-list.component.html',
@@ -12,12 +14,12 @@ import { Observable } from 'rxjs';
 })
 export class UserGroupListComponent implements OnInit {
   usergrp = 0;
+  next = '';
+  limit = defaultLimit;
+  search: '';
 
   isOpenAddEditUserGroupModal = false;
-  name;
-  description;
-  plants: Plant[];
-  plantsObject = {};
+
   constructor(
     public dialog: MatDialog,
     private plantService: PlantService,
@@ -25,7 +27,7 @@ export class UserGroupListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getAllPlants();
+    this.getListUser();
   }
 
   openAddEditUserGroupModal(): void {
@@ -33,29 +35,24 @@ export class UserGroupListComponent implements OnInit {
       AddEditUserGroupModalComponent,
       {
         data: {
-          dialogText: 'createUserGroup',
-          name: this.name,
-          description: this.description,
-          plantList: this.plants
+          dialogText: 'createUserGroup'
         }
       }
     );
     addEditUserGroupRef.afterClosed().subscribe((resp) => {
       if (!resp || Object.keys(resp).length === 0) return;
-
-      this.userGroupService
-        .createUserGroup$(resp.user)
-        .subscribe((createdUserGroup) => {
-          console.log(createdUserGroup);
-        });
     });
   }
 
-  getAllPlants() {
-    this.plantService.fetchAllPlants$().subscribe((data) => {
-      if (data && Object.keys(data).length > 0) {
-        this.plants = data.items;
-      }
-    });
-  }
+  getListUser = () =>
+    this.userGroupService
+      .listUserGroups({
+        limit: this.limit,
+        nextToken: this.next,
+        searchKey: this.search,
+        plantId: ''
+      })
+      .subscribe((data) => {
+        console.log(data.items);
+      });
 }

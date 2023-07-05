@@ -20,12 +20,19 @@ import {
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UserGroupEvent, ValidationError } from 'src/app/interfaces';
+import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 @Component({
   selector: 'app-add-edit-user-group-modal',
   templateUrl: './add-edit-user-group-modal.component.html',
   styleUrls: ['./add-edit-user-group-modal.component.scss']
 })
 export class AddEditUserGroupModalComponent implements OnInit {
+  name: string;
+  description: string;
+
+  plantId: string;
+  title;
   dialogText: string;
   plants: any[];
   plantInformation: any[];
@@ -33,8 +40,10 @@ export class AddEditUserGroupModalComponent implements OnInit {
   errors: ValidationError = {};
 
   constructor(
+    public dialog: MatDialog,
     private dailogRef: MatDialogRef<AddEditUserGroupModalComponent>,
     private fb: FormBuilder,
+    private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA)
     public data: any
@@ -52,13 +61,20 @@ export class AddEditUserGroupModalComponent implements OnInit {
       description: new FormControl(''),
       plantId: new FormControl('', [this.matSelectValidator()])
     });
+    this.getAllPlants();
 
-    const { name, description, plantList, dialogText } = this.data;
+    const { dialogText } = this.data;
     this.dialogText = dialogText;
-    this.plantInformation = plantList;
-    this.plants = this.plantInformation;
   }
 
+  getAllPlants() {
+    this.plantService.fetchAllPlants$().subscribe((data) => {
+      if (data && Object.keys(data).length > 0) {
+        this.plants = data.items;
+        this.plantInformation = this.plants;
+      }
+    });
+  }
   matSelectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null =>
       !control.value?.length ? { selectOne: { value: control.value } } : null;
@@ -66,6 +82,19 @@ export class AddEditUserGroupModalComponent implements OnInit {
 
   close() {
     this.dailogRef.close();
+  }
+
+  openSelectUser(): void {
+    const openSelectUserRef = this.dialog.open(
+      SelectUserUsergroupModalComponent,
+      {
+        data: {
+          dialogText: 'createUserGroup',
+          ...this.userGroupForm.value
+        }
+      }
+    );
+    openSelectUserRef.afterClosed().subscribe();
   }
 
   next() {
@@ -78,15 +107,15 @@ export class AddEditUserGroupModalComponent implements OnInit {
   onKeyPlant(event) {
     const value = event.target.value || '';
     if (!value) {
-      this.plants = this.plantInformation;
+      this.plantInformation = this.plants;
     } else {
-      this.plants = this.searchPlant(value);
+      this.plantInformation = this.searchPlant(value);
     }
   }
 
   searchPlant(value: string) {
     const searchValue = value.toLowerCase();
-    return this.plantInformation.filter(
+    return this.plants?.filter(
       (plant) =>
         (plant.name && plant.name.toLowerCase().indexOf(searchValue) !== -1) ||
         (plant.plantId &&

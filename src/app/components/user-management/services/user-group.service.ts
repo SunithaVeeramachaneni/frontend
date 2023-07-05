@@ -16,15 +16,57 @@ import { UserGroup, UserGroupDetails, ErrorInfo } from './../../../interfaces';
 export class UserGroupService {
   constructor(private appService: AppService) {}
 
-  createUserGroup$ = (
-    userGroup: UserGroupDetails,
+  listDynamoUsers$ = (
+    queryParams: {
+      next?: string;
+      limit: number;
+      searchKey: string;
+      plantId: string;
+    },
     info: ErrorInfo = {} as ErrorInfo
   ) => {
-    const createUserGroup = { ...userGroup };
-    return this.appService._postData(
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', `${queryParams.limit}`);
+    params.set('nextToken', queryParams.next);
+    params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase());
+    params.set('plantId', queryParams.plantId);
+
+    return this.appService._getResp(
       environment.userRoleManagementApiUrl,
-      `usersGroup`,
-      createUserGroup,
+      `user-groups/users?` + params.toString(),
+      info
+    );
+  };
+
+  createUserGroup$ = (
+    userGroupDetails: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ) =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      `user-groups`,
+      userGroupDetails,
+      info
+    );
+
+  listUserGroups = (
+    queryParams: {
+      limit: number;
+      nextToken: string;
+      plantId?: string;
+      searchKey?: string;
+    },
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', `${queryParams.limit}` ?? '');
+    params.set('nextToken', queryParams.nextToken ?? '');
+    params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
+    params.set('plantId', queryParams?.plantId ?? '');
+
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'user-groups?' + params.toString(),
       info
     );
   };

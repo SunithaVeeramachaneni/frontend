@@ -52,7 +52,7 @@
           (keyup)="onKeyPlant($event)"
         />
         <div class="scrollable-area">
-          <mat-option [value]="plant.id" *ngFor="let plant of plants"
+          <mat-option [value]="plant.id" *ngFor="let plant of plantInformation"
             >{{ plant.plantId }} - {{ plant.name }}</mat-option
           >
         </div>
@@ -85,8 +85,8 @@
   <button
     mat-raised-button
     class="next-btn"
-    (click)="next()"
+    (click)="openSelectUser()"
     type="submit"
-    translate="nextBtn"
+    translate="createBtn"
   ></button>
 </form>

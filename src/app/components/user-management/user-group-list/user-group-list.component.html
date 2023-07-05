@@ -51,6 +51,37 @@
               autocomplete="off"
             />
           </mat-form-field>
+          <!-- code here  -->
+          <mat-list>
+            <mat-list-item
+              *ngFor="let usergroup of usergroups"
+              class="usergroup-list"
+              (click)="showSelectedUserGroup(usergroup)"
+              [ngClass]="{
+                'selected-usergroup-list': this.selectedUserGroup
+                  ? usergroup.id === this.selectedUserGroup.id
+                  : ''
+              }"
+            >
+              <mat-checkbox
+                (change)="usergroupChecked(usergroup, $event)"
+                [checked]="selectedUserGroupIdList.includes(usergroup.id)"
+              >
+              </mat-checkbox>
+              <span class="usergroup-name" matTooltip="{{ usergroup.name }}">{{
+                usergroup.name
+              }}</span>
+
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="submenu"
+                class="more-items"
+                aria-label="More Options"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
         </div>
         <div class="width-70">
           <div class="width-30 custom-form-field-gray-color">
