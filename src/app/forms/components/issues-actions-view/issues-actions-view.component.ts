@@ -789,13 +789,13 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   compareDates(dateString: string): string {
-    const parsedDate = parse(dateString, 'dd MMM yyyy', new Date());
+    const parsedDate = parse(dateString, dateFormat2, new Date());
 
     return isToday(parsedDate)
       ? 'Today'
       : isYesterday(parsedDate)
       ? 'Yesterday'
-      : format(parsedDate, 'dd MMM yyyy');
+      : format(parsedDate, dateFormat2);
   }
 
   ngOnDestroy(): void {
