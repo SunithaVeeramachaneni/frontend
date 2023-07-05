@@ -294,6 +294,21 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj.startTime = this.service.addTime(obj.startTime, 1, 0);
         obj.index = obj.index - 1;
       }
+
+      // If we select first slot from two hour duration
+      if (
+        this.dataArrays?.length === 1 &&
+        this.dataArrays[0]?.index === 1 &&
+        obj?.index === 1
+      ) {
+        let timeDiff1: any = this.service.getTimeDifference(
+          this.service.addTime(this.dataArrays[0]?.startTime, 0, 1),
+          val
+        );
+        timeDiff1 = timeDiff1 - 1;
+        obj.startTime = this.service.subtractTime(obj?.startTime, timeDiff1, 0);
+        obj.endTime = this.service.subtractTime(obj?.endTime, timeDiff1, 0);
+      }
       this.dataArrays.push(obj);
       this.slotsArray.push(this.createItemFormGroup());
       this.dataArrays = this.service.sortArray(this.dataArrays, this.slots);
