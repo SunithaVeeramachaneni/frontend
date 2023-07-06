@@ -1,22 +1,12 @@
 <mat-toolbar class="form-toolbar">
-  <button (click)="onCancel()" class="back-btn">
-    <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-    <span class="back-btn-text">
-      {{ 'backBtn' | translate }}
-    </span>
-  </button>
+  <div>
+    <button (click)="onGoBack()" class="back-btn">
+      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+    </button>
+  </div>
 
-  <mat-stepper #stepper class="stepper-container">
-    <div *ngFor="let step of steps">
-      <mat-step>
-        <ng-template matStepLabel>
-          {{ step.title }}
-        </ng-template>
-      </mat-step>
-    </div>
-  </mat-stepper>
-  <!-- <div
-        class="steps-breadcrumb"
+  <!-- <mat-stepper #stepper class="stepper-container">
+      <div
         *ngFor="
           let step of steps;
           let i = index;
@@ -31,14 +21,41 @@
           first: first
         }"
       >
-        <div class="index">
-          <span>{{ i + 1 }}</span>
-        </div>
-        <div class="title pr-8">{{ step.title }}</div>
-        <mat-icon class="pr-8" *ngIf="!last">chevron_right</mat-icon>
-      </div> -->
+        <mat-step>
+          <ng-template matStepLabel>
+            <div>{{ step.title }}</div>
+          </ng-template>
+        </mat-step>
+      </div>
+    </mat-stepper> -->
 
-  <!-- DYNAMIC CONTENT -->
-  <ng-content></ng-content>
-  <!-- / DYNAMIC CONTENT -->
+  <div class="stepper-div">
+    <div
+      class="steps-breadcrumb"
+      *ngFor="
+        let step of steps;
+        let i = index;
+        let last = last;
+        let first = first
+      "
+      (click)="onGotoStep(i)"
+      [ngClass]="{
+        current: currentStep === i,
+        completed: currentStep > i,
+        last: last,
+        first: first,
+        'disable-step': currentStep < i
+      }"
+    >
+      <div class="index">
+        <span>{{ i + 1 }}</span>
+      </div>
+      <div class="title pr-8">{{ step.title }}</div>
+      <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
+    </div>
+
+    <!-- DYNAMIC CONTENT -->
+    <ng-content></ng-content>
+    <!-- / DYNAMIC CONTENT -->
+  </div>
 </mat-toolbar>

@@ -19,8 +19,7 @@ export class FullScreenFormCreationComponent implements OnInit {
   currentStep = 0;
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data,
-    private router: Router
+    @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   ngOnInit(): void {
@@ -28,7 +27,11 @@ export class FullScreenFormCreationComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/forms']);
+    if (this.currentStep === 0) {
+      this.dialogRef.close();
+    } else if (this.currentStep > 0) {
+      this.gotoPreviousStep();
+    }
   }
 
   onGotoStep(step): void {

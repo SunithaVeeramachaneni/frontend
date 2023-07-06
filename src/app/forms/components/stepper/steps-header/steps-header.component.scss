@@ -4,20 +4,11 @@
   height: 65px;
   background-color: $white;
   border-bottom: 1px solid $border-color;
+  display: flex;
 
   .back-btn {
     border: none;
     background-color: transparent;
-
-    .back-btn-text {
-      font-weight: 700;
-      font-size: 120%;
-      letter-spacing: 0.15px;
-      color: $text-color;
-      margin-left: 10px;
-      position: relative;
-      top: -2px;
-    }
 
     .back-arrow {
       height: 15px;
@@ -38,9 +29,69 @@
     height: 55px;
   }
 
-  ::ng-deep
-    .mat-step-header:hover:not([aria-disabled])
-    .mat-step-header:hover[aria-disabled='false'] {
+  ::ng-deep .mat-step-header:hover:not([aria-disabled]) {
     background-color: transparent;
+  }
+
+  ::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: $blue-main;
+  }
+}
+
+.steps-breadcrumb {
+  display: flex;
+  margin-left: 10%;
+
+  .title,
+  .index span,
+  .mat-icon {
+    color: $black;
+  }
+  .index {
+    display: flex;
+    margin-right: 6px;
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 28px;
+      min-width: 28px;
+      max-width: 28px;
+      height: 28px;
+      border-radius: 100%;
+      background-color: $blue-main;
+      color: $white;
+      font-size: 12px;
+      z-index: 10;
+    }
+  }
+  &.current {
+    .index span,
+    .mat-icon {
+      color: $white;
+    }
+  }
+}
+
+.stepper-div {
+  display: flex;
+}
+
+.stepper-line {
+  transform: rotate(90deg);
+  position: relative;
+  left: 15px;
+}
+
+.disable-step {
+  cursor: not-allowed;
+  .title {
+    color: gray;
+  }
+  .index {
+    span {
+      background-color: gray;
+    }
   }
 }

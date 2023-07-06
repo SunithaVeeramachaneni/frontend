@@ -33,4 +33,7 @@ export class StepsHeaderComponent implements OnInit {
   onGotoStep(step): void {
     this.gotoStep.emit(step);
   }
+  onGoBack(step): void {
+    this.goBack.emit(step);
+  }
 }

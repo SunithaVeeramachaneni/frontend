@@ -40,7 +40,6 @@ export class DynamicStepperComponent implements OnInit, OnChanges {
   constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
   onGotoStep(step): void {
-    console.log('Go to step: ' + Number(step + 1));
     this.gotoStep.emit(step);
   }
 

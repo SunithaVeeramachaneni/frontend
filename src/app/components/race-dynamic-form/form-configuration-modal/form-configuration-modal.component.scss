@@ -1,7 +1,7 @@
 @import '../../../../scss/colors.scss';
 
 .form-header-modal {
-  background: $white2;
+  margin-top: 30px;
 
   .form-content {
     height: calc(100vh - 75px);
@@ -12,7 +12,6 @@
       border-radius: 5px;
       margin: 15px auto;
       padding: 49px;
-      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
       overflow-y: auto;
       max-height: calc(100vh - 220px);
 
@@ -75,29 +74,6 @@
 
       .tags-mat-chips {
         margin: 5px 5px !important;
-      }
-
-      .buttons {
-        padding: 15px 0 15px 0;
-      }
-
-      .next-btn {
-        float: right;
-        margin-top: 38px;
-        height: 29px;
-        font-weight: normal;
-        line-height: normal;
-      }
-
-      .skip-btn {
-        float: right;
-        margin-right: 15px;
-        margin-top: 38px;
-        color: $radio-button-checked;
-        height: 29px;
-        font-weight: normal;
-        line-height: normal;
-        border: 1px solid $blue-main;
       }
     }
   }
@@ -214,4 +190,27 @@
     padding: 5px;
     margin: 5px;
   }
+}
+
+.buttons {
+  border-bottom: 1px solid $border-color;
+}
+
+.next-btn {
+  float: right;
+  margin-right: 22px;
+  height: 35px;
+  font-weight: normal;
+  line-height: normal;
+  width: 8%;
+}
+
+.skip-btn {
+  float: right;
+  color: $radio-button-checked;
+  height: 35px;
+  font-weight: normal;
+  line-height: normal;
+  border: 1px solid $blue-main;
+  width: 8%;
 }
