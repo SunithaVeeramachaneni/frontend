@@ -9,7 +9,7 @@
       (formDetailAction)="formDetailActionHandler()"
       (scheduleRoundPlan)="openScheduleConfigHandler($event)"
       [formStatus]="formConfigurationStatus.published"
-      [scheduleConfiguration]="formScheduleConfigurations[roundPlanDetail?.id]"
+      [scheduleConfiguration]="formScheduleConfigurations[formDetail?.id]"
       [shiftObj]="shiftIdNameMap"
     ></app-form-detail>
   </div>
