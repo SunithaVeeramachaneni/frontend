@@ -34,7 +34,7 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 import { Amplify } from 'aws-amplify';
 import { tap } from 'rxjs/operators';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { format } from 'date-fns';
+import { format, isToday, isYesterday, parse } from 'date-fns';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker/public-api';
 import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
@@ -42,7 +42,11 @@ import {
   getTimezoneUTC,
   localToTimezoneDate
 } from 'src/app/shared/utils/timezoneDate';
-import { dateTimeFormat2 } from 'src/app/app.constants';
+import {
+  dateTimeFormat2,
+  dateFormat2,
+  timeFormat
+} from 'src/app/app.constants';
 
 @Directive({
   selector: '[appScrollToBottom]'
@@ -84,7 +88,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     attachments: this.fb.array([]),
     message: ''
   });
-  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown'];
+  priorities = ['Emergency', 'High', 'Medium', 'Low', 'Shutdown', 'Turnaround'];
   statuses = ['Open', 'In-Progress', 'Resolved'];
   statusValues = ['Open', 'In Progress', 'Resolved'];
   minDate: Date;
@@ -732,7 +736,7 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
-  formatDate(date) {
+  formatDateTime(date) {
     if (
       this.plantTimezoneMap[
         this.issuesActionsDetailViewForm.get('plantId').value
@@ -747,6 +751,51 @@ export class IssuesActionsViewComponent implements OnInit, OnDestroy, DoCheck {
       );
     }
     return format(new Date(date), dateTimeFormat2);
+  }
+
+  formatTime(date) {
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ]?.timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[
+          this.issuesActionsDetailViewForm.get('plantId').value
+        ],
+        timeFormat
+      );
+    }
+    return format(new Date(date), timeFormat);
+  }
+
+  formatDate(date: string) {
+    const parsedDate = new Date();
+    if (
+      this.plantTimezoneMap[
+        this.issuesActionsDetailViewForm.get('plantId').value
+      ]?.timeZoneIdentifier
+    ) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[
+          this.issuesActionsDetailViewForm.get('plantId').value
+        ],
+        dateFormat2
+      );
+    }
+    return format(parsedDate, dateFormat2);
+  }
+
+  compareDates(dateString: string): string {
+    const parsedDate = parse(dateString, dateFormat2, new Date());
+
+    return isToday(parsedDate)
+      ? 'Today'
+      : isYesterday(parsedDate)
+      ? 'Yesterday'
+      : format(parsedDate, dateFormat2);
   }
 
   ngOnDestroy(): void {

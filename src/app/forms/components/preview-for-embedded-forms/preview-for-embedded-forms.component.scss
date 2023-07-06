@@ -49,6 +49,16 @@
     outline: none;
   }
 
+  .text-area-field {
+    width: 88%;
+    border: 1px solid $border-color;
+    padding-left: 5px;
+    font-size: 90%;
+    margin-bottom: 5px;
+    margin-top: -5px;
+    margin-left: 5px;
+  }
+
   .default-value {
     float: right;
     font-size: 90%;

@@ -8,9 +8,11 @@
     <div class="table-wrapper">
       <table class="center">
         <tr>
-          <td *ngFor="let slot of slots" class="slot pr-20 pl-15">
-            {{ slot }}
-          </td>
+          <ng-container *ngFor="let slot of slots; let last = last">
+            <td *ngIf="!last" class="slot pr-20 pl-15">
+              <b>{{ slot }}</b>
+            </td>
+          </ng-container>
         </tr>
         <tr *ngIf="col === 0">
           <td [attr.colspan]="slots?.length - 1" class="slot">

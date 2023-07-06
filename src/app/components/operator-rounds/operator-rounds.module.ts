@@ -71,7 +71,10 @@ import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effect
 import { globalResponseReducer } from 'src/app/forms/state/global-responses.reducer';
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { RoundObservationsComponent } from './round-observations/round-observations.component';
-
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
@@ -124,6 +127,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatRadioModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
+    NgxMatDatetimePickerModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

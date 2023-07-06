@@ -458,7 +458,9 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
+      askQuestions = askQuestions.concat(
+        ...questions.filter((q) => q.sectionId === `AQ_${logic.id}`)
+      );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
@@ -786,7 +788,7 @@ export class RaceDynamicFormService {
   updateInspection$ = (
     inspectionId: string,
     inspectionDetail: InspectionDetail,
-    type: 'due-date' | 'assigned-to',
+    type: 'due-date' | 'assigned-to' | 'start-date' | 'shift',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> =>
     this.appService
