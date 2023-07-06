@@ -481,10 +481,10 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     return this.raceDynamicFormService.updateForm$({
       formMetadata: {
         id: form?.id,
-        isArchived: false,
         name: form?.name,
         description: form?.description,
-        isArchivedAt: ''
+        isArchivedAt: '',
+        isDeleted: true
       },
       // eslint-disable-next-line no-underscore-dangle
       formListDynamoDBVersion: form._version
