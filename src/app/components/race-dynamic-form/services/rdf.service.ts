@@ -169,8 +169,8 @@ export class RaceDynamicFormService {
       filterData && filterData.status ? filterData.status : ''
     );
     params.set(
-      'modifiedBy',
-      filterData && filterData.modifiedBy ? filterData.modifiedBy : ''
+      'publishedBy',
+      filterData && filterData.publishedBy ? filterData.publishedBy : ''
     );
     params.set(
       'createdBy',
