@@ -95,3 +95,12 @@
     }
   }
 }
+
+.completed-step {
+  .index {
+    span {
+      background-color: greenyellow;
+      content: '\2713';
+    }
+  }
+}

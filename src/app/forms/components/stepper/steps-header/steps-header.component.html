@@ -44,11 +44,12 @@
         completed: currentStep > i,
         last: last,
         first: first,
-        'disable-step': currentStep < i
+        'disable-step': currentStep < i,
+        'completed-step': currentStep > i
       }"
     >
       <div class="index">
-        <span>{{ i + 1 }}</span>
+        <span>{{ currentStep > i ? '&#x2713;' : i + 1 }} </span>
       </div>
       <div class="title pr-8">{{ step.title }}</div>
       <hr class="stepper-line" *ngIf="i !== steps.length - 1" />

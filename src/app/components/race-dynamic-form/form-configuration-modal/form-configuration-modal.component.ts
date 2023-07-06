@@ -8,9 +8,11 @@ import {
   ViewChild,
   EventEmitter,
   Output,
-  Input
+  Input,
+  Inject
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
@@ -83,6 +85,7 @@ export class FormConfigurationModalComponent implements OnInit {
   additionalDetails: FormArray;
   labelSelected: any;
   constructor(
+    public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
     private fb: FormBuilder,
     private router: Router,
     private readonly loginService: LoginService,
@@ -581,6 +584,6 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate(['/forms']);
+    this.dialogRef.close();
   }
 }
