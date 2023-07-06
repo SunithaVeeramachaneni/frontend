@@ -1152,6 +1152,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
               ':' +
               changedDueDate.getMinutes().toString();
           }
+          slot = JSON.stringify(slot);
           let changedStatus = status;
           if (status === 'overdue') {
             if (assignedTo) {
