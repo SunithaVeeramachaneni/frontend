@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
+import { State, getFormDetails } from 'src/app/forms/state';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-full-screen-form-creation',
@@ -16,13 +18,24 @@ export class FullScreenFormCreationComponent implements OnInit {
 
   totalSteps: number;
   currentStep = 0;
+  formData;
+
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public data,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
+    this.store.select(getFormDetails).subscribe((formDetails) => {
+      const { formMetadata, formListDynamoDBVersion } = formDetails;
+      this.formData = {
+        formListDynamoDBVersion,
+        formMetadata,
+        formExists: Object.keys(formMetadata).length === 0 ? false : true
+      };
+    });
   }
 
   goBack(): void {

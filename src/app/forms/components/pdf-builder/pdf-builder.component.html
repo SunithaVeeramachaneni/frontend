@@ -244,7 +244,7 @@
               <span
                 class="formName-gray"
                 *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                >{{ formMetadata.name }}</span
+                >{{ formMetadata?.name }}</span
               >
             </div>
             <div
@@ -266,7 +266,7 @@
                   <span
                     class="name"
                     *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-                    >{{ formMetadata.name }}</span
+                    >{{ formMetadata?.name }}</span
                   >
                   <span class="discribe">{{
                     formMetadata?.description ? formMetadata?.description : ''
@@ -401,13 +401,13 @@
           class="formName"
           *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
         >
-          {{ formMetadata.name }}
+          {{ formMetadata?.name }}
         </div>
         <div
           class="roundId"
           *ngIf="pdfBuilderConfigurationsForm.get('formId').value"
         >
-          <b> Id:</b> {{ formMetadata.id }}
+          <b> Id:</b> {{ formMetadata?.id }}
         </div>
       </div>
 
@@ -439,7 +439,7 @@
           </tr>
           <tr>
             <td>
-              {{ ' ' + formMetadata.plant }}
+              {{ ' ' + formMetadata?.plant }}
             </td>
             <td>Weekly</td>
             <td>Shift A</td>
@@ -588,7 +588,7 @@
       <span
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
+        >{{ formMetadata?.name }}</span
       >
     </div>
     <div
@@ -757,7 +757,7 @@
       <span
         class="formName-gray"
         *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-        >{{ formMetadata.name }}</span
+        >{{ formMetadata?.name }}</span
       >
     </div>
     <div *ngIf="!pdfBuilderConfigurationsForm.get('issues').value">
@@ -772,7 +772,7 @@
           <span
             class="name"
             *ngIf="pdfBuilderConfigurationsForm.get('formTitle').value"
-            >{{ formMetadata.name }}</span
+            >{{ formMetadata?.name }}</span
           >
           <span class="discribe">{{
             formMetadata?.description ? formMetadata?.description : ''

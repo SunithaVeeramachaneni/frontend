@@ -29,30 +29,27 @@
 
         <p class="sub-heading" translate="setFormTypeHeading"></p>
         <div class="formtype-flex">
-          <div class="formtype-style">
-            <input
-              type="radio"
-              name="formType"
-              [value]="formConfigurationStatus.standalone"
-              id="1"
-              formControlName="formType"
-            />
-            <span class="radio-btn-text" translate="standalone"> </span>
-            <p class="radio-sub-text" translate="standaloneSubText"></p>
-          </div>
-          <div class="formtype-style">
-            <input
-              id="2"
-              type="radio"
-              name="formType"
-              [value]="formConfigurationStatus.embedded"
-              [disabled]="true"
-              formControlName="formType"
-            />
-            <span class="radio-btn-text" translate="embedded"> </span><br />
-
-            <p class="radio-sub-text" translate="embeddedSubText"></p>
-          </div>
+          <mat-radio-group class="dis-flex" formControlName="formType">
+            <div class="formtype-style">
+              <mat-radio-button
+                class="radio-btns"
+                [value]="formConfigurationStatus.standalone"
+                [disabled]="this.formData.formExists"
+                checked="true"
+              ></mat-radio-button>
+              <span class="radio-btn-text" translate="standalone"> </span>
+              <p class="radio-sub-text" translate="standaloneSubText"></p>
+            </div>
+            <div class="formtype-style">
+              <mat-radio-button
+                class="radio-btns"
+                [value]="formConfigurationStatus.embedded"
+                [disabled]="this.formData.formExists"
+              ></mat-radio-button>
+              <span class="radio-btn-text" translate="embedded"> </span><br />
+              <p class="radio-sub-text" translate="embeddedSubText"></p>
+            </div>
+          </mat-radio-group>
         </div>
         <hr class="horizontal-line" />
 
@@ -97,6 +94,7 @@
               formControlName="plantId"
               [placeholder]="'plant' | translate"
               (openedChange)="resetPlantSearchFilter()"
+              [disabled]="this.formData.formExists"
             >
               <input
                 class="searchable-input"

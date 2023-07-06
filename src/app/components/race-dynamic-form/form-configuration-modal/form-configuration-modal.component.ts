@@ -57,6 +57,7 @@ export class FormConfigurationModalComponent implements OnInit {
   @ViewChild(MatAutocompleteTrigger) auto: MatAutocompleteTrigger;
   @Output() gotoNextStep = new EventEmitter<void>();
   @Input() data;
+  @Input() formData;
   visible = true;
   selectable = true;
   removable = true;
@@ -256,33 +257,66 @@ export class FormConfigurationModalComponent implements OnInit {
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
-      this.store.dispatch(
-        BuilderConfigurationActions.addFormMetadata({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            plant: plant.name
-          },
-          formDetailPublishStatus: formConfigurationStatus.draft,
-          formSaveStatus: formConfigurationStatus.saving
-        })
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.updateCreateOrEditForm({
-          createOrEditForm: true
-        })
-      );
-      this.store.dispatch(
-        BuilderConfigurationActions.createForm({
-          formMetadata: {
-            ...this.headerDataForm.value,
-            additionalDetails: updatedAdditionalDetails,
-            pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
-            author: userName,
-            formLogo: 'assets/rdf-forms-icons/formlogo.svg'
-          }
-        })
-      );
+      if (this.formData.formExists === false) {
+        this.store.dispatch(
+          BuilderConfigurationActions.addFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name
+            },
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.createForm({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
+              author: userName,
+              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+            }
+          })
+        );
+      } else if (this.formData.formExists === true) {
+        console.log('in edit');
+        this.store.dispatch(
+          BuilderConfigurationActions.updateFormMetadata({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              plant: plant.name
+            },
+            formStatus: formConfigurationStatus.draft,
+            formDetailPublishStatus: formConfigurationStatus.draft,
+            formSaveStatus: formConfigurationStatus.saving
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateCreateOrEditForm({
+            createOrEditForm: true
+          })
+        );
+        this.store.dispatch(
+          BuilderConfigurationActions.updateForm({
+            formMetadata: {
+              ...this.headerDataForm.value,
+              additionalDetails: updatedAdditionalDetails,
+              pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
+              author: userName,
+              formLogo: 'assets/rdf-forms-icons/formlogo.svg'
+            },
+            formListDynamoDBVersion: this.formData.formListVersion
+          })
+        );
+      }
 
       if (this.data) {
         this.rdfService

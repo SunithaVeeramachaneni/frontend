@@ -29,6 +29,34 @@
         margin: 10px 5px;
       }
 
+      .radio-btns {
+        position: relative;
+        top: 15px;
+        left: 7px;
+      }
+
+      ::ng-deep
+        .mat-radio-button.mat-accent.mat-radio-checked
+        .mat-radio-outer-circle {
+        border-color: $blue-main;
+      }
+
+      ::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+        background-color: $blue-main;
+      }
+
+      ::ng-deep .mat-ripple-element {
+        display: none !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+        border-color: $disabled-color !important;
+      }
+
+      ::ng-deep .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+        background-color: $disabled-color !important;
+      }
+
       .radio-btn-text {
         font-weight: 500;
         font-size: 110%;

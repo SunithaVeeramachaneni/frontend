@@ -12,6 +12,7 @@
     <div [hidden]="currentStep !== 0">
       <app-form-configuration-modal
         [data]="data"
+        [formData]="formData"
         (gotoNextStep)="gotoNextStep()"
       ></app-form-configuration-modal>
     </div>
