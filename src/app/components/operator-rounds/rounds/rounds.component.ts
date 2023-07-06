@@ -1127,7 +1127,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       .updateRound$(
         roundId,
         { ...rest, roundId, assignedTo, previouslyAssignedTo, status },
-        'assignedTo'
+        'assigned-to'
       )
       .pipe(
         tap((resp) => {
