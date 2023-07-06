@@ -361,7 +361,7 @@ export const DEFAULT_PDF_BUILDER_CONFIG = {
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 export const EXCEL_EXTENSION = '.xlsx';
-export const DEFAULT_TEMPLATE_PAGES = [
+export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
   {
     name: 'Page',
     position: 1,
@@ -397,6 +397,94 @@ export const DEFAULT_TEMPLATE_PAGES = [
         sectionId: 'S1',
         name: 'Conducted On',
         fieldType: 'DT',
+        position: 2,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {},
+        date: true,
+        time: true
+      },
+      {
+        id: 'Q3',
+        sectionId: 'S1',
+        name: 'Performed By',
+        fieldType: 'TF',
+        position: 3,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'Q4',
+        sectionId: 'S1',
+        name: 'Location',
+        fieldType: 'GAL',
+        position: 4,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      }
+    ],
+    logics: []
+  }
+];
+export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
+  {
+    name: 'Page',
+    position: 1,
+    isOpen: true,
+    sections: [
+      {
+        id: 'S1',
+        name: 'Section',
+        position: 1,
+        isOpen: true
+      }
+    ],
+    questions: [
+      {
+        id: 'Q1',
+        sectionId: 'S1',
+        name: 'Site Conducted',
+        fieldType: 'TF',
+        position: 1,
+        required: false,
+        enableHistory: false,
+        multi: false,
+        value: 'TF',
+        isPublished: false,
+        isPublishedTillSave: false,
+        isOpen: true,
+        isResponseTypeModalOpen: false,
+        unitOfMeasurement: 'None',
+        rangeMetadata: {}
+      },
+      {
+        id: 'Q2',
+        sectionId: 'S1',
+        name: 'Conducted On',
+        fieldType: 'DF',
         position: 2,
         required: false,
         enableHistory: false,
