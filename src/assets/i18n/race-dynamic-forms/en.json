@@ -355,5 +355,7 @@
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
   "tasksCompleted": "Responses Completed",
-  "yes": "yes"
+  "yes": "yes",
+  "formsThatWillReflectChanges": "Forms that will reflect Template changes",
+  "affectedForms": "Forms will be affected"
 }
