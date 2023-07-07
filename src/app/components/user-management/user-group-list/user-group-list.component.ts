@@ -68,6 +68,11 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
   userGroupList: any = [];
   selectedUserGroup = null;
+  selectedUserGroupId$: BehaviorSubject<string> = new BehaviorSubject<string>(
+    ''
+  );
+  selectedUserGroupPlantId$: BehaviorSubject<string> =
+    new BehaviorSubject<string>('');
   listHeight = '68vh';
   private onDestroy$ = new Subject();
 
@@ -124,6 +129,9 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         this.fetchType = data;
         this.nextToken = '';
         return this.getUserGroups();
+      }),
+      tap((data) => {
+        this.selectUserGroup = data[0];
       })
     );
     const onScrollUserGroups$ = this.userGroupService.fetchUserGroups$.pipe(
@@ -158,6 +166,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
+          console.log(data);
+          this.usergrp = data.count;
           return data.items;
         }),
         catchError(() => {
@@ -165,6 +175,9 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
           return of([]);
         })
       );
+  }
+  showSelectedUserGroup(userGroup) {
+    this.selectedUserGroup = userGroup;
   }
 
   // getUserGroups() {

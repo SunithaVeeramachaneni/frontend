@@ -68,6 +68,7 @@
                 #userGroupList
                 *ngFor="let userGroup of userGroups"
                 class="roles-list"
+                (click)="showSelectedUserGroup(userGroup)"
                 [ngClass]="{
                   'selected-roles-list': this.selectedUserGroup
                     ? userGroup.id === this.selectedUserGroup.id
@@ -86,28 +87,13 @@
             </ng-container>
           </mat-list>
         </div>
-        <div class="width-70">
-          <div class="width-40">
-            <div class="width-30 custom-form-field-gray-color">
-              <mat-form-field
-                appearance="outline"
-                class="search-form-field usergroup-right-pannel"
-              >
-                <mat-icon matPrefix class="searchIcon">search</mat-icon>
-                <input
-                  matInput
-                  type="text"
-                  [placeholder]="'searchUserGroup' | translate"
-                  autocomplete="off"
-                />
-              </mat-form-field>
-            </div>
-            <button
-              mat-raised-button
-              class="add-role-btn"
-              translate="addUsersBtn"
-            ></button>
-          </div>
+        <div class="width-100">
+          <app-user-group-users-list
+            [userGroupId]="selectedUserGroup?.id"
+            [userGroupPlantId]="selectedUserGroup?.plantId"
+            style="height: 80vh"
+          >
+          </app-user-group-users-list>
         </div>
       </div>
     </div>

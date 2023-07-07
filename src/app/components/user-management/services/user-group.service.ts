@@ -36,8 +36,8 @@ export class UserGroupService {
   ) => {
     const params: URLSearchParams = new URLSearchParams();
     params.set('limit', `${queryParams.limit}`);
-    params.set('nextToken', queryParams.next);
-    params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase());
+    params.set('nextToken', queryParams.next ?? '');
+    params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams.plantId);
 
     return this.appService._getResp(

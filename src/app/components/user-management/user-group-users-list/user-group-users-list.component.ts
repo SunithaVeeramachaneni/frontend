@@ -6,7 +6,8 @@ import {
   Input,
   Output,
   OnChanges,
-  SimpleChange
+  SimpleChange,
+  SimpleChanges
 } from '@angular/core';
 import {
   BehaviorSubject,
@@ -45,24 +46,14 @@ import { defaultLimit } from 'src/app/app.constants';
 @Component({
   selector: 'app-user-group-users-list',
   templateUrl: './user-group-users-list.component.html',
-  styleUrls: ['./user-group-users-list.component.css']
+  styleUrls: ['./user-group-users-list.component.scss']
 })
-export class UserGroupUsersListComponent implements OnInit {
+export class UserGroupUsersListComponent implements OnInit, OnChanges {
+  @Input() userGroupId: string;
+  @Input() userGroupPlantId: string;
   userCount$: Observable<Count>;
   limit: number = defaultLimit;
   next = '';
-  @Input() set userGroupId(value: string) {
-    this._userGroupId = value;
-  }
-  get userGroupId() {
-    return this._userGroupId;
-  }
-  @Input() set userGroupPlantId(value: string) {
-    this._userGroupPlantId = value;
-  }
-  get userGroupPlantId() {
-    return this._userGroupPlantId;
-  }
 
   columns: Column[] = [
     {
@@ -147,7 +138,7 @@ export class UserGroupUsersListComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh-50px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
   dataSource: MatTableDataSource<any>;
@@ -157,11 +148,21 @@ export class UserGroupUsersListComponent implements OnInit {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   _userGroupId: string;
   _userGroupPlantId: string;
+  skip = 0;
 
   constructor(
     private userGroupService: UserGroupService,
     private toast: ToastService
   ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+    if (changes.userGroupId.currentValue) {
+      this.userGroupPlantId = changes.userGroupPlantId.currentValue;
+
+      this.getAllUsers();
+    }
+  }
 
   ngOnInit(): void {
     this.fetchUsers$.next({ data: 'load' });
@@ -176,6 +177,7 @@ export class UserGroupUsersListComponent implements OnInit {
         })
       )
       .subscribe();
+    this.configOptions.allColumns = this.columns;
   }
 
   getAllUsers() {
@@ -193,7 +195,29 @@ export class UserGroupUsersListComponent implements OnInit {
         }
       })
     );
-    this.allUsers$ = combineLatest([usersOnLoadSearch$, usersOnScroll$]).pipe();
+    const initial = {
+      columns: this.columns,
+      data: []
+    };
+    this.allUsers$ = combineLatest([usersOnLoadSearch$, usersOnScroll$]).pipe(
+      map(([users, scrollData]) => {
+        if (this.skip === 0) {
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: 'calc(100vh-50px)'
+          }; // To fix dynamic table height issue post search with no records & then remove search with records
+          initial.data = users;
+        } else {
+          initial.data = initial.data.concat(scrollData);
+        }
+
+        // console.log(initial);
+        this.skip = initial.data?.length;
+        this.dataSource = new MatTableDataSource(initial.data);
+        return initial;
+      }),
+      tap((data) => console.log(data))
+    );
   }
 
   getUsersList = () =>
@@ -222,4 +246,10 @@ export class UserGroupUsersListComponent implements OnInit {
           return rows;
         })
       );
+
+  handleTableEvent = (event) => {
+    console.log(event);
+    this.fetchUsers$.next(event);
+  };
+  rowLevelActionHandler($event) {}
 }
