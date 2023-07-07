@@ -18,11 +18,9 @@
 
 .input-container {
   position: relative;
-  top: 15px;
 
-  ::ng-deep .mat-form-field-infix {
+  ::ng-deep .input-container .mat-form-field-infix {
     padding: 0.5em 0;
-    border: 0.59375em solid transparent;
   }
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
@@ -51,6 +49,7 @@
 }
 
 .dialog-close-btn {
+  margin: 5px;
   float: right;
   cursor: pointer;
 }
@@ -62,28 +61,21 @@
 }
 
 .title {
-  font-size: 120%;
+  font-size: 150%;
   font-weight: 500;
+  margin: 5px;
 }
 
 .next-btn {
-  text-transform: capitalize;
-  float: right;
   background: $blue-main;
   color: $white;
-  height: 29px;
-  font-weight: normal;
-  line-height: normal;
-  margin-top: 10px;
+  width: 100px;
+  height: 34px;
 }
 
 .cancel-btn {
-  color: $gray4;
-  background: transparent;
-  height: 29px;
-  font-weight: normal;
-  line-height: normal;
-  margin: 10px 10px 0 0;
+  color: $blue-main;
+  margin-right: 10px;
 }
 
 ::ng-deep .roles-select .mat-option-text {
@@ -97,8 +89,20 @@
   border-radius: 4px;
   margin: 10px 10px 10px 12px;
 }
-
+.footer {
+  display: flex;
+  justify-content: end;
+  margin-top: 13px;
+}
 .max-char {
-  font-size: 10px;
-  margin-left: 12px;
+  font-size: 11px;
+  margin-left: 6px;
+  color: $gray-text;
+}
+::ng-deep .mat-form-field-subscript-wrapper {
+  font-size: 25%;
+}
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+  top: 1.85375em;
+  margin-top: -0.19em;
 }

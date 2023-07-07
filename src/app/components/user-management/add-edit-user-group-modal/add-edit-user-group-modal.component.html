@@ -19,7 +19,11 @@
   <div class="input-container">
     <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
       <mat-label>{{ 'enterName' | translate }}</mat-label>
-      <input matInput formControlName="name" />
+      <input
+        matInput
+        formControlName="name"
+        translate="maxCharacter"
+      />
       <mat-error
         *ngIf="processValidationErrors('name')"
         class="m-t-5 error-fields"
@@ -73,20 +77,24 @@
     <hr class="divider width-100 m-b-10" />
   </div>
 
-  <button
-    mat-button
-    class="cancel-btn"
-    autofocus="false"
-    mat-dialog-close
-    translate="cancelBtn"
-    tabindex="-1"
-  ></button>
+  <div class="footer">
+    <button
+      mat-raised-button
+      class="cancel-btn"
+      autofocus="false"
+      mat-dialog-close
+      translate="cancelBtn"
+      tabindex="-1"
+    ></button>
 
-  <button
-    mat-raised-button
-    class="next-btn"
-    (click)="openSelectUser()"
-    type="submit"
-    translate="createBtn"
-  ></button>
+    <button
+      mat-raised-button
+      *ngIf="dialogText === 'createUserGroup'"
+      class="next-btn"
+      (click)="openSelectUser()"
+      type="submit"
+      translate="nextBtn"
+      [disabled]="userGroupForm.invalid || userGroupForm.pristine"
+    ></button>
+  </div>
 </form>

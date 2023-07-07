@@ -32,13 +32,29 @@
   position: relative;
   top: -2px;
 }
+
 .add-btn {
-  width: 16px;
-  height: 18px;
+  height: 30px;
+  border-radius: 100%;
+  width: 30px;
+  border: none;
   position: relative;
-  top: 8px;
-  left: -5px;
+  top: 10px;
+  left: 6px;
+  background: none;
 }
+
+.add-btn:hover {
+  background-color: $add-hover-bg;
+}
+
+.add-btn-icon {
+  position: relative;
+  right: 3px;
+  top: 1px;
+  color: $blue;
+}
+
 .left-pannel-header {
   display: flex;
 }
