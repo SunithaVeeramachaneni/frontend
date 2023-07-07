@@ -8,12 +8,21 @@ import { environment } from 'src/environments/environment';
 import { superAdminIcon } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 
-import { UserGroup, UserGroupDetails, ErrorInfo } from './../../../interfaces';
+import {
+  UserGroup,
+  UserGroupDetails,
+  ErrorInfo,
+  TableEvent,
+  LoadEvent,
+  SearchEvent
+} from './../../../interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserGroupService {
+  fetchUserGroups$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(private appService: AppService) {}
 
   listDynamoUsers$ = (
@@ -53,6 +62,7 @@ export class UserGroupService {
     queryParams: {
       limit: number;
       nextToken: string;
+      fetchType: string;
       plantId?: string;
       searchKey?: string;
     },
@@ -64,10 +74,22 @@ export class UserGroupService {
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams?.plantId ?? '');
 
-    return this.appService._getResp(
-      environment.userRoleManagementApiUrl,
-      'user-groups?' + params.toString(),
-      info
-    );
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      return this.appService._getResp(
+        environment.userRoleManagementApiUrl,
+        'user-groups?' + params.toString(),
+        info
+      );
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        next: null
+      });
+    }
   };
 }

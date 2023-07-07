@@ -48,66 +48,80 @@
               matInput
               type="text"
               [placeholder]="'searchUserGroup' | translate"
+              [formControl]="searchUserGroup"
               autocomplete="off"
             />
           </mat-form-field>
-          <!-- code here  -->
-          <mat-list>
-            <mat-list-item
-              *ngFor="let usergroup of usergroups"
-              class="usergroup-list"
-              (click)="showSelectedUserGroup(usergroup)"
-              [ngClass]="{
-                'selected-usergroup-list': this.selectedUserGroup
-                  ? usergroup.id === this.selectedUserGroup.id
-                  : ''
-              }"
-            >
-              <mat-checkbox
-                (change)="usergroupChecked(usergroup, $event)"
-                [checked]="selectedUserGroupIdList.includes(usergroup.id)"
-              >
-              </mat-checkbox>
-              <span class="usergroup-name" matTooltip="{{ usergroup.name }}">{{
-                usergroup.name
-              }}</span>
 
-              <button
-                mat-icon-button
-                [matMenuTriggerFor]="submenu"
-                class="more-items"
-                aria-label="More Options"
+          <mat-list
+            class="roles"
+            *ngIf="userGroupList$ | async as userGroups"
+            #listContainer
+          >
+            <div *ngIf="userGroups.length === 0" class="unselected-role-text">
+              <span translate="noResultsFound"></span>
+            </div>
+            <ng-container
+              *ngIf="(isLoading$ | async) === false; else loadingUserGroupsList"
+            >
+              <mat-list-item
+                #userGroupList
+                *ngFor="let userGroup of userGroups"
+                class="roles-list"
+                [ngClass]="{
+                  'selected-roles-list': this.selectedUserGroup
+                    ? userGroup.id === this.selectedUserGroup.id
+                    : ''
+                }"
               >
-                <mat-icon>more_horiz</mat-icon>
-              </button>
-            </mat-list-item>
+                <mat-checkbox> </mat-checkbox>
+                <span
+                  class="role-name"
+                  matTooltip="{{ userGroup.name }}"
+                  [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+                >
+                  {{ userGroup.name }}
+                </span>
+              </mat-list-item>
+            </ng-container>
           </mat-list>
         </div>
         <div class="width-70">
-          <div class="width-30 custom-form-field-gray-color">
-            <mat-form-field
-              appearance="outline"
-              class="search-form-field usergroup-right-pannel"
-            >
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'searchUserGroup' | translate"
-                autocomplete="off"
-              />
-            </mat-form-field>
+          <div class="width-40">
+            <div class="width-30 custom-form-field-gray-color">
+              <mat-form-field
+                appearance="outline"
+                class="search-form-field usergroup-right-pannel"
+              >
+                <mat-icon matPrefix class="searchIcon">search</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="'searchUserGroup' | translate"
+                  autocomplete="off"
+                />
+              </mat-form-field>
+            </div>
+            <button
+              mat-raised-button
+              class="add-role-btn"
+              translate="addUsersBtn"
+            ></button>
           </div>
-          <button
-            mat-raised-button
-            class="add-role-btn"
-            translate="addUsersBtn"
-          ></button>
-
-          <div class="custom-form-field-white-color"></div>
         </div>
       </div>
     </div>
   </div>
   <router-outlet></router-outlet>
 </ng-container>
+
+<ng-template #loadingUserGroupsList>
+  <div class="p-10">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
