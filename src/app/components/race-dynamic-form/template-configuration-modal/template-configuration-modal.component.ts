@@ -28,7 +28,8 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
-  DEFAULT_TEMPLATE_PAGES,
+  DEFAULT_TEMPLATE_PAGES_STANDALONE,
+  DEFAULT_TEMPLATE_PAGES_EMBEDDED,
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -206,7 +207,11 @@ export class TemplateConfigurationModalComponent implements OnInit {
           this.rdfService
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
-              pages: DEFAULT_TEMPLATE_PAGES,
+              pages:
+                this.headerDataForm?.value?.formType ===
+                formConfigurationStatus.embedded
+                  ? DEFAULT_TEMPLATE_PAGES_EMBEDDED
+                  : DEFAULT_TEMPLATE_PAGES_STANDALONE,
               counter: 4
             })
             .subscribe(() => {
