@@ -483,7 +483,6 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         id: form?.id,
         name: form?.name,
         description: form?.description,
-        isArchivedAt: '',
         isDeleted: true
       },
       // eslint-disable-next-line no-underscore-dangle
