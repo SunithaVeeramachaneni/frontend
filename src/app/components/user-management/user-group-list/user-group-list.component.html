@@ -17,21 +17,6 @@
         </div>
 
         <div class="right-pannel-header">
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            class="more-usergroup"
-            aria-label="More Options"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              class="text-red"
-              translate="deleteBtn"
-            ></button>
-          </mat-menu>
           <span class="count-of-usergroup">
             <span class="usergroup-count">{{ usergrp }}</span>
             <span class="usergroup-text">{{
@@ -76,7 +61,6 @@
                     : ''
                 }"
               >
-                <mat-checkbox> </mat-checkbox>
                 <span
                   class="role-name"
                   matTooltip="{{ userGroup.name }}"
@@ -84,6 +68,21 @@
                 >
                   {{ userGroup.name }}
                 </span>
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  class="more-usergroup"
+                  aria-label="More Options"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button
+                    mat-menu-item
+                    class="text-red"
+                    translate="deleteBtn"
+                  ></button>
+                </mat-menu>
               </mat-list-item>
             </ng-container>
           </mat-list>
