@@ -11,8 +11,8 @@
       <div class="usergroup-header">
         <div class="width-30 left-pannel-header">
           <h2 class="heading" translate="userGroups"></h2>
-          <button mat-icon-button (click)="openAddEditUserGroupModal()">
-            <svg-icon icon="icon-add-user" class="add-btn"></svg-icon>
+          <button class="add-btn" (click)="openAddEditUserGroupModal()">
+            <mat-icon class="add-btn-icon">add</mat-icon>
           </button>
         </div>
 
@@ -52,6 +52,7 @@
               autocomplete="off"
             />
           </mat-form-field>
+          <!-- code here  -->
 
           <mat-list
             class="roles"
@@ -62,7 +63,7 @@
               <span translate="noResultsFound"></span>
             </div>
             <ng-container
-              *ngIf="(isLoading$ | async) === false; else loadingUserGroupsList"
+              *ngIf="(isLoading$ | async) === false; else LoadingUserGroupList"
             >
               <mat-list-item
                 #userGroupList
@@ -100,8 +101,7 @@
   </div>
   <router-outlet></router-outlet>
 </ng-container>
-
-<ng-template #loadingUserGroupsList>
+<ng-template #LoadingUserGroupList>
   <div class="p-10">
     <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
     </ngx-shimmer-loading>

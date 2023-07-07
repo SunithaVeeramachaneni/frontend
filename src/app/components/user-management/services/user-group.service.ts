@@ -54,7 +54,12 @@ export class UserGroupService {
     this.appService._postData(
       environment.userRoleManagementApiUrl,
       `user-groups`,
-      userGroupDetails,
+      {
+        ...userGroupDetails,
+        searchTerm:
+          `${userGroupDetails.name.toLowerCase()} ${userGroupDetails?.description.toLowerCase()}` ||
+          ''
+      },
       info
     );
 

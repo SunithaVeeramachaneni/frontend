@@ -38,6 +38,8 @@ import {
   tap
 } from 'rxjs/operators';
 import { UserGroupService } from '../services/user-group.service';
+import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
+import { ToastService } from 'src/app/shared/toast';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -148,11 +150,12 @@ export class SelectUserUsergroupModalComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
+    private dialogRef: MatDialogRef<SelectUserUsergroupModalComponent>,
     private usersService: UsersService,
     private userGroupService: UserGroupService,
     private roleService: RolesPermissionsService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -291,7 +294,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         const index = this.selectedUsers.findIndex(
           (user) => user.id === data.id
         );
-        console.log(index);
         if (index !== -1) {
           this.selectedUsers = this.selectedUsers.filter(
             (user) => user.id !== data.id
@@ -306,7 +308,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     }
   };
   onCancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({
+      isBack: true
+    });
   }
 
   onCreate(): void {
@@ -327,8 +331,14 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         displayToast: true,
         failureResponse: {}
       })
-      .subscribe((users) => {
-        console.log(users);
-      });
+      .subscribe(() =>
+        this.toastService.show({
+          type: 'success',
+          text: 'User Group created successfully'
+        })
+      );
+    this.dialogRef.close({
+      isBack: false
+    });
   }
 }

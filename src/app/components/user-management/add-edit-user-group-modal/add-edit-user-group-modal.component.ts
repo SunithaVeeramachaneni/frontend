@@ -94,7 +94,11 @@ export class AddEditUserGroupModalComponent implements OnInit {
         }
       }
     );
-    openSelectUserRef.afterClosed().subscribe();
+    openSelectUserRef.afterClosed().subscribe((data) => {
+      if (!data.isBack) {
+        this.dailogRef.close();
+      }
+    });
   }
 
   next() {

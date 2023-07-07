@@ -73,7 +73,7 @@
   "validFromInvalid": "Valid from is required",
   "validThroughInvalid": "Valid through is required",
   "userGroups": "User Groups ",
-  "maxCharacters": "Max Characters: {limit}",
+  "maxCharacters": "Upto {limit} Characters",
   "selectUser": "Select Users",
   "createBtn": "Create"
 }
