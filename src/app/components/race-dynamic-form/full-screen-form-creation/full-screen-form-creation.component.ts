@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
-import { State, getFormDetails } from 'src/app/forms/state';
+import { State, getFormDetails, getFormMetadata } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -28,6 +28,17 @@ export class FullScreenFormCreationComponent implements OnInit {
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
+
+    this.store.select(getFormMetadata).subscribe((formMetadata) => {
+      const { formType } = formMetadata;
+      if (formType === 'Embedded') {
+        this.steps = [
+          { title: 'Form Details', content: '' },
+          { title: 'Add Questions', content: '' }
+        ];
+      }
+    });
+
     this.store.select(getFormDetails).subscribe((formDetails) => {
       const { formMetadata, formListDynamoDBVersion } = formDetails;
       this.formData = {
