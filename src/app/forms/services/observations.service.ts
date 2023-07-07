@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
@@ -16,6 +17,7 @@ import { API, graphqlOperation } from 'aws-amplify';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import { UsersService } from 'src/app/components/user-management/services/users.service';
+import { isEmpty, omitBy } from 'lodash-es';
 
 const placeHolder = '_ _';
 const dataPlaceHolder = '--';
@@ -26,13 +28,21 @@ export class ObservationsService {
   fetchIssues$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   issuesNextToken = '';
-  issues$: Subject<{ count: number; next: string; rows: any[] }> =
-    new Subject();
+  issues$: Subject<{
+    count: number;
+    next: string;
+    rows: any[];
+    filters: { [x: string]: string[] };
+  }> = new Subject();
   fetchActions$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   actionsNextToken = '';
-  actions$: Subject<{ count: number; next: string; rows: any[] }> =
-    new Subject();
+  actions$: Subject<{
+    count: number;
+    next: string;
+    rows: any[];
+    filters: { [x: string]: string[] };
+  }> = new Subject();
   observationChartCounts$ = new BehaviorSubject(null);
   statusColors = {
     open: '#e0e0e0',
@@ -79,22 +89,35 @@ export class ObservationsService {
     private readonly userService: UsersService
   ) {}
 
-  getObservations$(queryParams: {
-    next?: string;
-    limit: any;
-    searchKey: string;
-    type: string;
-    moduleName: string;
-  }) {
+  getObservations$(
+    queryParams: {
+      next?: string;
+      limit: any;
+      searchKey: string;
+      type: string;
+      moduleName: string;
+    },
+    filterParams = {},
+    info: ErrorInfo = {} as ErrorInfo
+  ) {
     const params: URLSearchParams = new URLSearchParams();
     params.set('searchTerm', queryParams?.searchKey);
     params.set('limit', queryParams?.limit);
     params.set('next', queryParams?.next);
     params.set('type', queryParams?.type);
+    const { displayToast, failureResponse = {} } = info;
     return this.appService
       ._getResp(
         environment.operatorRoundsApiUrl,
-        `${queryParams.moduleName}?` + params.toString()
+        `${queryParams.moduleName}`,
+        { displayToast, failureResponse },
+        {
+          searchTerm: queryParams.searchKey,
+          next: queryParams.next,
+          limit: queryParams.limit.toString(),
+          type: queryParams.type,
+          ...omitBy(filterParams, isEmpty)
+        }
       )
       .pipe(
         map((res) => this.formateGetObservationResponse(res, queryParams.type))
@@ -435,6 +458,50 @@ export class ObservationsService {
     };
   }
 
+  getFormsFilter(info: ErrorInfo = {} as ErrorInfo): Observable<
+    {
+      label: string;
+      items: string[];
+      column: string;
+      type: string;
+      value: string;
+    }[]
+  > {
+    return this.appService._getLocal(
+      '',
+      'assets/json/observations-filter.json',
+      info
+    );
+  }
+
+  prepareFilterData(data, filterJson = []) {
+    filterJson?.forEach((item) => {
+      switch (item.column) {
+        case 'title':
+          item.items = data?.title ?? [];
+          break;
+        case 'location':
+          item.items = data?.location ?? [];
+          break;
+        case 'plant':
+          item.items = data?.plant ?? [];
+          break;
+        case 'priority':
+          item.items = data?.priority ?? [];
+          break;
+        case 'status':
+          item.items = data?.status ?? [];
+          break;
+        case 'assignedTo':
+          item.items = data?.assignedTo ?? [];
+          break;
+        default:
+          break;
+      }
+    });
+    return filterJson;
+  }
+
   private formateGetObservationResponse(resp, type) {
     const items = resp?.items?.sort(
       (a, b) =>
@@ -491,7 +558,8 @@ export class ObservationsService {
     return {
       rows,
       next: resp?.next,
-      count: resp?.count
+      count: resp?.count,
+      filters: resp?.filters
     };
   }
 
