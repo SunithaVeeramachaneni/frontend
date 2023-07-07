@@ -256,7 +256,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   };
   filter: any = {
     status: '',
-    modifiedBy: '',
     authoredBy: '',
     lastModifiedOn: '',
     publishedBy: '',
@@ -708,7 +707,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filter = {
       status: '',
-      modifiedBy: '',
       authoredBy: '',
       lastModifiedOn: '',
       plant: '',

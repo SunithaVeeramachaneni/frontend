@@ -63,7 +63,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   filterJson: any[] = [];
   filter: any = {
     status: '',
-    modifiedBy: '',
     createdBy: '',
     lastModifiedOn: '',
     scheduleStartDate: '',
@@ -679,7 +678,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   resetFilter() {
     this.filter = {
       status: '',
-      modifiedBy: '',
       createdBy: '',
       lastModifiedOn: '',
       scheduleStartDate: '',
