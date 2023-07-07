@@ -47,7 +47,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
-  ghostLoading = new Array(8).fill(0).map((v, i) => i);
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
 
   status: any[] = ['Draft', 'Published'];
@@ -160,7 +160,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '392px',
+    tableHeight: '492px',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
@@ -238,7 +238,7 @@ export class ImportFormListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: '392px'
+            tableHeight: '492px'
           };
           initial.data = rows;
         } else {

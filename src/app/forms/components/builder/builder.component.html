@@ -112,6 +112,10 @@
                           "
                         >
                           <div
+                            *ngIf="
+                              !pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
                             cdkDrag
                             class="questionContainer"
                             [ngClass]="{
@@ -126,6 +130,38 @@
                                 icon="icon-six-dots"
                                 class="question-six-dots section-dots"
                                 cdkDragHandle
+                              ></svg-icon>
+                            </div>
+
+                            <app-question
+                              class="question"
+                              [pageIndex]="pageIndex"
+                              [sectionId]="sectionIds[pageIndex][sectionIndex]"
+                              [questionId]="questionId"
+                              [questionIndex]="questionIndex"
+                              (questionEvent)="questionEventHandler($event)"
+                              [selectedNodeId]="selectedNode.id"
+                              [isPreviewActive]="isPreviewActive"
+                              [isEmbeddedForm]="isEmbeddedForm"
+                            ></app-question>
+                          </div>
+                          <div
+                            *ngIf="
+                              pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
+                            class="questionContainer"
+                            [ngClass]="{
+                              'highlight-bg':
+                                pageWiseSectionQuestions[pageIndex][
+                                  sectionIds[pageIndex][sectionIndex]
+                                ][questionIndex].isOpen === true
+                            }"
+                          >
+                            <div class="question-drag-handler">
+                              <svg-icon
+                                icon="icon-Unlink"
+                                class="icon-unlink"
                               ></svg-icon>
                             </div>
 

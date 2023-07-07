@@ -44,15 +44,19 @@ export class RoundPlanConfigurationService {
         ...this.getFormConfigurationStatuses()
       })
     );
-
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: page.questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId
-      })
-    );
+    if (
+      sectionQuestionsList.length &&
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: page.questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId
+        })
+      );
+    }
   }
 
   addSections(
@@ -92,14 +96,19 @@ export class RoundPlanConfigurationService {
         subFormId
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId
-      })
-    );
+    if (
+      sectionQuestionsList.length &&
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId
+        })
+      );
+    }
   }
 
   addQuestions(
@@ -237,6 +246,12 @@ export class RoundPlanConfigurationService {
     section: Section,
     isEmbeddedForm: boolean
   ) {
+    const templateData: any = {};
+    if (section?.isImported === true) {
+      templateData.isImported = section.isImported;
+      templateData.externalSectionID = section.externalSectionID;
+      templateData.templateID = section.templateID;
+    }
     return {
       id: `S${uuidv4()}`,
       name: section
@@ -245,7 +260,8 @@ export class RoundPlanConfigurationService {
         ? `Section ${sectionIndex}`
         : `Section`,
       position: sectionIndex,
-      isOpen: true
+      isOpen: true,
+      ...templateData
     };
   }
 

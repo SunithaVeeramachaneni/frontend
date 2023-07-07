@@ -1,0 +1,84 @@
+<div
+  class="import-questions"
+  *ngIf="{
+    sectionIndexes: sectionIndexes$ | async,
+    pagesCount: pagesCount$ | async,
+    questionCounter: questionCounter$ | async
+  }"
+>
+  <mat-card class="p-0">
+    <mat-card-title class="m-0 light-gray">
+      <div class="slider-heading">
+        <button (click)="cancel()" class="back-btn">
+          <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+        </button>
+        <span class="import-questions-heading"
+          ><h2>{{ 'importQuestions' | translate }}</h2></span
+        >
+      </div>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="form-name">
+        <mat-form-field class="width-100" appearance="outline">
+          <mat-select
+            [placeholder]="'select' | translate"
+            [formControl]="selectedTemplateControl"
+            [compareWith]="compareFn"
+          >
+            <mat-option
+              *ngFor="let template of allTemplates"
+              [value]="template"
+            >
+              {{ template.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="custom-form-field-gray-color search">
+          <mat-form-field class="width-100" appearance="outline">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchForms' | translate"
+              autocomplete="off"
+              [formControl]="searchSections"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div
+        *ngFor="let section of selectedTemplateSections$ | async; let i = index"
+      >
+        <p class="section-div">
+          <mat-checkbox
+            [checked]="section.checked"
+            (change)="setSectionChecked($event.checked, section)"
+          >
+          </mat-checkbox
+          >&nbsp;
+          {{ section.name }}
+        </p>
+        <div *ngIf="section.isOpen === true">
+          <div *ngFor="let question of section.questions" class="questions">
+            <span>{{ question.name }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <div *ngIf="isFooter" class="import-form-footer">
+      <button
+        mat-stroked-button
+        class="cancel-button"
+        (click)="cancel()"
+        translate="cancel"
+      ></button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="use-button"
+        (click)="useTemplate()"
+        translate="use"
+      ></button>
+    </div>
+  </mat-card>
+</div>

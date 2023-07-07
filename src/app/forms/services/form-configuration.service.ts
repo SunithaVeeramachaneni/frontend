@@ -60,15 +60,19 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
-
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: page.questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length &&
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: page.questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addSections(
@@ -105,14 +109,19 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId: null
-      })
-    );
+    if (
+      sectionQuestionsList.length &&
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId: null
+        })
+      );
+    }
   }
 
   addQuestions(
@@ -241,11 +250,18 @@ export class FormConfigurationService {
   }
 
   private getSection(sectionIndex: number, section: Section) {
+    const templateData: any = {};
+    if (section?.isImported === true) {
+      templateData.isImported = section.isImported;
+      templateData.externalSectionID = section.externalSectionID;
+      templateData.templateID = section.templateID;
+    }
     return {
       id: `S${uuidv4()}`,
       name: section ? section.name : 'Section',
       position: sectionIndex,
-      isOpen: true
+      isOpen: true,
+      ...templateData
     };
   }
 

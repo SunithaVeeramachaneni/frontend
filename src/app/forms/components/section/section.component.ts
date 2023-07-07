@@ -69,7 +69,10 @@ export class SectionComponent implements OnInit, OnDestroy {
       disabled: true
     },
     position: '',
-    isOpen: true
+    isOpen: true,
+    isImported: false,
+    templateID: '',
+    externalSectionID: ''
   });
   section$: Observable<Section>;
   sectionsCount$: Observable<number>;

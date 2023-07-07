@@ -38,6 +38,9 @@ export interface Section {
   name: string;
   position: number;
   isOpen: boolean;
+  isImported?: boolean;
+  templateID?: string;
+  externalSectionID?: string;
 }
 
 export interface Question {

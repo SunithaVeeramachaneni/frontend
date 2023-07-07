@@ -83,8 +83,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   formListVersion: number;
   public openAppSider$: Observable<any>;
+  public openImportTemplateSider$: Observable<any>;
   selectedFormName: string;
   selectedFormData: any;
+  allTemplates: any;
   currentFormData: any;
   isEmbeddedForm: boolean;
   errors: ValidationError = {};
@@ -500,7 +502,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         } = this.formDetails;
         this.store.dispatch(
           BuilderConfigurationActions.updateAuthoredFormDetail({
-            formStatus: formStatus,
+            formStatus,
             formDetailPublishStatus,
             formListId: formMetadata.id,
             counter,
@@ -557,12 +559,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         selectedFormData: '',
         selectedFormName: '',
         openImportQuestionsSlider: false,
-        isEmbeddedForm: this.isEmbeddedForm
+        openImportTemplateQuestionsSlider: false,
+        isEmbeddedForm: this.isEmbeddedForm,
+        allTemplates: []
       }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
+      this.allTemplates = result.allTemplates;
       this.selectedFormName = result.selectedFormName;
       this.authoredFormDetailSubscription = this.authoredFormDetail$.subscribe(
         (pagesData) => {
@@ -570,12 +575,19 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         }
       );
       this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.openImportTemplateSider$ = of(
+        result.openImportTemplateQuestionsSlider
+      );
       this.cdrf.markForCheck();
     });
   }
 
   cancelSlider(event) {
     this.openAppSider$ = of(event);
+  }
+
+  cancelTemplateSlider(event) {
+    this.openImportTemplateSider$ = of(event);
   }
 
   publishOrShowPdf() {

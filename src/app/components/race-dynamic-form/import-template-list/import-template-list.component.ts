@@ -36,7 +36,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
   fetchType = 'load';
   formMetadata$: Observable<FormMetadata>;
   formMetadata: FormMetadata;
-  ghostLoading = new Array(8).fill(0).map((v, i) => i);
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
   isLoading$ = new BehaviorSubject(true);
   allTemplates = [];
 
@@ -56,6 +56,8 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       sticky: false,
       groupable: false,
       titleStyle: {
+        display: 'inline-block',
+        width: '345px',
         'font-weight': '500',
         'font-size': '100%',
         color: '#000000',
@@ -65,6 +67,8 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       showMenuOptions: false,
       subtitleColumn: 'description',
       subtitleStyle: {
+        display: 'inline-block',
+        width: '345px',
         'font-size': '80%',
         color: 'darkgray',
         'overflow-wrap': 'anywhere'
@@ -109,8 +113,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '392px',
-    tableWidth: '100%',
+    tableHeight: '492px',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
 
@@ -134,8 +137,11 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
     this.templates$ = this.raceDynamicFormService.fetchAllTemplates$().pipe(
       map((res: any) => {
         this.allTemplates =
-          res?.rows?.filter((item) => item.formType === filterData.formType) ||
-          [];
+          res?.rows?.filter(
+            (item) =>
+              item.formType === filterData.formType &&
+              item.formStatus === 'Ready'
+          ) || [];
         this.dataSource = new MatTableDataSource(this.allTemplates);
         this.isLoading$.next(false);
         return this.allTemplates;
@@ -171,34 +177,9 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
 
   selectListItem(template) {
     this.data.selectedFormName = template.name;
-    const filteredTemplate = JSON.parse(
-      template.authoredFormTemplateDetails[0].pages
-    );
-
-    const pageData = filteredTemplate.map((page) => {
-      const sectionData = page.sections.map((section) => {
-        const questionsArray = [];
-        page.questions.forEach((question) => {
-          if (section.id === question.sectionId) {
-            questionsArray.push(question);
-          }
-        });
-        return { ...section, questions: questionsArray };
-      });
-      return { ...page, sections: sectionData };
-    });
-
-    this.selectedTemplate = pageData;
-    this.selectedTemplate?.forEach((page) => {
-      page.sections.forEach((sec) => {
-        sec.checked = false;
-        sec.questions.forEach((que) => {
-          que.checked = false;
-        });
-      });
-    });
-    this.data.selectedFormData = this.selectedTemplate;
-    this.data.openImportQuestionsSlider = true;
+    this.data.selectedFormData = template;
+    this.data.openImportTemplateQuestionsSlider = true;
+    this.data.allTemplates = this.allTemplates;
     this.dialogRef.close(this.data);
   }
 

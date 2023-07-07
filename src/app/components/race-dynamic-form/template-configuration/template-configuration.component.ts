@@ -73,7 +73,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   errors: ValidationError = {};
   formDetails: any;
   isEmbeddedTemplate: boolean;
-  isTemplate: boolean = true;
+  isTemplate = true;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
   private onDestroy$ = new Subject();

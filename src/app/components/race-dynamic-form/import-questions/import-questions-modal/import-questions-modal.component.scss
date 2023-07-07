@@ -1,7 +1,13 @@
+@import '../../../../../scss/colors.scss';
+
 .import-questions-modal {
-  height: 540px;
-  width: 540px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 640px;
   overflow: hidden;
+  background: $white;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;

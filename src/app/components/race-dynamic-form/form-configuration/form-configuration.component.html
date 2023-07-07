@@ -181,3 +181,17 @@
     ></app-import-questions-slider>
   </div>
 </div>
+
+<div *ngIf="openImportTemplateSider$ | async as openImportTemplateSider">
+  <div *ngIf="openImportTemplateSider">
+    <app-import-template-questions-slider
+      [isFooter]="true"
+      [selectedTemplateName]="selectedFormName"
+      [selectedTemplateData]="selectedFormData"
+      [allTemplates]="allTemplates"
+      [isEmbeddedForm]="isEmbeddedForm"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelTemplateSlider($event)"
+    ></app-import-template-questions-slider>
+  </div>
+</div>
