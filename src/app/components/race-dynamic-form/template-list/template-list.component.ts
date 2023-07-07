@@ -134,7 +134,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     },
     {
       id: 'formType',
-      displayName: 'Form Type',
+      displayName: 'Template Type',
       type: 'string',
       controlType: 'string',
       order: 4,
