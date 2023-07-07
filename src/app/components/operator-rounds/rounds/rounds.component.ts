@@ -1246,6 +1246,16 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
+          let slot = null;
+          if (JSON.parse(this.selectedRoundInfo.slotDetails)) {
+            slot = JSON.parse(this.selectedRoundInfo.slotDetails);
+            slot.endTime =
+              changedDueDate.getHours().toString() +
+              ':' +
+              changedDueDate.getMinutes().toString();
+          }
+          slot = JSON.stringify(slot);
+
           this.operatorRoundsService
             .updateRound$(
               roundId,
@@ -1257,6 +1267,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 roundId,
                 dueDate: changedDueDate,
                 scheduledAt,
+                slotDetails: slot,
                 locationAndAssetTasksCompleted,
                 assignedTo
               },
@@ -1273,6 +1284,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         dueDate: changedDueDate,
                         dueDateDisplay: dueDateDisplayFormat,
                         status: changedStatus,
+                        slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                         assignedToEmail: resp.assignedTo
@@ -1394,6 +1406,15 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 : (changedStatus = this.statusMap.open);
             }
           }
+          let slot = null;
+          if (JSON.parse(this.selectedRoundInfo.slotDetails)) {
+            slot = JSON.parse(this.selectedRoundInfo.slotDetails);
+            slot.startTime =
+              changedScheduledAt.getHours().toString() +
+              ':' +
+              changedScheduledAt.getMinutes().toString();
+          }
+          slot = JSON.stringify(slot);
           this.operatorRoundsService
             .updateRound$(
               roundId,
@@ -1403,6 +1424,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                 locationAndAssetTasksCompleted,
                 roundId,
                 assignedTo,
+                slotDetails: slot,
                 scheduledAt: changedScheduledAt,
                 dueDate
               },
@@ -1418,6 +1440,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
                         scheduledAt: changedScheduledAt,
                         status: changedStatus,
                         scheduledAtDisplay: startDateDisplayFormat,
+                        slotDetails: slot,
                         roundDBVersion: resp.roundDBVersion + 1,
                         roundDetailDBVersion: resp.roundDetailDBVersion + 1,
                         assignedToEmail: resp.assignedTo
