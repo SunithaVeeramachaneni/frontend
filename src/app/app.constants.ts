@@ -376,7 +376,7 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
     ],
     questions: [
       {
-        id: 'Q1',
+        id: 'TQ1',
         sectionId: 'S1',
         name: 'Site Conducted',
         fieldType: 'TF',
@@ -393,7 +393,7 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         rangeMetadata: {}
       },
       {
-        id: 'Q2',
+        id: 'TQ2',
         sectionId: 'S1',
         name: 'Conducted On',
         fieldType: 'DT',
@@ -412,7 +412,7 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         time: true
       },
       {
-        id: 'Q3',
+        id: 'TQ3',
         sectionId: 'S1',
         name: 'Performed By',
         fieldType: 'TF',
@@ -429,7 +429,7 @@ export const DEFAULT_TEMPLATE_PAGES_STANDALONE = [
         rangeMetadata: {}
       },
       {
-        id: 'Q4',
+        id: 'TQ4',
         sectionId: 'S1',
         name: 'Location',
         fieldType: 'GAL',
@@ -464,7 +464,7 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
     ],
     questions: [
       {
-        id: 'Q1',
+        id: 'TQ1',
         sectionId: 'S1',
         name: 'Site Conducted',
         fieldType: 'TF',
@@ -481,7 +481,7 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         rangeMetadata: {}
       },
       {
-        id: 'Q2',
+        id: 'TQ2',
         sectionId: 'S1',
         name: 'Conducted On',
         fieldType: 'DF',
@@ -500,7 +500,7 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         time: true
       },
       {
-        id: 'Q3',
+        id: 'TQ3',
         sectionId: 'S1',
         name: 'Performed By',
         fieldType: 'TF',
@@ -517,7 +517,7 @@ export const DEFAULT_TEMPLATE_PAGES_EMBEDDED = [
         rangeMetadata: {}
       },
       {
-        id: 'Q4',
+        id: 'TQ4',
         sectionId: 'S1',
         name: 'Location',
         fieldType: 'GAL',

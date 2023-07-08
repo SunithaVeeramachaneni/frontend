@@ -207,11 +207,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
           this.rdfService
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
-              pages:
-                this.headerDataForm?.value?.formType ===
-                formConfigurationStatus.embedded
-                  ? DEFAULT_TEMPLATE_PAGES_EMBEDDED
-                  : DEFAULT_TEMPLATE_PAGES_STANDALONE,
+              pages: this.getDefaultTemplateQuestions(
+                this.headerDataForm?.value?.formType
+              ),
               counter: 4
             })
             .subscribe(() => {
@@ -506,5 +504,23 @@ export class TemplateConfigurationModalComponent implements OnInit {
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+  getDefaultTemplateQuestions(formType) {
+    const timestamp = new Date().getTime();
+    if (formType === formConfigurationStatus.embedded) {
+      DEFAULT_TEMPLATE_PAGES_EMBEDDED.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_EMBEDDED;
+    } else {
+      DEFAULT_TEMPLATE_PAGES_STANDALONE.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_STANDALONE;
+    }
   }
 }
