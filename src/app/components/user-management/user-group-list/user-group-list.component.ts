@@ -56,6 +56,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   skip = 0;
   fetchType = 'load';
   nextToken = '';
+  userGroupId;
   usergrp = 0;
   next = '';
   limit = defaultLimit;
@@ -145,13 +146,22 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         }
       })
     );
-    onScrollUserGroups$.subscribe((data) => console.log('On scroll :', data));
 
-    // this.userGroupList$ = combineLatest([
-    //   userGroupsOnLoadSearch$,
-    //   onScrollUserGroups$
-    // ]).pipe();
-    // this.userGroupList$.subscribe((data) => console.log('got data :', data));
+    onScrollUserGroups$.subscribe((data) => console.log('On scroll :', data));
+  }
+
+  copyUserGroup(event) {
+    console.log('Id' + event);
+    this.userGroupId = event;
+    console.log();
+    return this.userGroupService
+      .copyUserGroup$(event, {
+        displayToast: true,
+        failureResponse: {}
+      })
+      .subscribe((data) => {
+        console.log(data);
+      });
   }
   getUserGroups() {
     console.log('into get users');
@@ -166,7 +176,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
-          console.log(data);
+          // console.log(data);
           this.usergrp = data.count;
           return data.items;
         }),
@@ -179,75 +189,4 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   showSelectedUserGroup(userGroup) {
     this.selectedUserGroup = userGroup;
   }
-
-  // getUserGroups() {
-  //   const initialUserGroupList$ = this.userGroupService
-  //     .listUserGroups({
-  //       limit: this.limit,
-  //       nextToken: this.next,
-  //       searchKey: this.search,
-  //       plantId: ''
-  //     })
-  //     .pipe(shareReplay(1))
-  //     .pipe(
-  //       map((data) => data.items),
-  //       tap((userGroups) => {
-  //         if (userGroups.length) {
-  //         }
-  //       })
-  //     );
-  //   initialUserGroupList$.subscribe((data) => {
-  //     console.log('User group data :', data);
-  //   });
-  //   this.userGroupList$ = combineLatest([
-  //     initialUserGroupList$,
-  //     this.userGroupListUpdate$
-  //   ]).pipe(
-  //     map(([userGroup, update]) => {
-  //       const { action, group } = update;
-  //       switch (action) {
-  //         case 'add':
-  //           userGroup.unshift(group);
-  //           break;
-  //         case 'edit':
-  //           const index = userGroup.findIndex((g) => g.id === group.id);
-  //           userGroup[index] = group;
-  //           break;
-  //         case 'delete':
-  //           const indexToDelete = userGroup.findIndex((g) => g.id === group.id);
-  //           userGroup.splice(indexToDelete, 1);
-  //           break;
-  //         case 'copy':
-  //           userGroup.push(group);
-  //           break;
-  //       }
-  //       return userGroup;
-  //     }),
-  //     tap((userGroupList) => {
-  //       this.userGroupList = userGroupList;
-  //     })
-  //   );
-  //   this.userGroupList$.subscribe((data) => {
-  //     console.log('user group list :', data);
-  //   });
-  //   this.searchUserGroup$.subscribe((data) => {
-  //     console.log('search :', data);
-  //   });
-  //   this.filteredUserGroupsList$ = combineLatest([
-  //     this.userGroupList$,
-  //     this.searchUserGroup$
-  //   ]).pipe(
-  //     map(([userGroups, search]) => {
-  //       const filteredUserGroups = userGroups.filter(
-  //         (userGroup) =>
-  //           userGroup.name?.toLowerCase().indexOf(search?.toLowerCase()) !== -1
-  //       );
-  //       return filteredUserGroups;
-  //     }),
-  //     tap((userGroups) => {
-  //       if (userGroups.length) {
-  //       }
-  //     })
-  //   );
-  // }
 }
