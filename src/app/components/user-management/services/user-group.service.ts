@@ -107,4 +107,36 @@ export class UserGroupService {
       });
     }
   };
+  listUserGroupUsers = (
+    queryParams: {
+      limit: number;
+      nextToken: string;
+      fetchType: string;
+      searchKey?: string;
+    },
+    userGroupId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ) => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('limit', `${queryParams.limit}` ?? '');
+    params.set('nextToken', queryParams.nextToken ?? '');
+    params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
+      return this.appService._getResp(
+        environment.userRoleManagementApiUrl,
+        `user-groups/${userGroupId}/users?` + params.toString(),
+        info
+      );
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        next: null
+      });
+    }
+  };
 }

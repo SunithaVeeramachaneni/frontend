@@ -41,7 +41,7 @@
 
           <mat-list
             class="roles"
-            *ngIf="userGroupList$ | async as userGroups"
+            *ngIf="allUserGroups$ | async as userGroups"
             #listContainer
           >
             <div *ngIf="userGroups.length === 0" class="unselected-role-text">
@@ -50,46 +50,48 @@
             <ng-container
               *ngIf="(isLoading$ | async) === false; else LoadingUserGroupList"
             >
-              <mat-list-item
-                #userGroupList
-                *ngFor="let userGroup of userGroups"
-                class="roles-list"
-                (click)="showSelectedUserGroup(userGroup)"
-                [ngClass]="{
-                  'selected-roles-list': this.selectedUserGroup
-                    ? userGroup.id === this.selectedUserGroup.id
-                    : ''
-                }"
-              >
-                <span
-                  class="role-name"
-                  matTooltip="{{ userGroup.name }}"
-                  [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+              <div (scroll)="listBottom($event)" class="roles">
+                <mat-list-item
+                  #userGroupList
+                  *ngFor="let userGroup of userGroups"
+                  class="roles-list"
+                  (click)="showSelectedUserGroup(userGroup)"
+                  [ngClass]="{
+                    'selected-roles-list': this.selectedUserGroup
+                      ? userGroup.id === this.selectedUserGroup.id
+                      : ''
+                  }"
                 >
-                  {{ userGroup.name }}
-                </span>
-                <button
-                  mat-icon-button
-                  [matMenuTriggerFor]="menu"
-                  class="more-usergroup"
-                  aria-label="More Options"
-                >
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
+                  <span
+                    class="role-name"
+                    matTooltip="{{ userGroup.name }}"
+                    [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+                  >
+                    {{ userGroup.name }}
+                  </span>
                   <button
-                    mat-menu-item
-                    translate="copyBtn"
-                    (click)="copyUserGroup(userGroup.id)"
-                  ></button>
-                  <button mat-menu-item translate="editBtn"></button>
-                  <button
-                    mat-menu-item
-                    class="text-red"
-                    translate="deleteBtn"
-                  ></button>
-                </mat-menu>
-              </mat-list-item>
+                    mat-icon-button
+                    [matMenuTriggerFor]="menu"
+                    class="more-usergroup"
+                    aria-label="More Options"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button
+                      mat-menu-item
+                      translate="copyBtn"
+                      (click)="copyUserGroup(userGroup.id)"
+                    ></button>
+                    <button mat-menu-item translate="editBtn"></button>
+                    <button
+                      mat-menu-item
+                      class="text-red"
+                      translate="deleteBtn"
+                    ></button>
+                  </mat-menu>
+                </mat-list-item>
+              </div>
             </ng-container>
           </mat-list>
         </div>

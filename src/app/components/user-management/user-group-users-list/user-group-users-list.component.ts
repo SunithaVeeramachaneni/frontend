@@ -42,6 +42,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-user-group-users-list',
@@ -121,6 +122,50 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
+    },
+    {
+      id: 'validThrough',
+      displayName: 'Valid Through',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'plant',
+      displayName: 'Plant',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
     }
   ];
   fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
@@ -149,6 +194,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   _userGroupId: string;
   _userGroupPlantId: string;
   skip = 0;
+  fetchType: string;
 
   constructor(
     private userGroupService: UserGroupService,
@@ -156,9 +202,9 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     if (changes.userGroupId.currentValue) {
-      this.userGroupPlantId = changes.userGroupPlantId.currentValue;
+      this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
+      this._userGroupId = changes.userGroupId?.currentValue;
 
       this.getAllUsers();
     }
@@ -178,12 +224,16 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       )
       .subscribe();
     this.configOptions.allColumns = this.columns;
+    this.prepareMenuActions();
   }
 
   getAllUsers() {
     const usersOnLoadSearch$ = this.fetchUsers$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => this.getUsersList())
+      switchMap(({ data }) => {
+        this.fetchType = data;
+        return this.getUsersList();
+      })
     );
     const usersOnScroll$ = this.fetchUsers$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
@@ -222,12 +272,15 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   getUsersList = () =>
     this.userGroupService
-      .listDynamoUsers$({
-        limit: this.limit,
-        searchKey: this.searchUser.value,
-        plantId: this.userGroupPlantId,
-        next: this.next
-      })
+      .listUserGroupUsers(
+        {
+          limit: this.limit,
+          nextToken: this.next,
+          fetchType: this.fetchType,
+          searchKey: this.searchUser.value
+        },
+        this.userGroupId
+      )
       .pipe(
         mergeMap((resp: any) => {
           this.userCount$ = of({ count: resp.count });
@@ -236,10 +289,21 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
         map((data) => {
           const rows = data.map((item) => {
-            if (item.firstName && item.lastName) {
-              item.user = item.firstName + ' ' + item.lastName;
+            if (item?.users.firstName && item?.users.lastName) {
+              item.user = item?.users.firstName + ' ' + item?.users.lastName;
             } else {
               item.user = '';
+            }
+            if (item?.users.email) {
+              item.email = item?.users.email ?? '';
+            }
+            if (item?.users?.validThrough) {
+              item.validThrough = format(
+                new Date(item?.users?.validThrough),
+                'dd.MM.yy'
+              );
+            } else {
+              item.validThrough = '';
             }
             return item;
           });
@@ -251,5 +315,16 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     console.log(event);
     this.fetchUsers$.next(event);
   };
+
+  prepareMenuActions() {
+    const menuActions = [];
+    menuActions.push({
+      title: 'Remove User',
+      action: 'delete'
+    });
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
+  }
   rowLevelActionHandler($event) {}
 }

@@ -24,7 +24,7 @@ import {
 } from 'rxjs/operators';
 import { defaultLimit, routingUrls } from 'src/app/app.constants';
 import { FormControl } from '@angular/forms';
-import { ErrorInfo } from 'src/app/interfaces';
+import { ErrorInfo, TableEvent } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -64,6 +64,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   isOpenAddEditUserGroupModal = false;
   searchUserGroup: FormControl;
   searchUserGroup$: Observable<string>;
+  allUserGroups$: Observable<any[]>;
   selectUserGroup = false;
   userGroupMode: string;
   addingUserGroup$ = new BehaviorSubject<boolean>(false);
@@ -75,6 +76,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   selectedUserGroupPlantId$: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
   listHeight = '68vh';
+  bottomHit = false;
   private onDestroy$ = new Subject();
 
   constructor(
@@ -89,6 +91,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.userGroupService.fetchUserGroups$.next({ data: 'load' });
+    this.userGroupService.fetchUserGroups$.next({} as TableEvent);
     this.searchUserGroup = new FormControl('');
     this.searchUserGroup.valueChanges
       .pipe(
@@ -123,7 +126,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   }
 
   getDisplayedUserGroups() {
-    this.userGroupList$ = this.userGroupService.fetchUserGroups$.pipe(
+    const userGroupList$ = this.userGroupService.fetchUserGroups$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -132,7 +135,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         return this.getUserGroups();
       }),
       tap((data) => {
-        this.selectUserGroup = data[0];
+        this.selectedUserGroup = data[0];
       })
     );
     const onScrollUserGroups$ = this.userGroupService.fetchUserGroups$.pipe(
@@ -140,16 +143,30 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
+          this.bottomHit = false;
           return this.getUserGroups();
         } else {
           return of([]);
         }
       })
     );
+    let initial = [];
 
-    onScrollUserGroups$.subscribe((data) => console.log('On scroll :', data));
+    this.allUserGroups$ = combineLatest([
+      userGroupList$,
+      onScrollUserGroups$
+    ]).pipe(
+      map(([rows, scrollData]) => {
+        if (this.skip === 0) {
+          initial = rows;
+        } else {
+          initial = initial.concat(scrollData);
+        }
+        this.skip = initial.length;
+        return initial;
+      })
+    );
   }
-
   copyUserGroup(event) {
     console.log('Id' + event);
     this.userGroupId = event;
@@ -164,7 +181,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       });
   }
   getUserGroups() {
-    console.log('into get users');
     return this.userGroupService
       .listUserGroups({
         limit: this.limit,
@@ -176,8 +192,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
-          // console.log(data);
           this.usergrp = data.count;
+          this.nextToken = data.next;
           return data.items;
         }),
         catchError(() => {
@@ -188,5 +204,16 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   }
   showSelectedUserGroup(userGroup) {
     this.selectedUserGroup = userGroup;
+  }
+  listBottom(event: any) {
+    if (
+      event.target.offsetHeight + Math.ceil(event.target.scrollTop) >=
+      Math.ceil(0.95 * event.target.scrollHeight)
+    ) {
+      if (this.nextToken && !this.bottomHit) {
+        this.userGroupService.fetchUserGroups$.next({ data: 'infiniteScroll' });
+        this.bottomHit = true;
+      }
+    }
   }
 }
