@@ -75,5 +75,6 @@
   "userGroups": "User Groups ",
   "maxCharacters": "Upto {limit} Characters",
   "selectUser": "Select Users",
-  "createBtn": "Create"
+  "createBtn": "Create",
+  "editBtn": "Edit"
 }

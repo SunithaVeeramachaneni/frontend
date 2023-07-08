@@ -79,6 +79,12 @@
                 <mat-menu #menu="matMenu">
                   <button
                     mat-menu-item
+                    translate="copyBtn"
+                    (click)="copyUserGroup(userGroup.id)"
+                  ></button>
+                  <button mat-menu-item translate="editBtn"></button>
+                  <button
+                    mat-menu-item
                     class="text-red"
                     translate="deleteBtn"
                   ></button>

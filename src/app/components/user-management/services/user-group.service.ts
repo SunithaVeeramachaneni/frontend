@@ -63,6 +63,16 @@ export class UserGroupService {
       info
     );
 
+  copyUserGroup$ = (userGroupId: any, info: ErrorInfo = {} as ErrorInfo) =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      `user-groups/copy/:userGroupId`,
+      {
+        userGroupId
+      },
+      info
+    );
+
   listUserGroups = (
     queryParams: {
       limit: number;
