@@ -27,6 +27,7 @@ export class SelectQuestionsDialogComponent implements OnInit {
   sections = [];
   selectedQuestions = [];
   operatorSymbolMap = {};
+  selectedSections = [];
   question$: Observable<Question>;
   page$: Observable<Page>;
 
@@ -56,7 +57,14 @@ export class SelectQuestionsDialogComponent implements OnInit {
           const mandateQuestion = page.logics
             .map((logic) => logic.mandateQuestions)
             .flat();
-          page.sections.map((section) => {
+          if (this.data.isTemplate) {
+            this.selectedSections = page.sections.filter(
+              (section) => section.id === this.data.sectionId
+            );
+          } else {
+            this.selectedSections = page.sections;
+          }
+          this.selectedSections.map((section) => {
             const sectionQuestions = page.questions.filter((q) => {
               if (q.required === false) {
                 return this.data.viewMode === 'HIDE'

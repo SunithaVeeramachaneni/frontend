@@ -39,6 +39,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+  @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
