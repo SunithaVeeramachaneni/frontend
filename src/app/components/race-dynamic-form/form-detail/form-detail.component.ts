@@ -61,9 +61,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
-    if (scheduleConfiguration) {
-      this._scheduleConfiguration = scheduleConfiguration;
-    }
+    this._scheduleConfiguration = scheduleConfiguration;
   }
 
   get scheduleConfiguration() {
@@ -96,15 +94,18 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
-    if (this._scheduleConfiguration?.shiftDetails) {
+    if (this.scheduleConfiguration && this.scheduleConfiguration.shiftDetails) {
       this.slotArr = Object.entries(this._scheduleConfiguration.shiftDetails);
+    } else {
+      this.slotArr = [];
     }
+
     if (this.selectedForm) {
       this.toggleLoader(true);
 
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.formId,
+          this.selectedForm.id,
           this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {

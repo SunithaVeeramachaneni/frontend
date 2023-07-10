@@ -266,7 +266,7 @@
               </p>
             </div>
             <div class="flex-custom">
-              <div class="create-name">
+              <div class="create-name" *ngIf="slotArr">
                 <div
                   *ngFor="let shiftDetail of slotArr; let i = index"
                   class="in-column"
