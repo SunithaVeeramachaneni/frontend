@@ -48,7 +48,6 @@ import { TenantService } from '../../tenant-management/services/tenant.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
-// import { PDFDocumentFactory, PDFDocumentWriter } from 'pdfjs-dist';
 
 @Component({
   selector: 'app-form-configuration-modal',

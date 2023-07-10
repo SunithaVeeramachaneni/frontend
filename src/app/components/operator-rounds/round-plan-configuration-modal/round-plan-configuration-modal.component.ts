@@ -46,7 +46,6 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { TenantService } from '../../tenant-management/services/tenant.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
 
