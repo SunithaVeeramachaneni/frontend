@@ -43,7 +43,6 @@ export const getPagesCount = (subFormId) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPagesCount');
     return state[key]?.length;
   });
 
@@ -53,7 +52,6 @@ export const getSubFormPages = (subFormId) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSubFormPages');
     return state[key];
   });
 
@@ -73,7 +71,6 @@ export const getTotalTasksCountByHierarchy = (subFormIds) =>
     allPages.forEach((page) => {
       count = count + page.questions?.length;
     });
-    console.log('getTotalTasksCountByHierarchy');
     return count;
   });
 
@@ -83,7 +80,6 @@ export const getPage = (pageIndex: number, subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPage');
     return state[key]?.find((page, index) => index === pageIndex);
   });
 
@@ -93,7 +89,6 @@ export const getPageIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageIndexes');
     if (state[key]) {
       return new Array(state[key].length).fill(0).map((v, i) => i);
     } else {
@@ -111,7 +106,6 @@ export const getSection = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSection');
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.sections.find((section, index) => index === sectionIndex);
@@ -126,7 +120,6 @@ export const getTaskCountByPage = (pageIndex: number, subFormId: string) =>
     const allQuestions = state[key]?.find(
       (page, index) => index === pageIndex
     )?.questions;
-    console.log('getTaskCountByPage');
     return allQuestions?.length;
   });
 
@@ -136,7 +129,6 @@ export const getSectionIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSectionIndexes');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = new Array(curr.sections.length).fill(0).map((v, i) => i);
       return acc;
@@ -149,7 +141,6 @@ export const getSectionIds = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSectionIds');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.sections.map((section) => section.id);
       return acc;
@@ -162,7 +153,6 @@ export const getQuestionIds = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getQuestionIds');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = {};
       curr.questions.forEach((question) => {
@@ -190,7 +180,6 @@ export const getQuestionByID = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getQuestionByID');
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.questions.find(
@@ -215,7 +204,6 @@ export const getPageWiseQuestionLogics = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageWiseQuestionLogics');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.questions.reduce((questionLogicsAcc, currQuestion) => {
         const logics = curr.logics.filter(
@@ -240,7 +228,6 @@ export const getQuestionLogics = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getQuestionLogics');
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.logics?.filter((logic) => logic.questionId === questionId);
@@ -256,7 +243,6 @@ export const getSectionQuestions = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSectionQuestions');
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.questions.filter((question) => question.sectionId === sectionId);
@@ -268,7 +254,6 @@ export const getPageWiseSectionQuestions = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageWiseSectionQuestions');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.sections.reduce((sectionsAcc, currSection) => {
         const questions = curr.questions.filter(
@@ -291,7 +276,6 @@ export const getPageWiseLogicsAskQuestions = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageWiseLogicsAskQuestions');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
         logicAcc[logicCurr.id] = curr.questions.filter(
@@ -311,7 +295,6 @@ export const getPageWiseLogicSectionAskEvidenceQuestions = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageWiseLogicSectionAskEvidenceQuestions');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.logics.reduce((logicAcc, logicCurr) => {
         logicAcc[logicCurr.id] = curr.questions.filter(
@@ -329,7 +312,6 @@ export const getPageWiseSections = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getPageWiseSections');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = curr.sections;
       return acc;
@@ -340,7 +322,6 @@ export const getNodeWiseQuestionsCount = () =>
   createSelector(selectFormConfigurationState, (state) => {
     const nodeIds =
       Object.keys(state).filter((key) => key.indexOf('pages_') === 0) || [];
-    console.log('getNodeWiseQuestionsCount');
     return nodeIds.reduce((acc, curr) => {
       acc[curr.substring(6)] = state[curr].reduce(
         (count, page) => (count += page.questions.length),
@@ -360,7 +341,6 @@ export const getSectionQuestionsCount = (
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getSectionQuestionsCount');
     return state[key]
       ?.find((page, index) => index === pageIndex)
       ?.questions.filter((question) => question.sectionId === sectionId).length;
@@ -372,7 +352,6 @@ export const getQuestionIndexes = (subFormId: string) =>
     if (subFormId) {
       key = `${key}_${subFormId}`;
     }
-    console.log('getQuestionIndexes');
     return state[key]?.reduce((acc, curr, index) => {
       acc[index] = {};
       curr.sections.forEach((section) => {

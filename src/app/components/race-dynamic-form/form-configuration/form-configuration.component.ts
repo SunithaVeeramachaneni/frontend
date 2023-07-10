@@ -236,11 +236,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailDynamoDBVersion,
           skipAuthoredDetail
         } = formDetails;
-        console.log(skipAuthoredDetail);
+
         if (skipAuthoredDetail) {
           return;
         }
-
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;

@@ -128,24 +128,22 @@ export class BuilderComponent implements OnInit {
         })
       );
     this.sectionIds$ = this.store.select(getSectionIds(this.selectedNode.id));
-    this.questionIds$ = this.store
-      .select(getQuestionIds(this.selectedNode.id))
-      .pipe(tap((data) => console.log(data)));
+    this.questionIds$ = this.store.select(getQuestionIds(this.selectedNode.id));
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes(this.selectedNode.id))
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
     this.questionCounter$ = this.store.select(getQuestionCounter);
-    this.pageWiseSectionQuestions$ = this.store
-      .select(getPageWiseSectionQuestions(this.selectedNode.id))
-      .pipe(tap((data) => console.log(data)));
+    this.pageWiseSectionQuestions$ = this.store.select(
+      getPageWiseSectionQuestions(this.selectedNode.id)
+    );
     this.pageWiseSections$ = this.store
       .select(getPageWiseSections(this.selectedNode.id))
       .pipe(
         tap((pageWiseSections) => (this.pageWiseSections = pageWiseSections))
       );
-    this.pageWiseQuestionLogics$ = this.store
-      .select(getPageWiseQuestionLogics(this.selectedNode.id))
-      .pipe(tap((logics) => console.log(logics)));
+    this.pageWiseQuestionLogics$ = this.store.select(
+      getPageWiseQuestionLogics(this.selectedNode.id)
+    );
   }
 
   ngOnInit(): void {}

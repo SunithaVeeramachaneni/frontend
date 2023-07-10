@@ -237,7 +237,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               prev.name !== undefined &&
               curr.name !== undefined
             ) {
-              console.log('tttttttttttttttttt');
               const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
@@ -283,7 +282,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       this.store.select(getSelectedHierarchyList)
     ]).pipe(
       tap(([formDetails, selectedHierarchyList]) => {
-        console.log(formDetails);
         const {
           formMetadata,
           formStatus,
@@ -337,19 +335,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   hierarchy: selectedHierarchyList
                 })
               );
-              console.log(
-                !isEqual(formMetadata, {
-                  ...formMetadata,
-                  lastModifiedBy: this.loginService.getLoggedInUserName()
-                })
-              );
               if (
                 formMetadata.lastModifiedBy !==
                 this.loginService.getLoggedInUserName()
               ) {
-                console.log(
-                  'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
-                );
                 this.store.dispatch(
                   BuilderConfigurationActions.updateFormMetadata({
                     formMetadata: {

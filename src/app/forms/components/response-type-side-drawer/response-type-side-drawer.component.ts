@@ -44,7 +44,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set question(question: Question) {
-    console.log(question);
     if (question) {
       this._question = question;
     }

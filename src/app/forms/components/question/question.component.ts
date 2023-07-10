@@ -5,8 +5,6 @@ import {
   ElementRef,
   Input,
   OnInit,
-  QueryList,
-  ViewChildren,
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
@@ -22,14 +20,7 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {
-  Observable,
-  Subject,
-  asapScheduler,
-  asyncScheduler,
-  queueScheduler,
-  timer
-} from 'rxjs';
+import { Observable, Subject, asapScheduler, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
@@ -43,13 +34,9 @@ import {
   UnitOfMeasurement
 } from 'src/app/interfaces';
 import {
-  getQuestionByID,
-  getSectionQuestionsCount,
   State,
-  getQuestionLogics,
   getFormMetadata,
-  getModuleName,
-  getPageWiseLogicsAskQuestions
+  getModuleName
 } from 'src/app/forms/state/builder/builder-state.selectors';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -143,12 +130,10 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @Input() isAskQuestionFocusId: any;
   @Input() set question(question: Question) {
     if (question) {
-      console.log('before inside question....');
       if (
         this.question?.isOpen !== question.isOpen &&
         !isEqual(this.question, question)
       ) {
-        console.log('inside question....');
         this._question = question;
         this.updateQuestion();
       }
@@ -160,9 +145,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   }
   @Input() set logics(logics: any) {
     if (logics?.length) {
-      console.log('before inside logics....');
       if (!isEqual(this.logics, logics)) {
-        console.log('inside logics....');
         this._logics = logics;
       }
     }
@@ -333,9 +316,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
             ...curr
           } = current;
-          console.log('before inside question changes...');
           if (!isEqual(prev, curr)) {
-            console.log('inside question changes...');
             const { value: prevValue } = prev;
             const { value: currValue } = curr;
             if (
@@ -656,13 +637,6 @@ export class QuestionComponent implements OnInit, OnDestroy {
   setQuestionValue(event) {
     this.questionForm.get('value').setValue(event);
   }
-
-  /* getQuestionLogics(pageIndex: number, questionId: string) {
-    console.log('test...');
-    return this.store.select(
-      getQuestionLogics(pageIndex, questionId, this.selectedNodeId)
-    );
-  } */
 
   addLogicToQuestion(pageIndex: number, questionId: string) {
     this.store.dispatch(

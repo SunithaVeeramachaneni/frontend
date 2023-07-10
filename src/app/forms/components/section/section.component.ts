@@ -60,9 +60,7 @@ export class SectionComponent implements OnInit, OnDestroy {
   }
 
   @Input() set section(section: Section) {
-    console.log('before inside section...');
     if (section) {
-      console.log('inside section...');
       if (!isEqual(this.section, section)) {
         this._section = section;
         this.sectionForm.patchValue(section, {
@@ -107,9 +105,7 @@ export class SectionComponent implements OnInit, OnDestroy {
         tap(([previous, current]) => {
           const { isOpen, ...prev } = previous;
           const { isOpen: currIsOpen, ...curr } = current;
-          console.log('before inside section changes...');
           if (!isEqual(prev, curr)) {
-            console.log('inside section changes...');
             this.sectionEvent.emit({
               section: this.sectionForm.getRawValue(),
               sectionIndex: this.sectionIndex,

@@ -43,11 +43,9 @@ export class PageComponent implements OnInit, OnDestroy {
   }
 
   @Input() set page(page: Page) {
-    console.log('before inside page...');
     if (page) {
       if (!isEqual(this.page, page)) {
         this._page = page;
-        console.log('inside page...');
         this.pageForm.patchValue(page, {
           emitEvent: false
         });
@@ -92,9 +90,7 @@ export class PageComponent implements OnInit, OnDestroy {
         tap(([previous, current]) => {
           const { isOpen, ...prev } = previous;
           const { isOpen: currIsOpen, ...curr } = current;
-          console.log('before inside page changes...');
           if (prev !== curr) {
-            console.log('inside page changes...');
             this.pageEvent.emit({
               page: this.pageForm.getRawValue(),
               pageIndex: this.pageIndex,
