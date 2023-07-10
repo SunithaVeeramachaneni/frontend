@@ -637,6 +637,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   formattingPlans(plans) {
+    console.log('plans:', plans);
     return plans.map((plan) => {
       let shift = '';
       if (this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails) {
@@ -648,6 +649,7 @@ export class PlansComponent implements OnInit, OnDestroy {
           }
         });
         if (shift) {
+          console.log('inside here');
           plan.shift = shift.substring(0, shift.length - 1);
         }
       }
@@ -818,7 +820,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.hideRoundPlanDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.roundPlanDetail = { ...row };
+    this.roundPlanDetail = { ...row, roundPlanId: row.id };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
     this.selectedRoundConfig = this.roundPlanScheduleConfigurations;

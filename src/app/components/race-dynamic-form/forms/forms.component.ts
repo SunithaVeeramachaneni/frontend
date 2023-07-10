@@ -727,7 +727,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.formDetail = { ...row };
+    this.formDetail = { ...row, formId: row.id };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }

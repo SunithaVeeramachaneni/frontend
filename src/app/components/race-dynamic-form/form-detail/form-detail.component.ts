@@ -102,10 +102,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.selectedForm) {
       this.toggleLoader(true);
-
+      console.log('selected form:', this.selectedForm);
       let formDetail$: any =
         this.raceDynamicFormService.getAuthoredFormDetailByFormId$(
-          this.selectedForm.id,
+          this.selectedForm.formId,
           this.formStatus
         );
       if (this.moduleName === 'OPERATOR_ROUNDS') {
@@ -114,6 +114,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.formStatus
         );
       }
+      formDetail$.subscribe((data) => console.log(data));
       this.selectedFormDetail$ = formDetail$.pipe(
         map((formDetail: any) => {
           this.pagesCount = 0;
