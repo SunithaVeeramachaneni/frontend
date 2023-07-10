@@ -89,7 +89,6 @@ import { ShiftDateChangeWarningModalComponent } from 'src/app/forms/components/s
 })
 export class RoundsComponent implements OnInit, OnDestroy {
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
-
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
       tap((users) => {
@@ -376,7 +375,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
-
     {
       id: 'schedule',
       displayName: 'Schedule',
@@ -696,7 +694,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.initial.data = this.formattingRound(this.initial.data);
         this.skip = this.initial.data.length;
         // Just a work around to improve the perforamce as we getting more records in the single n/w call. When small chunk of records are coming n/w call we can get rid of slice implementation
-
         const sliceStart = this.dataSource ? this.dataSource.data.length : 0;
         const dataSource = this.dataSource
           ? this.dataSource.data.concat(
