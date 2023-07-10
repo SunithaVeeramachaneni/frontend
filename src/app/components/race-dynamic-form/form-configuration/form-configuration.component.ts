@@ -6,7 +6,8 @@ import {
   ViewChild,
   ElementRef,
   EventEmitter,
-  Output
+  Output,
+  Input
 } from '@angular/core';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
@@ -59,6 +60,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 export class FormConfigurationComponent implements OnInit {
   @ViewChild('name') formName: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
+  @Input() formData;
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -367,45 +369,43 @@ export class FormConfigurationComponent implements OnInit {
             this.isEmbeddedForm = data.formType === 'Embedded';
           });
 
-          this.createOrEditForm$.subscribe((created) => {
-            if (!created) {
-              const section = {
-                id: 'S1',
-                name: 'Section',
-                position: 1,
-                isOpen: true
-              };
-              const df = this.formConfigurationService.getDefQues();
-              const questions = new Array(4).fill(0).map((q, index) => {
-                if (index === 0) {
-                  return { ...df, name: 'Site Conducted' };
-                }
-                if (index === 1) {
-                  return {
-                    ...df,
-                    name: 'Conducted On',
-                    fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
-                    date: true,
-                    time: true
-                  };
-                }
-                if (index === 2) {
-                  return { ...df, name: 'Performed By' };
-                }
-                if (index === 3) {
-                  return { ...df, name: 'Location', fieldType: 'GAL' };
-                }
-              });
-              this.formConfigurationService.addPage(
-                0,
-                1,
-                4,
-                this.sectionIndexes,
-                this.formConf.counter.value,
-                [{ section, questions }]
-              );
-            }
-          });
+          if (this.formData.pages.length === 0) {
+            const section = {
+              id: 'S1',
+              name: 'Section',
+              position: 1,
+              isOpen: true
+            };
+            const df = this.formConfigurationService.getDefQues();
+            const questions = new Array(4).fill(0).map((q, index) => {
+              if (index === 0) {
+                return { ...df, name: 'Site Conducted' };
+              }
+              if (index === 1) {
+                return {
+                  ...df,
+                  name: 'Conducted On',
+                  fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
+                  date: true,
+                  time: true
+                };
+              }
+              if (index === 2) {
+                return { ...df, name: 'Performed By' };
+              }
+              if (index === 3) {
+                return { ...df, name: 'Location', fieldType: 'GAL' };
+              }
+            });
+            this.formConfigurationService.addPage(
+              0,
+              1,
+              4,
+              this.sectionIndexes,
+              this.formConf.counter.value,
+              [{ section, questions }]
+            );
+          }
         }
       }
     });

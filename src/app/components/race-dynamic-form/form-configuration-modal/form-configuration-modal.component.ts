@@ -324,10 +324,8 @@ export class FormConfigurationModalComponent implements OnInit {
             formsUsageCount: this.data.formsUsageCount + 1
           })
           .subscribe(() => {
+            history.pushState({ selectedTemplate: this.data }, '', '/forms');
             this.gotoNextStep.emit();
-            this.router.navigate(['/forms/create'], {
-              state: { selectedTemplate: this.data }
-            });
           });
       } else {
         this.gotoNextStep.emit();

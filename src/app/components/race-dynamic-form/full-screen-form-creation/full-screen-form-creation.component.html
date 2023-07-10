@@ -9,7 +9,7 @@
 >
   <div stepsContent>
     <!-- STEP 1 -->
-    <div [hidden]="currentStep !== 0">
+    <div *ngIf="currentStep === 0">
       <app-form-configuration-modal
         [data]="data"
         [formData]="formData"
@@ -18,15 +18,16 @@
     </div>
 
     <!-- STEP 2 -->
-    <div [hidden]="currentStep !== 1">
+    <div *ngIf="currentStep === 1">
       <app-form-configuration
+        [formData]="formData"
         (gotoNextStep)="gotoNextStep()"
         (gotoPreviousStep)="gotoPreviousStep()"
       ></app-form-configuration>
     </div>
 
     <!-- STEP 3 -->
-    <div [hidden]="currentStep !== 2">
+    <div *ngIf="currentStep === 2">
       <app-pdf-builder
         [moduleName]="'RDF'"
         (gotoPreviousStep)="gotoPreviousStep()"

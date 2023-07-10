@@ -699,7 +699,7 @@ export class FormListComponent implements OnInit, OnDestroy {
   openCreateFromTemplateModal() {
     const dialogRef = this.dialog.open(CreateFromTemplateModalComponent, {});
     dialogRef.afterClosed().subscribe((data) => {
-      if (data.selectedTemplate) {
+      if (data?.selectedTemplate) {
         this.openFormCreationModal(data.selectedTemplate);
       }
     });
