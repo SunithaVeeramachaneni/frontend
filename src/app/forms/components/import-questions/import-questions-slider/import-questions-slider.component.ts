@@ -43,6 +43,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('import questions slider...');
     this.selectedFormData.forEach((item) => {
       if (item) {
         item.isOpen = false;

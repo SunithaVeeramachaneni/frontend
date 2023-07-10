@@ -59,9 +59,6 @@ import {
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanScheduleConfigurationService } from '../services/round-plan-schedule-configuration.service';
@@ -424,7 +421,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private rpscService: RoundPlanScheduleConfigurationService,
     private datePipe: DatePipe,
@@ -800,7 +796,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   closeRoundPlanHandler() {
     this.roundPlanDetail = null;
     this.formDetailState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -814,7 +809,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   openRoundPlanHandler(row: RoundPlanDetail): void {
     this.hideRoundPlanDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.roundPlanDetail = { ...row };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -822,7 +816,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   roundPlanDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.roundPlanDetail.id}`]);
   }
 

@@ -2,8 +2,6 @@
   class="questions"
   [formGroup]="questionForm"
   *ngIf="{
-    question: question$ | async,
-    sectionQuestionsCount: sectionQuestionsCount$ | async,
     formMetadata: formMetadata$ | async,
     moduleName: moduleName$ | async,
     uom: uom$ | async
@@ -447,15 +445,8 @@
                 ></app-drop-down>
               </span>
             </div>
-            <div
-              class="addLogicRow"
-              *ngIf="
-                getQuestionLogics(pageIndex, questionForm.get('id').value)
-                  | async as questionLogics
-              "
-            >
+            <div class="addLogicRow" *ngIf="logics.length">
               <app-add-logic
-                *ngIf="questionLogics.length"
                 [questionId]="questionForm.get('id').value"
                 [quickResponseValues]="questionForm.get('value').value"
                 [fieldType]="questionForm.get('fieldType').value"

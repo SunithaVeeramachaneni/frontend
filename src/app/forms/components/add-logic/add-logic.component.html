@@ -1,6 +1,6 @@
 <ng-container
   *ngIf="{
-    pageWiseLogicSectionAskQuestions: pageWiseLogicSectionAskQuestions$ | async,
+    pageWiseLogicsAskQuestions: pageWiseLogicsAskQuestions$ | async,
     questionLogics: questionLogics$ | async
   }"
 >
@@ -260,6 +260,7 @@
                       [questionIndex]="questionIndex"
                       [isAskQuestion]="true"
                       [subFormId]="selectedNodeId"
+                      [question]="questionObj"
                       [isAskQuestionFocusId]="isAskQuestionFocusId"
                       (click)="setIsAskQuestionFocusId(questionObj.id)"
                       (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
@@ -273,16 +274,15 @@
             </div>
             <div
               *ngIf="
-                pageWiseLogicSectionAskQuestions[pageIndex][logic.value.id]
-                  ?.length
+                pageWiseLogicsAskQuestions[pageIndex][logic.value.id]?.length
               "
               class="logicAskQuestions"
             >
               <ng-container
                 *ngFor="
-                  let questionObj of pageWiseLogicSectionAskQuestions[
-                    pageIndex
-                  ][logic.value.id];
+                  let questionObj of pageWiseLogicsAskQuestions[pageIndex][
+                    logic.value.id
+                  ];
                   trackBy: trackByQuestionIndex;
                   let questionIndex = index
                 "
@@ -299,6 +299,7 @@
                       [isAskQuestion]="true"
                       [subFormId]="selectedNodeId"
                       [isAskQuestionFocusId]="isAskQuestionFocusId"
+                      [question]="questionObj"
                       (click)="setIsAskQuestionFocusId(questionObj.id)"
                       (isAskedQuestionFocusId)="setIsAskQuestionFocusId($event)"
                       (questionEvent)="

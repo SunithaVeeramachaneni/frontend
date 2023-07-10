@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -20,14 +20,10 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {
-  getPage,
-  getPagesCount,
-  getTaskCountByPage,
-  State
-} from 'src/app/forms/state/builder/builder-state.selectors';
+import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { PageEvent, Page } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
+import { isEqual } from 'lodash-es';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -46,6 +42,29 @@ export class PageComponent implements OnInit, OnDestroy {
     return this._pageIndex;
   }
 
+  @Input() set page(page: Page) {
+    console.log('before inside page...');
+    if (page) {
+      if (!isEqual(this.page, page)) {
+        this._page = page;
+        console.log('inside page...');
+        this.pageForm.patchValue(page, {
+          emitEvent: false
+        });
+      }
+    }
+  }
+  get page() {
+    return this._page;
+  }
+
+  @Input() set pageQuestionsCount(count: number) {
+    this._pageQuestionsCount = count;
+  }
+  get pageQuestionsCount() {
+    return this._pageQuestionsCount;
+  }
+
   @Output() pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   pageForm: FormGroup = this.fb.group({
@@ -56,10 +75,9 @@ export class PageComponent implements OnInit, OnDestroy {
     position: '',
     isOpen: true
   });
-  page$: Observable<Page>;
-  pagesCount$: Observable<number>;
-  pageTasksCount$: Observable<number>;
   private _pageIndex: number;
+  private _page: Page;
+  private _pageQuestionsCount: number;
   private onDestroy$ = new Subject();
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
@@ -72,7 +90,11 @@ export class PageComponent implements OnInit, OnDestroy {
         takeUntil(this.onDestroy$),
         pairwise(),
         tap(([previous, current]) => {
-          if (previous !== current) {
+          const { isOpen, ...prev } = previous;
+          const { isOpen: currIsOpen, ...curr } = current;
+          console.log('before inside page changes...');
+          if (prev !== curr) {
+            console.log('inside page changes...');
             this.pageEvent.emit({
               page: this.pageForm.getRawValue(),
               pageIndex: this.pageIndex,
@@ -82,21 +104,6 @@ export class PageComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.page$ = this.store
-      .select(getPage(this.pageIndex, this.selectedNodeId))
-      .pipe(
-        tap((page) => {
-          this.pageForm.patchValue(page, {
-            emitEvent: false
-          });
-        })
-      );
-
-    this.pagesCount$ = this.store.select(getPagesCount(this.selectedNodeId));
-    this.pageTasksCount$ = this.store.select(
-      getTaskCountByPage(this.pageIndex, this.selectedNodeId)
-    );
   }
 
   addPage() {
