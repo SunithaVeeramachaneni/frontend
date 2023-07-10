@@ -1,15 +1,29 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy,
+  OnDestroy
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
-import { State, getFormDetails, getFormMetadata } from 'src/app/forms/state';
+import { State, getFormDetails } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
+import {
+  BuilderConfigurationActions,
+  GlobalResponseActions,
+  QuickResponseActions,
+  UnitOfMeasurementActions
+} from 'src/app/forms/state/actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-full-screen-form-creation',
   templateUrl: './full-screen-form-creation.component.html',
-  styleUrls: ['./full-screen-form-creation.component.scss']
+  styleUrls: ['./full-screen-form-creation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FullScreenFormCreationComponent implements OnInit {
+export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
   steps: Step[] = [
     { title: 'Form Details', content: '' },
     { title: 'Add Questions', content: '' },
@@ -23,13 +37,15 @@ export class FullScreenFormCreationComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private store: Store<State>
+    private store: Store<State>,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
 
-    this.store.select(getFormMetadata).subscribe((formMetadata) => {
+    this.store.select(getFormDetails).subscribe((formDetails) => {
+      const { formMetadata, formListDynamoDBVersion } = formDetails;
       const { formType } = formMetadata;
       if (formType === 'Embedded') {
         this.steps = [
@@ -37,10 +53,6 @@ export class FullScreenFormCreationComponent implements OnInit {
           { title: 'Add Questions', content: '' }
         ];
       }
-    });
-
-    this.store.select(getFormDetails).subscribe((formDetails) => {
-      const { formMetadata, formListDynamoDBVersion } = formDetails;
       this.formData = {
         formListDynamoDBVersion,
         formMetadata,
@@ -51,9 +63,13 @@ export class FullScreenFormCreationComponent implements OnInit {
 
   goBack(): void {
     if (this.currentStep === 0) {
+      this.router.navigate(['/forms']);
       this.dialogRef.close();
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
+    } else if (this.currentStep === this.totalSteps - 1) {
+      this.router.navigate(['/forms']);
+      this.dialogRef.close();
     }
   }
 
@@ -67,5 +83,12 @@ export class FullScreenFormCreationComponent implements OnInit {
 
   gotoPreviousStep(): void {
     this.currentStep--;
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
+    this.store.dispatch(QuickResponseActions.resetQuickResponses());
+    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 }

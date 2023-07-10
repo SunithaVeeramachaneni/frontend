@@ -507,9 +507,5 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
-    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
-    this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
-    this.store.dispatch(QuickResponseActions.resetQuickResponses());
-    this.store.dispatch(GlobalResponseActions.resetGlobalResponses());
   }
 }

@@ -134,6 +134,7 @@ export class FormConfigurationModalComponent implements OnInit {
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([])
     });
+    this.headerDataForm.patchValue(this.formData.formMetadata);
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -286,7 +287,6 @@ export class FormConfigurationModalComponent implements OnInit {
           })
         );
       } else if (this.formData.formExists === true) {
-        console.log('in edit');
         this.store.dispatch(
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
@@ -325,10 +325,9 @@ export class FormConfigurationModalComponent implements OnInit {
           })
           .subscribe(() => {
             this.gotoNextStep.emit();
-            //this.router.navigate(['/forms/create'], {
-            //state: { selectedTemplate: this.data }
-            //});
-            // .then(() => this.dialogRef.close());
+            this.router.navigate(['/forms/create'], {
+              state: { selectedTemplate: this.data }
+            });
           });
       } else {
         this.gotoNextStep.emit();
