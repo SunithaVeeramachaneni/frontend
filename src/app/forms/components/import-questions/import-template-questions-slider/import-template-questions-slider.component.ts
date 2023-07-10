@@ -86,7 +86,7 @@ export class ImportTemplateQuestionsSliderComponent
           templateID: template.id
         })
         .subscribe((res) => {
-          this.updateFormTemplateUsage(res, template.id);
+          this.updateFormTemplateUsage(res[0], template.id);
         });
       this.allTemplateSections = this.getTemplateSections(template);
       this.selectedTemplateSections$.next(this.allTemplateSections);
