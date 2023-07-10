@@ -100,14 +100,14 @@
               </div>
             </div>
           </div>
+          <button
+            *ngIf="!isViewMode"
+            mat-flat-button
+            (click)="addResponse(getResponseCount())"
+            class="add-response"
+            translate="addRes"
+          ></button>
         </div>
-        <button
-          *ngIf="!isViewMode"
-          mat-flat-button
-          (click)="addResponse(getResponseCount())"
-          class="add-response"
-          translate="addRes"
-        ></button>
       </mat-card-content>
     </div>
   </mat-card>

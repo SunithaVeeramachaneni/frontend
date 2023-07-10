@@ -56,8 +56,8 @@
   }
 
   .response-drop-list {
+    height: calc(100vh - 315px);
     overflow-y: auto;
-    max-height: calc(100vh - 300px);
   }
 
   .input-forms {
@@ -102,13 +102,10 @@
     }
   }
   .actions-footer {
-    position: absolute;
-    bottom: 0;
     display: flex;
-    padding: 8px;
-    align-items: center;
-    width: 96%;
     justify-content: center;
+    position: relative;
+    top: 48px;
   }
 
   .submit-response-btn {
