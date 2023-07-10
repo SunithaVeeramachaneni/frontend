@@ -63,9 +63,6 @@ import {
 } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -560,7 +557,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly operatorRoundsService: OperatorRoundsService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
@@ -877,7 +873,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedRound = null;
     this.formDetailState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -890,7 +885,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
 
   openRoundHandler(row: RoundDetail): void {
     this.hideRoundDetail = false;
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedRound = row;
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
@@ -916,7 +910,6 @@ export class RoundsComponent implements OnInit, OnDestroy {
         this.downloadPDF(this.selectedRound);
       }
     } else {
-      this.store.dispatch(FormConfigurationActions.resetPages());
       this.router.navigate([`/operator-rounds/edit/${this.selectedRound.id}`]);
     }
   }

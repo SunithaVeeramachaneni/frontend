@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/dot-notation */
 import {
   Component,
@@ -22,20 +23,14 @@ import { OperatorRoundsService } from 'src/app/components/operator-rounds/servic
 import { LocationService } from 'src/app/components/master-configurations/locations/services/location.service';
 import { AssetsService } from 'src/app/components/master-configurations/assets/services/assets.service';
 import { FormService } from '../../services/form.service';
-import { FormMetadata, HierarchyEntity } from 'src/app/interfaces';
+import { HierarchyEntity } from 'src/app/interfaces';
 import {
   getMasterHierarchyList,
   getSelectedHierarchyList
 } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
-import {
-  getNodeWiseQuestionsCount,
-  State
-} from '../../state/builder/builder-state.selectors';
-import {
-  AssetHierarchyUtil,
-  findIfAnotherNodeInstanceExists
-} from 'src/app/shared/utils/assetHierarchyUtil';
+import { State } from '../../state/builder/builder-state.selectors';
+import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { HierarchyDeleteConfirmationDialogComponent } from './hierarchy-delete-dialog/hierarchy-delete-dialog.component';
@@ -52,31 +47,32 @@ import { formConfigurationStatus } from 'src/app/app.constants';
 export class HierarchyContainerComponent implements OnInit {
   @Output() hierarchyEvent: EventEmitter<any> = new EventEmitter<any>();
   @Input() plantId: string;
+  @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
+    if (nodeWiseQuestionsCount) {
+      this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
+      this.setTasksCount();
+    }
+  }
+  get nodeWiseQuestionsCount() {
+    return this._nodeWiseQuestionsCount;
+  }
 
   filteredOptions$: Observable<any[]>;
-
   searchHierarchyKey: FormControl;
   selectedHierarchy$: Observable<any>;
   allLocations$: Observable<any>;
   masterHierarchyList$: Observable<any>;
   allAssets$: Observable<any>;
-  formMetadata$: Observable<FormMetadata>;
-
   masterHierarchyList = [];
-
   filteredHierarchyList = [];
-
   instanceIdMappings = {};
-
   hierarchy = [];
   totalAssetsLocationsCount = 0;
-
   hierarchyMode = 'asset_hierarchy';
   flatHierarchyList = [];
-
   filteredList = [];
   totalTasksCount: number;
-  nodeWiseQuestionsCount$: Observable<any>;
+  private _nodeWiseQuestionsCount: any = {};
 
   constructor(
     private operatorRoundsService: OperatorRoundsService,
@@ -90,21 +86,6 @@ export class HierarchyContainerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.nodeWiseQuestionsCount$ = this.store
-      .select(getNodeWiseQuestionsCount())
-      .pipe(
-        tap((nodeWiseQuestionsCount) => {
-          const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
-          const flatHierarchy =
-            this.assetHierarchyUtil.convertHierarchyToFlatList(hierarchy, 0);
-          const nodeIds = flatHierarchy.map((h) => h.id);
-          this.totalTasksCount = nodeIds.reduce(
-            (acc, curr) => (acc += nodeWiseQuestionsCount[curr] || 0),
-            0
-          );
-        })
-      );
-
     this.selectedHierarchy$ = this.store.select(getSelectedHierarchyList).pipe(
       tap((selectedHierarchy) => {
         if (selectedHierarchy) {
@@ -170,6 +151,19 @@ export class HierarchyContainerComponent implements OnInit {
       distinctUntilChanged(),
       startWith(''),
       map((value) => this.filter(value.trim() || ''))
+    );
+  }
+
+  setTasksCount() {
+    const hierarchy = JSON.parse(JSON.stringify(this.hierarchy));
+    const flatHierarchy = this.assetHierarchyUtil.convertHierarchyToFlatList(
+      hierarchy,
+      0
+    );
+    const nodeIds = flatHierarchy.map((h) => h.id);
+    this.totalTasksCount = nodeIds.reduce(
+      (acc, curr) => (acc += this.nodeWiseQuestionsCount[curr] || 0),
+      0
     );
   }
 

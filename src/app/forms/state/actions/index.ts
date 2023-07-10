@@ -1,4 +1,3 @@
-import * as FormConfigurationActions from './form-configuration.actions';
 import * as FormConfigurationApiActions from './form-configuration-api.actions';
 import * as AddLogicActions from './add-logic.actions';
 import * as RoundPlanConfigurationActions from './round-plan-configuration.actions';
@@ -11,7 +10,6 @@ import * as QuickResponseActions from './quick-responses.actions';
 import * as GlobalResponseActions from './global-responses.actions';
 
 export {
-  FormConfigurationActions,
   FormConfigurationApiActions,
   AddLogicActions,
   RoundPlanConfigurationActions,

@@ -6,10 +6,10 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DEFAULT_PDF_BUILDER_CONFIG } from 'src/app/app.constants';
 import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { RaceDynamicFormService } from '../../race-dynamic-form/services/rdf.service';
 import { RoundPlanResolverService } from '../../operator-rounds/services/round-plan-resolver.service';
+import { FormConfigurationState } from 'src/app/forms/state/builder/builder.reducer';
 
 @Injectable({ providedIn: 'root' })
 export class FormResolverService implements Resolve<FormConfigurationState> {
@@ -25,6 +25,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
       this.roundPlanResolverServive.getResponseTypeDetails();
       return of({} as FormConfigurationState);
     }
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return forkJoin({
       form: this.raceDynamicFormService.getFormById$(id),
       embeddedFormDetail: this.raceDynamicFormService.getEmbeddedFormId$(id),
@@ -34,7 +35,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
     }).pipe(
       map(({ form, embeddedFormDetail, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
-          FormConfigurationActions.updateCreateOrEditForm({
+          BuilderConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
           })
         );
@@ -51,6 +52,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant,
+          lastModifiedBy,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -85,7 +87,8 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant: plant.name,
-          embeddedFormId: embeddedFormId ? embeddedFormId : ''
+          embeddedFormId: embeddedFormId ? embeddedFormId : '',
+          lastModifiedBy
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 

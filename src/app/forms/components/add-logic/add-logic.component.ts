@@ -27,7 +27,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import {
   getPageWiseLogicSectionAskEvidenceQuestions,
-  getPageWiseLogicSectionAskQuestions,
+  getPageWiseLogicsAskQuestions,
   getQuestionLogics,
   State
 } from '../../state/builder/builder-state.selectors';
@@ -105,10 +105,10 @@ export class AddLogicComponent implements OnInit, OnDestroy {
     { title: 'option2', code: 'option2' }
   ];
   selectedTabIndex: number;
-  pageWiseLogicSectionAskQuestions: any;
-  pageWiseLogicSectionAskEvidenceQuestions: any;
   questionLogics$: Observable<any>;
-  pageWiseLogicSectionAskQuestions$: Observable<any>;
+  pageWiseLogicsAskQuestions: any;
+  pageWiseLogicSectionAskEvidenceQuestions: any;
+  pageWiseLogicsAskQuestions$: Observable<any>;
   pageWiseLogicSectionAskEvidenceQuestions$: Observable<any>;
 
   isAskQuestionFocusId = '';
@@ -130,12 +130,11 @@ export class AddLogicComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     let logicsFormArray = [];
-    this.pageWiseLogicSectionAskQuestions$ = this.store
-      .select(getPageWiseLogicSectionAskQuestions(this.selectedNodeId))
+    this.pageWiseLogicsAskQuestions$ = this.store
+      .select(getPageWiseLogicsAskQuestions(this.selectedNodeId))
       .pipe(
-        tap((pageWiseLogicSectionAskQuestions) => {
-          this.pageWiseLogicSectionAskQuestions =
-            pageWiseLogicSectionAskQuestions;
+        tap((pageWiseLogicsAskQuestions) => {
+          this.pageWiseLogicsAskQuestions = pageWiseLogicsAskQuestions;
         })
       );
     this.store
@@ -158,7 +157,7 @@ export class AddLogicComponent implements OnInit, OnDestroy {
             const mandateQuestions = logic.mandateQuestions;
             const hideQuestions = logic.hideQuestions;
             const askQuestions =
-              this.pageWiseLogicSectionAskQuestions[this.pageIndex][logic.id];
+              this.pageWiseLogicsAskQuestions[this.pageIndex][logic.id];
             const evidenceQuestions =
               this.pageWiseLogicSectionAskEvidenceQuestions[this.pageIndex][
                 logic.id
