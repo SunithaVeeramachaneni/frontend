@@ -80,9 +80,17 @@ export class ImportQuestionsSliderComponent implements OnInit {
     importFormData = importFormData.filter((page) => page.sections.length);
     importFormData.forEach((page) =>
       page.sections.forEach((section) => {
-        const questions = section.questions.filter(
-          (question) => question.sectionId === section.id
-        );
+        delete section.counter;
+        delete section.isImported;
+        delete section.templateID;
+        delete section.externalSectionID;
+        const questions = [];
+        section.questions.forEach((question) => {
+          if (question.sectionId === section.id) {
+            delete question.id;
+            questions.push(question);
+          }
+        });
         this.importSectionQuestions = [
           ...this.importSectionQuestions,
           { section, questions }

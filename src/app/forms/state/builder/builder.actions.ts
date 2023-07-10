@@ -183,6 +183,18 @@ export const addSections = createAction(
   }>()
 );
 
+export const addLogics = createAction(
+  '[Builder Configuration] addLogics',
+  props<{
+    subFormId?: string;
+    logics: any[];
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
+);
+
 export const updatePageSections = createAction(
   '[Builder Configuration] updatePageSections',
   props<{

@@ -127,12 +127,22 @@ export class ImportTemplateQuestionsSliderComponent
     )[0];
     return filteredTemplate.sections.map((section) => {
       const questionsArray = [];
+      const questionsInSection = {};
       filteredTemplate.questions.forEach((question) => {
         if (section.id === question.sectionId) {
+          questionsInSection[question.id] = 1;
           questionsArray.push(question);
         }
       });
-      return { ...section, questions: questionsArray, checked: false };
+      const logicsArray = filteredTemplate.logics.filter(
+        (logic) => questionsInSection[logic.questionId] === 1
+      );
+      return {
+        ...section,
+        questions: questionsArray,
+        logics: logicsArray,
+        checked: false
+      };
     });
   }
 
@@ -150,12 +160,14 @@ export class ImportTemplateQuestionsSliderComponent
       const questions = section.questions.filter(
         (question) => question.sectionId === section.id
       );
+      const logics = section.logics;
+      delete section.logics;
       section.externalSectionID = section.id;
       section.isImported = true;
       section.templateID = this.selectedTemplateControl.value.id;
       this.importSectionQuestions = [
         ...this.importSectionQuestions,
-        { section, questions }
+        { section, questions, logics }
       ];
     });
 
@@ -167,6 +179,75 @@ export class ImportTemplateQuestionsSliderComponent
     );
 
     dialogRef.afterClosed().subscribe((data) => {
+      for (const section of importTemplateData) {
+        if (this.formTemplateUsage.sections[section.externalSectionID]) {
+          this.formTemplateUsage.sections[section.externalSectionID] = ++this
+            .formTemplateUsage.sections[section.externalSectionID];
+        } else {
+          this.formTemplateUsage.sections[section.externalSectionID] = 1;
+        }
+      }
+      this.importSectionQuestions.forEach((d) => {
+        d.section.counter =
+          this.formTemplateUsage.sections[d.section.externalSectionID];
+        d.questions.forEach(
+          (question) =>
+            (question.id =
+              question.id +
+              `_${
+                this.formTemplateUsage.sections[d.section.externalSectionID]
+              }`)
+        );
+        d.logics.forEach((logic) => {
+          logic.id =
+            logic.id +
+            `_${this.formTemplateUsage.sections[d.section.externalSectionID]}`;
+          logic.questionId =
+            logic.questionId +
+            `_${this.formTemplateUsage.sections[d.section.externalSectionID]}`;
+          logic.evidenceQuestions = logic.evidenceQuestions.map(
+            (item) =>
+              (item =
+                item +
+                `_${
+                  this.formTemplateUsage.sections[d.section.externalSectionID]
+                }`)
+          );
+          logic.mandateQuestions = logic.mandateQuestions.map(
+            (item) =>
+              (item =
+                item +
+                `_${
+                  this.formTemplateUsage.sections[d.section.externalSectionID]
+                }`)
+          );
+          logic.hideQuestions = logic.hideQuestions.map(
+            (item) =>
+              (item =
+                item +
+                `_${
+                  this.formTemplateUsage.sections[d.section.externalSectionID]
+                }`)
+          );
+          logic.questions.forEach((question) => {
+            question.id =
+              question.id +
+              `_${
+                this.formTemplateUsage.sections[d.section.externalSectionID]
+              }`;
+            question.sectionId =
+              question.sectionId +
+              `_${
+                this.formTemplateUsage.sections[d.section.externalSectionID]
+              }`;
+            d.questions.push({
+              ...question,
+              id: question.id,
+              sectonId: question.sectionId
+            });
+          });
+        });
+      });
       const questionsCount = this.importSectionQuestions.reduce((acc, curr) => {
         acc += curr.questions.length;
         return acc;
@@ -190,14 +271,6 @@ export class ImportTemplateQuestionsSliderComponent
           this.questionCounter,
           this.importSectionQuestions
         );
-      }
-      for (const section of importTemplateData) {
-        if (this.formTemplateUsage.sections[section.externalSectionID]) {
-          this.formTemplateUsage.sections[section.externalSectionID] = ++this
-            .formTemplateUsage.sections[section.externalSectionID];
-        } else {
-          this.formTemplateUsage.sections[section.externalSectionID] = 1;
-        }
       }
       this.raceDynamicFormService
         .updateFormTemplateUsage$(this.formTemplateUsage)

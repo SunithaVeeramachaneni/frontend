@@ -84,7 +84,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -102,6 +102,15 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
+    if (logics?.length)
+      this.store.dispatch(
+        BuilderConfigurationActions.addLogics({
+          logics,
+          pageIndex,
+          ...this.getFormConfigurationStatuses(),
+          subFormId: null
+        })
+      );
     this.store.dispatch(
       BuilderConfigurationActions.updatePageState({
         pageIndex,
@@ -178,7 +187,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[]
   ) {
-    const { sections, questions } = this.getSectionsObject(
+    const { sections, questions, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -193,7 +202,7 @@ export class FormConfigurationService {
       isOpen: true,
       sections,
       questions,
-      logics: []
+      logics
     };
   }
 
@@ -211,6 +220,7 @@ export class FormConfigurationService {
         : 0;
     let sliceStart = 0;
     let questions: Question[] = [];
+    let logics: any[] = [];
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
       sectionCount = ++sectionCount;
@@ -218,7 +228,6 @@ export class FormConfigurationService {
         sectionCount,
         sectionQuestionsList[sectionIndex]?.section
       );
-
       const sectionQuestions = new Array(addQuestions)
         .fill(0)
         .slice(
@@ -231,7 +240,12 @@ export class FormConfigurationService {
         .map((q, questionIndex) =>
           this.getQuestion(
             questionIndex,
-            section.id,
+            sectionQuestionsList[sectionIndex]?.questions[
+              questionIndex
+            ]?.sectionId?.startsWith('AQ')
+              ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+                  ?.sectionId
+              : section.id,
             questionCounter + sliceStart + questionIndex + 1,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex]
           )
@@ -239,13 +253,18 @@ export class FormConfigurationService {
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
+      logics = [
+        ...logics,
+        ...(sectionQuestionsList[sectionIndex]?.logics || [])
+      ];
 
       return section;
     });
 
     return {
       sections,
-      questions
+      questions,
+      logics
     };
   }
 
@@ -275,7 +294,10 @@ export class FormConfigurationService {
       BuilderConfigurationActions.updateCounter({ counter: questionCounter })
     );
     return {
-      id: `Q${questionCounter}`,
+      id:
+        question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
+          ? question.id
+          : `Q${questionCounter}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',
