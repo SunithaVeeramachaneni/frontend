@@ -127,7 +127,7 @@ export class FormConfigurationModalComponent implements OnInit {
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
     const htmlTagsRegex = /<[^>]+>/g;
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const textWithoutTags = control.value.replace(htmlTagsRegex, '');
+      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
       if (textWithoutTags.length > maxLength) {
         return { maxLength: { value: control.value } };
       }
