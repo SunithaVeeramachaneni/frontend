@@ -1,11 +1,12 @@
 <mat-toolbar class="form-toolbar">
-  <div>
-    <button (click)="onGoBack(currentStep)" class="back-btn">
-      <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
-    </button>
-  </div>
+  <div class="stepper-toolbar">
+    <div class="width-20">
+      <button (click)="onGoBack(currentStep)" class="back-btn">
+        <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+      </button>
+    </div>
 
-  <!-- <mat-stepper #stepper class="stepper-container">
+    <div class="stepper-div width-55">
       <div
         *ngFor="
           let step of steps;
@@ -13,50 +14,32 @@
           let last = last;
           let first = first
         "
-        (click)="onGotoStep(i)"
-        [ngClass]="{
-          current: currentStep === i,
-          completed: currentStep > i,
-          last: last,
-          first: first
-        }"
+        class="width-15"
       >
-        <mat-step>
-          <ng-template matStepLabel>
-            <div>{{ step.title }}</div>
-          </ng-template>
-        </mat-step>
-      </div>
-    </mat-stepper> -->
+        <button
+          class="steps-breadcrumb"
+          (click)="onGotoStep(i)"
+          [ngClass]="{
+            current: currentStep === i,
+            completed: currentStep > i,
+            last: last,
+            first: first,
+            'disable-step': currentStep < i,
+            'completed-step': currentStep > i
+          }"
+          [disabled]="currentStep < i"
+        >
+          <div class="index">
+            <span>{{ currentStep > i ? '&#x2713;' : i + 1 }} </span>
+          </div>
+          <div class="title pr-8">{{ step.title }}</div>
+        </button>
+        <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
 
-  <div class="stepper-div">
-    <div
-      class="steps-breadcrumb"
-      *ngFor="
-        let step of steps;
-        let i = index;
-        let last = last;
-        let first = first
-      "
-      (click)="onGotoStep(i)"
-      [ngClass]="{
-        current: currentStep === i,
-        completed: currentStep > i,
-        last: last,
-        first: first,
-        'disable-step': currentStep < i,
-        'completed-step': currentStep > i
-      }"
-    >
-      <div class="index">
-        <span>{{ currentStep > i ? '&#x2713;' : i + 1 }} </span>
+        <!-- DYNAMIC CONTENT -->
+        <ng-content></ng-content>
+        <!-- / DYNAMIC CONTENT -->
       </div>
-      <div class="title pr-8">{{ step.title }}</div>
-      <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
     </div>
-
-    <!-- DYNAMIC CONTENT -->
-    <ng-content></ng-content>
-    <!-- / DYNAMIC CONTENT -->
   </div>
 </mat-toolbar>

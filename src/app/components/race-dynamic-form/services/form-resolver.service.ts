@@ -51,6 +51,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant,
+          additionalDetails,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -84,6 +85,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formType,
           tags,
           plantId,
+          additionalDetails,
           plant: plant.name,
           embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };

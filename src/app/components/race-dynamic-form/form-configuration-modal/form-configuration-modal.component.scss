@@ -222,12 +222,13 @@
 
 .buttons {
   border-bottom: 1px solid $border-color;
+  min-height: 33px;
 }
 
 .next-btn {
   float: right;
   margin-right: 22px;
-  height: 35px;
+  height: 30px;
   font-weight: normal;
   line-height: normal;
   width: 8%;
@@ -236,7 +237,7 @@
 .skip-btn {
   float: right;
   color: $radio-button-checked;
-  height: 35px;
+  height: 30px;
   font-weight: normal;
   line-height: normal;
   border: 1px solid $blue-main;
