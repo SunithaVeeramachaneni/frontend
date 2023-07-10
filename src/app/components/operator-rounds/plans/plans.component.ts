@@ -637,7 +637,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   formattingPlans(plans) {
-    console.log('plans:', plans);
     return plans.map((plan) => {
       let shift = '';
       if (this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails) {
@@ -649,7 +648,6 @@ export class PlansComponent implements OnInit, OnDestroy {
           }
         });
         if (shift) {
-          console.log('inside here');
           plan.shift = shift.substring(0, shift.length - 1);
         }
       }
