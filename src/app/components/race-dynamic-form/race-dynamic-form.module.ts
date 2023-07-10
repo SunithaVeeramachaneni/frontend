@@ -80,6 +80,7 @@ import { QuickResponseEffects } from 'src/app/forms/state/quick-responses.effect
 import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effects';
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 import { FullScreenFormCreationComponent } from './full-screen-form-creation/full-screen-form-creation.component';
+import { FormViewComponent } from './full-screen-form-creation/form-view.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -112,7 +113,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     TemplateContainerComponent,
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
-    FullScreenFormCreationComponent
+    FullScreenFormCreationComponent,
+    FormViewComponent
   ],
   imports: [
     FormsModule,

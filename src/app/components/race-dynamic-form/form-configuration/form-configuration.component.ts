@@ -181,11 +181,6 @@ export class FormConfigurationComponent implements OnInit {
           },
           { emitEvent: false }
         );
-        const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
-        this.breadcrumbService.set('@formName', {
-          label: formName
-        });
       })
     );
     this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
@@ -352,37 +347,6 @@ export class FormConfigurationComponent implements OnInit {
     this.route.data.subscribe((data) => {
       if (data.form && Object.keys(data.form).length) {
         this.formConf.counter.setValue(data.form.counter);
-        this.store.dispatch(
-          BuilderConfigurationActions.updateFormConfiguration({
-            formConfiguration: data.form
-          })
-        );
-        data.form.pages.forEach((page, index) => {
-          if (index === 0) {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: null
-              })
-            );
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: true,
-                subFormId: null
-              })
-            );
-          } else {
-            this.store.dispatch(
-              BuilderConfigurationActions.updatePageState({
-                pageIndex: index,
-                isOpen: false,
-                subFormId: null
-              })
-            );
-          }
-        });
       }
     });
 
@@ -402,41 +366,46 @@ export class FormConfigurationComponent implements OnInit {
           this.store.select(getFormMetadata).subscribe((data) => {
             this.isEmbeddedForm = data.formType === 'Embedded';
           });
-          const section = {
-            id: 'S1',
-            name: 'Section',
-            position: 1,
-            isOpen: true
-          };
-          const df = this.formConfigurationService.getDefQues();
-          const questions = new Array(4).fill(0).map((q, index) => {
-            if (index === 0) {
-              return { ...df, name: 'Site Conducted' };
-            }
-            if (index === 1) {
-              return {
-                ...df,
-                name: 'Conducted On',
-                fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
-                date: true,
-                time: true
+
+          this.createOrEditForm$.subscribe((created) => {
+            if (!created) {
+              const section = {
+                id: 'S1',
+                name: 'Section',
+                position: 1,
+                isOpen: true
               };
-            }
-            if (index === 2) {
-              return { ...df, name: 'Performed By' };
-            }
-            if (index === 3) {
-              return { ...df, name: 'Location', fieldType: 'GAL' };
+              const df = this.formConfigurationService.getDefQues();
+              const questions = new Array(4).fill(0).map((q, index) => {
+                if (index === 0) {
+                  return { ...df, name: 'Site Conducted' };
+                }
+                if (index === 1) {
+                  return {
+                    ...df,
+                    name: 'Conducted On',
+                    fieldType: this.isEmbeddedForm ? 'DF' : 'DT',
+                    date: true,
+                    time: true
+                  };
+                }
+                if (index === 2) {
+                  return { ...df, name: 'Performed By' };
+                }
+                if (index === 3) {
+                  return { ...df, name: 'Location', fieldType: 'GAL' };
+                }
+              });
+              this.formConfigurationService.addPage(
+                0,
+                1,
+                4,
+                this.sectionIndexes,
+                this.formConf.counter.value,
+                [{ section, questions }]
+              );
             }
           });
-          this.formConfigurationService.addPage(
-            0,
-            1,
-            4,
-            this.sectionIndexes,
-            this.formConf.counter.value,
-            [{ section, questions }]
-          );
         }
       }
     });
