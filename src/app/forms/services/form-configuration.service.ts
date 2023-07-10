@@ -10,9 +10,6 @@ import {
   SectionQuestions
 } from 'src/app/interfaces';
 import { State } from '../state';
-import { AppService } from 'src/app/shared/services/app.services';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
@@ -36,27 +33,7 @@ export class FormConfigurationService {
     unitOfMeasurement: 'None',
     rangeMetadata: {} as NumberRangeMetadata
   };
-  constructor(private store: Store<State>, private _appService: AppService) {}
-
-  uploadToS3$(file: Blob): Observable<any> {
-    const formFileData = new FormData();
-    formFileData.append('file', file);
-
-    return this._appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plan/imageAndPdfUpload',
-      formFileData
-    );
-  }
-
-  deleteFromS3(objectKey: string): void {
-    const params = new URLSearchParams();
-    params.append('objectKey', encodeURIComponent(objectKey));
-
-    this._appService
-      ._removeData(environment.operatorRoundsApiUrl, 'round-plan/delete')
-      .subscribe();
-  }
+  constructor(private store: Store<State>) {}
 
   addPage(
     pageIndex: number,

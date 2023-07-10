@@ -124,6 +124,10 @@
         line-height: normal;
         border: 1px solid $blue-main;
       }
+      .horizontal-line {
+        border: 1px solid $border-color;
+        margin: 20px 0;
+      }
     }
   }
   ::ng-deep .mat-form-field {

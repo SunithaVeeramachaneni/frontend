@@ -63,7 +63,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RoutePlanComponent } from 'src/app/forms/components/hierarchy-container/route-plan/route-plan.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { AssignedToComponent } from 'src/app/forms/components/assigned-to/assigned-to.component';
 import { unitOfMeasurementReducer } from 'src/app/forms/state/unit-of-measurement.reducer';
 import { UnitOfMeasurementEffects } from 'src/app/forms/state/unit-of-measurement.effects';
 import { quickResponseReducer } from 'src/app/forms/state/quick-responses.reducer';

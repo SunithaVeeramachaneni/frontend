@@ -841,6 +841,11 @@ export class QuestionComponent implements OnInit, OnDestroy {
             isImage: true,
             index
           });
+        } else {
+          this.toast.show({
+            text: 'Only upto 3 images can be attached to an instruction.',
+            type: 'warning'
+          });
         }
       }
     });

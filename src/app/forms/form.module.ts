@@ -28,6 +28,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
@@ -89,19 +90,16 @@ import { AttachmentResponseComponent } from './components/preview/response-types
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { NgxEchartsModule } from 'ngx-echarts';
-import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
-import { ObservationsComponent } from './components/observations/observations.component';
 import { DonutChartComponent } from './components/donut-chart/donut-chart.component';
 import { IssuesListComponent } from './components/issues-list/issues-list.component';
 import { ActionsListComponent } from './components/actions-list/actions-list.component';
 import { IssuesActionsViewComponent } from './components/issues-actions-view/issues-actions-view.component';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
-
+import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AssignedToComponent } from './components/assigned-to/assigned-to.component';
+import { ObservationsComponent } from './components/observations/observations.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import {
   NgxMatDatetimePickerModule,
@@ -117,6 +115,7 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,

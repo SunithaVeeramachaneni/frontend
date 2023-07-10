@@ -40,11 +40,9 @@ import {
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
-import { TenantService } from '../../tenant-management/services/tenant.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PDFDocument } from 'pdf-lib';
@@ -77,7 +75,6 @@ export class FormConfigurationModalComponent implements OnInit {
   plantInformation = [];
   changedValues: any;
   addNewShow = new BehaviorSubject<boolean>(false);
-  selectedOption: string;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
@@ -88,14 +85,12 @@ export class FormConfigurationModalComponent implements OnInit {
   readonly formConfigurationStatus = formConfigurationStatus;
   additionalDetails: FormArray;
   labelSelected: any;
-  options: any = [];
   filteredMediaType: any = { mediaType: [] };
   filteredMediaTypeIds: any = { mediaIds: [] };
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
   pdfFiles: any = [];
-  imageFiles: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -111,7 +106,6 @@ export class FormConfigurationModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data,
     private toast: ToastService,
     public dialog: MatDialog,
-    public tenantService: TenantService,
     private imageCompress: NgxImageCompressService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
@@ -313,7 +307,6 @@ export class FormConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
-
       this.store.dispatch(
         BuilderConfigurationActions.createForm({
           formMetadata: {

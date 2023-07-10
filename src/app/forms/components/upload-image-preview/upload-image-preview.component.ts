@@ -12,9 +12,7 @@ export class UploadImagePreviewComponent implements OnInit {
   @Output() imageIndexEmitter: EventEmitter<number> =
     new EventEmitter<number>();
 
-  ngOnInit(): void {
-    console.log('image', this.image);
-  }
+  ngOnInit(): void {}
 
   triggerDelete() {
     this.imageIndexEmitter.emit(this.index);

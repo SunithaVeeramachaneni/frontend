@@ -10,15 +10,12 @@ import {
 } from 'src/app/interfaces';
 import { State } from '../state/builder/builder-state.selectors';
 import { v4 as uuidv4 } from 'uuid';
-import { Observable } from 'rxjs/internal/Observable';
-import { environment } from 'src/environments/environment';
-import { AppService } from 'src/app/shared/services/app.services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoundPlanConfigurationService {
-  constructor(private store: Store<State>, private _appService: AppService) {}
+  constructor(private store: Store<State>) {}
 
   addPage(
     pageIndex: number,
