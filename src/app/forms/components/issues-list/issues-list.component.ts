@@ -15,7 +15,14 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { format } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subject,
+  Subscription
+} from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -31,6 +38,7 @@ import { slideInOut } from 'src/app/animations';
 
 import {
   graphQLDefaultLimit,
+  dateTimeFormat2,
   permissions as perms
 } from 'src/app/app.constants';
 import {
@@ -46,6 +54,8 @@ import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { IssuesActionsViewComponent } from '../issues-actions-view/issues-actions-view.component';
 import { ObservationsService } from '../../services/observations.service';
+import { PlantService } from 'src/app/components/master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 @Component({
   selector: 'app-issues-list',
@@ -220,7 +230,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       hasConditionalStyles: true
     },
     {
-      id: 'dueDate',
+      id: 'dueDateDisplay',
       displayName: 'Due Date',
       type: 'string',
       controlType: 'string',
@@ -301,7 +311,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 390px)',
+    tableHeight: 'calc(100vh - 435px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       high: {
@@ -346,6 +356,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
     data: any[];
   }>;
   skip = 0;
+  plantMapSubscription: Subscription;
   limit = graphQLDefaultLimit;
   searchIssue: FormControl;
   menuState = 'out';
@@ -357,6 +368,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   initial: any;
   isModalOpened = false;
   placeHolder = '_ _';
+  plantTimezoneMap = {};
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
@@ -364,11 +376,16 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly observationsService: ObservationsService,
     private readonly loginService: LoginService,
+    private plantService: PlantService,
     private readonly dialog: MatDialog,
     private readonly cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.observationsService.fetchIssues$.next({ data: 'load' });
     this.observationsService.fetchIssues$.next({} as TableEvent);
     this.searchIssue = new FormControl('');
@@ -428,7 +445,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 390px)'
+            tableHeight: 'calc(100vh - 435px)'
           };
           this.initial.data = this.formatIssues(rows);
         } else {
@@ -463,12 +480,25 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       const { assignedTo } = issue;
       return {
         ...issue,
+        dueDateDisplay: this.formatDate(issue.dueDate, issue),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
             : assignedTo
       };
     });
+  }
+
+  formatDate(date, issue) {
+    if (date === '') return '';
+    if (this.plantTimezoneMap[issue?.plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[issue.plantId],
+        dateTimeFormat2
+      );
+    }
+    return format(new Date(date), dateTimeFormat2);
   }
 
   getIssuesList() {
@@ -483,7 +513,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       mergeMap(({ rows, next, count }) => {
         this.observationsService.issuesNextToken = next;
         this.isLoading$.next(false);
-        this.issuesCount$ = of(count);
+        if (count) {
+          this.issuesCount$ = of(count);
+        }
         this.observationsService.issues$.next({ rows, next, count });
         return of(rows as any[]);
       }),
@@ -593,6 +625,7 @@ export class IssuesListComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

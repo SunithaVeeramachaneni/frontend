@@ -27,7 +27,11 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 
 import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
-import { graphQLDefaultLimit, routingUrls } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  graphQLDefaultLimit,
+  routingUrls
+} from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
@@ -355,6 +359,17 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
         }),
         map((data) =>
           data.map((item) => {
+            this.raceDynamicFormService
+              .getEmbeddedFormId$(item.id)
+              .subscribe((data) => {
+                let embeddedFormId;
+                if (data) {
+                  embeddedFormId = data?.embeddedFormId;
+                } else {
+                  embeddedFormId = '';
+                }
+                item.embeddedFormId = embeddedFormId;
+              });
             if (item.plantId) {
               item = {
                 ...item,
@@ -462,6 +477,19 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  deleteFormFromDynamo$(form) {
+    return this.raceDynamicFormService.updateForm$({
+      formMetadata: {
+        id: form?.id,
+        name: form?.name,
+        description: form?.description,
+        isDeleted: true
+      },
+      // eslint-disable-next-line no-underscore-dangle
+      formListDynamoDBVersion: form._version
+    });
+  }
+
   private onRestoreForm(form: any): void {
     this.raceDynamicFormService
       .updateForm$({
@@ -490,23 +518,41 @@ export class ArchivedListComponent implements OnInit, OnDestroy {
 
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
-        this.raceDynamicFormService
-          .updateForm$({
-            formMetadata: {
-              id: form?.id,
-              name: form?.name,
-              description: form?.description,
-              isDeleted: true
-            },
-            // eslint-disable-next-line no-underscore-dangle
-            formListDynamoDBVersion: form._version
-          })
-          .subscribe((updatedForm) => {
+        const { formType } = form;
+        if (formType !== formConfigurationStatus.embedded) {
+          this.deleteFormFromDynamo$(form).subscribe((updatedForm) => {
             this.restoreDeleteForm$.next({
               action: 'delete',
               form: updatedForm
             });
           });
+        } else {
+          of(form)
+            .pipe(
+              mergeMap(({ formStatus }) => {
+                if (formStatus === formConfigurationStatus.draft) {
+                  return this.deleteFormFromDynamo$(form);
+                } else {
+                  return this.raceDynamicFormService
+                    .deactivateAbapForm$(form)
+                    .pipe(
+                      mergeMap((response) => {
+                        if (response === null) {
+                          return this.deleteFormFromDynamo$(form);
+                        }
+                        return of({});
+                      })
+                    );
+                }
+              })
+            )
+            .subscribe((updatedForm) => {
+              this.restoreDeleteForm$.next({
+                action: 'delete',
+                form: updatedForm
+              });
+            });
+        }
       }
     });
   }

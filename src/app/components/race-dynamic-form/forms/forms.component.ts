@@ -14,6 +14,7 @@ import {
   of,
   ReplaySubject,
   Subject,
+  Subscription,
   timer
 } from 'rxjs';
 import {
@@ -64,9 +65,18 @@ import { DatePipe } from '@angular/common';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormScheduleConfigurationService } from './../services/form-schedule-configuration.service';
-import { ScheduleConfigEvent } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
+import {
+  ScheduleConfigEvent,
+  ScheduleConfigurationComponent
+} from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.component';
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
+
 @Component({
   selector: 'app-forms',
   templateUrl: './forms.component.html',
@@ -81,7 +91,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     plant: '',
     schedule: '',
     assignedTo: '',
-    scheduledAt: ''
+    scheduledAt: '',
+    shiftId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -142,11 +153,33 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'shift',
+      displayName: 'Shift',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'questions',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -169,7 +202,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -193,7 +226,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -215,7 +248,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -237,7 +270,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -297,6 +330,7 @@ export class FormsComponent implements OnInit, OnDestroy {
     unscheduled: 0
   };
   nextToken = '';
+  plantMapSubscription: Subscription;
   menuState = 'out';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   fetchType = 'load';
@@ -315,15 +349,23 @@ export class FormsComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   formCategory: FormControl;
   formId: string;
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
   plantsIdNameMap = {};
+  plantTimezoneMap = {};
+  userFullNameByEmail = {};
+  shiftIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -331,7 +373,7 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
-
+  private scheduleConfigEvent: Subscription;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
@@ -341,10 +383,26 @@ export class FormsComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private shiftService: ShiftService,
+    private dialog: MatDialog,
+    private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
 
   ngOnInit(): void {
+    this.scheduleConfigEvent =
+      this.scheduleConfigurationService.scheduleConfigEvent.subscribe(
+        (value) => {
+          if (value) {
+            this.scheduleConfigEventHandler(value);
+          }
+        }
+      );
+
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe(
+        (data) => (this.plantTimezoneMap = data)
+      );
     this.formCategory = new FormControl('all');
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -367,7 +425,11 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
       .fetchFormScheduleConfigurations$()
-      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
+      .pipe(
+        tap((configs) => {
+          this.formScheduleConfigurations = configs;
+        })
+      );
 
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -399,9 +461,21 @@ export class FormsComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       onScrollForms$,
       formScheduleConfigurations$,
+      this.shiftService.fetchAllShifts$(),
+      this.plantService.fetchAllPlants$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations]) => {
+      map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
+        shifts?.items?.forEach((shift) => {
+          this.shiftIdNameMap[shift.id] = shift.name;
+        });
+        this.allPlants = plants;
+        this.allShifts = shifts.items.filter((s) => s.isActive);
+        for (const item of this.filterJson) {
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.shiftIdNameMap);
+          }
+        }
         if (this.skip === 0) {
           this.initial.data = this.formatForms(
             forms.rows,
@@ -412,6 +486,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        this.initial.data = this.formattingForms(this.initial.data);
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -463,8 +538,8 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         for (const item of uniqueAssignTo) {
-          if (item && !this.assignedTo.includes(item)) {
-            this.assignedTo.push(item);
+          if (item && this.userFullNameByEmail[item] !== undefined) {
+            this.assignedTo.push(this.userFullNameByEmail[item].fullName);
           }
         }
         for (const item of this.filterJson) {
@@ -494,6 +569,21 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.populatePlantsforFilter();
     this.getFilter();
+  }
+
+  formattingForms(forms) {
+    return forms.map((form) => {
+      let shift = '';
+      if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
+        Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
+          (shiftId) => {
+            shift += this.shiftIdNameMap[shiftId] + ',';
+          }
+        );
+        form.shift = shift;
+      }
+      return form;
+    });
   }
 
   getFormsList() {
@@ -527,31 +617,45 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'forms':
         if (row.forms !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openFormHandler(row);
+        this.openFormHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(form: any) {
+    const selectedPlant = this.allPlants?.items.find(
+      (plant) => plant.id === form.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -634,11 +738,36 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   openScheduleConfigHandler(row: any) {
+    this.scheduleFormDetail = { ...row };
+    const dialogRef = this.dialog.open(ScheduleConfigurationComponent, {
+      disableClose: true,
+      backdropClass: 'schedule-configuration-modal',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      data: {
+        formDetail: this.scheduleFormDetail,
+        hidden: this.hideScheduleConfig,
+        moduleName: 'RDF',
+        assigneeDetails: this.assigneeDetails
+      }
+    });
     this.hideScheduleConfig = false;
     this.closeFormHandler();
-    this.scheduleFormDetail = { ...row };
     this.scheduleConfigState = 'in';
     this.zIndexScheduleDelay = 400;
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data?.actionType === 'scheduleConfig') {
+        delete data?.actionType;
+        this.scheduleConfigHandler(data);
+      }
+      if (data?.actionType === 'scheduleConfigEvent') {
+        delete data?.actionType;
+        this.scheduleConfigEventHandler(data);
+      }
+    });
   }
 
   scheduleConfigEventHandler(event: ScheduleConfigEvent) {
@@ -707,7 +836,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             ...data,
             schedule: this.getFormattedSchedule(formsScheduleConfiguration),
             scheduleDates: this.getFormattedScheduleDates(
-              formsScheduleConfiguration
+              formsScheduleConfiguration,
+              data.plantId
             ),
             assignedTo: this.getAssignedTo(formsScheduleConfiguration),
             assignedToEmail: this.getAssignedToEmail(formsScheduleConfiguration)
@@ -727,18 +857,15 @@ export class FormsComponent implements OnInit, OnDestroy {
     }
   }
 
-  viewFormsHandler(id: any) {
-    this.selectTab.emit({ index: 1, queryParams: { id } });
-  }
-
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openFormHandler(data);
+        this.openFormHandler({ ...data, shifts: activeShifts });
         break;
       case 'showInspections':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
@@ -759,7 +886,8 @@ export class FormsComponent implements OnInit, OnDestroy {
             formScheduleConfigurations[form?.id]
           ),
           scheduleDates: this.getFormattedScheduleDates(
-            formScheduleConfigurations[form?.id]
+            formScheduleConfigurations[form?.id],
+            form.plantId
           ),
           forms: form.forms || this.placeHolder,
           assignedTo: this.getAssignedTo(formScheduleConfigurations[form.id]),
@@ -778,25 +906,67 @@ export class FormsComponent implements OnInit, OnDestroy {
   }
 
   getFormattedScheduleDates(
-    formScheduleConfiguration: FormScheduleConfiguration
+    formScheduleConfiguration: FormScheduleConfiguration,
+    plantId
   ) {
     const { scheduleEndType, scheduleEndOn, endDate, scheduleType } =
       formScheduleConfiguration;
-    const formatedStartDate =
+    let formatedStartDate =
       scheduleType === 'byFrequency'
-        ? this.datePipe.transform(
-            formScheduleConfiguration.startDate,
-            dateFormat
-          )
+        ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+          ? localToTimezoneDate(
+              new Date(formScheduleConfiguration.startDate),
+              this.plantTimezoneMap[plantId],
+              dateFormat
+            )
+          : this.datePipe.transform(
+              formScheduleConfiguration.startDate,
+              dateFormat
+            )
         : '';
-    const formatedEndDate =
+    let formatedEndDate =
       scheduleType === 'byFrequency'
         ? scheduleEndType === 'on'
-          ? this.datePipe.transform(scheduleEndOn, dateFormat)
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(scheduleEndOn),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(scheduleEndOn, dateFormat)
           : scheduleEndType === 'after'
-          ? this.datePipe.transform(endDate, dateFormat)
+          ? this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+            ? localToTimezoneDate(
+                new Date(endDate),
+                this.plantTimezoneMap[plantId],
+                dateFormat
+              )
+            : this.datePipe.transform(endDate, dateFormat)
           : 'Never'
         : '';
+    if (scheduleType === 'byDate') {
+      const scheduleDates = formScheduleConfiguration.scheduleByDates.map(
+        (scheduleByDate) => new Date(scheduleByDate.date).getTime()
+      );
+      scheduleDates.sort();
+      formatedStartDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[0]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(scheduleDates[0], dateFormat);
+      formatedEndDate = this.plantTimezoneMap[plantId]?.timeZoneIdentifier
+        ? localToTimezoneDate(
+            new Date(scheduleDates[scheduleDates.length - 1]),
+            this.plantTimezoneMap[plantId],
+            dateFormat
+          )
+        : this.datePipe.transform(
+            scheduleDates[scheduleDates.length - 1],
+            dateFormat
+          );
+    }
 
     return formatedStartDate !== ''
       ? `${formatedStartDate} - ${formatedEndDate}`
@@ -848,6 +1018,11 @@ export class FormsComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.shiftIdNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value ?? '';
       } else if (item.type === 'date' && item.value) {
@@ -865,7 +1040,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       plant: '',
       schedule: '',
       assignedTo: '',
-      scheduledAt: ''
+      scheduledAt: '',
+      shiftId: ''
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

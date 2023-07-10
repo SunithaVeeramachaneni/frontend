@@ -21,7 +21,11 @@ import {
   FormMetadata
 } from './../../../interfaces';
 
-import { formConfigurationStatus, LIST_LENGTH } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  LIST_LENGTH,
+  dateFormat2
+} from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
@@ -252,6 +256,7 @@ export class RaceDynamicFormService {
       | 'isPublic'
       | 'plantId'
       | 'pdfTemplateConfiguration'
+      | 'additionalDetails'
     >
   ) {
     return this.appService._postData(environment.rdfApiUrl, 'forms', {
@@ -265,6 +270,7 @@ export class RaceDynamicFormService {
       tags: formListQuery.tags,
       isPublic: formListQuery.isPublic,
       plantId: formListQuery.plantId,
+      additionalDetails: formListQuery.additionalDetails,
       isArchived: false,
       isDeleted: false
     });
@@ -450,9 +456,10 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      askQuestions = questions.filter((q) => q.sectionId === `AQ_${logic.id}`);
+      askQuestions = askQuestions.concat(
+        ...questions.filter((q) => q.sectionId === `AQ_${logic.id}`)
+      );
       askQuestions.forEach((q) => {
-        q.id = q.isPublished ? q.id : `AQ_${Date.now()}`;
         globalIndex = globalIndex + 1;
         const oppositeOperator = oppositeOperatorMap[logic.operator];
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
@@ -737,7 +744,7 @@ export class RaceDynamicFormService {
           condition: true
         },
         dueDateDisplay: p.dueDate
-          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          ? format(new Date(p.dueDate), dateFormat2)
           : '',
         tasksCompleted: `${p.totalTasksCompleted}/${p.totalTasks},${
           p.totalTasks > 0
@@ -779,7 +786,7 @@ export class RaceDynamicFormService {
   updateInspection$ = (
     inspectionId: string,
     inspectionDetail: InspectionDetail,
-    type: 'due-date' | 'assigned-to',
+    type: 'due-date' | 'assigned-to' | 'start-date' | 'shift',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<InspectionDetail> =>
     this.appService
@@ -923,7 +930,8 @@ export class RaceDynamicFormService {
               SECTIONNAME: sectionName,
               FIELDLABEL: questionName,
               UIPOSITION: index.toString(),
-              UIFIELDTYPE: question.fieldType,
+              UIFIELDTYPE:
+                question.fieldType === 'INST' ? 'LLF' : question.fieldType,
               ACTIVE: 'X',
               INSTRUCTION: '',
               TEXTSTYLE: '',
@@ -1069,11 +1077,11 @@ export class RaceDynamicFormService {
         };
         break;
       }
-      case 'LLF': {
+      case 'INST': {
         const { name } = question;
         properties = {
           ...properties,
-          FIELDLABEL: `<html>${name}</html>`,
+          FIELDLABEL: `<html>${name}</html>`.replace(/"/g, "'"),
           DEFAULTVALUE: ''
           //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
@@ -1105,62 +1113,21 @@ export class RaceDynamicFormService {
       case 'VI':
       case 'DD': {
         const {
-          value: {
-            values,
-            responseType,
-            dependsOn,
-            location,
-            latitudeColumn: lat,
-            longitudeColumn: lan,
-            radius,
-            pins: pinsCount,
-            autoSelectColumn: autoFill,
-            fileName,
-            globalDataset,
-            children
-          },
+          value: { value },
           multi
         } = question;
-        if (!globalDataset) {
-          const viVALUE = values.map((item, idx) => ({
-            [`label${idx + 1}`]: item.title,
-            key: item.title,
-            color: item.color,
-            description: item.title
-          }));
-          properties = {
-            ...properties,
-            DDVALUE: JSON.stringify(viVALUE),
-            UIFIELDTYPE: multi ? 'DDM' : fieldType
-          };
-        } else {
-          if (location) {
-            properties = {
-              ...properties,
-              MAPDATA: JSON.stringify({
-                lat,
-                lan,
-                radius,
-                pinsCount: pinsCount.toString(),
-                autoFill: autoFill.toString(),
-                parent: responseType
-              })
-            };
-          }
-          if (readOnly) {
-            properties = {
-              ...properties,
-              UIFIELDTYPE: 'LF'
-            };
-          }
-          properties = {
-            ...properties,
-            FILENAME: fileName,
-            DDDEPENDECYFIELD: dependsOn,
-            CHILDREN: JSON.stringify(children),
-            COLUMNNAME: responseType
-          };
-        }
+        const viVALUE = value.map((item, idx) => ({
+          [`label${idx + 1}`]: item.title,
+          key: item.title,
+          color: item.color,
+          description: item.title
+        }));
+        properties = {
+          ...properties,
+          DDVALUE: JSON.stringify(viVALUE),
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
+        };
+
         break;
       }
       case 'ARD': {
@@ -1184,6 +1151,13 @@ export class RaceDynamicFormService {
         properties = {
           ...properties,
           SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      case 'HL': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: question.value
         };
         break;
       }
@@ -1234,6 +1208,24 @@ export class RaceDynamicFormService {
       info
     );
 
+  deleteAbapFormField$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('FORMNAME', queryParams.FORMNAME);
+    params.set('UNIQUEKEY', queryParams.UNIQUEKEY);
+    params.set('APPNAME', APPNAME);
+    params.set('VERSION', VERSION);
+    params.set('VALIDFROM', VALIDFROM);
+    params.set('VALIDTO', VALIDTO);
+    return this.appService._removeData(
+      environment.rdfApiUrl,
+      `abap/forms/fields?` + params.toString(),
+      info
+    );
+  };
+
   getEmbeddedFormId$ = (
     formId: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -1243,4 +1235,24 @@ export class RaceDynamicFormService {
       `forms/embedded/${formId}`,
       info
     );
+
+  deactivateAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const { name, embeddedFormId } = form;
+    const payload = {
+      VERSION,
+      APPNAME,
+      FORMNAME: embeddedFormId,
+      FORMTITLE: name,
+      DEACTIVATE: 'X'
+    };
+    return this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms`,
+      payload,
+      info
+    );
+  };
 }

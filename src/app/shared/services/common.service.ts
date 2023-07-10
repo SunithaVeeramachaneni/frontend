@@ -58,4 +58,13 @@ export class CommonService {
   setDisplayLoader(display: boolean) {
     this.displayLoaderSubject.next(display);
   }
+
+  isJson(str: string) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
 }

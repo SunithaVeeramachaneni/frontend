@@ -5,7 +5,10 @@ import {
   Input,
   OnInit,
   Output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ElementRef,
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,11 +16,12 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { ValidationError } from 'src/app/interfaces';
 import { PlantService } from '../services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ShiftService } from '../../shifts/services/shift.service';
-import { Observable, of } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ShiftOverlapModalComponent } from '../shift-overlap-modal/shift-overlap-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,11 +32,16 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./add-edit-plant.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddEditPlantComponent implements OnInit {
+export class AddEditPlantComponent implements OnInit, OnDestroy {
+  @ViewChild('countryInputSearch', { static: false })
+  countryInputSearch: ElementRef;
+  @ViewChild('stateInputSearch', { static: false })
+  stateInputSearch: ElementRef;
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Output() createdPlantData: EventEmitter<any> = new EventEmitter();
   @Input() set plantEditData(data) {
     this.plantsEditData = data;
+    this.selectedShiftsDetails = [];
     if (this.plantsEditData === null) {
       this.plantStatus = 'add';
       this.plantTitle = 'Create Plant';
@@ -69,6 +78,7 @@ export class AddEditPlantComponent implements OnInit {
         zipCode: this.plantsEditData?.zipCode,
         label: this.plantEditData?.label,
         field: this.plantEditData?.field,
+        timeZone: this.plantEditData?.timeZone,
         shifts: this.selectedShiftIDs
       };
 
@@ -79,7 +89,17 @@ export class AddEditPlantComponent implements OnInit {
   get plantEditData() {
     return this.plantsEditData;
   }
-
+  plantMapSubscription: Subscription;
+  countrySearch: any;
+  selectedCountry: any;
+  countryAllStates: any = [];
+  countryAllTimeZones: any = [];
+  states: any = [];
+  timeZones: any = [];
+  noState = false;
+  plantMasterData = {};
+  allCountries = [];
+  countryData = [];
   selectedShiftIDs: any[];
   selectedShiftsDetails = [];
   allShiftsMaster: any[];
@@ -102,6 +122,13 @@ export class AddEditPlantComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.plantMapSubscription = this.plantService.plantMasterData$.subscribe(
+      (res) => {
+        this.plantMasterData = res;
+        this.allCountries = Object.values(this.plantMasterData);
+        this.countryData = this.allCountries;
+      }
+    );
     const regex = '^[A-Za-z0-9 ]*$';
     this.plantForm = this.fb.group({
       id: '',
@@ -134,9 +161,35 @@ export class AddEditPlantComponent implements OnInit {
         WhiteSpaceValidator.whiteSpace,
         WhiteSpaceValidator.trimWhiteSpace
       ]),
+      timeZone: new FormControl('', [Validators.required]),
       shifts: new FormControl('', []),
       label: '',
       field: ''
+    });
+    this.plantForm.get('state').disable();
+    this.plantForm.get('timeZone').disable();
+    this.plantForm.get('country').valueChanges.subscribe((countryCode) => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      this.plantForm.patchValue({ state: null, timeZone: null });
+      if (countryCode) {
+        this.selectedCountry = this.plantMasterData[countryCode];
+        if (!this.selectedCountry.states.length) {
+          this.plantForm.get('state').disable();
+          this.noState = true;
+        } else {
+          this.plantForm.get('state').enable();
+          this.noState = false;
+        }
+        [this.states, this.countryAllStates] = [
+          this.selectedCountry.states,
+          this.selectedCountry.states
+        ];
+        [this.timeZones, this.countryAllTimeZones] = [
+          this.selectedCountry.timeZones,
+          this.selectedCountry.timeZones
+        ];
+        this.plantForm.get('timeZone').enable();
+      }
     });
 
     this.activeShifts$ = this.shiftService
@@ -212,6 +265,10 @@ export class AddEditPlantComponent implements OnInit {
             });
             this.plantForm.reset();
             this.slideInOut.emit('out');
+            this.plantForm.get('state').disable();
+            this.plantForm.get('timeZone').disable();
+            this.clearSearchInputs();
+            this.noState = false;
           });
       } else if (this.plantStatus === 'edit') {
         const payload = this.plantForm.getRawValue();
@@ -228,6 +285,7 @@ export class AddEditPlantComponent implements OnInit {
           .updatePlant$({
             ...payload,
             shifts: shiftsStr,
+            // eslint-disable-next-line no-underscore-dangle
             _version: this.plantsEditData._version,
             id: this.plantsEditData?.id
           })
@@ -238,6 +296,10 @@ export class AddEditPlantComponent implements OnInit {
             });
             this.plantForm.reset();
             this.slideInOut.emit('out');
+            this.plantForm.get('state').disable();
+            this.plantForm.get('timeZone').disable();
+            this.clearSearchInputs();
+            this.noState = false;
           });
       }
     }
@@ -245,6 +307,48 @@ export class AddEditPlantComponent implements OnInit {
   cancel() {
     this.plantForm.reset();
     this.slideInOut.emit('out');
+    this.plantForm.get('state').disable();
+    this.plantForm.get('timeZone').disable();
+    this.clearSearchInputs();
+    this.noState = false;
+  }
+
+  onKeyCountry(event: any) {
+    const value = event.target.value || '';
+    if (value) {
+      this.countryData = this.searchCountry(value);
+    } else {
+      this.countryData = Object.values(this.plantMasterData);
+    }
+  }
+
+  onKeyState(event: any) {
+    const value = event.target.value || '';
+    if (value) {
+      this.states = this.searchStates(value);
+    } else {
+      this.states = this.countryAllStates;
+    }
+  }
+
+  searchCountry(value: string) {
+    const searchValue = value.toLowerCase();
+    return Object.values(this.plantMasterData).filter(
+      (country: any) =>
+        (country.countryCode &&
+          country.countryCode.toLowerCase().indexOf(searchValue) !== -1) ||
+        (country.countryName &&
+          country.countryName.toLowerCase().indexOf(searchValue) !== -1)
+    );
+  }
+
+  searchStates(value: string) {
+    const searchValue = value.toLowerCase();
+    if (searchValue) {
+      return this.countryAllStates.filter(
+        (state: any) => state && state.toLowerCase().indexOf(searchValue) !== -1
+      );
+    }
   }
 
   processValidationErrors(controlName: string): boolean {
@@ -262,6 +366,26 @@ export class AddEditPlantComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
+  compareTimeZones(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return false;
+    return (
+      o1.utcOffset === o2.utcOffset &&
+      o1.description === o2.description &&
+      o1.timeZoneIdentifier === o2.timeZoneIdentifier
+    );
+  }
+  onCountryClosed() {
+    this.countryData = Object.values(this.plantMasterData);
+  }
+  onStateClosed() {
+    this.states = this.countryAllStates;
+  }
+
+  clearSearchInputs() {
+    this.countryInputSearch.nativeElement.value = '';
+    this.stateInputSearch.nativeElement.value = '';
+  }
+
   overlapping = (a, b) => {
     const getMinutes = (s) => {
       const p = s.split(':').map(Number);
@@ -274,13 +398,33 @@ export class AddEditPlantComponent implements OnInit {
   };
 
   isOverlapping = (arr) => {
-    for (let i = 0; i < arr.length - 1; i++) {
-      for (let j = i + 1; j < arr.length; j++) {
-        if (this.overlapping(arr[i], arr[j])) {
+    const filteredShifts = [];
+    arr.forEach((e) => {
+      if (e.start > e.end) {
+        const TS1 = {
+          start: e.start,
+          end: '24:00'
+        };
+        const TS2 = {
+          start: '01:00',
+          end: e.end
+        };
+        filteredShifts.push(TS1);
+        filteredShifts.push(TS2);
+      } else {
+        filteredShifts.push(e);
+      }
+    });
+    for (let i = 0; i < filteredShifts.length - 1; i++) {
+      for (let j = i + 1; j < filteredShifts.length; j++) {
+        if (this.overlapping(filteredShifts[i], filteredShifts[j])) {
           return true;
         }
       }
     }
     return false;
   };
+  ngOnDestroy() {
+    this.plantMapSubscription.unsubscribe();
+  }
 }

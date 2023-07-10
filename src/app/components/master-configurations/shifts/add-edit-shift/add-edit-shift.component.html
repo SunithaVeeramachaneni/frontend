@@ -8,10 +8,12 @@
       <div class="container-div" [formGroup]="shiftForm">
         <p class="m-10-5">
           <mat-form-field appearance="outline" class="width-100 m-b-10">
-            <mat-label translate="nameMandatory"></mat-label>
+            <mat-label translate="name">
+              <span class="text-red">&nbsp;*</span>
+            </mat-label>
             <input
               matInput
-              [placeholder]="'nameMandatory' | translate"
+              [placeholder]="'name' | translate"
               formControlName="name"
             />
             <mat-hint align="start" translate="max25Chars" class="m-t-15">
@@ -21,7 +23,9 @@
 
         <span class="m-2">
           <mat-form-field appearance="outline" class="width-100" class="m-5">
-            <mat-label translate="startTime"></mat-label>
+            <mat-label translate="startTime">
+              <span class="text-red">&nbsp;*</span>
+            </mat-label>
             <input
               type="time"
               matInput
@@ -30,7 +34,9 @@
             />
           </mat-form-field>
           <mat-form-field appearance="outline" class="width-100" class="m-5">
-            <mat-label translate="endTime"></mat-label>
+            <mat-label translate="endTime">
+              <span class="text-red">&nbsp;*</span>
+            </mat-label>
             <input
               type="time"
               matInput
@@ -69,7 +75,7 @@
         <span class="detailRow">
           <span class="sub-headings" translate="status"></span>
           <span class="m-0 sub-headings-value">
-            {{ shiftEditData.status ? 'Active' : 'Inactive' }}
+            {{ shiftEditData.isActive ? 'Active' : 'Inactive' }}
           </span>
         </span>
         <hr class="horizon-line" />

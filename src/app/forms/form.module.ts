@@ -106,9 +106,15 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { ShiftChartComponent } from './components/schedular/shift-chart/shift-chart.component';
+
 import { RaiseNotificationDailogComponent } from './components/add-logic/raise-notification-dialog/raise-notification-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { IphoneForEmbeddedFormsComponent } from './components/iphone-for-embedded-forms/iphone-for-embedded-forms.component';
+import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embedded-forms/preview-for-embedded-forms.component';
 import { UserNameByEmailPipe } from './pipes';
+import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
+import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -173,9 +179,15 @@ import { UserNameByEmailPipe } from './pipes';
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+
     RaiseNotificationDailogComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe,
+    ShiftMenuItemComponent,
+    ShiftDateChangeWarningModalComponent
   ],
   imports: [
     SharedModule,
@@ -253,7 +265,11 @@ import { UserNameByEmailPipe } from './pipes';
     AssignedToComponent,
     ObservationsComponent,
     DatePickerComponent,
-    UserNameByEmailPipe
+    ShiftChartComponent,
+    IphoneForEmbeddedFormsComponent,
+    PreviewForEmbeddedFormsComponent,
+    UserNameByEmailPipe,
+    ShiftMenuItemComponent
   ]
 })
 export class FormModule {}

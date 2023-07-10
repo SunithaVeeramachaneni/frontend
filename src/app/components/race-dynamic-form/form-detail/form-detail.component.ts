@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import { map } from 'rxjs/operators';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -24,8 +24,15 @@ import {
   RoundPlanDetail,
   RoundDetail
 } from 'src/app/interfaces';
-import { formConfigurationStatus } from 'src/app/app.constants';
-import { scheduleConfigs } from '../../operator-rounds/round-plan-schedule-configuration/round-plan-schedule-configuration.constants';
+import { scheduleConfigs } from 'src/app/forms/components/schedular/schedule-configuration/schedule-configuration.constants';
+import {
+  formConfigurationStatus,
+  dateFormat2,
+  dateTimeFormat2,
+  dateTimeFormat4
+} from 'src/app/app.constants';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
 
 interface FrequencyDetail {
   info: string;
@@ -50,6 +57,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showPDFDownload = false;
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
+  @Input() shiftObj: any;
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
@@ -61,7 +69,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   get scheduleConfiguration() {
     return this._scheduleConfiguration;
   }
-
+  plantMapSubscription: Subscription;
   currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
@@ -72,6 +80,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   placeHolder = '_ _';
   frequencyDetail = {} as FrequencyDetail;
   pdfButtonDisabled = false;
+  plantTimezoneMap: any;
+  slotArr = [];
+  readonly dateTimeFormat = dateTimeFormat2;
+  readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly scheduleConfigs = scheduleConfigs;
   private _scheduleConfiguration: RoundPlanScheduleConfiguration;
@@ -79,10 +91,14 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly operatorRoundsService: OperatorRoundsService,
-    private readonly store: Store<State>
+    private readonly store: Store<State>,
+    private readonly plantService: PlantService
   ) {}
 
   ngOnChanges(_: SimpleChanges) {
+    if (this._scheduleConfiguration?.shiftDetails) {
+      this.slotArr = Object.entries(this._scheduleConfiguration.shiftDetails);
+    }
     if (this.selectedForm) {
       this.toggleLoader(true);
 
@@ -134,19 +150,36 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
 
       this.setFrequencyInfo();
-      this.pdfButtonDisabled = false;
-      if (this.selectedForm?.status) {
-        if (
-          this.selectedForm?.status.toLowerCase() === 'open' ||
-          this.selectedForm?.status.toLowerCase() === 'to-do'
-        ) {
-          this.pdfButtonDisabled = true;
-        }
+      this.pdfButtonDisabled = true;
+      if (this.selectedForm?.isViewPdf === true) {
+        this.pdfButtonDisabled = false;
       }
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.plantService.getPlantTimeZoneMapping();
+    this.plantMapSubscription =
+      this.plantService.plantTimeZoneMapping$.subscribe((data) => {
+        this.plantTimezoneMap = data;
+      });
+  }
+
+  convertTo12HourFormat(time24: string): string {
+    const [hours, minutes] = time24.split(':');
+
+    let hours12 = parseInt(hours, 10);
+    const suffix = hours12 >= 12 ? 'PM' : 'AM';
+
+    if (hours12 === 0) {
+      hours12 = 12;
+    } else if (hours12 > 12) {
+      hours12 -= 12;
+    }
+
+    const time12 = `${hours12}:${minutes} ${suffix}`;
+    return time12;
+  }
 
   cancelForm() {
     this.slideInOut.emit('in');
@@ -168,11 +201,29 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  formateDate(date: string) {
-    if (!date) {
-      return '';
+  formatDate(date, plantId, dateFormat) {
+    if (!date) return '';
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateFormat
+      );
     }
-    return format(new Date(date), 'M/d/yy, h:mm a');
+
+    return format(new Date(date), dateFormat);
+  }
+
+  formatDateTime(date, plantId) {
+    if (!date) return '';
+    if (this.plantTimezoneMap[plantId]?.timeZoneIdentifier) {
+      return localToTimezoneDate(
+        date,
+        this.plantTimezoneMap[plantId],
+        dateTimeFormat4
+      );
+    }
+    return format(new Date(date), dateTimeFormat4);
   }
 
   onNavigateToDetailPage() {
@@ -186,6 +237,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.plantMapSubscription.unsubscribe();
     this.selectedForm = null;
     this.toggleLoader(false);
   }
@@ -205,7 +257,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       } = this.scheduleConfiguration;
       if (scheduleType === 'byFrequency') {
       }
-
       this.frequencyDetail =
         scheduleType === 'byFrequency'
           ? repeatEvery === 'week'
