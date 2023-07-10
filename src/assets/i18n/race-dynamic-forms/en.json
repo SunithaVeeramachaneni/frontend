@@ -17,7 +17,7 @@
   "addFormNameMandatory": "Form Name *",
   "addFormDescription": "Short Description",
   "tags": "Tags",
-  "nextBtn": "Save & Go Next",
+  "nextBtn": "Save & Next",
   "nextBtnPreview": "Next",
   "skipBtn": "Skip",
   "name": "Form Name",
@@ -270,7 +270,7 @@
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
   "selectAnOperator": "Select an Operator",
-  "addImagesAndPDFBtn1": "Add images or pdf",
+  "addImagesAndPDFBtnNew": "Add images or pdf",
   "notesAndAttachment": "Notes and Attachments",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters",
   "openIssues": "Open Issues",
@@ -355,5 +355,6 @@
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
   "tasksCompleted": "Responses Completed",
-  "yes": "yes"
+  "yes": "yes",
+  "addNotes": "Add Notes"
 }

@@ -1,9 +1,9 @@
-@import 'src/scss/colors.scss';
+@import '../../../../scss/colors.scss';
 
-.roundplan-pdf-container {
+.instruction-pdf-container {
   background: $blue8;
   padding: 13px;
-  margin-top: 14px;
+  margin-top: 13px;
 
   .pdf-icon {
     height: 25px;
@@ -34,8 +34,7 @@
     right: -15px;
     z-index: 100;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    padding: 3px;
+    height: 15px;
+    width: 15px;
   }
 }

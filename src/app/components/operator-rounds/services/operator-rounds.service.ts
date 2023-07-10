@@ -111,6 +111,17 @@ export class OperatorRoundsService {
       info
     );
 
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    const formFileData = new FormData();
+    formFileData.append('file', file);
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments`,
+      formFileData,
+      info
+    );
+  }
+
   createDataSet$ = (
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo

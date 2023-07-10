@@ -8,27 +8,6 @@
     </button>
   </mat-toolbar>
 
-  <div mat-dialog-actions align="end" class="action-buttons">
-    <button
-      mat-stroked-button
-      type="button"
-      color="primary"
-      class="skip-btn"
-      (click)="onCancel()"
-      translate="cancelBtn"
-    ></button>
-    <button
-      mat-raised-button
-      type="submit"
-      color="primary"
-      class="next-btn"
-      (click)="next()"
-      [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-      translate="nextBtn"
-    ></button>
-  </div>
-  <hr class="horizontal-line" />
-
   <div class="dis-flex form-content">
     <div class="width-5"></div>
     <div class="width-95">
@@ -176,6 +155,88 @@
           </mat-form-field>
         </div>
 
+        <div class="notes-attachment" formGroupName="instructions">
+          <p
+            class="form-name-description m-b-0 m-t-20"
+            translate="notesAndAttachment"
+          ></p>
+          <mat-form-field
+            class="notes-attachment width-100"
+            appearance="outline"
+          >
+            <quill-material
+              #notes
+              [ngClass]="{
+                'display-toolbar': true
+              }"
+              formControlName="notes"
+              [placeholder]="'addNotes' | translate"
+            >
+            </quill-material>
+
+            <mat-error
+              *ngIf="maxLengthWithoutBulletPoints(250)"
+              class="m-5 error-fields"
+            >
+              {{ 'errorExceedingLimit' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="add-attachments">
+          <br />
+          <input
+            type="file"
+            class="file-upload"
+            accept="image/jpeg,image/jpg,image/png,application/pdf"
+            (change)="formFileUploadHandler($event)"
+            [hidden]="true"
+            #formFileUpload
+          />
+
+          <button
+            mat-button
+            color="primary"
+            class="upload-button"
+            (click)="formFileUpload.click()"
+          >
+            <mat-icon class="icon-upload">link</mat-icon>
+            <span translate="addImagesAndPDFBtnNew"></span>
+          </button>
+
+          <div class="attachments-container">
+            <span
+              *ngFor="
+                let image of filteredMediaType.mediaType;
+                index as i;
+                trackBy: trackBySelectedattachments
+              "
+              class="m-r-10"
+            >
+              <app-upload-image-preview
+                [image]="image"
+                (imageIndexEmitter)="formFileDeleteHandler(i)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-upload-image-preview>
+            </span>
+
+            <span
+              *ngFor="
+                let pdf of pdfFiles;
+                index as i;
+                trackBy: trackBySelectedattachments
+              "
+              class="m-r-10"
+            >
+              <app-instruction-pdf
+                [pdf]="pdf"
+                (indexEmitter)="formPdfDeleteHandler(i)"
+              ></app-instruction-pdf>
+            </span>
+          </div>
+        </div>
+
         <div
           class="additional-details"
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
@@ -286,7 +347,7 @@
               <div class="width-45">
                 <mat-form-field
                   appearance="outline"
-                  class="m-l-20 symbol m-b-10 width-100"
+                  class="m-l-20 m-b-10 width-100 value-field"
                 >
                   <input
                     #valueInput
@@ -371,87 +432,24 @@
             </div>
           </div>
         </div>
-
-        <div class="notesAndAttachment">
-          <p
-            class="form-name-description m-b-0 m-t-20"
-            translate="notesAndAttachment"
-          ></p>
-          <mat-form-field
-            placeholder="Notes and Attachments"
-            class="notes_Attachment"
-            class="width-100"
-            appearance="outline"
-          >
-            <quill-material
-              #notesAttachment
-              [ngClass]="{
-                'display-toolbar': true
-              }"
-              formControlName="notesAttachment"
-            >
-            </quill-material>
-            <mat-error
-              *ngIf="maxLengthWithoutBulletPoints(250)"
-              class="m-5 error-fields"
-            >
-              {{ 'errorExceedingLimit' | translate }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="add-pdf">
-          <br />
-          <input
-            type="file"
-            class="file-upload"
-            accept="image/jpeg,image/jpg,image/png,application/pdf"
-            (change)="formFileUploadHandler($event)"
-            [hidden]="true"
-            #formFileUpload
-          />
-
+        <div mat-dialog-actions align="end" class="buttons">
           <button
-            mat-button
+            mat-stroked-button
+            type="button"
             color="primary"
-            class="addLogicBtn"
-            (click)="formFileUpload.click()"
-          >
-            <mat-icon class="icon">link</mat-icon>
-            <span translate="addImagesAndPDFBtn1"></span>
-          </button>
-
-          <div class="attachments-container">
-            <span
-              *ngFor="
-                let image of headerDataForm.get('instructions').value.images;
-                index as i;
-                trackBy: trackBySelectedattachments
-              "
-              class="m-r-10"
-            >
-              <app-upload-image-preview
-                [image]="image"
-                (imageIndexEmitter)="formFileDeleteHandler($event)"
-                class="attachments cursor-pointer"
-                (triggerPreviewDialog)="openPreviewDialog()"
-              ></app-upload-image-preview>
-            </span>
-
-            <span
-              *ngFor="
-                let pdf of headerDataForm.get('instructions').value.pdf;
-                index as i;
-                trackBy: trackBySelectedattachments
-              "
-              class="m-r-10"
-            >
-              <app-upload-pdf-preview
-                [pdf]="pdf"
-                (pdfIndexEmitter)="formPdfDeleteHandler($event)"
-              ></app-upload-pdf-preview>
-            </span>
-          </div>
+            class="skip-btn"
+            (click)="onCancel()"
+            translate="cancelBtn"
+          ></button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            class="next-btn"
+            (click)="next()"
+            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+            translate="nextBtn"
+          ></button>
         </div>
       </div>
     </div>

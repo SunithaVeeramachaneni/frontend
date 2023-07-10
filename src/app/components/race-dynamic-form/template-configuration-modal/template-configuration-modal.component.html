@@ -4,28 +4,6 @@
       <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
     </button>
   </mat-toolbar>
-
-  <div mat-dialog-actions align="end" class="buttons">
-    <button
-      mat-stroked-button
-      type="button"
-      color="primary"
-      class="skip-btn"
-      (click)="onCancel()"
-      translate="cancelBtn"
-    ></button>
-    <button
-      mat-raised-button
-      type="submit"
-      color="primary"
-      class="next-btn"
-      (click)="next()"
-      [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-      translate="nextBtn"
-    ></button>
-  </div>
-  <hr class="horizontal-line" />
-
   <div class="dis-flex form-content">
     <div class="width-5"></div>
     <div class="width-95">
@@ -105,316 +83,219 @@
           </mat-form-field>
         </div>
 
-        <p
-          class="form-name-description m-b-0 m-t-20"
-          translate="Notes and Attachments"
-        ></p>
-        <div class="notes_and_Attachment">
-          <mat-form-field
-            placeholder="Notes and Attachments"
-            class="notes_Attachment"
-            class="width-100"
-            appearance="outline"
-          >
-            <quill-material
-              [ngClass]="{
-                'display-toolbar': true
-              }"
-              formControlName="notesAttachment"
-            >
-            </quill-material>
-
-            <mat-error
-              *ngIf="processValidationErrors('name')"
-              class="m-5 error-fields"
-            >
-              pLEASE check you have exceeded limit
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="add-pdf">
-          <br />
-          <input
-            type="file"
-            class="file-upload"
-            accept="image/jpeg,image/jpg,image/png,application/pdf"
-            (change)="formFileUploadHandler($event)"
-            [hidden]="true"
-            #formFileUpload
-          />
-
-          <button
-            mat-button
-            color="primary"
-            class="addLogicBtn"
-            (click)="formFileUpload.click()"
-          >
-            <mat-icon class="icon">link</mat-icon>
-            <span translate="addImagesAndPDFBtn1"></span>
+        <div
+          class="additional-details"
+          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
+        >
+          <p translate="additionalDetails" class="additional-details-text"></p>
+          <button class="add-button" (click)="addAdditionalDetails()">
+            {{ 'add' | translate }}
           </button>
+        </div>
+        <div
+          class="label-value-text"
+          *ngIf="
+            headerDataForm.get('additionalDetails')['controls']?.length > 0
+          "
+        >
+          <div class="width-45 label">{{ 'label' | translate }}</div>
+          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+        </div>
+        <div formArrayName="additionalDetails">
+          <div
+            *ngFor="
+              let additionalDetails of getAdditionalDetailList();
+              let i = index
+            "
+          >
+            <div [formGroupName]="i" class="dis-flex">
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-5 symbol m-b-10 width-100"
+                >
+                  <input
+                    #labelInput
+                    matInput
+                    type="text"
+                    formControlName="label"
+                    class="example-input"
+                    [matAutocomplete]="autolabel"
+                    (click)="labelOptionClick(i)"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
 
-          <div class="attachments-container">
-            <span
-              *ngFor="
-                let image of headerDataForm.get('instructions').value.images;
-                index as i;
-                trackBy: trackBySelectedattachments
-              "
-              class="m-r-10"
-            >
-              <app-upload-image-preview
-                [image]="image"
-                (imageIndexEmitter)="formFileDeleteHandler($event)"
-                class="attachments cursor-pointer"
-                (triggerPreviewDialog)="openPreviewDialog()"
-              ></app-upload-image-preview>
-            </span>
-
-            <span
-              *ngFor="
-                let pdf of headerDataForm.get('instructions').value.pdf;
-                index as i;
-                trackBy: trackBySelectedattachments
-              "
-              class="m-r-10"
-            >
-              <app-upload-pdf-preview
-                [pdf]="pdf"
-                (pdfIndexEmitter)="formPdfDeleteHandler($event)"
-              ></app-upload-pdf-preview>
-            </span>
-            <div
-              class="additional-details"
-              *ngIf="
-                headerDataForm.get('additionalDetails')['controls'].length < 5
-              "
-            >
-              <p
-                translate="additionalDetails"
-                class="additional-details-text"
-              ></p>
-              <button class="add-button" (click)="addAdditionalDetails()">
-                {{ 'add' | translate }}
-              </button>
-            </div>
-            <div
-              class="label-value-text"
-              *ngIf="
-                headerDataForm.get('additionalDetails')['controls']?.length > 0
-              "
-            >
-              <div class="width-45 label">{{ 'label' | translate }}</div>
-              <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
-            </div>
-            <div formArrayName="additionalDetails">
-              <div
-                *ngFor="
-                  let additionalDetails of getAdditionalDetailList();
-                  let i = index
-                "
-              >
-                <div [formGroupName]="i" class="dis-flex">
-                  <div class="width-45">
-                    <mat-form-field
-                      appearance="outline"
-                      class="m-l-5 symbol m-b-10 width-100"
+                  <mat-autocomplete #autolabel="matAutocomplete">
+                    <mat-option
+                      *ngFor="let label of filteredLabels$ | async"
+                      [value]="label"
                     >
-                      <input
-                        #labelInput
-                        matInput
-                        type="text"
-                        formControlName="label"
-                        class="example-input"
-                        [matAutocomplete]="autolabel"
-                        (click)="labelOptionClick(i)"
-                      />
-                      <mat-icon matSuffix class="arrow"
-                        >arrow_drop_down</mat-icon
+                      {{ label }}
+                      <button
+                        mat-button
+                        class="remove-btn"
+                        (click)="removeLabel(label, i)"
                       >
-
-                      <mat-autocomplete #autolabel="matAutocomplete">
-                        <mat-option
-                          *ngFor="let label of filteredLabels$ | async"
-                          [value]="label"
-                        >
-                          {{ label }}
-                          <button
-                            mat-button
-                            class="remove-btn"
-                            (click)="removeLabel(label, i)"
-                          >
-                            <span>{{ 'removeBtn' | translate }}</span>
-                          </button>
-                        </mat-option>
-                        <mat-option
-                          *ngIf="
+                        <span>{{ 'removeBtn' | translate }}</span>
+                      </button>
+                    </mat-option>
+                    <mat-option
+                      *ngIf="
+                        headerDataForm.get('additionalDetails')['controls'][i]
+                          .value.label
+                      "
+                    >
+                      <ng-container>
+                        <button
+                          mat-button
+                          color="primary"
+                          class="p-0"
+                          (click)="storeDetails(i)"
+                          [disabled]="
                             headerDataForm.get('additionalDetails')['controls'][
                               i
-                            ].value.label
+                            ].invalid ||
+                            headerDataForm.get('additionalDetails')['controls'][
+                              i
+                            ].pristine
                           "
                         >
-                          <ng-container>
-                            <button
-                              mat-button
-                              color="primary"
-                              class="p-0"
-                              (click)="storeDetails(i)"
-                              [disabled]="
-                                headerDataForm.get('additionalDetails')[
-                                  'controls'
-                                ][i].invalid ||
-                                headerDataForm.get('additionalDetails')[
-                                  'controls'
-                                ][i].pristine
-                              "
-                            >
-                              <mat-icon class="m-r-5">add</mat-icon>
+                          <mat-icon class="m-r-5">add</mat-icon>
 
-                              <span
-                                >{{ 'addNew' | translate }} ({{
-                                  headerDataForm.get('additionalDetails')[
-                                    'controls'
-                                  ][i].value.label
-                                }})</span
-                              >
-                            </button>
-                          </ng-container>
-                        </mat-option>
-                      </mat-autocomplete>
-
-                      <mat-error
-                        *ngIf="
-                          processValidationErrorsAdditionalDetails(i, 'label')
-                        "
-                        class="m-t-5 error-fields"
-                      >
-                        {{
-                          errors?.label?.name
-                            | translate
-                              : {
-                                  name: 'label' | translate,
-                                  length: errors?.label?.length
-                                }
-                        }}
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-
-                  <div class="width-45">
-                    <mat-form-field
-                      appearance="outline"
-                      class="m-l-20 symbol m-b-10 width-100"
-                    >
-                      <input
-                        #valueInput
-                        matInput
-                        type="text"
-                        formControlName="value"
-                        [matAutocomplete]="autoValue"
-                        class="example-input"
-                        (click)="valueOptionClick(i)"
-                      />
-                      <mat-icon matSuffix class="arrow"
-                        >arrow_drop_down</mat-icon
-                      >
-
-                      <mat-autocomplete #autoValue="matAutocomplete">
-                        <mat-option
-                          *ngFor="let value of filteredValues$ | async"
-                          [value]="value"
-                        >
-                          {{ value }}
-                          <button
-                            mat-button
-                            class="remove-btn"
-                            (click)="removeValue(value, i)"
+                          <span
+                            >{{ 'addNew' | translate }} ({{
+                              headerDataForm.get('additionalDetails')[
+                                'controls'
+                              ][i].value.label
+                            }})</span
                           >
-                            <span>{{ 'removeBtn' | translate }}</span>
-                          </button>
-                        </mat-option>
+                        </button>
+                      </ng-container>
+                    </mat-option>
+                  </mat-autocomplete>
 
-                        <mat-option
-                          *ngIf="
+                  <mat-error
+                    *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
+                    class="m-t-5 error-fields"
+                  >
+                    {{
+                      errors?.label?.name
+                        | translate
+                          : {
+                              name: 'label' | translate,
+                              length: errors?.label?.length
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-20 symbol m-b-10 width-100"
+                >
+                  <input
+                    #valueInput
+                    matInput
+                    type="text"
+                    formControlName="value"
+                    [matAutocomplete]="autoValue"
+                    class="example-input"
+                    (click)="valueOptionClick(i)"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+
+                  <mat-autocomplete #autoValue="matAutocomplete">
+                    <mat-option
+                      *ngFor="let value of filteredValues$ | async"
+                      [value]="value"
+                    >
+                      {{ value }}
+                      <button
+                        mat-button
+                        class="remove-btn"
+                        (click)="removeValue(value, i)"
+                      >
+                        <span>{{ 'removeBtn' | translate }}</span>
+                      </button>
+                    </mat-option>
+
+                    <mat-option
+                      *ngIf="
+                        headerDataForm.get('additionalDetails')['controls'][i][
+                          'value'
+                        ].value
+                      "
+                    >
+                      <button
+                        mat-button
+                        color="primary"
+                        class="p-0"
+                        (click)="storeValueDetails(i)"
+                        [disabled]="
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .invalid ||
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .pristine
+                        "
+                      >
+                        <mat-icon class="m-r-5">add</mat-icon>
+
+                        <span
+                          >{{ 'addNew' | translate }} ({{
                             headerDataForm.get('additionalDetails')['controls'][
                               i
                             ]['value'].value
-                          "
+                          }})</span
                         >
-                          <button
-                            mat-button
-                            color="primary"
-                            class="p-0"
-                            (click)="storeValueDetails(i)"
-                            [disabled]="
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i].invalid ||
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i].pristine
-                            "
-                          >
-                            <mat-icon class="m-r-5">add</mat-icon>
+                      </button>
+                    </mat-option>
+                  </mat-autocomplete>
 
-                            <span
-                              >{{ 'addNew' | translate }} ({{
-                                headerDataForm.get('additionalDetails')[
-                                  'controls'
-                                ][i]['value'].value
-                              }})</span
-                            >
-                          </button>
-                        </mat-option>
-                      </mat-autocomplete>
-
-                      <mat-error
-                        *ngIf="
-                          processValidationErrorsAdditionalDetails(i, 'value')
-                        "
-                        class="m-t-5 error-fields"
-                      >
-                        {{
-                          errors?.value?.name
-                            | translate
-                              : {
-                                  name: 'value' | translate,
-                                  length: errors?.value?.length
-                                }
-                        }}
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="width-10 cancel-icon">
-                    <svg-icon
-                      icon="icon-closeIcon"
-                      class="close-icon"
-                      (click)="deleteAdditionalDetails(i)"
-                    ></svg-icon>
-                  </div>
-                </div>
+                  <mat-error
+                    *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
+                    class="m-t-5 error-fields"
+                  >
+                    {{
+                      errors?.value?.name
+                        | translate
+                          : {
+                              name: 'value' | translate,
+                              length: errors?.value?.length
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
               </div>
-
-              <div mat-dialog-actions align="end" class="buttons">
-                <button
-                  mat-stroked-button
-                  type="button"
-                  color="primary"
-                  class="skip-btn"
-                  (click)="onCancel()"
-                  translate="cancelBtn"
-                ></button>
-                <button
-                  mat-raised-button
-                  type="submit"
-                  color="primary"
-                  class="next-btn"
-                  (click)="next()"
-                  [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-                  translate="nextBtn"
-                ></button>
+              <div class="width-10 cancel-icon">
+                <svg-icon
+                  icon="icon-closeIcon"
+                  class="close-icon"
+                  (click)="deleteAdditionalDetails(i)"
+                ></svg-icon>
               </div>
             </div>
+          </div>
+
+          <div mat-dialog-actions align="end" class="buttons">
+            <button
+              mat-stroked-button
+              type="button"
+              color="primary"
+              class="skip-btn"
+              (click)="onCancel()"
+              translate="cancelBtn"
+            ></button>
+            <button
+              mat-raised-button
+              type="submit"
+              color="primary"
+              class="next-btn"
+              (click)="next()"
+              [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+              translate="nextBtn"
+            ></button>
           </div>
         </div>
       </div>

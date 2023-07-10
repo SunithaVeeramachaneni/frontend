@@ -4,11 +4,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  Inject,
   OnInit,
   ViewChild
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
@@ -16,14 +17,15 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, merge, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators
+  Validators,
+  ValidatorFn
 } from '@angular/forms';
 import { ValidationError, FormMetadata } from 'src/app/interfaces';
 import { Router } from '@angular/router';
@@ -43,12 +45,10 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
-import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { RoundPlanConfigurationService } from 'src/app/forms/services/round-plan-configuration.service';
-import { RoundPlanFile } from 'src/app/interfaces/master-data-management/round-plan';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { TenantService } from '../../tenant-management/services/tenant.service';
-import { ToastService } from 'src/app/shared/toast';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { PDFDocument } from 'pdf-lib';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -80,8 +80,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allPlantsData = [];
   plantInformation = [];
   changedValues: any;
-
-  name: string;
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
@@ -98,8 +96,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   moduleName: string;
   form: FormGroup;
   options: any = [];
-  filteredMediaType: any;
-  s3BaseUrl: string;
+  filteredMediaType: any = { mediaType: [] };
+  filteredMediaTypeIds: any = { mediaIds: [] };
+  filteredMediaPdfTypeIds: any = [];
+  filteredMediaPdfType: any = [];
+  base64result: string;
+  pdfFiles: any = [];
   additionalDetails: FormArray;
   labelSelected: any;
   constructor(
@@ -113,9 +115,8 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private cdrf: ChangeDetectorRef,
     private toastService: ToastService,
     public dialog: MatDialog,
-    private toast: ToastService,
-    private tenantService: TenantService,
-    private roundPlanConfigurationService: RoundPlanConfigurationService
+    @Inject(MAT_DIALOG_DATA) public data,
+    private imageCompress: NgxImageCompressService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -143,12 +144,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
     const htmlTagsRegex = /<[^>]+>/g;
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const value = control.value;
-      if (typeof value === 'string') {
-        const textWithoutTags = value.replace(htmlTagsRegex, '');
-        if (textWithoutTags.length > maxLength) {
-          return { maxLength: { value } };
-        }
+      const textWithoutTags = control.value.replace(htmlTagsRegex, '');
+      if (textWithoutTags.length > maxLength) {
+        return { maxLength: { value: control.value } };
       }
       return null;
     };
@@ -173,21 +171,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      instructions: [
-        {
-          images: [],
-          pdf: []
-        }
-      ],
-      notesAttachment: ['', [this.maxLengthWithoutBulletPoints(250)]],
-      additionalDetails: this.fb.array([])
+      additionalDetails: this.fb.array([]),
+      instructions: this.fb.group({
+        notes: ['', [this.maxLengthWithoutBulletPoints(250)]],
+        attachments: ''
+      })
     });
-    const {
-      s3Details: { bucket, region }
-    } = this.tenantService.getTenantInfo();
-
-    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
-
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -257,19 +246,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     const newTags = [];
-    const pdfs = this.headerDataForm.get('instructions').value.pdf;
-    const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
-
-    const images = this.headerDataForm.get('instructions').value.images;
-    const imageKeys = images.map((image) => image.objectKey.substring(7));
-    const newAttachments = [...imageKeys, ...pdfKeys];
-    const notesAdd = this.headerDataForm.get('notesAttachment').value;
-
-    const instructions = {
-      notes: '',
-      attachments: '',
-      pdfDocs: ''
-    };
+    const attachmentskeys = this.filteredMediaTypeIds.mediaIds.concat(
+      this.filteredMediaPdfTypeIds
+    );
+    this.headerDataForm
+      .get('instructions.attachments')
+      .setValue(attachmentskeys);
 
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
@@ -309,28 +291,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
-      newAttachments.forEach((url) => {
-        if (
-          url.endsWith('.png') ||
-          url.endsWith('.jpeg') ||
-          url.endsWith('.jpg')
-        ) {
-          instructions.attachments += `${
-            instructions.attachments.length > 0 ? ', ' : ''
-          }${url}`;
-        } else if (url.endsWith('.pdf')) {
-          instructions.pdfDocs += `${
-            instructions.pdfDocs.length > 0 ? ',' : ''
-          }${url}`;
-        }
-      });
-      this.headerDataForm.patchValue({
-        instructions: {
-          attachments: instructions.attachments,
-          notes: notesAdd,
-          pdfDocs: instructions.pdfDocs
-        }
-      });
+
       this.store.dispatch(
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
@@ -388,61 +349,118 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  sendFileToS3(file, params): void {
-    const { originalValue, isImage } = params;
-
-    this.roundPlanConfigurationService.uploadToS3$(file).subscribe((event) => {
-      const value: RoundPlanFile = {
-        name: file.name,
-        size: file.size,
-        objectKey: event
-      };
-
-      if (isImage) {
-        originalValue.images.push(value);
-      } else {
-        originalValue.pdf.push(value);
-      }
-      this.headerDataForm.get('instructions').setValue(originalValue);
-    });
-  }
-
   roundplanFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
-    const allowedFileTypes: string[] = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'application/pdf'
-    ];
-    const originalValue = this.headerDataForm.get('instructions').value;
-    const invalidFiles = files.filter(
-      (file) => !allowedFileTypes.includes(file.type)
-    );
-    if (invalidFiles.length > 0) {
-      this.toast.show({
-        text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
-        type: 'warning'
-      });
-    } else {
-      files.forEach((file) => {
-        const isImage = file.type === 'application/pdf' ? false : true;
-        this.sendFileToS3(file, {
-          originalValue,
-          isImage
-        });
-      });
+    const reader = new FileReader();
+    const file: File = files[0];
+    const size = file.size;
+    const maxSize = 390000;
+    if (file.name.endsWith('.pdf') && size <= maxSize) {
+      this.pdfFiles.push(file);
     }
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      this.base64result = reader?.result as string;
+
+      if (this.base64result.includes('data:application/pdf;base64,')) {
+        this.filteredMediaPdfType.push(this.base64result);
+        this.resizePdf(this.base64result).then(async (compressedPdf) => {
+          const onlybase64 = compressedPdf.split(',')[1];
+
+          await this.operatorRoundsService
+            .uploadAttachments$(onlybase64)
+            .pipe(
+              tap((response) => {
+                const responsenew =
+                  response?.data?.createRoundPlanAttachments?.id;
+                this.filteredMediaPdfTypeIds.push(responsenew);
+              })
+            )
+            .subscribe();
+        });
+      } else {
+        this.filteredMediaType = {
+          mediaType: [...this.filteredMediaType.mediaType, this.base64result]
+        };
+      }
+
+      this.resizeImage(this.base64result).then(async (compressedImage) => {
+        const onlybase64 = compressedImage.split(',')[1];
+        await this.operatorRoundsService
+          .uploadAttachments$(onlybase64)
+          .pipe(
+            tap((response) => {
+              const responsenew = response?.data?.createFormAttachments?.id;
+
+              this.filteredMediaTypeIds = {
+                mediaIds: [...this.filteredMediaTypeIds.mediaIds, responsenew]
+              };
+              this.cdrf.detectChanges();
+            })
+          )
+          .subscribe();
+      });
+
+      if (size > maxSize) {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Please select a file smaller than 390KB'
+        });
+      }
+    };
   };
 
-  openPreviewDialog() {
-    const attachments = this.headerDataForm.get('instructions').value;
-    const filteredMediaType = [...attachments.images];
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
 
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = 400 * 1024;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
+      });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  openPreviewDialog() {
+    const filteredMediaTypes = [...this.filteredMediaType.mediaType];
     const slideshowImages = [];
-    filteredMediaType.forEach((media) => {
-      slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
+    filteredMediaTypes.forEach((media) => {
+      slideshowImages.push(media);
     });
 
     if (slideshowImages) {
@@ -457,32 +475,18 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   roundPlanFileDeleteHandler(index: number): void {
-    const attachments = this.headerDataForm.get('instructions').value;
-    if (attachments) {
-      const deleteObservable = of(
-        this.roundPlanConfigurationService.deleteFromS3(
-          attachments.images.objectKey
-        )
-      );
-      deleteObservable.subscribe(() => {
-        attachments.images.splice(index, 1);
-      });
-    }
-    this.headerDataForm.get('instructions').setValue(attachments);
+    this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
+      (_, i) => i !== index
+    );
+    this.filteredMediaTypeIds.mediaIds =
+      this.filteredMediaTypeIds.mediaIds.filter((_, i) => i !== index);
   }
 
   roundPlanPdfDeleteHandler(index: number): void {
-    const attachments = this.headerDataForm.get('instructions').value;
-    if (attachments) {
-      this.roundPlanConfigurationService.deleteFromS3(
-        attachments.pdf.objectKey
-      );
-      .subscribe((res) => {
-        console.log('hit', res);
-        if (res) attachments.pdf.splice(index, 1);
-      });
-    }
-    this.headerDataForm.get('instructions').setValue(attachments);
+    this.pdfFiles = this.pdfFiles.filter((_, i) => i !== index);
+    this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(
+      (_, i) => i !== index
+    );
   }
 
   processValidationErrorsAdditionalDetails(

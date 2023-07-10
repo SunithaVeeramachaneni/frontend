@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-upload-image-preview',
@@ -8,29 +7,17 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 })
 export class UploadImagePreviewComponent implements OnInit {
   @Input() image;
-
+  @Input() index;
   @Output() triggerPreviewDialog: EventEmitter<null> = new EventEmitter();
-  @Output() imageIndexEmitter: EventEmitter<any> = new EventEmitter<any>();
+  @Output() imageIndexEmitter: EventEmitter<number> =
+    new EventEmitter<number>();
 
-  s3BaseUrl: string;
-  constructor(private tenantService: TenantService) {}
-
-  ngOnInit(): void {}
-
-  imageURL() {
-    const {
-      s3Details: { bucket, region }
-    } = this.tenantService.getTenantInfo();
-
-    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
-
-    const imageUrl = `${this.s3BaseUrl}${this.image.objectKey}`;
-
-    return imageUrl;
+  ngOnInit(): void {
+    console.log('image', this.image);
   }
 
   triggerDelete() {
-    this.imageIndexEmitter.emit({ index: this.image.index, type: 'image' });
+    this.imageIndexEmitter.emit(this.index);
   }
 
   triggerPreview() {

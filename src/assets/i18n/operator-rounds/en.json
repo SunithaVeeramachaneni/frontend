@@ -19,7 +19,7 @@
   "addFormNameMandatory": "Plan Name *",
   "addFormDescription": "Plan Description",
   "tags": "Tags",
-  "nextBtn": "Save & Go Next",
+  "nextBtn": "Save & Next",
   "nextBtnPreview": "Next",
   "next": "Next",
   "skipBtn": "Skip",
@@ -313,7 +313,7 @@
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
-  "addImagesAndPDFBtn1": "Add images or pdf",
+  "addImagesAndPDFBtnNew": "Add images or pdf",
   "nodeId": "{type} Id: {id}",
   "typePlaceholder": "Type",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters",
@@ -357,5 +357,6 @@
   "skipped": "Skipped",
   "total": "Total",
   "totalPages": "Total Pages",
-  "reportGeneratedOn": "Report Generated On"
+  "reportGeneratedOn": "Report Generated On",
+  "addNotes": "Add Notes"
 }

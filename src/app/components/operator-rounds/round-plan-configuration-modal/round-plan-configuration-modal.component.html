@@ -5,27 +5,6 @@
     </button>
   </mat-toolbar>
 
-  <div mat-dialog-actions class="action-buttons">
-    <button
-      mat-stroked-button
-      type="button"
-      color="primary"
-      class="skip-btn"
-      (click)="onCancel()"
-      translate="cancelBtn"
-    ></button>
-    <button
-      mat-raised-button
-      type="submit"
-      color="primary"
-      class="next-btn"
-      (click)="next()"
-      [disabled]="headerDataForm.invalid || headerDataForm.pristine"
-      translate="nextBtn"
-    ></button>
-  </div>
-  <hr class="horizontal-line" />
-
   <div class="dis-flex form-content">
     <div class="width-100">
       <div class="form-detials">
@@ -177,13 +156,12 @@
           </mat-form-field>
         </div>
 
-        <div class="notes_and_Attachment">
+        <div class="notes-attachment" formGroupName="instructions">
           <p
             class="form-name-description m-b-0 m-t-20"
             translate="notesAndAttachments"
           ></p>
           <mat-form-field
-            placeholder="Notes and Attachments"
             class="notes_Attachment width-100"
             appearance="outline"
           >
@@ -191,7 +169,8 @@
               [ngClass]="{
                 'display-toolbar': true
               }"
-              formControlName="notesAttachment"
+              formControlName="notes"
+              [placeholder]="'addNotes' | translate"
             >
             </quill-material>
 
@@ -204,7 +183,7 @@
           </mat-form-field>
         </div>
 
-        <div class="add-pdf">
+        <div class="add-attachments">
           <br />
           <input
             type="file"
@@ -212,166 +191,119 @@
             accept="image/jpeg,image/jpg,image/png,application/pdf"
             (change)="roundplanFileUploadHandler($event)"
             [hidden]="true"
-            #roundplanFileUpload
+            #roundPlanFileUpload
           />
 
-          <div
-            class="additional-details"
-            *ngIf="
-              headerDataForm.get('additionalDetails')['controls'].length < 5
-            "
+          <button
+            mat-button
+            color="primary"
+            class="upload-button"
+            (click)="roundPlanFileUpload.click()"
           >
-            <p
-              translate="additionalDetails"
-              class="additional-details-text"
-            ></p>
-            <button class="add-button" (click)="addAdditionalDetails()">
-              {{ 'add' | translate }}
-            </button>
-          </div>
-          <div
-            class="label-value-text"
-            *ngIf="
-              headerDataForm.get('additionalDetails')['controls']?.length > 0
-            "
-          >
-            <div class="width-45 label">{{ 'label' | translate }}</div>
-            <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
-          </div>
-          <div formArrayName="additionalDetails">
-            <div
+            <mat-icon class="icon-upload">link</mat-icon>
+            <span translate="addImagesAndPDFBtnNew"></span>
+          </button>
+          <div class="attachments-container">
+            <span
               *ngFor="
-                let additionalDetails of getAdditionalDetailList();
-                let i = index
+                let image of filteredMediaType.mediaType;
+                index as i;
+                trackBy: trackBySelectedattachments
               "
+              class="m-r-10"
             >
-              <div [formGroupName]="i" class="dis-flex">
-                <div class="width-45">
-                  <mat-form-field
-                    appearance="outline"
-                    class="m-l-5 symbol m-b-10 width-100"
-                  >
-                    <input
-                      #labelInput
-                      matInput
-                      type="text"
-                      formControlName="label"
-                      class="example-input"
-                      [matAutocomplete]="autolabel"
-                      (click)="labelOptionClick(i)"
-                    />
-                    <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+              <app-upload-image-preview
+                [image]="image"
+                (imageIndexEmitter)="roundPlanFileDeleteHandler(i)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-upload-image-preview>
+            </span>
 
-                    <mat-autocomplete #autolabel="matAutocomplete">
-                      <mat-option
-                        *ngFor="let label of filteredLabels$ | async"
-                        [value]="label"
-                      >
-                        {{ label }}
-                        <button
-                          mat-button
-                          class="remove-btn"
-                          (click)="removeLabel(label, i)"
-                        >
-                          <span>{{ 'removeBtn' | translate }}</span>
-                        </button>
-                      </mat-option>
-                      <mat-option
-                        *ngIf="
-                          headerDataForm.get('additionalDetails')['controls'][i]
-                            .value.label
-                        "
-                      >
-                        <ng-container>
-                          <button
-                            mat-button
-                            color="primary"
-                            class="p-0"
-                            (click)="storeDetails(i)"
-                            [disabled]="
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i].invalid ||
-                              headerDataForm.get('additionalDetails')[
-                                'controls'
-                              ][i].pristine
-                            "
-                          >
-                            <mat-icon class="m-r-5">add</mat-icon>
+            <span
+              *ngFor="
+                let pdf of pdfFiles;
+                index as i;
+                trackBy: trackBySelectedattachments
+              "
+              class="m-r-10"
+            >
+              <app-instruction-pdf
+                [pdf]="pdf"
+                (indexEmitter)="roundPlanPdfDeleteHandler(i)"
+              ></app-instruction-pdf>
+            </span>
+          </div>
+        </div>
 
-                            <span
-                              >{{ 'addNew' | translate }} ({{
-                                headerDataForm.get('additionalDetails')[
-                                  'controls'
-                                ][i].value.label
-                              }})</span
-                            >
-                          </button>
-                        </ng-container>
-                      </mat-option>
-                    </mat-autocomplete>
+        <div
+          class="additional-details"
+          *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
+        >
+          <p translate="additionalDetails" class="additional-details-text"></p>
+          <button class="add-button" (click)="addAdditionalDetails()">
+            {{ 'add' | translate }}
+          </button>
+        </div>
+        <div
+          class="label-value-text"
+          *ngIf="
+            headerDataForm.get('additionalDetails')['controls']?.length > 0
+          "
+        >
+          <div class="width-45 label">{{ 'label' | translate }}</div>
+          <div class="width-45 m-l-20 value">{{ 'value' | translate }}</div>
+        </div>
+        <div formArrayName="additionalDetails">
+          <div
+            *ngFor="
+              let additionalDetails of getAdditionalDetailList();
+              let i = index
+            "
+          >
+            <div [formGroupName]="i" class="dis-flex">
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-5 symbol m-b-10 width-100"
+                >
+                  <input
+                    #labelInput
+                    matInput
+                    type="text"
+                    formControlName="label"
+                    class="example-input"
+                    [matAutocomplete]="autolabel"
+                    (click)="labelOptionClick(i)"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
 
-                    <mat-error
-                      *ngIf="
-                        processValidationErrorsAdditionalDetails(i, 'label')
-                      "
-                      class="m-t-5 error-fields"
+                  <mat-autocomplete #autolabel="matAutocomplete">
+                    <mat-option
+                      *ngFor="let label of filteredLabels$ | async"
+                      [value]="label"
                     >
-                      {{
-                        errors?.label?.name
-                          | translate
-                            : {
-                                name: 'label' | translate,
-                                length: errors?.label?.length
-                              }
-                      }}
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-
-                <div class="width-45">
-                  <mat-form-field
-                    appearance="outline"
-                    class="m-l-20 symbol m-b-10 width-100"
-                  >
-                    <input
-                      #valueInput
-                      matInput
-                      type="text"
-                      formControlName="value"
-                      [matAutocomplete]="autoValue"
-                      class="example-input"
-                      (click)="valueOptionClick(i)"
-                    />
-                    <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
-
-                    <mat-autocomplete #autoValue="matAutocomplete">
-                      <mat-option
-                        *ngFor="let value of filteredValues$ | async"
-                        [value]="value"
+                      {{ label }}
+                      <button
+                        mat-button
+                        class="remove-btn"
+                        (click)="removeLabel(label, i)"
                       >
-                        {{ value }}
-                        <button
-                          mat-button
-                          class="remove-btn"
-                          (click)="removeValue(value, i)"
-                        >
-                          <span>{{ 'removeBtn' | translate }}</span>
-                        </button>
-                      </mat-option>
-
-                      <mat-option
-                        *ngIf="
-                          headerDataForm.get('additionalDetails')['controls'][
-                            i
-                          ]['value'].value
-                        "
-                      >
+                        <span>{{ 'removeBtn' | translate }}</span>
+                      </button>
+                    </mat-option>
+                    <mat-option
+                      *ngIf="
+                        headerDataForm.get('additionalDetails')['controls'][i]
+                          .value.label
+                      "
+                    >
+                      <ng-container>
                         <button
                           mat-button
                           color="primary"
                           class="p-0"
-                          (click)="storeValueDetails(i)"
+                          (click)="storeDetails(i)"
                           [disabled]="
                             headerDataForm.get('additionalDetails')['controls'][
                               i
@@ -387,83 +319,137 @@
                             >{{ 'addNew' | translate }} ({{
                               headerDataForm.get('additionalDetails')[
                                 'controls'
-                              ][i]['value'].value
+                              ][i].value.label
                             }})</span
                           >
                         </button>
-                      </mat-option>
-                    </mat-autocomplete>
+                      </ng-container>
+                    </mat-option>
+                  </mat-autocomplete>
 
-                    <mat-error
-                      *ngIf="
-                        processValidationErrorsAdditionalDetails(i, 'value')
-                      "
-                      class="m-t-5 error-fields"
+                  <mat-error
+                    *ngIf="processValidationErrorsAdditionalDetails(i, 'label')"
+                    class="m-t-5 error-fields"
+                  >
+                    {{
+                      errors?.label?.name
+                        | translate
+                          : {
+                              name: 'label' | translate,
+                              length: errors?.label?.length
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="width-45">
+                <mat-form-field
+                  appearance="outline"
+                  class="m-l-20 symbol m-b-10 width-100"
+                >
+                  <input
+                    #valueInput
+                    matInput
+                    type="text"
+                    formControlName="value"
+                    [matAutocomplete]="autoValue"
+                    class="example-input"
+                    (click)="valueOptionClick(i)"
+                  />
+                  <mat-icon matSuffix class="arrow">arrow_drop_down</mat-icon>
+
+                  <mat-autocomplete #autoValue="matAutocomplete">
+                    <mat-option
+                      *ngFor="let value of filteredValues$ | async"
+                      [value]="value"
                     >
-                      {{
-                        errors?.value?.name
-                          | translate
-                            : {
-                                name: 'value' | translate,
-                                length: errors?.value?.length
-                              }
-                      }}
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="width-10 cancel-icon">
-                  <svg-icon
-                    icon="icon-closeIcon"
-                    class="close-icon"
-                    (click)="deleteAdditionalDetails(i)"
-                  ></svg-icon>
-                </div>
+                      {{ value }}
+                      <button
+                        mat-button
+                        class="remove-btn"
+                        (click)="removeValue(value, i)"
+                      >
+                        <span>{{ 'removeBtn' | translate }}</span>
+                      </button>
+                    </mat-option>
+
+                    <mat-option
+                      *ngIf="
+                        headerDataForm.get('additionalDetails')['controls'][i][
+                          'value'
+                        ].value
+                      "
+                    >
+                      <button
+                        mat-button
+                        color="primary"
+                        class="p-0"
+                        (click)="storeValueDetails(i)"
+                        [disabled]="
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .invalid ||
+                          headerDataForm.get('additionalDetails')['controls'][i]
+                            .pristine
+                        "
+                      >
+                        <mat-icon class="m-r-5">add</mat-icon>
+
+                        <span
+                          >{{ 'addNew' | translate }} ({{
+                            headerDataForm.get('additionalDetails')['controls'][
+                              i
+                            ]['value'].value
+                          }})</span
+                        >
+                      </button>
+                    </mat-option>
+                  </mat-autocomplete>
+
+                  <mat-error
+                    *ngIf="processValidationErrorsAdditionalDetails(i, 'value')"
+                    class="m-t-5 error-fields"
+                  >
+                    {{
+                      errors?.value?.name
+                        | translate
+                          : {
+                              name: 'value' | translate,
+                              length: errors?.value?.length
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="width-10 cancel-icon">
+                <svg-icon
+                  icon="icon-closeIcon"
+                  class="close-icon"
+                  (click)="deleteAdditionalDetails(i)"
+                ></svg-icon>
               </div>
             </div>
           </div>
+        </div>
 
-          <div mat-dialog-actions align="end" class="buttons">
-            <button
-              mat-button
-              color="primary"
-              class="addLogicBtn"
-              (click)="roundplanFileUpload.click()"
-            >
-              <mat-icon class="icon">link</mat-icon>
-              <span translate="addImagesAndPDFBtn1"></span>
-            </button>
-            <div class="attachments-container">
-              <span
-                *ngFor="
-                  let image of headerDataForm.get('instructions').value.images;
-                  index as i;
-                  trackBy: trackBySelectedattachments
-                "
-                class="m-r-10"
-              >
-                <app-upload-image-preview
-                  [image]="image"
-                  (imageIndexEmitter)="roundPlanFileDeleteHandler($event)"
-                  class="attachments cursor-pointer"
-                  (triggerPreviewDialog)="openPreviewDialog()"
-                ></app-upload-image-preview>
-              </span>
-
-              <span
-                *ngFor="
-                  let pdf of headerDataForm.get('instructions').value.pdf;
-                  index as i;
-                  trackBy: trackBySelectedattachments
-                "
-                class="m-r-10"
-              >
-                <app-upload-pdf-preview
-                  [pdf]="pdf"
-                  (pdfIndexEmitter)="roundPlanPdfDeleteHandler($event)"
-                ></app-upload-pdf-preview>
-              </span>
-            </div>
-          </div>
+        <div mat-dialog-actions class="buttons">
+          <button
+            mat-stroked-button
+            type="button"
+            color="primary"
+            class="skip-btn"
+            (click)="onCancel()"
+            translate="cancelBtn"
+          ></button>
+          <button
+            mat-raised-button
+            type="submit"
+            color="primary"
+            class="next-btn"
+            (click)="next()"
+            [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+            translate="nextBtn"
+          ></button>
         </div>
       </div>
     </div>

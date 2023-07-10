@@ -17,7 +17,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { BehaviorSubject, Observable, merge, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -27,7 +27,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
-import { FormUploadFile, ValidationError } from 'src/app/interfaces';
+import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
@@ -45,8 +45,11 @@ import { ToastService } from 'src/app/shared/toast';
 import { MatDialog } from '@angular/material/dialog';
 import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
 import { TenantService } from '../../tenant-management/services/tenant.service';
-import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { PDFDocument } from 'pdf-lib';
+// import { PDFDocumentFactory, PDFDocumentWriter } from 'pdfjs-dist';
+
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
@@ -87,8 +90,13 @@ export class FormConfigurationModalComponent implements OnInit {
   additionalDetails: FormArray;
   labelSelected: any;
   options: any = [];
-  filteredMediaType: any;
-  s3BaseUrl: string;
+  filteredMediaType: any = { mediaType: [] };
+  filteredMediaTypeIds: any = { mediaIds: [] };
+  filteredMediaPdfTypeIds: any = [];
+  filteredMediaPdfType: any = [];
+  base64result: string;
+  pdfFiles: any = [];
+  imageFiles: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -105,7 +113,7 @@ export class FormConfigurationModalComponent implements OnInit {
     private toast: ToastService,
     public dialog: MatDialog,
     public tenantService: TenantService,
-    private formConfigurationService: FormConfigurationService
+    private imageCompress: NgxImageCompressService
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -153,22 +161,13 @@ export class FormConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      instructions: [
-        {
-          images: [],
-          pdf: []
-        }
-      ],
-      notesAttachment: ['', [this.maxLengthWithoutBulletPoints(250)]],
-      additionalDetails: this.fb.array([])
+
+      additionalDetails: this.fb.array([]),
+      instructions: this.fb.group({
+        notes: ['', [this.maxLengthWithoutBulletPoints(250)]],
+        attachments: ''
+      })
     });
-
-    const {
-      s3Details: { bucket, region }
-    } = this.tenantService.getTenantInfo();
-
-    this.s3BaseUrl = `https://${bucket}.s3.${region}.amazonaws.com/`;
-
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -271,18 +270,13 @@ export class FormConfigurationModalComponent implements OnInit {
     );
 
     const newTags = [];
-    const instructions = {
-      notes: '',
-      attachments: '',
-      pdfDocs: ''
-    };
-    const pdfs = this.headerDataForm.get('instructions').value.pdf;
-    const pdfKeys = pdfs.map((pdf) => pdf.objectKey.substring(7));
+    const attachmentskeys = this.filteredMediaTypeIds.mediaIds.concat(
+      this.filteredMediaPdfTypeIds
+    );
 
-    const images = this.headerDataForm.get('instructions').value.images;
-    const imageKeys = images.map((image) => image.objectKey.substring(7));
-    const newAttachments = [...imageKeys, ...pdfKeys];
-    const notesAdd = this.headerDataForm.get('notesAttachment').value;
+    this.headerDataForm
+      .get('instructions.attachments')
+      .setValue(attachmentskeys);
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -320,28 +314,7 @@ export class FormConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
-      for (const url of newAttachments) {
-        if (
-          url.endsWith('.png') ||
-          url.endsWith('.jpeg') ||
-          url.endsWith('.jpg')
-        ) {
-          if (instructions.attachments.length > 0) {
-            instructions.attachments += ', ';
-          }
-          instructions.attachments += url;
-        } else if (url.endsWith('.pdf')) {
-          {
-            if (instructions.pdfDocs.length > 0) {
-              instructions.pdfDocs += ',';
-            }
-            instructions.pdfDocs += url;
-          }
-        }
-      }
-      instructions.notes += notesAdd;
-      this.headerDataForm.get('notesAttachment').setValue(notesAdd);
-      this.headerDataForm.get('instructions').setValue(instructions);
+
       this.store.dispatch(
         BuilderConfigurationActions.createForm({
           formMetadata: {
@@ -396,68 +369,117 @@ export class FormConfigurationModalComponent implements OnInit {
     return !touched || this.errors[controlName] === null ? false : true;
   }
 
-  getS3Url(filePath: string) {
-    return `${this.s3BaseUrl}public/${filePath}`;
-  }
-
-  sendFileToS3(file, params): void {
-    const { originalValue, isImage } = params;
-    this.formConfigurationService.uploadToS3$(file).subscribe((event) => {
-      const value: FormUploadFile = {
-        name: file.name,
-        size: file.size,
-        objectKey: event
-      };
-      if (isImage) {
-        originalValue.images.push(value);
-      } else {
-        originalValue.pdf.push(value);
-      }
-
-      this.headerDataForm.get('instructions').setValue(originalValue);
-    });
-  }
-
   formFileUploadHandler = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
-    const allowedFileTypes: string[] = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'application/pdf'
-    ];
+    const reader = new FileReader();
+    const file: File = files[0];
+    const size = file.size;
+    const maxSize = 390000;
+    if (file.name.endsWith('.pdf') && size <= maxSize) {
+      this.pdfFiles.push(file);
+    }
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      this.base64result = reader?.result as string;
 
-    const originalValue = this.headerDataForm.get('instructions').value;
-    for (const file of files) {
-      if (allowedFileTypes.indexOf(file.type) === -1) {
-        this.toast.show({
-          text: 'Invalid file type, only JPG/JPEG/PNG/PDF accepted.',
-          type: 'warning'
-        });
-        return;
-      }
-      if (file.type === 'application/pdf') {
-        this.sendFileToS3(file, {
-          originalValue,
-          isImage: false
+      if (this.base64result.includes('data:application/pdf;base64,')) {
+        this.filteredMediaPdfType.push(this.base64result);
+        this.resizePdf(this.base64result).then((compressedPdf) => {
+          const onlybase64 = compressedPdf.split(',')[1];
+          this.rdfService
+            .uploadAttachments$(onlybase64)
+            .pipe(
+              tap((response) => {
+                const responsenew = response?.data?.createFormAttachments?.id;
+                this.filteredMediaPdfTypeIds.push(responsenew);
+              })
+            )
+            .subscribe();
         });
       } else {
-        this.sendFileToS3(file, {
-          originalValue,
-          isImage: true
+        this.filteredMediaType = {
+          mediaType: [...this.filteredMediaType.mediaType, this.base64result]
+        };
+
+        this.resizeImage(this.base64result).then((compressedImage) => {
+          const onlybase64 = compressedImage.split(',')[1];
+          this.rdfService
+            .uploadAttachments$(onlybase64)
+            .pipe(
+              tap((response) => {
+                const responsenew = response?.data?.createFormAttachments?.id;
+
+                this.filteredMediaTypeIds = {
+                  mediaIds: [...this.filteredMediaTypeIds.mediaIds, responsenew]
+                };
+
+                this.cdrf.detectChanges();
+              })
+            )
+            .subscribe();
         });
       }
-    }
+
+      if (size > maxSize) {
+        this.toastService.show({
+          type: 'warning',
+          text: 'Please select a file smaller than 390KB'
+        });
+      }
+    };
   };
 
-  openPreviewDialog() {
-    const attachments = this.headerDataForm.get('instructions').value;
-    const filteredMediaType1 = [...attachments.images];
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
 
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = 400 * 1024;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
+      });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  openPreviewDialog() {
+    const filteredMediaTypes = [...this.filteredMediaType.mediaType];
     const slideshowImages = [];
-    filteredMediaType1.forEach((media) => {
-      slideshowImages.push(`${this.s3BaseUrl}${media.objectKey}`);
+    filteredMediaTypes.forEach((media) => {
+      slideshowImages.push(media);
     });
 
     if (slideshowImages) {
@@ -472,24 +494,18 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   formFileDeleteHandler(index: number): void {
-    const attachments = this.headerDataForm.get('instructions').value;
-    if (attachments) {
-      this.formConfigurationService.deleteFromS3(attachments.images.objectKey);
-
-      attachments.images.splice(index, 1);
-      this.headerDataForm.get('instructions').setValue(attachments);
-    }
+    this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
+      (_, i) => i !== index
+    );
+    this.filteredMediaTypeIds.mediaIds =
+      this.filteredMediaTypeIds.mediaIds.filter((_, i) => i !== index);
   }
 
   formPdfDeleteHandler(index: number): void {
-    const attachments = this.headerDataForm.get('instructions').value;
-    if (attachments) {
-      this.formConfigurationService.deleteFromS3(attachments.pdf.objectKey);
-
-      attachments.pdf.splice(index, 1);
-
-      this.headerDataForm.get('instructions').setValue(attachments);
-    }
+    this.pdfFiles = this.pdfFiles.filter((_, i) => i !== index);
+    this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(
+      (_, i) => i !== index
+    );
   }
 
   processValidationErrorsAdditionalDetails(

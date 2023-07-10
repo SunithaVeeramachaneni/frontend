@@ -20,26 +20,6 @@ import { AppService } from 'src/app/shared/services/app.services';
 export class RoundPlanConfigurationService {
   constructor(private store: Store<State>, private _appService: AppService) {}
 
-  uploadToS3$(file: Blob): Observable<any> {
-    const formFileData = new FormData();
-    formFileData.append('file', file);
-
-    return this._appService._postData(
-      environment.operatorRoundsApiUrl,
-      'round-plan/imageAndPdfUpload',
-      formFileData
-    );
-  }
-
-  deleteFromS3(objectKey: string): void {
-    const params = new URLSearchParams();
-    params.append('objectKey', encodeURIComponent(objectKey));
-
-    this._appService
-      ._removeData(environment.operatorRoundsApiUrl, 'round-plan/delete')
-      .subscribe();
-  }
-
   addPage(
     pageIndex: number,
     addSections: number,
