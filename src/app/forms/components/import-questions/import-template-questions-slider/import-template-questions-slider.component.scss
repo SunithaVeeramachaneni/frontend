@@ -33,7 +33,7 @@
     }
 
     .import-questions-heading {
-      font-size: 100%;
+      font-size: 130%;
     }
   }
 
@@ -44,7 +44,6 @@
     justify-content: space-between;
     font-weight: 500;
     font-size: 130%;
-    padding: 15px;
   }
 
   .mat-card {
@@ -109,9 +108,17 @@
 }
 
 .search {
-  margin: 4px 0;
+  margin: 4px 0px 4px 8px;
+}
+
+.searchIcon {
+  padding: 8px 0;
 }
 
 ::ng-deep .mat-select-panel {
   max-height: 12px;
+}
+
+::ng-deep .mat-form-field-infix {
+  border-top-width: 6px;
 }

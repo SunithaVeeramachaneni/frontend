@@ -74,10 +74,11 @@ export class SelectQuestionsDialogComponent implements OnInit {
               }
             });
 
-            this.sections.push({
-              ...section,
-              questions: sectionQuestions || []
-            });
+            if (!section?.isImported)
+              this.sections.push({
+                ...section,
+                questions: sectionQuestions || []
+              });
           });
         })
       );

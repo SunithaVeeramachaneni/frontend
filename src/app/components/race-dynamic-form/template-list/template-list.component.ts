@@ -28,6 +28,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
 
 @Component({
   selector: 'app-template-list',
@@ -37,6 +40,8 @@ import { permissions } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class TemplateListComponent implements OnInit, OnDestroy {
+  public menuState = 'out';
+  selectedForm: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
@@ -74,7 +79,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'counter',
+      id: 'questionsCount',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
@@ -171,7 +176,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        color: '#3D5AFE',
+        'text-decoration': 'underline'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -273,7 +281,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private translateService: TranslateService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -315,11 +324,25 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.prepareMenuActions();
   }
 
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+    this.store.dispatch(FormConfigurationActions.resetPages());
+  }
+
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId } = event;
+    const { columnId, row } = event;
     switch (columnId) {
-      default:
+      case 'name':
+      case 'questionsCount':
+      case 'formStatus':
+      case 'formType':
+      case 'lastPublishedBy':
+      case 'author':
+        this.showFormDetail(row);
         break;
+      case 'formsUsageCount':
+      default:
     }
   };
 
@@ -440,8 +463,19 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
+  templateDetailActionHandler(event) {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private showFormDetail(row: any): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }

@@ -55,6 +55,16 @@
     </div>
   </div>
 
+  <ng-container *ngIf="menuState">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+      [isTemplate]="true"
+      (formDetailAction)="templateDetailActionHandler($event)"
+    ></app-form-detail>
+  </ng-container>
+
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">

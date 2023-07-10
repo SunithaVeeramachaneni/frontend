@@ -26,6 +26,7 @@ import {
 import { SectionQuestions } from 'src/app/interfaces';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { FormControl } from '@angular/forms';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 
 @Component({
   selector: 'app-import-template-questions-slider',
@@ -54,11 +55,13 @@ export class ImportTemplateQuestionsSliderComponent
   allTemplateSections = [];
   selectedTemplateSections$ = new BehaviorSubject<any[]>([]);
   searchSections;
+  formTemplateUsage: any = {};
   private onDestroy$ = new Subject();
 
   constructor(
     private modal: MatDialog,
     private formConfigurationService: FormConfigurationService,
+    private raceDynamicFormService: RaceDynamicFormService,
     private store: Store<State>
   ) {}
 
@@ -77,6 +80,14 @@ export class ImportTemplateQuestionsSliderComponent
       .subscribe();
 
     this.selectedTemplateControl.valueChanges.subscribe((template) => {
+      this.raceDynamicFormService
+        .getFormTemplateUsage$({
+          formID: this.currentFormData.formMetadata.id,
+          templateID: template.id
+        })
+        .subscribe((res) => {
+          this.updateFormTemplateUsage(res, template.id);
+        });
       this.allTemplateSections = this.getTemplateSections(template);
       this.selectedTemplateSections$.next(this.allTemplateSections);
     });
@@ -93,6 +104,14 @@ export class ImportTemplateQuestionsSliderComponent
     this.questionCounter$ = this.store
       .select(getQuestionCounter)
       .pipe(tap((questionCounter) => (this.questionCounter = questionCounter)));
+  }
+
+  updateFormTemplateUsage(res, templateID) {
+    this.formTemplateUsage = {
+      formID: this.currentFormData.formMetadata.id,
+      templateID,
+      sections: res?.sections ? JSON.parse(res.sections) : {}
+    };
   }
 
   applySearch(searchTerm: string) {
@@ -118,7 +137,6 @@ export class ImportTemplateQuestionsSliderComponent
   }
 
   setSectionChecked(checked, section) {
-    console.log(checked, section);
     section.checked = checked;
   }
 
@@ -173,6 +191,28 @@ export class ImportTemplateQuestionsSliderComponent
           this.importSectionQuestions
         );
       }
+      for (const section of importTemplateData) {
+        if (this.formTemplateUsage.sections[section.externalSectionID]) {
+          this.formTemplateUsage.sections[section.externalSectionID] = ++this
+            .formTemplateUsage.sections[section.externalSectionID];
+        } else {
+          this.formTemplateUsage.sections[section.externalSectionID] = 1;
+        }
+      }
+      this.raceDynamicFormService
+        .updateFormTemplateUsage$(this.formTemplateUsage)
+        .subscribe((res) => {
+          this.updateFormTemplateUsage(
+            res,
+            this.selectedTemplateControl.value.id
+          );
+          this.raceDynamicFormService
+            .updateTemplate$(this.selectedTemplateControl.value.id, {
+              formsUsageCount: ++this.selectedTemplateControl.value
+                .formsUsageCount
+            })
+            .subscribe();
+        });
       this.cancelSliderEvent.emit(false);
     });
   }

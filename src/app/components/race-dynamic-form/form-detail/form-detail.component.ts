@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { map, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -58,6 +58,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Input() formStatus = formConfigurationStatus.draft;
   @Input() formDetailType = 'Authored';
   @Input() shiftObj: any;
+  @Input() isTemplate: boolean;
   @Input() set scheduleConfiguration(
     scheduleConfiguration: any | RoundPlanScheduleConfiguration
   ) {
@@ -112,6 +113,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
           this.selectedForm.id,
           this.formStatus
         );
+      }
+      if (this.isTemplate) {
+        formDetail$ = of(this.selectedForm.authoredFormTemplateDetails[0]);
       }
       this.selectedFormDetail$ = formDetail$.pipe(
         map((formDetail: any) => {

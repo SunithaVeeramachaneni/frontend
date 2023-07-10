@@ -77,7 +77,7 @@ export class ImportTemplateListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'counter',
+      id: 'questionsCount',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',

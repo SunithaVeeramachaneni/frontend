@@ -181,6 +181,42 @@
           </ng-container>
         </ng-container>
         <ng-container *ngIf="formDetailType === 'Authored'; else submitted">
+          <div *ngIf="isTemplate">
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">Template ID</p>
+              </div>
+              <div class="flex-custom" *ngIf="selectedForm?.id">
+                <h4 class="create-name">{{ selectedForm?.id }}</h4>
+              </div>
+            </div>
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">Status</p>
+              </div>
+              <div class="flex-custom" *ngIf="selectedForm?.formStatus">
+                <h4 class="create-name">{{ selectedForm?.formStatus }}</h4>
+              </div>
+            </div>
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">Questions</p>
+              </div>
+              <div class="flex-custom" *ngIf="selectedForm?.questionsCount">
+                <h4 class="create-name">{{ selectedForm?.questionsCount }}</h4>
+              </div>
+            </div>
+            <div class="name-heading">
+              <div>
+                <p class="color-gray">Template In</p>
+              </div>
+              <div class="flex-custom" *ngIf="selectedForm?.formsUsageCount">
+                <h4 class="create-name">
+                  {{ selectedForm?.formsUsageCount }} Forms
+                </h4>
+              </div>
+            </div>
+          </div>
           <div class="name-heading">
             <div>
               <p class="color-gray">
@@ -201,7 +237,7 @@
               </p>
             </div>
           </div>
-          <div class="name-heading">
+          <div *ngIf="!isTemplate" class="name-heading">
             <div>
               <p class="color-gray">
                 {{ 'lastModifiedBy' | translate }}
@@ -241,7 +277,7 @@
               </p>
             </div>
           </div>
-          <div class="name-heading">
+          <div *ngIf="!isTemplate" class="name-heading">
             <div>
               <p class="color-gray">
                 {{ 'timeZone' | translate }}
@@ -259,7 +295,7 @@
               </h4>
             </div>
           </div>
-          <div class="name-heading">
+          <div *ngIf="!isTemplate" class="name-heading">
             <div>
               <p class="color-gray">
                 {{ 'slot' | translate }}
@@ -435,8 +471,19 @@
             </p>
           </div>
           <div (click)="onNavigateToDetailPage()">
-            <button mat-raised-button class="w-full btn-push btn-primary-blue">
+            <button
+              *ngIf="!isTemplate"
+              mat-raised-button
+              class="w-full btn-push btn-primary-blue"
+            >
               {{ 'editForm' | translate }}
+            </button>
+            <button
+              *ngIf="isTemplate"
+              mat-raised-button
+              class="w-full btn-push btn-primary-blue"
+            >
+              Edit
             </button>
           </div>
         </div>
