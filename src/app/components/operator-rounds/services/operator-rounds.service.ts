@@ -28,6 +28,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { isJson } from '../../race-dynamic-form/utils/utils';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
+import { isEmpty, omitBy } from 'lodash-es';
 
 const limit = 10000;
 @Injectable({
@@ -163,17 +164,21 @@ export class OperatorRoundsService {
       if (isSearch) {
         rest.next = '';
       }
-      let queryParamaters: any = rest;
+      let queryParameters: any = rest;
       if (filterData) {
-        queryParamaters = { ...rest, plantId: filterData.plant };
+        queryParameters = { ...rest, plantId: filterData.plant };
       }
       const { displayToast, failureResponse = {} } = info;
       return this.appService
         ._getResp(
           environment.operatorRoundsApiUrl,
-          'rounds/',
+          'rounds',
           { displayToast, failureResponse },
-          queryParamaters
+          {
+            next: queryParameters.next,
+            limit: queryParameters.limit.toString(),
+            ...omitBy(queryParameters, isEmpty)
+          }
         )
         .pipe(
           map((data) => ({ ...data, rows: this.formatRounds(data.items) }))
@@ -586,7 +591,9 @@ export class OperatorRoundsService {
           },
           condition: true
         },
-        dueDate: p.dueDate ? format(new Date(p.dueDate), 'dd MMM yyyy') : '',
+        dueDateDisplay: p.dueDate
+          ? format(new Date(p.dueDate), 'dd MMM yyyy')
+          : '',
         locationAssetsCompleted: `${p.locationAndAssetsCompleted}/${p.locationAndAssets}`,
         tasksCompleted: `${p.locationAndAssetTasksCompleted}/${
           p.locationAndAssetTasks
@@ -625,13 +632,8 @@ export class OperatorRoundsService {
 
   fetchAllRounds$ = () => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('searchTerm', '');
     params.set('limit', '2000000');
     params.set('next', '');
-    params.set('roundPlanId', '');
-    params.set('status', '');
-    params.set('assignedTo', '');
-    params.set('dueDate', '');
 
     return this.appService
       ._getResp(

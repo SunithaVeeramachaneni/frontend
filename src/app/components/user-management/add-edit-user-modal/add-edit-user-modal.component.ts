@@ -83,6 +83,7 @@ export class AddEditUserModalComponent implements OnInit {
   emailValidated = false;
   isValidIDPUser = false;
   verificationInProgress = false;
+  previousEmail = '';
 
   rolesInput: any;
   dialogText: 'addUser' | 'editUser';
@@ -183,6 +184,7 @@ export class AddEditUserModalComponent implements OnInit {
       let base64;
       if (this.data.user.title === superAdminText) {
         this.userForm.disable();
+        this.userForm.get('plantId').enable();
       }
       if (typeof userDetails.profileImage === 'string') {
         base64 = this.data.user.profileImage;
@@ -193,6 +195,7 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue({
         profileImage: base64
       });
+      this.previousEmail = userDetails.email;
       this.userForm.patchValue(userDetails);
     }
 
@@ -315,13 +318,16 @@ export class AddEditUserModalComponent implements OnInit {
         profileImageFileName: 'default.png'
       });
     }
-    this.dialogRef.close({
+    const payload = {
       user: {
         ...this.data.user,
         ...this.userForm.value
       },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
-    });
+    };
+    if (this.dialogText === 'editUser')
+      payload.user.previousEmail = this.previousEmail;
+    this.dialogRef.close(payload);
   }
 
   close() {
