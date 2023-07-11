@@ -64,6 +64,11 @@ export class SectionComponent implements OnInit, OnDestroy {
     if (section) {
       if (!isEqual(this.section, section)) {
         this._section = section;
+        if (section && !section.isImported) {
+          section.isImported = false;
+          section.templateID = '';
+          section.externalSectionID = '';
+        }
         this.sectionForm.patchValue(section, {
           emitEvent: false
         });

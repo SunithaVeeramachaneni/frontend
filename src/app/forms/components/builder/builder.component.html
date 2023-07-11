@@ -18,8 +18,8 @@
         [pageQuestionsCount]="
           props.pageWiseSectionQuestions[pageIndex].pageQuestionsCount
         "
-        [isEmbeddedForm]="isEmbeddedForm"
         [isTemplate]="isTemplate"
+        [isEmbeddedForm]="isEmbeddedForm"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
         [selectedNodeId]="selectedNode.id"
@@ -40,40 +40,11 @@
                   ></svg-icon>
                 </div>
 
-                  <app-section
-                    class="sectionContainer"
-                    [pageIndex]="pageIndex"
-                    [sectionIndex]="sectionIndex"
-                    [isTemplate]="isTemplate"
-                    [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                    (sectionEvent)="sectionEventHandler($event)"
-                    [selectedNodeId]="selectedNode.id"
-                    *ngIf="
-                      pageWiseSectionQuestions$
-                        | async as pageWiseSectionQuestions
-                    "
-                  >
-                    <div
-                      class="sectionMinimumDragArea"
-                      cdkDropList
-                      id="{{ sectionIds[pageIndex][sectionIndex] }}"
-                      [cdkDropListConnectedTo]="sectionIds[pageIndex]"
-                      (cdkDropListDropped)="
-                        drop(
-                          $event,
-                          pageIndex,
-                          sectionIds[pageIndex][sectionIndex],
-                          selectedNode.id
-                        )
-                      "
-                      [cdkDropListData]="
-                        pageWiseSectionQuestions[pageIndex][
-                          sectionIds[pageIndex][sectionIndex]
-                        ]
                 <app-section
                   class="sectionContainer"
                   [pageIndex]="pageIndex"
                   [sectionIndex]="sectionIndex"
+                  [isTemplate]="isTemplate"
                   [sectionId]="props.sectionIds[pageIndex][sectionIndex]"
                   (sectionEvent)="sectionEventHandler($event)"
                   [selectedNodeId]="selectedNode.id"
@@ -152,6 +123,9 @@
                       "
                     >
                       <div
+                        *ngIf="
+                          !pageWiseSections[pageIndex][sectionIndex]?.isImported
+                        "
                         cdkDrag
                         class="questionContainer"
                         [ngClass]="{
@@ -166,6 +140,48 @@
                             icon="icon-six-dots"
                             class="question-six-dots section-dots"
                             cdkDragHandle
+                          ></svg-icon>
+                        </div>
+
+                        <app-question
+                          class="question"
+                          [pageIndex]="pageIndex"
+                          [sectionId]="
+                            props.sectionIds[pageIndex][sectionIndex]
+                          "
+                          [questionId]="questionId"
+                          [questionIndex]="questionIndex"
+                          [question]="
+                            props.pageWiseSectionQuestions[pageIndex][
+                              props.sectionIds[pageIndex][sectionIndex]
+                            ].questions[questionIndex]
+                          "
+                          [logics]="
+                            props.pageWiseQuestionLogics[pageIndex][questionId]
+                              .logics
+                          "
+                          (questionEvent)="questionEventHandler($event)"
+                          [selectedNodeId]="selectedNode.id"
+                          [isPreviewActive]="isPreviewActive"
+                          [isEmbeddedForm]="isEmbeddedForm"
+                        ></app-question>
+                      </div>
+                      <div
+                        *ngIf="
+                          pageWiseSections[pageIndex][sectionIndex]?.isImported
+                        "
+                        class="questionContainer"
+                        [ngClass]="{
+                          'highlight-bg':
+                            props.pageWiseSectionQuestions[pageIndex][
+                              props.sectionIds[pageIndex][sectionIndex]
+                            ].questions[questionIndex].isOpen === true
+                        }"
+                      >
+                        <div class="question-drag-handler">
+                          <svg-icon
+                            icon="icon-Unlink"
+                            class="icon-unlink"
                           ></svg-icon>
                         </div>
 

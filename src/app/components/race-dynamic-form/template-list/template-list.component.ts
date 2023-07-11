@@ -28,7 +28,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 
@@ -327,7 +326,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
@@ -464,7 +462,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   templateDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
   }
 
@@ -474,7 +471,6 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: any): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

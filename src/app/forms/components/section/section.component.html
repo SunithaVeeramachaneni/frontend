@@ -42,7 +42,7 @@
             class="edit-icon"
             *ngIf="
               sectionForm.get('name').disabled === true &&
-              sectionForm.get('isImported').value === false
+              sectionForm.get('isImported').value !== true
             "
           >
             <svg-icon
