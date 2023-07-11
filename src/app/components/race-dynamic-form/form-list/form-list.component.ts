@@ -706,13 +706,24 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   openFormCreationModal(data: any) {
-    this.dialog.open(FullScreenFormCreationComponent, {
+    const dialogRef = this.dialog.open(FullScreenFormCreationComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
       data
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      result = result === undefined ? {} : result;
+      if (Object.keys(result)?.length !== 0) {
+        this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+        this.formsListCountUpdate$.next(1);
+        this.toast.show({
+          text: 'Form created successfully!',
+          type: 'success'
+        });
+      }
     });
   }
 
