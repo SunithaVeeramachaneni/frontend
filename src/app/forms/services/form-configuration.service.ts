@@ -61,7 +61,7 @@ export class FormConfigurationService {
       })
     );
     if (
-      sectionQuestionsList.length &&
+      sectionQuestionsList.length === 0 ||
       !sectionQuestionsList[0].section?.isImported
     ) {
       this.store.dispatch(
@@ -120,7 +120,7 @@ export class FormConfigurationService {
       })
     );
     if (
-      sectionQuestionsList.length &&
+      sectionQuestionsList.length === 0 ||
       !sectionQuestionsList[0].section?.isImported
     ) {
       this.store.dispatch(
