@@ -268,6 +268,7 @@ export class RoundPlanConfigurationService {
       templateData.isImported = section.isImported;
       templateData.externalSectionID = section.externalSectionID;
       templateData.templateID = section.templateID;
+      templateData.counter = section.counter;
     }
     return {
       id: `S${uuidv4()}`,
