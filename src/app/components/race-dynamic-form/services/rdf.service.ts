@@ -1255,4 +1255,23 @@ export class RaceDynamicFormService {
       info
     );
   };
+
+  getAffectedFormList$(queryParams: {
+    templateID: string;
+    limit: number;
+    nextToken: string;
+    searchTerm?: string;
+    fetchType?: string;
+  }) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('templateID', queryParams?.templateID);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('searchTerm', queryParams?.searchTerm);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/get-forms?' + params.toString()
+    );
+  }
 }
