@@ -21,19 +21,30 @@
       </ngx-shimmer-loading>
     </div>
   </div>
-  <cwp-dynamictable
-    *ngIf="(isLoading$ | async) === false"
-    [dataSource]="dataSource"
-    [configOptions]="configOptions"
-    class="width-100"
-  ></cwp-dynamictable>
+
+  <div *ngIf="forms$ | async">
+    <div *ngIf="(isLoading$ | async) === false">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+  <div
+    *ngIf="(formsListCount$ | async) === 0 && (isLoading$ | async) === false"
+    class="no-affected-forms"
+  >
+    <svg-icon icon="icon-frame" class="affected-icon"></svg-icon>
+    <span class="affected-text" translate
+      >formsWillAppearOnceTemplateIsLinked</span
+    >
+  </div>
   <div mat-dialog-actions class="actions">
     <div>
-      <div
-        *ngIf="affectedFormsCount && (isLoading$ | async) === false"
-        class="form-count"
-      >
-        {{ affectedFormsCount }} <span translate>affectedForms</span>
+      <div *ngIf="(isLoading$ | async) === false" class="form-count">
+        {{ affectedFormsCount }}
+        <span translate>affectedForms</span>
       </div>
     </div>
     <div>
@@ -48,6 +59,7 @@
         (click)="markTemplateAsReady()"
         translate="done"
         class="select-btn"
+        [disabled]="(formLoaded$ | async) !== true"
       ></button>
     </div>
   </div>

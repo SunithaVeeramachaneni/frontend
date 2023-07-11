@@ -9,7 +9,23 @@
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
   }
-
+  .no-affected-forms {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    .affected-icon {
+      height: 250px;
+      width: 250px;
+    }
+    .affected-text {
+      font-size: 120%;
+      color: $gray4;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  }
   .heading-conatiner {
     justify-content: space-between;
 
