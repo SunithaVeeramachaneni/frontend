@@ -134,6 +134,12 @@ export class FormConfigurationModalComponent implements OnInit {
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([])
     });
+    this.headerDataForm.patchValue({
+      name: this.formData.formMetadata.name,
+      description: this.formData.formMetadata.description,
+      formType: this.formData.formMetadata.formType,
+      plantId: this.formData.formMetadata.plantId
+    });
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -143,15 +149,12 @@ export class FormConfigurationModalComponent implements OnInit {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
     });
-    if (this.formData?.formMetadata) {
+    if (this.data) {
       this.headerDataForm.patchValue({
-        name: this.formData.formMetadata.name,
-        description: this.formData.formMetadata.description,
-        formType:
-          this.formData.formMetadata.formType !== ''
-            ? this.formData.formMetadata.formType
-            : formConfigurationStatus.standalone,
-        plantId: this.formData.formMetadata.plantId
+        name: this.data.name,
+        description: this.data.description,
+        formType: this.data.formType,
+        plantId: this.data.plantId
       });
       this.headerDataForm.markAsDirty();
     }
