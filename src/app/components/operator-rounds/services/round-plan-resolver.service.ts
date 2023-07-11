@@ -16,9 +16,9 @@ import {
   QuickResponseActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
-import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { HierarchyState } from 'src/app/forms/state/hierarchy.reducer';
 import { OperatorRoundsService } from './operator-rounds.service';
+import { FormConfigurationState } from 'src/app/forms/state/builder/builder.reducer';
 
 @Injectable({ providedIn: 'root' })
 export class RoundPlanResolverService
@@ -45,6 +45,7 @@ export class RoundPlanResolverService
         hierarchyState: {} as HierarchyState
       });
     }
+    this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     return this.operatorRoundsService.getFormDetailsById$(id).pipe(
       map((response) => {
         if (!Object.keys(response).length) {
@@ -71,6 +72,7 @@ export class RoundPlanResolverService
           tags,
           plantId,
           plant,
+          lastModifiedBy,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -102,7 +104,8 @@ export class RoundPlanResolverService
           tags,
           plantId,
           plant: plant.name,
-          pdfTemplateConfiguration
+          pdfTemplateConfiguration,
+          lastModifiedBy
         };
 
         const subFormsMap = subForms ? JSON.parse(subForms) : {};

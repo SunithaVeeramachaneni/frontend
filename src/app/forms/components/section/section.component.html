@@ -1,12 +1,4 @@
-<div
-  class="section dis-flex"
-  [formGroup]="sectionForm"
-  *ngIf="{
-    section: section$ | async,
-    sectionsCount: sectionsCount$ | async,
-    sectionTasksCount: sectionTasksCount$ | async
-  } as props"
->
+<div class="section dis-flex" [formGroup]="sectionForm">
   <div class="width-95 section-margin">
     <div>
       <input type="hidden" formControlName="position" />
@@ -53,7 +45,7 @@
         </a>
         <div class="sectionHeadRight">
           <span class="sectionTaskCount">
-            {{ getTasksCountBySectionId(pageIndex, sectionId) | async }}
+            {{ sectionQuestionsCount }}
           </span>
 
           <button

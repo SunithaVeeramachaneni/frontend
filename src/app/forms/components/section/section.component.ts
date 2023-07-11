@@ -13,21 +13,15 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash-es';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
   pairwise,
   takeUntil,
   tap
 } from 'rxjs/operators';
-import {
-  getSection,
-  getSectionsCount,
-  getTaskCountBySection,
-  State
-} from 'src/app/forms/state/builder/builder-state.selectors';
+import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { SectionEvent, Section } from 'src/app/interfaces';
 import { BuilderConfigurationActions } from '../../state/actions';
 
@@ -59,6 +53,27 @@ export class SectionComponent implements OnInit, OnDestroy {
     return this._sectionId;
   }
 
+  @Input() set sectionQuestionsCount(count: number) {
+    this._sectionQuestionsCount = count;
+  }
+  get sectionQuestionsCount() {
+    return this._sectionQuestionsCount;
+  }
+
+  @Input() set section(section: Section) {
+    if (section) {
+      if (!isEqual(this.section, section)) {
+        this._section = section;
+        this.sectionForm.patchValue(section, {
+          emitEvent: false
+        });
+      }
+    }
+  }
+  get section() {
+    return this._section;
+  }
+
   @Input() selectedNodeId: any;
 
   @Output() sectionEvent: EventEmitter<SectionEvent> =
@@ -72,12 +87,11 @@ export class SectionComponent implements OnInit, OnDestroy {
     position: '',
     isOpen: true
   });
-  section$: Observable<Section>;
-  sectionsCount$: Observable<number>;
-  sectionTasksCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionIndex: number;
   private _sectionId: string;
+  private _section: Section;
+  private _sectionQuestionsCount: number;
   private onDestroy$ = new Subject();
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
@@ -103,31 +117,6 @@ export class SectionComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-
-    this.section$ = this.store
-      .select(
-        getSection(this.pageIndex, this.sectionIndex, this.selectedNodeId)
-      )
-      .pipe(
-        tap((section) => {
-          this.sectionForm.patchValue(section, {
-            emitEvent: false
-          });
-        })
-      );
-
-    this.sectionsCount$ = this.store.select(
-      getSectionsCount(this.pageIndex, this.selectedNodeId)
-    );
-    this.sectionTasksCount$ = this.store.select(
-      getTaskCountBySection(this.pageIndex, this.sectionId, this.selectedNodeId)
-    );
-  }
-
-  getTasksCountBySectionId(pageIndex, sectionId) {
-    return this.store
-      .select(getTaskCountBySection(pageIndex, sectionId, this.selectedNodeId))
-      .pipe(map((d) => d));
   }
 
   addSection() {

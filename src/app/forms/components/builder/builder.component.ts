@@ -16,7 +16,8 @@ import {
   SectionEvent,
   Question,
   Section,
-  FormMetadata
+  FormMetadata,
+  Page
 } from 'src/app/interfaces';
 
 import {
@@ -29,7 +30,8 @@ import {
   getSubFormPages,
   getQuestionCounter,
   getPageWiseSectionQuestions,
-  getPageWiseSections
+  getPageWiseSections,
+  getPageWiseQuestionLogics
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
@@ -76,8 +78,20 @@ export class BuilderComponent implements OnInit {
   pageWiseSections: any;
   questionCounter$: Observable<number>;
   formMetadata$: Observable<FormMetadata>;
-  pageWiseSectionQuestions$: Observable<any>;
+  pageWiseSectionQuestions$: Observable<{
+    [key: number]: {
+      page: Page;
+      pageQuestionsCount: number;
+    } & {
+      [key: string]: {
+        section: Section;
+        questions: Question[];
+        questionsById: { [key: string]: Question };
+      };
+    };
+  }>;
   pageWiseSections$: Observable<any>;
+  pageWiseQuestionLogics$: Observable<any>;
 
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -128,6 +142,9 @@ export class BuilderComponent implements OnInit {
       .pipe(
         tap((pageWiseSections) => (this.pageWiseSections = pageWiseSections))
       );
+    this.pageWiseQuestionLogics$ = this.store.select(
+      getPageWiseQuestionLogics(this.selectedNode.id)
+    );
   }
 
   ngOnInit(): void {}

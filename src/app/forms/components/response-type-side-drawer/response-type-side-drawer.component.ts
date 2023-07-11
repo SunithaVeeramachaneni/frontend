@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
@@ -20,6 +21,7 @@ import {
 } from 'rxjs/operators';
 import {
   NumberRangeMetadata,
+  Question,
   RangeSelectorState,
   ResponseTypeOpenState,
   SliderSelectorState
@@ -41,7 +43,14 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
   @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
-  @Input() question;
+  @Input() set question(question: Question) {
+    if (question) {
+      this._question = question;
+    }
+  }
+  get question(): Question {
+    return this._question;
+  }
   sliderOpenState$: Observable<SliderSelectorState>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
   rangeSelectorOpenState$: Observable<RangeSelectorState>;
@@ -76,6 +85,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit, OnDestroy {
   upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
   isCreate = true;
   private onDestroy$ = new Subject();
+  private _question: Question;
 
   constructor(
     private formService: FormService,

@@ -1,12 +1,4 @@
-<div
-  class="pages"
-  [formGroup]="pageForm"
-  *ngIf="{
-    page: page$ | async,
-    pagesCount: pagesCount$ | async,
-    pageTasksCount: pageTasksCount$ | async
-  } as props"
->
+<div class="pages" [formGroup]="pageForm">
   <div class="page-header" *ngIf="!isEmbeddedForm && !isTemplate">
     <mat-icon
       (click)="toggleIsOpenState()"
@@ -49,7 +41,7 @@
 
     <div class="pageHeadRight">
       <span class="pageTaskCount">
-        {{ props.pageTasksCount }}
+        {{ pageQuestionsCount }}
       </span>
       <button
         [matMenuTriggerFor]="pageMenu"

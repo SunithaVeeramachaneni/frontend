@@ -56,9 +56,6 @@ import {
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { DatePipe } from '@angular/common';
@@ -357,11 +354,15 @@ export class FormsComponent implements OnInit, OnDestroy {
   assigneeDetails: AssigneeDetails;
   plantsIdNameMap = {};
   plantTimezoneMap = {};
+  userFullNameByEmail = {};
   shiftIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -373,7 +374,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
@@ -534,8 +534,8 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         for (const item of uniqueAssignTo) {
-          if (item && !this.assignedTo.includes(item)) {
-            this.assignedTo.push(item);
+          if (item && this.userFullNameByEmail[item] !== undefined) {
+            this.assignedTo.push(this.userFullNameByEmail[item].fullName);
           }
         }
         for (const item of this.filterJson) {
@@ -708,7 +708,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   closeFormHandler() {
     this.formDetail = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -722,14 +721,12 @@ export class FormsComponent implements OnInit, OnDestroy {
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.formDetail = { ...row };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
   formDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
