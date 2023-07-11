@@ -40,7 +40,9 @@ import { State } from 'src/app/forms/state';
 })
 export class TemplateListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
+  public affectedSliderState = 'out';
   selectedForm: any = null;
+  selectedTemplate: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
@@ -328,6 +330,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.menuState = 'out';
   }
 
+  onCloseAffectedSlider() {
+    this.selectedTemplate = null;
+    this.affectedSliderState = 'out';
+  }
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
@@ -340,6 +346,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         this.showFormDetail(row);
         break;
       case 'formsUsageCount':
+        this.showAffectedSlider(row);
       default:
     }
   };
@@ -473,5 +480,11 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   private showFormDetail(row: any): void {
     this.selectedForm = row;
     this.menuState = 'in';
+    this.onCloseAffectedSlider();
+  }
+  private showAffectedSlider(row: any): void {
+    this.selectedTemplate = row;
+    this.affectedSliderState = 'in';
+    this.onCloseViewDetail();
   }
 }

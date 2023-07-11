@@ -65,6 +65,14 @@
     ></app-form-detail>
   </ng-container>
 
+  <ng-container *ngIf="affectedSliderState">
+    <app-affected-form-template-slider
+      [@slideInOut]="affectedSliderState"
+      (slideInOut)="onCloseAffectedSlider()"
+      [selectedForm]="selectedTemplate"
+    ></app-affected-form-template-slider>
+  </ng-container>
+
   <div *ngIf="isLoading$ | async">
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">
