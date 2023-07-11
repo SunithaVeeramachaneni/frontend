@@ -118,7 +118,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
 import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dynamic-stepper.component';
 import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
-
+import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder-opr.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -193,7 +193,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     ShiftMenuItemComponent,
     ShiftDateChangeWarningModalComponent,
     DynamicStepperComponent,
-    StepsHeaderComponent
+    StepsHeaderComponent,
+    PdfBuilderOprComponent
   ],
   imports: [
     SharedModule,
@@ -278,7 +279,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     UserNameByEmailPipe,
     ShiftMenuItemComponent,
     DynamicStepperComponent,
-    StepsHeaderComponent
+    StepsHeaderComponent,
+    PdfBuilderOprComponent
   ]
 })
 export class FormModule {}

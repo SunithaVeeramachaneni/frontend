@@ -64,7 +64,7 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { FormService } from 'src/app/forms/services/form.service';
 import { getSelectedHierarchyList } from 'src/app/forms/state';
 import { HierarchyModalComponent } from 'src/app/forms/components/hierarchy-modal/hierarchy-modal.component';
-import { PDFBuilderComponent } from 'src/app/forms/components/pdf-builder/pdf-builder.component';
+import { PdfBuilderOprComponent } from 'src/app/forms/components/pdf-builder-opr/pdf-builder-opr.component';
 
 @Component({
   selector: 'app-round-plan-configuration',
@@ -645,7 +645,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   goToPDFBuilderConfiguration = () => {
-    this.dialog.open(PDFBuilderComponent, {
+    this.dialog.open(PdfBuilderOprComponent, {
       data: {
         moduleName: 'OPERATOR_ROUNDS'
       },
