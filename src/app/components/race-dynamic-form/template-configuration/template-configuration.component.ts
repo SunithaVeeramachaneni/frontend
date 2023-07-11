@@ -51,7 +51,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
 import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
-import { TemplateService } from '../services/template.service';
 
 @Component({
   selector: 'app-template-configuration',
@@ -92,7 +91,6 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private readonly templateService: TemplateService,
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
 

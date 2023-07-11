@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TemplateService } from '../../services/template.service';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import {
   catchError,
