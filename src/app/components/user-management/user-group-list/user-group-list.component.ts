@@ -30,10 +30,6 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
-interface UserGroupListUpdate {
-  action: 'add' | 'edit' | 'delete' | 'copy' | null;
-  group: any;
-}
 @Component({
   selector: 'app-user-group-list',
   templateUrl: './user-group-list.component.html',
@@ -48,11 +44,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   selectedUserGroupIDList = [];
   selectedUserGroupUsers$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  userGroupListUpdate$: BehaviorSubject<UserGroupListUpdate> =
-    new BehaviorSubject<UserGroupListUpdate>({
-      action: null,
-      group: {}
-    });
+
   skip = 0;
   fetchType = 'load';
   nextToken = '';
@@ -73,8 +65,14 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   selectedUserGroupId$: BehaviorSubject<string> = new BehaviorSubject<string>(
     ''
   );
+  userGroupCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
+  userGroupCount$: Observable<number>;
+  userGroupListCount$: Observable<number>;
   selectedUserGroupPlantId$: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
+
   listHeight = '68vh';
   bottomHit = false;
   private onDestroy$ = new Subject();
@@ -90,6 +88,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.userGroupService.addUpdateDeleteCopyUserGroup = false;
     this.userGroupService.fetchUserGroups$.next({ data: 'load' });
     this.userGroupService.fetchUserGroups$.next({} as TableEvent);
     this.searchUserGroup = new FormControl('');
@@ -111,12 +110,28 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   }
   ngAfterViewChecked(): void {}
 
-  openAddEditUserGroupModal(): void {
+  createUserGroup(): void {
     const addEditUserGroupRef = this.dialog.open(
       AddEditUserGroupModalComponent,
       {
         data: {
-          dialogText: 'createUserGroup'
+          userGroupData: null,
+          type: 'create'
+        }
+      }
+    );
+    addEditUserGroupRef.afterClosed().subscribe((resp) => {
+      if (!resp || Object.keys(resp).length === 0) return;
+    });
+  }
+
+  editUserGroup(data: any): void {
+    const addEditUserGroupRef = this.dialog.open(
+      AddEditUserGroupModalComponent,
+      {
+        data: {
+          userGroupData: data,
+          type: 'update'
         }
       }
     );
@@ -143,7 +158,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          this.bottomHit = false;
           return this.getUserGroups();
         } else {
           return of([]);
@@ -154,46 +168,76 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
 
     this.allUserGroups$ = combineLatest([
       userGroupList$,
-      onScrollUserGroups$
+      onScrollUserGroups$,
+      this.userGroupService.userGroupActions$
     ]).pipe(
-      map(([rows, scrollData]) => {
+      map(([rows, scrollData, { action, group }]) => {
         if (this.skip === 0) {
           initial = rows;
+        } else if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
+          switch (action) {
+            case 'copy':
+              initial.unshift(group);
+              break;
+            case 'edit':
+              const indexCpy = initial.findIndex(
+                (data) => data?.id === group?.id
+              );
+              initial[indexCpy] = group;
+              this.toast.show({
+                type: 'success',
+                text: 'User Group edited successfully'
+              });
+              break;
+            case 'add':
+              initial.unshift(group);
+              this.selectedUserGroup = group;
+              this.toast.show({
+                type: 'success',
+                text: 'User Group added successfully'
+              });
+              break;
+            case 'delete':
+              const indexDel = initial.findIndex(
+                (data) => data.id === group.id
+              );
+              initial.splice(indexDel, 1);
+              this.selectedUserGroup = initial[indexDel];
+              this.toast.show({
+                type: 'success',
+                text: 'User Group deleted successfully'
+              });
+          }
+          this.userGroupService.addUpdateDeleteCopyUserGroup = false;
         } else {
           initial = initial.concat(scrollData);
         }
         this.skip = initial.length;
+        this.cdrf.markForCheck();
         return initial;
       })
     );
   }
-  copyUserGroup(event) {
-    console.log('Id' + event);
-    this.userGroupId = event;
-    console.log();
-    return this.userGroupService
-      .copyUserGroup$(event, {
-        displayToast: true,
-        failureResponse: {}
-      })
-      .subscribe((data) => {
-        console.log(data);
-      });
-  }
+
   getUserGroups() {
     return this.userGroupService
       .listUserGroups({
         limit: this.limit,
         fetchType: this.fetchType,
         nextToken: this.nextToken,
-        searchKey: this.searchUserGroup.value,
+        searchKey: this.searchUserGroup.value.toLowerCase(),
         plantId: ''
       })
       .pipe(
         map((data) => {
           this.isLoading$.next(false);
-          this.usergrp = data.count;
+          if (data.count) {
+            this.reloadUserGroupCount(data.count);
+          }
           this.nextToken = data.next;
+          if (this.bottomHit === true) {
+            this.bottomHit = false;
+          }
           return data.items;
         }),
         catchError(() => {
@@ -202,8 +246,36 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         })
       );
   }
+  copyUserGroup(id: any) {
+    this.userGroupService.copyUserGroup$(id).subscribe((data) => {
+      this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+      const preparedData = Object.fromEntries(
+        Object.entries(data).filter(([key, value]) => key !== 'users')
+      );
+      this.userGroupService.userGroupActions$.next({
+        action: 'copy',
+        group: preparedData
+      });
+      this.userGroupCountUpdate$.next(1);
+      this.toast.show({
+        type: 'success',
+        text: 'User Group copied successfully'
+      });
+    });
+  }
+  deleteUserGroup(data: any) {
+    this.userGroupService.deleteUserGroup$(data.id).subscribe(() => {
+      this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+      this.userGroupService.userGroupActions$.next({
+        action: 'delete',
+        group: data
+      });
+      this.userGroupCountUpdate$.next(-1);
+    });
+  }
   showSelectedUserGroup(userGroup) {
     this.selectedUserGroup = userGroup;
+    console.log(userGroup);
   }
   listBottom(event: any) {
     if (
@@ -215,5 +287,20 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
         this.bottomHit = true;
       }
     }
+  }
+  reloadUserGroupCount(rawCount: number) {
+    this.userGroupListCount$ = of(rawCount);
+    this.userGroupCount$ = combineLatest([
+      this.userGroupListCount$,
+      this.userGroupCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.userGroupService.addUpdateDeleteCopyUserGroup) {
+          count += update;
+          this.userGroupService.addUpdateDeleteCopyUserGroup = false;
+        }
+        return count;
+      })
+    );
   }
 }

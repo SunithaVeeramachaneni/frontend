@@ -26,6 +26,7 @@
   "lastName": "Last Name",
   "enterName": "Name",
   "createUserGroup": "Create User Group",
+  "editUserGroup": "Edit User Group",
   "nextBtn": "Next",
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
@@ -76,5 +77,7 @@
   "maxCharacters": "Upto {limit} Characters",
   "selectUser": "Select Users",
   "createBtn": "Create",
-  "editBtn": "Edit"
+  "editBtn": "Edit",
+  "changeUserinGroup": "Add user to group",
+  "selectedUsers": "Users Selected"
 }

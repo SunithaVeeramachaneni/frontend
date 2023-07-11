@@ -26,7 +26,13 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { defaultLimit, routingUrls } from 'src/app/app.constants';
-import { Observable, ReplaySubject, combineLatest, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  ReplaySubject,
+  combineLatest,
+  of
+} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import {
   debounceTime,
@@ -70,7 +76,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'displayRoles',
+      id: 'roles',
       displayName: 'Role',
       type: 'string',
       controlType: 'string',
@@ -136,9 +142,16 @@ export class SelectUserUsergroupModalComponent implements OnInit {
 
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserTable>;
-  userCount$: Observable<Count>;
+  alluserCount$: Observable<number>;
+  userCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  userListCount$: Observable<number>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
+  fetchUserGroupUsers$: Observable<any>;
+  selectedUserCountUpdate$: BehaviorSubject<number> =
+    new BehaviorSubject<number>(0);
+  initialSelectedUserCount$: Observable<number>;
+  selectedUsersCount$: Observable<number>;
   skip = 0;
   plantId;
   next = '';
@@ -147,6 +160,8 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   searchUser: FormControl;
   selectedUsers = [];
   allUsersList = [];
+  addNewGroup: Observable<number>;
+  type: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -161,6 +176,16 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   ngOnInit() {
     this.fetchUsers$.next({ data: 'load' });
     this.fetchUsers$.next({} as TableEvent);
+    console.log(this.data);
+    if (this.data?.type === 'update') {
+      this.type = 'update';
+      this.fetchUserGroupUsers$ = this.userGroupService.listUserGroupUsers(
+        { limit: 25, nextToken: '', fetchType: 'load' },
+        this.data?.plantId
+      );
+    } else {
+      this.fetchUserGroupUsers$ = of([]);
+    }
     this.searchUser = new FormControl('');
     this.searchUser.valueChanges
       .pipe(
@@ -173,19 +198,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       .subscribe();
 
     this.getDisplayedUsers();
-
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService.getRolesWithPermissions$({
       includePermissions: true
     });
-
-    const { name, description, plantId, dialogText } = this.data;
-
-    console.log(name);
-    console.log(description);
-    console.log(plantId);
-    this.getUsersList().subscribe((response) => console.log(response));
   }
 
   getDisplayedUsers() {
@@ -227,6 +244,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         // console.log(initial);
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
+        this.allUsersList = initial.data;
         return initial;
       })
     );
@@ -242,15 +260,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .pipe(
         mergeMap((resp: any) => {
-          this.userCount$ = of({ count: resp.count });
+          console.log(resp);
+          this.reloadAllUsersCount(resp.count);
+          this.next = resp.next;
           return of(resp.items);
         }),
-        // mergeMap((resp: UserDetails[]) => {
-        //   resp = resp?.map((user) =>
-        //     this.usersService.prepareUser(user, user.roles)
-        //   );
-        //   return of(resp);
-        // }),
         map((data) => {
           const rows = data.map((item) => {
             if (item.firstName && item.lastName) {
@@ -261,8 +275,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
             return item;
           });
           return rows;
-        }),
-        tap((selectedUserId) => (this.allUsersList = selectedUserId))
+        })
       );
 
   handleTableEvent = (event) => {
@@ -283,11 +296,12 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         ) {
           allSelected = true;
           this.selectedUsers = users;
-          console.log(this.selectedUsers);
         } else {
           allSelected = false;
-          // this.selectedUsers = [];
+          this.selectedUsers = [];
         }
+        this.selectedUsersCount$ = of(this.selectedUsers.length);
+
         break;
 
       case 'toggleRowSelect':
@@ -298,10 +312,12 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.selectedUsers = this.selectedUsers.filter(
             (user) => user.id !== data.id
           );
+          this.selectedUserCountUpdate$.next(-1);
         } else {
           this.selectedUsers.push(data);
-          console.log(data);
+          this.selectedUserCountUpdate$.next(1);
         }
+        this.selectedUsersCount$ = of(this.selectedUsers.length);
         break;
       default:
       // do nothing
@@ -323,22 +339,42 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       name: this.data.name,
       description: this.data.description,
       plantId: this.data.plantId,
-      users: selectedUserId
+      users: selectedUserId,
+      searchTerm: `${this.data.name.toLowerCase()} ${this.data.description.toLowerCase()}`
     };
+    console.log('New user grp :', newUserGroup);
 
     this.userGroupService
       .createUserGroup$(newUserGroup, {
         displayToast: true,
         failureResponse: {}
       })
-      .subscribe(() =>
-        this.toastService.show({
-          type: 'success',
-          text: 'User Group created successfully'
-        })
-      );
+      .subscribe((data) => {
+        this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+        this.userGroupService.userGroupActions$.next({
+          action: 'add',
+          group: data
+        });
+      });
     this.dialogRef.close({
       isBack: false
     });
+  }
+  reloadAllUsersCount(rawCount: number) {
+    this.userListCount$ = of(rawCount);
+    this.alluserCount$ = combineLatest([
+      this.userListCount$,
+      this.userCountUpdate$
+    ]).pipe(
+      map(([initial, update]) => {
+        initial += update;
+        return initial;
+      })
+    );
+  }
+  updateUsers() {
+    this.userGroupService
+      .selectUnselectGroupMembers$(this.data?.userGroupId, this.selectedUsers)
+      .subscribe();
   }
 }

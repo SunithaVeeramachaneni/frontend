@@ -67,7 +67,6 @@
   width: 150px;
   font-weight: normal;
   line-height: normal;
-  margin: 10px;
 }
 
 .cancel-btn {
@@ -83,4 +82,13 @@
 }
 .user-content {
   height: max-content;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 10px 0px 10px;
+  position: relative;
 }

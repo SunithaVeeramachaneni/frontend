@@ -7,6 +7,10 @@
   height: 20px;
   padding: 15px;
   border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 .modal-header {
   display: flex;
@@ -14,6 +18,7 @@
   position: relative;
   align-items: center;
   margin: 7px;
+  justify-content: space-between;
 }
 
 .back-btn {
@@ -83,4 +88,20 @@
 }
 .user-content {
   height: 70vh;
+}
+.header-left-elements {
+  display: flex;
+  flex-direction: row;
+}
+.footer-btns {
+  display: flex;
+  flex-direction: row;
+}
+.table {
+  height: 100%;
+  width: 100%;
+}
+.table-container {
+  height: 80%;
+  width: 100%;
 }

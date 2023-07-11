@@ -11,14 +11,14 @@
       <div class="usergroup-header">
         <div class="width-30 left-pannel-header">
           <h2 class="heading" translate="userGroups"></h2>
-          <button class="add-btn" (click)="openAddEditUserGroupModal()">
+          <button class="add-btn" (click)="createUserGroup()">
             <mat-icon class="add-btn-icon">add</mat-icon>
           </button>
         </div>
 
         <div class="right-pannel-header">
           <span class="count-of-usergroup">
-            <span class="usergroup-count">{{ usergrp }}</span>
+            <span class="usergroup-count">{{ userGroupCount$ | async }}</span>
             <span class="usergroup-text">{{
               'userGroupCount' | translate
             }}</span>
@@ -37,7 +37,6 @@
               autocomplete="off"
             />
           </mat-form-field>
-          <!-- code here  -->
 
           <mat-list
             class="roles"
@@ -49,6 +48,7 @@
             </div>
             <ng-container
               *ngIf="(isLoading$ | async) === false; else LoadingUserGroupList"
+              class="list-container"
             >
               <div (scroll)="listBottom($event)" class="roles">
                 <mat-list-item
@@ -62,32 +62,39 @@
                       : ''
                   }"
                 >
-                  <span
-                    class="role-name"
-                    matTooltip="{{ userGroup.name }}"
-                    [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
-                  >
-                    {{ userGroup.name }}
-                  </span>
-                  <button
-                    mat-icon-button
-                    [matMenuTriggerFor]="menu"
-                    class="more-usergroup"
-                    aria-label="More Options"
-                  >
-                    <mat-icon>more_horiz</mat-icon>
-                  </button>
+                  <div class="list-items">
+                    <span
+                      class="role-name"
+                      matTooltip="{{ userGroup.name }}"
+                      [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+                    >
+                      {{ userGroup.name }}
+                    </span>
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="menu"
+                      class="more-usergroup"
+                      aria-label="More Options"
+                    >
+                      <mat-icon>more_horiz</mat-icon>
+                    </button>
+                  </div>
                   <mat-menu #menu="matMenu">
                     <button
                       mat-menu-item
                       translate="copyBtn"
                       (click)="copyUserGroup(userGroup.id)"
                     ></button>
-                    <button mat-menu-item translate="editBtn"></button>
+                    <button
+                      mat-menu-item
+                      translate="editBtn"
+                      (click)="editUserGroup(userGroup)"
+                    ></button>
                     <button
                       mat-menu-item
                       class="text-red"
                       translate="deleteBtn"
+                      (click)="deleteUserGroup(userGroup)"
                     ></button>
                   </mat-menu>
                 </mat-list-item>
@@ -95,13 +102,16 @@
             </ng-container>
           </mat-list>
         </div>
-        <div class="width-100">
-          <app-user-group-users-list
-            [userGroupId]="selectedUserGroup?.id"
-            [userGroupPlantId]="selectedUserGroup?.plantId"
-            style="height: 80vh"
-          >
-          </app-user-group-users-list>
+        <div class="userList-left-component">
+          <div class="width-100">
+            <app-user-group-users-list
+              [userGroupPlantId]="selectedUserGroup?.plantId"
+              [userGroupId]="selectedUserGroup?.id"
+              [userGroupName]="selectedUserGroup?.name"
+              style="height: 80vh"
+            >
+            </app-user-group-users-list>
+          </div>
         </div>
       </div>
     </div>

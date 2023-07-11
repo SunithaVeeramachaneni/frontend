@@ -22,6 +22,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { UserGroupEvent, ValidationError } from 'src/app/interfaces';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
+import { UserGroupService } from '../services/user-group.service';
 @Component({
   selector: 'app-add-edit-user-group-modal',
   templateUrl: './add-edit-user-group-modal.component.html',
@@ -30,13 +31,16 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 export class AddEditUserGroupModalComponent implements OnInit {
   name: string;
   description: string;
-
   plantId: string;
   title;
   dialogText: string;
   plants: any[];
   plantInformation: any[];
   userGroupForm: any;
+  groupStatus: string;
+  groupTitle: string;
+  groupBtn: string;
+  groupData: any;
   errors: ValidationError = {};
 
   constructor(
@@ -45,6 +49,7 @@ export class AddEditUserGroupModalComponent implements OnInit {
     private fb: FormBuilder,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
+    private userGroupService: UserGroupService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -61,8 +66,27 @@ export class AddEditUserGroupModalComponent implements OnInit {
       description: new FormControl(''),
       plantId: new FormControl('', [this.matSelectValidator()])
     });
+    if (this.data.type === 'create') {
+      this.groupData = null;
+      this.groupStatus = 'create';
+      this.groupTitle = 'Create User Group';
+      this.groupBtn = 'Next';
+      this.userGroupForm?.reset();
+      this.userGroupForm?.get('plantId').enable();
+    } else {
+      this.groupData = this.data?.userGroupData;
+      this.groupStatus = 'update';
+      this.groupTitle = 'Update User Group';
+      this.groupBtn = 'Save';
+      const groupEditData = {
+        name: this.groupData?.name,
+        description: this.groupData?.description,
+        plantId: this.groupData?.plantId
+      };
+      this.userGroupForm.patchValue(groupEditData);
+      this.userGroupForm.get('plantId').disable();
+    }
     this.getAllPlants();
-
     const { dialogText } = this.data;
     this.dialogText = dialogText;
   }
@@ -102,10 +126,29 @@ export class AddEditUserGroupModalComponent implements OnInit {
   }
 
   next() {
-    console.log(this.userGroupForm.value);
     this.dailogRef.close({
       data: this.userGroupForm.value
     });
+  }
+  updateUserGroup() {
+    const updatedName = this.userGroupForm.get('name').value;
+    const updatedDesc = this.userGroupForm.get('description').value;
+    const updatedData = {
+      ...this.groupData,
+      name: updatedName,
+      description: updatedDesc,
+      searchTerm: `${updatedName.toLowerCase()} ${updatedDesc.toLowerCase()}`
+    };
+    this.userGroupService
+      .updateUserGroup(this.groupData?.id, updatedData)
+      .subscribe(() => {
+        this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+        this.userGroupService.userGroupActions$.next({
+          action: 'edit',
+          group: { ...updatedData }
+        });
+        this.dailogRef.close();
+      });
   }
 
   onKeyPlant(event) {

@@ -1,13 +1,13 @@
 <form class="userGroupModal" [formGroup]="userGroupForm">
   <div class="modal-header">
     <span
-      *ngIf="dialogText === 'editUserGroup'"
+      *ngIf="groupStatus === 'update'"
       class="title"
       translate="editUserGroup"
     >
     </span>
     <span
-      *ngIf="dialogText === 'createUserGroup'"
+      *ngIf="groupStatus === 'create'"
       class="title"
       translate="createUserGroup"
     ></span>
@@ -19,11 +19,7 @@
   <div class="input-container">
     <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
       <mat-label>{{ 'enterName' | translate }}</mat-label>
-      <input
-        matInput
-        formControlName="name"
-        translate="maxCharacter"
-      />
+      <input matInput formControlName="name" translate="maxCharacter" />
       <mat-error
         *ngIf="processValidationErrors('name')"
         class="m-t-5 error-fields"
@@ -89,11 +85,20 @@
 
     <button
       mat-raised-button
-      *ngIf="dialogText === 'createUserGroup'"
+      *ngIf="groupStatus === 'create'"
       class="next-btn"
       (click)="openSelectUser()"
       type="submit"
       translate="nextBtn"
+      [disabled]="userGroupForm.invalid || userGroupForm.pristine"
+    ></button>
+    <button
+      mat-raised-button
+      *ngIf="groupStatus === 'update'"
+      class="next-btn"
+      (click)="updateUserGroup()"
+      type="submit"
+      translate="saveBtn"
       [disabled]="userGroupForm.invalid || userGroupForm.pristine"
     ></button>
   </div>

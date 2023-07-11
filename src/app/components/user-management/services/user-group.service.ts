@@ -17,10 +17,22 @@ import {
   SearchEvent
 } from './../../../interfaces';
 
+interface UserGroupListUpdate {
+  action: 'add' | 'edit' | 'delete' | 'copy' | null;
+  group: any;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserGroupService {
+  addUpdateDeleteCopyUserGroup = false;
+  userGroupActions$: BehaviorSubject<UserGroupListUpdate> =
+    new BehaviorSubject<UserGroupListUpdate>({
+      action: null,
+      group: {}
+    });
+
   fetchUserGroups$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(private appService: AppService) {}
@@ -35,7 +47,7 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', `${queryParams.limit}`);
+    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.next ?? '');
     params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams.plantId);
@@ -66,10 +78,8 @@ export class UserGroupService {
   copyUserGroup$ = (userGroupId: any, info: ErrorInfo = {} as ErrorInfo) =>
     this.appService._postData(
       environment.userRoleManagementApiUrl,
-      `user-groups/copy/:userGroupId`,
-      {
-        userGroupId
-      },
+      `user-groups/copy/${userGroupId}`,
+      {},
       info
     );
 
@@ -84,7 +94,7 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', `${queryParams.limit}` ?? '');
+    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.nextToken ?? '');
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams?.plantId ?? '');
@@ -118,7 +128,6 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', `${queryParams.limit}` ?? '');
     params.set('nextToken', queryParams.nextToken ?? '');
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     if (
@@ -139,4 +148,31 @@ export class UserGroupService {
       });
     }
   };
+  updateUserGroup(id: string, userGroup: any, info = {} as ErrorInfo) {
+    return this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `user-groups/${id}`,
+      userGroup,
+      info
+    );
+  }
+  deleteUserGroup$(id: string, info = {} as ErrorInfo) {
+    return this.appService._removeData(
+      environment.userRoleManagementApiUrl,
+      `user-groups/${id}`,
+      info
+    );
+  }
+  selectUnselectGroupMembers$(
+    id: string,
+    members: string[],
+    info = {} as ErrorInfo
+  ) {
+    return this.appService.patchData(
+      environment.userRoleManagementApiUrl,
+      `user-groups/${id}/users`,
+      { users: members },
+      info
+    );
+  }
 }

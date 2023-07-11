@@ -43,6 +43,8 @@ import {
 } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
 import { format } from 'date-fns';
+import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-group-users-list',
@@ -52,6 +54,7 @@ import { format } from 'date-fns';
 export class UserGroupUsersListComponent implements OnInit, OnChanges {
   @Input() userGroupId: string;
   @Input() userGroupPlantId: string;
+  @Input() userGroupName: string;
   userCount$: Observable<Count>;
   limit: number = defaultLimit;
   next = '';
@@ -193,19 +196,23 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   _userGroupId: string;
   _userGroupPlantId: string;
+  _userGroupName: string;
   skip = 0;
   fetchType: string;
 
   constructor(
     private userGroupService: UserGroupService,
+    private dialog: MatDialog,
     private toast: ToastService
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.userGroupId.currentValue) {
-      this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
       this._userGroupId = changes.userGroupId?.currentValue;
-
+      this._userGroupName = changes.userGroupName?.currentValue;
+      if (changes.userGroupPlantId) {
+        this._userGroupPlantId = changes.userGroupPlantId?.currentValue;
+      }
       this.getAllUsers();
     }
   }
@@ -274,7 +281,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.userGroupService
       .listUserGroupUsers(
         {
-          limit: this.limit,
+          limit: 25,
           nextToken: this.next,
           fetchType: this.fetchType,
           searchKey: this.searchUser.value
@@ -284,6 +291,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       .pipe(
         mergeMap((resp: any) => {
           this.userCount$ = of({ count: resp.count });
+          this.next = resp.next;
           return of(resp.items);
         }),
 
@@ -325,6 +333,20 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  selectUnselectUsers() {
+    const openSelectUserRef = this.dialog.open(
+      SelectUserUsergroupModalComponent,
+      {
+        data: {
+          type: 'update',
+          plantId: this._userGroupPlantId,
+          userGroupId: this._userGroupId,
+          name: this._userGroupName
+        }
+      }
+    );
   }
   rowLevelActionHandler($event) {}
 }
