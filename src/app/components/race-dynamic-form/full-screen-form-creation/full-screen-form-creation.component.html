@@ -22,16 +22,12 @@
       <app-form-configuration
         [formData]="formData"
         (gotoNextStep)="gotoNextStep()"
-        (gotoPreviousStep)="gotoPreviousStep()"
       ></app-form-configuration>
     </div>
 
     <!-- STEP 3 -->
     <div *ngIf="currentStep === 2">
-      <app-pdf-builder
-        [moduleName]="'RDF'"
-        (gotoPreviousStep)="gotoPreviousStep()"
-      ></app-pdf-builder>
+      <app-pdf-builder [moduleName]="'RDF'"></app-pdf-builder>
     </div>
   </div>
 </app-dynamic-stepper>

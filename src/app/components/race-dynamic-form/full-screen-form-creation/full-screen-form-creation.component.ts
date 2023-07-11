@@ -65,7 +65,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
   goBack(): void {
     if (this.currentStep === 0) {
       this.router.navigate(['/forms']);
-      this.dialogRef.close();
+      this.dialogRef.close(this.formData.formMetadata);
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
     } else if (this.currentStep === this.totalSteps - 1) {

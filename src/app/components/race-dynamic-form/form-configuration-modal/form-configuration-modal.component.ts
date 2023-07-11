@@ -134,7 +134,6 @@ export class FormConfigurationModalComponent implements OnInit {
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([])
     });
-    this.headerDataForm.patchValue(this.formData.formMetadata);
     this.getAllPlantsData();
     this.retrieveDetails();
   }
@@ -144,11 +143,15 @@ export class FormConfigurationModalComponent implements OnInit {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
     });
-
-    if (this.data) {
+    if (this.formData?.formMetadata) {
       this.headerDataForm.patchValue({
-        name: this.data.name,
-        description: this.data.description
+        name: this.formData.formMetadata.name,
+        description: this.formData.formMetadata.description,
+        formType:
+          this.formData.formMetadata.formType !== ''
+            ? this.formData.formMetadata.formType
+            : formConfigurationStatus.standalone,
+        plantId: this.formData.formMetadata.plantId
       });
       this.headerDataForm.markAsDirty();
     }
@@ -257,7 +260,6 @@ export class FormConfigurationModalComponent implements OnInit {
     );
 
     if (this.headerDataForm.valid) {
-      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(
@@ -292,8 +294,9 @@ export class FormConfigurationModalComponent implements OnInit {
           BuilderConfigurationActions.updateFormMetadata({
             formMetadata: {
               ...this.headerDataForm.value,
+              id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
-              plant: plant.name
+              plant: plant?.name
             },
             formStatus: formConfigurationStatus.draft,
             formDetailPublishStatus: formConfigurationStatus.draft,
@@ -309,12 +312,13 @@ export class FormConfigurationModalComponent implements OnInit {
           BuilderConfigurationActions.updateForm({
             formMetadata: {
               ...this.headerDataForm.value,
+              id: this.formData.formMetadata.id,
               additionalDetails: updatedAdditionalDetails,
               pdfTemplateConfiguration: DEFAULT_PDF_BUILDER_CONFIG,
               author: userName,
               formLogo: 'assets/rdf-forms-icons/formlogo.svg'
             },
-            formListDynamoDBVersion: this.formData.formListVersion
+            formListDynamoDBVersion: this.formData.formListDynamoDBVersion
           })
         );
       }
