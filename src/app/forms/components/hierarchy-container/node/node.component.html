@@ -1,8 +1,7 @@
 <div
   class="node-item"
   *ngIf="{
-    selectedNode: selectedNode$ | async,
-    nodeWiseQuestionsCount: nodeWiseQuestionsCount$ | async
+    selectedNode: selectedNode$ | async
   }"
 >
   <div
@@ -133,6 +132,7 @@
       <app-node
         class="node-item"
         [node]="node"
+        [nodeWiseQuestionsCount]="nodeWiseQuestionsCount"
         [hierarchyMode]="hierarchyMode"
         [dropTargetIds]="dropTargetIds"
         *ngFor="let node of node.children"

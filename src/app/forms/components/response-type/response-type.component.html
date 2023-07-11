@@ -47,6 +47,7 @@
             <app-response-type-side-drawer
               (responseTypeHandler)="quickResponseTypeHandler($event)"
               [formId]="formId"
+              [question]="question"
             ></app-response-type-side-drawer>
           </div>
         </mat-tab>
@@ -69,7 +70,7 @@
                       closeResponseType()
                     "
                     [ngClass]="{
-                      active: question.value.id === resp.id
+                      active: question.value?.id === resp.id
                     }"
                   >
                     <mat-chip-list
@@ -144,7 +145,7 @@
                 >
                   <div
                     [ngClass]="{
-                      active: question.value.id === response.id
+                      active: question.value?.id === response.id
                     }"
                   >
                     <mat-chip
@@ -183,6 +184,7 @@
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [formId]="formId"
+                [question]="question"
               ></app-response-type-side-drawer>
             </div>
           </div>

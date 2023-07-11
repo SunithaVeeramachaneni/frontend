@@ -42,7 +42,8 @@ import {
   getFormPublishStatus,
   getIsFormCreated,
   getQuestionCounter,
-  State
+  State,
+  getNodeWiseQuestionsCount
 } from 'src/app/forms/state/builder/builder-state.selectors';
 
 import {
@@ -112,6 +113,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   selectedNodeInstances: any[];
 
   selectedNode$: Observable<any>;
+  nodeWiseQuestionsCount$: Observable<any>;
   selectedNodeLoadStatus = false;
   isHierarchyLoaded = false;
   createOrEditForm: boolean;
@@ -159,6 +161,10 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       tap((data) => {
         this.hierarchyMode = data;
       })
+    );
+
+    this.nodeWiseQuestionsCount$ = this.store.select(
+      getNodeWiseQuestionsCount()
     );
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
@@ -226,7 +232,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               ...curr
             } = current;
 
-            if (!isEqual(prev, curr)) {
+            if (
+              !isEqual(prev, curr) &&
+              prev.name !== undefined &&
+              curr.name !== undefined
+            ) {
               const { moduleName, ...currentVal } = curr;
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
@@ -283,8 +293,13 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           formDetailPublishStatus,
           formSaveStatus,
           formListDynamoDBVersion,
-          authoredFormDetailDynamoDBVersion
+          authoredFormDetailDynamoDBVersion,
+          skipAuthoredDetail
         } = formDetails;
+
+        if (skipAuthoredDetail) {
+          return;
+        }
 
         const subFormsObj = {};
         let formKeys = Object.keys(formDetails);
@@ -300,8 +315,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         if (formListId) {
           if (authoredFormDetailId) {
             if (
-              formSaveStatus !== 'Saved' &&
-              formStatus !== 'Published' &&
+              formSaveStatus !== formConfigurationStatus.saved &&
+              formStatus !== formConfigurationStatus.published &&
               selectedHierarchyList &&
               (!isEqual(this.formDetails, formDetails) ||
                 !isEqual(this.selectedHierarchyList, selectedHierarchyList))
@@ -320,25 +335,31 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
                   hierarchy: selectedHierarchyList
                 })
               );
-              this.store.dispatch(
-                BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
-              this.store.dispatch(
-                RoundPlanConfigurationActions.updateRoundPlan({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  formListDynamoDBVersion: this.formListVersion,
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
+              if (
+                formMetadata.lastModifiedBy !==
+                this.loginService.getLoggedInUserName()
+              ) {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
+                this.store.dispatch(
+                  RoundPlanConfigurationActions.updateRoundPlan({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    formListDynamoDBVersion: this.formListVersion,
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
+              }
+
               this.formDetails = formDetails;
               this.selectedHierarchyList = selectedHierarchyList;
             }
