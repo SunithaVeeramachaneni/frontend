@@ -72,6 +72,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
   @ViewChild('insertImage') private insertImage: ElementRef;
 
   @Input() selectedNodeId: any;
+  @Input() isTemplate: boolean;
 
   @Input() set questionId(id: string) {
     this._id = id;

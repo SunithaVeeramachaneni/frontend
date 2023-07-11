@@ -28,7 +28,8 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import {
-  DEFAULT_TEMPLATE_PAGES,
+  DEFAULT_TEMPLATE_PAGES_STANDALONE,
+  DEFAULT_TEMPLATE_PAGES_EMBEDDED,
   formConfigurationStatus
 } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
@@ -206,7 +207,9 @@ export class TemplateConfigurationModalComponent implements OnInit {
           this.rdfService
             .createAuthoredTemplateDetail$(template.id, {
               formStatus: formConfigurationStatus.draft,
-              pages: DEFAULT_TEMPLATE_PAGES,
+              pages: this.getDefaultTemplateQuestions(
+                this.headerDataForm?.value?.formType
+              ),
               counter: 4
             })
             .subscribe(() => {
@@ -501,5 +504,23 @@ export class TemplateConfigurationModalComponent implements OnInit {
   }
   getAdditionalDetailList() {
     return (this.headerDataForm.get('additionalDetails') as FormArray).controls;
+  }
+  getDefaultTemplateQuestions(formType) {
+    const timestamp = new Date().getTime();
+    if (formType === formConfigurationStatus.embedded) {
+      DEFAULT_TEMPLATE_PAGES_EMBEDDED.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_EMBEDDED;
+    } else {
+      DEFAULT_TEMPLATE_PAGES_STANDALONE.map((page) => {
+        page.questions.map(
+          (question) => (question.id = `${question.id}_${timestamp}`)
+        );
+      });
+      return DEFAULT_TEMPLATE_PAGES_STANDALONE;
+    }
   }
 }

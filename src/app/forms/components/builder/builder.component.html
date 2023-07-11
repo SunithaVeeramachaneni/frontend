@@ -39,6 +39,7 @@
                     class="sectionContainer"
                     [pageIndex]="pageIndex"
                     [sectionIndex]="sectionIndex"
+                    [isTemplate]="isTemplate"
                     [sectionId]="sectionIds[pageIndex][sectionIndex]"
                     (sectionEvent)="sectionEventHandler($event)"
                     [selectedNodeId]="selectedNode.id"
@@ -139,6 +140,7 @@
                               [selectedNodeId]="selectedNode.id"
                               [isPreviewActive]="isPreviewActive"
                               [isEmbeddedForm]="isEmbeddedForm"
+                              [isTemplate]="isTemplate"
                             ></app-question>
                           </div>
                         </ng-container>
