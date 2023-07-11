@@ -106,8 +106,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     schedule: '',
     assignedTo: '',
     scheduledAt: '',
-    shifts: '',
-    roundPlanId: ''
+    shifts: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -644,9 +643,13 @@ export class PlansComponent implements OnInit, OnDestroy {
         Object.keys(
           this.roundPlanScheduleConfigurations[plan.id]?.shiftDetails
         ).map((shiftId) => {
-          shift += this.activeShiftIdMap[shiftId] + ',';
+          if (shiftId !== 'null') {
+            shift += this.activeShiftIdMap[shiftId] + ',';
+          }
         });
-        plan.shift = shift;
+        if (shift) {
+          plan.shift = shift.substring(0, shift.length - 1);
+        }
       }
       return plan;
     });
@@ -660,7 +663,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       roundPlanId: this.roundPlanId
     };
-
+    this.isLoading$.next(true);
     return this.operatorRoundsService
       .getPlansList$({ ...obj, ...this.filter })
       .pipe(
@@ -815,7 +818,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.hideRoundPlanDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.roundPlanDetail = { ...row };
+    this.roundPlanDetail = { ...row, roundPlanId: row.id };
     this.formDetailState = 'in';
     this.zIndexDelay = 400;
     this.selectedRoundConfig = this.roundPlanScheduleConfigurations;
@@ -1123,22 +1126,28 @@ export class PlansComponent implements OnInit, OnDestroy {
   applyFilters(data: any): void {
     this.isPopoverOpen = false;
     for (const item of data) {
-      switch (item.column) {
-        case 'plant':
-          this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
-          break;
-        case 'shiftId':
-          const foundEntry = Object.entries(this.activeShiftIdMap).find(
-            ([key, val]) => val === item.value
-          );
-          this.filter[item.column] = foundEntry[0];
-          break;
-        case 'assignedTo':
-          this.filter[item.column] = this.getFullNameToEmailArray(item.value);
-          break;
-        default:
-          this.filter[item.column] = item.value;
-          break;
+      if (item.value) {
+        switch (item.column) {
+          case 'plant':
+            this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+            break;
+          case 'shiftId':
+            const foundEntry = Object.entries(this.activeShiftIdMap).find(
+              ([key, val]) => val === item.value
+            );
+            this.filter[item.column] = foundEntry[0];
+            break;
+          case 'assignedTo':
+            if (item.value) {
+              this.filter[item.column] = this.getFullNameToEmailArray(
+                item.value
+              );
+            }
+            break;
+          default:
+            this.filter[item.column] = item.value;
+            break;
+        }
       }
     }
     this.nextToken = '';
@@ -1152,8 +1161,7 @@ export class PlansComponent implements OnInit, OnDestroy {
       schedule: '',
       assignedTo: '',
       scheduledAt: '',
-      shifts: '',
-      roundPlanId: ''
+      shifts: ''
     };
     this.nextToken = '';
     this.fetchPlans$.next({ data: 'load' });

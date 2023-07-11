@@ -74,6 +74,7 @@ export interface RoundPlan {
 }
 
 export interface RoundPlanDetail extends RoundPlan {
+  roundPlanId: string;
   schedule: string;
   scheduleDates: string;
   tasks: number;
