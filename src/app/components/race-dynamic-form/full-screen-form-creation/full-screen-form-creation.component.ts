@@ -45,7 +45,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
     this.totalSteps = this.steps.length;
 
     this.store.select(getFormDetails).subscribe((formDetails) => {
-      const { formMetadata, formListDynamoDBVersion } = formDetails;
+      const { formMetadata, formListDynamoDBVersion, pages } = formDetails;
       const { formType } = formMetadata;
       if (formType === 'Embedded') {
         this.steps = [
@@ -56,6 +56,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
       this.formData = {
         formListDynamoDBVersion,
         formMetadata,
+        pages,
         formExists: Object.keys(formMetadata).length === 0 ? false : true
       };
     });
