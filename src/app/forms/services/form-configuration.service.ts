@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { QuestionComponent } from '../components/question/question.component';
 import {
   NumberRangeMetadata,
   Question,
@@ -43,7 +42,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const page = this.getPageObject(
+    const { counter, ...page } = this.getPageObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -57,7 +56,8 @@ export class FormConfigurationService {
         page,
         pageIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
     if (
@@ -84,7 +84,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { sections, questions, logics } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -99,7 +99,8 @@ export class FormConfigurationService {
         pageIndex,
         sectionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
     if (logics?.length)
@@ -141,16 +142,16 @@ export class FormConfigurationService {
     questionCounter: number,
     questions: Question[] = []
   ) {
-    const sectionQuestions = new Array(addQuestions)
-      .fill(0)
-      .map((q, index) =>
-        this.getQuestion(
-          questionIndex + index,
-          sectionId,
-          questionCounter + index + 1,
-          questions[index]
-        )
+    let counter: number;
+    const sectionQuestions = new Array(addQuestions).fill(0).map((q, index) => {
+      counter = questionCounter + index + 1;
+      return this.getQuestion(
+        questionIndex + index,
+        sectionId,
+        questionCounter + index + 1,
+        questions[index]
       );
+    });
     this.store.dispatch(
       BuilderConfigurationActions.addQuestions({
         questions: sectionQuestions,
@@ -158,7 +159,8 @@ export class FormConfigurationService {
         sectionId,
         questionIndex,
         ...this.getFormConfigurationStatuses(),
-        subFormId: null
+        subFormId: null,
+        counter
       })
     );
     this.store.dispatch(
@@ -169,6 +171,10 @@ export class FormConfigurationService {
         subFormId: null
       })
     );
+  }
+
+  getDefQues() {
+    return this.defField;
   }
 
   private getFormConfigurationStatuses() {
@@ -187,7 +193,7 @@ export class FormConfigurationService {
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[]
   ) {
-    const { sections, questions, logics } = this.getSectionsObject(
+    const { sections, questions, counter, logics } = this.getSectionsObject(
       pageIndex,
       addSections,
       addQuestions,
@@ -202,7 +208,8 @@ export class FormConfigurationService {
       isOpen: true,
       sections,
       questions,
-      logics
+      logics,
+      counter
     };
   }
 
@@ -220,6 +227,7 @@ export class FormConfigurationService {
         : 0;
     let sliceStart = 0;
     let questions: Question[] = [];
+    let counter: number;
     let logics: any[] = [];
 
     const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
@@ -237,8 +245,9 @@ export class FormConfigurationService {
               ? sectionQuestionsList[sectionIndex]?.questions?.length
               : addQuestions)
         )
-        .map((q, questionIndex) =>
-          this.getQuestion(
+        .map((q, questionIndex) => {
+          counter = questionCounter + sliceStart + questionIndex + 1;
+          return this.getQuestion(
             questionIndex,
             sectionQuestionsList[sectionIndex]?.questions[
               questionIndex
@@ -246,10 +255,10 @@ export class FormConfigurationService {
               ? sectionQuestionsList[sectionIndex]?.questions[questionIndex]
                   ?.sectionId
               : section.id,
-            questionCounter + sliceStart + questionIndex + 1,
+            counter,
             sectionQuestionsList[sectionIndex]?.questions[questionIndex]
-          )
-        );
+          );
+        });
 
       sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
       questions = [...questions, ...sectionQuestions];
@@ -264,6 +273,7 @@ export class FormConfigurationService {
     return {
       sections,
       questions,
+      counter,
       logics
     };
   }
@@ -290,9 +300,6 @@ export class FormConfigurationService {
     questionCounter: number,
     question: Question
   ) {
-    this.store.dispatch(
-      BuilderConfigurationActions.updateCounter({ counter: questionCounter })
-    );
     return {
       id:
         question?.id?.startsWith('TQ') || question?.id?.startsWith('AQ')
@@ -315,9 +322,5 @@ export class FormConfigurationService {
         ? question.rangeMetadata
         : ({} as NumberRangeMetadata)
     };
-  }
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  getDefQues() {
-    return this.defField;
   }
 }

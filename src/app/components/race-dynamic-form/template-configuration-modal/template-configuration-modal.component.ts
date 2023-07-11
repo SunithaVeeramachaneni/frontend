@@ -38,6 +38,10 @@ import { DuplicateNameValidator } from 'src/app/shared/validators/duplicate-name
 import { AppService } from 'src/app/shared/services/app.services';
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+
 @Component({
   selector: 'app-template-configuration-modal',
   templateUrl: './template-configuration-modal.component.html',
@@ -76,6 +80,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<TemplateConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private rdfService: RaceDynamicFormService,
+    private store: Store<State>,
     private cdrf: ChangeDetectorRef,
     private appService: AppService,
     private toastService: ToastService,
@@ -195,6 +200,7 @@ export class TemplateConfigurationModalComponent implements OnInit {
     }
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userEmail = this.loginService.getLoggedInEmail();
       this.rdfService
         .createTemplate$({

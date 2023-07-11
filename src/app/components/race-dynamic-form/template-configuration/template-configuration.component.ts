@@ -254,8 +254,13 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
           formStatus,
           pages,
           isFormDetailPublished,
-          formSaveStatus
+          formSaveStatus,
+          skipAuthoredDetail
         } = formDetails;
+
+        if (skipAuthoredDetail) {
+          return;
+        }
         const { id: templateId } = formMetadata;
         this.formStatus = formStatus;
         this.isTemplatePublishing = isFormDetailPublished;

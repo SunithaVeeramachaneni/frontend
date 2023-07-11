@@ -151,7 +151,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               ...curr
             } = current;
 
-            if (!isEqual(prev, curr)) {
+            if (
+              !isEqual(prev, curr) &&
+              prev.name !== undefined &&
+              curr.name !== undefined
+            ) {
               this.store.dispatch(
                 BuilderConfigurationActions.updateFormMetadata({
                   formMetadata: curr,
@@ -231,8 +235,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formSaveStatus,
           formListDynamoDBVersion,
           formDetailDynamoDBVersion,
-          authoredFormDetailDynamoDBVersion
+          authoredFormDetailDynamoDBVersion,
+          skipAuthoredDetail
         } = formDetails;
+
+        if (skipAuthoredDetail) {
+          return;
+        }
         this.formListVersion = formListDynamoDBVersion;
         this.formStatus = formStatus;
         this.formDetailPublishStatus = formDetailPublishStatus;
@@ -243,8 +252,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         if (formListId) {
           if (authoredFormDetailId && authoredFormDetailId.length) {
             if (
-              formSaveStatus !== 'Saved' &&
-              formStatus !== 'Published' &&
+              formSaveStatus !== formConfigurationStatus.saved &&
+              formStatus !== formConfigurationStatus.published &&
               !isEqual(this.formDetails, formDetails)
             ) {
               this.store.dispatch(
@@ -259,27 +268,32 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   authoredFormDetailDynamoDBVersion
                 })
               );
-              this.store.dispatch(
-                BuilderConfigurationActions.updateFormMetadata({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  ...this.getFormConfigurationStatuses()
-                })
-              );
+              if (
+                formMetadata.lastModifiedBy !==
+                this.loginService.getLoggedInUserName()
+              ) {
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateFormMetadata({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    ...this.getFormConfigurationStatuses()
+                  })
+                );
 
-              this.store.dispatch(
-                BuilderConfigurationActions.updateForm({
-                  formMetadata: {
-                    ...formMetadata,
-                    lastModifiedBy: this.loginService.getLoggedInUserName()
-                  },
-                  formListDynamoDBVersion: this.formListVersion
-                })
-              );
+                this.store.dispatch(
+                  BuilderConfigurationActions.updateForm({
+                    formMetadata: {
+                      ...formMetadata,
+                      lastModifiedBy: this.loginService.getLoggedInUserName()
+                    },
+                    formListDynamoDBVersion: this.formListVersion
+                  })
+                );
+              }
+              this.formDetails = formDetails;
             }
-            this.formDetails = formDetails;
           } else {
             this.store.dispatch(
               BuilderConfigurationActions.createAuthoredFormDetail({

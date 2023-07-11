@@ -16,7 +16,7 @@ import { Store } from '@ngrx/store';
 
 import { State } from 'src/app/forms/state';
 import { RaceDynamicFormService } from '../services/rdf.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 import {
   RoundPlan,
@@ -132,8 +132,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               if (pIdx === 0) {
                 this.defaultFormName = `${page.name} ${page.position}`;
                 this.store.dispatch(
-                  FormConfigurationActions.initPages({
-                    pages: [page]
+                  BuilderConfigurationActions.initPages({
+                    pages: [page],
+                    subFormId: null
                   })
                 );
               }
@@ -188,7 +189,6 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   cancelForm() {
     this.slideInOut.emit('in');
     this.selectedFormDetail$ = null;
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
 
   openMenu(page): void {
@@ -198,8 +198,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
       );
       this.defaultFormName = `${foundPage?.name} ${foundPage?.position}`;
       this.store.dispatch(
-        FormConfigurationActions.initPages({
-          pages: [foundPage]
+        BuilderConfigurationActions.initPages({
+          pages: [foundPage],
+          subFormId: null
         })
       );
     });

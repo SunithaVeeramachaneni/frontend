@@ -4,36 +4,41 @@
       pageIndexes: pageIndexes$ | async,
       subFormPages: subFormPages$ | async,
       questionCounter: questionCounter$ | async,
-      pageWiseSections: pageWiseSections$ | async
+      pageWiseSections: pageWiseSections$ | async,
+      pageWiseSectionQuestions: pageWiseSectionQuestions$ | async,
+      sectionIds: sectionIds$ | async,
+      questionIds: questionIds$ | async,
+      pageWiseQuestionLogics: pageWiseQuestionLogics$ | async
     } as props"
   >
     <ng-container *ngFor="let pageIndex of props.pageIndexes">
       <app-page
         [pageIndex]="pageIndex"
+        [page]="props.pageWiseSectionQuestions[pageIndex].page"
+        [pageQuestionsCount]="
+          props.pageWiseSectionQuestions[pageIndex].pageQuestionsCount
+        "
         [isEmbeddedForm]="isEmbeddedForm"
         [isTemplate]="isTemplate"
         (pageEvent)="pageEventHandler($event)"
         cdkDropListGroup
         [selectedNodeId]="selectedNode.id"
       >
-        <ng-container *ngIf="sectionIds$ | async as sectionIds">
-          <div
-            cdkDropList
-            (cdkDropListDropped)="
-              dropSection($event, pageIndex, selectedNode.id)
-            "
-            [cdkDropListData]="props.pageWiseSections[pageIndex]"
-          >
-            <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
-              <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
-                <div class="dis-flex" cdkDrag>
-                  <div class="section-drag-handler">
-                    <svg-icon
-                      icon="icon-six-dots-white"
-                      class="section-six-dots"
-                      cdkDragHandle
-                    ></svg-icon>
-                  </div>
+        <div
+          cdkDropList
+          (cdkDropListDropped)="dropSection($event, pageIndex, selectedNode.id)"
+          [cdkDropListData]="props.pageWiseSections[pageIndex]"
+        >
+          <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
+            <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
+              <div class="dis-flex" cdkDrag>
+                <div class="section-drag-handler">
+                  <svg-icon
+                    icon="icon-six-dots-white"
+                    class="section-six-dots"
+                    cdkDragHandle
+                  ></svg-icon>
+                </div>
 
                   <app-section
                     class="sectionContainer"
@@ -65,180 +70,186 @@
                         pageWiseSectionQuestions[pageIndex][
                           sectionIds[pageIndex][sectionIndex]
                         ]
-                      "
-                      [id]="sectionIds[pageIndex][sectionIndex]"
-                    >
-                      <ng-container *ngIf="questionIds$ | async as questionIds">
-                        <div
-                          *ngIf="
-                            pageWiseSectionQuestions[pageIndex][
-                              sectionIds[pageIndex][sectionIndex]
-                            ].length === 0
-                          "
-                        >
-                          <span
-                            class="sectionEmpty"
-                            translate="sectionEmptyMessage"
-                          >
-                          </span>
-                          <div class="floating-btns empty-section">
-                            <button
-                              class="questions-btn"
-                              (click)="
-                                addQuestion(
-                                  pageIndex,
-                                  sectionIds[pageIndex][sectionIndex],
-                                  0,
-                                  selectedNode.id
-                                )
-                              "
-                            >
-                              <svg-icon
-                                icon="icon-add-question"
-                                class="add-question-icon"
-                              ></svg-icon>
-                              <p
-                                class="questions-delete-btn-text"
-                                translate="question"
-                              ></p>
-                            </button>
-                          </div>
-                        </div>
-                        <ng-container
-                          *ngFor="
-                            let questionId of questionIds[pageIndex][
-                              sectionIds[pageIndex][sectionIndex]
-                            ];
-                            let questionIndex = index
-                          "
-                        >
-                          <div
-                            *ngIf="
-                              !pageWiseSections[pageIndex][sectionIndex]
-                                ?.isImported
-                            "
-                            cdkDrag
-                            class="questionContainer"
-                            [ngClass]="{
-                              'highlight-bg':
-                                pageWiseSectionQuestions[pageIndex][
-                                  sectionIds[pageIndex][sectionIndex]
-                                ][questionIndex].isOpen === true
-                            }"
-                          >
-                            <div class="question-drag-handler">
-                              <svg-icon
-                                icon="icon-six-dots"
-                                class="question-six-dots section-dots"
-                                cdkDragHandle
-                              ></svg-icon>
-                            </div>
-
-                            <app-question
-                              class="question"
-                              [pageIndex]="pageIndex"
-                              [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                              [questionId]="questionId"
-                              [questionIndex]="questionIndex"
-                              (questionEvent)="questionEventHandler($event)"
-                              [selectedNodeId]="selectedNode.id"
-                              [isPreviewActive]="isPreviewActive"
-                              [isEmbeddedForm]="isEmbeddedForm"
-                              [isTemplate]="isTemplate"
-                            ></app-question>
-                          </div>
-                          <div
-                            *ngIf="
-                              pageWiseSections[pageIndex][sectionIndex]
-                                ?.isImported
-                            "
-                            class="questionContainer"
-                            [ngClass]="{
-                              'highlight-bg':
-                                pageWiseSectionQuestions[pageIndex][
-                                  sectionIds[pageIndex][sectionIndex]
-                                ][questionIndex].isOpen === true
-                            }"
-                          >
-                            <div class="question-drag-handler">
-                              <svg-icon
-                                icon="icon-Unlink"
-                                class="icon-unlink"
-                              ></svg-icon>
-                            </div>
-
-                            <app-question
-                              class="question"
-                              [pageIndex]="pageIndex"
-                              [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                              [questionId]="questionId"
-                              [questionIndex]="questionIndex"
-                              (questionEvent)="questionEventHandler($event)"
-                              [selectedNodeId]="selectedNode.id"
-                              [isPreviewActive]="isPreviewActive"
-                              [isEmbeddedForm]="isEmbeddedForm"
-                            ></app-question>
-                          </div>
-                        </ng-container>
-                      </ng-container>
-                    </div>
-                  </app-section>
-                </div>
-              </div>
-            </ng-container>
-            <ng-container
-              *ngIf="isEmptyPage[pageIndex]"
-              class="emptyPageContainer"
-            >
-              <div
-                class="floating-btns"
-                *ngIf="sectionIds[pageIndex].length !== 0"
-              >
-                <button
-                  class="questions-btn"
-                  (click)="
-                    addQuestion(
-                      pageIndex,
-                      sectionIds[pageIndex][0],
-                      0,
-                      selectedNode.id
-                    )
+                <app-section
+                  class="sectionContainer"
+                  [pageIndex]="pageIndex"
+                  [sectionIndex]="sectionIndex"
+                  [sectionId]="props.sectionIds[pageIndex][sectionIndex]"
+                  (sectionEvent)="sectionEventHandler($event)"
+                  [selectedNodeId]="selectedNode.id"
+                  [section]="
+                    props.pageWiseSectionQuestions[pageIndex][
+                      props.sectionIds[pageIndex][sectionIndex]
+                    ].section
+                  "
+                  [sectionQuestionsCount]="
+                    props.pageWiseSectionQuestions[pageIndex][
+                      props.sectionIds[pageIndex][sectionIndex]
+                    ].questions.length
                   "
                 >
-                  <svg-icon
-                    icon="icon-add-question"
-                    class="add-question-icon"
-                  ></svg-icon>
-                  <p class="questions-delete-btn-text" translate="question"></p>
-                </button>
-                <br />
+                  <div
+                    class="sectionMinimumDragArea"
+                    cdkDropList
+                    id="{{ props.sectionIds[pageIndex][sectionIndex] }}"
+                    [cdkDropListConnectedTo]="props.sectionIds[pageIndex]"
+                    (cdkDropListDropped)="
+                      drop(
+                        $event,
+                        pageIndex,
+                        props.sectionIds[pageIndex][sectionIndex],
+                        selectedNode.id
+                      )
+                    "
+                    [cdkDropListData]="
+                      props.pageWiseSectionQuestions[pageIndex][
+                        props.sectionIds[pageIndex][sectionIndex]
+                      ].questions
+                    "
+                    [id]="props.sectionIds[pageIndex][sectionIndex]"
+                  >
+                    <div
+                      *ngIf="
+                        props.pageWiseSectionQuestions[pageIndex][
+                          props.sectionIds[pageIndex][sectionIndex]
+                        ].questions.length === 0
+                      "
+                    >
+                      <span
+                        class="sectionEmpty"
+                        translate="sectionEmptyMessage"
+                      >
+                      </span>
+                      <div class="floating-btns empty-section">
+                        <button
+                          class="questions-btn"
+                          (click)="
+                            addQuestion(
+                              pageIndex,
+                              props.sectionIds[pageIndex][sectionIndex],
+                              0,
+                              selectedNode.id
+                            )
+                          "
+                        >
+                          <svg-icon
+                            icon="icon-add-question"
+                            class="add-question-icon"
+                          ></svg-icon>
+                          <p
+                            class="questions-delete-btn-text"
+                            translate="question"
+                          ></p>
+                        </button>
+                      </div>
+                    </div>
+                    <ng-container
+                      *ngFor="
+                        let questionId of props.questionIds[pageIndex][
+                          props.sectionIds[pageIndex][sectionIndex]
+                        ];
+                        let questionIndex = index
+                      "
+                    >
+                      <div
+                        cdkDrag
+                        class="questionContainer"
+                        [ngClass]="{
+                          'highlight-bg':
+                            props.pageWiseSectionQuestions[pageIndex][
+                              props.sectionIds[pageIndex][sectionIndex]
+                            ].questions[questionIndex].isOpen === true
+                        }"
+                      >
+                        <div class="question-drag-handler">
+                          <svg-icon
+                            icon="icon-six-dots"
+                            class="question-six-dots section-dots"
+                            cdkDragHandle
+                          ></svg-icon>
+                        </div>
 
-                <button class="delete-btn">
-                  <svg-icon
-                    icon="icon-delete-question"
-                    class="add-question-icon"
-                  ></svg-icon>
-                  <p class="questions-delete-btn-text" translate="delete"></p>
-                </button>
+                        <app-question
+                          class="question"
+                          [pageIndex]="pageIndex"
+                          [sectionId]="
+                            props.sectionIds[pageIndex][sectionIndex]
+                          "
+                          [questionId]="questionId"
+                          [questionIndex]="questionIndex"
+                          [question]="
+                            props.pageWiseSectionQuestions[pageIndex][
+                              props.sectionIds[pageIndex][sectionIndex]
+                            ].questions[questionIndex]
+                          "
+                          [logics]="
+                            props.pageWiseQuestionLogics[pageIndex][questionId]
+                              .logics
+                          "
+                          (questionEvent)="questionEventHandler($event)"
+                          [selectedNodeId]="selectedNode.id"
+                          [isPreviewActive]="isPreviewActive"
+                          [isEmbeddedForm]="isEmbeddedForm"
+                        ></app-question>
+                      </div>
+                    </ng-container>
+                  </div>
+                </app-section>
               </div>
+            </div>
+          </ng-container>
+          <ng-container
+            *ngIf="isEmptyPage[pageIndex]"
+            class="emptyPageContainer"
+          >
+            <div
+              class="floating-btns"
+              *ngIf="props.sectionIds[pageIndex].length !== 0"
+            >
               <button
-                class="add-section-btn"
-                [ngClass]="{
-                  'add-section-btn': sectionIds[pageIndex].length !== 0,
-                  'add-section-without-floating-btns':
-                    sectionIds[pageIndex].length === 0
-                }"
-                (click)="addSection(pageIndex)"
+                class="questions-btn"
+                (click)="
+                  addQuestion(
+                    pageIndex,
+                    props.sectionIds[pageIndex][0],
+                    0,
+                    selectedNode.id
+                  )
+                "
               >
                 <svg-icon
-                  icon="icon-add-section"
-                  class="add-section-btn-icon"
+                  icon="icon-add-question"
+                  class="add-question-icon"
                 ></svg-icon>
-                {{ 'addSection' | translate }}
+                <p class="questions-delete-btn-text" translate="question"></p>
               </button>
-            </ng-container>
-          </div>
-        </ng-container>
+              <br />
+
+              <button class="delete-btn">
+                <svg-icon
+                  icon="icon-delete-question"
+                  class="add-question-icon"
+                ></svg-icon>
+                <p class="questions-delete-btn-text" translate="delete"></p>
+              </button>
+            </div>
+            <button
+              class="add-section-btn"
+              [ngClass]="{
+                'add-section-btn': props.sectionIds[pageIndex].length !== 0,
+                'add-section-without-floating-btns':
+                  props.sectionIds[pageIndex].length === 0
+              }"
+              (click)="addSection(pageIndex)"
+            >
+              <svg-icon
+                icon="icon-add-section"
+                class="add-section-btn-icon"
+              ></svg-icon>
+              {{ 'addSection' | translate }}
+            </button>
+          </ng-container>
+        </div>
       </app-page>
     </ng-container>
   </div>
