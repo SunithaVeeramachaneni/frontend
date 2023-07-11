@@ -1,0 +1,140 @@
+@import '../../../../../scss/colors.scss';
+
+.import-questions-modal {
+  height: calc(100% - 46px);
+  padding: 15px;
+  position: relative;
+  overflow: none;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+  .no-affected-forms {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    .affected-icon {
+      height: 250px;
+      width: 250px;
+    }
+    .affected-text {
+      font-size: 120%;
+      color: $gray4;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  }
+  .heading-conatiner {
+    justify-content: space-between;
+
+    .heading {
+      font-size: 120%;
+    }
+
+    .clear-icon {
+      font-size: 130%;
+      align-self: center;
+      cursor: pointer;
+    }
+  }
+
+  .search {
+    margin-bottom: 15px;
+
+    .icon {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    position: absolute;
+    width: calc(100% - 30px);
+    bottom: 15px;
+    justify-content: space-between;
+
+    .form-count {
+      color: $gray4;
+      font-size: 110%;
+    }
+
+    .close-btn {
+      width: 200px;
+      color: $blue-main;
+    }
+
+    .select-btn {
+      color: $white;
+      width: 200px;
+      background-color: $blue-main;
+    }
+
+    .select-btn:disabled {
+      color: $gray7;
+      background-color: $gray2-bg;
+    }
+  }
+
+  .list-container {
+    height: 340px;
+    overflow-y: auto;
+
+    .list-item-conatiner {
+      border-bottom: 1px solid $gray8;
+      margin: 0 15px;
+
+      .selected-list-element {
+        list-style-type: none;
+        display: flex;
+        width: 100%;
+        cursor: pointer;
+
+        .form-name {
+          padding: 0 15px;
+          color: black;
+          font-size: 110%;
+          margin: 7px 0 0 0;
+          font-weight: 500;
+          text-transform: capitalize;
+        }
+
+        .form-des {
+          padding: 0 15px;
+          color: $gray4;
+          font-size: 100%;
+          margin: 5px 0;
+        }
+
+        .no-of-ques {
+          float: right;
+          padding-right: 15px;
+          color: $gray4;
+          font-size: 100%;
+        }
+      }
+
+      .selected-list-element:hover {
+        background: $blue4-hover;
+        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .active {
+        background: $blue4-hover;
+        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
+        border-radius: 5px;
+      }
+    }
+
+    .no-records {
+      background: $white;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
+}

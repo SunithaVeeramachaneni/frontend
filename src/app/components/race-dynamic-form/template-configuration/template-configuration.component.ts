@@ -42,11 +42,15 @@ import {
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  graphQLDefaultLimit
+} from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
+import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
 
 @Component({
   selector: 'app-template-configuration',
@@ -73,7 +77,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   errors: ValidationError = {};
   formDetails: any;
   isEmbeddedTemplate: boolean;
-  isTemplate = true;
+  isTemplate: boolean = true;
+  affectedForms: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
   private onDestroy$ = new Subject();
@@ -365,11 +370,15 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
+    const dialogRef = this.dialog.open(TemplateAffectedFormsModalComponent, {
+      maxWidth: '50vw',
+      maxHeight: '82vh',
+      height: '100%',
+      width: '100%',
+      data: {
+        templateID: this.formMetadata.id
+      }
+    });
   }
 
   getDraftFormConfigurationStatuses() {

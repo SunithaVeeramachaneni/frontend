@@ -81,6 +81,7 @@ import { GlobalResponseEffects } from 'src/app/forms/state/global-response.effec
 import { InspectionObservationsComponent } from './inspection-observations/inspection-observations.component';
 import { ImportTemplateListComponent } from 'src/app/components/race-dynamic-form/import-template-list/import-template-list.component';
 import { ImportFormListComponent } from 'src/app/components/race-dynamic-form/import-form-list/import-form-list.component';
+import { TemplateAffectedFormsModalComponent } from './template-configuration/template-affected-forms-modal/template-affected-forms-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -114,7 +115,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     EditTemplateNameModalComponent,
     InspectionObservationsComponent,
     ImportTemplateListComponent,
-    ImportFormListComponent
+    ImportFormListComponent,
+    TemplateAffectedFormsModalComponent
   ],
   imports: [
     FormsModule,
