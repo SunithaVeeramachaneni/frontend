@@ -71,6 +71,7 @@ export class RoundPlanResolverService
           tags,
           plantId,
           plant,
+          instructions,
           _version: formListDynamoDBVersion
         } = form;
         let pdfTemplateConfiguration = JSON.parse(
@@ -102,7 +103,8 @@ export class RoundPlanResolverService
           tags,
           plantId,
           plant: plant.name,
-          pdfTemplateConfiguration
+          pdfTemplateConfiguration,
+          instructions
         };
 
         const subFormsMap = subForms ? JSON.parse(subForms) : {};

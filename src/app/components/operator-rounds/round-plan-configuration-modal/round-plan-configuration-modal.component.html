@@ -166,10 +166,12 @@
           >
             <quill-material
               [ngClass]="{
-                'display-toolbar': true
+                'display-toolbar': headerDataForm.get('isOpen').value
               }"
               formControlName="notes"
               [placeholder]="'addNotes' | translate"
+              class="notes-field"
+              (editorFocus)="handleEditorFocus($event)"
             >
             </quill-material>
 
@@ -301,7 +303,7 @@
                         <button
                           mat-button
                           color="primary"
-                          class="p-0"
+                          class="p-0 add-new-button"
                           (click)="storeDetails(i)"
                           [disabled]="
                             headerDataForm.get('additionalDetails')['controls'][
@@ -423,7 +425,7 @@
               <div class="width-10 cancel-icon">
                 <svg-icon
                   icon="icon-closeIcon"
-                  class="close-icon"
+                  class="close-icon cursor-pointer"
                   (click)="deleteAdditionalDetails(i)"
                 ></svg-icon>
               </div>

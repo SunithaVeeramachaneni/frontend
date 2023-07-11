@@ -173,6 +173,14 @@
 
 .icon-upload {
   -webkit-transform: rotate(120deg);
+  height: 16px;
+  width: 16px;
+  margin-bottom: 5px;
+  margin-right: -4px;
+}
+.add-new-button {
+  width: 100%;
+  text-align: start;
 }
 
 .attachments-container {

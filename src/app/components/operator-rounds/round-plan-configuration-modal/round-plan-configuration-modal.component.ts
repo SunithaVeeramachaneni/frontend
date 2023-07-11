@@ -144,7 +144,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     const htmlTagsRegex = /<[^>]+>/g;
     return (control: AbstractControl): { [key: string]: any } | null => {
       const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
-      if (textWithoutTags.length > maxLength) {
+      if (textWithoutTags?.length > maxLength) {
         return { maxLength: { value: control.value } };
       }
       return null;
@@ -170,10 +170,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
+      isOpen: false,
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
         notes: ['', [this.maxLengthWithoutBulletPoints(250)]],
-        attachments: ''
+        attachments: '',
+        pdfDocs: ''
       })
     });
     this.getAllPlantsData();
@@ -231,8 +233,21 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       tag.toLowerCase().includes(filterValue)
     );
   }
+  handleEditorFocus(focus: boolean) {
+    if (this.headerDataForm.get('isOpen').value !== focus) {
+      this.headerDataForm.get('isOpen').setValue(focus);
+    }
+  }
 
   next() {
+    const value = this.headerDataForm.get('instructions.notes').value;
+    if (
+      value.trim() !== value ||
+      value.startsWith(' ') ||
+      value.endsWith(' ')
+    ) {
+      return { trimError: true };
+    }
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
@@ -245,13 +260,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     const newTags = [];
-    const attachmentskeys = this.filteredMediaTypeIds.mediaIds.concat(
-      this.filteredMediaPdfTypeIds
-    );
     this.headerDataForm
       .get('instructions.attachments')
-      .setValue(attachmentskeys);
-
+      .setValue(this.filteredMediaTypeIds.mediaIds);
+    this.headerDataForm
+      .get('instructions.pdfDocs')
+      .setValue(this.filteredMediaPdfTypeIds);
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -353,7 +367,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     const files = Array.from(target.files);
     const reader = new FileReader();
     const file: File = files[0];
-    const size = file.size;
+    const size = file?.size;
     const maxSize = 390000;
     if (file.name.endsWith('.pdf') && size <= maxSize) {
       this.pdfFiles.push(file);

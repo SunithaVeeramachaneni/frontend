@@ -270,7 +270,7 @@
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
   "selectAnOperator": "Select an Operator",
-  "addImagesAndPDFBtnNew": "Add images or pdf",
+  "addImagesAndPDFBtnNew": "Add Images or PDF",
   "notesAndAttachment": "Notes and Attachments",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters",
   "openIssues": "Open Issues",

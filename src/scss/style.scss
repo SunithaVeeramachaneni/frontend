@@ -144,6 +144,16 @@ li.breadcrumb-item.active span {
 .display-toolbar .ql-editor {
   padding: 12px 15px !important;
 }
+.notes-field {
+  .ql-editor {
+    padding: 0px 5px !important;
+  }
+  .ql-editor p,
+  .ql-editor ol,
+  .ql-editor ul {
+    margin-bottom: 0rem !important;
+  }
+}
 
 .display-toolbar .ql-toolbar.ql-snow {
   display: block;

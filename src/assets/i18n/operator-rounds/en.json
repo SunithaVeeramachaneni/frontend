@@ -313,7 +313,7 @@
   "locationCreated": "Location: ",
   "plantCreated": "Plant: ",
   "categoryCreated": "Category: ",
-  "addImagesAndPDFBtnNew": "Add images or pdf",
+  "addImagesAndPDFBtnNew": "Add Images or PDF",
   "nodeId": "{type} Id: {id}",
   "typePlaceholder": "Type",
   "errorExceedingLimit": "Notes cannot contain more than 250 characters",
