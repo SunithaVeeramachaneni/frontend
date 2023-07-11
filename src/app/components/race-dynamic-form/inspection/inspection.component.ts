@@ -436,7 +436,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
       this.users$
     ]).pipe(
       map(([inspections, scrollData]) => {
-        console.log('here');
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -475,7 +474,6 @@ export class InspectionComponent implements OnInit, OnDestroy {
             )
           : this.initial.data.slice(sliceStart, this.sliceCount);
         this.dataSource = new MatTableDataSource(dataSource);
-        console.log('should be here');
         return this.initial;
       })
     );
