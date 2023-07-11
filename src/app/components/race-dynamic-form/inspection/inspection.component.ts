@@ -403,6 +403,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
+        this.dataSource = new MatTableDataSource([]);
         return this.getInspectionsList();
       })
     );
@@ -498,6 +499,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       fetchType: this.fetchType,
       formId: this.formId
     };
+    this.isLoading$.next(true);
     return this.raceDynamicFormService
       .getInspectionsList$({ ...obj, ...this.filter })
       .pipe(
@@ -728,7 +730,7 @@ export class InspectionComponent implements OnInit, OnDestroy {
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value;
       } else if (item.type === 'date' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        this.filter[item.column] = item.value;
       }
     }
     this.nextToken = '';

@@ -764,7 +764,7 @@ export class RoundsComponent implements OnInit, OnDestroy {
       } else if (item.column === 'assignedTo' && item.value) {
         this.filter[item.column] = this.getFullNameToEmailArray(item.value);
       } else if (item.column === 'dueDate' && item.value) {
-        this.filter[item.column] = item.value.toISOString();
+        this.filter[item.column] = item.value;
       }
     }
     this.nextToken = '';

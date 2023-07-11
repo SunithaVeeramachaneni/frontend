@@ -358,6 +358,17 @@ export class ActionsListComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserInfo>;
   initial: any;
   isModalOpened = false;
+  isPopoverOpen = false;
+  filterJson = [];
+  filter = {
+    title: '',
+    location: '',
+    plant: '',
+    priority: '',
+    status: '',
+    dueDate: '',
+    assignedTo: ''
+  };
   readonly perms = perms;
   private _users$: Observable<UserDetails[]>;
   private onDestroy$ = new Subject();
@@ -390,6 +401,7 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+    this.getFilter();
     this.displayActions();
     this.configOptions.allColumns = this.columns;
   }
@@ -468,12 +480,16 @@ export class ActionsListComponent implements OnInit, OnDestroy {
       moduleName: this.moduleName
     };
 
-    return this.observationsService.getObservations$(obj).pipe(
-      mergeMap(({ rows, next, count }) => {
+    return this.observationsService.getObservations$(obj, this.filter).pipe(
+      mergeMap(({ rows, next, count, filters }) => {
         this.observationsService.actionsNextToken = next;
         this.isLoading$.next(false);
         this.actionsCount$ = of(count);
-        this.observationsService.actions$.next({ rows, next, count });
+        this.observationsService.actions$.next({ rows, next, count, filters });
+        this.filterJson = this.observationsService.prepareFilterData(
+          filters,
+          this.filterJson
+        );
         return of(rows as any[]);
       }),
       catchError(() => {
@@ -570,8 +586,46 @@ export class ActionsListComponent implements OnInit, OnDestroy {
     }
   };
 
+  applyFilters(data: any): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    for (const item of data) {
+      if (item.type !== 'date' && item.value) {
+        this.filter[item.column] = item.value ?? '';
+      } else if (item.type === 'date' && item.value) {
+        this.filter[item.column] = item.value.toISOString();
+      } else {
+        this.filter[item.column] = item.value ?? '';
+      }
+    }
+    this.observationsService.actionsNextToken = '';
+    this.observationsService.fetchActions$.next({ data: 'load' });
+  }
+
+  clearFilters(): void {
+    this.isLoading$.next(true);
+    this.isPopoverOpen = false;
+    this.filter = {
+      title: '',
+      location: '',
+      plant: '',
+      priority: '',
+      status: '',
+      dueDate: '',
+      assignedTo: ''
+    };
+    this.observationsService.actionsNextToken = '';
+    this.observationsService.fetchActions$.next({ data: 'load' });
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  private getFilter(): void {
+    this.observationsService
+      .getFormsFilter()
+      .subscribe((res) => (this.filterJson = res));
   }
 }
