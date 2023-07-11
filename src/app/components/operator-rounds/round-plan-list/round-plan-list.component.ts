@@ -37,9 +37,6 @@ import {
 } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { slideInOut } from 'src/app/animations';
 import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
@@ -296,7 +293,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>,
     private dialog: MatDialog,
     private plantService: PlantService,
     private loginService: LoginService
@@ -600,10 +596,8 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
   roundPlanDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
@@ -716,7 +710,6 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: RoundPlan): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

@@ -257,6 +257,7 @@ export class FormConfigurationModalComponent implements OnInit {
     );
 
     if (this.headerDataForm.valid) {
+      this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
       const userName = this.loginService.getLoggedInUserName();
       if (this.formData.formExists === false) {
         this.store.dispatch(

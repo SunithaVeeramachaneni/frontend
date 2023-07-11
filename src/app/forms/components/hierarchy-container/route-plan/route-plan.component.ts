@@ -7,15 +7,11 @@ import {
   Input,
   Output,
   EventEmitter,
-  ChangeDetectorRef,
   Inject,
   ViewChild
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-  getNodeWiseQuestionsCount,
-  State
-} from 'src/app/forms/state/builder/builder-state.selectors';
+import { State } from 'src/app/forms/state/builder/builder-state.selectors';
 import { OperatorRoundsService } from 'src/app/components/operator-rounds/services/operator-rounds.service';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { DOCUMENT } from '@angular/common';
@@ -50,6 +46,14 @@ export class RoutePlanComponent implements OnInit {
     return this._hierarchy;
   }
   @Input() hierarchyMode;
+  @Input() set nodeWiseQuestionsCount(nodeWiseQuestionsCount: any) {
+    if (nodeWiseQuestionsCount) {
+      this._nodeWiseQuestionsCount = nodeWiseQuestionsCount;
+    }
+  }
+  get nodeWiseQuestionsCount() {
+    return this._nodeWiseQuestionsCount;
+  }
 
   dropTargetIds = [];
   nodeLookup = {};
@@ -57,12 +61,11 @@ export class RoutePlanComponent implements OnInit {
   positions: any;
   selectedNode: any;
   selectedNode$: Observable<any>;
-  nodeWiseQuestionsCount: any = {};
-  nodeWiseQuestionsCount$: any;
   public nodeSelectedForShowHierarchy = {} as any;
   public togglePopover = false;
 
   private _hierarchy: any;
+  private _nodeWiseQuestionsCount: any = {};
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -78,14 +81,6 @@ export class RoutePlanComponent implements OnInit {
         this.selectedNode = data;
       })
     );
-
-    this.nodeWiseQuestionsCount$ = this.store
-      .select(getNodeWiseQuestionsCount())
-      .pipe(
-        tap((nodeWiseQuestionsCount) => {
-          this.nodeWiseQuestionsCount = nodeWiseQuestionsCount;
-        })
-      );
   }
 
   setSelectedNode(node) {

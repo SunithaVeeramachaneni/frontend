@@ -41,9 +41,6 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { slideInOut } from 'src/app/animations';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
 import { CreateFromTemplateModalComponent } from '../create-from-template-modal/create-from-template-modal.component';
@@ -325,7 +322,6 @@ export class FormListComponent implements OnInit, OnDestroy {
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private router: Router,
-    private readonly store: Store<State>,
     private dialog: MatDialog,
     private loginService: LoginService,
     private usersService: UsersService,
@@ -636,10 +632,8 @@ export class FormListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
   }
-  formDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
+  formDetailActionHandler() {
     this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
   }
 
@@ -745,7 +739,6 @@ export class FormListComponent implements OnInit, OnDestroy {
   }
 
   private showFormDetail(row: GetFormList): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

@@ -65,6 +65,7 @@ const routes: Routes = [
       {
         path: 'templates',
         component: TemplateContainerComponent,
+        resolve: { form: TemplateResolverService },
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Templates' },
