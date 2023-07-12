@@ -27,6 +27,7 @@
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
         class="width-100"
       ></cwp-dynamictable>
     </div>

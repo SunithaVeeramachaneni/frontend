@@ -246,6 +246,10 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
       })
     );
   }
+  
+  handleTableEvent = (event): void => {
+    this.raceDynamicFormService.fetchForms$.next(event);
+  };
 
   getForms() {
     return this.raceDynamicFormService

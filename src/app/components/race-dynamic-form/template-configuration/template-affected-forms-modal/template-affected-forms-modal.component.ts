@@ -201,10 +201,11 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     this.formsListCount$.subscribe((count) => {
       this.affectedFormsCount = count;
     });
-    this.raceDynamicFormService.fetchForms$.subscribe((data) => {
-      console.log(data);
-    });
   }
+
+  handleTableEvent = (event): void => {
+    this.raceDynamicFormService.fetchForms$.next(event);
+  };
 
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
