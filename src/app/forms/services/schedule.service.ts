@@ -72,14 +72,26 @@ export class ScheduleConfigurationService {
   getTimeDifference(firstTime: string, secondTime: string): number {
     let timeDifference: number;
     const startTime = '12:00 AM';
+    const nextDayStartTime = '01:00 AM';
     const twentyFourHours = 24;
-
+    const twelveHours = 12;
+    const firstHour = this.getHours(firstTime);
+    const secondHour = this.getHours(secondTime);
+    if (
+      firstTime.toLowerCase() === startTime.toLowerCase() &&
+      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
+    ) {
+      return (timeDifference = twelveHours + (firstHour === 0 ? 1 : firstHour));
+    }
+    if (
+      firstTime.toLowerCase() !== startTime.toLowerCase() &&
+      secondTime.toLowerCase() === nextDayStartTime.toLowerCase()
+    ) {
+      return (timeDifference = (firstHour === 0 ? 1 : firstHour) - secondHour);
+    }
     if (firstTime === startTime && secondTime === startTime) {
       timeDifference = twentyFourHours;
     } else {
-      const firstHour = this.getHours(firstTime);
-      const secondHour = this.getHours(secondTime);
-
       if (firstHour > secondHour) {
         timeDifference = twentyFourHours - (firstHour - secondHour);
       } else {
@@ -150,6 +162,8 @@ export class ScheduleConfigurationService {
   addTime(originalTime: string, addHours: number, addMinutes: number) {
     if (!originalTime) return;
 
+    originalTime = this.convertTo24Hour(originalTime);
+
     // Split the original time into hours, minutes, and AM/PM indicator
     const [timePart, ampmPart] = originalTime?.split(' ');
     const [hoursStr, minutesStr] = timePart?.split(':');
@@ -183,6 +197,11 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
+
+    const startTimeAM = '12:00 am';
+    if (originalTime?.toLowerCase() === startTimeAM.toLowerCase()) {
+      ampm = TimeType.am;
+    }
     // Format the resulting time as a string
     const updatedTime = `${this.padZero(hours)}:${this.padZero(
       minutes
@@ -204,6 +223,9 @@ export class ScheduleConfigurationService {
       string?,
       string?
     ];
+
+    timeString = this.convertTo24Hour(timeString);
+
     let hours: number = parseInt(hoursStr, 10);
     let minutes: number = parseInt(minutesStr, 10);
 
@@ -249,10 +271,28 @@ export class ScheduleConfigurationService {
     return updatedTimeString;
   }
 
-  sortArray(rows = []) {
-    return rows?.sort((a, b) =>
-      this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
-    );
+  sortArray(rows = [], timeSlots = []) {
+    if (timeSlots.length > 0) {
+      if (timeSlots[0] === timeSlots[timeSlots.length - 1]) {
+        return rows?.sort((a, b) =>
+          this.getTime(a?.startTime) > this.getTime(b?.startTime) ? 1 : -1
+        );
+      }
+    }
+
+    return rows?.sort((a, b) => {
+      const aIndex = timeSlots.indexOf(a?.startTime);
+      const bIndex = timeSlots.indexOf(b?.startTime);
+      return aIndex - bIndex;
+    });
+  }
+
+  addLeadingZero(val: string): string {
+    const parsedNumber = parseInt(val, 10);
+    if (!isNaN(parsedNumber) && parsedNumber >= 1 && parsedNumber <= 9) {
+      return '0' + val;
+    }
+    return val;
   }
 
   private getDateString(data?: Date): string {

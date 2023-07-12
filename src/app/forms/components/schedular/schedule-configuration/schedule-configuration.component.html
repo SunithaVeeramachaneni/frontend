@@ -325,9 +325,7 @@
                   (selectionChange)="onShiftChange($event)"
                 >
                   <mat-select-trigger>
-                    {{ shiftSlots?.value[0]?.name }},
-                    {{ shiftSlots?.value[1]?.name }},
-                    {{ shiftSlots?.value[2]?.name }}
+                    {{ initialShiftSelected }}
                     <span
                       *ngIf="shiftSlots?.value?.length > 3"
                       class="example-additional-selection"

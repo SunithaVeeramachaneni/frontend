@@ -364,6 +364,11 @@
   .sub-text {
     color: $light-gray;
   }
+
+  .mat-calendar {
+    width: 50%;
+    margin-left: 20%;
+  }
 }
 
 #horizontal-row {
@@ -403,9 +408,4 @@
   font-weight: bold;
   font-size: 130%;
   margin: 0;
-}
-
-::ng-deep .mat-calendar {
-  width: 350px;
-  height: 400px;
 }

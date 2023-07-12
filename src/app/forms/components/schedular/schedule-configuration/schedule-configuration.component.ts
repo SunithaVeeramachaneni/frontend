@@ -953,6 +953,9 @@ export class ScheduleConfigurationComponent
               this.shiftDetails = {};
               delete config?.shiftDetails;
             }
+            if (this.selectedDetails?.shifts?.length > 0) {
+              this.initCreatedSlots();
+            }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
               this.schedulerConfigForm.get('startDate').disable();
@@ -1129,6 +1132,9 @@ export class ScheduleConfigurationComponent
               );
               this.shiftDetails = {};
               delete config?.shiftDetails;
+            }
+            if (this.selectedDetails?.shifts?.length > 0) {
+              this.initCreatedSlots();
             }
             this.schedulerConfigForm.patchValue(config);
             if (scheduledTill !== null) {
@@ -1350,6 +1356,16 @@ export class ScheduleConfigurationComponent
     return timeZone
       ? `${timeZone?.utcOffset ?? '' + ','} ${timeZone?.description ?? ''}`
       : this.placeHolder;
+  }
+
+  get initialShiftSelected(): string {
+    if (this.shiftSlots?.value?.length > 0) {
+      return this.shiftSlots?.value
+        ?.slice(0, 3)
+        .map((s) => s?.name)
+        .join(', ');
+    }
+    return '';
   }
 
   ngOnDestroy(): void {
