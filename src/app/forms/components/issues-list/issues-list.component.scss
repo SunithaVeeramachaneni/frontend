@@ -60,3 +60,10 @@
     width: 14px;
   }
 }
+
+::ng-deep .set-filter {
+  height: 20px !important;
+  width: 20px !important;
+  top: 30px !important;
+  position: relative !important;
+}
