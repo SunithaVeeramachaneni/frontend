@@ -47,7 +47,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  ghostLoading = new Array(19).fill(0).map((_, i) => i);
+  ghostLoading = new Array(13).fill(0).map((_, i) => i);
   nextToken = '';
   fetchType = 'load';
   skip = 0;
@@ -234,7 +234,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 330px)'
+            tableHeight: 'calc(100vh - 170px)'
           };
           initial.data = rows;
         } else {

@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div *ngIf="forms$ | async">
+  <div *ngIf="(forms$ | async) && (formsListCount$ | async) !== 0">
     <div *ngIf="(isLoading$ | async) === false">
       <cwp-dynamictable
         [dataSource]="dataSource"
