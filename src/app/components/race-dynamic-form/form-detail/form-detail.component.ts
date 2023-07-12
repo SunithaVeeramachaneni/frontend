@@ -83,6 +83,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   pdfButtonDisabled = false;
   plantTimezoneMap: any;
   slotArr = [];
+  templatesUsed = [];
   readonly dateTimeFormat = dateTimeFormat2;
   readonly dateFormat = dateFormat2;
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -141,6 +142,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               this.questionsCount += page?.questions?.length || 0;
               this.pagesCount += 1;
             });
+            this.templatesUsed = [];
+            if (formDetail?.templatesUsed) {
+              this.templatesUsed = formDetail.templatesUsed;
+            }
           }
           return data;
         })
