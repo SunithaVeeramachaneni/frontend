@@ -184,7 +184,7 @@
           <div *ngIf="isTemplate">
             <div class="name-heading">
               <div>
-                <p class="color-gray">Template ID</p>
+                <p class="color-gray">{{ 'templateId' | translate }}</p>
               </div>
               <div class="flex-custom" *ngIf="selectedForm?.id">
                 <h4 class="create-name">{{ selectedForm?.id }}</h4>
@@ -192,7 +192,7 @@
             </div>
             <div class="name-heading">
               <div>
-                <p class="color-gray">Status</p>
+                <p class="color-gray">{{ 'status' | translate }}</p>
               </div>
               <div class="flex-custom" *ngIf="selectedForm?.formStatus">
                 <h4 class="create-name">{{ selectedForm?.formStatus }}</h4>
@@ -200,7 +200,7 @@
             </div>
             <div class="name-heading">
               <div>
-                <p class="color-gray">Questions</p>
+                <p class="color-gray">{{ 'questionS' | translate }}</p>
               </div>
               <div class="flex-custom" *ngIf="selectedForm?.questionsCount">
                 <h4 class="create-name">{{ selectedForm?.questionsCount }}</h4>
@@ -208,7 +208,7 @@
             </div>
             <div class="name-heading">
               <div>
-                <p class="color-gray">Template In</p>
+                <p class="color-gray">{{ 'templateIn' | translate }}</p>
               </div>
               <div class="flex-custom" (click)="showAffectedTemplateForms()">
                 <h4 class="create-name affected-forms">
