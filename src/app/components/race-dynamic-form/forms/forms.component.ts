@@ -467,7 +467,7 @@ export class FormsComponent implements OnInit, OnDestroy {
           this.shiftIdNameMap[shift.id] = shift.name;
         });
         this.allPlants = plants;
-        this.allShifts = shifts.items.filter((s) => s.isActive);
+        this.allShifts = shifts?.items?.filter((s) => s?.isActive) || [];
         for (const item of this.filterJson) {
           if (item.column === 'shiftId') {
             item.items = Object.values(this.shiftIdNameMap);
@@ -647,12 +647,12 @@ export class FormsComponent implements OnInit, OnDestroy {
   };
 
   prepareActiveShifts(form: any) {
-    const selectedPlant = this.allPlants?.items.find(
+    const selectedPlant = this.allPlants?.items?.find(
       (plant) => plant.id === form.plantId
     );
     const selectedShifts = JSON.parse(selectedPlant?.shifts);
-    const activeShifts = this.allShifts.filter((data) =>
-      selectedShifts.some((shift) => shift.id === data.id)
+    const activeShifts = this.allShifts?.filter((data) =>
+      selectedShifts.some((shift) => shift?.id === data?.id)
     );
     return activeShifts;
   }

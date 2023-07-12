@@ -206,7 +206,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
           this.setShiftDetails();
           return;
         }
-        const lastTIme = this.dataArrays[indexOfMatchObject].endTime;
+        const lastTime = this.dataArrays[indexOfMatchObject].endTime;
         const oldIndex = this.dataArrays[indexOfMatchObject].index;
         this.dataArrays[indexOfMatchObject].index = Math.abs(timeDiff);
         this.dataArrays[indexOfMatchObject].endTime = this.service.subtractTime(
@@ -217,7 +217,7 @@ export class ShiftChartComponent implements OnInit, OnChanges {
         obj = {
           index: Math.abs(oldIndex - timeDiff),
           startTime: this.service.subtractTime(val, 0, 0),
-          endTime: timeDiff === 1 ? this.service.addTime(val, 0, 59) : lastTIme,
+          endTime: lastTime,
           isBook: true
         };
         this.dataArrays.push(obj);
@@ -286,12 +286,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       }
 
       // If we add slot from left to right and endTime and startTime are equal
-      console.log(
-        this.dataArrays.filter(
-          (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
-        ).length > 0,
-        'this.dataArrays.filter'
-      );
       if (
         this.dataArrays.filter(
           (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)

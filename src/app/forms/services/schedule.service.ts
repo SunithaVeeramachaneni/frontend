@@ -162,6 +162,8 @@ export class ScheduleConfigurationService {
   addTime(originalTime: string, addHours: number, addMinutes: number) {
     if (!originalTime) return;
 
+    originalTime = this.convertTo24Hour(originalTime);
+
     // Split the original time into hours, minutes, and AM/PM indicator
     const [timePart, ampmPart] = originalTime?.split(' ');
     const [hoursStr, minutesStr] = timePart?.split(':');
@@ -221,6 +223,8 @@ export class ScheduleConfigurationService {
       string?,
       string?
     ];
+    timeString = this.convertTo24Hour(timeString);
+
     let hours: number = parseInt(hoursStr, 10);
     let minutes: number = parseInt(minutesStr, 10);
 
@@ -251,7 +255,7 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
-    const startTimePM = '12:00 PM';
+    const startTimePM = '12:00';
     if (timeString?.toLowerCase() === startTimePM?.toLowerCase()) {
       type = TimeType.am;
     }
