@@ -210,8 +210,8 @@
               <div>
                 <p class="color-gray">Template In</p>
               </div>
-              <div class="flex-custom" *ngIf="selectedForm?.formsUsageCount">
-                <h4 class="create-name">
+              <div class="flex-custom" (click)="showAffectedTemplateForms()">
+                <h4 class="create-name affected-forms">
                   {{ selectedForm?.formsUsageCount }} Forms
                 </h4>
               </div>

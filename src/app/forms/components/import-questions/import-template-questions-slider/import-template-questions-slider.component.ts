@@ -279,12 +279,6 @@ export class ImportTemplateQuestionsSliderComponent
             res,
             this.selectedTemplateControl.value.id
           );
-          this.raceDynamicFormService
-            .updateTemplate$(this.selectedTemplateControl.value.id, {
-              formsUsageCount: ++this.selectedTemplateControl.value
-                .formsUsageCount
-            })
-            .subscribe();
         });
       this.cancelSliderEvent.emit(false);
     });

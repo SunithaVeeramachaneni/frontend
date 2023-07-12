@@ -52,6 +52,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
   @Output() scheduleRoundPlan: EventEmitter<RoundPlanDetail> =
     new EventEmitter();
+  @Output() showAffectedForms: EventEmitter<any> = new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   @Input() moduleName = 'RDF';
   @Input() showPDFDownload = false;
@@ -324,6 +325,11 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   isDayOfWeekSelected(daysOfWeek, dayIndex) {
     return daysOfWeek.includes(dayIndex);
+  }
+
+  showAffectedTemplateForms() {
+    if (this.selectedForm?.formsUsageCount)
+      this.showAffectedForms.emit(this.selectedForm);
   }
 
   private toggleLoader(action: boolean): void {

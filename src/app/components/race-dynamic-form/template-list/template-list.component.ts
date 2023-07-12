@@ -249,12 +249,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       ready: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -347,6 +347,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
         break;
       case 'formsUsageCount':
         this.showAffectedSlider(row);
+        break;
       default:
     }
   };
@@ -477,14 +478,15 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  showAffectedSlider(row: any): void {
+    this.selectedTemplate = row;
+    this.affectedSliderState = 'in';
+    this.onCloseViewDetail();
+  }
+
   private showFormDetail(row: any): void {
     this.selectedForm = row;
     this.menuState = 'in';
     this.onCloseAffectedSlider();
-  }
-  private showAffectedSlider(row: any): void {
-    this.selectedTemplate = row;
-    this.affectedSliderState = 'in';
-    this.onCloseViewDetail();
   }
 }

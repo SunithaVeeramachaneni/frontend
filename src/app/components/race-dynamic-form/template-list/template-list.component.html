@@ -60,6 +60,7 @@
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
+      (showAffectedForms)="showAffectedSlider($event)"
       [isTemplate]="true"
       (formDetailAction)="templateDetailActionHandler($event)"
     ></app-form-detail>
