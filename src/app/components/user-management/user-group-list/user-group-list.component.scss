@@ -30,8 +30,14 @@
   top: -37px;
 }
 .more-usergroup {
+  color: $light-gray;
   position: relative;
   top: -2px;
+  left: 11px;
+
+  mat-icon {
+    font-size: 170%;
+  }
 }
 
 .add-btn {
@@ -160,9 +166,11 @@
 }
 
 .role-name {
+  color: $gray-bg;
   padding: 10px;
   margin-top: 3px;
-  max-width: 60%;
+  font-weight: 500;
+  max-width: 95%;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -297,7 +305,7 @@
 .userList-left-component {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 75%;
 }
 
 .title {

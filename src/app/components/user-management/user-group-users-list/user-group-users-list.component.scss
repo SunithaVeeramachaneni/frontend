@@ -22,6 +22,17 @@
   font-weight: normal;
   line-height: normal;
 }
+.remove-btn {
+  text-transform: capitalize;
+  float: right;
+  background: $blue-main;
+  color: $white;
+  height: 35px;
+  width: 150px;
+  font-weight: normal;
+  line-height: normal;
+  margin: 10px;
+}
 
 .cancel-btn {
   text-transform: capitalize;
@@ -37,7 +48,17 @@
 .user-content {
   height: max-content;
 }
-
+.footer-btns {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  justify-content: end;
+  width: 100%;
+  position: absolute;
+  bottom: 15px;
+  border-top: 1px solid $border-color;
+  right: 0;
+}
 .header {
   display: flex;
   flex-direction: row;

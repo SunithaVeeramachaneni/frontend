@@ -1,8 +1,10 @@
 <div class="userGroupDeleteModal">
   <p class="heading" translate="deleteUserGroupHeading"></p>
   <p class="subHeading">
-    {{ 'deleteUserGroupSubHeading' | translate : { x: userGroupName } }}
+    <span translate="deleteUserGroupSubHeading"></span>
+    <b class="userGroupText">"{{ userGroupName }}"</b>?
   </p>
+
   <p class="message" translate="deleteUserGroupModal"></p>
   <button
     mat-raised-button

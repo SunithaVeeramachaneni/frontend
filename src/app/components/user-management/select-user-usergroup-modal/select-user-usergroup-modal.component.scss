@@ -36,7 +36,8 @@
   background-color: transparent;
   position: relative;
   margin: 11px 12px;
-  top: 0px;
+  top: 1px;
+  color: $light-gray;
 }
 
 .back-arrow {
@@ -53,6 +54,8 @@
 .no-of-active-users {
   float: right;
   margin: 15px;
+  position: relative;
+  top: -2px;
 }
 
 .active-users-count {
@@ -69,15 +72,18 @@
 }
 
 .title {
-  font-size: 150%;
+  font-size: 147%;
   font-weight: 500;
+  position: relative;
+  right: 5px;
+  top: 1px;
 }
 
 .create-btn {
   text-transform: capitalize;
   float: right;
-  background: #3d5afe;
-  color: #ffffff;
+  background: $blue-main;
+  color: $white;
   height: 35px;
   width: 150px;
   font-weight: normal;
@@ -102,6 +108,8 @@
 .header-left-elements {
   display: flex;
   flex-direction: row;
+  position: relative;
+  top: 3px;
 }
 .footer-btns {
   display: flex;

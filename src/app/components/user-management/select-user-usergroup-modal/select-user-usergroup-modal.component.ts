@@ -136,7 +136,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 150px)',
+    tableHeight: 'calc(100vh - 210px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
 
@@ -242,7 +242,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 150px)'
+            tableHeight: 'calc(100vh - 210px)'
           };
           console.log('loa data :', scrollData);
           users.map((user) => {

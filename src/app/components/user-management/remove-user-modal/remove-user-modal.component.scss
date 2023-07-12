@@ -1,7 +1,7 @@
 @import '../../../../scss/colors.scss';
 
-.userGroupDeleteModal {
-  width: 400px;
+.userRemoveModal {
+  width: 350px;
   height: auto;
   overflow: hidden;
   padding: 17px;
@@ -16,22 +16,14 @@
   margin: 0;
 }
 
-.userGroupText {
-  color: $gray-bg;
-}
 .message {
   font-weight: 400;
   color: $light-gray;
 }
 
-.subHeading {
-  color: $light-gray;
-  font-size: 100%;
-  font-weight: 500;
-}
-
 .yes-btn {
   background: $red-main;
+  height: 34px;
   border-radius: 4px;
   color: $white;
   float: right;

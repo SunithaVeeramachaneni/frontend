@@ -27,6 +27,7 @@ import { ToastService } from 'src/app/shared/toast';
 import {
   Count,
   LoadEvent,
+  RowLevelActionEvent,
   SearchEvent,
   TableEvent,
   UserDetails
@@ -45,6 +46,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { format } from 'date-fns';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
 
 @Component({
   selector: 'app-user-group-users-list',
@@ -186,7 +188,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh-50px)',
+    tableHeight: 'calc(100vh - 200px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
   dataSource: MatTableDataSource<any>;
@@ -262,7 +264,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh-50px)'
+            tableHeight: 'calc(100vh - 200px)'
           }; // To fix dynamic table height issue post search with no records & then remove search with records
           initial.data = users;
         } else {
@@ -347,5 +349,21 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       }
     );
   }
-  rowLevelActionHandler($event) {}
+
+  openRemoveUserModal($event): void {
+    const removeUserModalRef = this.dialog.open(RemoveUserModalComponent, {
+      data: {
+        text: 'remove-users'
+      }
+    });
+    removeUserModalRef.afterClosed().subscribe();
+  }
+  rowLevelActionHandler = ({ data, action }): void => {
+    switch (action) {
+      case 'delete':
+        this.openRemoveUserModal(data);
+        break;
+      default:
+    }
+  };
 }

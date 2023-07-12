@@ -47,6 +47,7 @@ import { AddEditUserGroupModalComponent } from './add-edit-user-group-modal/add-
 import { SelectUserUsergroupModalComponent } from './select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { UserGroupUsersListComponent } from './user-group-users-list/user-group-users-list.component';
 import { UserGroupDeleteModalComponent } from './user-group-delete-modal/user-group-delete-modal.component';
+import { RemoveUserModalComponent } from './remove-user-modal/remove-user-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -103,7 +104,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditUserGroupModalComponent,
     SelectUserUsergroupModalComponent,
     UserGroupUsersListComponent,
-    UserGroupDeleteModalComponent
+    UserGroupDeleteModalComponent,
+    RemoveUserModalComponent
   ],
   schemas: [],
   providers: [],
