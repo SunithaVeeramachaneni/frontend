@@ -39,24 +39,36 @@ export class UserGroupService {
 
   listDynamoUsers$ = (
     queryParams: {
-      next?: string;
+      fetchType: string;
       limit: number;
       searchKey: string;
       plantId: string;
+      next?: string;
     },
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.next ?? '');
     params.set('searchTerm', queryParams?.searchKey.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams.plantId);
 
-    return this.appService._getResp(
-      environment.userRoleManagementApiUrl,
-      `user-groups/users?` + params.toString(),
-      info
-    );
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.next !== null)
+    ) {
+      return this.appService._getResp(
+        environment.userRoleManagementApiUrl,
+        `user-groups/users?` + params.toString(),
+        info
+      );
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        next: null
+      });
+    }
   };
 
   createUserGroup$ = (
@@ -94,7 +106,6 @@ export class UserGroupService {
     info: ErrorInfo = {} as ErrorInfo
   ) => {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('limit', queryParams.limit.toString() ?? '');
     params.set('nextToken', queryParams.nextToken ?? '');
     params.set('searchTerm', queryParams?.searchKey?.toLocaleLowerCase() ?? '');
     params.set('plantId', queryParams?.plantId ?? '');
@@ -172,6 +183,13 @@ export class UserGroupService {
       environment.userRoleManagementApiUrl,
       `user-groups/${id}/users`,
       { users: members },
+      info
+    );
+  }
+  getAllUsersUserGroup(id: number, info = {} as ErrorInfo) {
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `user-groups/${id}/users/all`,
       info
     );
   }

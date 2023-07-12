@@ -320,7 +320,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       );
 
   handleTableEvent = (event) => {
-    console.log(event);
     this.fetchUsers$.next(event);
   };
 

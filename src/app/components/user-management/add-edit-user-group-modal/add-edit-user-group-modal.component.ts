@@ -109,7 +109,7 @@ export class AddEditUserGroupModalComponent implements OnInit {
       SelectUserUsergroupModalComponent,
       {
         data: {
-          dialogText: 'createUserGroup',
+          type: 'create',
           ...this.userGroupForm.value
         }
       }

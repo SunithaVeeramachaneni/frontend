@@ -162,6 +162,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   allUsersList = [];
   addNewGroup: Observable<number>;
   type: string;
+  fetchType: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -179,11 +180,11 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     console.log(this.data);
     if (this.data?.type === 'update') {
       this.type = 'update';
-      this.fetchUserGroupUsers$ = this.userGroupService.listUserGroupUsers(
-        { limit: 25, nextToken: '', fetchType: 'load' },
-        this.data?.plantId
+      this.fetchUserGroupUsers$ = this.userGroupService.getAllUsersUserGroup(
+        this.data?.userGroupId
       );
     } else {
+      this.type = 'create';
       this.fetchUserGroupUsers$ = of([]);
     }
     this.searchUser = new FormControl('');
@@ -208,8 +209,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   getDisplayedUsers() {
     const usersOnLoadSearch$ = this.fetchUsers$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => {
+      switchMap(({ data }) => {
         this.skip = 0;
+        this.fetchType = data;
         return this.getUsersList();
       })
     );
@@ -218,9 +220,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = data;
           return this.getUsersList();
         } else {
-          return of([] as UserDetails[]);
+          return of([]);
         }
       })
     );
@@ -229,21 +232,46 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       columns: this.columns,
       data: []
     };
-    this.users$ = combineLatest([usersOnLoadSearch$, onScrollUsers$]).pipe(
-      map(([users, scrollData]) => {
+    this.users$ = combineLatest([
+      usersOnLoadSearch$,
+      onScrollUsers$,
+      this.fetchUserGroupUsers$
+    ]).pipe(
+      map(([users, scrollData, groupUsers]) => {
+        console.log(groupUsers);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
             tableHeight: 'calc(100vh - 150px)'
-          }; // To fix dynamic table height issue post search with no records & then remove search with records
+          };
+          console.log('loa data :', scrollData);
+          users.map((user) => {
+            if (
+              groupUsers?.items.some((grp) => grp?.users?.email === user?.email)
+            ) {
+              user.isSelected = true;
+            }
+            return user;
+          });
           initial.data = users;
         } else {
+          console.log('Scroll data :', scrollData);
+          scrollData.map((user) => {
+            if (
+              groupUsers?.items.some((grp) => grp?.users?.email === user?.email)
+            ) {
+              user.isSelected = true;
+            }
+            return user;
+          });
+
           initial.data = initial.data.concat(scrollData);
         }
 
         // console.log(initial);
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
+        this.selectedUsers = initial?.data?.filter((user) => user.isSelected);
         this.allUsersList = initial.data;
         return initial;
       })
@@ -256,6 +284,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         limit: this.limit,
         searchKey: this.searchUser.value,
         plantId: this.data.plantId,
+        fetchType: this.fetchType,
         next: this.next
       })
       .pipe(
@@ -266,7 +295,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           return of(resp.items);
         }),
         map((data) => {
-          const rows = data.map((item) => {
+          const rows = data?.map((item) => {
             if (item.firstName && item.lastName) {
               item.user = item.firstName + ' ' + item.lastName;
             } else {
@@ -372,8 +401,9 @@ export class SelectUserUsergroupModalComponent implements OnInit {
     );
   }
   updateUsers() {
+    const selectedUserIds = this.selectedUsers.map((user) => user.id);
     this.userGroupService
-      .selectUnselectGroupMembers$(this.data?.userGroupId, this.selectedUsers)
+      .selectUnselectGroupMembers$(this.data?.userGroupId, selectedUserIds)
       .subscribe();
   }
 }
