@@ -90,6 +90,11 @@
       color: $white;
     }
 
+    .use-button:disabled {
+      background-color: $gray2-bg;
+      color: $gray7;
+    }
+
     .cancel-button {
       width: 48%;
       margin-right: 10px;

@@ -44,6 +44,7 @@ export class ImportTemplateQuestionsSliderComponent
   @Input() allTemplates;
 
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  sectionCheckedCount = 0;
   importSectionQuestions: SectionQuestions[] = [];
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
@@ -80,6 +81,7 @@ export class ImportTemplateQuestionsSliderComponent
       .subscribe();
 
     this.selectedTemplateControl.valueChanges.subscribe((template) => {
+      this.sectionCheckedCount = 0;
       this.raceDynamicFormService
         .getFormTemplateUsage$({
           formID: this.currentFormData.formMetadata.id,
@@ -148,6 +150,8 @@ export class ImportTemplateQuestionsSliderComponent
 
   setSectionChecked(checked, section) {
     section.checked = checked;
+    if (checked) this.sectionCheckedCount++;
+    else this.sectionCheckedCount--;
   }
 
   useTemplate() {

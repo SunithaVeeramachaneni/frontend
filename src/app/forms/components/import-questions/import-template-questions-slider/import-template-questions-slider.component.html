@@ -73,6 +73,7 @@
         translate="cancel"
       ></button>
       <button
+        [disabled]="sectionCheckedCount === 0"
         mat-raised-button
         color="primary"
         class="use-button"
