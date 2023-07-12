@@ -64,7 +64,7 @@ export class AddEditUserGroupModalComponent implements OnInit {
         WhiteSpaceValidator.trimWhiteSpace
       ]),
       description: new FormControl(''),
-      plantId: new FormControl('', [this.matSelectValidator()])
+      plantId: new FormControl('', [Validators.required])
     });
     if (this.data.type === 'create') {
       this.groupData = null;
@@ -98,10 +98,6 @@ export class AddEditUserGroupModalComponent implements OnInit {
         this.plantInformation = this.plants;
       }
     });
-  }
-  matSelectValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null =>
-      !control.value?.length ? { selectOne: { value: control.value } } : null;
   }
 
   close() {

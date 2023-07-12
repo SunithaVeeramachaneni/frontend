@@ -1,12 +1,30 @@
 <div class="container">
   <div class="header">
-    <h2 class="title">{{ _userGroupName }}</h2>
-    <button
-      mat-raised-button
-      class="create-btn"
-      translate="changeUserinGroup"
-      (click)="selectUnselectUsers()"
-    ></button>
+    <div class="left-pannel">
+      <h2 class="title">{{ _userGroupName }}</h2>
+    </div>
+
+    <div class="right-pannel">
+      <span class="custom-form-field-gray-color search">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchUsers' | translate"
+            autocomplete="off"
+            [formControl]="searchUser"
+          />
+        </mat-form-field>
+      </span>
+
+      <button
+        mat-raised-button
+        class="create-btn"
+        translate="changeUserinGroup"
+        (click)="selectUnselectUsers()"
+      ></button>
+    </div>
   </div>
   <div
     *ngIf="allUsers$ | async as users; else loadingUsers"

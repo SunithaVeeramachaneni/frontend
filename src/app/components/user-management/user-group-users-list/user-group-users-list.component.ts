@@ -192,7 +192,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   dataSource: MatTableDataSource<any>;
   allUsers$: Observable<any>;
   searchUser: FormControl;
-  searchUser$: Observable<any>;
+  // searchUser$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   _userGroupId: string;
   _userGroupPlantId: string;
@@ -225,11 +225,12 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap((data) => {
-          this.isLoading$.next(true);
+        tap(() => {
+          this.fetchUsers$.next({ data: 'search' });
         })
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
+    this.getAllUsers();
     this.configOptions.allColumns = this.columns;
     this.prepareMenuActions();
   }
@@ -272,8 +273,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
-      }),
-      tap((data) => console.log(data))
+      })
     );
   }
 

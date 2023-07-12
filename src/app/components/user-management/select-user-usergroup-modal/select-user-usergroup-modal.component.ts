@@ -342,7 +342,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       users: selectedUserId,
       searchTerm: `${this.data.name.toLowerCase()} ${this.data.description.toLowerCase()}`
     };
-    console.log('New user grp :', newUserGroup);
 
     this.userGroupService
       .createUserGroup$(newUserGroup, {

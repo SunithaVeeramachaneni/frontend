@@ -12,6 +12,16 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.header-right-elements {
+  display: flex;
+}
+.back-arrow {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 1px;
+}
 .modal-header {
   display: flex;
   flex-direction: row;

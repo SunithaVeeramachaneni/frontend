@@ -1,6 +1,12 @@
 <div class="selectUser">
   <div class="modal-header">
-    <h2 class="title">{{ 'selectUser' | translate }}</h2>
+    <div class="header-right-elements">
+      <button (click)="onCancel()" class="back-btn">
+        <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+      </button>
+      <h2 class="title">{{ 'selectUser' | translate }}</h2>
+    </div>
+
     <div class="header-left-elements">
       <span class="no-of-active-users">
         <span class="active-users-count">

@@ -29,6 +29,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { UserGroupDeleteModalComponent } from '../user-group-delete-modal/user-group-delete-modal.component';
 
 @Component({
   selector: 'app-user-group-list',
@@ -264,18 +265,29 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
     });
   }
   deleteUserGroup(data: any) {
-    this.userGroupService.deleteUserGroup$(data.id).subscribe(() => {
-      this.userGroupService.addUpdateDeleteCopyUserGroup = true;
-      this.userGroupService.userGroupActions$.next({
-        action: 'delete',
-        group: data
+    const deleteUserGroupModalRef = this.dialog.open(
+      UserGroupDeleteModalComponent,
+      {
+        data: {
+          userGroupData: data,
+          type: 'delete'
+        }
+      }
+    );
+    deleteUserGroupModalRef.afterClosed().subscribe((resp) => {
+      if (!resp) return;
+      this.userGroupService.deleteUserGroup$(data.id).subscribe(() => {
+        this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+        this.userGroupService.userGroupActions$.next({
+          action: 'delete',
+          group: data
+        });
+        this.userGroupCountUpdate$.next(-1);
       });
-      this.userGroupCountUpdate$.next(-1);
     });
   }
   showSelectedUserGroup(userGroup) {
     this.selectedUserGroup = userGroup;
-    console.log(userGroup);
   }
   listBottom(event: any) {
     if (
