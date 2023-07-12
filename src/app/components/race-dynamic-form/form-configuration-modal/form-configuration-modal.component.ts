@@ -138,7 +138,7 @@ export class FormConfigurationModalComponent implements OnInit {
     this.store.select(getFormMetadata).subscribe((res) => {
       this.headerDataForm.patchValue({
         name: res.name,
-        description: res.description
+        description: res.description ? res.description : ''
       });
     });
     this.getAllPlantsData();
