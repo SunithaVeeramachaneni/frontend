@@ -59,24 +59,8 @@ export class FormViewComponent implements OnInit {
       }
     });
 
-    this.route.params.subscribe((params) => {
-      if (!params.id) {
-        if (window.history.state.selectedTemplate) {
-          this.store.dispatch(
-            BuilderConfigurationActions.replacePagesAndCounter({
-              pages: JSON.parse(
-                window.history.state.selectedTemplate
-                  .authoredFormTemplateDetails[0].pages
-              ),
-              counter: window.history.state.selectedTemplate.counter
-            })
-          );
-        } else {
-          this.store.select(getFormMetadata).subscribe((data) => {
-            this.formMetadata = data;
-          });
-        }
-      }
+    this.store.select(getFormMetadata).subscribe((data) => {
+      this.formMetadata = data;
     });
 
     this.dialog.open(FullScreenFormCreationComponent, {
@@ -85,7 +69,10 @@ export class FormViewComponent implements OnInit {
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal',
-      data: this.formMetadata
+      data: {
+        formData: this.formMetadata,
+        type: 'edit'
+      }
     });
   }
 }

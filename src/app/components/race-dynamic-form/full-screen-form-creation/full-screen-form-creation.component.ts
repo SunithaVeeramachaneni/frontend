@@ -15,7 +15,8 @@ import {
   QuickResponseActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-full-screen-form-creation',
@@ -33,45 +34,50 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
   totalSteps: number;
   currentStep = 0;
   formData;
+  authoredFormDetailSubscription: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private store: Store<State>,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.totalSteps = this.steps.length;
 
-    this.store.select(getFormDetails).subscribe((formDetails) => {
-      const { formMetadata, formListDynamoDBVersion, pages } = formDetails;
-      const { formType } = formMetadata;
-      if (formType === 'Embedded') {
-        this.steps = [
-          { title: 'Form Details', content: '' },
-          { title: 'Add Questions', content: '' }
-        ];
-      }
-      this.formData = {
-        formListDynamoDBVersion,
-        formMetadata,
-        pages,
-        formExists: Object.keys(formMetadata).length === 0 ? false : true
-      };
-    });
+    this.authoredFormDetailSubscription = this.store
+      .select(getFormDetails)
+      .subscribe((formDetails) => {
+        const { formMetadata, formListDynamoDBVersion, pages } = formDetails;
+        const { formType } = formMetadata;
+        if (formType === 'Embedded') {
+          this.steps = [
+            { title: 'Form Details', content: '' },
+            { title: 'Add Questions', content: '' }
+          ];
+        }
+        this.formData = {
+          formListDynamoDBVersion,
+          formMetadata,
+          pages,
+          formExists: Object.keys(formMetadata).length === 0 ? false : true
+        };
+      });
   }
 
   goBack(): void {
     if (this.currentStep === 0) {
       this.router.navigate(['/forms']);
-      this.dialogRef.close(this.formData.formMetadata);
+      this.dialogRef.close({ data: this.formData.formMetadata, type: 'add' });
     } else if (this.currentStep > 0) {
       this.gotoPreviousStep();
-    } else if (this.currentStep === this.totalSteps - 1) {
-      this.router.navigate(['/forms']);
-      this.dialogRef.close();
     }
+  }
+
+  goToListAfterPublish(): void {
+    this.dialogRef.close({ data: this.formData.formMetadata, typ: 'publish' });
   }
 
   onGotoStep(step): void {
@@ -87,6 +93,9 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.authoredFormDetailSubscription) {
+      this.authoredFormDetailSubscription.unsubscribe();
+    }
     this.store.dispatch(BuilderConfigurationActions.resetFormConfiguration());
     this.store.dispatch(UnitOfMeasurementActions.resetUnitOfMeasurementList());
     this.store.dispatch(QuickResponseActions.resetQuickResponses());

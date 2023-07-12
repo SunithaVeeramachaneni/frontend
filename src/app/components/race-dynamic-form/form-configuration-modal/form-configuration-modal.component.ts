@@ -33,7 +33,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
+import { State, getFormMetadata } from 'src/app/forms/state';
 import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
 import {
   DEFAULT_PDF_BUILDER_CONFIG,
@@ -134,11 +134,12 @@ export class FormConfigurationModalComponent implements OnInit {
       plantId: ['', Validators.required],
       additionalDetails: this.fb.array([])
     });
-    this.headerDataForm.patchValue({
-      name: this.formData.formMetadata.name,
-      description: this.formData.formMetadata.description,
-      formType: this.formData.formMetadata.formType,
-      plantId: this.formData.formMetadata.plantId
+
+    this.store.select(getFormMetadata).subscribe((res) => {
+      this.headerDataForm.patchValue({
+        name: res.name,
+        description: res.description
+      });
     });
     this.getAllPlantsData();
     this.retrieveDetails();
@@ -149,12 +150,12 @@ export class FormConfigurationModalComponent implements OnInit {
       this.allPlantsData = plants.items || [];
       this.plantInformation = this.allPlantsData;
     });
-    if (this.data) {
+    if (this.data?.formData) {
       this.headerDataForm.patchValue({
-        name: this.data.name,
-        description: this.data.description,
-        formType: this.data.formType,
-        plantId: this.data.plantId
+        name: this.data.formData.name,
+        description: this.data.formData.description,
+        formType: this.data.formData.formType,
+        plantId: this.data.formData.plantId
       });
       this.headerDataForm.markAsDirty();
     }
@@ -326,13 +327,20 @@ export class FormConfigurationModalComponent implements OnInit {
         );
       }
 
-      if (this.data) {
+      if (this.data && this.data.formData && this.data.type === 'add') {
         this.rdfService
-          .updateTemplate$(this.data.id, {
-            formsUsageCount: this.data.formsUsageCount + 1
+          .updateTemplate$(this.data.formData.id, {
+            formsUsageCount: this.data.formData.formsUsageCount + 1
           })
           .subscribe(() => {
-            history.pushState({ selectedTemplate: this.data }, '', '/forms');
+            this.store.dispatch(
+              BuilderConfigurationActions.replacePagesAndCounter({
+                pages: JSON.parse(
+                  this.data.formData.authoredFormTemplateDetails[0].pages
+                ),
+                counter: this.data.formData.counter
+              })
+            );
             this.gotoNextStep.emit();
           });
       } else {

@@ -7,7 +7,9 @@ import {
   ViewChild,
   ElementRef,
   OnDestroy,
-  Input
+  Input,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -54,6 +56,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
   @Input() moduleName;
+  @Output() goToListAfterPublish = new EventEmitter<void>();
   authoredFormDetailSubscription: Subscription;
   loadPDFBuilderConfig$: Observable<any>;
 
@@ -153,6 +156,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
                 type: 'success'
               });
               this.router.navigate(['/forms']);
+              this.goToListAfterPublish.emit();
             }
           }
           if (
