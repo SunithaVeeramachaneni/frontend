@@ -173,7 +173,14 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       isOpen: false,
       additionalDetails: this.fb.array([]),
       instructions: this.fb.group({
-        notes: ['', [this.maxLengthWithoutBulletPoints(250)]],
+        notes: [
+          '',
+          [
+            this.maxLengthWithoutBulletPoints(250),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
         attachments: '',
         pdfDocs: ''
       })
@@ -240,14 +247,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   }
 
   next() {
-    const value = this.headerDataForm.get('instructions.notes').value;
-    if (
-      value.trim() !== value ||
-      value.startsWith(' ') ||
-      value.endsWith(' ')
-    ) {
-      return { trimError: true };
-    }
     const additionalinfoArray = this.headerDataForm.get(
       'additionalDetails'
     ) as FormArray;
