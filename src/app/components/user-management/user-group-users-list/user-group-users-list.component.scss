@@ -38,6 +38,7 @@
   text-transform: capitalize;
   float: right;
   border: 1px solid $blue-primary;
+  background-color: $white;
   color: $blue-main;
   height: 35px;
   width: 150px;
@@ -49,11 +50,12 @@
   height: max-content;
 }
 .footer-btns {
+  background-color: $footer-bg-color;
   display: flex;
   flex-direction: row;
   float: right;
   justify-content: end;
-  width: 100%;
+  width: 75%;
   position: absolute;
   bottom: 15px;
   border-top: 1px solid $border-color;

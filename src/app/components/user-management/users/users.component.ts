@@ -7,6 +7,7 @@ import {
   ReplaySubject
 } from 'rxjs';
 import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -22,6 +23,7 @@ import {
   SearchEvent,
   TableEvent,
   UserDetails,
+  UserGroup,
   UserInfo,
   UserTable
 } from 'src/app/interfaces';
@@ -43,6 +45,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
+import { UserGroupService } from '../services/user-group.service';
 import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
 import { FormControl } from '@angular/forms';
@@ -111,11 +114,34 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: true
     },
     {
+      id: 'usergroup',
+      displayName: 'User Group',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+
+    {
       id: 'email',
       displayName: 'Email',
       type: 'string',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -137,7 +163,7 @@ export class UsersComponent implements OnInit {
       displayName: 'Valid Through',
       type: 'string',
       controlType: 'string',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -159,7 +185,7 @@ export class UsersComponent implements OnInit {
       displayName: 'Plant',
       type: 'string',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -181,7 +207,7 @@ export class UsersComponent implements OnInit {
       displayName: 'Created At',
       type: 'date',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -228,12 +254,16 @@ export class UsersComponent implements OnInit {
   };
   selectedUsers = [];
   allUsersList = [];
+  selectedUserGroup = null;
+  fetchType = 'load';
+  nextToken = '';
   dataSource: MatTableDataSource<any>;
   disableDeactivate = false;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
+  usergroupList$: Observable<UserGroup[]>;
   addEditDeactivateUser$: BehaviorSubject<UserTableUpdate> =
     new BehaviorSubject<UserTableUpdate>({
       action: null,
@@ -243,6 +273,7 @@ export class UsersComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   roles;
+  usergroup;
   loggedInUserInfo$: Observable<UserInfo>;
   readonly perms = perms;
   searchUser: FormControl;
@@ -251,10 +282,13 @@ export class UsersComponent implements OnInit {
   plantsList: Plant[];
   plantsObject = {};
   isOpenAddEditModal = false;
+  searchUserGroup: FormControl;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(
     private usersService: UsersService,
     private roleService: RolesPermissionsService,
+    private userGroupService: UserGroupService,
     public dialog: MatDialog,
     private toast: ToastService,
     private loginService: LoginService,
@@ -292,6 +326,17 @@ export class UsersComponent implements OnInit {
     this.usersService.getRoles$().subscribe((roles) => {
       this.roles = roles;
     });
+
+    this.userGroupService
+      .listUserGroups({
+        limit: this.limit,
+        fetchType: this.fetchType,
+        nextToken: this.nextToken
+      })
+      .subscribe((usergroup) => {
+        this.usergroup = usergroup;
+        console.log(usergroup);
+      });
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService
@@ -310,6 +355,7 @@ export class UsersComponent implements OnInit {
     switch (columnId) {
       case 'user':
       case 'roles':
+      case 'usergroup':
       case 'email':
       case 'createdAt':
         this.openEditAddUserModal(event.row);
@@ -320,6 +366,7 @@ export class UsersComponent implements OnInit {
   };
 
   openEditAddUserModal(user = {} as UserDetails) {
+    // console.log('openAddEditMOdal', user);
     if (this.isOpenAddEditModal) return;
     this.isOpenAddEditModal = true;
     const openEditAddUserModalRef = this.dialog.open(
@@ -328,8 +375,10 @@ export class UsersComponent implements OnInit {
         data: {
           user,
           roles: this.roles,
+          usergroup: this.usergroup,
           permissionsList$: this.permissionsList$,
           rolesList$: this.rolesList$,
+          usergroupList$: this.usergroupList$,
           plantsList: this.plantsList
         }
       }
@@ -354,6 +403,7 @@ export class UsersComponent implements OnInit {
                   user: this.usersService.prepareUser(
                     resp.user,
                     resp.user.roles
+                    // resp.user.usergroup
                   )
                 });
               }
@@ -376,6 +426,7 @@ export class UsersComponent implements OnInit {
                 user: this.usersService.prepareUser(
                   createdUser,
                   resp.user.roles
+                  // resp.user.usergroup
                 )
               });
             }
@@ -630,6 +681,7 @@ export class UsersComponent implements OnInit {
                   email: '',
                   isActive: false,
                   roles: [],
+                  usergroup: [],
                   validFrom: '',
                   validThrough: '',
                   plantId: ''

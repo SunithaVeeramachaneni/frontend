@@ -200,6 +200,43 @@
       </mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
+      <mat-label>{{ 'usergroup' | translate }}</mat-label>
+      <mat-select
+        name="priority"
+        multiple
+        [compareWith]="objectComparisonFunction"
+        formControlName="usergroup"
+      >
+        <mat-select-trigger>
+          {{ usergroup.value[0]?.name }}
+          <span
+            *ngIf="usergroup.value?.length > 1"
+            class="example-additional-selection"
+          >
+            + {{ usergroup.value.length - 1 }}
+            {{ usergroup.value?.length === 2 ? 'more' : 'more' }}
+          </span>
+        </mat-select-trigger>
+        <mat-option
+          *ngFor="let usergroup of usergroupInput; let i = index"
+          [value]="usergroup"
+          style="padding-right: 0"
+          class="roles-select"
+        >
+          <span>{{ usergroup.name }}</span>
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="
+          userForm.controls.usergroup.errors?.selectOne &&
+          userForm.controls.usergroup.touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'usergroups' | translate }}
+      </mat-error>
+    </mat-form-field>
     <div class="width-100 user-date-range m-b-10 m-t-10">
       <mat-form-field class="width-95 user-date-from" appearance="outline">
         <mat-label>{{ 'validFrom' | translate }}</mat-label>

@@ -19,7 +19,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { HttpClient } from '@angular/common/http';
-import { Permission, Role, ValidationError } from 'src/app/interfaces';
+import {
+  Permission,
+  Role,
+  UserGroup,
+  ValidationError
+} from 'src/app/interfaces';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   debounceTime,
@@ -74,6 +79,7 @@ export class AddEditUserModalComponent implements OnInit {
       [this.checkIfUserExistsInIDP(), this.checkIfUserExistsInDB()]
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
+    usergroup: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
     profileImageFileName: new FormControl(''),
     validFrom: new FormControl('', [Validators.required]),
@@ -85,6 +91,7 @@ export class AddEditUserModalComponent implements OnInit {
   verificationInProgress = false;
 
   rolesInput: any;
+  usergroupInput: any;
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
   displayedPermissions;
@@ -92,10 +99,14 @@ export class AddEditUserModalComponent implements OnInit {
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
+  usergroupList$: Observable<UserGroup[]>;
   superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
   get roles() {
     return this.userForm.get('roles');
+  }
+  get usergroup() {
+    return this.userForm.get('usergroup');
   }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
@@ -113,8 +124,7 @@ export class AddEditUserModalComponent implements OnInit {
     private usersService: UsersService,
     private http: HttpClient,
     private imageCompress: NgxImageCompressService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private plantService: PlantService
   ) {}
 
@@ -174,6 +184,9 @@ export class AddEditUserModalComponent implements OnInit {
     this.permissionsList$ = this.data.permissionsList$;
     this.rolesInput = this.data.roles.rows;
     this.rolesList$ = this.data.rolesList$;
+    this.usergroupInput = this.data.usergroup.items;
+    this.usergroupList$ = this.data.usergroupList$;
+
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
       this.profileImage = defaultProfile;
