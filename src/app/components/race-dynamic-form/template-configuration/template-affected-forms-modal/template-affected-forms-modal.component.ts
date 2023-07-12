@@ -34,7 +34,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./template-affected-forms-modal.component.scss']
 })
 export class TemplateAffectedFormsModalComponent implements OnInit {
-  ghostLoading = new Array(9).fill(0).map((v, i) => i);
+  ghostLoading = new Array(8).fill(0).map((v, i) => i);
   nextToken = '';
   fetchType = 'load';
   searchForm: FormControl;

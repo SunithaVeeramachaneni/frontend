@@ -143,7 +143,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
               this.pagesCount += 1;
             });
             this.templatesUsed = [];
-            if (formDetail?.templatesUsed.length) {
+            if (formDetail?.templatesUsed?.length) {
               this.templatesUsed = formDetail.templatesUsed;
             }
           }
