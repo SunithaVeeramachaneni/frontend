@@ -256,7 +256,7 @@ export class ScheduleConfigurationService {
     } else if (hours === 0) {
       hours = 12;
     }
-    const startTimePM = '12:00 PM';
+    const startTimePM = '12:00';
     if (timeString?.toLowerCase() === startTimePM?.toLowerCase()) {
       type = TimeType.am;
     }
