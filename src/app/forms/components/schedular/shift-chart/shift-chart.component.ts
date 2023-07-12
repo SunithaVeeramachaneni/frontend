@@ -286,12 +286,6 @@ export class ShiftChartComponent implements OnInit, OnChanges {
       }
 
       // If we add slot from left to right and endTime and startTime are equal
-      console.log(
-        this.dataArrays.filter(
-          (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
-        ).length > 0,
-        'this.dataArrays.filter'
-      );
       if (
         this.dataArrays.filter(
           (item) => item.endTime === this.service.addTime(obj?.startTime, 0, 59)
