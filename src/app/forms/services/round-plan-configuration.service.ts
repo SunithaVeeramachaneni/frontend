@@ -266,8 +266,8 @@ export class RoundPlanConfigurationService {
     const templateData: any = {};
     if (section?.isImported === true) {
       templateData.isImported = section.isImported;
-      templateData.externalSectionID = section.externalSectionID;
-      templateData.templateID = section.templateID;
+      templateData.externalSectionId = section.externalSectionId;
+      templateData.templateId = section.templateId;
       templateData.templateName = section.templateName;
       templateData.counter = section.counter;
     }

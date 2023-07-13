@@ -1257,14 +1257,14 @@ export class RaceDynamicFormService {
   };
 
   getAffectedFormList$(queryParams: {
-    templateID: string;
+    templateId: string;
     limit: number;
     nextToken: string;
     searchTerm?: string;
     fetchType?: string;
   }) {
     const params: URLSearchParams = new URLSearchParams();
-    params.set('templateID', queryParams?.templateID);
+    params.set('templateId', queryParams?.templateId);
     params.set('limit', queryParams?.limit.toString());
     params.set('searchTerm', queryParams?.searchTerm);
     params.set('nextToken', queryParams?.nextToken);
@@ -1278,7 +1278,7 @@ export class RaceDynamicFormService {
   getFormTemplateUsage$ = (payload: any): Observable<any> =>
     this.appService._getResp(
       environment.rdfApiUrl,
-      'template-reference/' + `${payload.templateID}/` + `${payload.formID}`
+      'template-reference/' + `${payload.templateId}/` + `${payload.formId}`
     );
 
   updateFormTemplateUsage$ = (data: any): Observable<any> =>

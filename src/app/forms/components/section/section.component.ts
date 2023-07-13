@@ -66,9 +66,9 @@ export class SectionComponent implements OnInit, OnDestroy {
         this._section = section;
         if (section && !section.isImported) {
           section.isImported = false;
-          section.templateID = '';
+          section.templateId = '';
           section.templateName = '';
-          section.externalSectionID = '';
+          section.externalSectionId = '';
         }
         this.sectionForm.patchValue(section, {
           emitEvent: false
@@ -93,9 +93,9 @@ export class SectionComponent implements OnInit, OnDestroy {
     position: '',
     isOpen: true,
     isImported: false,
-    templateID: '',
+    templateId: '',
     templateName: '',
-    externalSectionID: ''
+    externalSectionId: ''
   });
   private _pageIndex: number;
   private _sectionIndex: number;

@@ -246,7 +246,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
       })
     );
   }
-  
+
   handleTableEvent = (event): void => {
     this.raceDynamicFormService.fetchForms$.next(event);
   };
@@ -254,7 +254,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
   getForms() {
     return this.raceDynamicFormService
       .getAffectedFormList$({
-        templateID: this.selectedForm.id,
+        templateId: this.selectedForm.id,
         nextToken: this.nextToken,
         limit: this.limit,
         searchTerm: this.searchForm.value,

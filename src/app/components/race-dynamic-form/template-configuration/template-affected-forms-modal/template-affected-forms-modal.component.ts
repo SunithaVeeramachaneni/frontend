@@ -255,7 +255,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getAffectedFormList$({
-        templateID: this.data.templateID,
+        templateId: this.data.templateId,
         nextToken: this.nextToken,
         limit: this.limit,
         searchTerm: this.searchForm.value,

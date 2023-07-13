@@ -39,9 +39,9 @@ export interface Section {
   position: number;
   isOpen: boolean;
   isImported?: boolean;
-  templateID?: string;
+  templateId?: string;
   templateName?: string;
-  externalSectionID?: string;
+  externalSectionId?: string;
   counter?: number;
 }
 

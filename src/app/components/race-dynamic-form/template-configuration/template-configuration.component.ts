@@ -77,7 +77,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   errors: ValidationError = {};
   formDetails: any;
   isEmbeddedTemplate: boolean;
-  isTemplate: boolean = true;
+  isTemplate = true;
   affectedForms: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
@@ -376,7 +376,7 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       height: '100%',
       width: '100%',
       data: {
-        templateID: this.formMetadata.id
+        templateId: this.formMetadata.id
       }
     });
   }

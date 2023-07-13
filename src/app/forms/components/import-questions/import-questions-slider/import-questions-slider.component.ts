@@ -82,8 +82,8 @@ export class ImportQuestionsSliderComponent implements OnInit {
       page.sections.forEach((section) => {
         delete section.counter;
         delete section.isImported;
-        delete section.templateID;
-        delete section.externalSectionID;
+        delete section.templateId;
+        delete section.externalSectionId;
         const questions = [];
         section.questions.forEach((question) => {
           if (question.sectionId === section.id) {
