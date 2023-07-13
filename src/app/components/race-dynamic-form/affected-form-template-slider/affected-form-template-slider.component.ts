@@ -260,23 +260,37 @@ export class AffectedFormTemplateSliderComponent
             ...this.configOptions,
             tableHeight: 'calc(100vh - 170px)'
           };
+          rows.map((item) => {
+            item.plant = '';
+            if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            item.preTextImage = {
+              image: item?.formLogo,
+              style: {
+                width: '40px',
+                height: '40px',
+                marginRight: '10px'
+              },
+              condition: true
+            };
+          });
           initial.data = rows;
         } else {
+          scrollData.map((item) => {
+            item.plant = '';
+            if (item?.plantId) item.plant = this.plantsObject[item.plantId];
+            item.preTextImage = {
+              image: item?.formLogo,
+              style: {
+                width: '40px',
+                height: '40px',
+                marginRight: '10px'
+              },
+              condition: true
+            };
+          });
           initial.data = initial.data.concat(scrollData);
         }
-        initial.data.map((item) => {
-          item.plant = '';
-          if (item?.plantId) item.plant = this.plantsObject[item.plantId];
-          item.preTextImage = {
-            image: item?.formLogo,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
-            },
-            condition: true
-          };
-        });
+
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
