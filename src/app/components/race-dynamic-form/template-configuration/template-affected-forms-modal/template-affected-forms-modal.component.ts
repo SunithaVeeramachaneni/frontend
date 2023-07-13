@@ -67,6 +67,8 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       sticky: false,
       groupable: false,
       titleStyle: {
+        display: 'inline-block',
+        width: '216px',
         'font-weight': '500',
         'font-size': '100%',
         color: '#000000',
