@@ -46,6 +46,7 @@ import {
 import { UserGroupService } from '../services/user-group.service';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
 import { ToastService } from 'src/app/shared/toast';
+import { data_test } from '../../spare-parts/spare-parts-data';
 @Component({
   selector: 'app-select-user-usergroup-modal',
   templateUrl: './select-user-usergroup-modal.component.html',
@@ -398,9 +399,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .subscribe((data) => {
         this.userGroupService.addUpdateDeleteCopyUserGroup = true;
+
         this.userGroupService.userGroupActions$.next({
           action: 'add',
-          group: data
+          group: { ...data, usersCount: data?.users.length }
         });
       });
     this.dialogRef.close({
@@ -422,7 +424,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   updateUsers() {
     const selectedUserIds = this.selectedUsers.map((user) => user.id);
     this.userGroupService
-      .selectUnselectGroupMembers$(this.data?.userGroupId, selectedUserIds)
+      .selectUnselectGroupMembers$(this.data?.userGroupId, selectedUserIds, {
+        displayToast: true,
+        failureResponse: {}
+      })
       .subscribe(() => {
         this.dialogRef.close({ returnType: 'done' });
       });

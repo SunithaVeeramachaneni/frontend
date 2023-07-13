@@ -4,7 +4,8 @@ import {
   Component,
   OnInit,
   ViewChild,
-  ElementRef
+  ElementRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditUserGroupModalComponent } from '../add-edit-user-group-modal/add-edit-user-group-modal.component';
@@ -28,13 +29,14 @@ import { ErrorInfo, TableEvent } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { UserGroupDeleteModalComponent } from '../user-group-delete-modal/user-group-delete-modal.component';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-user-group-list',
   templateUrl: './user-group-list.component.html',
-  styleUrls: ['./user-group-list.component.scss']
+  styleUrls: ['./user-group-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserGroupListComponent implements OnInit, AfterViewChecked {
   currentRouteUrl$: Observable<string>;
@@ -78,6 +80,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
 
   listHeight = '68vh';
   bottomHit = false;
+  permissionsArray = [];
   private onDestroy$ = new Subject();
 
   constructor(
@@ -87,7 +90,8 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
     private cdrf: ChangeDetectorRef,
     private toast: ToastService,
     private headerService: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -110,6 +114,13 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       tap(() => this.headerService.setHeaderTitle(routingUrls.userGroups.title))
     );
     this.getDisplayedUserGroups();
+    this.loginService.loggedInUserInfo$
+      .pipe(
+        tap(({ permissions = [] }) => {
+          this.permissionsArray = permissions;
+        })
+      )
+      .subscribe();
   }
   ngAfterViewChecked(): void {}
 
@@ -235,7 +246,7 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
 
   getUserGroups() {
     return this.userGroupService
-      .listUserGroups({
+      .listUserGroups$({
         limit: this.limit,
         fetchType: this.fetchType,
         nextToken: this.nextToken,
@@ -328,4 +339,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       })
     );
   }
+  checkPermissions = (permission) =>
+    this.loginService.checkUserHasPermission(this.permissionsArray, permission);
 }
