@@ -1,9 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 
 @Component({
   selector: 'app-upload-image-preview',
   templateUrl: './upload-image-preview.component.html',
-  styleUrls: ['./upload-image-preview.component.scss']
+  styleUrls: ['./upload-image-preview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadImagePreviewComponent implements OnInit {
   @Input() image;

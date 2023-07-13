@@ -79,12 +79,10 @@ export class RaceDynamicFormService {
       info
     );
   uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    const formFileData = new FormData();
-    formFileData.append('file', file);
     return this.appService._postData(
       environment.rdfApiUrl,
       `upload-attachments`,
-      formFileData,
+      file,
       info
     );
   }

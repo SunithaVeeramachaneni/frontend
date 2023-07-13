@@ -91,7 +91,7 @@ export class FormConfigurationModalComponent implements OnInit {
   filteredMediaPdfTypeIds: any = [];
   filteredMediaPdfType: any = [];
   base64result: string;
-  pdfFiles: any = [];
+  pdfFiles: any = { mediaType: [] };
 
   constructor(
     private fb: FormBuilder,
@@ -382,61 +382,80 @@ export class FormConfigurationModalComponent implements OnInit {
     const target = event.target as HTMLInputElement;
     const files = Array.from(target.files);
     const reader = new FileReader();
-    const file: File = files[0];
-    const size = file?.size;
-    const maxSize = 390000;
-    if (file.name.endsWith('.pdf') && size <= maxSize) {
-      this.pdfFiles.push(file);
+    if (files.length > 0 && files[0] instanceof File) {
+      const file: File = files[0];
+      const maxSize = 390000;
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        this.base64result = reader?.result as string;
+        if (this.base64result.includes('data:application/pdf;base64,')) {
+          this.resizePdf(this.base64result).then((compressedPdf) => {
+            const onlybase64 = compressedPdf.split(',')[1];
+            const resizedPdfSize = atob(onlybase64).length;
+            if (resizedPdfSize <= maxSize) {
+              this.rdfService
+                .uploadAttachments$({ file: onlybase64 })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      this.pdfFiles = {
+                        mediaType: [...this.pdfFiles.mediaType, file]
+                      };
+                      const responsenew =
+                        response?.data?.createFormAttachments?.id;
+                      this.filteredMediaPdfTypeIds.push(responsenew);
+                      this.filteredMediaPdfType.push(this.base64result);
+                    }
+                    this.cdrf.detectChanges();
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toastService.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        } else {
+          this.resizeImage(this.base64result).then((compressedImage) => {
+            const onlybase64 = compressedImage.split(',')[1];
+            const resizedImageSize = atob(onlybase64).length;
+            if (resizedImageSize <= maxSize) {
+              this.rdfService
+                .uploadAttachments$({ file: onlybase64 })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      const responsenew =
+                        response?.data?.createFormAttachments?.id;
+                      this.filteredMediaTypeIds = {
+                        mediaIds: [
+                          ...this.filteredMediaTypeIds.mediaIds,
+                          responsenew
+                        ]
+                      };
+                      this.filteredMediaType = {
+                        mediaType: [
+                          ...this.filteredMediaType.mediaType,
+                          this.base64result
+                        ]
+                      };
+                      this.cdrf.detectChanges();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toastService.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        }
+      };
     }
-    reader.readAsDataURL(files[0]);
-    reader.onloadend = () => {
-      this.base64result = reader?.result as string;
-
-      if (this.base64result.includes('data:application/pdf;base64,')) {
-        this.filteredMediaPdfType.push(this.base64result);
-        this.resizePdf(this.base64result).then((compressedPdf) => {
-          const onlybase64 = compressedPdf.split(',')[1];
-          this.rdfService
-            .uploadAttachments$(onlybase64)
-            .pipe(
-              tap((response) => {
-                const responsenew = response?.data?.createFormAttachments?.id;
-                this.filteredMediaPdfTypeIds.push(responsenew);
-              })
-            )
-            .subscribe();
-        });
-      } else {
-        this.filteredMediaType = {
-          mediaType: [...this.filteredMediaType.mediaType, this.base64result]
-        };
-
-        this.resizeImage(this.base64result).then((compressedImage) => {
-          const onlybase64 = compressedImage.split(',')[1];
-          this.rdfService
-            .uploadAttachments$(onlybase64)
-            .pipe(
-              tap((response) => {
-                const responsenew = response?.data?.createFormAttachments?.id;
-
-                this.filteredMediaTypeIds = {
-                  mediaIds: [...this.filteredMediaTypeIds.mediaIds, responsenew]
-                };
-
-                this.cdrf.detectChanges();
-              })
-            )
-            .subscribe();
-        });
-      }
-
-      if (size > maxSize) {
-        this.toastService.show({
-          type: 'warning',
-          text: 'Please select a file smaller than 390KB'
-        });
-      }
-    };
   };
 
   async resizeImage(base64result: string): Promise<string> {
@@ -454,18 +473,14 @@ export class FormConfigurationModalComponent implements OnInit {
     try {
       const base64Data = base64Pdf.split(',')[1];
       const binaryString = atob(base64Data);
-
       const encoder = new TextEncoder();
       const pdfBytes = encoder.encode(binaryString);
-
       const pdfDoc = await PDFDocument.load(pdfBytes);
-
       const currentSize = pdfBytes.length / 1024;
       const desiredSize = 400 * 1024;
       if (currentSize <= desiredSize) {
         return base64Pdf;
       }
-
       const scalingFactor = Math.sqrt(desiredSize / currentSize);
       const pages = pdfDoc.getPages();
       pages.forEach((page) => {
@@ -474,10 +489,8 @@ export class FormConfigurationModalComponent implements OnInit {
       });
 
       const modifiedPdfBytes = await pdfDoc.save();
-
       const decoder = new TextDecoder();
       const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
-
       return base64ModifiedPdf;
     } catch (error) {
       throw error;
@@ -511,7 +524,9 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   formPdfDeleteHandler(index: number): void {
-    this.pdfFiles = this.pdfFiles.filter((_, i) => i !== index);
+    this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
+      (_, i) => i !== index
+    );
     this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(
       (_, i) => i !== index
     );

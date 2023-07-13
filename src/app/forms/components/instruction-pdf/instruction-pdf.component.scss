@@ -5,6 +5,7 @@
   padding: 13px;
   margin-top: 13px;
   margin-left: 12px;
+  border-radius: 4px;
 
   .pdf-icon {
     height: 25px;
@@ -31,8 +32,8 @@
 
   .close {
     position: relative;
-    top: -15px;
-    right: -15px;
+    top: -22px;
+    right: -20px;
     z-index: 100;
     cursor: pointer;
     height: 15px;
