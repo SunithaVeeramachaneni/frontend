@@ -91,6 +91,9 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.headerService.setHeaderTitle(routingUrls.userGroups.title))
+    );
     this.userGroupService.addUpdateDeleteCopyUserGroup = false;
     this.userGroupService.fetchUserGroups$.next({ data: 'load' });
     this.userGroupService.fetchUserGroups$.next({} as TableEvent);
@@ -106,9 +109,6 @@ export class UserGroupListComponent implements OnInit, AfterViewChecked {
       )
       .subscribe(() => this.isLoading$.next(true));
 
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.headerService.setHeaderTitle(routingUrls.userGroups.title))
-    );
     this.getDisplayedUserGroups();
   }
   ngAfterViewChecked(): void {}
