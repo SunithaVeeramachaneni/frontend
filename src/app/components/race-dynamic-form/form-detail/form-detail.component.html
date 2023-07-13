@@ -240,26 +240,6 @@
           <div *ngIf="!isTemplate" class="name-heading">
             <div>
               <p class="color-gray">
-                {{ 'lastModifiedBy' | translate }}
-              </p>
-            </div>
-            <div class="flex-custom" *ngIf="selectedForm?.lastModifiedBy">
-              <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
-              <span class="dots"></span>
-              <p class="date-name color-gray">
-                {{
-                  formatDate(
-                    selectedForm?.updatedAt,
-                    selectedForm?.plantId,
-                    dateTimeFormat
-                  )
-                }}
-              </p>
-            </div>
-          </div>
-          <div class="name-heading">
-            <div>
-              <p class="color-gray">
                 {{ 'createdBy' | translate }}
               </p>
             </div>
