@@ -30,7 +30,6 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: '' },
           permissions: [permissions.createForm]
         }
       },
@@ -40,7 +39,6 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         resolve: { form: FormResolverService },
         data: {
-          breadcrumb: { label: '' },
           permissions: [permissions.updateForm]
         }
       },

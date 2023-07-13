@@ -5,5 +5,5 @@ export interface Step {
 
 export interface StepperConfiguration {
   intermediaryJumpsAllowed: boolean;
-  backButtonBehaviour: '';
+  backButtonBehaviour: string;
 }

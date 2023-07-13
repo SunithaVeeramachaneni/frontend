@@ -16,7 +16,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ToastService } from 'src/app/shared/toast';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import { formConfigurationStatus, operatorRounds, raceDynamicForms } from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
 import {
@@ -56,7 +56,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   @ViewChild('myPDF', { static: false }) myPDF!: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
   @Input() moduleName;
-  @Output() goToListAfterPublish = new EventEmitter<void>();
+  @Output() publishedEvent = new EventEmitter<void>();
   authoredFormDetailSubscription: Subscription;
   loadPDFBuilderConfig$: Observable<any>;
 
@@ -109,6 +109,8 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
   currentUserName = '';
 
   readonly formConfigurationStatus = formConfigurationStatus;
+  readonly operatorRounds = operatorRounds;
+  readonly raceDynamicForms = raceDynamicForms
   private onDestroy$ = new Subject();
 
   constructor(
@@ -144,19 +146,19 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           if (formDetailPublishStatus === 'Draft') this.inDraftState = true;
           this.formDetailPublishStatus = formDetailPublishStatus;
           if (formDetailPublishStatus === 'Published' && this.inDraftState) {
-            if (this.moduleName === 'OPERATOR_ROUNDS') {
+            if (this.moduleName === this.operatorRounds) {
               this.toast.show({
                 text: 'Round published successfully',
                 type: 'success'
               });
               this.router.navigate(['/operator-rounds']);
-            } else if (this.moduleName === 'RDF') {
+            } else if (this.moduleName === this.raceDynamicForms) {
               this.toast.show({
                 text: 'Form published successfully',
                 type: 'success'
               });
               this.router.navigate(['/forms']);
-              this.goToListAfterPublish.emit();
+              this.publishedEvent.emit();
             }
           }
           if (
@@ -167,7 +169,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
         })
       );
 
-    if (this.moduleName && this.moduleName === 'OPERATOR_ROUNDS') {
+    if (this.moduleName && this.moduleName === this.operatorRounds) {
       this.store.select(getSelectedHierarchyList).subscribe((data) => {
         this.selectedFlatHierarchy =
           this.assetHierarchyUtil.convertHierarchyToFlatList(data, 0);
@@ -206,7 +208,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.moduleName && this.moduleName === 'RDF') {
+        if (this.moduleName && this.moduleName === this.raceDynamicForms) {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,
@@ -243,7 +245,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
           })
         );
 
-        if (this.moduleName && this.moduleName === 'RDF') {
+        if (this.moduleName && this.moduleName === this.raceDynamicForms) {
           this.store.dispatch(
             BuilderConfigurationActions.updateForm({
               formMetadata: this.formMetadata,

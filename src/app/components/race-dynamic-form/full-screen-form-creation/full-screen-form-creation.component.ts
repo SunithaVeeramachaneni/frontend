@@ -75,7 +75,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToListAfterPublish(): void {
+  publishedEventHandler(): void {
     this.dialogRef.close({ data: this.formData.formMetadata, typ: 'publish' });
   }
 
