@@ -40,8 +40,10 @@ import { State } from 'src/app/forms/state';
 })
 export class TemplateListComponent implements OnInit, OnDestroy {
   public menuState = 'out';
+  public affectedFormDetailState = 'out';
   public affectedSliderState = 'out';
   selectedForm: any = null;
+  affectedFormDetail: any = null;
   selectedTemplate: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
@@ -328,12 +330,15 @@ export class TemplateListComponent implements OnInit, OnDestroy {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
+    this.affectedFormDetail = null;
+    this.affectedFormDetailState = 'out';
   }
 
   onCloseAffectedSlider() {
     this.selectedTemplate = null;
     this.affectedSliderState = 'out';
   }
+
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
     switch (columnId) {
@@ -469,8 +474,17 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
-  templateDetailActionHandler(event) {
+  templateDetailActionHandler() {
     this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
+  }
+
+  affectedFormDetailActionHandler() {
+    this.router.navigate(['/forms/edit', this.affectedFormDetail.id]);
+  }
+
+  onClickAffectedFormDetail(event) {
+    this.affectedFormDetail = event;
+    this.affectedFormDetailState = 'in';
   }
 
   ngOnDestroy(): void {

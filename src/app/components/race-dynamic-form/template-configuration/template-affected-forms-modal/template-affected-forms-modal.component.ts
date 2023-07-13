@@ -45,7 +45,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
   forms$: Observable<any>;
   skip = 0;
   limit = graphQLDefaultLimit;
-  affectedFormsCount: Number;
+  affectedFormsCount: number;
   affectedForms: any[];
   allAffectedForms: any[];
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

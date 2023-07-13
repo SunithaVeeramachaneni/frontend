@@ -50,6 +50,7 @@ export class AffectedFormTemplateSliderComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
+  @Output() affectedFormDetail: EventEmitter<any> = new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -301,6 +302,11 @@ export class AffectedFormTemplateSliderComponent
   handleTableEvent = (event): void => {
     this.raceDynamicFormService.fetchForms$.next(event);
   };
+
+  cellClickActionHandler(event) {
+    this.cancelForm();
+    this.affectedFormDetail.emit(event.row);
+  }
 
   getForms() {
     return this.raceDynamicFormService
