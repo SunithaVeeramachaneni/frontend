@@ -285,7 +285,6 @@ export class FormConfigurationModalComponent implements OnInit {
     this.headerDataForm
       .get('instructions.pdfDocs')
       .setValue(this.filteredMediaPdfTypeIds);
-    console.log('val', this.headerDataForm.value);
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
