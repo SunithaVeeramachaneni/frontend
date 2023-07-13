@@ -1,0 +1,24 @@
+@import 'src/scss/colors.scss';
+
+.roundplan-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.roundplan-image-container .insert-roundplan-image {
+  height: 55px;
+  width: 85px;
+  margin-top: 15px;
+  margin-left: 16px;
+  border-radius: 4px;
+}
+
+.roundplan-image-container .close {
+  position: absolute;
+  top: 5px;
+  right: -8px;
+  z-index: 100;
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+}

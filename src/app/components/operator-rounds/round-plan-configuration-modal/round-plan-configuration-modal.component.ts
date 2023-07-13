@@ -4,11 +4,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  Inject,
   OnInit,
   ViewChild
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   MatAutocomplete,
   MatAutocompleteSelectedEvent,
@@ -16,16 +17,17 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable, merge, of } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators
+  Validators,
+  ValidatorFn
 } from '@angular/forms';
-import { ValidationError } from 'src/app/interfaces';
+import { ValidationError, FormMetadata } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
@@ -41,7 +43,11 @@ import {
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
+import { SlideshowComponent } from 'src/app/shared/components/slideshow/slideshow.component';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { PDFDocument } from 'pdf-lib';
 
 @Component({
   selector: 'app-round-plan-configuration-modal',
@@ -73,7 +79,6 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
   allPlantsData = [];
   plantInformation = [];
   changedValues: any;
-
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   convertedDetail = {};
@@ -82,6 +87,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
 
   plantFilterInput = '';
   readonly formConfigurationStatus = formConfigurationStatus;
+
+  dropDownIsOpen = false;
+  modalIsOpen = false;
+  attachment: any;
+  formMetadata: FormMetadata;
+  moduleName: string;
+  form: FormGroup;
+  options: any = [];
+  filteredMediaType: any = { mediaType: [] };
+  filteredMediaTypeIds: any = { mediaIds: [] };
+  filteredMediaPdfTypeIds: any = [];
+  filteredMediaPdfType: any = [];
+  base64result: string;
+  pdfFiles: any = { mediaType: [] };
   additionalDetails: FormArray;
   labelSelected: any;
   constructor(
@@ -93,7 +112,10 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private operatorRoundsService: OperatorRoundsService,
     private plantService: PlantService,
     private cdrf: ChangeDetectorRef,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data,
+    private imageCompress: NgxImageCompressService
   ) {
     this.operatorRoundsService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
@@ -118,6 +140,17 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     });
   }
 
+  maxLengthWithoutBulletPoints(maxLength: number): ValidatorFn {
+    const htmlTagsRegex = /<[^>]+>/g;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const textWithoutTags = control?.value?.replace(htmlTagsRegex, '');
+      if (textWithoutTags?.length > maxLength) {
+        return { maxLength: { value: control.value } };
+      }
+      return null;
+    };
+  }
+
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
       name: [
@@ -137,7 +170,20 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       formType: [formConfigurationStatus.standalone],
       tags: [this.tags],
       plantId: ['', Validators.required],
-      additionalDetails: this.fb.array([])
+      isOpen: false,
+      additionalDetails: this.fb.array([]),
+      instructions: this.fb.group({
+        notes: [
+          '',
+          [
+            this.maxLengthWithoutBulletPoints(250),
+            WhiteSpaceValidator.trimWhiteSpace,
+            WhiteSpaceValidator.whiteSpace
+          ]
+        ],
+        attachments: '',
+        pdfDocs: ''
+      })
     });
     this.getAllPlantsData();
     this.retrieveDetails();
@@ -194,6 +240,11 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       tag.toLowerCase().includes(filterValue)
     );
   }
+  handleEditorFocus(focus: boolean) {
+    if (this.headerDataForm.get('isOpen').value !== focus) {
+      this.headerDataForm.get('isOpen').setValue(focus);
+    }
+  }
 
   next() {
     const additionalinfoArray = this.headerDataForm.get(
@@ -208,6 +259,12 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     );
 
     const newTags = [];
+    this.headerDataForm
+      .get('instructions.attachments')
+      .setValue(this.filteredMediaTypeIds.mediaIds);
+    this.headerDataForm
+      .get('instructions.pdfDocs')
+      .setValue(this.filteredMediaPdfTypeIds);
     this.tags.forEach((selectedTag) => {
       if (this.originalTags.indexOf(selectedTag) < 0) {
         newTags.push(selectedTag);
@@ -247,6 +304,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
+
       this.store.dispatch(
         RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
@@ -263,6 +321,9 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     }
   }
 
+  trackBySelectedattachments(index: number, el: any): string {
+    return el.id;
+  }
   onCancel(): void {
     this.dialogRef.close();
   }
@@ -299,6 +360,167 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
       });
     }
     return !touched || this.errors[controlName] === null ? false : true;
+  }
+
+  roundplanFileUploadHandler = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files);
+    const reader = new FileReader();
+
+    if (files.length > 0 && files[0] instanceof File) {
+      const file: File = files[0];
+      const maxSize = 390000;
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        this.base64result = reader?.result as string;
+        if (this.base64result.includes('data:application/pdf;base64,')) {
+          this.resizePdf(this.base64result).then((compressedPdf) => {
+            const onlybase64 = compressedPdf.split(',')[1];
+            const resizedPdfSize = atob(onlybase64).length;
+            if (resizedPdfSize <= maxSize) {
+              this.operatorRoundsService
+                .uploadAttachments$({ file: onlybase64 })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      this.pdfFiles = {
+                        mediaType: [...this.pdfFiles.mediaType, file]
+                      };
+                      const responsenew =
+                        response?.data?.createFormAttachments?.id;
+                      this.filteredMediaPdfTypeIds.push(responsenew);
+                      this.filteredMediaPdfType.push(this.base64result);
+                    }
+                    this.cdrf.detectChanges();
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toastService.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        } else {
+          this.resizeImage(this.base64result).then((compressedImage) => {
+            const onlybase64 = compressedImage.split(',')[1];
+            const resizedImageSize = atob(onlybase64).length;
+            if (resizedImageSize <= maxSize) {
+              this.operatorRoundsService
+                .uploadAttachments$({ file: onlybase64 })
+                .pipe(
+                  tap((response) => {
+                    if (response) {
+                      const responsenew =
+                        response?.data?.createFormAttachments?.id;
+                      this.filteredMediaTypeIds = {
+                        mediaIds: [
+                          ...this.filteredMediaTypeIds.mediaIds,
+                          responsenew
+                        ]
+                      };
+                      this.filteredMediaType = {
+                        mediaType: [
+                          ...this.filteredMediaType.mediaType,
+                          this.base64result
+                        ]
+                      };
+                      this.cdrf.detectChanges();
+                    }
+                  })
+                )
+                .subscribe();
+            } else {
+              this.toastService.show({
+                type: 'warning',
+                text: 'File size should not exceed 390KB'
+              });
+            }
+          });
+        }
+      };
+    }
+  };
+
+  async resizeImage(base64result: string): Promise<string> {
+    const compressedImage = await this.imageCompress.compressFile(
+      base64result,
+      -1,
+      100,
+      800,
+      600
+    );
+    return compressedImage;
+  }
+
+  async resizePdf(base64Pdf: string): Promise<string> {
+    try {
+      const base64Data = base64Pdf.split(',')[1];
+      const binaryString = atob(base64Data);
+
+      const encoder = new TextEncoder();
+      const pdfBytes = encoder.encode(binaryString);
+
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const currentSize = pdfBytes.length / 1024;
+      const desiredSize = 400 * 1024;
+      if (currentSize <= desiredSize) {
+        return base64Pdf;
+      }
+
+      const scalingFactor = Math.sqrt(desiredSize / currentSize);
+      const pages = pdfDoc.getPages();
+      pages.forEach((page) => {
+        const { width, height } = page.getSize();
+        page.setSize(width * scalingFactor, height * scalingFactor);
+      });
+
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      const decoder = new TextDecoder();
+      const base64ModifiedPdf = btoa(decoder.decode(modifiedPdfBytes));
+
+      return base64ModifiedPdf;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  openPreviewDialog() {
+    const filteredMediaTypes = [...this.filteredMediaType.mediaType];
+    const slideshowImages = [];
+    filteredMediaTypes.forEach((media) => {
+      slideshowImages.push(media);
+    });
+
+    if (slideshowImages) {
+      this.dialog.open(SlideshowComponent, {
+        width: '100%',
+        height: '100%',
+        panelClass: 'slideshow-container',
+        backdropClass: 'slideshow-backdrop',
+        data: slideshowImages
+      });
+    }
+  }
+
+  roundPlanFileDeleteHandler(index: number): void {
+    this.filteredMediaType.mediaType = this.filteredMediaType.mediaType.filter(
+      (_, i) => i !== index
+    );
+    this.filteredMediaTypeIds.mediaIds =
+      this.filteredMediaTypeIds.mediaIds.filter((_, i) => i !== index);
+  }
+
+  roundPlanPdfDeleteHandler(index: number): void {
+    this.pdfFiles.mediaType = this.pdfFiles.mediaType.filter(
+      (_, i) => i !== index
+    );
+    this.filteredMediaPdfTypeIds = this.filteredMediaPdfTypeIds.filter(
+      (_, i) => i !== index
+    );
   }
 
   processValidationErrorsAdditionalDetails(

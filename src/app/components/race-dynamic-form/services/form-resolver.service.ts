@@ -52,6 +52,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant,
+          instructions,
           lastModifiedBy,
           _version: formListDynamoDBVersion
         } = form;
@@ -87,8 +88,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           tags,
           plantId,
           plant: plant.name,
-          embeddedFormId: embeddedFormId ? embeddedFormId : '',
-          lastModifiedBy
+          embeddedFormId: embeddedFormId ? embeddedFormId : ''
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 

@@ -19,6 +19,7 @@ export interface FormMetadata {
   plantId?: string;
   plant: string;
   pdfTemplateConfiguration: any;
+  instructions: any;
   lastModifiedBy: string;
   embeddedFormId?: string;
   additionalDetails: string;
@@ -101,4 +102,9 @@ export interface InstructionsFile {
   size: number;
   objectKey: string;
   objectURL: string;
+}
+export interface FormUploadFile {
+  name: string;
+  size: number;
+  objectKey: string;
 }
