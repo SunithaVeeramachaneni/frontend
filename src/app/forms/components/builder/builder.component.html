@@ -123,51 +123,8 @@
                       "
                     >
                       <div
-                        *ngIf="
-                          !pageWiseSections[pageIndex][sectionIndex]?.isImported
-                        "
                         cdkDrag
-                        class="questionContainer"
-                        [ngClass]="{
-                          'highlight-bg':
-                            props.pageWiseSectionQuestions[pageIndex][
-                              props.sectionIds[pageIndex][sectionIndex]
-                            ].questions[questionIndex].isOpen === true
-                        }"
-                      >
-                        <div class="question-drag-handler">
-                          <svg-icon
-                            icon="icon-six-dots"
-                            class="question-six-dots section-dots"
-                            cdkDragHandle
-                          ></svg-icon>
-                        </div>
-
-                        <app-question
-                          class="question"
-                          [pageIndex]="pageIndex"
-                          [sectionId]="
-                            props.sectionIds[pageIndex][sectionIndex]
-                          "
-                          [questionId]="questionId"
-                          [questionIndex]="questionIndex"
-                          [question]="
-                            props.pageWiseSectionQuestions[pageIndex][
-                              props.sectionIds[pageIndex][sectionIndex]
-                            ].questions[questionIndex]
-                          "
-                          [logics]="
-                            props.pageWiseQuestionLogics[pageIndex][questionId]
-                              .logics
-                          "
-                          (questionEvent)="questionEventHandler($event)"
-                          [selectedNodeId]="selectedNode.id"
-                          [isPreviewActive]="isPreviewActive"
-                          [isEmbeddedForm]="isEmbeddedForm"
-                        ></app-question>
-                      </div>
-                      <div
-                        *ngIf="
+                        [cdkDragDisabled]="
                           pageWiseSections[pageIndex][sectionIndex]?.isImported
                         "
                         class="questionContainer"
@@ -180,6 +137,19 @@
                       >
                         <div class="question-drag-handler">
                           <svg-icon
+                            *ngIf="
+                              !pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
+                            icon="icon-six-dots"
+                            class="question-six-dots section-dots"
+                            cdkDragHandle
+                          ></svg-icon>
+                          <svg-icon
+                            *ngIf="
+                              pageWiseSections[pageIndex][sectionIndex]
+                                ?.isImported
+                            "
                             icon="icon-Unlink"
                             class="icon-unlink"
                           ></svg-icon>

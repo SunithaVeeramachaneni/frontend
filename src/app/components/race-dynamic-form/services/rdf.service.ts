@@ -1271,7 +1271,7 @@ export class RaceDynamicFormService {
     params.set('fetchType', queryParams?.fetchType);
     return this.appService._getResp(
       environment.rdfApiUrl,
-      'template-reference/get-forms?' + params.toString()
+      'template-reference/forms?' + params.toString()
     );
   }
 
