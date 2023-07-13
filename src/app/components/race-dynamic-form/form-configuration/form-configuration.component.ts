@@ -40,8 +40,6 @@ import {
   getQuestionCounter,
   State
 } from 'src/app/forms/state';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -95,8 +93,6 @@ export class FormConfigurationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private headerService: HeaderService,
-    private breadcrumbService: BreadcrumbService,
     private router: Router,
     private dialog: MatDialog,
     private route: ActivatedRoute,

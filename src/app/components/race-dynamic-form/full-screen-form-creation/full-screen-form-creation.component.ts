@@ -15,7 +15,7 @@ import {
   QuickResponseActions,
   UnitOfMeasurementActions
 } from 'src/app/forms/state/actions';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -40,8 +40,7 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     private store: Store<State>,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit(): void {

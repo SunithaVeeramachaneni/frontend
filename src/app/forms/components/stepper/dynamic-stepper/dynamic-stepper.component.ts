@@ -9,10 +9,8 @@ import {
   Output,
   SimpleChanges,
   TemplateRef,
-  ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { Step } from 'src/app/interfaces/stepper';
 
 @Component({

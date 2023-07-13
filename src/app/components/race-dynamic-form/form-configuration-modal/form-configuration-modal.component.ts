@@ -31,7 +31,6 @@ import {
   Validators
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
-import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State, getFormMetadata } from 'src/app/forms/state';
@@ -104,7 +103,6 @@ export class FormConfigurationModalComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     private fb: FormBuilder,
-    private router: Router,
     private readonly loginService: LoginService,
     private store: Store<State>,
     private rdfService: RaceDynamicFormService,

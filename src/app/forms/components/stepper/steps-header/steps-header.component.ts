@@ -1,13 +1,11 @@
 import {
   Component,
   OnInit,
-  Inject,
   Input,
   Output,
   EventEmitter,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Step } from 'src/app/interfaces/stepper';
 
 @Component({
@@ -22,16 +20,9 @@ export class StepsHeaderComponent implements OnInit {
   @Input() showGoBack?: boolean;
   @Output() gotoStep = new EventEmitter<number>();
   @Output() goBack = new EventEmitter<void>();
-  constructor(
-    public dialogRef: MatDialogRef<StepsHeaderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {}
-
-  onCancel(): void {
-    this.dialogRef.close();
-  }
 
   onGotoStep(step): void {
     this.gotoStep.emit(step);

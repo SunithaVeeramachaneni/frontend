@@ -16,15 +16,16 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { AssetHierarchyUtil } from 'src/app/shared/utils/assetHierarchyUtil';
 import { ToastService } from 'src/app/shared/toast';
-import { formConfigurationStatus, operatorRounds, raceDynamicForms } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  operatorRounds,
+  raceDynamicForms
+} from 'src/app/app.constants';
 import { FormMetadata } from 'src/app/interfaces';
 import { getSelectedHierarchyList } from '../../state';
 import {
   BuilderConfigurationActions,
-  GlobalResponseActions,
-  QuickResponseActions,
-  RoundPlanConfigurationActions,
-  UnitOfMeasurementActions
+  RoundPlanConfigurationActions
 } from '../../state/actions';
 import {
   getFormMetadata,
@@ -110,7 +111,7 @@ export class PDFBuilderComponent implements OnInit, OnDestroy {
 
   readonly formConfigurationStatus = formConfigurationStatus;
   readonly operatorRounds = operatorRounds;
-  readonly raceDynamicForms = raceDynamicForms
+  readonly raceDynamicForms = raceDynamicForms;
   private onDestroy$ = new Subject();
 
   constructor(
