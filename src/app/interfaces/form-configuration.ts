@@ -38,6 +38,10 @@ export interface Section {
   name: string;
   position: number;
   isOpen: boolean;
+  isImported?: boolean;
+  templateID?: string;
+  externalSectionID?: string;
+  counter?: number;
 }
 
 export interface Question {
@@ -61,6 +65,7 @@ export interface Question {
 export interface SectionQuestions {
   section: Section;
   questions: Question[];
+  logics?: any[];
 }
 
 export interface NumberRangeMetadata {

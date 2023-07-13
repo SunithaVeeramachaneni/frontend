@@ -17,6 +17,11 @@
         >
           chevron_right
         </mat-icon>
+        <svg-icon
+          *ngIf="sectionForm.get('isImported').value === true"
+          icon="icon-Unlink"
+          class="icon-unlink"
+        ></svg-icon>
 
         <a class="width-60">
           <input
@@ -35,7 +40,10 @@
             mat-icon-button
             (click)="editSection()"
             class="edit-icon"
-            *ngIf="sectionForm.get('name').disabled === true"
+            *ngIf="
+              sectionForm.get('name').disabled === true &&
+              sectionForm.get('isImported').value !== true
+            "
           >
             <svg-icon
               icon="icon-edit-icon-white"
@@ -69,7 +77,11 @@
       </div>
       <div
         *ngIf="sectionForm.get('isOpen').value === true"
-        class="questions-content"
+        [ngClass]="
+          sectionForm.get('isImported').value === true
+            ? 'disable-questions questions-content'
+            : 'questions-content'
+        "
       >
         <ng-content></ng-content>
       </div>

@@ -1274,4 +1274,17 @@ export class RaceDynamicFormService {
       'template-reference/get-forms?' + params.toString()
     );
   }
+
+  getFormTemplateUsage$ = (payload: any): Observable<any> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/' + `${payload.templateID}/` + `${payload.formID}`
+    );
+
+  updateFormTemplateUsage$ = (data: any): Observable<any> =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      'template-reference',
+      data
+    );
 }

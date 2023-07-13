@@ -1,6 +1,27 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { RaceDynamicFormService } from '../../services/rdf.service';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
+import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import { slideInOut } from 'src/app/animations';
+import {
+  RoundDetail,
+  RoundPlan,
+  RoundPlanDetail,
+  TableEvent
+} from 'src/app/interfaces';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { FormControl } from '@angular/forms';
 import {
   catchError,
   debounceTime,
@@ -12,42 +33,28 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
-import { MatTableDataSource } from '@angular/material/table';
 import { graphQLDefaultLimit } from 'src/app/app.constants';
-import { FormControl } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { ToastService } from 'src/app/shared/toast';
-import { TableEvent } from 'src/app/interfaces';
+import { MatTableDataSource } from '@angular/material/table';
 import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { Router } from '@angular/router';
-
 @Component({
-  selector: 'app-template-affected-forms-modal',
-  templateUrl: './template-affected-forms-modal.component.html',
-  styleUrls: ['./template-affected-forms-modal.component.scss']
+  selector: 'app-affected-form-template-slider',
+  templateUrl: './affected-form-template-slider.component.html',
+  styleUrls: ['./affected-form-template-slider.component.scss'],
+  animations: [slideInOut]
 })
-export class TemplateAffectedFormsModalComponent implements OnInit {
-  ghostLoading = new Array(8).fill(0).map((v, i) => i);
+export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
+  @Output() slideInOut: EventEmitter<any> = new EventEmitter();
+  @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  ghostLoading = new Array(13).fill(0).map((_, i) => i);
   nextToken = '';
   fetchType = 'load';
-  searchForm: FormControl;
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  formsListCount$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  forms$: Observable<any>;
   skip = 0;
   limit = graphQLDefaultLimit;
-  affectedFormsCount: Number;
-  affectedForms: any[];
-  allAffectedForms: any[];
-  formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  searchForm: FormControl;
   dataSource: MatTableDataSource<any>;
+  forms$: Observable<any>;
   columns: Column[] = [
     {
       id: 'name',
@@ -169,19 +176,11 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       }
     }
   };
-
   private onDestroy$ = new Subject();
-
-  constructor(
-    private store: Store<State>,
-    private toastService: ToastService,
-    private router: Router,
-    private raceDynamicFormService: RaceDynamicFormService,
-    public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
-
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
+  constructor(private raceDynamicFormService: RaceDynamicFormService) {}
+  ngOnChanges(_: SimpleChanges) {
+    this.getDisplayedForms();
+  }
   ngOnInit(): void {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
@@ -190,7 +189,6 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        takeUntil(this.onDestroy$),
         tap((value: string) => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
@@ -198,16 +196,13 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       .subscribe(() => this.isLoading$.next(true));
     this.configOptions.allColumns = this.columns;
     this.getDisplayedForms();
-    this.formsListCount$.subscribe((count) => {
-      this.affectedFormsCount = count;
-    });
+  }
+  ngOnDestroy(): void {
+    this.selectedForm = null;
   }
 
-  handleTableEvent = (event): void => {
-    this.raceDynamicFormService.fetchForms$.next(event);
-  };
-
   getDisplayedForms(): void {
+    this.isLoading$.next(true);
     const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
@@ -239,23 +234,27 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 330px)'
+            tableHeight: 'calc(100vh - 170px)'
           };
           initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
-        this.skip = initial.data.length;
+        this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
   }
+  
+  handleTableEvent = (event): void => {
+    this.raceDynamicFormService.fetchForms$.next(event);
+  };
 
   getForms() {
     return this.raceDynamicFormService
       .getAffectedFormList$({
-        templateID: this.data.templateID,
+        templateID: this.selectedForm.id,
         nextToken: this.nextToken,
         limit: this.limit,
         searchTerm: this.searchForm.value,
@@ -263,33 +262,22 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       })
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          if (count !== undefined) {
-            this.formsListCount$.next(count);
-          }
           this.nextToken = next;
           this.formLoaded$.next(true);
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.formsListCount$.next(0);
           this.formLoaded$.next(true);
           this.isLoading$.next(false);
           return of([]);
         })
       );
   }
-  markTemplateAsReady() {
-    this.dialogRef.close();
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
-    this.router.navigate(['/forms/templates']);
-    this.toastService.show({
-      type: 'success',
-      text: `${this.affectedFormsCount} Forms are updated.`
-    });
+
+  cancelForm() {
+    this.slideInOut.emit('in');
+    this.selectedForm = null;
+    this.onDestroy$;
   }
 }

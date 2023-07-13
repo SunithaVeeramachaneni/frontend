@@ -28,6 +28,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { TemplateConfigurationModalComponent } from '../template-configuration-modal/template-configuration-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
 
 @Component({
   selector: 'app-template-list',
@@ -37,6 +39,10 @@ import { permissions } from 'src/app/app.constants';
   animations: [slideInOut]
 })
 export class TemplateListComponent implements OnInit, OnDestroy {
+  public menuState = 'out';
+  public affectedSliderState = 'out';
+  selectedForm: any = null;
+  selectedTemplate: any = null;
   submissionSlider = 'out';
   isPopoverOpen = false;
   status: any[] = ['Draft', 'Ready'];
@@ -74,7 +80,7 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'counter',
+      id: 'questionsCount',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
@@ -171,7 +177,10 @@ export class TemplateListComponent implements OnInit, OnDestroy {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {},
+      titleStyle: {
+        color: '#3D5AFE',
+        'text-decoration': 'underline'
+      },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
@@ -240,12 +249,12 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
+        'background-color': '#FFCC00',
+        color: '#000000'
       },
       ready: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
+        'background-color': '#2C9E53',
+        color: '#FFFFFF'
       }
     }
   };
@@ -273,7 +282,8 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private translateService: TranslateService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -315,11 +325,30 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     this.prepareMenuActions();
   }
 
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+  }
+
+  onCloseAffectedSlider() {
+    this.selectedTemplate = null;
+    this.affectedSliderState = 'out';
+  }
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId } = event;
+    const { columnId, row } = event;
     switch (columnId) {
-      default:
+      case 'name':
+      case 'questionsCount':
+      case 'formStatus':
+      case 'formType':
+      case 'lastPublishedBy':
+      case 'author':
+        this.showFormDetail(row);
         break;
+      case 'formsUsageCount':
+        this.showAffectedSlider(row);
+        break;
+      default:
     }
   };
 
@@ -440,8 +469,24 @@ export class TemplateListComponent implements OnInit, OnDestroy {
     });
   }
 
+  templateDetailActionHandler(event) {
+    this.router.navigate([`/forms/templates/edit/${this.selectedForm.id}`]);
+  }
+
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  showAffectedSlider(row: any): void {
+    this.selectedTemplate = row;
+    this.affectedSliderState = 'in';
+    this.onCloseViewDetail();
+  }
+
+  private showFormDetail(row: any): void {
+    this.selectedForm = row;
+    this.menuState = 'in';
+    this.onCloseAffectedSlider();
   }
 }

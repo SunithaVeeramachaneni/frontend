@@ -1,6 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { RaceDynamicFormService } from '../../services/rdf.service';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -12,46 +14,47 @@ import {
   takeUntil,
   tap
 } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import {
+  CellClickActionEvent,
+  FormMetadata,
+  TableEvent
+} from '../../../interfaces';
+
+import { graphQLDefaultMaxLimit } from '../../../app.constants';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { getFormMetadata, State } from 'src/app/forms/state';
+import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
+import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
-import { graphQLDefaultLimit } from 'src/app/app.constants';
-import { FormControl } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
-import { BuilderConfigurationActions } from 'src/app/forms/state/actions';
-import { ToastService } from 'src/app/shared/toast';
-import { TableEvent } from 'src/app/interfaces';
-import { GetFormList } from 'src/app/interfaces/master-data-management/forms';
-import { Router } from '@angular/router';
-
 @Component({
-  selector: 'app-template-affected-forms-modal',
-  templateUrl: './template-affected-forms-modal.component.html',
-  styleUrls: ['./template-affected-forms-modal.component.scss']
+  selector: 'app-import-form-list',
+  templateUrl: './import-form-list.component.html',
+  styleUrls: ['./import-form-list.component.scss']
 })
-export class TemplateAffectedFormsModalComponent implements OnInit {
-  ghostLoading = new Array(8).fill(0).map((v, i) => i);
+export class ImportFormListComponent implements OnInit, OnDestroy {
+  searchForm: FormControl;
+  skip = 0;
+  limit = graphQLDefaultMaxLimit;
+  selectedForm;
+  forms$: Observable<any>;
+  authoredFormDetail$: Observable<any>;
+  authoredFormDetail;
   nextToken = '';
   fetchType = 'load';
-  searchForm: FormControl;
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-  formsListCount$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  forms$: Observable<any>;
-  skip = 0;
-  limit = graphQLDefaultLimit;
-  affectedFormsCount: Number;
-  affectedForms: any[];
-  allAffectedForms: any[];
-  formLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  dataSource: MatTableDataSource<any>;
+  formMetadata$: Observable<FormMetadata>;
+  formMetadata: FormMetadata;
+  ghostLoading = new Array(11).fill(0).map((v, i) => i);
+  isLoading$ = new BehaviorSubject(true);
+
+  status: any[] = ['Draft', 'Published'];
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Form Name',
+      displayName: 'Name',
       type: 'string',
       controlType: 'string',
       order: 1,
@@ -143,8 +146,9 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       hasConditionalStyles: true
     }
   ];
+
   configOptions: ConfigOptions = {
-    tableID: 'affectedFormsTable',
+    tableID: 'formsTable',
     rowsExpandable: false,
     enableRowsSelection: false,
     enablePagination: false,
@@ -156,7 +160,7 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '400px',
+    tableHeight: '492px',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
     conditionalStyles: {
       draft: {
@@ -169,17 +173,14 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
       }
     }
   };
-
+  dataSource: MatTableDataSource<any>;
   private onDestroy$ = new Subject();
 
   constructor(
-    private store: Store<State>,
-    private toastService: ToastService,
-    private router: Router,
+    public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data,
     private raceDynamicFormService: RaceDynamicFormService,
-    public dialogRef: MatDialogRef<TemplateAffectedFormsModalComponent>,
-
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -191,21 +192,19 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.onDestroy$),
-        tap((value: string) => {
+        tap(() => {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.configOptions.allColumns = this.columns;
-    this.getDisplayedForms();
-    this.formsListCount$.subscribe((count) => {
-      this.affectedFormsCount = count;
-    });
-  }
 
-  handleTableEvent = (event): void => {
-    this.raceDynamicFormService.fetchForms$.next(event);
-  };
+    this.getDisplayedForms();
+    this.configOptions.allColumns = this.columns;
+
+    this.formMetadata$ = this.store
+      .select(getFormMetadata)
+      .pipe(tap((formMetadata) => (this.formMetadata = formMetadata)));
+  }
 
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
@@ -239,12 +238,13 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 330px)'
+            tableHeight: '492px'
           };
           initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
+
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
@@ -253,43 +253,107 @@ export class TemplateAffectedFormsModalComponent implements OnInit {
   }
 
   getForms() {
+    const filterData = {
+      formType: this.data.isEmbeddedForm ? 'Embedded' : 'Standalone'
+    };
     return this.raceDynamicFormService
-      .getAffectedFormList$({
-        templateID: this.data.templateID,
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchTerm: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          next: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        false,
+        filterData
+      )
       .pipe(
         mergeMap(({ count, rows, next }) => {
-          if (count !== undefined) {
-            this.formsListCount$.next(count);
-          }
           this.nextToken = next;
-          this.formLoaded$.next(true);
           this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
-          this.formsListCount$.next(0);
-          this.formLoaded$.next(true);
           this.isLoading$.next(false);
           return of([]);
-        })
+        }),
+        map((data) =>
+          data.map((item) => {
+            if (item.plantId) {
+              item = {
+                ...item,
+                plant: item.plant
+              };
+            } else {
+              item = { ...item, plant: '' };
+            }
+            return item;
+          })
+        )
       );
   }
-  markTemplateAsReady() {
-    this.dialogRef.close();
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
-    this.router.navigate(['/forms/templates']);
-    this.toastService.show({
-      type: 'success',
-      text: `${this.affectedFormsCount} Forms are updated.`
+
+  selectListItem(form) {
+    this.raceDynamicFormService
+      .getAuthoredFormDetailByFormId$(form.id)
+      .pipe(
+        map((authoredFormDetail) => {
+          this.data.selectedFormName = form.name;
+          const filteredForm = JSON.parse(authoredFormDetail.pages);
+          let sectionData;
+          const pageData = filteredForm.map((page) => {
+            sectionData = page.sections.map((section) => {
+              const questionsArray = [];
+              page.questions.forEach((question) => {
+                if (section.id === question.sectionId) {
+                  questionsArray.push(question);
+                }
+              });
+              return { ...section, questions: questionsArray };
+            });
+            return { ...page, sections: sectionData };
+          });
+          return pageData;
+        })
+      )
+      .subscribe((response) => {
+        this.selectedForm = response;
+        this.selectFormElement();
+      });
+  }
+
+  selectFormElement() {
+    this.selectedForm?.forEach((page) => {
+      page.sections.forEach((sec) => {
+        sec.checked = false;
+        sec.questions.forEach((que) => {
+          que.checked = false;
+        });
+      });
     });
+    this.data.selectedFormData = this.selectedForm;
+    this.data.openImportQuestionsSlider = true;
+    this.dialogRef.close(this.data);
+  }
+
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    const { columnId, row } = event;
+    switch (columnId) {
+      case 'name':
+      case 'description':
+      case 'formStatus':
+        this.selectListItem(row);
+        break;
+      default:
+    }
+  };
+
+  handleTableEvent = (event): void => {
+    this.raceDynamicFormService.fetchForms$.next(event);
+  };
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

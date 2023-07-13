@@ -122,6 +122,9 @@
   "createdBy": "Created By",
   "assignedTo": "Assigned To",
   "dueDate": "Due Date",
+  "templateId": "Template ID",
+  "questionS": "Questions",
+  "templateIn": "Template In",
   "dueDateAndTime": "Due Date and Time",
   "issueActionDueDateAndTime": "Due Date and Time: ",
   "preview": "Preview",
@@ -358,5 +361,6 @@
   "yes": "yes",
   "formsThatWillReflectChanges": "Forms that will reflect Template changes",
   "affectedForms": "Forms will be affected",
-  "formsWillAppearOnceTemplateIsLinked": "Forms will appear once Template is linked"
+  "formsWillAppearOnceTemplateIsLinked": "Forms will appear once Template is linked",
+  "templatesUsed": "Templates Used"
 }
