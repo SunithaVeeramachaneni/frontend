@@ -185,7 +185,7 @@ export class AddEditUserModalComponent implements OnInit {
     this.permissionsList$ = this.data.permissionsList$;
     this.rolesInput = this.data.roles.rows;
     this.rolesList$ = this.data.rolesList$;
-    this.usergroupInput = this.data.usergroup.items;
+    this.usergroupInput = this.data.usergroup?.items;
     this.usergroupList$ = this.data.usergroupList$;
 
     if (Object.keys(userDetails).length === 0) {

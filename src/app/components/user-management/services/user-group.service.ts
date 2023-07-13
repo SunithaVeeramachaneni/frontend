@@ -218,4 +218,10 @@ export class UserGroupService {
       info
     );
   }
+  listAllUserGroups$ = (info = {} as ErrorInfo) =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'user-groups/all',
+      info
+    );
 }

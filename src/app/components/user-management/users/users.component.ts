@@ -327,15 +327,9 @@ export class UsersComponent implements OnInit {
       this.roles = roles;
     });
 
-    this.userGroupService
-      .listUserGroups$({
-        limit: this.limit,
-        fetchType: this.fetchType,
-        nextToken: this.nextToken
-      })
-      .subscribe((usergroup) => {
-        this.usergroup = usergroup;
-      });
+    this.userGroupService.listAllUserGroups$().subscribe((data) => {
+      this.usergroup = data;
+    });
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService
@@ -414,6 +408,7 @@ export class UsersComponent implements OnInit {
       }
       if (resp.action === 'add') {
         const input = resp.user;
+        console.log('Data :', input);
         const idArray = input.usergroup.map((obj) => obj.id); // Extract id values
         const idString = idArray.join(','); // Join values with commas
         input.userGroups = idString;
@@ -491,6 +486,7 @@ export class UsersComponent implements OnInit {
       usersOnLoadSearch$,
       this.addEditDeactivateUser$,
       onScrollUsers$,
+      this.userGroupService.listAllUserGroups$(),
       this.plantService.fetchAllPlants$().pipe(
         tap((data) => {
           this.plantsList = data.items;
@@ -498,7 +494,7 @@ export class UsersComponent implements OnInit {
         })
       )
     ]).pipe(
-      map(([users, update, scrollData]) => {
+      map(([users, update, scrollData, userGroups]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -555,7 +551,16 @@ export class UsersComponent implements OnInit {
             initial.data = initial.data.concat(scrollData);
           }
         }
-
+        initial?.data?.map((data) => {
+          const ids = data?.userGroups?.split(',');
+          const names = [];
+          ids?.forEach((id) => {
+            const obj = userGroups?.items?.find((g) => g?.id === id);
+            names.push(obj?.name);
+          });
+          data.userGroups = names.toString();
+          return data;
+        });
         this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;

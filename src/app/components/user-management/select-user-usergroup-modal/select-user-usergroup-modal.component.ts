@@ -77,7 +77,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'roles',
+      id: 'roleString',
       displayName: 'Role',
       type: 'string',
       controlType: 'string',
@@ -146,7 +146,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   alluserCount$: Observable<number>;
   userCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
-
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   userListCount$: Observable<number>;
   permissionsList$: Observable<any>;
@@ -169,6 +168,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   fetchType: string;
   initialUsers = [];
   disableBtn = true;
+  preselectedUsers = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -201,7 +201,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           this.fetchUsers$.next({ data: 'search' });
         })
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
 
     this.getDisplayedUsers();
     this.configOptions.allColumns = this.columns;
@@ -217,6 +217,7 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       switchMap(({ data }) => {
         this.skip = 0;
         this.fetchType = data;
+        this.isLoading$.next(true);
         return this.getUsersList();
       })
     );
@@ -279,9 +280,21 @@ export class SelectUserUsergroupModalComponent implements OnInit {
         }
 
         this.skip = initial.data?.length;
+        initial.data.map((user) => {
+          const rolesArray = user?.roles;
+          const rolesList = rolesArray?.map((role) => role.name);
+          user.roleString = rolesList?.toString();
+          return user;
+        });
         this.dataSource = new MatTableDataSource(initial.data);
-        this.selectedUsers = initial?.data?.filter((user) => user.isSelected);
-        this.initialUsers = this.selectedUsers;
+        this.preselectedUsers = [
+          ...this.preselectedUsers,
+          ...initial?.data?.filter((user) => user.isSelected)
+        ];
+        this.preselectedUsers = this.makeArrayUnique(this.preselectedUsers);
+        this.initialUsers = this.preselectedUsers;
+        this.selectedUsers = [...this.selectedUsers, ...this.preselectedUsers];
+        this.selectedUsers = this.makeArrayUnique(this.selectedUsers);
         this.selectedUsersCount$ = of(this.selectedUsers.length);
         this.allUsersList = initial.data;
         return initial;
@@ -300,7 +313,10 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       })
       .pipe(
         mergeMap((resp: any) => {
-          this.reloadAllUsersCount(resp.count);
+          this.isLoading$.next(false);
+          if (resp.count) {
+            this.reloadAllUsersCount(resp.count);
+          }
           this.next = resp.next;
           return of(resp.items);
         }),
@@ -434,5 +450,16 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       .subscribe(() => {
         this.dialogRef.close({ returnType: 'done' });
       });
+  }
+  makeArrayUnique(array) {
+    const uniqueMap = {};
+    for (const obj of array) {
+      const id = obj.id;
+      if (!uniqueMap.hasOwnProperty(id)) {
+        uniqueMap[id] = obj;
+      }
+    }
+    const uniqueArray = Object.values(uniqueMap);
+    return uniqueArray;
   }
 }

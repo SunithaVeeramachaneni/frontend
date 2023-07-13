@@ -331,7 +331,11 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         }
 
         this.skip = initial.data?.length;
-        initial.data.map((user) => (user.plant = plantName));
+        initial.data.map((user) => {
+          user.plant = plantName;
+          user.roles = user?.roles?.toString();
+          return user;
+        });
         this.dataSource = new MatTableDataSource(initial.data);
         this.allUsersList = initial.data;
         return initial;
