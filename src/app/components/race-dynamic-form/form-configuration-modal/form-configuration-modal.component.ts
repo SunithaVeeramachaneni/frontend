@@ -44,6 +44,7 @@ import { PlantService } from '../../master-configurations/plants/services/plant.
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { ToastService } from 'src/app/shared/toast';
 import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
+import { FullScreenFormCreationComponent } from '../full-screen-form-creation/full-screen-form-creation.component';
 @Component({
   selector: 'app-form-configuration-modal',
   templateUrl: './form-configuration-modal.component.html',
@@ -86,7 +87,7 @@ export class FormConfigurationModalComponent implements OnInit {
   additionalDetails: FormArray;
   labelSelected: any;
   constructor(
-    public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
+    public dialogRef: MatDialogRef<FullScreenFormCreationComponent>,
     private fb: FormBuilder,
     private router: Router,
     private readonly loginService: LoginService,
@@ -157,8 +158,34 @@ export class FormConfigurationModalComponent implements OnInit {
         formType: this.data.formData.formType,
         plantId: this.data.formData.plantId
       });
+
+      const additionalDetailsArray =
+        this.data.formData.additionalDetails instanceof Array
+          ? this.data.formData.additionalDetails
+          : JSON.parse(this.data.formData.additionalDetails);
+
+      const tagsValue = this.data.formData.tags;
+
+      this.patchAdditionalDetailsArray(additionalDetailsArray);
+      this.patchTags(tagsValue);
+
       this.headerDataForm.markAsDirty();
     }
+  }
+
+  patchTags(values: any[]): void {
+    this.tags = values;
+  }
+
+  patchAdditionalDetailsArray(values: any[]): void {
+    const formGroups = values.map((value) =>
+      this.fb.group({
+        label: [value.FIELDLABEL],
+        value: [value.DEFAULTVALUE]
+      })
+    );
+    const formArray = this.fb.array(formGroups);
+    this.headerDataForm.setControl('additionalDetails', formArray);
   }
 
   resetPlantSearchFilter = () => {

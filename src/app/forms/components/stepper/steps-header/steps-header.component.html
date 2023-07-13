@@ -34,7 +34,11 @@
           </div>
           <div class="title pr-8">{{ step.title }}</div>
         </button>
-        <hr class="stepper-line" *ngIf="i !== steps.length - 1" />
+        <hr
+          class="stepper-line"
+          *ngIf="i !== steps.length - 1"
+          [ngClass]="{ 'stepper-line-length': steps.length === 2 }"
+        />
 
         <!-- DYNAMIC CONTENT -->
         <ng-content></ng-content>

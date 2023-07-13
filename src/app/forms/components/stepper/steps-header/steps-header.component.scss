@@ -81,7 +81,7 @@
   display: flex;
   justify-content: space-evenly;
   position: relative;
-  top: 7px;
+  top: 5px;
 }
 
 .stepper-line {
@@ -89,6 +89,14 @@
   bottom: 12px;
   left: 115px;
   width: 85px;
+  margin: 0;
+}
+
+.stepper-line-length {
+  position: relative;
+  bottom: 12px;
+  left: 107px;
+  width: 155px;
   margin: 0;
 }
 
