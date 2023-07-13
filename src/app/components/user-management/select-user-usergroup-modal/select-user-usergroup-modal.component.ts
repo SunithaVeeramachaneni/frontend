@@ -179,7 +179,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
   ngOnInit() {
     this.fetchUsers$.next({ data: 'load' });
     this.fetchUsers$.next({} as TableEvent);
-    console.log(this.data);
     if (this.data?.type === 'update') {
       this.type = 'update';
       this.fetchUserGroupUsers$ = this.userGroupService.getAllUsersUserGroup(
@@ -223,7 +222,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = data;
-          console.log('Fetchtype :', this.fetchType);
           return this.getUsersList();
         } else {
           return of([]);
@@ -241,7 +239,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
       this.fetchUserGroupUsers$
     ]).pipe(
       map(([users, scrollData, groupUsers]) => {
-        console.log('Scroll data :', scrollData);
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -277,7 +274,6 @@ export class SelectUserUsergroupModalComponent implements OnInit {
           initial.data = initial.data.concat(scrollData);
         }
 
-        // console.log(initial);
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         this.selectedUsers = initial?.data?.filter((user) => user.isSelected);

@@ -330,7 +330,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
           initial.data = initial.data.concat(scrollData);
         }
 
-        console.log('Initial check :', initial);
         this.skip = initial.data?.length;
         this.dataSource = new MatTableDataSource(initial.data);
         this.allUsersList = initial.data;
@@ -351,7 +350,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         this.userGroupId
       )
       .pipe(
-        tap((data) => console.log(data)),
         mergeMap((resp: any) => {
           this.userCount = resp.count;
           this.userGroupService.usersCount$.next({
@@ -432,7 +430,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     });
   }
   rowLevelActionHandler(event) {
-    console.log('event :', event);
     const { data, action } = event;
     switch (action) {
       case 'toggleAllRows':
@@ -496,7 +493,6 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     });
   }
   removeMultipleMembers() {
-    console.log('In remove multiple user');
     const removeMultipleUserModelRef = this.dialog.open(
       RemoveUserModalComponent,
       {

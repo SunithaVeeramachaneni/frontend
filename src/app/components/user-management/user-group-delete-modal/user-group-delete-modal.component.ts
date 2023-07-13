@@ -14,7 +14,6 @@ export class UserGroupDeleteModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // console.log(this.userGroupdata.userGroupData.name);
     this.userGroupName = this.userGroupdata.userGroupData.name;
   }
   deleteUserGroup = (data) => {

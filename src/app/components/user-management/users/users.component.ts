@@ -335,7 +335,6 @@ export class UsersComponent implements OnInit {
       })
       .subscribe((usergroup) => {
         this.usergroup = usergroup;
-        console.log(usergroup);
       });
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
@@ -366,7 +365,6 @@ export class UsersComponent implements OnInit {
   };
 
   openEditAddUserModal(user = {} as UserDetails) {
-    // console.log('openAddEditMOdal', user);
     if (this.isOpenAddEditModal) return;
     this.isOpenAddEditModal = true;
     const openEditAddUserModalRef = this.dialog.open(
