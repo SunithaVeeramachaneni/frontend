@@ -44,6 +44,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { UserGroupListComponent } from './user-group-list/user-group-list.component';
 import { AddEditUserGroupModalComponent } from './add-edit-user-group-modal/add-edit-user-group-modal.component';
+import { SelectUserUsergroupModalComponent } from './select-user-usergroup-modal/select-user-usergroup-modal.component';
+import { UserGroupUsersListComponent } from './user-group-users-list/user-group-users-list.component';
+import { UserGroupDeleteModalComponent } from './user-group-delete-modal/user-group-delete-modal.component';
+import { RemoveUserModalComponent } from './remove-user-modal/remove-user-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -97,7 +101,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     RoleDeleteModalComponent,
     InactiveUsersComponent,
     UserGroupListComponent,
-    AddEditUserGroupModalComponent
+    AddEditUserGroupModalComponent,
+    SelectUserUsergroupModalComponent,
+    UserGroupUsersListComponent,
+    UserGroupDeleteModalComponent,
+    RemoveUserModalComponent
   ],
   schemas: [],
   providers: [],

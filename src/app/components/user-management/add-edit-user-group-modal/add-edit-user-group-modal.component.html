@@ -1,72 +1,105 @@
 <form class="userGroupModal" [formGroup]="userGroupForm">
-  <span class="title" translate>createUserGroup</span>
-  <span class="dialog-close-btn" (click)="close()">
-    <mat-icon class="dialog-close">close</mat-icon>
-  </span>
-  <hr class="divider1" />
+  <div class="modal-header">
+    <span
+      *ngIf="groupStatus === 'update'"
+      class="title"
+      translate="editUserGroup"
+    >
+    </span>
+    <span
+      *ngIf="groupStatus === 'create'"
+      class="title"
+      translate="createUserGroup"
+    ></span>
+    <span class="dialog-close-btn" (click)="close()">
+      <mat-icon class="dialog-close">close</mat-icon>
+    </span>
+  </div>
+  <hr class="divider width-100 m-t-10" />
   <div class="input-container">
-    <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
-      <mat-label>{{ 'name2' | translate }}</mat-label>
-      <input matInput formControlName="name" />
-      <!-- <mat-error
-        *ngIf="processValidationErrors('firstName')"
-        class="m-t-5 error-fields"
+    <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
+      <mat-label>{{ 'enterName' | translate }}</mat-label>
+      <input matInput formControlName="name" translate="maxCharacter" />
+      <mat-error
+        *ngIf="processValidationErrors('name')"
+        class="m-t-8 error-fields"
       >
         {{
-          errors.firstName.name
+          errors.name.name
             | translate
               : {
-                  name: 'firstName' | translate,
-                  length: errors.firstName.length
+                  name: 'enterName' | translate,
+                  length: errors.name.length
                 }
         }}
-      </mat-error> -->
+      </mat-error>
     </mat-form-field>
+    <span class="max-char">{{
+      'maxCharacters' | translate : { limit: 40 }
+    }}</span>
 
-    <mat-form-field appearance="outline" class="m-b-10 first-name m-t-10">
-      <mat-label>{{ 'description2' | translate }}</mat-label>
-      <input matInput formControlName="description2" />
+    <mat-form-field appearance="outline" class="m-b-10 width-100 m-t-10">
+      <mat-label>{{ 'roleDescription' | translate }}</mat-label>
+      <input matInput formControlName="description" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10 m-t-10">
       <mat-label>{{ 'plant' | translate }}</mat-label>
       <mat-select formControlName="plantId">
-        <mat-option
-          *ngFor="let plant of data.plantsList"
-          [value]="plant.id"
-          style="padding-right: 0"
-          class="roles-select"
-        >
-          <span>{{ plant.plantId }}</span>
-        </mat-option>
+        <input
+          class="searchable-input"
+          [placeholder]="'search' | translate"
+          (keyup)="onKeyPlant($event)"
+        />
+        <div class="scrollable-area">
+          <mat-option [value]="plant.id" *ngFor="let plant of plantInformation"
+            >{{ plant.plantId }} - {{ plant.name }}</mat-option
+          >
+        </div>
       </mat-select>
       <mat-error
-        *ngIf="
-          userGroupForm.controls.plantId.errors?.selectOne &&
-          userGroupForm.controls.plantId.touched
-        "
-        class="m-t-5 error-fields"
+        *ngIf="processValidationErrors('plantId')"
+        class="m-t-8 error-fields"
       >
-        {{ 'plantsEmpty' | translate }}
+        {{
+          errors.plantId.name
+            | translate
+              : {
+                  name: 'Plant' | translate
+                }
+        }}
       </mat-error>
     </mat-form-field>
-    <hr class="divider2" />
+    <hr class="divider width-100 m-b-10" />
   </div>
 
-  <button
-    mat-button
-    class="cancel-btn"
-    autofocus="false"
-    mat-dialog-close
-    translate="cancelBtn"
-    tabindex="-1"
-  ></button>
+  <div class="footer">
+    <button
+      mat-raised-button
+      class="cancel-btn"
+      autofocus="false"
+      mat-dialog-close
+      translate="cancelBtn"
+      tabindex="-1"
+    ></button>
 
-  <button
-    mat-raised-button
-    class="next-btn"
-    (click)="save()"
-    type="submit"
-    translate="nextBtn"
-  ></button>
+    <button
+      mat-raised-button
+      *ngIf="groupStatus === 'create'"
+      class="next-btn"
+      (click)="openSelectUser()"
+      type="submit"
+      translate="nextBtn"
+      [disabled]="userGroupForm.invalid || userGroupForm.pristine"
+    ></button>
+    <button
+      mat-raised-button
+      *ngIf="groupStatus === 'update'"
+      class="next-btn"
+      (click)="updateUserGroup()"
+      type="submit"
+      translate="saveBtn"
+      [disabled]="userGroupForm.invalid || userGroupForm.pristine"
+    ></button>
+  </div>
 </form>

@@ -1,82 +1,141 @@
-<ng-container>
-  <div>
-    <div class="main-container">
-      <ngx-spinner
-        size="medium"
-        bdColor="rgba(0, 0, 0, 0.6)"
-        type="ball-clip-rotate-pulse"
-        [fullScreen]="false"
-      >
-      </ngx-spinner>
-      <div class="usergroup-header">
-        <div class="width-30 left-pannel-header">
-          <h2 class="heading" translate="userGroups"></h2>
-          <button mat-icon-button (click)="openAddEditUserGroupModal()">
-            <svg-icon icon="icon-add-user" class="add-btn"></svg-icon>
-          </button>
-        </div>
+<div class="main-container">
+  <ngx-spinner
+    size="medium"
+    bdColor="rgba(0, 0, 0, 0.6)"
+    type="ball-clip-rotate-pulse"
+    [fullScreen]="false"
+  >
+  </ngx-spinner>
+  <div class="usergroup-header">
+    <div class="width-30 left-pannel-header">
+      <h2 class="heading" translate="userGroups"></h2>
+      <button class="add-btn" (click)="createUserGroup()">
+        <mat-icon class="add-btn-icon">add</mat-icon>
+      </button>
+    </div>
 
-        <div class="right-pannel-header">
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            class="more-usergroup"
-            aria-label="More Options"
-          >
-            <mat-icon>more_horiz</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              class="text-red"
-              translate="deleteBtn"
-            ></button>
-          </mat-menu>
-          <span class="count-of-usergroup">
-            <span class="usergroup-count">{{ usergrp }}</span>
-            <span class="usergroup-text">{{
-              'userGroupCount' | translate
-            }}</span>
-          </span>
-        </div>
-      </div>
-      <div class="dis-flex usergroup-content">
-        <div class="width-25 custom-form-field-gray-color usergroup-left-panel">
-          <mat-form-field appearance="outline" class="search-form-field">
-            <mat-icon matPrefix class="searchIcon">search</mat-icon>
-            <input
-              matInput
-              type="text"
-              [placeholder]="'searchUserGroup' | translate"
-              autocomplete="off"
-            />
-          </mat-form-field>
-        </div>
-        <div class="width-70">
-          <div class="width-30 custom-form-field-gray-color">
-            <mat-form-field
-              appearance="outline"
-              class="search-form-field usergroup-right-pannel"
-            >
-              <mat-icon matPrefix class="searchIcon">search</mat-icon>
-              <input
-                matInput
-                type="text"
-                [placeholder]="'searchUserGroup' | translate"
-                autocomplete="off"
-              />
-            </mat-form-field>
-          </div>
-          <button
-            mat-raised-button
-            class="add-role-btn"
-            translate="addUsersBtn"
-          ></button>
-
-          <div class="custom-form-field-white-color"></div>
-        </div>
-      </div>
+    <div class="right-pannel-header">
+      <span class="count-of-usergroup">
+        <span class="usergroup-count-header">{{
+          userGroupCount$ | async
+        }}</span>
+        <span class="usergroup-text">{{ 'userGroupCount' | translate }}</span>
+      </span>
     </div>
   </div>
-  <router-outlet></router-outlet>
-</ng-container>
+  <div class="dis-flex usergroup-content">
+    <div class="width-25 custom-form-field-gray-color usergroup-left-panel">
+      <mat-form-field appearance="outline" class="search-form-field">
+        <mat-icon matPrefix class="searchIcon">search</mat-icon>
+        <input
+          matInput
+          type="text"
+          [placeholder]="'searchUserGroup' | translate"
+          [formControl]="searchUserGroup"
+          autocomplete="off"
+        />
+      </mat-form-field>
+
+      <mat-list
+        class="roles"
+        *ngIf="allUserGroups$ | async as userGroups"
+        #listContainer
+      >
+        <div *ngIf="userGroups.length === 0" class="unselected-role-text">
+          <span translate="noResultsFound"></span>
+        </div>
+        <ng-container
+          *ngIf="(isLoading$ | async) === false; else LoadingUserGroupList"
+          class="list-container"
+        >
+          <div (scroll)="listBottom($event)" class="roles">
+            <mat-list-item
+              #userGroupList
+              *ngFor="let userGroup of userGroups"
+              class="roles-list"
+              (click)="showSelectedUserGroup(userGroup)"
+              [ngClass]="{
+                'selected-roles-list': this.selectedUserGroup
+                  ? userGroup.id === this.selectedUserGroup.id
+                  : ''
+              }"
+            >
+              <div class="list-items">
+                <span
+                  class="role-name"
+                  matTooltip="{{ userGroup.name }}"
+                  [ngClass]="{ 'text-red': userGroup.name?.length > 100 }"
+                >
+                  {{ userGroup.name }}
+                </span>
+                <div class="list-display">
+                  <span class="usergroup-count">{{
+                    userGroup?.usersCount
+                  }}</span>
+                  <button
+                    mat-icon-button
+                    [matMenuTriggerFor]="menu"
+                    class="more-usergroup"
+                    aria-label="More Options"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <mat-menu #menu="matMenu">
+                <button
+                  mat-menu-item
+                  translate="copyBtn"
+                  (click)="copyUserGroup(userGroup.id)"
+                ></button>
+                <button
+                  mat-menu-item
+                  translate="editBtn"
+                  (click)="editUserGroup(userGroup)"
+                ></button>
+                <button
+                  mat-menu-item
+                  class="text-red"
+                  translate="deleteBtn"
+                  (click)="deleteUserGroup(userGroup)"
+                ></button>
+              </mat-menu>
+            </mat-list-item>
+          </div>
+        </ng-container>
+      </mat-list>
+    </div>
+    <div class="userList-left-component">
+      <app-user-group-users-list
+        [userGroupPlantId]="selectedUserGroup?.plantId"
+        [userGroupId]="selectedUserGroup?.id"
+        [userGroupName]="selectedUserGroup?.name"
+      >
+      </app-user-group-users-list>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>
+
+<ng-template #LoadingUserGroupList>
+  <div class="p-10">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

@@ -1,0 +1,129 @@
+<div class="selectUser">
+  <div class="modal-header">
+    <div class="header-right-elements">
+      <button (click)="onCancel()" class="back-btn">
+        <svg-icon icon="icon-back-arrow" class="back-arrow"></svg-icon>
+      </button>
+      <h2 class="title">{{ 'selectUser' | translate }}</h2>
+    </div>
+
+    <div class="header-left-elements">
+      <span class="no-of-active-users">
+        <span class="active-users-count">
+          {{ (alluserCount$ | async) ? (alluserCount$ | async) : 0 }}
+        </span>
+        <span class="active-users-text">{{
+          'usersPlural'
+            | translate
+              : {
+                  count: (alluserCount$ | async) ? (alluserCount$ | async) : 0
+                }
+        }}</span>
+      </span>
+      <div class="width-25 custom-form-field-gray-color usergroup-left">
+        <span class="custom-form-field-gray-color search">
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchUsers' | translate"
+              autocomplete="off"
+              [formControl]="searchUser"
+            />
+          </mat-form-field>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="table-container">
+    <div *ngIf="users$ | async as users; else loadingUsers">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+  <div class="footer">
+    <span class="no-of-active-users">
+      <span class="active-users-count">
+        {{ (selectedUsersCount$ | async) ? (selectedUsersCount$ | async) : 0 }}
+      </span>
+      <span class="active-users-text">{{ 'selectedUsers' | translate }}</span>
+    </span>
+    <div class="footer-btns">
+      <button
+        mat-button
+        class="cancel-btn"
+        autofocus="false"
+        mat-dialog-close
+        translate="cancelBtn"
+        (click)="onCancel()"
+        tabindex="-1"
+      ></button>
+
+      <button
+        *ngIf="type === 'create'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="createBtn"
+        mat-dialog-close
+        (click)="onCreate()"
+      ></button>
+      <button
+        *ngIf="type === 'update'"
+        mat-raised-button
+        class="create-btn"
+        type="submit"
+        translate="doneBtn"
+        (click)="updateUsers()"
+        [disabled]="disableBtn"
+      ></button>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingUsers>
+  <div style="padding: 0 20px">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
