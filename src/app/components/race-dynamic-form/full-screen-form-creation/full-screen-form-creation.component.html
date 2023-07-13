@@ -20,7 +20,7 @@
     <!-- STEP 2 -->
     <div [hidden]="currentStep !== 1">
       <app-form-configuration
-        [formData]="formData"
+        [data]="data"
         (gotoNextStep)="gotoNextStep()"
       ></app-form-configuration>
     </div>

@@ -60,7 +60,7 @@ import { RaceDynamicFormService } from '../services/rdf.service';
 export class FormConfigurationComponent implements OnInit {
   @ViewChild('name') formName: ElementRef;
   @Output() gotoNextStep = new EventEmitter<void>();
-  @Input() formData;
+  @Input() data;
   selectedNode = { id: null };
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
@@ -383,7 +383,7 @@ export class FormConfigurationComponent implements OnInit {
             this.isEmbeddedForm = data.formType === 'Embedded';
           });
 
-          if (this.formData.pages.length === 0) {
+          if (this.data.formData === null) {
             const section = {
               id: 'S1',
               name: 'Section',

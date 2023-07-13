@@ -61,7 +61,6 @@ export class FullScreenFormCreationComponent implements OnInit, OnDestroy {
         this.formData = {
           formListDynamoDBVersion,
           formMetadata,
-          pages,
           formExists: Object.keys(formMetadata).length === 0 ? false : true
         };
       });
