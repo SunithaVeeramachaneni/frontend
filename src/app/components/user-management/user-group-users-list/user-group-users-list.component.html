@@ -27,16 +27,23 @@
       ></button>
     </div>
   </div>
-  <div
-    *ngIf="allUsers$ | async as users; else loadingUsers"
-    class="users-content"
-  >
+  <div *ngIf="allUsers$ | async as users" class="users-content">
     <cwp-dynamictable
+      *ngIf="(isLoading$ | async) === false"
       [dataSource]="dataSource"
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
     ></cwp-dynamictable>
+    <div *ngIf="isLoading$ | async">
+      <div class="ghost-loading">
+        <div *ngFor="let number of ghostLoading">
+          <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+          </ngx-shimmer-loading>
+        </div>
+      </div>
+    </div>
+
     <div class="footer-btns" *ngIf="selectedCount">
       <button
         mat-button
@@ -57,7 +64,7 @@
   </div>
 </div>
 
-<ng-template #loadingUsers>
+<!-- <ng-template #loadingUsers>
   <div style="padding: 0 20px">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
@@ -100,4 +107,4 @@
     <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
     </ngx-shimmer-loading>
   </div>
-</ng-template>
+</ng-template> -->

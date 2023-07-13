@@ -227,6 +227,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   searchUser: FormControl;
   // searchUser$: Observable<any>;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(8).fill(0).map((v, i) => i);
   skip = 0;
   fetchType: string;
   userInfo$: any;

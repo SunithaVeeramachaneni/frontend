@@ -117,25 +117,11 @@
 </div>
 <router-outlet></router-outlet>
 
-<ng-template #LoadingUserGroupList>
-  <div class="p-10">
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-    </ngx-shimmer-loading>
+<div *ngIf="isLoading$ | async">
+  <div class="ghost-loading">
+    <div *ngFor="let number of ghostLoading">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+    </div>
   </div>
-</ng-template>
+</div>
