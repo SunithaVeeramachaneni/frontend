@@ -619,6 +619,7 @@ export class RoundPlanListComponent implements OnInit, OnDestroy {
               }
               return '';
             })
+            .filter((value) => value)
             .filter((value, index, self) => self.indexOf(value) === index);
           this.lastModifiedBy = [...uniqueLastModifiedBy];
           const uniqueAuthoredBy = formsList.rows
