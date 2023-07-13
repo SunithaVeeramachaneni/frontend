@@ -60,7 +60,7 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
 import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
 import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
-import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfComponent } from './components/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
@@ -116,6 +116,7 @@ import { PreviewForEmbeddedFormsComponent } from './components/preview-for-embed
 import { UserNameByEmailPipe } from './pipes';
 import { ShiftMenuItemComponent } from './components/shift-menu-item/shift-menu-item.component';
 import { ShiftDateChangeWarningModalComponent } from './components/shift-date-change-warning-modal/shift-date-change-warning-modal.component';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -181,7 +182,7 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-
+    UploadImagePreviewComponent,
     RaiseNotificationDailogComponent,
     DatePickerComponent,
     ShiftChartComponent,
@@ -267,11 +268,13 @@ import { ShiftDateChangeWarningModalComponent } from './components/shift-date-ch
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    UploadImagePreviewComponent,
     DatePickerComponent,
     ShiftChartComponent,
     IphoneForEmbeddedFormsComponent,
     PreviewForEmbeddedFormsComponent,
     UserNameByEmailPipe,
+    InstructionPdfComponent,
     ShiftMenuItemComponent
   ]
 })

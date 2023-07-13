@@ -1,0 +1,14 @@
+<div class="bg-white roundplan-image-container">
+  <img
+    class="insert-roundplan-image"
+    [src]="image"
+    alt="image"
+    (click)="triggerPreview()"
+  />
+  <svg-icon
+    class="close"
+    icon="icon-red-cancel"
+    (click)="triggerDelete()"
+    alt="close-icon"
+  ></svg-icon>
+</div>

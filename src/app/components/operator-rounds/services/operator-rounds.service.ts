@@ -111,6 +111,15 @@ export class OperatorRoundsService {
       info
     );
 
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.operatorRoundsApiUrl,
+      `upload-attachments`,
+      file,
+      info
+    );
+  }
+
   createDataSet$ = (
     dataset: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -324,6 +333,7 @@ export class OperatorRoundsService {
         isArchived: false,
         isDeleted: false,
         pdfTemplateConfiguration: formListQuery.pdfTemplateConfiguration,
+        instructions: formListQuery.instructions,
         additionalDetails: formListQuery.additionalDetails
       }
     );

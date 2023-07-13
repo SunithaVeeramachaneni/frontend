@@ -26,6 +26,7 @@ export type GetFormList = {
   updatedAt: string;
   _version: number;
   pdfTemplateConfiguration?: any;
+  instructions?: any;
   additionalDetails?: string | null;
 };
 

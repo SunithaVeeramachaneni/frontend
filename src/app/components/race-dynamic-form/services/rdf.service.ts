@@ -78,7 +78,14 @@ export class RaceDynamicFormService {
       dataset,
       info
     );
-
+  uploadAttachments$(file, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this.appService._postData(
+      environment.rdfApiUrl,
+      `upload-attachments`,
+      file,
+      info
+    );
+  }
   getDataSetsByType$ = (
     datasetType: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -256,6 +263,7 @@ export class RaceDynamicFormService {
       | 'isPublic'
       | 'plantId'
       | 'pdfTemplateConfiguration'
+      | 'instructions'
       | 'additionalDetails'
     >
   ) {
@@ -271,6 +279,7 @@ export class RaceDynamicFormService {
       isPublic: formListQuery.isPublic,
       plantId: formListQuery.plantId,
       additionalDetails: formListQuery.additionalDetails,
+      instructions: formListQuery.instructions,
       isArchived: false,
       isDeleted: false
     });
