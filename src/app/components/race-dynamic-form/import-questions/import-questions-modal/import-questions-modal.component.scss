@@ -1,9 +1,13 @@
 @import '../../../../../scss/colors.scss';
 
 .import-questions-modal {
-  height: 500px;
-  width: 500px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 640px;
   overflow: hidden;
+  background: $white;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 10px 0;
@@ -25,95 +29,7 @@
     }
   }
 
-  .search {
-    margin: 0 15px;
-
-    .icon {
-      position: relative;
-      top: 3px;
-    }
+  .body-container {
+    padding: 0 15px 10px 15px;
   }
-
-  .actions {
-    float: right;
-    margin-right: 15px;
-
-    .close-btn {
-      color: $blue-main;
-    }
-
-    .select-btn {
-      color: $white;
-      background-color: $blue-main;
-    }
-
-    .select-btn:disabled {
-      color: $gray7;
-      background-color: $gray2-bg;
-    }
-  }
-
-  .list-container {
-    height: 340px;
-    overflow-y: auto;
-
-    .list-item-conatiner {
-      border-bottom: 1px solid $gray8;
-      margin: 0 15px;
-
-      .selected-list-element {
-        list-style-type: none;
-        display: flex;
-        width: 100%;
-        cursor: pointer;
-
-        .form-name {
-          padding: 0 15px;
-          color: black;
-          font-size: 110%;
-          margin: 7px 0 0 0;
-          font-weight: 500;
-          text-transform: capitalize;
-        }
-
-        .form-des {
-          padding: 0 15px;
-          color: $gray4;
-          font-size: 100%;
-          margin: 5px 0;
-        }
-
-        .no-of-ques {
-          float: right;
-          padding-right: 15px;
-          color: $gray4;
-          font-size: 100%;
-        }
-      }
-
-      .selected-list-element:hover {
-        background: $blue4-hover;
-        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .active {
-        background: $blue4-hover;
-        box-shadow: 0px 2px 4px rgba(160, 160, 160, 0.25);
-        border-radius: 5px;
-      }
-    }
-
-    .no-records {
-      background: $white;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
-  }
-}
-
-.ghost-loading {
-  padding: 0 15px;
 }

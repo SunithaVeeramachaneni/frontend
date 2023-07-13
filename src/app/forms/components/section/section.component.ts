@@ -33,6 +33,7 @@ import { BuilderConfigurationActions } from '../../state/actions';
 })
 export class SectionComponent implements OnInit, OnDestroy {
   @ViewChild('sectionName') sectionName: ElementRef;
+  @Input() isTemplate: boolean;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -63,6 +64,12 @@ export class SectionComponent implements OnInit, OnDestroy {
     if (section) {
       if (!isEqual(this.section, section)) {
         this._section = section;
+        if (section && !section.isImported) {
+          section.isImported = false;
+          section.templateId = '';
+          section.templateName = '';
+          section.externalSectionId = '';
+        }
         this.sectionForm.patchValue(section, {
           emitEvent: false
         });
@@ -84,7 +91,11 @@ export class SectionComponent implements OnInit, OnDestroy {
       disabled: true
     },
     position: '',
-    isOpen: true
+    isOpen: true,
+    isImported: false,
+    templateId: '',
+    templateName: '',
+    externalSectionId: ''
   });
   private _pageIndex: number;
   private _sectionIndex: number;

@@ -1264,4 +1264,36 @@ export class RaceDynamicFormService {
       info
     );
   };
+
+  getAffectedFormList$(queryParams: {
+    templateId: string;
+    limit: number;
+    nextToken: string;
+    searchTerm?: string;
+    fetchType?: string;
+  }) {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('templateId', queryParams?.templateId);
+    params.set('limit', queryParams?.limit.toString());
+    params.set('searchTerm', queryParams?.searchTerm);
+    params.set('nextToken', queryParams?.nextToken);
+    params.set('fetchType', queryParams?.fetchType);
+    return this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/forms?' + params.toString()
+    );
+  }
+
+  getFormTemplateUsage$ = (payload: any): Observable<any> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      'template-reference/' + `${payload.templateId}/` + `${payload.formId}`
+    );
+
+  updateFormTemplateUsage$ = (data: any): Observable<any> =>
+    this.appService.patchData(
+      environment.rdfApiUrl,
+      'template-reference',
+      data
+    );
 }

@@ -25,6 +25,7 @@ export class RoundPlanConfigurationService {
     questionCounter: number,
     subFormId: string,
     isEmbeddedForm: boolean,
+    isTemplate: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
     const { counter, ...page } = this.getPageObject(
@@ -34,7 +35,8 @@ export class RoundPlanConfigurationService {
       pageWiseSectionIndexes,
       questionCounter,
       sectionQuestionsList,
-      isEmbeddedForm
+      isEmbeddedForm,
+      isTemplate
     );
     this.store.dispatch(
       BuilderConfigurationActions.addPage({
@@ -45,15 +47,19 @@ export class RoundPlanConfigurationService {
         counter
       })
     );
-
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: page.questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: page.questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId
+        })
+      );
+    }
   }
 
   addSections(
@@ -65,6 +71,7 @@ export class RoundPlanConfigurationService {
     questionCounter: number,
     subFormId: string,
     isEmbeddedForm: boolean,
+    isTemplate: boolean,
     sectionQuestionsList: SectionQuestions[] = []
   ) {
     const { sections, questions, counter } = this.getSectionsObject(
@@ -74,7 +81,8 @@ export class RoundPlanConfigurationService {
       pageWiseSectionIndexes,
       questionCounter,
       sectionQuestionsList,
-      isEmbeddedForm
+      isEmbeddedForm,
+      isTemplate
     );
     this.store.dispatch(
       BuilderConfigurationActions.addSections({
@@ -94,14 +102,19 @@ export class RoundPlanConfigurationService {
         subFormId
       })
     );
-    this.store.dispatch(
-      BuilderConfigurationActions.updateQuestionState({
-        questionId: questions[addQuestions - 1].id,
-        isOpen: true,
-        isResponseTypeModalOpen: false,
-        subFormId
-      })
-    );
+    if (
+      sectionQuestionsList.length === 0 ||
+      !sectionQuestionsList[0].section?.isImported
+    ) {
+      this.store.dispatch(
+        BuilderConfigurationActions.updateQuestionState({
+          questionId: questions[addQuestions - 1].id,
+          isOpen: true,
+          isResponseTypeModalOpen: false,
+          subFormId
+        })
+      );
+    }
   }
 
   addQuestions(
@@ -111,6 +124,7 @@ export class RoundPlanConfigurationService {
     questionIndex: number,
     questionCounter: number,
     subFormId: string,
+    isTemplate: boolean,
     questions: Question[] = []
   ) {
     let counter: number;
@@ -120,7 +134,8 @@ export class RoundPlanConfigurationService {
         questionIndex + index,
         sectionId,
         questionCounter + index + 1,
-        questions[index]
+        questions[index],
+        isTemplate
       );
     });
     this.store.dispatch(
@@ -159,7 +174,8 @@ export class RoundPlanConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[],
-    isEmbeddedForm: boolean
+    isEmbeddedForm: boolean,
+    isTemplate: boolean
   ) {
     const { sections, questions, counter } = this.getSectionsObject(
       pageIndex,
@@ -168,7 +184,8 @@ export class RoundPlanConfigurationService {
       pageWiseSectionIndexes,
       questionCounter,
       sectionQuestionsList,
-      isEmbeddedForm
+      isEmbeddedForm,
+      isTemplate
     );
 
     return {
@@ -189,7 +206,8 @@ export class RoundPlanConfigurationService {
     pageWiseSectionIndexes: any,
     questionCounter: number,
     sectionQuestionsList: SectionQuestions[],
-    isEmbeddedForm: boolean
+    isEmbeddedForm: boolean,
+    isTemplate: boolean
   ) {
     let sectionCount =
       pageWiseSectionIndexes && pageWiseSectionIndexes[pageIndex]
@@ -222,7 +240,8 @@ export class RoundPlanConfigurationService {
             questionIndex,
             section.id,
             counter,
-            sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+            sectionQuestionsList[sectionIndex]?.questions[questionIndex],
+            isTemplate
           );
         });
 
@@ -244,6 +263,14 @@ export class RoundPlanConfigurationService {
     section: Section,
     isEmbeddedForm: boolean
   ) {
+    const templateData: any = {};
+    if (section?.isImported === true) {
+      templateData.isImported = section.isImported;
+      templateData.externalSectionId = section.externalSectionId;
+      templateData.templateId = section.templateId;
+      templateData.templateName = section.templateName;
+      templateData.counter = section.counter;
+    }
     return {
       id: `S${uuidv4()}`,
       name: section
@@ -252,7 +279,8 @@ export class RoundPlanConfigurationService {
         ? `Section ${sectionIndex}`
         : `Section`,
       position: sectionIndex,
-      isOpen: true
+      isOpen: true,
+      ...templateData
     };
   }
 
@@ -260,10 +288,13 @@ export class RoundPlanConfigurationService {
     questionIndex: number,
     sectionId: string,
     questionCounter: number,
-    question: Question
+    question: Question,
+    isTemplate: boolean
   ) {
     return {
-      id: `Q${questionCounter}`,
+      id: isTemplate
+        ? `TQ${questionCounter}_${new Date().getTime()}`
+        : `Q${questionCounter}`,
       sectionId,
       name: question ? question.name : '',
       fieldType: question ? question.fieldType : 'TF',

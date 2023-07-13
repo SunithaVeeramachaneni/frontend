@@ -42,11 +42,15 @@ import {
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
-import { formConfigurationStatus } from 'src/app/app.constants';
+import {
+  formConfigurationStatus,
+  graphQLDefaultLimit
+} from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { MatDialog } from '@angular/material/dialog';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { EditTemplateNameModalComponent } from '../edit-template-name-modal/edit-template-name-modal.component';
+import { TemplateAffectedFormsModalComponent } from './template-affected-forms-modal/template-affected-forms-modal.component';
 
 @Component({
   selector: 'app-template-configuration',
@@ -72,6 +76,9 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   formListVersion: number;
   errors: ValidationError = {};
   formDetails: any;
+  isEmbeddedTemplate: boolean;
+  isTemplate = true;
+  affectedForms: any;
   readonly formConfigurationStatus = formConfigurationStatus;
   private allTemplates: any[];
   private onDestroy$ = new Subject();
@@ -105,7 +112,8 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
       ),
       description: [''],
       counter: [0],
-      formStatus: [formConfigurationStatus.draft]
+      formStatus: [formConfigurationStatus.draft],
+      formType: formConfigurationStatus.standalone
     });
 
     // if accessed from list screen, allTemplates will be in router state
@@ -209,15 +217,19 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo, formStatus } = formMetadata;
+        const { name, description, id, formLogo, formStatus, formType } =
+          formMetadata;
         this.formMetadata = formMetadata;
+        this.isEmbeddedTemplate =
+          formMetadata.formType === formConfigurationStatus.embedded;
         this.formConfiguration.patchValue(
           {
             name,
             description,
             id,
             formLogo,
-            formStatus
+            formStatus,
+            formType
           },
           { emitEvent: false }
         );
@@ -358,11 +370,15 @@ export class TemplateConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    this.store.dispatch(
-      BuilderConfigurationActions.updateIsFormDetailPublished({
-        isFormDetailPublished: true
-      })
-    );
+    const dialogRef = this.dialog.open(TemplateAffectedFormsModalComponent, {
+      maxWidth: '50vw',
+      maxHeight: '82vh',
+      height: '100%',
+      width: '100%',
+      data: {
+        templateId: this.formMetadata.id
+      }
+    });
   }
 
   getDraftFormConfigurationStatuses() {

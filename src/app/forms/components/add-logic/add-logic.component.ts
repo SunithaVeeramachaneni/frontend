@@ -46,6 +46,7 @@ import { NumberRangeMetadata } from 'src/app/interfaces';
 export class AddLogicComponent implements OnInit, OnDestroy {
   @Input() selectedNodeId: any;
   @Input() isEmbeddedForm: boolean;
+  @Input() isTemplate: boolean;
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set questionId(id: string) {
@@ -404,7 +405,9 @@ export class AddLogicComponent implements OnInit, OnDestroy {
         viewMode,
         pageIndex: this.pageIndex,
         questionId: this.questionId,
-        subFormId: this.selectedNodeId
+        subFormId: this.selectedNodeId,
+        sectionId: this.sectionId,
+        isTemplate: this.isTemplate
       }
     });
     dialogRef.afterClosed().subscribe((result) => {
