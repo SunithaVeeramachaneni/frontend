@@ -263,7 +263,12 @@ export class ScheduleConfigurationService {
     if (timeString?.toLowerCase() === startTimeAM) {
       type = TimeType.am;
     }
-
+    if (
+      timeString?.toLowerCase() === startTimePM?.toLowerCase() &&
+      timeType === 'PM'
+    ) {
+      type = TimeType.pm;
+    }
     const updatedTimeString = `${this.padZero(hours)}:${this.padZero(
       minutes
     )} ${type}`;
