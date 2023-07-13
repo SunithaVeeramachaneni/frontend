@@ -746,7 +746,7 @@ export class OperatorRoundsService {
   updateRound$ = (
     roundId: string,
     round: RoundDetail,
-    type: 'due-date' | 'assigned-to',
+    type: 'due-date' | 'assigned-to' | 'shift' | 'start-date',
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<RoundDetail> =>
     this.appService

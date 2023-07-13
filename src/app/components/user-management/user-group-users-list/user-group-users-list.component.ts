@@ -7,7 +7,8 @@ import {
   Output,
   OnChanges,
   SimpleChange,
-  SimpleChanges
+  SimpleChanges,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   BehaviorSubject,
@@ -43,12 +44,12 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit } from 'src/app/app.constants';
 import { format } from 'date-fns';
 import { SelectUserUsergroupModalComponent } from '../select-user-usergroup-modal/select-user-usergroup-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { RemoveUserModalComponent } from '../remove-user-modal/remove-user-modal.component';
 import { LoginService } from '../../login/services/login.service';
+import { PlantService } from '../../master-configurations/plants/services/plant.service';
 interface UsersListActions {
   action: 'delete' | null;
   id: any[];
@@ -57,7 +58,8 @@ interface UsersListActions {
 @Component({
   selector: 'app-user-group-users-list',
   templateUrl: './user-group-users-list.component.html',
-  styleUrls: ['./user-group-users-list.component.scss']
+  styleUrls: ['./user-group-users-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserGroupUsersListComponent implements OnInit, OnChanges {
   @Input() set userGroupId(userGroupId: string) {
@@ -226,7 +228,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
   allUsers$: Observable<any>;
   searchUser: FormControl;
   // searchUser$: Observable<any>;
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   ghostLoading = new Array(8).fill(0).map((v, i) => i);
   skip = 0;
   fetchType: string;
@@ -239,7 +241,8 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     private userGroupService: UserGroupService,
     private dialog: MatDialog,
     private toast: ToastService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private plantService: PlantService
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -256,6 +259,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       this.dataSource = new MatTableDataSource([]);
       this.disableBtn = true;
       this._userGroupName = '';
+      this.isLoading$.next(true);
     }
   }
 
@@ -263,20 +267,15 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.fetchUsers$.next({ data: 'load' });
     this.fetchUsers$.next({} as TableEvent);
     this.searchUser = new FormControl('');
-    this.searchUser.valueChanges
+    this.loginService.loggedInUserInfo$
       .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap(() => {
-          this.fetchUsers$.next({ data: 'search' });
+        tap(({ permissions = [] }) => {
+          this.prepareMenuActions(permissions);
         })
       )
-      .subscribe(() => this.isLoading$.next(true));
+      .subscribe();
     this.getAllUsers();
     this.configOptions.allColumns = this.columns;
-    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
-    );
   }
 
   getAllUsers() {
@@ -284,6 +283,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.fetchType = data;
+        this.skip = 0;
         return this.getUsersList();
       })
     );
@@ -304,14 +304,14 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
     this.allUsers$ = combineLatest([
       usersOnLoadSearch$,
       usersOnScroll$,
-      this.userListActions$
+      this.userListActions$,
+      this.plantService.fetchAllPlants$()
     ]).pipe(
-      map(([users, scrollData, { action, id }]) => {
+      map(([users, scrollData, { action, id }, plant]) => {
+        const plantName = plant?.items.find(
+          (data) => data.id === this.userGroupPlantId
+        )?.name;
         if (this.skip === 0) {
-          this.configOptions = {
-            ...this.configOptions,
-            tableHeight: 'calc(100vh - 200px)'
-          }; // To fix dynamic table height issue post search with no records & then remove search with records
           initial.data = users;
         } else if (this.userAddEdit) {
           switch (action) {
@@ -331,6 +331,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         }
 
         this.skip = initial.data?.length;
+        initial.data.map((user) => (user.plant = plantName));
         this.dataSource = new MatTableDataSource(initial.data);
         this.allUsersList = initial.data;
         return initial;
@@ -340,7 +341,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   getUsersList = () =>
     this.userGroupService
-      .listUserGroupUsers(
+      .listUserGroupUsers$(
         {
           limit: this.limit,
           nextToken: this.next,
@@ -351,12 +352,14 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
       )
       .pipe(
         mergeMap((resp: any) => {
+          this.isLoading$.next(false);
           this.userCount = resp.count;
           this.userGroupService.usersCount$.next({
             groupId: this._userGroupId,
             count: this.userCount
           });
           this.next = resp.next;
+
           return of(resp.items);
         }),
 
@@ -390,14 +393,13 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
-    if (
-      this.loginService.checkUserHasPermission(permissions, 'DELETE_USER_GROUP')
-    ) {
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_ASSET')) {
       menuActions.push({
         title: 'Remove User',
         action: 'delete'
       });
     }
+
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
@@ -508,6 +510,7 @@ export class UserGroupUsersListComponent implements OnInit, OnChanges {
         this.userGroupService
           .deleteUserGroupMembers(idList, this.userGroupId)
           .subscribe(() => {
+            this.selectedUsers = [];
             this.userAddEdit = true;
             this.userListActions$.next({ action: 'delete', id: idList });
             this.userCount -= idList.length;

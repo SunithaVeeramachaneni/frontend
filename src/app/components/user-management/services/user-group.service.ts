@@ -105,7 +105,7 @@ export class UserGroupService {
       info
     );
 
-  listUserGroups = (
+  listUserGroups$ = (
     queryParams: {
       limit: number;
       nextToken: string;
@@ -139,7 +139,7 @@ export class UserGroupService {
       });
     }
   };
-  listUserGroupUsers = (
+  listUserGroupUsers$ = (
     queryParams: {
       limit: number;
       nextToken: string;
@@ -171,40 +171,40 @@ export class UserGroupService {
       });
     }
   };
-  updateUserGroup(id: string, userGroup: any, info = {} as ErrorInfo) {
-    return this.appService.patchData(
+  updateUserGroup$ = (id: string, userGroup: any, info = {} as ErrorInfo) =>
+    this.appService.patchData(
       environment.userRoleManagementApiUrl,
       `user-groups/${id}`,
       userGroup,
       info
     );
-  }
-  deleteUserGroup$(id: string, info = {} as ErrorInfo) {
-    return this.appService._removeData(
+
+  deleteUserGroup$ = (id: string, info = {} as ErrorInfo) =>
+    this.appService._removeData(
       environment.userRoleManagementApiUrl,
       `user-groups/${id}`,
       info
     );
-  }
-  selectUnselectGroupMembers$(
+
+  selectUnselectGroupMembers$ = (
     id: string,
     members: string[],
     info = {} as ErrorInfo
-  ) {
-    return this.appService.patchData(
+  ) =>
+    this.appService.patchData(
       environment.userRoleManagementApiUrl,
       `user-groups/${id}/users`,
       { users: members },
       info
     );
-  }
-  getAllUsersUserGroup(id: number, info = {} as ErrorInfo) {
-    return this.appService._getResp(
+
+  getAllUsersUserGroup = (id: number, info = {} as ErrorInfo) =>
+    this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `user-groups/${id}/users/all`,
       info
     );
-  }
+
   deleteUserGroupMembers(
     members: string[],
     id: string,

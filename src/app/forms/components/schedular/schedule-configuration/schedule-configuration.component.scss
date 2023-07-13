@@ -404,3 +404,8 @@
   font-size: 130%;
   margin: 0;
 }
+
+::ng-deep .mat-calendar {
+  width: 350px;
+  height: 400px;
+}

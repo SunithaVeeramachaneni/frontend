@@ -26,7 +26,8 @@ import { UserGroupService } from '../services/user-group.service';
 @Component({
   selector: 'app-add-edit-user-group-modal',
   templateUrl: './add-edit-user-group-modal.component.html',
-  styleUrls: ['./add-edit-user-group-modal.component.scss']
+  styleUrls: ['./add-edit-user-group-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditUserGroupModalComponent implements OnInit {
   name: string;
@@ -136,7 +137,10 @@ export class AddEditUserGroupModalComponent implements OnInit {
       searchTerm: `${updatedName.toLowerCase()} ${updatedDesc.toLowerCase()}`
     };
     this.userGroupService
-      .updateUserGroup(this.groupData?.id, updatedData)
+      .updateUserGroup$(this.groupData?.id, updatedData, {
+        displayToast: true,
+        failureResponse: {}
+      })
       .subscribe(() => {
         this.userGroupService.addUpdateDeleteCopyUserGroup = true;
         this.userGroupService.userGroupActions$.next({

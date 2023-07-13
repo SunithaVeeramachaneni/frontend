@@ -56,9 +56,6 @@ import {
   permissions as perms
 } from 'src/app/app.constants';
 import { LoginService } from '../../login/services/login.service';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { slideInOut } from 'src/app/animations';
 import { DatePipe } from '@angular/common';
@@ -72,6 +69,8 @@ import {
 import { UsersService } from '../../user-management/services/users.service';
 import { PlantService } from '../../master-configurations/plants/services/plant.service';
 import { localToTimezoneDate } from 'src/app/shared/utils/timezoneDate';
+import { ShiftService } from '../../master-configurations/shifts/services/shift.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleConfigurationService } from 'src/app/forms/services/schedule.service';
 
@@ -89,7 +88,8 @@ export class FormsComponent implements OnInit, OnDestroy {
     plant: '',
     schedule: '',
     assignedTo: '',
-    scheduledAt: ''
+    scheduledAt: '',
+    shiftId: ''
   };
   assignedTo: string[] = [];
   schedules: string[] = [];
@@ -150,11 +150,33 @@ export class FormsComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
+      id: 'shift',
+      displayName: 'Shift',
+      type: 'string',
+      controlType: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
       id: 'questions',
       displayName: 'Questions',
       type: 'number',
       controlType: 'string',
-      order: 3,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -177,7 +199,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       type: 'string',
       controlType: 'button',
       controlValue: 'Schedule',
-      order: 4,
+      order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -201,7 +223,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Inspection Generated',
       type: 'number',
       controlType: 'string',
-      order: 5,
+      order: 6,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -223,7 +245,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Assigned To',
       type: 'string',
       controlType: 'string',
-      order: 6,
+      order: 7,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -245,7 +267,7 @@ export class FormsComponent implements OnInit, OnDestroy {
       displayName: 'Starts - Ends',
       type: 'string',
       controlType: 'string',
-      order: 7,
+      order: 8,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -324,16 +346,23 @@ export class FormsComponent implements OnInit, OnDestroy {
   placeHolder = '_ _';
   formCategory: FormControl;
   formId: string;
+  allPlants: any;
+  allShifts: any;
   readonly perms = perms;
   readonly formConfigurationStatus = formConfigurationStatus;
   roundPlanDetail: any;
   assigneeDetails: AssigneeDetails;
   plantsIdNameMap = {};
   plantTimezoneMap = {};
+  userFullNameByEmail = {};
+  shiftIdNameMap = {};
 
   @Input() set users$(users$: Observable<UserDetails[]>) {
     this._users$ = users$.pipe(
-      tap((users) => (this.assigneeDetails = { users }))
+      tap((users) => {
+        this.assigneeDetails = { users };
+        this.userFullNameByEmail = this.userService.getUsersInfo();
+      })
     );
   }
   get users$(): Observable<UserDetails[]> {
@@ -345,13 +374,13 @@ export class FormsComponent implements OnInit, OnDestroy {
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private loginService: LoginService,
-    private store: Store<State>,
     private router: Router,
     private formScheduleConfigurationService: FormScheduleConfigurationService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
     private userService: UsersService,
     private plantService: PlantService,
+    private shiftService: ShiftService,
     private dialog: MatDialog,
     private readonly scheduleConfigurationService: ScheduleConfigurationService
   ) {}
@@ -392,7 +421,11 @@ export class FormsComponent implements OnInit, OnDestroy {
 
     const formScheduleConfigurations$ = this.formScheduleConfigurationService
       .fetchFormScheduleConfigurations$()
-      .pipe(tap((configs) => (this.formScheduleConfigurations = configs)));
+      .pipe(
+        tap((configs) => {
+          this.formScheduleConfigurations = configs;
+        })
+      );
 
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
@@ -424,9 +457,21 @@ export class FormsComponent implements OnInit, OnDestroy {
       formsOnLoadSearch$,
       onScrollForms$,
       formScheduleConfigurations$,
+      this.shiftService.fetchAllShifts$(),
+      this.plantService.fetchAllPlants$(),
       this.users$
     ]).pipe(
-      map(([forms, scrollData, formScheduleConfigurations]) => {
+      map(([forms, scrollData, formScheduleConfigurations, shifts, plants]) => {
+        shifts?.items?.forEach((shift) => {
+          this.shiftIdNameMap[shift.id] = shift.name;
+        });
+        this.allPlants = plants;
+        this.allShifts = shifts.items.filter((s) => s.isActive);
+        for (const item of this.filterJson) {
+          if (item.column === 'shiftId') {
+            item.items = Object.values(this.shiftIdNameMap);
+          }
+        }
         if (this.skip === 0) {
           this.initial.data = this.formatForms(
             forms.rows,
@@ -437,6 +482,7 @@ export class FormsComponent implements OnInit, OnDestroy {
             this.formatForms(scrollData.rows, formScheduleConfigurations)
           );
         }
+        this.initial.data = this.formattingForms(this.initial.data);
         this.skip = this.initial.data.length;
         return this.initial;
       })
@@ -488,8 +534,8 @@ export class FormsComponent implements OnInit, OnDestroy {
         }
 
         for (const item of uniqueAssignTo) {
-          if (item && !this.assignedTo.includes(item)) {
-            this.assignedTo.push(item);
+          if (item && this.userFullNameByEmail[item] !== undefined) {
+            this.assignedTo.push(this.userFullNameByEmail[item].fullName);
           }
         }
         for (const item of this.filterJson) {
@@ -519,6 +565,21 @@ export class FormsComponent implements OnInit, OnDestroy {
     this.configOptions.allColumns = this.columns;
     this.populatePlantsforFilter();
     this.getFilter();
+  }
+
+  formattingForms(forms) {
+    return forms.map((form) => {
+      let shift = '';
+      if (this.formScheduleConfigurations[form.id]?.shiftDetails) {
+        Object.keys(this.formScheduleConfigurations[form.id]?.shiftDetails).map(
+          (shiftId) => {
+            shift += this.shiftIdNameMap[shiftId] + ',';
+          }
+        );
+        form.shift = shift;
+      }
+      return form;
+    });
   }
 
   getFormsList() {
@@ -559,25 +620,38 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
     const { columnId, row } = event;
+
+    const activeShifts = this.prepareActiveShifts(row);
     switch (columnId) {
       case 'schedule':
         if (!row.schedule) {
-          this.openScheduleConfigHandler(row);
+          this.openScheduleConfigHandler({ ...row, shifts: activeShifts });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       case 'forms':
         if (row.forms !== this.placeHolder) {
           this.selectTab.emit({ index: 1, queryParams: { id: row?.id } });
         } else {
-          this.openFormHandler(row);
+          this.openFormHandler({ ...row, shifts: activeShifts });
         }
         break;
       default:
-        this.openFormHandler(row);
+        this.openFormHandler({ ...row, shifts: activeShifts });
     }
   };
+
+  prepareActiveShifts(form: any) {
+    const selectedPlant = this.allPlants?.items.find(
+      (plant) => plant.id === form.plantId
+    );
+    const selectedShifts = JSON.parse(selectedPlant?.shifts);
+    const activeShifts = this.allShifts.filter((data) =>
+      selectedShifts.some((shift) => shift.id === data.id)
+    );
+    return activeShifts;
+  }
 
   prepareMenuActions(permissions: Permission[]): void {
     const menuActions = [
@@ -634,7 +708,6 @@ export class FormsComponent implements OnInit, OnDestroy {
   closeFormHandler() {
     this.formDetail = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
     timer(400)
       .pipe(
         tap(() => {
@@ -648,14 +721,12 @@ export class FormsComponent implements OnInit, OnDestroy {
   openFormHandler(row: ScheduleFormDetail): void {
     this.hideFormDetail = false;
     this.scheduleConfigEventHandler({ slideInOut: 'out' });
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.formDetail = { ...row };
     this.menuState = 'in';
     this.zIndexDelay = 400;
   }
 
   formDetailActionHandler() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/forms/edit/${this.formDetail.id}`]);
   }
 
@@ -781,12 +852,13 @@ export class FormsComponent implements OnInit, OnDestroy {
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {
     const { action, data } = event;
+    const activeShifts = this.prepareActiveShifts(data);
     switch (action) {
       case 'schedule':
-        this.openScheduleConfigHandler(data);
+        this.openScheduleConfigHandler({ ...data, shifts: activeShifts });
         break;
       case 'showDetails':
-        this.openFormHandler(data);
+        this.openFormHandler({ ...data, shifts: activeShifts });
         break;
       case 'showInspections':
         this.selectTab.emit({ index: 1, queryParams: { id: data.id } });
@@ -939,6 +1011,11 @@ export class FormsComponent implements OnInit, OnDestroy {
     for (const item of data) {
       if (item.column === 'plant') {
         this.filter[item.column] = this.plantsIdNameMap[item.value] ?? '';
+      } else if (item.column === 'shiftId' && item.value) {
+        const foundEntry = Object.entries(this.shiftIdNameMap).find(
+          ([key, val]) => val === item.value
+        );
+        this.filter[item.column] = foundEntry[0];
       } else if (item.type !== 'date' && item.value) {
         this.filter[item.column] = item.value ?? '';
       } else if (item.type === 'date' && item.value) {
@@ -956,7 +1033,8 @@ export class FormsComponent implements OnInit, OnDestroy {
       plant: '',
       schedule: '',
       assignedTo: '',
-      scheduledAt: ''
+      scheduledAt: '',
+      shiftId: ''
     };
     this.nextToken = '';
     this.fetchForms$.next({ data: 'load' });

@@ -28,5 +28,19 @@
     "column": "plant",
     "type": "select",
     "value": ""
+  },
+  {
+    "label": "Shift",
+    "items": [],
+    "column": "shiftId",
+    "type": "select",
+    "value": ""
+  },
+  {
+    "label": "Round Plan Id",
+    "items": [],
+    "column": "roundPlanId",
+    "type": "input",
+    "value": ""
   }
 ]

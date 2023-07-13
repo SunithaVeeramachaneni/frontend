@@ -114,7 +114,7 @@ export class UsersComponent implements OnInit {
       hasPostTextImage: true
     },
     {
-      id: 'usergroup',
+      id: 'userGroups',
       displayName: 'User Group',
       type: 'string',
       controlType: 'string',
@@ -328,7 +328,7 @@ export class UsersComponent implements OnInit {
     });
 
     this.userGroupService
-      .listUserGroups({
+      .listUserGroups$({
         limit: this.limit,
         fetchType: this.fetchType,
         nextToken: this.nextToken
@@ -354,7 +354,7 @@ export class UsersComponent implements OnInit {
     switch (columnId) {
       case 'user':
       case 'roles':
-      case 'usergroup':
+      case 'userGroups':
       case 'email':
       case 'createdAt':
         this.openEditAddUserModal(event.row);
@@ -413,14 +413,11 @@ export class UsersComponent implements OnInit {
           });
       }
       if (resp.action === 'add') {
-        console.log('resp user', resp.user);
         const input = resp.user;
         const idArray = input.usergroup.map((obj) => obj.id); // Extract id values
         const idString = idArray.join(','); // Join values with commas
         input.userGroups = idString;
-        console.log(idString);
         this.usersService.createUser$(input).subscribe((createdUser) => {
-          console.log(createdUser);
           if (Object.keys(createdUser).length) {
             this.addEditDeactivateUser = true;
             if (this.searchUser.value) {

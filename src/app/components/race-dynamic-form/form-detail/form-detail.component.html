@@ -136,7 +136,30 @@
                 </p>
               </div>
               <div class="flex-custom">
-                <h4 class="create-name">{{ selectedForm?.scheduleDates }}</h4>
+                <h4 class="create-name">
+                  {{ selectedForm?.scheduleDates }}
+                </h4>
+              </div>
+            </div>
+            <div
+              class="name-heading"
+              *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
+            >
+              <div>
+                <p class="color-gray">
+                  {{ 'dueDate' | translate }}
+                </p>
+              </div>
+              <div class="flex-custom">
+                <h4 class="create-name">
+                  {{
+                    formatDate(
+                      selectedForm?.dueDate,
+                      selectedForm?.plantId,
+                      dateFormat
+                    )
+                  }}
+                </h4>
               </div>
             </div>
             <div class="name-heading">
@@ -181,26 +204,6 @@
           <div class="name-heading">
             <div>
               <p class="color-gray">
-                {{ 'lastModifiedBy' | translate }}
-              </p>
-            </div>
-            <div class="flex-custom" *ngIf="selectedForm?.lastModifiedBy">
-              <h4 class="create-name">{{ selectedForm?.lastModifiedBy }}</h4>
-              <span class="dots"></span>
-              <p class="date-name color-gray">
-                {{
-                  formatDate(
-                    selectedForm?.updatedAt,
-                    selectedForm?.plantId,
-                    dateTimeFormat
-                  )
-                }}
-              </p>
-            </div>
-          </div>
-          <div class="name-heading">
-            <div>
-              <p class="color-gray">
                 {{ 'createdBy' | translate }}
               </p>
             </div>
@@ -233,6 +236,28 @@
                 ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
                   this.placeHolder
                 }}</span>
+              </h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'slot' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                <div *ngFor="let shiftDetail of slotArr; let i = index">
+                  <span class="make-bold"
+                    >{{ shiftObj[shiftDetail[i]].name }} :</span
+                  >
+                  <ng-container *ngFor="let shift of shiftDetail[i + 1]">
+                    <span>
+                      {{ convertTo12HourFormat(shift.startTime) }} -
+                      {{ convertTo12HourFormat(shift.endTime) }}
+                    </span>
+                  </ng-container>
+                </div>
               </h4>
             </div>
           </div>
@@ -280,6 +305,26 @@
               </h4>
             </div>
           </div>
+          <div
+            class="name-heading"
+            *ngIf="scheduleConfiguration?.scheduleType !== 'byDate'"
+          >
+            <div>
+              <p class="color-gray">
+                {{ 'startDate' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{
+                  formatDateTime(
+                    selectedForm?.scheduledAt,
+                    selectedForm?.plantId
+                  )
+                }}
+              </h4>
+            </div>
+          </div>
 
           <div *ngIf="moduleName === 'OPERATOR_ROUNDS'" class="name-heading">
             <div>
@@ -303,11 +348,7 @@
             <div class="flex-custom">
               <h4 class="create-name">
                 {{
-                  formatDate(
-                    selectedForm?.dueDate,
-                    selectedForm.plantId,
-                    dateFormat
-                  )
+                  formatDateTime(selectedForm?.dueDate, selectedForm.plantId)
                 }}
               </h4>
             </div>
@@ -337,6 +378,18 @@
                 ><span *ngIf="!this.plantTimezoneMap[selectedForm?.plantId]">{{
                   this.placeHolder
                 }}</span>
+              </h4>
+            </div>
+          </div>
+          <div class="name-heading">
+            <div>
+              <p class="color-gray">
+                {{ 'shift' | translate }}
+              </p>
+            </div>
+            <div class="flex-custom">
+              <h4 class="create-name">
+                {{ shiftObj[selectedForm?.shiftId]?.name }}
               </h4>
             </div>
           </div>
