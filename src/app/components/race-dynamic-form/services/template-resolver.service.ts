@@ -43,6 +43,7 @@ export class TemplateResolverService {
           formStatus,
           formType,
           tags,
+          instructions,
           authoredFormTemplateDetails
         } = form.rows[0];
         const { counter, pages } = authoredFormTemplateDetails[0];
@@ -55,7 +56,8 @@ export class TemplateResolverService {
           isPublic,
           formStatus,
           formType,
-          tags
+          tags,
+          instructions
         };
         this.roundPlanResolverServive.getResponseTypeDetails(id);
 

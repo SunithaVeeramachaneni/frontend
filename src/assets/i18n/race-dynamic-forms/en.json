@@ -269,6 +269,9 @@
   "whiteSpace": "{name} is required",
   "trimWhiteSpace": "{name} must not start or end with spaces",
   "selectAnOperator": "Select an Operator",
+  "addImagesAndPDFBtnNew": "Add Images or PDF",
+  "notesAndAttachment": "Notes and Attachments",
+  "errorExceedingLimit": "Notes cannot contain more than 250 characters",
   "openIssues": "Open Issues",
   "openActions": "Open Actions",
   "priority": "Priority",
@@ -351,5 +354,6 @@
   "totalPages": "Total Pages",
   "reportGeneratedOn": "Report Generated On",
   "tasksCompleted": "Responses Completed",
-  "yes": "yes"
+  "yes": "yes",
+  "addNotes": "Add Notes"
 }

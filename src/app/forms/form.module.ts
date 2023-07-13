@@ -59,7 +59,7 @@ import { ShowHierarchyPopupComponent } from './components/show-hierarchy-popup/s
 import { QuillMaterialComponent } from './components/field-types/instructions/quill-material/quill-material.component';
 import { TagSelectComponent } from './components/field-types/instructions/tag-select/tag-select.component';
 import { InstructionImageComponent } from './components/field-types/instructions/instruction-image/instruction-image.component';
-import { InstructionPdfComponent } from './components/field-types/instructions/instruction-pdf/instruction-pdf.component';
+import { InstructionPdfComponent } from './components/instruction-pdf/instruction-pdf.component';
 import { InstructionPdfPreviewComponent } from './components/field-types/instructions/instruction-pdf-preview/instruction-pdf-preview.component';
 import { PDFBuilderComponent } from './components/pdf-builder/pdf-builder.component';
 import { CdkScrollableModule } from '@angular/cdk/scrolling';
@@ -119,6 +119,7 @@ import { DynamicStepperComponent } from './components/stepper/dynamic-stepper/dy
 import { StepsHeaderComponent } from './components/stepper/steps-header/steps-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder-opr.component';
+import { UploadImagePreviewComponent } from './components/upload-image-preview/upload-image-preview.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -183,7 +184,7 @@ import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
-
+    UploadImagePreviewComponent,
     RaiseNotificationDailogComponent,
     DatePickerComponent,
     ShiftChartComponent,
@@ -272,6 +273,7 @@ import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder
     IssuesActionsViewComponent,
     AssignedToComponent,
     ObservationsComponent,
+    UploadImagePreviewComponent,
     DatePickerComponent,
     ShiftChartComponent,
     IphoneForEmbeddedFormsComponent,
@@ -280,7 +282,9 @@ import { PdfBuilderOprComponent } from './components/pdf-builder-opr/pdf-builder
     ShiftMenuItemComponent,
     DynamicStepperComponent,
     StepsHeaderComponent,
-    PdfBuilderOprComponent
+    PdfBuilderOprComponent,
+    InstructionPdfComponent,
+    ShiftMenuItemComponent
   ]
 })
 export class FormModule {}

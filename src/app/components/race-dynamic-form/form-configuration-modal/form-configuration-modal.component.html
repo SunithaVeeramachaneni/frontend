@@ -163,6 +163,90 @@
           </mat-form-field>
         </div>
 
+        <div class="notes-attachment" formGroupName="instructions">
+          <p
+            class="form-name-description m-b-0 m-t-20"
+            translate="notesAndAttachment"
+          ></p>
+          <mat-form-field
+            class="notes-attachment width-100"
+            appearance="outline"
+          >
+            <quill-material
+              #notes
+              [ngClass]="{
+                'display-toolbar': headerDataForm.get('isOpen').value
+              }"
+              formControlName="notes"
+              [placeholder]="'addNotes' | translate"
+              class="notes-field"
+              (editorFocus)="handleEditorFocus($event)"
+            >
+            </quill-material>
+
+            <mat-error
+              *ngIf="maxLengthWithoutBulletPoints(250)"
+              class="m-5 error-fields"
+            >
+              {{ 'errorExceedingLimit' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="add-attachments">
+          <br />
+          <input
+            type="file"
+            class="file-upload"
+            accept="image/jpeg,image/jpg,image/png,application/pdf"
+            (change)="formFileUploadHandler($event)"
+            [hidden]="true"
+            #formFileUpload
+          />
+
+          <button
+            mat-button
+            color="primary"
+            class="upload-button"
+            (click)="formFileUpload.click()"
+          >
+            <mat-icon class="icon-upload">link</mat-icon>
+            <span translate="addImagesAndPDFBtnNew"></span>
+          </button>
+
+          <div class="attachments-container">
+            <span
+              *ngFor="
+                let image of filteredMediaType.mediaType;
+                index as i;
+                trackBy: trackBySelectedattachments
+              "
+              class="m-r-10"
+            >
+              <app-upload-image-preview
+                [image]="image"
+                (imageIndexEmitter)="formFileDeleteHandler(i)"
+                class="attachments cursor-pointer"
+                (triggerPreviewDialog)="openPreviewDialog()"
+              ></app-upload-image-preview>
+            </span>
+
+            <span
+              *ngFor="
+                let pdf of pdfFiles.mediaType;
+                index as i;
+                trackBy: trackBySelectedattachments
+              "
+              class="m-r-10"
+            >
+              <app-instruction-pdf
+                [pdf]="pdf"
+                (indexEmitter)="formPdfDeleteHandler(i)"
+              ></app-instruction-pdf>
+            </span>
+          </div>
+        </div>
+
         <div
           class="additional-details"
           *ngIf="headerDataForm.get('additionalDetails')['controls'].length < 5"
@@ -229,7 +313,7 @@
                         <button
                           mat-button
                           color="primary"
-                          class="p-0"
+                          class="p-0 add-new-button"
                           (click)="storeDetails(i)"
                           [disabled]="
                             headerDataForm.get('additionalDetails')['controls'][
@@ -273,7 +357,7 @@
               <div class="width-45">
                 <mat-form-field
                   appearance="outline"
-                  class="m-l-20 symbol m-b-10 width-100"
+                  class="m-l-20 symbol m-b-10 width-100 value-field"
                 >
                   <input
                     #valueInput
@@ -351,7 +435,7 @@
               <div class="width-10 cancel-icon">
                 <svg-icon
                   icon="icon-closeIcon"
-                  class="close-icon"
+                  class="close-icon cursor-pointer"
                   (click)="deleteAdditionalDetails(i)"
                 ></svg-icon>
               </div>

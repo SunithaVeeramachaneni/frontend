@@ -73,11 +73,6 @@
         margin: 3px 0px 5px 35px;
       }
 
-      .horizontal-line {
-        border: 1px solid $border-color;
-        margin: 20px 0;
-      }
-
       .form-name-description {
         font-weight: 500;
         font-size: 110%;
@@ -103,11 +98,51 @@
       .tags-mat-chips {
         margin: 5px 5px !important;
       }
+
+      .buttons {
+        padding: 15px 0 15px 0;
+        margin-right: 0;
+        width: 100%;
+      }
+
+      .next-btn {
+        float: right;
+        margin-top: 38px;
+        height: 29px;
+        font-weight: normal;
+        line-height: normal;
+      }
+
+      .skip-btn {
+        float: right;
+        margin-right: 15px;
+        margin-top: 38px;
+        color: $radio-button-checked;
+        height: 29px;
+        font-weight: normal;
+        line-height: normal;
+        border: 1px solid $blue-main;
+      }
+      .horizontal-line {
+        border: 1px solid $border-color;
+        margin: 20px 0;
+      }
     }
+  }
+  ::ng-deep .mat-form-field {
+    margin: 0.25em 0;
+    margin-top: 8px;
+  }
+  ::ng-deep .display-toolbar .ql-toolbar.ql-snow {
+    display: block;
+    margin-left: 140px;
   }
   .close-icon {
     width: 20px;
     height: 30px;
+  }
+  .value-field {
+    margin-left: 18px;
   }
 }
 
@@ -129,6 +164,34 @@
   border-color: $radio-button-checked;
 }
 
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0.25em 0;
+  margin-top: 26px;
+  position: relative;
+}
+
+.icon-upload {
+  -webkit-transform: rotate(120deg);
+  font-size: 150%;
+  margin-bottom: 5px;
+}
+.add-new-button {
+  width: 100%;
+  text-align: start;
+}
+
+.attachments-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+
+.upload-button {
+  margin-top: -16px;
+  padding: 0;
+}
+
 .add-button {
   color: $blue-main;
   border: none;
@@ -141,7 +204,6 @@
 .additional-details {
   background-color: $blue7;
   border-radius: 8px;
-  margin-top: 33px;
   height: 40px;
 }
 
@@ -170,6 +232,7 @@
   position: relative;
   top: 15px;
   left: 35px;
+  cursor: pointer;
 }
 
 .arrow {
