@@ -241,6 +241,28 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       hasPreTextImage: false,
       hasPostTextImage: false
     },
+    // {
+    //   id: 'dueDate',
+    //   displayName: 'Due Date',
+    //   type: 'string',
+    //   controlType: 'string',
+    //   order: 6,
+    //   hasSubtitle: false,
+    //   showMenuOptions: false,
+    //   subtitleColumn: '',
+    //   searchable: false,
+    //   sortable: true,
+    //   hideable: false,
+    //   visible: true,
+    //   movable: false,
+    //   stickable: false,
+    //   sticky: false,
+    //   groupable: true,
+    //   titleStyle: {},
+    //   subtitleStyle: {},ro
+    //   hasPreTextImage: false,
+    //   hasPostTextImage: false
+    // },
     {
       id: 'notificationInfo',
       displayName: 'Notification No.',
@@ -475,12 +497,26 @@ export class IssuesListComponent implements OnInit, OnDestroy {
       const { assignedTo } = issue;
       return {
         ...issue,
+        // dueDateDisplay: this.formatDate(issue.dueDate, issue),
         assignedToDisplay:
           assignedTo !== null
             ? this.observationsService.formatUsersDisplay(assignedTo)
             : assignedTo
       };
     });
+  }
+
+  formatDate(date, issue) {
+    // if (date === '') return '';
+    // if (this.plantTimezoneMap[issue?.plantId]?.timeZoneIdentifier) {
+    //   return localToTimezoneDate(
+    //     date,
+    //     this.plantTimezoneMap[issue.plantId],
+    //     dateTimeFormat2
+    //   );
+    // }
+    console.log('date:', date);
+    return date;
   }
 
   getIssuesList() {
@@ -585,7 +621,9 @@ export class IssuesListComponent implements OnInit, OnDestroy {
                 ? notificationInfo
                 : this.placeHolder,
               priority,
-              dueDate: dueDate ? format(new Date(dueDate), 'dd MMM, yyyy') : '',
+              dueDate: dueDate
+                ? format(new Date(dueDate), 'dd MMM, yyyy hh:mm a')
+                : '',
               assignedToDisplay: assignedToDisplay || '',
               assignedTo: assignedTo || ''
             };
