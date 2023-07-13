@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnInit,
   Input,
@@ -31,6 +32,7 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 @Component({
   selector: 'app-import-template-questions-slider',
   templateUrl: './import-template-questions-slider.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./import-template-questions-slider.component.scss']
 })
 export class ImportTemplateQuestionsSliderComponent

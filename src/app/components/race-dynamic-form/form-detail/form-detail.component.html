@@ -219,8 +219,11 @@
           </div>
           <div class="name-heading">
             <div>
-              <p class="color-gray">
+              <p *ngIf="!isTemplate" class="color-gray">
                 {{ 'lastPublishedBy' | translate }}
+              </p>
+              <p *ngIf="isTemplate" class="color-gray">
+                {{ 'authoredBy' | translate }}
               </p>
             </div>
             <div class="flex-custom" *ngIf="selectedForm?.lastPublishedBy">
@@ -276,7 +279,7 @@
             </div>
           </div>
           <div
-            *ngIf="!isTemplate && moduleName !== 'OPERATOR_ROUNDS'"
+            *ngIf="!isTemplate && moduleName !== operatorRoundsModule"
             class="name-heading"
           >
             <div>
@@ -329,7 +332,7 @@
             </div>
           </div>
 
-          <div *ngIf="moduleName === 'OPERATOR_ROUNDS'" class="name-heading">
+          <div *ngIf="moduleName === operatorRoundsModule" class="name-heading">
             <div>
               <p class="color-gray">
                 {{ 'locationAssetsCompleted' | translate }}
@@ -379,7 +382,7 @@
             </div>
           </div>
 
-          <div *ngIf="moduleName === 'OPERATOR_ROUNDS'" class="name-heading">
+          <div *ngIf="moduleName === operatorRoundsModule" class="name-heading">
             <div>
               <p class="color-gray">
                 {{ 'taskSkipped' | translate }}
@@ -451,7 +454,7 @@
     </ng-container>
     <div
       *ngIf="
-        moduleName !== 'OPERATOR_ROUNDS' &&
+        moduleName !== operatorRoundsModule &&
         formStatus !== formConfigurationStatus.published
       "
     >
@@ -528,7 +531,7 @@
     <div
       (click)="onNavigateToDetailPage()"
       *ngIf="
-        moduleName === 'OPERATOR_ROUNDS' &&
+        moduleName === operatorRoundsModule &&
         formStatus !== formConfigurationStatus.published
       "
     >

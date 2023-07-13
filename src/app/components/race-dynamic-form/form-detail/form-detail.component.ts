@@ -74,6 +74,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   plantMapSubscription: Subscription;
   currentPage = 1;
   selectedFormDetail$: Observable<any> = null;
+  operatorRoundsModule = 'OPERATOR_ROUNDS';
   defaultFormName = null;
   pagesCount = 0;
   questionsCount = 0;

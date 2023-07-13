@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -42,9 +43,12 @@ import { PlantsResponse } from 'src/app/interfaces/master-data-management/plants
   selector: 'app-affected-form-template-slider',
   templateUrl: './affected-form-template-slider.component.html',
   styleUrls: ['./affected-form-template-slider.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [slideInOut]
 })
-export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
+export class AffectedFormTemplateSliderComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Output() slideInOut: EventEmitter<any> = new EventEmitter();
   @Input() selectedForm: any | RoundPlan | RoundPlanDetail | RoundDetail = null;
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
@@ -179,7 +183,7 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
       }
     }
   };
-  private onDestroy$ = new Subject();
+  private destroy$ = new Subject();
   constructor(
     private raceDynamicFormService: RaceDynamicFormService,
     private plantService: PlantService
@@ -205,6 +209,8 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
   }
   ngOnDestroy(): void {
     this.selectedForm = null;
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   getDisplayedForms(): void {
@@ -309,6 +315,5 @@ export class AffectedFormTemplateSliderComponent implements OnInit, OnChanges {
   cancelForm() {
     this.slideInOut.emit('in');
     this.selectedForm = null;
-    this.onDestroy$;
   }
 }
