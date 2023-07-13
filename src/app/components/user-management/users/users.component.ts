@@ -335,7 +335,6 @@ export class UsersComponent implements OnInit {
       })
       .subscribe((usergroup) => {
         this.usergroup = usergroup;
-        console.log(usergroup);
       });
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
@@ -366,7 +365,6 @@ export class UsersComponent implements OnInit {
   };
 
   openEditAddUserModal(user = {} as UserDetails) {
-    // console.log('openAddEditMOdal', user);
     if (this.isOpenAddEditModal) return;
     this.isOpenAddEditModal = true;
     const openEditAddUserModalRef = this.dialog.open(
@@ -415,7 +413,14 @@ export class UsersComponent implements OnInit {
           });
       }
       if (resp.action === 'add') {
-        this.usersService.createUser$(resp.user).subscribe((createdUser) => {
+        console.log('resp user', resp.user);
+        const input = resp.user;
+        const idArray = input.usergroup.map((obj) => obj.id); // Extract id values
+        const idString = idArray.join(','); // Join values with commas
+        input.userGroups = idString;
+        console.log(idString);
+        this.usersService.createUser$(input).subscribe((createdUser) => {
+          console.log(createdUser);
           if (Object.keys(createdUser).length) {
             this.addEditDeactivateUser = true;
             if (this.searchUser.value) {
@@ -426,7 +431,6 @@ export class UsersComponent implements OnInit {
                 user: this.usersService.prepareUser(
                   createdUser,
                   resp.user.roles
-                  // resp.user.usergroup
                 )
               });
             }
